@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "cheffelo_personalization"
+version = "0.3.20"
+description = "Personalization applications for Cheffelo"
+authors = ["Thomas Astad Sve <thomas.sve@godtlevert.no>"]
+readme = "README.md"
+packages = [{include = "personalization"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = "^2.0.1"
+python-dotenv = "^0.21.0"
+tqdm = "^4.65.0"
+mlflow = "^2.5.0"
+aligned = {version = "^0.0.62", extras = ["pandera"]}
+adlfs = "^2023.10.0"
+asyncpg = "^0.29.0"
+sqlalchemy = "^2.0.23"
+aioodbc = "0.4.1"
+pyodbc = "4.0.35"
+aligned-streamlit = {git = "git@github.com:MatsMoll/aligned-streamlit.git"}
+lmkgroup-ds-utils = {path = "../../packages/lmkgroup-ds-utils", develop = true}
+
+[tool.poetry.group.ui.dependencies]
+streamlit = "^1.29.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+ruff = "*"
+pytest-mock = "^3.10.0"
+pytest-asyncio = "^0.21.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

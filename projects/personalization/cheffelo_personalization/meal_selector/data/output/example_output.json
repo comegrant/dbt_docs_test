@@ -1,0 +1,42 @@
+[
+    {
+        "agreement_id": 123456,
+        "weeks": [
+            {
+                "year": 2021,
+                "week": 1,
+                "result": "SUCCESS",
+                "products": [
+                    "financial_variation_4_meals_id",
+                    "default_variation_id_1",
+                    "default_variation_id_2",
+                    "default_variation_id_3",
+                    "replaced_variation_id_1"
+                ]
+            },
+            {
+                "year": 2021,
+                "week": 2,
+                "result": "DEFAULT",
+                "products": []
+            },
+            {
+                "year": 2021,
+                "week": 3,
+                "result": "NOT_ENOUGH_MEALS",
+                "products": [
+                    "financial_variation_3_meals_id",
+                    "default_variation_id_1",
+                    "default_variation_id_2",
+                    "replaced_variation_id_1"
+                ]
+            },
+            {
+                "year": 2021,
+                "week": 4,
+                "result": "FAILED",
+                "products": []
+            }
+        ]
+    }
+]

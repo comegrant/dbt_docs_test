@@ -1,0 +1,171 @@
+{
+  "weeks": [
+      {
+          "week": 21,
+          "year": 2021
+      }
+  ],
+  "company_id": "8a613c15-35e4-471f-91cc-972f933331d7",
+  "agreements": [
+      {
+          "agreement_id": 234499,
+          "products": [
+            {
+                "variation_id": "f3fdda93-d49e-498b-8ce4-670687d0c4cd",
+                "quantity": 1
+            },
+            {
+                "variation_id": "db49a849-9db4-4eb1-9083-c545eb5894c4",
+                "quantity": 1
+            },
+            {
+                "variation_id": "b1f615fd-4141-4062-b41e-bdc8e0f4c6d5",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "ff9f03be-c0eb-4d79-bf40-0659aedd3b89",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235218,
+          "products": [
+            {
+                "variation_id": "e2ffae32-778e-4dbb-9226-82bcc4431b87",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235239,
+          "products": [
+            {
+                "variation_id": "db49a849-9db4-4eb1-9083-c545eb5894c4",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235315,
+          "products": [
+            {
+                "variation_id": "b1f615fd-4141-4062-b41e-bdc8e0f4c6d5",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235398,
+          "products": [
+            {
+                "variation_id": "db49a849-9db4-4eb1-9083-c545eb5894c4",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235667,
+          "products": [
+            {
+                "variation_id": "db49a849-9db4-4eb1-9083-c545eb5894c4",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 235779,
+          "products": [
+            {
+                "variation_id": "dee27a4b-910d-4c35-a92d-2126fa06a720",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      },
+      {
+          "agreement_id": 236099,
+          "products": [
+            {
+                "variation_id": "4bc4c5c0-5418-4308-a90b-6b5249a6efe3",
+                "quantity": 1
+            }
+          ],
+          "preferences": [
+              {
+                  "preference_id": "1df054fb-2cba-4af2-afdb-684cae328cb2",
+                  "preference_type_id": "009cf63e-6e84-446c-9ce4-afdbb6bb9687"
+              },
+              {
+                  "preference_id": "9eeb4f91-6402-4247-a9e5-39bd8cde5526",
+                  "preference_type_id": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb"
+              }
+          ]
+      }
+  ]
+}

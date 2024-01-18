@@ -1,0 +1,3319 @@
+{
+    "weeks": [
+        {
+            "week": 33,
+            "year": 2022
+        },
+        {
+            "week": 34,
+            "year": 2022
+        },
+        {
+            "week": 35,
+            "year": 2022
+        }
+    ],
+    "companyId": "5e65a955-7b1a-446c-b24f-cfe576bf52d7",
+    "agreements": [
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "f904ff1b-0e61-48a1-baea-7ee8c7589b69",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "0877d63e-6c76-4494-a101-2a423ab90bdb",
+                    "preferenceTypeId": "88272bc4-3618-4570-ba8e-b049c5bf61a0",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "b1819d47-3cd4-4f57-8881-cad0c4a42e1e",
+                    "preferenceTypeId": "f0a7de03-775a-48e2-b467-3f54a0c20f6d",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "cbff0a78-810c-4185-9e35-344aaa514edd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "67df7cf6-bce7-48dd-9a9e-f6ab04f04f52",
+                    "preferenceTypeId": "0859015a-5204-42aa-b693-1dfe32a64c93",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "87eec422-1b38-43f9-a844-fb7a83991cf6",
+                    "preferenceTypeId": "97f81441-cfac-434c-9f51-a03417d039d7",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "c47dc1dd-e9e7-43c4-8a40-cceec599cbb7",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "d202402f-1d7c-4108-b9ed-5e0b2922a0d4",
+                    "preferenceTypeId": "7f1f1f15-f68b-42ae-9f5c-f48daacbee01",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "9eeca8b1-130c-408f-87d7-96634f9e35c0",
+                    "preferenceTypeId": "a3ac7c45-1602-4de0-8057-baa4793b4196",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "fd9ca460-34d5-4131-9ebf-61bea6359d84",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "b47a2516-cefe-4ed6-8566-1e824ca84ae4",
+                    "preferenceTypeId": "9175fec2-f341-4150-9b04-ec287959ae34",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "cff59af3-b0d5-4fe6-adff-7b5ae31668c7",
+                    "preferenceTypeId": "f6d38b50-442b-4ae2-aee1-f0fc4cb56179",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "385ce3a5-0cf3-4a3a-8c98-5d1682ff9984",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "08dc89bc-4fbd-4d60-8686-4dc1058a6ac9",
+                    "preferenceTypeId": "7df6e999-ff71-456b-8910-8bc6c1ef1d11",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "e8a80da0-1250-4aaa-8a92-00f46c956e49",
+                    "preferenceTypeId": "87ae4bec-fc31-4035-8082-27ffaa4e78f4",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "33855a2a-c2c6-4116-b5a4-53a62fae0e19",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "4920162a-3148-43ab-bc1b-e3b25e9eab0a",
+                    "preferenceTypeId": "1cadcb8f-6b33-4b0c-81c5-05ae41b6a6ae",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "5b25210c-9a12-4a77-a84d-751f643a76d8",
+                    "preferenceTypeId": "5759f5f0-ce7f-4589-89c9-18023643a850",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "82eb6bed-c9cf-41b9-8cfe-9e7e5b8effd4",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "4b85e3ab-d176-4846-8f99-c989dc6ffc87",
+                    "preferenceTypeId": "bef77369-a07e-445d-a0b8-fe9907f33e08",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "b5725dc8-c290-465d-8d16-f38d8a982d11",
+                    "preferenceTypeId": "e6bb64b0-179f-416d-9c31-d02309813a32",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "5241314d-785e-4a81-b555-640b6f911707",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "d5aee438-4d82-4ea3-b825-aff7d619f768",
+                    "preferenceTypeId": "9f766d44-687a-49ac-9bb1-834d161b3597",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "099aa314-7b1f-407d-a658-63ee3e859646",
+                    "preferenceTypeId": "c1814939-cef3-4998-8ab9-b8c092dd37b5",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "cb38d215-9267-4e6a-8943-f776610aa6b3",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "7c6f90fd-7e77-477c-bdda-03b70f37bc55",
+                    "preferenceTypeId": "9a34d29c-4f7a-4e51-a9f1-090cb2994b8a",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "e60eee86-b6aa-4772-b7b3-5c090854892d",
+                    "preferenceTypeId": "ca3195e8-bdd1-4e98-a7ac-98d6272ef5a1",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "0b98a84d-fca3-4032-b515-606bf8e183c6",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "1ae39c76-cf86-436e-9c0b-a2b7fb9d557a",
+                    "preferenceTypeId": "c4ada7cc-ce66-4551-97b8-1a5351374695",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "aa281504-e8fe-49e0-861e-34f471b5d1aa",
+                    "preferenceTypeId": "c15769ce-0fd1-4902-9d3f-47bd26969b5c",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "32d129e6-f7ee-4503-b109-205af7959021",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "a82896a4-b40a-4a9e-9581-c165c20ea821",
+                    "preferenceTypeId": "a6f244a7-b41d-4c5f-99cd-104a1914aaaf",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "68a89476-9b63-4417-9f70-10fef20c0e9e",
+                    "preferenceTypeId": "4783f95d-cee5-4e95-8ee7-2e2d577513fa",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "44a541bc-2075-47e7-aa6d-da9ee33ce150",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "8259df76-e8e8-4157-a098-0e2cad51691f",
+                    "preferenceTypeId": "2d91653f-61ea-4d0c-a532-42c4a04546b7",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "4eceecc6-0fcd-41ef-ade6-2413c6ac16a4",
+                    "preferenceTypeId": "ee10dfec-7c34-43d5-bf96-5207a4a05f55",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "a29543da-bdae-46ab-ba52-ec52785c1377",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "a7d3bfcd-b8f0-4faf-9dfe-eb7e977f129e",
+                    "preferenceTypeId": "e81df79d-3e4b-4900-a11c-072a40760bed",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "2f4be175-9832-4093-935d-226b645c88f5",
+                    "preferenceTypeId": "87c7c3c3-6642-47cb-a494-dd2e8ad47136",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "83608400-91ed-474e-9f70-100df3dbf14b",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "ab8b8c37-a344-4f5f-a33c-3491842ea78f",
+                    "preferenceTypeId": "c6fee1a9-aa21-4556-9985-f073d07ae9c9",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "d7137dab-6baf-43f1-bcd7-f3a2fbd9268e",
+                    "preferenceTypeId": "ec15243e-9df8-4f6e-845b-f4e850ca3eca",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "f0dbefd8-9b0d-4091-bbc4-e3f97257a7b9",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "19ca1652-2d13-44da-8977-5f8993ec2348",
+                    "preferenceTypeId": "09a84ff6-dd63-46a7-8930-d70f0419a58f",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "29ded237-668e-41b4-bbb4-f2b45fa61af4",
+                    "preferenceTypeId": "978daf16-1bf0-4ece-a5c4-8a344374f249",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "fb42abba-d572-49c5-85d2-0fa21a289ae1",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "c5e1c7d5-def4-44f4-8de4-fef4da0a432b",
+                    "preferenceTypeId": "47bd77a4-7774-4489-b395-8759cc9b30f5",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "efc7ef73-a8cb-452f-8ae0-51821a21308c",
+                    "preferenceTypeId": "728b034c-e2d6-48b3-9b4e-45e7e550ba41",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "2d6ce9e6-081f-4a85-b3fa-f8985beffb2f",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "c80df13e-806c-49d2-8568-ee27ff84640a",
+                    "preferenceTypeId": "ab82132b-5292-48db-8c99-b87339fbf284",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "494392ea-f5b9-45ba-810a-814da1156f83",
+                    "preferenceTypeId": "34e90bb4-63a3-45e7-bbdc-15311c04ec72",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        },
+        {
+            "agreementId": 1165073,
+            "products": [
+                {
+                    "variationId": "42082f48-9c6a-4eb3-a989-1305c1b633bd",
+                    "quantity": 1
+                }
+            ],
+            "preferences": [
+                {
+                    "preferenceId": "6c1ea610-872d-4eb1-b821-38ab4bb9d457",
+                    "preferenceTypeId": "009cf63e-6e84-446c-9ce4-afdbb6bb9687",
+                    "preferencePriority": 0
+                },
+                {
+                    "preferenceId": "357343b0-3afd-42f0-9205-f82ecd47d6fb",
+                    "preferenceTypeId": "4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb",
+                    "preferencePriority": 0
+                }
+            ],
+            "price": 0
+        }
+    ]
+}

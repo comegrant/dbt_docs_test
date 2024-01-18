@@ -1,0 +1,122 @@
+[
+    {
+        "ProductId": "890ab85e-6860-4ff5-9e21-4a85e20ec5b7",
+        "PreselectedProducts": [
+            {
+                "ProductId": "e7f5e81c-ac53-4b5e-89d7-2ca3e9a989dd",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 1
+            },
+            {
+                "ProductId": "40d012c5-94f7-45a9-a121-4eeb579ff315",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 2
+            },
+            {
+                "ProductId": "0ffca1b2-bdfc-4220-b8d4-df31f822b81b",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 3
+            },
+            {
+                "ProductId": "703a5048-7ed3-425b-99ac-953b235dfe99",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 4
+            },
+            {
+                "ProductId": "efa2844b-11c2-4780-916b-ec361c646546",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 5
+            }
+        ]
+    },
+    {
+        "ProductId": "8a279815-6ee5-4a7f-922d-4a8f02317ef1",
+        "PreselectedProducts": [
+            {
+                "ProductId": "1642d3da-e0f7-4491-8f0f-d397aefe4692",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 1
+            },
+            {
+                "ProductId": "60b74b7b-67c3-4a90-b006-ee7dd9322841",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 2
+            },
+            {
+                "ProductId": "ae09942d-0950-4551-b221-613781a79dd5",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 3
+            },
+            {
+                "ProductId": "a2fc4ba8-e4f9-4c9a-ac84-cc2858e8ca82",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 4
+            },
+            {
+                "ProductId": "2668e211-1d49-4147-ba4b-219c95f38f1f",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 5
+            }
+        ]
+    },
+    {
+        "ProductId": "d5c1eb45-6479-41e7-b5de-8ea0b4960d5b",
+        "PreselectedProducts": [
+            {
+                "ProductId": "b7230989-723b-44f8-926f-8b20ec01f090",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 1
+            },
+            {
+                "ProductId": "84547587-ae1f-459a-9d11-380ff80ab720",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 2
+            },
+            {
+                "ProductId": "112df9f3-5372-4211-b208-50e3dd813302",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 3
+            },
+            {
+                "ProductId": "c3378d84-c2fb-45ab-8c79-8fed4d0f174a",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 4
+            },
+            {
+                "ProductId": "a623bc09-a413-46aa-aee4-baa22f1cfea3",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 5
+            }
+        ]
+    },
+    {
+        "ProductId": "ccad8fc2-c2c9-4f68-a5dd-97d3bf333f25",
+        "PreselectedProducts": [
+            {
+                "ProductId": "1642d3da-e0f7-4491-8f0f-d397aefe4692",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 1
+            },
+            {
+                "ProductId": "e7f5e81c-ac53-4b5e-89d7-2ca3e9a989dd",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 2
+            },
+            {
+                "ProductId": "a2fc4ba8-e4f9-4c9a-ac84-cc2858e8ca82",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 3
+            },
+            {
+                "ProductId": "703a5048-7ed3-425b-99ac-953b235dfe99",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 4
+            },
+            {
+                "ProductId": "a623bc09-a413-46aa-aee4-baa22f1cfea3",
+                "ProductTypeId": "cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1",
+                "RecipeOrder": 5
+            }
+        ]
+    }
+]
