@@ -1,0 +1,18 @@
+---
+name: CI projects/lmkgroup-ds-utils
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_lmkgroup_ds_utils.yml'
+      - 'packages/lmkgroup_ds_utils/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  ci-libs-lmkgroup-ds-utils:
+    uses:
+      ./.github/workflows/python_reusable.yml
+    with:
+      working-directory: packages/lmkgroup_ds_utils
+    secrets: inherit

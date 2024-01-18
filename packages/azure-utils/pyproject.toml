@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "azure_utils"
+version = "0.1.0"
+description = "A Python package by Cheffelo."
+authors = ["Your full name <Your email address>"]
+packages = [{include = "azure_utils"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+ruff = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,350 @@
+import logging
+import os
+import random
+import shutil
+import string
+from io import BytesIO
+from typing import Dict, Optional
+from urllib.parse import urlparse
+
+import pandas as pd
+from azure.storage.blob import BlobServiceClient
+from dotenv import find_dotenv, load_dotenv
+
+logger = logging.getLogger()
+load_dotenv(find_dotenv())
+
+
+class BlobConnector:
+    def __init__(self, local: bool = False, **kwargs) -> None:
+        try:
+            if local:
+                account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY")
+                tenant_id = os.getenv("AZURE_TENANT_ID")
+                client_id = os.getenv("DATALAKE_SERVICE_PRINCIPAL_CLIENT_ID")
+                client_secret = os.getenv("DATALAKE_SERVICE_PRINCIPAL_CLIENT_SECRET")
+                account_url = os.getenv("DATALAKE_SERVICE_ACCOUNT_URL")
+            else:
+                account_key = None
+                tenant_id = kwargs["tenant_id"]
+                client_id = kwargs["client_id"]
+                client_secret = kwargs["client_secret"]
+                account_url = kwargs["account_url"]
+
+            if account_key is not None:
+                self.blob_service_client = BlobServiceClient(
+                    account_url=account_url, credential=account_key
+                )
+            elif (
+                client_id is not None
+                and client_secret is not None
+                and tenant_id is not None
+            ):
+                from azure.identity import ClientSecretCredential
+
+                token = ClientSecretCredential(tenant_id, client_id, client_secret)
+
+                self.blob_service_client = BlobServiceClient(
+                    account_url=account_url, credential=token
+                )
+            else:
+                logger.info("Missing arguments to make connection!")
+        except Exception as exception:
+            logger.exception(exception)
+
+    def list_blobs(self, container: str, path: str = "/"):
+        """
+        List files existing on a container
+        Keyword arguments:
+        path -- the folder to search on (default /)
+
+        eg: list_dir(container="test", path="churn-ai/GL/data/interm/")
+        """
+        container_client = self.blob_service_client.get_container_client(
+            container=container
+        )
+        files = []
+        for blob in container_client.list_blobs(name_starts_with=path):
+            files.append(blob.name)
+        return files
+
+    def upload_df(
+        self, container: str, dataframe: pd.DataFrame, file_path: str, filename: str
+    ):
+        """
+        Upload DataFrame to Azure Blob Storage to given container
+        Keyword arguments:
+        container -- name of the container
+        dataframe -- the dataframe(df) object (default None)
+        file_path -- source folder
+        filename -- the filename to use for the blob (default None)
+
+        eg: upload_df(container="test", dataframe=df, file_path="/tmp/file.csv", filename="test.csv")
+        """
+        upload_file_path = os.path.join(file_path, filename)
+        blob_client = self.blob_service_client.get_blob_client(
+            container=container, blob=upload_file_path
+        )
+        try:
+            output = dataframe.to_csv(index=False, encoding="utf-8")
+        except Exception as exception:
+            logger.exception("Failed to save dataframe: %s", exception)
+            return
+        try:
+            blob_client.upload_blob(output, blob_type="BlockBlob", overwrite=True)
+        except Exception as exception:
+            logger.exception("Failed to save dataframe: %s", exception)
+
+    def download_file(self, filename, url=None):
+        """
+        Download dataframe from Azure Blob Storage for given url
+        Keyword arguments:
+        url -- the url of the blob (default None)
+
+        Function uses following enviornment variables
+        AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
+        eg: download_file("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        """
+        if url:
+            path = urlparse(url).path
+            path = path.split("/")
+            container = path[1]
+            blob = "/".join(path[2:])
+            blob_client = self.blob_service_client.get_blob_client(
+                container=container, blob=blob
+            )
+            with BytesIO() as input_blob:
+                try:
+                    blob_client.download_blob().download_to_stream(input_blob)
+                    input_blob.seek(0)
+                    with open(filename, "wb") as f:
+                        f.write(input_blob.getbuffer())
+                        return f
+                except Exception as exception:
+                    logger.exception("Failed to download file: %s", exception)
+                    return None
+        else:
+            return None
+
+    def download_csv_to_df(self, url=None, **kwargs):
+        """
+        Download dataframe from Azure Blob Storage for given url
+        Keyword arguments:
+        url -- the url of the blob (default None)
+
+        Function uses following enviornment variables
+        AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
+        eg: download_csv_to_df("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        """
+        if url:
+            path = urlparse(url).path
+            path = path.split("/")
+            container = path[1]
+            blob = "/".join(path[2:])
+            blob_client = self.blob_service_client.get_blob_client(
+                container=container, blob=blob
+            )
+            with BytesIO() as input_blob:
+                try:
+                    blob_client.download_blob().download_to_stream(input_blob)
+                    input_blob.seek(0)
+                    df = pd.read_csv(input_blob, **kwargs)
+                    return df
+                except Exception as exception:
+                    logger.exception("Failed to download dataframe: %s", exception)
+                    return None
+        else:
+            return None
+
+    def download_json_to_df(self, blob, container="data-science", **kwargs):
+        """
+        Download dataframe from Azure Blob Storage for given json url
+        Keyword arguments:
+        url -- the url of the blob (default None)
+        Function uses following enviornment variables
+        AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
+        eg: download_json_to_df("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        """
+        blob_client = self.blob_service_client.get_blob_client(
+            container=container, blob=blob
+        )
+        with BytesIO() as input_blob:
+            try:
+                blob_client.download_blob().download_to_stream(input_blob)
+                input_blob.seek(0)
+                df = pd.read_json(input_blob, **kwargs)
+                return df
+            except Exception as exception:
+                logger.exception("Failed to download dataframe: %s", exception)
+                return None
+
+    def upload_local_file(
+        self, container: str, local_file_path: str, remote_file_path: str, filename: str
+    ):
+        """
+        Upload local file to Azure Blob Storage
+        Keyword arguments:
+        container -- the container name (default None)
+        local_file_path -- path of source file
+        remote_file_path -- path of target file
+        filename -- the filename to use for the blob (default None)
+
+        eg: upload_local_file(container="test", local_file_path="/tmp/file.csv", remote_file_path="dbfs:/folder/", filename="test.csv")
+        """
+        upload_file_path = os.path.join(remote_file_path, filename)
+        blob_client = self.blob_service_client.get_blob_client(
+            container=container, blob=upload_file_path
+        )
+        try:
+            with open(local_file_path, "rb") as data:
+                blob_client.upload_blob(data, overwrite=True)
+        except Exception as exception:
+            logger.exception("Failed to upload file: %s", exception)
+
+    def delete_file(self, url=None, **kwargs):
+        """
+        Deletes dataframe on Azure Blob Storage for given url
+        Keyword arguments:
+        url -- the url of the blob (default None)
+
+        Function uses following enviornment variables
+        AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
+        eg: download_delete_file("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        """
+        if url:
+            path = urlparse(url).path
+            path = path.split("/")
+            container = path[1]
+            blob = "/".join(path[2:])
+            blob_client = self.blob_service_client.get_blob_client(
+                container=container, blob=blob
+            )
+
+            try:
+                blob_client.delete_blob()
+            except Exception as exception:
+                logger.exception("Failed to download dataframe: %s", exception)
+                return None
+        else:
+            return None
+
+
+class BlobMount:
+    def __init__(self, dbutils) -> None:
+        self.mounts: Dict[str, str] = {}
+        self.dbutils = dbutils
+
+    def add_mounted_path(self, path: str, storage_account: str, container: str):
+        source = "wasbs://{container}@{storage_account}.blob.core.windows.net".format(
+            storage_account=storage_account, container=container
+        )
+        if source not in self.mounts.keys():
+            self.mounts[source] = path
+        else:
+            logger.info("The source {source} is already mounted.")
+
+    def mount_storage(
+        self, storage_account: str, container: str, scope: str, secret: str, path: str
+    ):
+        """
+        Mount a storage to the DBFS filesystem.
+        Keyword arguments:
+        storage_account -- the storage account name
+        container -- the container name (default None)
+        scope -- the scope for the secret
+        secret -- the secret stored in the scope, for accessing the storage
+        path -- the mounting folder for the storage
+        """
+        try:
+            source = (
+                "wasbs://{container}@{storage_account}.blob.core.windows.net".format(
+                    storage_account=storage_account, container=container
+                )
+            )
+
+            if source in self.mounts.keys():
+                logger.info("Source already is mounted on %s", self.mounts[source])
+                return
+
+            self.dbutils.fs.mount(
+                source=source,
+                mount_point=path,
+                extra_configs={
+                    "fs.azure.account.key.{storage_account}.blob.core.windows.net".format(
+                        storage_account=storage_account
+                    ): self.dbutils.secrets.get(
+                        scope=scope, key=secret
+                    )
+                },
+            )
+
+            self.mounts[source] = path
+        except Exception as e:
+            logger.exception("Error mounting the storage: %s", e)
+
+    def unmount_storage(self, path: str):
+        """
+        Unmount a storage from the DBFS filesystem.
+        Keyword arguments:
+        path -- the mounting folder for the storage
+        """
+        try:
+            self.dbutils.fs.unmount(path)
+            self.mounts = {key: val for key, val in self.mounts.items() if val != path}
+        except Exception as e:
+            logger.exception("Error unmounting storage: %s", e)
+
+    def list_mounts(self):
+        """
+        List all the storage mounts in the DBFS filesystem.
+        Keyword arguments:
+        """
+        for key, val in self.mounts.items():
+            logger.info("%s -> %s", key, val)
+
+    def copy_file(self, file: str, path: str):
+        """
+        Copy a file from the local filesystem to a mounted storage.
+        Keyword arguments:
+        file -- the file path
+        path -- the mounting folder for the storage, including the folder where its gonna be stored
+        """
+        filename = os.path.basename(file)
+        randFolderName = "".join(
+            random.choice(string.ascii_lowercase) for i in range(5)
+        )
+        tmp_folder = os.path.join("tmp", randFolderName)
+        old_dbfs = os.path.join("/dbfs", tmp_folder)
+        new_dbfs = os.path.join("dbfs:", tmp_folder)
+
+        os.makedirs(old_dbfs)
+        try:
+            shutil.copyfile(file, os.path.join(old_dbfs, filename))
+            self.dbutils.fs.cp(os.path.join(new_dbfs, filename), path)
+        except Exception as e:
+            logger.exception("Failed to copy file: %s", e)
+        finally:
+            shutil.rmtree(old_dbfs)
+
+    def copy_folder(self, folder: str, path: str):
+        """
+        Copy a folder from the local filesystem to a mounted storage.
+        Keyword arguments:
+        folder -- the folder path
+        path -- the mounting folder for the storage, including the folder where its gonna be stored
+        """
+        folderName = os.path.basename(folder)
+        randFolderName = "".join(
+            random.choice(string.ascii_lowercase) for i in range(5)
+        )
+        tmp_folder = os.path.join("tmp", randFolderName)
+        old_dbfs = os.path.join("/dbfs", tmp_folder)
+        new_dbfs = os.path.join("dbfs:", tmp_folder)
+
+        try:
+            shutil.copytree(folder, os.path.join(old_dbfs, folderName))
+            self.dbutils.fs.cp(os.path.join(new_dbfs, folderName), path, recurse=True)
+        except Exception as e:
+            logger.exception("Failed to copy folder: %s", e)
+        finally:
+            shutil.rmtree(old_dbfs)
