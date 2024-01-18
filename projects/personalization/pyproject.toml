@@ -18,8 +18,7 @@ asyncpg = "^0.29.0"
 sqlalchemy = "^2.0.23"
 aioodbc = "0.4.1"
 pyodbc = "4.0.35"
-aligned-streamlit = {git = "git@github.com:MatsMoll/aligned-streamlit.git"}
-lmkgroup-ds-utils = {path = "../../packages/lmkgroup-ds-utils", develop = true}
+lmkgroup-ds-utils = {git="git@github.com:cheffelo/python-monorepo-test.git", rev="c600fb39833e08067e822c7d82a7fc5f9ae25ba6", subdirectory="packages/lmkgroup-ds-utils"}
 
 [tool.poetry.group.ui.dependencies]
 streamlit = "^1.29.0"
