@@ -1,0 +1,10 @@
+agreement_id,order_id,company_id,delivery_year,delivery_week,case_line_type,case_line_amount,category,responsible,cause,comment,registration_date
+112211,4522127,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,47,PRP/Credit,0.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten",vårløk ,2020-11-25 14:51:05.980
+112211,4522127,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,47,PRP/Credit,0.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten","urter, koriander",2020-11-25 14:51:47.527
+112211,4557311,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,48,PRP/Credit,0.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten","urter, mynte",2020-11-25 14:50:38.837
+112211,4593040,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,49,PRP/Credit,40.0,Previous week,PW: Procurement,PW: See comment,uke 47: muggen koriander,2020-11-25 14:52:17.963
+112211,4593040,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,49,PRP/Credit,40.0,Previous week,PW: Procurement,PW: See comment,uke 47: muggen vårløk,2020-11-25 14:52:14.253
+112211,4593040,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,49,PRP/Credit,40.0,Previous week,PW: Procurement,PW: See comment,uke 48: muggen mynte,2020-11-25 14:52:31.287
+112211,4662984,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,51,PRP/Credit,30.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten",løk - banansjalottløk 1stk	,2020-12-15 11:26:05.657
+112211,4662984,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,51,PRP/Credit,30.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten","hvitløk, kinesisk 1stk	",2020-12-15 11:26:23.857
+112211,4662984,09ECD4F0-AE58-4539-8E8F-9275B1859A19,2020,51,PRP/Credit,40.0,Procurement,External: Procurement,"Bad quality: mouldy, rotten","søtpotet, medium 1stk	",2020-12-15 11:25:51.673

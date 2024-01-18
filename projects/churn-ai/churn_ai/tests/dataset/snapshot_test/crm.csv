@@ -1,0 +1,91 @@
+agreement_id,current_delivery_year,current_delivery_week,main_segment_name,sub_segment_name,planned_delivery,number_of_orders,bargain_hunter,revenue
+112211,2020,39,Buyer,Super loyal,True,17,False,15401.05
+112211,2020,37,Buyer,Super loyal,True,16,False,14413.05
+112211,2020,48,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,21,Buyer,Onboarding,True,5,False,3845.05
+112211,2020,28,Buyer,Super loyal,True,9,False,7597.05
+112211,2020,20,Buyer,Onboarding,True,4,False,3356.55
+112211,2021,40,Buyer,Loyal,True,32,False,29324.05
+112211,2020,19,Buyer,Onboarding,True,3,False,2319.55
+112211,2020,40,Buyer,Super loyal,True,17,False,15401.05
+112211,2020,49,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,15,Buyer,Pending onboarding,True,0,False,0.0
+112211,2020,16,Buyer,Onboarding,True,1,False,443.55
+112211,2020,17,Buyer,Onboarding,True,2,False,1381.55
+112211,2020,18,Buyer,Onboarding,True,3,False,2319.55
+112211,2020,29,Buyer,Super loyal,True,10,False,8535.05
+112211,2020,22,Buyer,Onboarding,True,6,False,4783.05
+112211,2020,27,Buyer,Onboarding,True,9,False,7597.05
+112211,2020,23,Buyer,Onboarding,True,7,False,5721.05
+112211,2020,24,Buyer,Onboarding,True,8,False,6659.05
+112211,2020,25,Buyer,Onboarding,True,9,False,7597.05
+112211,2020,51,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,30,Buyer,Super loyal,True,11,False,9473.05
+112211,2021,38,Buyer,Loyal,True,31,False,28375.05
+112211,2020,52,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,26,Buyer,Onboarding,True,9,False,7597.05
+112211,2021,45,Buyer,Super loyal,True,35,False,32171.05
+112211,2021,19,Buyer,Super loyal,True,25,False,22681.05
+112211,2020,36,Buyer,Super loyal,True,15,False,13425.05
+112211,2021,44,Buyer,Super loyal,True,35,False,32171.05
+112211,2020,31,Buyer,Super loyal,True,11,False,9473.05
+112211,2020,53,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,41,Buyer,Super loyal,True,17,False,15401.05
+112211,2020,33,Buyer,Super loyal,True,13,False,11449.05
+112211,2020,50,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,32,Buyer,Super loyal,True,12,False,10461.05
+112211,2021,2,Churned,1-3 months,False,18,False,16389.05
+112211,2021,1,Churned,1-3 months,False,18,False,16389.05
+112211,2021,4,Churned,1-3 months,False,18,False,16389.05
+112211,2021,3,Churned,1-3 months,False,18,False,16389.05
+112211,2020,42,Buyer,Super loyal,True,18,False,16389.05
+112211,2020,44,Buyer,Super loyal,True,18,False,16389.05
+112211,2020,34,Buyer,Super loyal,True,14,False,12437.05
+112211,2020,47,Buyer,Sporadic,False,18,False,16389.05
+112211,2020,35,Buyer,Super loyal,True,15,False,13425.05
+112211,2020,45,Buyer,Loyal,False,18,False,16389.05
+112211,2020,43,Buyer,Super loyal,True,18,False,16389.05
+112211,2020,38,Buyer,Super loyal,True,17,False,15401.05
+112211,2020,46,Buyer,Loyal,False,18,False,16389.05
+112211,2021,12,Buyer,Reactivated buyer,True,23,False,20783.05
+112211,2021,14,Buyer,Reactivated buyer,True,23,False,20783.05
+112211,2021,5,Churned,1-3 months,False,18,False,16389.05
+112211,2021,47,Buyer,Loyal,True,35,False,32171.05
+112211,2021,6,Churned,1-3 months,False,18,False,16389.05
+112211,2021,39,Buyer,Loyal,True,31,False,28375.05
+112211,2021,7,Buyer,Reactivated buyer,True,19,False,17138.05
+112211,2021,8,Buyer,Reactivated buyer,True,20,False,17936.05
+112211,2021,30,Buyer,Sporadic,True,28,False,25528.05
+112211,2021,26,Buyer,Sporadic,True,26,False,23630.05
+112211,2021,9,Buyer,Reactivated buyer,True,20,False,17936.05
+112211,2021,49,Buyer,Super loyal,True,37,False,34069.05
+112211,2021,10,Buyer,Reactivated buyer,True,21,False,18885.05
+112211,2021,11,Buyer,Reactivated buyer,True,22,False,19834.05
+112211,2021,48,Buyer,Loyal,True,36,False,33120.05
+112211,2021,50,Buyer,Super loyal,True,38,False,35018.05
+112211,2021,13,Buyer,Reactivated buyer,True,23,False,20783.05
+112211,2021,33,Buyer,Loyal,True,29,False,26477.05
+112211,2021,20,Buyer,Loyal,True,25,False,22681.05
+112211,2021,15,Buyer,Reactivated buyer,True,24,False,21732.05
+112211,2021,22,Buyer,Loyal,True,25,False,22681.05
+112211,2021,42,Buyer,Super loyal,True,34,False,31222.05
+112211,2021,16,Buyer,Reactivated buyer,True,25,False,22681.05
+112211,2021,46,Buyer,Loyal,True,35,False,32171.05
+112211,2021,51,Buyer,Super loyal,True,38,False,35018.05
+112211,2021,17,Buyer,Reactivated buyer,True,25,False,22681.05
+112211,2021,18,Buyer,Reactivated buyer,True,25,False,22681.05
+112211,2021,21,Buyer,Loyal,True,25,False,22681.05
+112211,2021,28,Buyer,Sporadic,True,27,False,24579.05
+112211,2021,24,Buyer,Sporadic,True,26,False,23630.05
+112211,2021,23,Buyer,Loyal,True,26,False,23630.05
+112211,2021,41,Buyer,Loyal,True,33,False,30273.05
+112211,2021,25,Buyer,Sporadic,True,26,False,23630.05
+112211,2021,27,Buyer,Sporadic,True,27,False,24579.05
+112211,2021,29,Buyer,Sporadic,True,28,False,25528.05
+112211,2021,31,Buyer,Sporadic,True,28,False,25528.05
+112211,2021,32,Buyer,Sporadic,True,28,False,25528.05
+112211,2021,34,Buyer,Loyal,True,30,False,27426.05
+112211,2021,35,Buyer,Loyal,True,31,False,28375.05
+112211,2021,43,Buyer,Super loyal,True,35,False,32171.05
+112211,2021,36,Buyer,Loyal,True,31,False,28375.05
+112211,2021,37,Buyer,Loyal,True,31,False,28375.05
