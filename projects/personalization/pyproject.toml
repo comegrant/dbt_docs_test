@@ -4,7 +4,7 @@ version = "0.3.20"
 description = "Personalization applications for Cheffelo"
 authors = ["Thomas Astad Sve <thomas.sve@godtlevert.no>"]
 readme = "README.md"
-packages = [{include = "personalization"}]
+packages = [{include = "cheffelo_personalization"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -18,7 +18,8 @@ asyncpg = "^0.29.0"
 sqlalchemy = "^2.0.23"
 aioodbc = "0.4.1"
 pyodbc = "4.0.35"
-lmkgroup-ds-utils = {git="git@github.com:cheffelo/python-monorepo-test.git", rev="c600fb39833e08067e822c7d82a7fc5f9ae25ba6", subdirectory="packages/lmkgroup-ds-utils"}
+chef = {path = "../../packages/chef", develop=true}
+lmkgroup-ds-utils = {path = "../../packages/lmkgroup-ds-utils", develop = true}
 
 [tool.poetry.group.ui.dependencies]
 streamlit = "^1.29.0"
@@ -34,3 +35,6 @@ pytest-asyncio = "^0.21.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
