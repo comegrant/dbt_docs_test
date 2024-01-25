@@ -24,7 +24,7 @@ RUN mkdir -p cheffelo_personalization && touch cheffelo_personalization/__init__
 
 # install requirements
 RUN poetry config virtualenvs.create false
-RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
+RUN poetry install && rm -rf ~/.cache/pypoetry/cache
 
 # copy source code
 COPY projects/personalization .

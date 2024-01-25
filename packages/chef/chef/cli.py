@@ -27,16 +27,19 @@ def project_name() -> str | Exception:
 
 @cli.command()
 def list_internal_deps():
-    click.echo('Internal dependencies:')
+    echo_action('Internal dependencies:')
     for package in internal_packages():
         click.echo(f"- {package}")
 
+def echo_action(action: str):
+    click.echo(click.style(f"Yes Chef!", bold=True))
+    click.echo(action)
 
 @cli.command()
 @click.argument('name')
 @click.option('--extras', default=None)
 def add(name: str, extras: str | None):
-    click.echo(f"Adding {name}")
+    echo_action(f"Adding {name}")
 
     if name in internal_packages():
         click.echo("Found internal package")
@@ -56,13 +59,13 @@ def add(name: str, extras: str | None):
 
 @cli.command()
 def install():
-    click.echo("Installing dependencies")
+    echo_action("Installing dependencies")
     subprocess.run(['poetry', 'install'])
 
 
 @cli.command()
 def setup():
-    click.echo("Setting up venv")
+    echo_action("Setting up Python environment")
     subprocess.run(['pip', 'install', 'poetry'])
     subprocess.run(['poetry', 'install'])
     subprocess.run(['pre-commit', 'install'])
@@ -102,7 +105,7 @@ def pin(name: str, version: str | None, repo: str | None):
 @cli.command()
 @click.argument('port')
 def expose(port: str):
-    click.echo(f"Exposing port {port} to a public url")
+    echo_action(f"Exposing port {port} to a public url")
     subprocess.run(['ngrok', 'http', f'{port}'])
 
 @cli.command()
@@ -113,7 +116,7 @@ def build():
         click.echo("An error occured while trying to get the project name. Make sure you run this command from a project directory.", err=True)
         return
 
-    click.echo(f"Building project '{name}'")
+    echo_action(f"Building project '{name}'")
     subprocess.run(['docker', 'build', '-t', name, '-f', 'Dockerfile', '../../'])
 
 @cli.command()
@@ -125,7 +128,7 @@ def run(subcommand: str):
         click.echo("An error occured while trying to get the project name. Make sure you run this command from a project directory.", err=True)
         return
 
-    click.echo(f"Running project '{name}'")
+    echo_action(f"Running project '{name}'")
     command = ['docker', 'run', name]
     if subcommand:
         if isinstance(subcommand, tuple):
@@ -143,7 +146,7 @@ def bash():
         click.echo("An error occured while trying to get the project name. Make sure you run this command from a project directory.", err=True)
         return
 
-    click.echo(f"Running terminal for project '{name}'")
+    echo_action(f"Running terminal for project '{name}'")
     command = ['docker', 'run', '-it', name, 'bash']
     subprocess.run(command)
 

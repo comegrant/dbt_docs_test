@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 cookiecutter = "^2.5.0"
+chef = {path = "packages/chef", develop=true}
 
 [build-system]
 requires = ["poetry-core"]
@@ -47,3 +48,6 @@ ignore = [
 ]
 line-length = 100
 target-version = "py311"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
