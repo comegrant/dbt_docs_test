@@ -79,7 +79,6 @@ def install() -> None:
 @cli.command()
 def setup() -> None:
     echo_action("Setting up Python environment")
-    subprocess.run(["pip", "install", "poetry"])
     subprocess.run(["poetry", "install"])
     subprocess.run(["pre-commit", "install"])
 
