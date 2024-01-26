@@ -65,6 +65,11 @@ Builds a project into a Docker image. Will default to the name of the project.
 
 `chef build`
 
+### Run
+Runs a command in a build Docker image.
+
+`chef run echo "Hello World"`
+
 ### Bash
 Opens up an interactable bash shell in a Docker image.
 
