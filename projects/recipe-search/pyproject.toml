@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "{{ cookiecutter.module_name }}"
+name = "recipe-search"
 version = "0.1.0"
-description = "{{ cookiecutter.package_description }}"
-authors = ["{{ cookiecutter.owner_full_name }} <{{ cookiecutter.owner_email_address }}>"]
-packages = [{include = "{{ cookiecutter.module_name }}"}]
+description = "A project to search through recipes with semantic search"
+authors = ["Mats E. Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "recipe_search"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
@@ -18,3 +18,6 @@ chef = {path = "../../packages/chef", develop = true}
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

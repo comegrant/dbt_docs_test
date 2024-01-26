@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "{{ cookiecutter.module_name }}"
+name = "vector_search"
 version = "0.1.0"
-description = "{{ cookiecutter.package_description }}"
-authors = ["{{ cookiecutter.owner_full_name }} <{{ cookiecutter.owner_email_address }}>"]
-packages = [{include = "{{ cookiecutter.module_name }}"}]
+description = "A package to do vector search in an efficient and standardised way"
+authors = ["Mats E. Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "vector_search"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

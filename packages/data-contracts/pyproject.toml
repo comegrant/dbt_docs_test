@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "data_contracts"
+version = "0.1.0"
+description = "A set of data contracts that ML project expect to be upheld"
+authors = ["Mats E. Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "data_contracts"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aligned = "^0.0.63"
+azure-storage-blob = "^12.19.0"
+azure-identity = "^1.15.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
