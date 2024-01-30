@@ -1,5 +1,8 @@
+
 # Sous Chef
-Sous chef is the monorepo for the data team.
+<img src="sous-chef.png" alt="sous-chef" width="200"/>
+
+Sous chef is the Python monorepo for the data team.
 
 ---
 
