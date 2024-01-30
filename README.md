@@ -19,6 +19,7 @@ cd sous-chef
 
 ### Install Python and `chef` cli
 ```
+pip install poetry
 poetry shell
 poetry install --no-root
 ```
