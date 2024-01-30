@@ -71,7 +71,7 @@ To create a new package:
 chef new package
 ```
 
-#### What is the difference between <library name>, <package name> and <module name>?
+#### What is the difference between \<library name\>, \<package name\> and \<module name\>?
 
 **Library** name is a human readable name. *E.g: Analytics API*
 
