@@ -62,7 +62,9 @@ class AzureBlobConfig:
         return AzureBlobCsvDataSource(self, path)
 
     def delta_at(
-        self, path: str, mapping_keys: dict[str, str] | None = None
+        self,
+        path: str,
+        mapping_keys: dict[str, str] | None = None,
     ) -> AzureBlobDeltaDataSource:
         return AzureBlobDeltaDataSource(self, path, mapping_keys=mapping_keys or {})
 
@@ -124,7 +126,9 @@ class AzureBlobDirectory:
         return self.config.csv_at(sub_path.as_posix())
 
     def delta_at(
-        self, path: str, mapping_keys: dict[str, str] | None = None
+        self,
+        path: str,
+        mapping_keys: dict[str, str] | None = None,
     ) -> AzureBlobDeltaDataSource:
         sub_path = self.sub_path / path
         return self.config.delta_at(sub_path.as_posix(), mapping_keys)
@@ -176,9 +180,7 @@ class AzureBlobDataSource(StorageFileReference, ColumnFeatureMappable):
 
 
 @dataclass
-class AzureBlobCsvDataSource(
-    BatchDataSource, DataFileReference, ColumnFeatureMappable
-):
+class AzureBlobCsvDataSource(BatchDataSource, DataFileReference, ColumnFeatureMappable):
     config: AzureBlobConfig
     path: str
     mapping_keys: dict[str, str] = field(default_factory=dict)
@@ -243,9 +245,7 @@ Path: *{self.path}*
 
 
 @dataclass
-class AzureBlobParquetDataSource(
-    BatchDataSource, DataFileReference, ColumnFeatureMappable
-):
+class AzureBlobParquetDataSource(BatchDataSource, DataFileReference, ColumnFeatureMappable):
     config: AzureBlobConfig
     path: str
     mapping_keys: dict[str, str] = field(default_factory=dict)
@@ -302,13 +302,14 @@ Path: *{self.path}*"""
         creds = self.config.read_creds()
         df.collect().to_pandas().to_parquet(url, storage_options=creds)
 
-
     async def schema(self) -> dict[str, FeatureFactory]:
         from aligned.schemas.feature import FeatureType
+
         df = await self.to_polars()
         parquet_schema = df.schema
         return {
-            name: FeatureType.from_polars(pl_type).feature_factory for name, pl_type in parquet_schema.items()
+            name: FeatureType.from_polars(pl_type).feature_factory
+            for name, pl_type in parquet_schema.items()
         }
 
 

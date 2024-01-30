@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "projects"
+name = "sous-chef"
 version = "0.1.0"
 description = ""
 authors = []
@@ -47,6 +47,3 @@ ignore = [
 ]
 line-length = 100
 target-version = "py311"
-
-[tool.poetry.scripts]
-chef = 'chef.cli:cli'

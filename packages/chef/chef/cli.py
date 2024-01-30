@@ -14,11 +14,7 @@ def internal_package_path() -> Path:
 
 
 def internal_packages() -> list[str]:
-    return [
-        package.name
-        for package in internal_package_path().iterdir()
-        if package.is_dir()
-    ]
+    return [package.name for package in internal_package_path().iterdir() if package.is_dir()]
 
 
 def path_for_internal_package(name: str) -> Path:
@@ -161,7 +157,8 @@ def build() -> None:
 
 @cli.command()
 @click.argument("subcommand", nargs=-1)
-def run(subcommand: str) -> None:
+@click.option("--command", default="python")
+def run(command: str, subcommand: str) -> None:
     name = project_name()
     if isinstance(name, Exception):
         click.echo(name)
@@ -173,13 +170,14 @@ def run(subcommand: str) -> None:
         return
 
     echo_action(f"Running project '{name}'")
-    command = ["docker", "run", name]
+    commands = ["docker", "run", name]
     if subcommand:
+        commands.append(command)
         if isinstance(subcommand, tuple):
-            command.extend(list(subcommand))
+            commands.extend(list(subcommand))
         else:
-            command.extend(subcommand.split(" "))
-    subprocess.run(command)
+            commands.extend(subcommand.split(" "))
+    subprocess.run(commands)
 
 
 @cli.command()

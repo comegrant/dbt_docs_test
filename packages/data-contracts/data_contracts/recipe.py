@@ -1,7 +1,7 @@
-from aligned import feature_view, String, Int32, Bool, Float
+from aligned import Bool, Float, Int32, String, feature_view
 from aligned.compiler.feature_factory import List
-from data_contracts.azure_blob import AzureBlobConfig
 
+from data_contracts.azure_blob import AzureBlobConfig
 
 azure_dl_creds = AzureBlobConfig(
     account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",
@@ -12,11 +12,11 @@ azure_dl_creds = AzureBlobConfig(
 )
 embedding_dir = azure_dl_creds.directory("data-science/recipe_text_embedding/latest")
 
+
 @feature_view(
     name="recipe_embedding",
     source=embedding_dir.parquet_at("recipe_text_GL.parquet"),
-    # materialized_source=materialized_folder.parquet_at("recipe_embedding.parquet"),
-)   
+)
 class RecipeEmbedding:
     recipe_id = Int32().as_entity()
 

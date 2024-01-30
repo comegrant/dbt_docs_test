@@ -16,7 +16,7 @@ COPY projects/{{cookiecutter.project_name}}/pyproject.toml .
 COPY projects/{{cookiecutter.project_name}}/poetry.lock .
 
 # create a dummy package to satisfy Poetry
-RUN mkdir -p {{cookiecutter.project_name}} && touch {{cookiecutter.project_name}}/__init__.py
+RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/__init__.py
 
 # install requirements
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
