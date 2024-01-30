@@ -73,6 +73,8 @@ chef new package
 
 #### What is the difference between <library name>, <package name> and <module name>?
 
-Library name is a human readable name. *E.g: Analytics API*
-Package name is a name without spaces and upper letters for workflows and folders. *E.g: analytics-api*
-Module name is the python package name which needs underscores. *E.g: analytics_api*
+**Library** name is a human readable name. *E.g: Analytics API*
+
+**Package** name is a name without spaces and upper letters for workflows and folders. *E.g: analytics-api*
+
+**Module** name is the python package name which needs underscores. *E.g: analytics_api*
