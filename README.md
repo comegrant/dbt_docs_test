@@ -6,7 +6,7 @@ Sous chef is the monorepo for the data team.
 ## Getting Started
 Simply clone the repository and start by installing the `chef` cli tool.
 
-The following script assumes that you have `poetry` and `pyenv` installed.
+The following script assumes that you have `poetry`.
 
 ### Clone Repo
 ```bash
