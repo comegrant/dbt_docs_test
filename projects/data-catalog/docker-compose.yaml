@@ -1,0 +1,10 @@
+version: '3'
+services:
+  project_main:
+    build:
+      context: ../../
+      dockerfile: ./projects/data-catalog/Dockerfile
+    volumes:
+      - ./data_catalog:/opt/projects/data-catalog/data_catalog
+    ports:
+      - 8501:8501

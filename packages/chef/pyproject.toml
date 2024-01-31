@@ -3,11 +3,14 @@ name = "chef"
 version = "0.1.0"
 description = "A Python package by Cheffelo."
 authors = ["Your full name <Your email address>"]
-packages = [{include = "chef"}]
+packages = [
+    { include = "chef" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 click = "^8.1.7"
+cookiecutter = "^2.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

@@ -1,5 +1,3 @@
-
-
 <h1 align="center">
 Sous-chef 🧑‍🍳
 </h1>
@@ -28,9 +26,8 @@ cd sous-chef
 
 ### Install Python and `chef` cli
 ```
-pip install poetry
+bash setup_tooling.sh
 poetry shell
-poetry install --no-root
 ```
 
 This will spin up a new Python virtualenv, and activate the venv in a new shell.

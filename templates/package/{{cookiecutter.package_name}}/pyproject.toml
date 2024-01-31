@@ -6,12 +6,13 @@ authors = ["{{ cookiecutter.owner_full_name }} <{{ cookiecutter.owner_email_addr
 packages = [{include = "{{ cookiecutter.module_name }}"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^{{ cookiecutter.python_version }}"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
 pre-commit = "*"
 pytest = "*"
+pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
 

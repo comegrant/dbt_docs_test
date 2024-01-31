@@ -8,7 +8,7 @@ CI_FILE_PATH: str = f"../../.github/workflows/ci_{MODULE_NAME}.yml"
 with open(CI_FILE_PATH, "w") as handle:
     handle.writelines(
         f"""---
-name: CI projects/{{ cookiecutter.package_name }}
+name: CI packages/{{ cookiecutter.package_name }}
 
 on:
   pull_request:

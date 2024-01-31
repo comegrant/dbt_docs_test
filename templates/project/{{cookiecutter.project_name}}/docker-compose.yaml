@@ -1,0 +1,10 @@
+version: '3'
+services:
+  project_main:
+    build:
+      context: ../../
+      dockerfile: projects/{{ cookiecuter.project_name }}/Dockerfile
+    volumes:
+      - ./{{cookiecutter.module_name}}:/opt/{{cookiecutter.project_name}}/{{cookiecutter.module_name}}
+    ports:
+      - 8501:8501

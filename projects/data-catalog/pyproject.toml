@@ -1,12 +1,14 @@
 [tool.poetry]
-name = "{{cookiecutter.project_name}}"
+name = "data-catalog"
 version = "0.1.0"
-description = "{{cookiecutter.project_description}}"
-authors = ["{{cookiecutter.owner_full_name}} <{{cookiecutter.owner_email_address}}>"]
-packages = [{include = "{{cookiecutter.module_name}}"}]
+description = "A data catalog for the ML data used in Cheffelo"
+authors = ["Mats E. Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "data_catalog"}]
 
 [tool.poetry.dependencies]
-python = "^{{cookiecutter.python_version}}"
+python = "^3.10"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+streamlit = "^1.30.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

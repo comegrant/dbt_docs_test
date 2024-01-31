@@ -1,5 +1,6 @@
 import subprocess
 from pathlib import Path
+from cookiecutter.main import cookiecutter
 
 import click
 
@@ -10,13 +11,27 @@ def cli() -> None:
 
 
 def internal_package_path() -> Path:
+    if is_root():
+        return Path("packages")
     return Path("../../packages")
 
 
-def internal_packages() -> list[str]:
+def projects_path() -> Path:
+    if is_root():
+        return Path("projects")
+    return Path("../../projects")
+
+
+def template_path() -> Path:
+    if is_root():
+        return Path("templates")
+    return Path("../../templates")
+
+
+def list_dirs_in(path: Path) -> list[str]:
     return [
         package.name
-        for package in internal_package_path().iterdir()
+        for package in path.iterdir()
         if package.is_dir()
     ]
 
@@ -24,12 +39,14 @@ def internal_packages() -> list[str]:
 def path_for_internal_package(name: str) -> Path:
     return internal_package_path() / name
 
+def is_root() -> bool:
+    return Path(".git").is_dir()
 
 def is_project() -> bool:
     return Path(".").resolve().parent.name == "projects"
 
 
-def project_name() -> str | Exception:
+def folder_name() -> str | Exception:
     if not is_project():
         return ValueError("Not in a project directory")
 
@@ -39,9 +56,14 @@ def project_name() -> str | Exception:
 @cli.command()
 def list_internal_deps() -> None:
     echo_action("Internal dependencies:")
-    for package in internal_packages():
+    for package in list_dirs_in(internal_package_path()):
         click.echo(f"- {package}")
 
+@cli.command()
+def list_projects() -> None:
+    echo_action("Listing projects")
+    for project in list_dirs_in(projects_path()):
+        click.echo(f"- {project}")
 
 def echo_action(action: str) -> None:
     click.echo(click.style("Yes Chef!", bold=True))
@@ -54,7 +76,7 @@ def echo_action(action: str) -> None:
 def add(name: str, extras: str | None) -> None:
     echo_action(f"Adding {name}")
 
-    if name in internal_packages():
+    if name in list_dirs_in(internal_package_path()):
         click.echo("Found internal package")
         path = path_for_internal_package(name)
         click.echo(f"Adding {path.as_posix()}")
@@ -81,7 +103,7 @@ def install() -> None:
 @click.option("--version", default=None)
 @click.option("--repo", default=None)
 def pin(name: str, version: str | None, repo: str | None) -> None:
-    if name not in internal_packages():
+    if name not in list_dirs_in(internal_package_path()):
         click.echo(f"Package '{name}' not found as an internal package")
         return
 
@@ -138,7 +160,7 @@ def expose(port: str) -> None:
 
 @cli.command()
 def build() -> None:
-    name = project_name()
+    name = folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -156,7 +178,7 @@ def build() -> None:
 @click.argument("subcommand", nargs=-1)
 @click.option("--command", default="python")
 def run(command: str, subcommand: str) -> None:
-    name = project_name()
+    name = folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -170,6 +192,10 @@ def run(command: str, subcommand: str) -> None:
     commands = ["docker", "run", name]
     if subcommand:
         commands.append(command)
+
+        if command == "python":
+            commands.append("-m")
+
         if isinstance(subcommand, tuple):
             commands.extend(list(subcommand))
         else:
@@ -178,8 +204,25 @@ def run(command: str, subcommand: str) -> None:
 
 
 @cli.command()
+def up() -> None:
+    name = folder_name()
+    if isinstance(name, Exception):
+        click.echo(name)
+        click.echo(
+            "An error occured while trying to get the project name. "
+            "Make sure you run this command from a project directory.",
+            err=True,
+        )
+        return
+
+    echo_action(f"Running project '{name}'")
+    command = ["docker", "compose", "up"]
+    subprocess.run(command)
+
+
+@cli.command()
 def bash() -> None:
-    name = project_name()
+    name = folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -193,22 +236,61 @@ def bash() -> None:
     command = ["docker", "run", "-it", name, "bash"]
     subprocess.run(command)
 
+def git_config(key: str) -> str | None:
+    try:
+        return (
+            subprocess.check_output(
+                [
+                    "git",
+                    "config",
+                    key,
+                ],
+            )
+            .decode("utf-8")
+            .strip()
+        )
+    except subprocess.CalledProcessError:
+        return None
 
 @cli.command()
 @click.argument("type_name", type=click.Choice(["project", "package"]))
 def new(type_name: str) -> None:
     echo_action(f"Creating new {type_name}")
 
+    git_user_name = git_config("user.name")
+    git_user_email = git_config("user.email")
+    git_user_username = git_config("user.username")
+
+    extra_context = {}
+    
+    if git_user_name:
+        extra_context["owner_full_name"] = git_user_name
+    if git_user_email:
+        extra_context["owner_email_address"] = git_user_email
+    if git_user_username:
+        extra_context["owner_github_handle"] = git_user_username
+
+    click.echo(f"Found extra context: {extra_context}")
+
+
     if type_name == "project":
-        subprocess.run(["cookiecutter", "templates/project", "-o", "projects"])
+        cookiecutter(
+            (template_path() / "project").as_posix(),
+            output_dir=projects_path().as_posix(),
+            extra_context=extra_context,
+        )
     elif type_name == "package":
-        subprocess.run(["cookiecutter", "templates/package", "-o", "packages"])
+        cookiecutter(
+            (template_path() / "project").as_posix(),
+            output_dir=projects_path().as_posix(),
+            extra_context=extra_context,
+        )
 
 
 @cli.command()
 def test() -> None:
     echo_action("Testing project")
-    command = ["pytest", "-rav", "."]
+    command = ["pytest", "-rav", "tests"]
     subprocess.run(command)
 
 
