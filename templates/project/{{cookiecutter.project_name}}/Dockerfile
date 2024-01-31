@@ -19,6 +19,7 @@ COPY projects/{{cookiecutter.project_name}}/poetry.lock .
 RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/__init__.py
 
 # install requirements
+RUN poetry config virtualenvs.create false
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
 
 # copy source code
