@@ -14,7 +14,11 @@ def internal_package_path() -> Path:
 
 
 def internal_packages() -> list[str]:
-    return [package.name for package in internal_package_path().iterdir() if package.is_dir()]
+    return [
+        package.name
+        for package in internal_package_path().iterdir()
+        if package.is_dir()
+    ]
 
 
 def path_for_internal_package(name: str) -> Path:
@@ -70,13 +74,6 @@ def add(name: str, extras: str | None) -> None:
 def install() -> None:
     echo_action("Installing dependencies")
     subprocess.run(["poetry", "install"])
-
-
-@cli.command()
-def setup() -> None:
-    echo_action("Setting up Python environment")
-    subprocess.run(["poetry", "install"])
-    subprocess.run(["pre-commit", "install"])
 
 
 @cli.command()

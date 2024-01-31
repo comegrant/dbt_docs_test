@@ -42,12 +42,6 @@ Setup the dependencies and pre-commit hooks.
 
 `chef setup`
 
-
-### Install
-Install the deps defined in the package or project.
-
-`chef install`
-
 ### Pin
 Pins an internal dependency to a spesified version.
 If no versions are defined, will it select the current version on origin/main.
