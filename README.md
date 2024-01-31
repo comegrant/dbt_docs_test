@@ -1,8 +1,17 @@
 
-# Sous Chef
-<img src="sous-chef.png" alt="sous-chef" width="200"/>
 
+<h1 align="center">
+Sous Chef 🧑‍🍳
+</h1>
+
+<p align="center">
+<img src="sous-chef.png" alt="sous-chef" width="200"/>
+</p>
+
+<p align="center">
 Sous chef is the Python monorepo for the data team.
+</p>
+
 
 ---
 
