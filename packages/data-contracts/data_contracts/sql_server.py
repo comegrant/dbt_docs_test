@@ -56,7 +56,10 @@ Query:
         return self.requests
 
     def join(
-        self, job: RetrivalJob, method: str, on_columns: str | tuple[str, str]
+        self,
+        job: RetrivalJob,
+        method: str,
+        on_columns: str | tuple[str, str],
     ) -> RetrivalJob:
         from aligned.retrival_job import JoinJobs
 
@@ -90,11 +93,14 @@ Query:
         return f"SqlServer Job: \n{self.query}\n"
 
     def all_between_dates(
-        self, request: RetrivalRequest, start_date: datetime, end_date: datetime
+        self,
+        request: RetrivalRequest,
+        start_date: datetime,
+        end_date: datetime,
     ) -> RetrivalJob:
         if not request.event_timestamp:
             raise ValueError(
-                f"Unable to filter '{request.name}' features on datetimes without an event timestamp."
+                f"Unable to filter '{request.name}' features on datetimes without an event timestamp.",
             )
 
         event_column = request.event_timestamp.name
@@ -144,19 +150,24 @@ class SqlServerConfig(Codable):
 
     @staticmethod
     def localhost(
-        db: str, credentials: tuple[str, str] | None = None
+        db: str,
+        credentials: tuple[str, str] | None = None,
     ) -> SqlServerConfig:
         if credentials:
             return SqlServerConfig.from_url(
-                f"mssql://{credentials[0]}:{credentials[1]}@127.0.0.1:1433/{db}"
+                f"mssql://{credentials[0]}:{credentials[1]}@127.0.0.1:1433/{db}",
             )
         return SqlServerConfig.from_url(f"mssql://127.0.0.1:1433/{db}")
 
     def table(
-        self, table: str, mapping_keys: dict[str, str] | None = None
+        self,
+        table: str,
+        mapping_keys: dict[str, str] | None = None,
     ) -> SqlServerDataSource:
         return SqlServerDataSource(
-            config=self, table=table, mapping_keys=mapping_keys or {}
+            config=self,
+            table=table,
+            mapping_keys=mapping_keys or {},
         )
 
     def fetch(self, query: str) -> SqlServerJob:
@@ -167,12 +178,14 @@ class SqlServerConfig(Codable):
 
 
 mssql_aggregations = {
-    "concat_string_agg": lambda agg: f"STRING_AGG({agg.key}, '{agg.separator}')"
+    "concat_string_agg": lambda agg: f"STRING_AGG({agg.key}, '{agg.separator}')",
 }
 
 
 def build_aggregation_over(
-    over: AggregateOver, features: list[AggregatedFeature], source: SqlServerDataSource
+    over: AggregateOver,
+    features: list[AggregatedFeature],
+    source: SqlServerDataSource,
 ) -> str:
     from aligned.schemas.transformation import PsqlTransformation
 
@@ -182,7 +195,7 @@ def build_aggregation_over(
     if where_condition:
         if not isinstance(where_condition, PsqlTransformation):
             raise ValueError(
-                "Unable to do aggregations with where clause that can not be represented as a SQL"
+                "Unable to do aggregations with where clause that can not be represented as a SQL",
             )
         where_clause = f"WHERE {where_condition.as_psql()}"
 
@@ -195,7 +208,7 @@ def build_aggregation_over(
         agg_transformation = agg.derived_feature.transformation
         if agg_transformation.name not in mssql_aggregations:
             raise ValueError(
-                "Unable to do aggregations with where clause that can not be represented as a SQL"
+                "Unable to do aggregations with where clause that can not be represented as a SQL",
             )
 
         agg_sql = mssql_aggregations[agg_transformation.name](agg_transformation)
@@ -216,7 +229,9 @@ GROUP BY {entity_select}
 
 
 def build_full_select_query_mssql(
-    source: SqlServerDataSource, request: RetrivalRequest, limit: int | None
+    source: SqlServerDataSource,
+    request: RetrivalRequest,
+    limit: int | None,
 ) -> str:
     """
     Generates the SQL query needed to select all features related to a psql data source
@@ -240,7 +255,10 @@ def build_full_select_query_mssql(
 
 
 def insert_mssql_queries(
-    data: pd.DataFrame, table: str, colnames: list[str], chunk_size: int = 1000
+    data: pd.DataFrame,
+    table: str,
+    colnames: list[str],
+    chunk_size: int = 1000,
 ) -> list[str]:
     """Generates an insert into query for your needs"""
 
@@ -268,10 +286,12 @@ def insert_mssql_queries(
         str_data_good = "(" + str_data[:-3] + ";"
 
         query = """
-        INSERT INTO {0} ({1}) VALUES
-        {2}
+        INSERT INTO {} ({}) VALUES
+        {}
         """.format(
-            table, ", ".join(colnames), str_data_good
+            table,
+            ", ".join(colnames),
+            str_data_good,
         )
 
         queries.append(query)
@@ -311,22 +331,21 @@ def factual_mssql_query(
         if source.config.schema:
             source_table = f"{source.config.schema}.{source.table}"
 
-        joins = [
-            f"{table_alias}.{entity} = entities.{entity}" for entity in needed_entities
-        ]
+        joins = [f"{table_alias}.{entity} = entities.{entity}" for entity in needed_entities]
         sort = "row_id"
 
         if request.event_timestamp_request:
             ent_req = request.event_timestamp_request
             ent_col = reverese_map.get(
-                ent_req.event_timestamp.name, ent_req.event_timestamp.name
+                ent_req.event_timestamp.name,
+                ent_req.event_timestamp.name,
             )
             columns += f", {ent_col}"
             sort = f"{ent_col} DESC"
 
             if ent_req.entity_column:
                 joins.append(
-                    f"{table_alias}.{ent_col} <= entities.{ent_req.entity_column}"
+                    f"{table_alias}.{ent_col} <= entities.{ent_req.entity_column}",
                 )
                 all_returned_columns.add(ent_req.entity_column)
 
@@ -344,9 +363,7 @@ def factual_mssql_query(
 
     returned_columns_sql = ", ".join(all_returned_columns)
     cte_join_sql = "\nLEFT JOIN ".join(cte_joins)
-    final_select = (
-        f"SELECT {returned_columns_sql} FROM entities\nLEFT JOIN {cte_join_sql}"
-    )
+    final_select = f"SELECT {returned_columns_sql} FROM entities\nLEFT JOIN {cte_join_sql}"
 
     return f"{full_cte} {final_select}"
 
@@ -396,17 +413,14 @@ def upsert_mssql_queries(
         str_data_good = "(" + str_data[:-3]
         sql_col_names = ", ".join(column_names)
         join_constraints = "  AND ".join(
-            [
-                f"{table}.{match_column} = new.{match_column}"
-                for match_column in on_match_columns
-            ]
+            [f"{table}.{match_column} = new.{match_column}" for match_column in on_match_columns],
         )
         update_set = ", ".join(
             [
                 f"{table}.{column_name} = new.{column_name}"
                 for column_name in column_names
                 if column_name not in on_match_columns
-            ]
+            ],
         )
 
         query = f"""
@@ -426,7 +440,10 @@ WHEN NOT MATCHED BY TARGET THEN
 
 @dataclass
 class SqlServerDataSource(
-    BatchDataSource, ColumnFeatureMappable, WritableFeatureSource, MarkdownDescribable
+    BatchDataSource,
+    ColumnFeatureMappable,
+    WritableFeatureSource,
+    MarkdownDescribable,
 ):
     config: SqlServerConfig
     table: str
@@ -449,21 +466,15 @@ Column Mappings: *{self.mapping_keys}*"""
         return self.config.env_var
 
     def contains_config(self, config: Any) -> bool:
-        return (
-            isinstance(config, SqlServerConfig)
-            and config.env_var == self.config.env_var
-        )
+        return isinstance(config, SqlServerConfig) and config.env_var == self.config.env_var
 
     def __hash__(self) -> int:
         return hash(self.table)
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
         # if request.aggregated_features:
-        #     request.aggregated_features = set()
         #
         # return SqlServerJob(
-        #     config=self.config, query=build_full_select_query_mssql(self, request, limit), requests=[request]
-        # )
         if not request.aggregated_features:
             return SqlServerJob(
                 config=self.config,
@@ -474,7 +485,7 @@ Column Mappings: *{self.mapping_keys}*"""
             group_bys = request.aggregate_over().items()
             if len(group_bys) > 1:
                 raise ValueError(
-                    f"Currently support one aggregation when using fetch all, got {len(group_bys)}"
+                    f"Currently support one aggregation when using fetch all, got {len(group_bys)}",
                 )
 
             agg_over, aggregations = list(group_bys)[0]
@@ -520,11 +531,13 @@ Column Mappings: *{self.mapping_keys}*"""
 
         if not isinstance(facts, SqlServerJob):
             raise ValueError(
-                f"Sql Source do currently only support sql server jobs as entities. Got {type(facts)}"
+                f"Sql Source do currently only support sql server jobs as entities. Got {type(facts)}",
             )
 
         return SqlServerJob(
-            config, query=factual_mssql_query(reqs, facts, sources), requests=reqs
+            config,
+            query=factual_mssql_query(reqs, facts, sources),
+            requests=reqs,
         )
 
     async def freshness(self, event_timestamp: EventTimestamp) -> datetime | None:
@@ -552,7 +565,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
         if len(requests) != 1:
             raise ValueError(
-                f"Only support writing for one request, got {len(requests)}."
+                f"Only support writing for one request, got {len(requests)}.",
             )
 
         request = requests[0]
@@ -593,7 +606,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
         if len(requests) != 1:
             raise ValueError(
-                f"Only support writing for one request, got {len(requests)}."
+                f"Only support writing for one request, got {len(requests)}.",
             )
 
         request = requests[0]

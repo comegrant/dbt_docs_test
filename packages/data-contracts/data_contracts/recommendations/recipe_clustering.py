@@ -1,5 +1,4 @@
 from aligned import EventTimestamp, Int32, String, model_contract
-
 from data_contracts.contacts import Contacts
 from data_contracts.recommendations.recipe import RecipeTaxonomies
 from data_contracts.sources import model_preds

@@ -1,5 +1,4 @@
 from aligned import Bool, EventTimestamp, Int32, String, feature_view
-
 from data_contracts.contacts import Contacts
 from data_contracts.sources import adb, adb_ml, folder
 
@@ -76,7 +75,7 @@ class RecipeTaxonomies:
     loaded_at = EventTimestamp()
 
     recipe_taxonomies = String().description(
-        "A list of taxonomies seperated by a ',' char."
+        "A list of taxonomies seperated by a ',' char.",
     )
 
 
@@ -109,7 +108,7 @@ class RecipeIngredient:
     loaded_at = EventTimestamp()
 
     all_ingredients = String().description(
-        "All the ingredients seperated by a ',' char."
+        "All the ingredients seperated by a ',' char.",
     )
 
 
@@ -123,15 +122,11 @@ class BasketDeviation:
     week = Int32().as_entity()
     year = Int32().as_entity()
 
-    # updated_at = EventTimestamp()
-
     billing_agreement_basket_deviation_id = String()
 
     is_active = Bool()
     origin = String()
 
     was_user, was_meal_selector = origin.one_hot_encode(
-        [user_origin_id, recommendation_engine_origin_id]
+        [user_origin_id, recommendation_engine_origin_id],
     )
-
-

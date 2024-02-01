@@ -1,8 +1,9 @@
 import subprocess
+from contextlib import suppress
 from pathlib import Path
-from cookiecutter.main import cookiecutter
 
 import click
+from cookiecutter.main import cookiecutter
 
 
 @click.group()
@@ -29,18 +30,16 @@ def template_path() -> Path:
 
 
 def list_dirs_in(path: Path) -> list[str]:
-    return [
-        package.name
-        for package in path.iterdir()
-        if package.is_dir()
-    ]
+    return [package.name for package in path.iterdir() if package.is_dir()]
 
 
 def path_for_internal_package(name: str) -> Path:
     return internal_package_path() / name
 
+
 def is_root() -> bool:
     return Path(".git").is_dir()
+
 
 def is_project() -> bool:
     return Path(".").resolve().parent.name == "projects"
@@ -59,11 +58,13 @@ def list_internal_deps() -> None:
     for package in list_dirs_in(internal_package_path()):
         click.echo(f"- {package}")
 
+
 @cli.command()
 def list_projects() -> None:
     echo_action("Listing projects")
     for project in list_dirs_in(projects_path()):
         click.echo(f"- {project}")
+
 
 def echo_action(action: str) -> None:
     click.echo(click.style("Yes Chef!", bold=True))
@@ -171,13 +172,17 @@ def build() -> None:
         return
 
     echo_action(f"Building project '{name}'")
-    subprocess.run(["docker", "build", "-t", name, "-f", "Dockerfile", "../../"])
+    subprocess.run(["docker", "compose", "build"])
+
+
+def is_module(module_name: str) -> bool:
+    path = module_name.replace(".", "/").split(":")[0] + ".py"
+    return Path(path).is_file()
 
 
 @cli.command()
 @click.argument("subcommand", nargs=-1)
-@click.option("--command", default="python")
-def run(command: str, subcommand: str) -> None:
+def run(subcommand: str) -> None:
     name = folder_name()
     if isinstance(name, Exception):
         click.echo(name)
@@ -189,17 +194,33 @@ def run(command: str, subcommand: str) -> None:
         return
 
     echo_action(f"Running project '{name}'")
-    commands = ["docker", "run", name]
+    cwd = Path().cwd().resolve().as_posix()
+    commands = ["docker", "compose", "run", "-v", f"{cwd}/:/opt/{name}", "--service-ports", name]
     if subcommand:
-        commands.append(command)
+        with suppress(Exception):
+            first_arg = subcommand[0]
 
-        if command == "python":
-            commands.append("-m")
+            if Path(first_arg).is_file():
+                commands.append("python")
+            elif is_module(first_arg):
+                commands.append("python")
+                commands.append("-m")
+            elif first_arg == "streamlit":
+                commands.extend(["streamlit", "run"])
+                subcommand = subcommand[1:]
 
         if isinstance(subcommand, tuple):
             commands.extend(list(subcommand))
         else:
             commands.extend(subcommand.split(" "))
+
+    if "streamlit" in commands:
+        click.echo("---------------------------------")
+        click.echo("Spinning up streamlit app")
+        click.echo("Press Ctrl+C to stop the app")
+        click.echo("Streamlit app at: http://127.0.0.1:8501")
+        click.echo("---------------------------------")
+
     subprocess.run(commands)
 
 
@@ -233,8 +254,9 @@ def bash() -> None:
         return
 
     echo_action(f"Running bash for project '{name}'")
-    command = ["docker", "run", "-it", name, "bash"]
+    command = ["docker", "compose", "run", "-i", name, "bash"]
     subprocess.run(command)
+
 
 def git_config(key: str) -> str | None:
     try:
@@ -252,6 +274,7 @@ def git_config(key: str) -> str | None:
     except subprocess.CalledProcessError:
         return None
 
+
 @cli.command()
 @click.argument("type_name", type=click.Choice(["project", "package"]))
 def new(type_name: str) -> None:
@@ -262,7 +285,7 @@ def new(type_name: str) -> None:
     git_user_username = git_config("user.username")
 
     extra_context = {}
-    
+
     if git_user_name:
         extra_context["owner_full_name"] = git_user_name
     if git_user_email:
@@ -271,7 +294,6 @@ def new(type_name: str) -> None:
         extra_context["owner_github_handle"] = git_user_username
 
     click.echo(f"Found extra context: {extra_context}")
-
 
     if type_name == "project":
         cookiecutter(

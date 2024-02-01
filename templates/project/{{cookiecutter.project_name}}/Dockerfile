@@ -33,4 +33,4 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 # set starting command
 WORKDIR $SERVICE_HOME
-CMD poetry run python {{cookiecutter.module_name}}/main.py
+CMD python {{cookiecutter.module_name}}/main.py

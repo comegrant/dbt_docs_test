@@ -1,8 +1,7 @@
 from aligned import EventTimestamp, Float, Int32, Json, String, model_contract
-
 from data_contracts.contacts import Contacts
-from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders
+from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.user_recipe_likability import (
     UserRecipeLikability,
 )
@@ -24,6 +23,7 @@ rec_contacts = [
 
 delivered_recipes = HistoricalRecipeOrders()
 
+
 @model_contract(
     name="rec_engine",
     contacts=rec_contacts,
@@ -31,7 +31,8 @@ delivered_recipes = HistoricalRecipeOrders()
     features=[likability.score, cluster.cluster],
     prediction_source=model_preds.parquet_at("recommendation_products.parquet"),
     application_source=adb_ml_output.table(
-        "latest_recommendations", mapping_keys={"run_timestamp": "predicted_at"}
+        "latest_recommendations",
+        mapping_keys={"run_timestamp": "predicted_at"},
     ),
 )
 class RecommendatedDish:
@@ -44,8 +45,8 @@ class RecommendatedDish:
 
     company_id = String()
 
-    order_of_relevance_cluster = (Int32()
-        .lower_bound(1)
+    order_of_relevance_cluster = (
+        Int32().lower_bound(1)
         # .as_recommendation_target()
         # .as_recommendation_ranking()
         # .binary_target(delivered_recipes)
@@ -87,4 +88,3 @@ class PresentedRecommendations:
 
     company_id = String()
     recommendation_json = Json()
-    # run_timestamp = EventTimestamp()

@@ -63,7 +63,9 @@ class AzureBlobConfig:
         return AzureBlobCsvDataSource(self, path)
 
     def delta_at(
-        self, path: str, mapping_keys: dict[str, str] | None = None
+        self,
+        path: str,
+        mapping_keys: dict[str, str] | None = None,
     ) -> AzureBlobDeltaDataSource:
         return AzureBlobDeltaDataSource(self, path, mapping_keys=mapping_keys or {})
 
@@ -125,7 +127,9 @@ class AzureBlobDirectory:
         return self.config.csv_at(sub_path.as_posix())
 
     def delta_at(
-        self, path: str, mapping_keys: dict[str, str] | None = None
+        self,
+        path: str,
+        mapping_keys: dict[str, str] | None = None,
     ) -> AzureBlobDeltaDataSource:
         sub_path = self.sub_path / path
         return self.config.delta_at(sub_path.as_posix(), mapping_keys)
@@ -178,7 +182,10 @@ class AzureBlobDataSource(StorageFileReference, ColumnFeatureMappable):
 
 @dataclass
 class AzureBlobCsvDataSource(
-    BatchDataSource, DataFileReference, ColumnFeatureMappable, MarkdownDescribable
+    BatchDataSource,
+    DataFileReference,
+    ColumnFeatureMappable,
+    MarkdownDescribable,
 ):
     config: AzureBlobConfig
     path: str
@@ -245,7 +252,10 @@ Path: *{self.path}*
 
 @dataclass
 class AzureBlobParquetDataSource(
-    BatchDataSource, DataFileReference, ColumnFeatureMappable, MarkdownDescribable
+    BatchDataSource,
+    DataFileReference,
+    ColumnFeatureMappable,
+    MarkdownDescribable,
 ):
     config: AzureBlobConfig
     path: str

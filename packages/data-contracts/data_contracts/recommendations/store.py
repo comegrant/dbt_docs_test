@@ -27,7 +27,6 @@ def recommendation_feature_contracts() -> FeatureStore:
 
     store = FeatureStore.experimental()
 
-
     views: list[FeatureViewWrapper] = [
         RecipeTaxonomies,
         RecipeIngredient,

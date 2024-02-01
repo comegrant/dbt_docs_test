@@ -1,7 +1,6 @@
 from aligned import EventTimestamp, Float, Int32, String, model_contract
-
 from data_contracts.contacts import Contacts
-from data_contracts.recommendations.recipe import RecipeTaxonomies, RecipeIngredient
+from data_contracts.recommendations.recipe import RecipeIngredient, RecipeTaxonomies
 from data_contracts.sources import model_preds
 
 ingredient = RecipeIngredient()

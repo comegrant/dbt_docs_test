@@ -1,6 +1,6 @@
 version: '3'
 services:
-  project_main:
+  {{cookiecutter.project_name}}:
     build:
       context: ../../
       dockerfile: projects/{{ cookiecuter.project_name }}/Dockerfile
