@@ -172,14 +172,16 @@ def expose(port: str) -> None:
 
 
 def load_compose_file(
-    folder_path: Path, compose_file: str = "docker-compose.yaml",
+    folder_path: Path,
+    compose_file: str = "docker-compose.yaml",
 ) -> dict:
     with open(folder_path / compose_file) as file:
         return yaml.safe_load(file)
 
 
 def compose_command(
-    folder_path: Path, compose_file: str = "docker-compose.yaml",
+    folder_path: Path,
+    compose_file: str = "docker-compose.yaml",
 ) -> list[str]:
     return ["docker", "compose", "-f", (folder_path / compose_file).as_posix()]
 
@@ -263,7 +265,7 @@ def run(subcommand) -> None:
         [
             "run",
             "-v",
-            f"{project_dir.as_posix()}/:/opt/projects/{name}",
+            f"{project_dir.resolve().as_posix()}/:/opt/projects/{name}",
             "--service-ports",
             name,
         ],
@@ -369,7 +371,7 @@ def git_config(key: str) -> str | None:
 
 @cli.command()
 @click.argument("type_name", type=click.Choice(["project", "package"]))
-def new(type_name: str) -> None:
+def create(type_name: str) -> None:
     echo_action(f"Creating new {type_name}")
 
     git_user_name = git_config("user.name")
