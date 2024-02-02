@@ -171,17 +171,22 @@ def expose(port: str) -> None:
     subprocess.run(["ngrok", "http", f"{port}"])
 
 
-def load_compose_file(folder_path: Path, compose_file: str = "docker-compose.yaml") -> dict:
+def load_compose_file(
+    folder_path: Path, compose_file: str = "docker-compose.yaml",
+) -> dict:
     with open(folder_path / compose_file) as file:
         return yaml.safe_load(file)
 
 
-def compose_command(folder_path: Path, compose_file: str = "docker-compose.yaml") -> list[str]:
+def compose_command(
+    folder_path: Path, compose_file: str = "docker-compose.yaml",
+) -> list[str]:
     return ["docker", "compose", "-f", (folder_path / compose_file).as_posix()]
 
 
 def compose_exposed_ports(
-    folder_path: Path, compose_file: str = "docker-compose.yaml",
+    folder_path: Path,
+    compose_file: str = "docker-compose.yaml",
 ) -> dict[str, list[str]]:
     compose = load_compose_file(folder_path, compose_file)
 
@@ -232,8 +237,15 @@ def is_module(module_name: str) -> bool:
 
 @cli.command()
 @click.argument("subcommand", nargs=-1)
-def run(subcommand: str) -> None:
-    name = folder_name()
+def run(subcommand) -> None:
+    name: str | Exception = ValueError("No project name found")
+
+    if subcommand and subcommand[0] in internal_projects():
+        name = subcommand[0]
+        subcommand = subcommand[1:]
+    else:
+        name = folder_name()
+
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -244,8 +256,19 @@ def run(subcommand: str) -> None:
         return
 
     echo_action(f"Running project '{name}'")
-    cwd = Path().cwd().resolve().as_posix()
-    commands = ["docker", "compose", "run", "-v", f"{cwd}/:/opt/{name}", "--service-ports", name]
+    project_dir = projects_path() / name
+    commands = compose_command(project_dir)
+
+    commands.extend(
+        [
+            "run",
+            "-v",
+            f"{project_dir.as_posix()}/:/opt/projects/{name}",
+            "--service-ports",
+            name,
+        ],
+    )
+
     if subcommand:
         with suppress(Exception):
             first_arg = subcommand[0]
