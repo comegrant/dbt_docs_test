@@ -321,7 +321,9 @@ async def model_datasets(model_store: ModelFeatureStore):
 
 
 async def evaluate_model_contract(
-    store: FeatureStore, contract_name: str, target: RegressionTarget | ClassificationTarget,
+    store: FeatureStore,
+    contract_name: str,
+    target: RegressionTarget | ClassificationTarget,
 ):
     contract_store = store.model(contract_name)
     contract = contract_store.model
@@ -360,7 +362,9 @@ If the model contract have a `model_version_column` set, then we will evaluate e
 
     if location_type and location_name and feature_name:
         target_ref = FeatureReferance(
-            feature_name, FeatureLocation(location_name, location_type), target_ref.dtype,
+            feature_name,
+            FeatureLocation(location_name, location_type),
+            target_ref.dtype,
         )
 
     if isinstance(target, ClassificationTarget):
@@ -490,7 +494,9 @@ If the model contract have a `model_version_column` set, then we will evaluate e
 
     st.subheader("Compare against baseline models")
     models = await train_baseline_model(
-        model_store=contract_store, target=target, baseline_model=baseline_models,
+        model_store=contract_store,
+        target=target,
+        baseline_model=baseline_models,
     )
     if not models:
         return
@@ -534,7 +540,8 @@ class MeanPerGroupModel(BaselineModel):
 
     @staticmethod
     def train_constructor(
-        group_by: list[str], y_column: str,
+        group_by: list[str],
+        y_column: str,
     ) -> Callable[[pl.DataFrame], Coroutine[None, None, BaselineModel]]:
         async def train(entities: pl.DataFrame) -> BaselineModel:
             return await MeanPerGroupModel.train(entities, y_column, group_by)
@@ -543,14 +550,18 @@ class MeanPerGroupModel(BaselineModel):
 
     @staticmethod
     async def train(
-        entities: pl.DataFrame, y_column: str, group_by: list[str],
+        entities: pl.DataFrame,
+        y_column: str,
+        group_by: list[str],
     ) -> MeanPerGroupModel:
         mean_per_group = (
             entities.to_pandas().groupby(group_by).mean().reset_index()[[*group_by, y_column]]
         )
 
         return MeanPerGroupModel(
-            group_by=group_by, y_column=y_column, mean_per_group=mean_per_group,
+            group_by=group_by,
+            y_column=y_column,
+            mean_per_group=mean_per_group,
         )
 
     async def predict(self, x: pd.DataFrame) -> pd.Series:
@@ -570,7 +581,8 @@ class ColumnWrapper(BaselineModel):
 
     @staticmethod
     def train_constructor(
-        store: FeatureStore, feature_ref: str,
+        store: FeatureStore,
+        feature_ref: str,
     ) -> Callable[[pl.DataFrame], Coroutine[None, None, BaselineModel]]:
         async def train(entities: pl.DataFrame) -> BaselineModel:
             return ColumnWrapper(store, feature_ref)
@@ -606,7 +618,8 @@ class ClassProbabilityModel(BaselineModel):
 
     @staticmethod
     def train_constructor(
-        y_column: str, top_n: int | None,
+        y_column: str,
+        top_n: int | None,
     ) -> Callable[[pl.DataFrame], Coroutine[None, None, BaselineModel]]:
         async def train(entities: pl.DataFrame) -> BaselineModel:
             probs = entities[y_column].value_counts()
@@ -634,7 +647,8 @@ class MeanModel(BaselineModel):
 
     @staticmethod
     def train_constructor(
-        entity_names: list[str], y_column: str,
+        entity_names: list[str],
+        y_column: str,
     ) -> Callable[[pl.DataFrame], Coroutine[None, None, BaselineModel]]:
         async def train(entities: pl.DataFrame) -> BaselineModel:
             model = MeanModel()
@@ -738,7 +752,9 @@ async def test_transform_for(view: FeatureViewStore):
 
     def ref_for_feature(feature: Feature) -> FeatureReferance:
         return FeatureReferance(
-            feature.name, FeatureLocation.feature_view(view.name), feature.dtype,
+            feature.name,
+            FeatureLocation.feature_view(view.name),
+            feature.dtype,
         )
 
     input_features = {ref_for_feature(feature) for feature in request.entities}
@@ -777,7 +793,8 @@ async def test_transform_for(view: FeatureViewStore):
     st.subheader("Choose Input Features")
     with st.form("Input Features"):
         input_df = st.data_editor(
-            pd.DataFrame(columns=[feat.name for feat in input_features]), num_rows="dynamic",
+            pd.DataFrame(columns=[feat.name for feat in input_features]),
+            num_rows="dynamic",
         )
         st.form_submit_button()
 
@@ -816,7 +833,10 @@ async def model_get_input_features(model_store: ModelFeatureStore) -> None:
         keys = list(model_store.model.features.versions.keys())
         default_index = keys.index(model_store.model.features.default_version)
         selected_version = st.selectbox(
-            "Select Feature Version", keys, index=default_index, key="Select version for features",
+            "Select Feature Version",
+            keys,
+            index=default_index,
+            key="Select version for features",
         )
         model_store = model_store.using_version(selected_version)
 
@@ -849,7 +869,8 @@ async def model_get_input_features(model_store: ModelFeatureStore) -> None:
     with st.spinner("Loading..."):
         data = (
             await model_store.features_for(
-                entities, event_timestamp_column=event_timestamp,
+                entities,
+                event_timestamp_column=event_timestamp,
             ).to_polars()
         ).collect()
 
@@ -1114,7 +1135,10 @@ async def load_feature_view_data(store: FeatureStore, view_name: str):
         limit = st.number_input("Limit", value=100, key=f"{view_name}-load_limit_preview")
         all_features = sorted(view_store.request.all_feature_names)
         features = st.multiselect(
-            "Features", all_features, default=all_features, key=f"{view_name}-load_features_preview",
+            "Features",
+            all_features,
+            default=all_features,
+            key=f"{view_name}-load_features_preview",
         )
 
         if st.button("Load data", key="load_limit_preview"):
@@ -1228,7 +1252,10 @@ def show_mermiad_graph(
     types = ["LR", "TB"]
 
     selected_type = col.selectbox(
-        "Graph Type", types, index=types.index(graph_type), key=f"{graph_name}_type",
+        "Graph Type",
+        types,
+        index=types.index(graph_type),
+        key=f"{graph_name}_type",
     )
     mermaid_graph = mermiad_graph(nodes, edges, graph_type=selected_type or graph_type)
 
@@ -1592,7 +1619,8 @@ async def show_feature_view(store: FeatureStore, view_name: str):
 
 
 async def select_entities_range(
-    store: FeatureStore, needed_entities: set[Feature],
+    store: FeatureStore,
+    needed_entities: set[Feature],
 ) -> pl.DataFrame | None:
     st.write("Select a view containing all the entities, and then select a limit.")
 
@@ -1636,7 +1664,8 @@ async def select_entities_range(
 
 
 async def select_entities_from_view(
-    store: FeatureStore, needed_entities: set[Feature],
+    store: FeatureStore,
+    needed_entities: set[Feature],
 ) -> pl.DataFrame | None:
     st.write("Select a view containing all the entities, and then select a limit.")
 
@@ -1680,7 +1709,9 @@ async def data_catalog(store: FeatureStore, definition: RepoDefinition | None = 
     number_of_models = len(store.models)
 
     selection = st.sidebar.selectbox(
-        "View Models or Features", ["Model Contracts", "Features", "Models"], index=None,
+        "View Models or Features",
+        ["Model Contracts", "Features", "Models"],
+        index=None,
     )
 
     if selection == "Model Contracts":
@@ -1767,7 +1798,9 @@ async def generate_schema(store: FeatureStore):
             elif removed_optional.startswith("dict"):
                 st.caption(name)
                 df = st.data_editor(
-                    pd.DataFrame(columns=["key", "value"]), num_rows="dynamic", key=name,
+                    pd.DataFrame(columns=["key", "value"]),
+                    num_rows="dynamic",
+                    key=name,
                 )
                 value = dict(zip(df["key"].tolist(), df["value"].tolist()))
             else:
@@ -1810,7 +1843,9 @@ class NotSupportedTransformation(Transformation):
         return pd.Series("Not Supporting Custom Transformations in this environment.")
 
     async def transform_polars(
-        self, df: pl.LazyFrame, alias: str,
+        self,
+        df: pl.LazyFrame,
+        alias: str,
     ) -> pl.LazyFrame | pl.Expr | pl.Expr:
         return pl.lit("Custom Transformations are not supported in this environment.")
 
@@ -1827,9 +1862,35 @@ async def test_view():
     st.header("Data Catalog")
 
     store = recommendation_feature_contracts()
-    definition = store.repo_definition()
+    store.repo_definition()
 
-    await data_catalog(store, definition=definition)
+    col = st.columns(1)[0]
+
+    col._html(
+        """
+
+<body>
+    <script>
+      const callback = function (url) {
+        window.location.href=url
+      };
+    </script>
+
+    <pre class="mermaid">
+    flowchart TD
+    Start --> Stop
+    click Start call callback("/?callback=callback") "Start"
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', });
+
+    </script>
+</body>""",
+        scrolling=True,
+        height=int(500),
+    )
 
 
 if __name__ == "__main__":

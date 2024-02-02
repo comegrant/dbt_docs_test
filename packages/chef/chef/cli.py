@@ -11,22 +11,24 @@ def cli() -> None:
     pass
 
 
-def internal_package_path() -> Path:
+def root_dir() -> Path:
     if is_root():
-        return Path("packages")
-    return Path("../../packages")
+        return Path(".")
+    if Path("../.git").is_dir():
+        return Path("../")
+    return Path("../../")
+
+
+def internal_package_path() -> Path:
+    return root_dir() / "packages"
 
 
 def projects_path() -> Path:
-    if is_root():
-        return Path("projects")
-    return Path("../../projects")
+    return root_dir() / "projects"
 
 
 def template_path() -> Path:
-    if is_root():
-        return Path("templates")
-    return Path("../../templates")
+    return root_dir() / "templates"
 
 
 def list_dirs_in(path: Path) -> list[str]:
@@ -50,6 +52,14 @@ def folder_name() -> str | Exception:
         return ValueError("Not in a project directory")
 
     return Path(".").resolve().name
+
+
+def internal_packages() -> list[str]:
+    return list_dirs_in(internal_package_path())
+
+
+def internal_projects() -> list[str]:
+    return list_dirs_in(projects_path())
 
 
 @cli.command()
@@ -160,8 +170,10 @@ def expose(port: str) -> None:
 
 
 @cli.command()
-def build() -> None:
-    name = folder_name()
+@click.argument("project", default=None, required=False)
+def build(project: str | None) -> None:
+    name = project or folder_name()
+
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -171,8 +183,19 @@ def build() -> None:
         )
         return
 
+    internal_projects = list_dirs_in(projects_path())
+    if name not in internal_projects:
+        click.echo("-------------------------------")
+        click.echo("Available internal projects:")
+        for package in internal_projects:
+            click.echo(f"- {package}")
+        click.echo("-------------------------------")
+        click.echo(f"Unable to find project '{name}'", err=True)
+        return
+
     echo_action(f"Building project '{name}'")
-    subprocess.run(["docker", "compose", "build"])
+    docker_compose_file = (projects_path() / name / "docker-compose.yaml").as_posix()
+    subprocess.run(["docker", "compose", "-f", docker_compose_file, "build"])
 
 
 def is_module(module_name: str) -> bool:

@@ -3,7 +3,7 @@ services:
   {{cookiecutter.project_name}}:
     build:
       context: ../../
-      dockerfile: projects/{{ cookiecuter.project_name }}/Dockerfile
+      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
     volumes:
       - ./{{cookiecutter.module_name}}:/opt/{{cookiecutter.project_name}}/{{cookiecutter.module_name}}
     ports:
