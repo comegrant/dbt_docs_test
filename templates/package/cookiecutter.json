@@ -3,7 +3,7 @@
   "package_name": "{{ cookiecutter.library_name.lower().replace(' ', '-') }}",
   "module_name": "{{ cookiecutter.library_name.lower().replace(' ', '_').replace('-', '_') }}",
   "package_description": "A Python package by Cheffelo.",
-  "python_versio": "3.11",
+  "python_version": "3.11",
   "owner_full_name": "Your full name",
   "owner_email_address": "Your email address",
   "owner_github_handle": "Your GitHub handle"

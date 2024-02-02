@@ -378,7 +378,17 @@ def create(type_name: str) -> None:
     git_user_email = git_config("user.email")
     git_user_username = git_config("user.username")
 
-    extra_context = {}
+    extra_context = {
+        "python_version": subprocess.check_output(
+            [
+                "python",
+                "--version",
+            ],
+        )
+        .decode("utf-8")
+        .replace("Python ", "")
+        .strip(),
+    }
 
     if git_user_name:
         extra_context["owner_full_name"] = git_user_name
@@ -387,20 +397,25 @@ def create(type_name: str) -> None:
     if git_user_username:
         extra_context["owner_github_handle"] = git_user_username
 
-    click.echo(f"Found extra context: {extra_context}")
+    click.echo("Setting default variables:")
+    for key, value in extra_context.items():
+        click.echo(f"- {key}: {value}")
+
+    output_dir: str | None = None
 
     if type_name == "project":
-        cookiecutter(
+        output_dir = cookiecutter(
             (template_path() / "project").as_posix(),
             output_dir=projects_path().as_posix(),
             extra_context=extra_context,
         )
     elif type_name == "package":
-        cookiecutter(
-            (template_path() / "project").as_posix(),
+        output_dir = cookiecutter(
+            (template_path() / "package").as_posix(),
             output_dir=projects_path().as_posix(),
             extra_context=extra_context,
         )
+    subprocess.run(["poetry", "lock", f"--directory={output_dir}"])
 
 
 @cli.command()
