@@ -1862,35 +1862,8 @@ async def test_view():
     st.header("Data Catalog")
 
     store = recommendation_feature_contracts()
-    store.repo_definition()
 
-    col = st.columns(1)[0]
-
-    col._html(
-        """
-
-<body>
-    <script>
-      const callback = function (url) {
-        window.location.href=url
-      };
-    </script>
-
-    <pre class="mermaid">
-    flowchart TD
-    Start --> Stop
-    click Start call callback("/?callback=callback") "Start"
-    </pre>
-
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', });
-
-    </script>
-</body>""",
-        scrolling=True,
-        height=int(500),
-    )
+    await data_catalog(store, store.repo_definition())
 
 
 if __name__ == "__main__":

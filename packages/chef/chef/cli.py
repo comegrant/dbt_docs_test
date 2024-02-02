@@ -1,8 +1,10 @@
 import subprocess
+from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 
 import click
+import yaml
 from cookiecutter.main import cookiecutter
 
 
@@ -169,6 +171,30 @@ def expose(port: str) -> None:
     subprocess.run(["ngrok", "http", f"{port}"])
 
 
+def load_compose_file(folder_path: Path, compose_file: str = "docker-compose.yaml") -> dict:
+    with open(folder_path / compose_file) as file:
+        return yaml.safe_load(file)
+
+
+def compose_command(folder_path: Path, compose_file: str = "docker-compose.yaml") -> list[str]:
+    return ["docker", "compose", "-f", (folder_path / compose_file).as_posix()]
+
+
+def compose_exposed_ports(
+    folder_path: Path, compose_file: str = "docker-compose.yaml",
+) -> dict[str, list[str]]:
+    compose = load_compose_file(folder_path, compose_file)
+
+    all_service_ports: dict[str, list[str]] = defaultdict(list)
+
+    for service, content in compose["services"].items():
+        for port in content.get("ports", []):
+            localhost_port, _ = port.split(":")
+            all_service_ports[service].append(localhost_port)
+
+    return all_service_ports
+
+
 @cli.command()
 @click.argument("project", default=None, required=False)
 def build(project: str | None) -> None:
@@ -194,8 +220,9 @@ def build(project: str | None) -> None:
         return
 
     echo_action(f"Building project '{name}'")
-    docker_compose_file = (projects_path() / name / "docker-compose.yaml").as_posix()
-    subprocess.run(["docker", "compose", "-f", docker_compose_file, "build"])
+    commands = compose_command(projects_path() / name)
+    commands.extend(["build"])
+    subprocess.run(commands)
 
 
 def is_module(module_name: str) -> bool:
@@ -248,8 +275,9 @@ def run(subcommand: str) -> None:
 
 
 @cli.command()
-def up() -> None:
-    name = folder_name()
+@click.argument("project", default=None, required=False)
+def up(project: str | None) -> None:
+    name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -260,7 +288,25 @@ def up() -> None:
         return
 
     echo_action(f"Running project '{name}'")
-    command = ["docker", "compose", "up"]
+    ports = compose_exposed_ports(projects_path() / name)
+
+    if ports:
+        click.echo("")
+        click.echo("-------------------------------")
+        click.echo("")
+        click.echo("Services are exposed on the following urls:")
+
+        for service, exposed_ports in ports.items():
+            click.echo("")
+            click.echo(f"{service}")
+            for port in exposed_ports:
+                click.echo(f"- http://127.0.0.1:{port}")
+        click.echo("")
+        click.echo("-------------------------------")
+        click.echo("")
+
+    command = compose_command(projects_path() / name)
+    command.extend(["up", "--remove-orphans"])
     subprocess.run(command)
 
 
