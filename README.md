@@ -33,6 +33,10 @@ poetry shell
 This will spin up a new Python virtualenv, and activate the venv in a new shell.
 It will also install the core utils (`chef`) to manage the monorepo.
 
+### Create a project
+The video bellow shows how to create a new project with `chef` and get started.
+
+<video src="create-project.mov" width="100%"/>
 
 ### File Structure
 ```

@@ -7,6 +7,10 @@ packages = [{include = "{{cookiecutter.module_name}}"}]
 
 [tool.poetry.dependencies]
 python = "^{{cookiecutter.python_version}}"
+pydantic-settings = "^2.1.0"
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.30.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

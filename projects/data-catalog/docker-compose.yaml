@@ -1,10 +1,17 @@
-version: '3'
 services:
   data-catalog:
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
-    volumes:
-      - ./data_catalog:/opt/projects/data-catalog/data_catalog
     ports:
-      - 8501:8501
+    - 8502:8501
+    volumes:
+    - ./data_catalog:/opt/projects/data-catalog/data_catalog
+  data-catalog-streamlit:
+    build:
+      context: ../../
+      dockerfile: ./projects/data-catalog/Dockerfile
+    command: python -m streamlit run /opt/projects/data-catalog/app/app.py
+    ports:
+    - 8501:8501
+version: '3'

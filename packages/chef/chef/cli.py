@@ -1,6 +1,7 @@
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
+from importlib import import_module
 from pathlib import Path
 
 import click
@@ -89,7 +90,7 @@ def echo_action(action: str) -> None:
 def add(name: str, extras: str | None) -> None:
     echo_action(f"Adding {name}")
 
-    if name in list_dirs_in(internal_package_path()):
+    if name in internal_packages():
         click.echo("Found internal package")
         path = path_for_internal_package(name)
         click.echo(f"Adding {path.as_posix()}")
@@ -377,9 +378,8 @@ def create(type_name: str) -> None:
     git_user_name = git_config("user.name")
     git_user_email = git_config("user.email")
     git_user_username = git_config("user.username")
-
-    extra_context = {
-        "python_version": subprocess.check_output(
+    python_version = (
+        subprocess.check_output(
             [
                 "python",
                 "--version",
@@ -387,7 +387,13 @@ def create(type_name: str) -> None:
         )
         .decode("utf-8")
         .replace("Python ", "")
-        .strip(),
+        .strip()
+    )
+    if len(python_version.split(".")) >= 3:
+        python_version = ".".join(python_version.split(".")[:2])
+
+    extra_context = {
+        "python_version": python_version,
     }
 
     if git_user_name:
@@ -441,6 +447,34 @@ def lint(fix: bool) -> None:
         command.append("--fix")
 
     subprocess.run(command)
+
+
+@cli.command()
+@click.option("--settings-path", "-s", default="settings:Settings")
+@click.option("--output-file", "-o", default=".env")
+def generate_dotenv(settings_path: str, env_file: str) -> None:
+    """
+    This assumes that the `pydantic` is installed.
+    """
+    echo_action("Generating .env file")
+
+    module_path, object_name = settings_path.split(":")
+    module = import_module(module_path)
+    obj = getattr(module, object_name)
+
+    env_file = ""
+    for key, value in obj.model_fields.items():
+        env_file += f"{key}="
+
+        if value.default and str(value.default) != "PydanticUndefined":
+            env_file += f"{value.default}"
+
+        if value.description:
+            env_file += f" # {value.description}"
+        env_file += "\n"
+
+    with open(env_file, "w") as file:
+        file.write(env_file)
 
 
 if __name__ == "__main__":

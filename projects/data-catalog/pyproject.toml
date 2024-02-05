@@ -9,6 +9,7 @@ packages = [{include = "data_catalog"}]
 python = "^3.10"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 streamlit = "^1.30.0"
+pydantic-settings = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

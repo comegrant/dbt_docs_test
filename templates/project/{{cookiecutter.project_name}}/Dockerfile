@@ -20,7 +20,7 @@ RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/
 
 # install requirements
 RUN poetry config virtualenvs.create false
-RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
+RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
 
 # copy source code
 COPY projects/{{cookiecutter.project_name}} .
