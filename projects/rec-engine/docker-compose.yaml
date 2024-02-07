@@ -1,0 +1,19 @@
+version: '3'
+services:
+  # rec-engine:
+  #   build:
+  #     context: ../../
+  #     dockerfile: projects/rec-engine/Dockerfile
+  #   volumes:
+  #     - ./rec_engine:/opt/projects/rec-engine/rec_engine
+
+  rec-engine-app:
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile
+    volumes:
+      # - ./rec_engine:/opt/projects/rec-engine/rec_engine
+      - ./:/opt/projects/rec-engine/
+    command: ["python", "-m", "streamlit", "run", "app_ui.py"]
+    ports:
+      - 8501:8501
