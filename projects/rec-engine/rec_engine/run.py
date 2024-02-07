@@ -1,7 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import dotenv
 import pandas as pd
@@ -54,16 +54,16 @@ def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
         .groupby("recipe_id", as_index=False)
         .median()
     )
-    recs["predicted_at"] = datetime.utcnow()
+    recs["predicted_at"] = datetime.now(tz=UTC)
     return recs
 
 
-async def run(
+async def run(  # noqa: PLR0913, PLR0915
     dataset: ManualDataset | CompanyDataset,
     store: FeatureStore,
     agreement_ids_subset: list[int] | None = None,
     run_id: str | None = None,
-    model_regristry: ModelRegistry = InMemoryModelRegistry(),
+    model_regristry: ModelRegistry = None,
     write_to_path: str | None = "data/rec_engine",
     number_of_recommendations_per_week: int = 8,
     update_source_threshold: timedelta | None = None,
@@ -72,8 +72,11 @@ async def run(
     recipe_rating_contract: str = "user_recipe_likability",
     recipe_cluster_contract: str = "recipe_cluster",
 ) -> None:
+    if model_regristry is None:
+        model_regristry = InMemoryModelRegistry()
+
     if not run_id:
-        run_id = str(datetime.utcnow().isoformat())
+        run_id = str(datetime.now(tz=UTC).isoformat())
 
     if not dotenv.load_dotenv():
         logger.info(
@@ -85,14 +88,18 @@ async def run(
             model_contracts = [recipe_rating_contract, recipe_cluster_contract]
 
             await update_models_from_source_if_older_than(
-                threshold=update_source_threshold, models=model_contracts, store=store,
+                threshold=update_source_threshold,
+                models=model_contracts,
+                store=store,
             )
 
     if ratings_update_source_threshold:
         with log_step("Updating ratings view"):
             views = [ratings_view]
             await update_view_from_source_if_older_than(
-                threshold=ratings_update_source_threshold, views=views, store=store,
+                threshold=ratings_update_source_threshold,
+                views=views,
+                store=store,
             )
 
     with log_step("Selecting who to train and predict for"):
@@ -162,7 +169,8 @@ async def run(
 
         with log_step("Predict recipe cluster"):
             cluster_preds = await cluster_model.predict_over(
-                menus[menus["yearweek"] == yearweek], store,
+                menus[menus["yearweek"] == yearweek],
+                store,
             )
 
         with log_step(f"Storing {cluster_preds.shape[0]} cluster predictions"):
@@ -200,9 +208,10 @@ async def run(
 
     with log_step("Formatting frontend format"):
         formatted_recommendations = format_ranking_recommendations(
-            ranking, number_of_recommendations_per_week,
+            ranking,
+            number_of_recommendations_per_week,
         )
-        formatted_recommendations["run_timestamp"] = datetime.utcnow()
+        formatted_recommendations["run_timestamp"] = datetime.now(tz=UTC)
         formatted_recommendations["company_id"] = company_id
 
     with log_step(f"Writing {formatted_recommendations.shape[0]} to frontend source"):
@@ -213,7 +222,8 @@ async def run(
 
 
 def format_ranking_recommendations(
-    rankings: pd.DataFrame, number_of_recommendations: int,
+    rankings: pd.DataFrame,
+    number_of_recommendations: int,
 ) -> pd.DataFrame:
     column = "order_of_relevance_cluster"
     year_week_products = (
@@ -260,7 +270,11 @@ async def select_entities(
         )
 
         recipes = dataset.db_to_use.fetch(
-            f"""SELECT DISTINCT (menu_year * 100 + menu_week) as yearweek, wm.menu_year as year, wm.menu_week as week, mr.recipe_id, m.MENU_EXTERNAL_ID as product_id
+            f"""SELECT DISTINCT (menu_year * 100 + menu_week) as yearweek,
+            wm.menu_year as year,
+            wm.menu_week as week,
+            mr.recipe_id,
+            m.MENU_EXTERNAL_ID as product_id
 FROM pim.MENU_RECIPES mr
 INNER JOIN pim.MENUS m ON m.MENU_ID = mr.MENU_ID AND m.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
 INNER JOIN pim.weekly_menus wm ON m.WEEKLY_MENUS_ID = wm.weekly_menus_id
@@ -294,7 +308,8 @@ WHERE company_id = '{dataset.company_id}'
         menus = dataset.rate_menus
         if len(menus.recipe_ids) != len(menus.year_weeks):
             raise ValueError(
-                "The menu recipe ids and year weeks arrays need to be of equal size. As the recommendation will be assosiated with a yearweek",
+                "The menu recipe ids and year weeks arrays need to be of equal size. "
+                "As the recommendation will be assosiated with a yearweek",
             )
 
         menu_job = pd.DataFrame(

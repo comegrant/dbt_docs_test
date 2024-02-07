@@ -8,7 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 def use_cache_for_model_inputs(
-    cache_file: str, models: list[str], store: FeatureStore,
+    cache_file: str,
+    models: list[str],
+    store: FeatureStore,
 ) -> FeatureStore:
     if not isinstance(store.feature_source, BatchFeatureSource):
         raise ValueError(
@@ -26,7 +28,9 @@ def use_cache_for_model_inputs(
 
 
 def use_local_sources_in(
-    store: FeatureStore, contracts: list[str], write_to_path: str,
+    store: FeatureStore,
+    contracts: list[str],
+    write_to_path: str,
 ) -> FeatureStore:
     """
     Sets the feature sources to a local dir.

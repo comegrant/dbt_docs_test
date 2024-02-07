@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import logging
 import tracemalloc
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from pydantic import BaseModel, Field
 
@@ -23,11 +23,11 @@ class RunArgs(BaseModel):
     log_file_dir: str | None = Field(None)
     cache_location: str | None = Field(None)
 
-    year_weeks: list[str] = Field([date.today().strftime("%Y%W")])
+    year_weeks: list[str] = Field([date.today().strftime("%Y%W")])  # noqa: DTZ011
     only_for_agreement_ids: list[str] | None = Field(None)
 
     train_year_weeks: list[str] | None = Field(None)
-    write_to: str = Field(f"data/rec_engine/{date.today().isoformat()}")
+    write_to: str = Field(f"data/rec_engine/{date.today().isoformat()}")  # noqa: DTZ011
 
     manual_year_week: list[str] | None = Field(None)
     manual_recipe_ids: list[str] | None = Field(None)
@@ -35,8 +35,8 @@ class RunArgs(BaseModel):
     manual_train_recipe_ids: list[str] | None = Field(None)
 
 
-def parse_args():
-    current_date = date.today()
+def parse_args() -> argparse.Namespace:
+    current_date = date.today()  # noqa: DTZ011
 
     parser = argparse.ArgumentParser(description="Run project")
     parser.add_argument(
@@ -119,18 +119,18 @@ def parse_args():
     return args
 
 
-def setup_logger(log_dir: str | None):
+def setup_logger(log_dir: str | None) -> None:
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         logging.ERROR,
     )
-    now = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    now = datetime.now(tz=UTC).strftime("%Y-%m-%d_%H:%M:%S")
     if log_dir:
         logging.basicConfig(level=logging.INFO, filename=f"{log_dir}/{now}")
     else:
         logging.basicConfig(level=logging.INFO)
 
 
-async def cli_run():
+async def cli_run() -> None:
     """
     Trains and predicts using the recommendation engine.
 
@@ -160,7 +160,9 @@ async def cli_run():
         dataset = ManualDataset(
             train_on_recipe_ids=args.manual_train_recipe_ids or recipe_ids,
             rate_menus=RateMenuRecipes(
-                year_weeks=year_weeks, recipe_ids=recipe_ids, product_id=product_ids,
+                year_weeks=year_weeks,
+                recipe_ids=recipe_ids,
+                product_id=product_ids,
             ),
         )
     elif args.company_id and args.year_weeks:
@@ -169,7 +171,7 @@ async def cli_run():
         if args.train_year_weeks:
             train_year_weeks = [int("".join(yw)) for yw in args.train_year_weeks]
         else:
-            today = date.today()
+            today = date.today()  # noqa: DTZ011
             number_of_weeks = 24
             train_year_weeks = [
                 int((today - timedelta(weeks=i)).strftime("%Y%W"))
@@ -183,7 +185,6 @@ async def cli_run():
         )
     else:
         raise ValueError("Unable to create dataset")
-
 
     # Reads the repo and finds every feature view and model contract
     store = recommendation_feature_contracts()

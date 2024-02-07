@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from aligned import FeatureStore
 from aligned.feature_source import WritableFeatureSource
@@ -9,7 +9,7 @@ from aligned.schemas.feature import FeatureLocation
 logger = logging.getLogger(__name__)
 
 
-async def incremental_update_from_source(views: list[str], store: FeatureStore):
+async def incremental_update_from_source(views: list[str], store: FeatureStore) -> None:
     for view_name, view in store.feature_views.items():
         if view_name not in views:
             continue
@@ -19,13 +19,17 @@ async def incremental_update_from_source(views: list[str], store: FeatureStore):
             continue
 
         if not (
-            isinstance(view.materialized_source, WritableFeatureSource | DataFileReference)
+            isinstance(
+                view.materialized_source,
+                WritableFeatureSource | DataFileReference,
+            )
         ):
             logger.info(f"View: {view.name} do not have a data source that is writable")
             continue
 
         logger.info(
-            f"Updating {view.name} batch source using source {view.source}, materializing to {view.materialized_source}",
+            f"Updating {view.name} batch source using source {view.source}, "
+            f"materializing to {view.materialized_source}",
         )
 
         location = FeatureLocation.feature_view(view_name)
@@ -34,14 +38,15 @@ async def incremental_update_from_source(views: list[str], store: FeatureStore):
 
         if freshness:
             new_feature_job = source_store.between_dates(
-                start_date=freshness, end_date=datetime.utcnow(),
+                start_date=freshness,
+                end_date=datetime.now(tz=UTC),
             )
             await store.upsert_into(location, new_feature_job)
         else:
             await source_store.all().write_to_source(view.materialized_source)
 
 
-async def update_from_source(views: list[str], store: FeatureStore):
+async def update_from_source(views: list[str], store: FeatureStore) -> None:
     for view_name, view in store.feature_views.items():
         if view_name not in views:
             continue
@@ -53,7 +58,10 @@ async def update_from_source(views: list[str], store: FeatureStore):
             f"Updating {view.name} batch source using staging source {view.source}",
         )
         if not (
-            isinstance(view.materialized_source, WritableFeatureSource | DataFileReference)
+            isinstance(
+                view.materialized_source,
+                WritableFeatureSource | DataFileReference,
+            )
         ):
             logger.info(f"View: {view.name} do not have a data source that is writable")
             continue
@@ -71,7 +79,7 @@ async def update_models_from_source_if_older_than(
     models: list[str],
     store: FeatureStore,
 ) -> None:
-    now = datetime.utcnow()
+    now = datetime.now(tz=UTC)
     views_to_update: set[str] = set()
     for model in models:
         all_freshnesses = await store.model(model).freshness()
@@ -100,7 +108,7 @@ async def update_view_from_source_if_older_than(
     views: list[str],
     store: FeatureStore,
 ) -> None:
-    now = datetime.utcnow()
+    now = datetime.now(tz=UTC)
     views_to_update = set()
     for view in views:
         freshness = await store.feature_view(view).freshness()

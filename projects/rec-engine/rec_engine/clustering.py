@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pandas as pd
@@ -48,7 +48,9 @@ class ClusterModel:
         return self.pipeline.predict(data)
 
     async def predict_over(
-        self, recipes: pd.DataFrame, store: FeatureStore,
+        self,
+        recipes: pd.DataFrame,
+        store: FeatureStore,
     ) -> pd.DataFrame:
         entities = recipes[["recipe_id", "year", "week"]].drop_duplicates()
         data = (
@@ -57,7 +59,7 @@ class ClusterModel:
             .to_pandas()
         )
 
-        predicted_at = datetime.utcnow()
+        predicted_at = datetime.now(tz=UTC)
 
         preds = entities.copy()
         preds["cluster"] = self.predict(data)
@@ -68,7 +70,9 @@ class ClusterModel:
 
     @staticmethod
     def train(
-        data: pd.DataFrame, model_contract_name: str, model_version: str | None = None,
+        data: pd.DataFrame,
+        model_contract_name: str,
+        model_version: str | None = None,
     ) -> "ClusterModel":
         model = Pipeline(
             [

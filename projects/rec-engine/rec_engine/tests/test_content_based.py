@@ -13,7 +13,7 @@ class TestPredict(TestCase):
     """This class holds all the tests related to most of the methods inside
     the predict.py file and Predict class."""
 
-    def test_content_based(self):
+    def test_content_based(self) -> None:
         ratings = pd.DataFrame(
             {
                 "agreement_id": [1, 2, 2, 1, 2],
@@ -51,7 +51,7 @@ class TestPredict(TestCase):
 
         assert preds["recipe_id"].isin(recipe_ids_to_predict).all()
 
-    def test_ranking(self):
+    def test_ranking(self) -> None:
         expected = pd.Series([7, 4, 5, 6, 2, 1, 3])
         input_df = pd.DataFrame(
             {
@@ -63,7 +63,7 @@ class TestPredict(TestCase):
         ordered_rank = result.sort_index()
         assert expected.equals(ordered_rank)
 
-    def test_predict_for_recipe_scorings(self):
+    def test_predict_for_recipe_scorings(self) -> None:
         expected = pd.DataFrame(
             {
                 "agreement_id": [1, 1, 1, 2, 2, 2, 3],

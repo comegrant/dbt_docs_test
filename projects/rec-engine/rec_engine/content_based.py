@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pandas as pd
@@ -38,7 +38,8 @@ def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     data_ing = data["all_ingredients"].str.replace(" ", "").str.get_dummies(sep=",")
 
     processed = pd.concat(
-        [data_tax.add_prefix(prefix="tax_"), data_ing.add_prefix("ing_")], axis=1,
+        [data_tax.add_prefix(prefix="tax_"), data_ing.add_prefix("ing_")],
+        axis=1,
     )
     processed.columns = processed.columns.str.replace(" ", "")
     return processed
@@ -69,7 +70,8 @@ class CBModel:
         logger.info("Prepocessing done")
 
         recipe_data = processed_recipe.drop(
-            processed_recipe.columns.difference(list(self.matrix)), axis=1,
+            processed_recipe.columns.difference(list(self.matrix)),
+            axis=1,
         )
         user_data = self.matrix[list(recipe_data)]
         logger.info("Selected interesection of features and preds")
@@ -78,7 +80,7 @@ class CBModel:
         data_pred = user_data.dot(recipe_data.T)
         logger.info("Completed dot product predictions")
 
-        def normalise(x):
+        def normalise(x):  # noqa
             denum = recipe_data.loc[x.name].sum()
             if (denum != 0).all():
                 return x / denum
@@ -88,7 +90,7 @@ class CBModel:
         # Normalization of agreement-recipe total value (using to number of taxonomies and ingredients)
 
         logger.info("Will normalize predictions")
-        normalised = data_pred.apply(normalise)
+        normalised = data_pred.apply(normalise)  # type: ignore
 
         logger.info("Normalized. Will melt and return predictions")
         return pd.melt(
@@ -99,7 +101,9 @@ class CBModel:
         )
 
     async def predict_over(
-        self, menu: pd.DataFrame, store: FeatureStore,
+        self,
+        menu: pd.DataFrame,
+        store: FeatureStore,
     ) -> pd.DataFrame:
         model_store = store.model(self.model_contract_name)
         needed_entities = [entity.name for entity in model_store.needed_entities()]
@@ -118,7 +122,7 @@ class CBModel:
             f"Predicting recommendation ratings for {recipe_features.shape[0]} recipes",
         )
 
-        predicted_at = datetime.utcnow()
+        predicted_at = datetime.now(tz=UTC)
         recipe_features.index = recipe_features["recipe_id"]
 
         preds = self.predict(recipe_features)
@@ -154,7 +158,8 @@ class CBModel:
         )
 
         weighted = joined_ratings[dynamic_feature_columns].mul(
-            joined_ratings["rating"] ** 3, axis=0,
+            joined_ratings["rating"] ** 3,
+            axis=0,
         )
         weighted["agreement_id"] = joined_ratings["agreement_id"]
 
@@ -164,11 +169,13 @@ class CBModel:
                 "Unable to train CB Model, as no users preferences were produced",
             )
         return CBModel(
-            summed_per_user, model_contract_name, model_version=model_version,
+            summed_per_user,
+            model_contract_name,
+            model_version=model_version,
         )
 
     @staticmethod
-    async def train_using(
+    async def train_using(  # noqa: PLR0913
         entities: RetrivalJob | ConvertableToRetrivalJob,
         store: FeatureStore,
         model_contract_name: str,
@@ -197,7 +204,9 @@ class CBModel:
             .astype("float")
             .fillna(
                 ratings[["recipe_id"]].merge(
-                    mean_recipe_rating, on="recipe_id", how="left",
+                    mean_recipe_rating,
+                    on="recipe_id",
+                    how="left",
                 )["rating"],
             )
             .fillna(3)

@@ -42,13 +42,17 @@ FROM cms.billing_agreement ba
          INNER JOIN cms.billing_agreement_order bao ON bao.agreement_id = ba.agreement_id
          INNER JOIN cms.billing_agreement_order_line baol ON baol.agreement_order_id = bao.id
          INNER JOIN velgandvrak p ON p.variation_id = baol.variation_id
-         INNER JOIN pim.WEEKLY_MENUS wm ON wm.COMPANY_ID = ba.company_id AND wm.MENU_WEEK = bao.week AND wm.MENU_YEAR = bao.year
+         INNER JOIN pim.WEEKLY_MENUS wm
+            ON wm.COMPANY_ID = ba.company_id
+                AND wm.MENU_WEEK = bao.week
+                AND wm.MENU_YEAR = bao.year
          INNER JOIN pim.MENUS m ON m.WEEKLY_MENUS_ID = wm.WEEKLY_MENUS_ID
          INNER JOIN pim.MENU_VARIATIONS mv ON mv.MENU_ID = m.MENU_ID AND mv.MENU_VARIATION_EXT_ID = baol.variation_id
          INNER JOIN pim.MENU_RECIPES mr ON mr.MENU_ID = m.menu_id AND mr.menu_recipe_order <= mv.menu_number_days
          INNER JOIN pim.recipes r ON r.recipe_id = mr.RECIPE_ID
          LEFT JOIN pim.RECIPES_RATING rr ON rr.RECIPE_ID = r.recipe_id AND rr.AGREEMENT_ID = ba.agreement_id
-WHERE DATEDIFF(MONTH, dbo.find_first_day_of_week(bao.year, bao.week), GETDATE()) <=6 -- limiting to past 6 months of delivery date;
+WHERE DATEDIFF(MONTH, dbo.find_first_day_of_week(bao.year, bao.week), GETDATE()) <=6
+-- limiting to past 6 months of delivery date;
 """
 
 recipe_ingredients_sql = """
@@ -121,7 +125,6 @@ class BasketDeviation:
     billing_agreement_basket_id = String().as_entity()
     week = Int32().as_entity()
     year = Int32().as_entity()
-
 
     billing_agreement_basket_deviation_id = String()
 

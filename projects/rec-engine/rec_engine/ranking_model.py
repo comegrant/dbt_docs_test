@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pandas as pd
 
@@ -7,7 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 def rank_recipes(
-    recipes: pd.DataFrame, cluster_column: str = "cluster", score_column: str = "score",
+    recipes: pd.DataFrame,
+    cluster_column: str = "cluster",
+    score_column: str = "score",
 ) -> pd.Series:
     """
     Ranks a set of recipes based on the score and cluster they belong to.
@@ -32,11 +34,13 @@ def rank_recipes(
     for value in recipes[cluster_column].unique():
         mask = recipes[cluster_column] == value
         recipes.loc[mask, "cluster_rank"] = recipes.loc[mask, score_column].rank(
-            method="min", ascending=False,
+            method="min",
+            ascending=False,
         )
 
     sorted_recipes = recipes.sort_values(
-        by=["cluster_rank", score_column], ascending=[True, False],
+        by=["cluster_rank", score_column],
+        ascending=[True, False],
     )
     sorted_recipes["order_of_relevance_cluster"] = range(1, sorted_recipes.shape[0] + 1)
 
@@ -59,7 +63,9 @@ def predict_order_of_relevance(recipes: pd.DataFrame) -> pd.DataFrame:
 
 
 def predict_rankings(
-    recipes: pd.DataFrame, menus: pd.DataFrame, id_column: str = "recipe_id",
+    recipes: pd.DataFrame,
+    menus: pd.DataFrame,
+    id_column: str = "recipe_id",
 ) -> pd.DataFrame:
     rankings: pd.DataFrame | None = None
 
@@ -75,13 +81,15 @@ def predict_rankings(
 
         preds = predict_order_of_relevance(sub_features.copy())
         with_product_id = preds.merge(
-            menu_week[[id_column, "product_id"]], how="inner", on=id_column,
+            menu_week[[id_column, "product_id"]],
+            how="inner",
+            on=id_column,
         )
         week = year_week % 100
         with_product_id["week"] = week
         with_product_id["year"] = int((year_week - week) / 100)
 
-        if rankings is not None:
+        if rankings is not None:  # noqa: SIM108
             rankings = pd.concat([with_product_id, rankings], axis=0)
         else:
             rankings = with_product_id
@@ -89,7 +97,7 @@ def predict_rankings(
     if rankings is None:
         raise ValueError("No ranking predictions were produced.")
 
-    rankings["predicted_at"] = datetime.utcnow()
+    rankings["predicted_at"] = datetime.now(tz=UTC)
 
     logger.info(f"Produced rankings {rankings.head()}")
     rankings.to_csv("data/rankings_debug.csv")

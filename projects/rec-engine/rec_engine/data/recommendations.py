@@ -31,7 +31,8 @@ delivered_recipes = HistoricalRecipeOrders()
     features=[likability.score, cluster.cluster],
     prediction_source=model_preds.parquet_at("recommendation_products.parquet"),
     application_source=adb_ml_output.table(
-        "latest_recommendations", mapping_keys={"run_timestamp": "predicted_at"},
+        "latest_recommendations",
+        mapping_keys={"run_timestamp": "predicted_at"},
     ),
 )
 class RecommendatedDish:

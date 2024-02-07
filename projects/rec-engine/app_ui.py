@@ -5,7 +5,7 @@ from pydantic_form import pydantic_form
 from rec_engine.main import RunArgs
 
 
-async def main():
+async def main() -> None:
     st.title("Run rec_engine")
 
     inputs = pydantic_form(key="run_form", model=RunArgs)
