@@ -12,6 +12,10 @@ data-contracts = {path = "../../packages/data-contracts", develop = true}
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
