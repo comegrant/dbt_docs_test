@@ -49,7 +49,11 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
+    recs = (
+        recommendations[["recipe_id", "score"]]
+        .groupby("recipe_id", as_index=False)
+        .median()
+    )
     recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
@@ -59,7 +63,7 @@ async def run(  # noqa: PLR0913, PLR0915
     store: FeatureStore,
     agreement_ids_subset: list[int] | None = None,
     run_id: str | None = None,
-    model_regristry: ModelRegistry = None,
+    model_regristry: ModelRegistry | None = None,
     write_to_path: str | None = "data/rec_engine",
     number_of_recommendations_per_week: int = 8,
     update_source_threshold: timedelta | None = None,

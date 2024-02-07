@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from aligned import FeatureStore, FileSource
 from aligned.feature_source import BatchFeatureSource
@@ -45,6 +46,10 @@ def use_local_sources_in(
 
     # Changing the sources of our models to a local one
     # A bit to impl spesific, but will do for now
+    write_path = Path(write_to_path)
+    if not write_path.exists():
+        write_path.mkdir(parents=True)
+
     for contract in contracts:
         path = f"{write_to_path}/{contract}.csv"
         logger.info(f"Writing '{contract}' to local file system {path}")
