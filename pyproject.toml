@@ -44,6 +44,7 @@ select = [
 ignore = [
     "ANN101", # Missing type annotation for self in method
     "ANN204", # Missing type annotation for special method
+    "UP017"
 ]
 line-length = 120
 target-version = "py311"

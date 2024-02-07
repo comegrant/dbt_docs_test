@@ -1,5 +1,5 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from aligned import FeatureStore
 from aligned.feature_source import WritableFeatureSource
@@ -39,7 +39,7 @@ async def incremental_update_from_source(views: list[str], store: FeatureStore) 
         if freshness:
             new_feature_job = source_store.between_dates(
                 start_date=freshness,
-                end_date=datetime.now(tz=UTC),
+                end_date=datetime.now(tz=timezone.utc),
             )
             await store.upsert_into(location, new_feature_job)
         else:
@@ -66,12 +66,7 @@ async def update_from_source(views: list[str], store: FeatureStore) -> None:
             logger.info(f"View: {view.name} do not have a data source that is writable")
             continue
 
-        await (
-            store.feature_view(view_name)
-            .using_source(view.source)
-            .all()
-            .write_to_source(view.materialized_source)
-        )
+        await store.feature_view(view_name).using_source(view.source).all().write_to_source(view.materialized_source)
 
 
 async def update_models_from_source_if_older_than(
@@ -79,7 +74,7 @@ async def update_models_from_source_if_older_than(
     models: list[str],
     store: FeatureStore,
 ) -> None:
-    now = datetime.now(tz=UTC)
+    now = datetime.now(tz=timezone.utc)
     views_to_update: set[str] = set()
     for model in models:
         all_freshnesses = await store.model(model).freshness()
@@ -108,7 +103,7 @@ async def update_view_from_source_if_older_than(
     views: list[str],
     store: FeatureStore,
 ) -> None:
-    now = datetime.now(tz=UTC)
+    now = datetime.now(tz=timezone.utc)
     views_to_update = set()
     for view in views:
         freshness = await store.feature_view(view).freshness()

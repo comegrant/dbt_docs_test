@@ -15,7 +15,7 @@ on:
     paths:
       - '.github/workflows/python_reusable.yml'
       - '.github/workflows/ci_{MODULE_NAME}.yml'
-      - 'packages/{MODULE_NAME}/**'
+      - 'packages/{PACKAGE_NAME}/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
@@ -23,6 +23,6 @@ jobs:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: packages/{MODULE_NAME}
-    secrets: inherit"""
+      working-directory: packages/{PACKAGE_NAME}
+    secrets: inherit""",
     )

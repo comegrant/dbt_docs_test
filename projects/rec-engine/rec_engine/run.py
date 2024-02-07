@@ -1,7 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import dotenv
 import pandas as pd
@@ -49,12 +49,8 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = (
-        recommendations[["recipe_id", "score"]]
-        .groupby("recipe_id", as_index=False)
-        .median()
-    )
-    recs["predicted_at"] = datetime.now(tz=UTC)
+    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
+    recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
 
@@ -76,7 +72,7 @@ async def run(  # noqa: PLR0913, PLR0915
         model_regristry = InMemoryModelRegistry()
 
     if not run_id:
-        run_id = str(datetime.now(tz=UTC).isoformat())
+        run_id = str(datetime.now(tz=timezone.utc).isoformat())
 
     if not dotenv.load_dotenv():
         logger.info(
@@ -211,7 +207,7 @@ async def run(  # noqa: PLR0913, PLR0915
             ranking,
             number_of_recommendations_per_week,
         )
-        formatted_recommendations["run_timestamp"] = datetime.now(tz=UTC)
+        formatted_recommendations["run_timestamp"] = datetime.now(tz=timezone.utc)
         formatted_recommendations["company_id"] = company_id
 
     with log_step(f"Writing {formatted_recommendations.shape[0]} to frontend source"):

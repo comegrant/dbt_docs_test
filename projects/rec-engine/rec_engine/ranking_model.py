@@ -1,5 +1,5 @@
 import logging
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import pandas as pd
 
@@ -50,12 +50,7 @@ def rank_recipes(
 def predict_order_of_relevance(recipes: pd.DataFrame) -> pd.DataFrame:
     # Need to do the if, as the `level_1` will not exist if containing only one ID
     if len(recipes["agreement_id"].unique()) > 1:
-        subset_ranking = (
-            recipes.groupby("agreement_id")
-            .apply(rank_recipes)
-            .reset_index()
-            .set_index("level_1")
-        )
+        subset_ranking = recipes.groupby("agreement_id").apply(rank_recipes).reset_index().set_index("level_1")
         return recipes.join(subset_ranking["order_of_relevance_cluster"])
     else:
         recipes["order_of_relevance_cluster"] = rank_recipes(recipes)
@@ -97,8 +92,7 @@ def predict_rankings(
     if rankings is None:
         raise ValueError("No ranking predictions were produced.")
 
-    rankings["predicted_at"] = datetime.now(tz=UTC)
+    rankings["predicted_at"] = datetime.now(tz=timezone.utc)
 
     logger.info(f"Produced rankings {rankings.head()}")
-    rankings.to_csv("data/rankings_debug.csv")
     return rankings

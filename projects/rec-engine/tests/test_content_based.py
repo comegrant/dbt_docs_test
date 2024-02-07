@@ -83,9 +83,7 @@ class TestPredict(TestCase):
         result = predict_order_of_relevance(recipe_subset)
         assert result.shape[0] == expected.shape[0]
         assert expected.equals(
-            result[
-                ["agreement_id", "recipe_id", "order_of_relevance_cluster"]
-            ].reset_index(drop=True),
+            result[["agreement_id", "recipe_id", "order_of_relevance_cluster"]].reset_index(drop=True),
         )
 
 

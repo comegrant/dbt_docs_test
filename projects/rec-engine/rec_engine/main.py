@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import logging
 import tracemalloc
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from pydantic import BaseModel, Field
 
@@ -123,7 +123,7 @@ def setup_logger(log_dir: str | None) -> None:
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         logging.ERROR,
     )
-    now = datetime.now(tz=UTC).strftime("%Y-%m-%d_%H:%M:%S")
+    now = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d_%H:%M:%S")
     if log_dir:
         logging.basicConfig(level=logging.INFO, filename=f"{log_dir}/{now}")
     else:
@@ -148,9 +148,7 @@ async def cli_run() -> None:
 
     agreement_id_subset = None
     if args.only_for_agreement_ids:
-        agreement_id_subset = [
-            int("".join(agreement_id)) for agreement_id in args.only_for_agreement_ids
-        ]
+        agreement_id_subset = [int("".join(agreement_id)) for agreement_id in args.only_for_agreement_ids]
 
     if args.manual_year_week and args.manual_recipe_ids:
         recipe_ids = [int("".join(recipe_id)) for recipe_id in args.manual_recipe_ids]
@@ -173,10 +171,7 @@ async def cli_run() -> None:
         else:
             today = date.today()  # noqa: DTZ011
             number_of_weeks = 24
-            train_year_weeks = [
-                int((today - timedelta(weeks=i)).strftime("%Y%W"))
-                for i in range(number_of_weeks)
-            ]
+            train_year_weeks = [int((today - timedelta(weeks=i)).strftime("%Y%W")) for i in range(number_of_weeks)]
 
         dataset = CompanyDataset(
             company_id=args.company_id,

@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 import pandas as pd
@@ -122,7 +122,7 @@ class CBModel:
             f"Predicting recommendation ratings for {recipe_features.shape[0]} recipes",
         )
 
-        predicted_at = datetime.now(tz=UTC)
+        predicted_at = datetime.now(tz=timezone.utc)
         recipe_features.index = recipe_features["recipe_id"]
 
         preds = self.predict(recipe_features)
@@ -186,17 +186,9 @@ class CBModel:
         from aligned.validation.pandera import PanderaValidator
 
         recipes = await (
-            store.model(model_contract_name)
-            .features_for(entities)
-            .drop_invalid(PanderaValidator())
-            .to_pandas()
+            store.model(model_contract_name).features_for(entities).drop_invalid(PanderaValidator()).to_pandas()
         )
-        ratings = await (
-            store.feature_view(ratings_view)
-            .all()
-            .drop_invalid(PanderaValidator())
-            .to_pandas()
-        )
+        ratings = await store.feature_view(ratings_view).all().drop_invalid(PanderaValidator()).to_pandas()
 
         mean_recipe_rating = ratings.groupby("recipe_id")["rating"].mean().reset_index()
         ratings["rating"] = (

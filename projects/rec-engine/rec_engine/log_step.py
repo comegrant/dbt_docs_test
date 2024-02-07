@@ -2,7 +2,7 @@ import logging
 import tracemalloc
 from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ def log_step(step_name: str) -> Iterator[None]:
         )
 
     logger.info(f"Starting to run {step_name}.")
-    start_time = datetime.now(tz=UTC)
+    start_time = datetime.now(tz=timezone.utc)
     did_fail = False
 
     try:
@@ -26,7 +26,7 @@ def log_step(step_name: str) -> Iterator[None]:
         did_fail = True
         raise
     finally:
-        end_time = datetime.now(tz=UTC) - start_time
+        end_time = datetime.now(tz=timezone.utc) - start_time
         if did_fail:
             logger.info(f"Failed step: '{step_name}' in duration: {end_time}.")
         else:

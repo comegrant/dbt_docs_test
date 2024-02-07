@@ -67,7 +67,7 @@ async def test_training_pipelines(model_contracts: FeatureStore) -> None:
     nr_expected_recommendations = len(dataset.rate_menus.recipe_ids) * nr_agreements
 
     test_run = str(uuid4())
-    write_path = f"data/rec_engine/{test_run}"
+    write_path = f"test_data/test-runs/{test_run}"
 
     await run(
         dataset=dataset,
@@ -145,10 +145,7 @@ def test_json_formatting() -> None:
 
         for expected_item in expected_list:
             output_item: dict = next(
-                i
-                for i in output_list
-                if i["year"] == expected_item["year"]
-                and i["week"] == expected_item["week"]
+                i for i in output_list if i["year"] == expected_item["year"] and i["week"] == expected_item["week"]
             )
 
             for key in expected_item:

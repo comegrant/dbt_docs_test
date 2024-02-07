@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 import pandas as pd
@@ -53,13 +53,9 @@ class ClusterModel:
         store: FeatureStore,
     ) -> pd.DataFrame:
         entities = recipes[["recipe_id", "year", "week"]].drop_duplicates()
-        data = (
-            await store.model(self.model_contract_name)
-            .features_for(entities)
-            .to_pandas()
-        )
+        data = await store.model(self.model_contract_name).features_for(entities).to_pandas()
 
-        predicted_at = datetime.now(tz=UTC)
+        predicted_at = datetime.now(tz=timezone.utc)
 
         preds = entities.copy()
         preds["cluster"] = self.predict(data)
@@ -105,8 +101,6 @@ class ClusterModel:
         model_contract: str,
         model_version: str | None = None,
     ) -> "ClusterModel":
-        recipe_features = await (
-            store.model(model_contract).features_for(entities).to_pandas()
-        )
+        recipe_features = await store.model(model_contract).features_for(entities).to_pandas()
 
         return ClusterModel.train(recipe_features, model_contract, model_version)
