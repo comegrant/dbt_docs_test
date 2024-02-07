@@ -107,6 +107,12 @@ def add(name: str, extras: str | None) -> None:
 
 
 @cli.command()
+@click.argument("name")
+def remove(name: str) -> None:
+    echo_action(f"Removing {name}")
+    subprocess.run(["poetry", "remove", name])
+
+@cli.command()
 def install() -> None:
     echo_action("Installing dependencies")
     subprocess.run(["poetry", "install"])
@@ -337,6 +343,25 @@ def up(project: str | None) -> None:
 
 
 @cli.command()
+@click.argument("project", default=None, required=False)
+def down(project: str | None) -> None:
+    name = project or folder_name()
+    if isinstance(name, Exception):
+        click.echo(name)
+        click.echo(
+            "An error occured while trying to get the project name. "
+            "Make sure you run this command from a project directory.",
+            err=True,
+        )
+        return
+
+    echo_action(f"Running project '{name}'")
+    command = compose_command(projects_path() / name)
+    command.extend(["down"])
+    subprocess.run(command)
+
+
+@cli.command()
 def bash() -> None:
     name = folder_name()
     if isinstance(name, Exception):
@@ -418,7 +443,7 @@ def create(type_name: str) -> None:
     elif type_name == "package":
         output_dir = cookiecutter(
             (template_path() / "package").as_posix(),
-            output_dir=projects_path().as_posix(),
+            output_dir=internal_package_path().as_posix(),
             extra_context=extra_context,
         )
     subprocess.run(["poetry", "lock", f"--directory={output_dir}"])

@@ -1,16 +1,14 @@
 [tool.poetry]
-name = "my-awesome-project"
+name = "pydantic_form"
 version = "0.1.0"
-description = "A Python project by Cheffelo."
+description = "A package for setting up streamlit forms using pydantic"
 authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
-packages = [{include = "my_awesome_project"}]
+packages = [{include = "pydantic_form"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-pydantic-settings = "^2.1.0"
-
-[tool.poetry.group.app.dependencies]
-streamlit = "^1.30.0"
+python = "^3.10"
+streamlit = "^1.31.0"
+pydantic = "^2.6.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
@@ -23,6 +21,3 @@ chef = {path = "../../packages/chef", develop = true}
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-chef = 'chef.cli:cli'

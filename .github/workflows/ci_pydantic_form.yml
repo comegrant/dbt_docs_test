@@ -1,18 +1,18 @@
 ---
-name: CI projects/test-project
+name: CI packages/pydantic-form
 
 on:
   pull_request:
     paths:
       - '.github/workflows/python_reusable.yml'
-      - '.github/workflows/ci_test_project.yml'
-      - 'projects/test-project**'
+      - '.github/workflows/ci_pydantic_form.yml'
+      - 'packages/pydantic_form/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  ci-libs-test-project:
+  ci-libs-pydantic-form:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: projects/test-project
+      working-directory: packages/pydantic_form
     secrets: inherit

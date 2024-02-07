@@ -36,39 +36,6 @@ It will also install the core utils (`chef`) to manage the monorepo.
 ### Create a project
 The video bellow shows how to create a new project with `chef` and get started.
 
-
-### File Structure
-```
-├── doc                    # Project-level documentation folder
-├── packages               # Packages root folder
-├── scripts                # Project-level scripts folder
-├── services               # Services root folder
-├── templates              # Template folder for new packages and services
-│   ├── package            # Package template folder
-│   │   ├── doc            # Package documentation folder
-│   │   ├── scripts        # Package scripts folder
-│   │   ├── src            # Package source code folder
-│   │   ├── tests          # Package test folder
-│   │   ├── Makefile       # Package Makefile for running common commands
-│   │   ├── README.md      # Package README file
-│   │   ├── poetry.lock    # Poetry lock file for package dependencies
-│   │   └── pyproject.toml # Poetry configuration file for the package
-│   └── service            # Service template folder
-│       ├── doc            # Service documentation folder
-│       ├── scripts        # Service scripts folder
-│       ├── src            # Service source code folder
-│       ├── tests          # Service test folder
-│       ├── Dockerfile     # Dockerfile for building the service
-│       ├── Makefile       # Service Makefile for running common commands
-│       ├── README.md      # Service README file
-│       ├── poetry.lock    # Poetry lock file for service dependencies
-│       └── pyproject.toml # Poetry configuration file for the service
-├── LICENSE                # License file
-├── Makefile               # Project-level Makefile for running common commands for the entire repo
-├── README.md              # README file for the entire repo
-└── pyproject.toml         # Poetry configuration file for the entire repo
-```
-
 ### Creating New Project and Packages
 To create a new project, run the new-service target from the command line and provide a name for your service:
 

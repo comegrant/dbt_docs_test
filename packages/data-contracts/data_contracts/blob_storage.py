@@ -137,6 +137,9 @@ class AzureBlobDirectory:
     def sub_dir(self, path: str) -> AzureBlobDirectory:
         return AzureBlobDirectory(self.config, self.sub_path / path)
 
+    def directory(self, path: str) -> AzureBlobDirectory:
+        return AzureBlobDirectory(self.config, self.sub_path / path)
+
 
 @dataclass
 class BlobStorage(Storage):

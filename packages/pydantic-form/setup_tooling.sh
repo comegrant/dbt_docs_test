@@ -26,3 +26,4 @@ if ! docker info; then
     echo "Docker is not running. Please start Docker and try again."
     exit 1
 fi
+

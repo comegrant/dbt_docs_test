@@ -1,5 +1,4 @@
 # Copied from https://github.com/MatsMoll/aligned-streamlit/blob/main/aligned_streamlit/data_catalog_ui.py
-
 from __future__ import annotations
 
 import asyncio
