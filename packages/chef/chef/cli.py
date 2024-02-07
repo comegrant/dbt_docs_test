@@ -112,6 +112,7 @@ def remove(name: str) -> None:
     echo_action(f"Removing {name}")
     subprocess.run(["poetry", "remove", name])
 
+
 @cli.command()
 def install() -> None:
     echo_action("Installing dependencies")
@@ -452,7 +453,7 @@ def create(type_name: str) -> None:
 @cli.command()
 def test() -> None:
     echo_action("Testing project")
-    command = ["pytest", "-rav", "tests"]
+    command = ["pytest", "-rav", "."]
     subprocess.run(command)
 
 
