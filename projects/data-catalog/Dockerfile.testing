@@ -1,0 +1,4 @@
+FROM data-catalog-data-catalog-streamlit:latest
+
+# Install test dependencies also
+RUN poetry install

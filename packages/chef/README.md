@@ -17,10 +17,10 @@ Otherwise try activate the shell with `poetry shell` or run `poetry run chef <co
 
 Bellow contains the different commands available.
 
-### New
+### Create
 Create a new project or package.
 
-`chef new <project | package>`
+`chef create <project | package>`
 
 This will start up an interactable wisard that fills in basic information.
 
@@ -32,15 +32,15 @@ Adds an internal or external package to the project.
 If you define a package that matches one of the internal packages will the internal package be added.
 Otherwise will it assume it is an external package, and add that one.
 
+### Remove
+Removes a dependency from the project.
+
+`chef remove lmkgroup-ds-utils`
+
 ### List internal deps
 Lists the internal dependencies that exists.
 
 `chef list-internal-deps`
-
-### Setup
-Setup the dependencies and pre-commit hooks.
-
-`chef setup`
 
 ### Pin
 Pins an internal dependency to a spesified version.
@@ -59,20 +59,41 @@ Builds a project into a Docker image. Will default to the name of the project.
 
 `chef build`
 
+
+### Up
+Spins up a complete environment of the project.
+This is suppose to simulate the project in it's final form.
+
+`chef up`
+
+You can also specify a `--profile` if you would like to spin up a subset of services.
+
+### Down
+To take down all services after running `chef up` can you use `chef down`
+
 ### Run
-Runs a command in a build Docker image.
+Runs a command in the projects environment.
 
 `chef run echo "Hello World"`
 
-### Bash
+### Shell
 Opens up an interactable bash shell in a Docker image.
 
-`chef bash`
+`chef shell`
+
+This can be very useful for debugging Docker images, or spesific commands.
 
 ### Test
 Runs all tests in the current package or project
 
 `chef test`
+
+### Generate Dotenv
+Generates a `.env` file that contains the expected settings for the project.
+
+`chef generate-dotenv`
+
+If you do not provide a `--settings-path`, then it will default to look for a `settings.py` file and a `pydantic_settings.BaseSettings` class called `Settings`.
 
 ### Lint
 Run a linter in the project.

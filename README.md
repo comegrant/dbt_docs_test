@@ -40,13 +40,15 @@ The video bellow shows how to create a new project with `chef` and get started.
 To create a new project, run the new-service target from the command line and provide a name for your service:
 
 ```shell
-chef new project
+chef create project
 ```
 
 To create a new package:
 ```shell
-chef new package
+chef create package
 ```
+
+For more information about the `chef` cli, view [packages/`chef`/README.md](packages/chef/README.md)
 
 #### What is the difference between \<library name\>, \<package name\> and \<module name\>?
 

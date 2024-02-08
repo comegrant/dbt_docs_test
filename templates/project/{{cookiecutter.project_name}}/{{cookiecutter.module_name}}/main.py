@@ -1,9 +1,9 @@
-import asyncio
+from pydantic import BaseModel
 
 
-async def main() -> None:
-    print("Hello from {{cookiecutter.library_name}}!")
+class RunArgs(BaseModel):
+    name: str
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def run(args: RunArgs) -> None:
+    print(f"Hello, {args.name}!")

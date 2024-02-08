@@ -1,12 +1,23 @@
+import logging
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
+from dataclasses import dataclass
 from importlib import import_module
 from pathlib import Path
 
 import click
 import yaml
 from cookiecutter.main import cookiecutter
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class UserInfo:
+    name: str
+    email: str
+    slack_member_id: str
 
 
 @click.group()
@@ -82,6 +93,56 @@ def list_projects() -> None:
 def echo_action(action: str) -> None:
     click.echo(click.style("Yes Chef!", bold=True))
     click.echo(action)
+
+
+def user_info() -> UserInfo | Exception:
+    name = git_config("user.name")
+    email = git_config("user.email")
+    slack_member_id = git_config("user.slack-member-id")
+
+    missing_info = []
+    if not name:
+        missing_info.append("name")
+
+    if not email:
+        missing_info.append("email")
+
+    if not slack_member_id:
+        missing_info.append("slack-member-id")
+
+    if missing_info:
+        return ValueError(f"Missing git config: {', '.join(missing_info)}")
+
+    if not name or not email or not slack_member_id:
+        return ValueError("Missing git config")
+
+    return UserInfo(
+        name=name,
+        email=email,
+        slack_member_id=slack_member_id,
+    )
+
+
+def setup_user_info():
+    info = user_info()
+    if not isinstance(info, Exception):
+        click.echo("✅ User info is complete")
+        return
+
+    if "name" in info.args[0]:
+        name = click.prompt("What is your name?")
+        set_git_config("user.name", name)
+
+    if "email" in info.args[0]:
+        email = click.prompt("What is your email?")
+        set_git_config("user.email", email)
+
+    if "slack-member-id" in info.args[0]:
+        click.echo(
+            "You can find your slack member id by going to your profile and clicking 'Copy member ID'",
+        )
+        slack_member_id = click.prompt("What is your slack member id?")
+        set_git_config("user.slack-member-id", slack_member_id)
 
 
 @cli.command()
@@ -309,7 +370,8 @@ def run(subcommand) -> None:
 
 @cli.command()
 @click.argument("project", default=None, required=False)
-def up(project: str | None) -> None:
+@click.option("--profile", default="app", required=False)
+def up(project: str | None, profile: str) -> None:
     name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
@@ -339,7 +401,7 @@ def up(project: str | None) -> None:
         click.echo("")
 
     command = compose_command(projects_path() / name)
-    command.extend(["up", "--remove-orphans"])
+    command.extend(["--profile", profile, "up", "--remove-orphans"])
     subprocess.run(command)
 
 
@@ -363,8 +425,10 @@ def down(project: str | None) -> None:
 
 
 @cli.command()
-def bash() -> None:
-    name = folder_name()
+@click.argument("project", default=None, required=False)
+@click.option("--service", default=None, required=False)
+def shell(project: str | None, service: str | None) -> None:
+    name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -375,8 +439,18 @@ def bash() -> None:
         return
 
     echo_action(f"Running bash for project '{name}'")
-    command = ["docker", "compose", "run", "-i", name, "bash"]
+
+    if not service:
+        service = name
+
+    command = compose_command(projects_path() / name)
+    command.extend(["run", "-i", service, "bash"])
+    click.echo(f"Running command: {command}")
     subprocess.run(command)
+
+
+def set_git_config(key: str, value: str) -> None:
+    subprocess.run(["git", "config", "--global", key, value])
 
 
 def git_config(key: str) -> str | None:
@@ -401,9 +475,14 @@ def git_config(key: str) -> str | None:
 def create(type_name: str) -> None:
     echo_action(f"Creating new {type_name}")
 
-    git_user_name = git_config("user.name")
-    git_user_email = git_config("user.email")
-    git_user_username = git_config("user.username")
+    info = user_info()
+    if isinstance(info, Exception):
+        setup_user_info()
+        info = user_info()
+
+        if isinstance(info, Exception):
+            raise info
+
     python_version = (
         subprocess.check_output(
             [
@@ -422,12 +501,9 @@ def create(type_name: str) -> None:
         "python_version": python_version,
     }
 
-    if git_user_name:
-        extra_context["owner_full_name"] = git_user_name
-    if git_user_email:
-        extra_context["owner_email_address"] = git_user_email
-    if git_user_username:
-        extra_context["owner_github_handle"] = git_user_username
+    extra_context["owner_full_name"] = info.name
+    extra_context["owner_email_address"] = info.email
+    extra_context["owner_slack_handle"] = info.slack_member_id
 
     click.echo("Setting default variables:")
     for key, value in extra_context.items():
@@ -451,9 +527,26 @@ def create(type_name: str) -> None:
 
 
 @cli.command()
-def test() -> None:
+@click.argument("project", default=None, required=False)
+@click.option("--test-service", default=None, required=False)
+def test(project: str | None, test_service: str | None) -> None:
     echo_action("Testing project")
-    command = ["pytest", "-rav", "."]
+
+    name = project or folder_name()
+    if isinstance(name, Exception):
+        click.echo(name)
+        click.echo(
+            "An error occured while trying to get the project name. "
+            "Make sure you run this command from a project directory.",
+            err=True,
+        )
+        return
+
+    if not test_service:
+        test_service = f"{name}-test"
+
+    command = compose_command(projects_path() / name)
+    command.extend(["run", test_service])
     subprocess.run(command)
 
 
