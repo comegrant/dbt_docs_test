@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/python_reusable.yml'
       - '.github/workflows/ci_pydantic_form.yml'
-      - 'packages/pydantic_form/**'
+      - 'packages/pydantic-form/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
@@ -14,5 +14,5 @@ jobs:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: packages/pydantic_form
+      working-directory: packages/pydantic-form
     secrets: inherit
