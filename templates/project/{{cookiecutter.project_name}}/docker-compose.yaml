@@ -1,5 +1,8 @@
 version: '3'
 services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
   {{cookiecutter.project_name}}:
     build:
       context: ../../
