@@ -96,7 +96,9 @@ class HistoricalRecipeOrders:
 
     delivered_at = EventTimestamp()
 
-    rating = Int32().is_optional().lower_bound(0).upper_bound(5)
+    rating = (
+        Int32().is_optional().lower_bound(0).upper_bound(5).clip(1, 5)
+    ).description("Avoid 0 values, as this can lead to odd predictions.")
 
 
 @feature_view(
