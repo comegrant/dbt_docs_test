@@ -18,7 +18,7 @@ def is_list_annotation(dtype: type) -> bool:
     return get_origin(dtype) == list
 
 
-def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]):
+def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
     "Add Pydantic model to an ArgumentParser"
 
     for name, field in model.model_fields.items():
