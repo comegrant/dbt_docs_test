@@ -1,17 +1,33 @@
+version: '3'
 services:
+
   data-catalog:
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
-    ports:
-    - 8502:8501
+    command: ["echo", "'Hello from data-catalog'"]
     volumes:
-    - ./data_catalog:/opt/projects/data-catalog/data_catalog
-  data-catalog-streamlit:
+      - ./:/opt/projects/data-catalog
+      - ./../../packages:/opt/packages
+
+  data-catalog-app:
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
     command: python -m streamlit run /opt/projects/data-catalog/app/app.py
     ports:
-    - 8501:8501
-version: '3'
+      - 8501:8501
+    volumes:
+      - ./:/opt/projects/data-catalog
+      - ./../../packages:/opt/packages
+
+  data-catalog-test:
+    build:
+      context: ../../
+      dockerfile: ./projects/data-catalog/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/data-catalog
+      - ./../../packages:/opt/packages
+    depends_on:
+      - data-catalog

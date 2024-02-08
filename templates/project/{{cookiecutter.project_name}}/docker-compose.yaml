@@ -1,11 +1,14 @@
 version: '3'
 services:
-  # {{cookiecutter.project_name}}:
-  #   build:
-  #     context: ../../
-  #     dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
-  #   volumes:
-  #     - ./{{cookiecutter.module_name}}:/opt/projects/{{cookiecutter.project_name}}/{{cookiecutter.module_name}}
+  {{cookiecutter.project_name}}:
+    build:
+      context: ../../
+      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
+    command: ["echo", "'Hello from {{cookiecutter.project_name}}'"]
+    volumes:
+      - ./:/opt/projects/{{cookiecutter.project_name}}
+      - ./../../packages:/opt/packages
+    profiles: ["base"]
 
   {{cookiecutter.project_name}}-app:
     build:
@@ -17,3 +20,18 @@ services:
     command: ["python", "-m", "streamlit", "run", "app.py"]
     ports:
       - 8501:8501
+    depends_on:
+      - {{cookiecutter.project_name}}
+    profiles: ["app"]
+
+  {{cookiecutter.project_name}}-test:
+    build:
+      context: ../../
+      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/{{cookiecutter.project_name}}
+      - ./../../packages:/opt/packages
+    depends_on:
+      - {{cookiecutter.project_name}}
+    profiles: ["test"]

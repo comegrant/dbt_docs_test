@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
@@ -7,6 +8,8 @@ from pathlib import Path
 import click
 import yaml
 from cookiecutter.main import cookiecutter
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -111,6 +114,7 @@ def add(name: str, extras: str | None) -> None:
 def remove(name: str) -> None:
     echo_action(f"Removing {name}")
     subprocess.run(["poetry", "remove", name])
+
 
 @cli.command()
 def install() -> None:
@@ -308,7 +312,8 @@ def run(subcommand) -> None:
 
 @cli.command()
 @click.argument("project", default=None, required=False)
-def up(project: str | None) -> None:
+@click.option("--profile", default="app", required=False)
+def up(project: str | None, profile: str) -> None:
     name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
@@ -338,7 +343,7 @@ def up(project: str | None) -> None:
         click.echo("")
 
     command = compose_command(projects_path() / name)
-    command.extend(["up", "--remove-orphans"])
+    command.extend(["--profile", profile, "up", "--remove-orphans"])
     subprocess.run(command)
 
 
@@ -362,8 +367,10 @@ def down(project: str | None) -> None:
 
 
 @cli.command()
-def bash() -> None:
-    name = folder_name()
+@click.argument("project", default=None, required=False)
+@click.option("--service", default=None, required=False)
+def shell(project: str | None, service: str | None) -> None:
+    name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
@@ -374,7 +381,13 @@ def bash() -> None:
         return
 
     echo_action(f"Running bash for project '{name}'")
-    command = ["docker", "compose", "run", "-i", name, "bash"]
+
+    if not service:
+        service = name
+
+    command = compose_command(projects_path() / name)
+    command.extend(["run", "-i", service, "bash"])
+    click.echo(f"Running command: {command}")
     subprocess.run(command)
 
 
@@ -450,9 +463,26 @@ def create(type_name: str) -> None:
 
 
 @cli.command()
-def test() -> None:
+@click.argument("project", default=None, required=False)
+@click.option("--test-service", default=None, required=False)
+def test(project: str | None, test_service: str | None) -> None:
     echo_action("Testing project")
-    command = ["pytest", "-rav", "tests"]
+
+    name = project or folder_name()
+    if isinstance(name, Exception):
+        click.echo(name)
+        click.echo(
+            "An error occured while trying to get the project name. "
+            "Make sure you run this command from a project directory.",
+            err=True,
+        )
+        return
+
+    if not test_service:
+        test_service = f"{name}-test"
+
+    command = compose_command(projects_path() / name)
+    command.extend(["run", test_service])
     subprocess.run(command)
 
 

@@ -6,7 +6,7 @@ from pydantic_form import pydantic_form
 async def main():
 
     st.title("{{cookiecutter.library_name}}")
-    args = pydantic_form(keys="run_args", model=RunArgs)
+    args = pydantic_form(key="run_args", model=RunArgs)
 
     if not args:
         st.warning("Please fill in the form to run the app.")
