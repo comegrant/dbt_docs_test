@@ -1,0 +1,10 @@
+version: '3'
+services:
+  project-owners-test:
+    build:
+      context: ../../
+      dockerfile: packages/project-owners/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/project-owners
+    profiles: ["test"]

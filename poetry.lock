@@ -166,6 +166,7 @@ develop = true
 [package.dependencies]
 click = "^8.1.7"
 cookiecutter = "^2.5.0"
+project-owners = {path = "../../packages/project-owners", develop = true}
 
 [package.source]
 type = "directory"
@@ -348,6 +349,19 @@ files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
 ]
+
+[[package]]
+name = "project-owners"
+version = "0.1.0"
+description = "A package to define owners in Cheffelo projects"
+optional = false
+python-versions = "^3.8"
+files = []
+develop = true
+
+[package.source]
+type = "directory"
+url = "packages/project-owners"
 
 [[package]]
 name = "pygments"

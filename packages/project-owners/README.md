@@ -1,12 +1,12 @@
-# {{cookiecutter.library_name}}
+# Project Owners
 
-{{ cookiecutter.package_description }}
+A package to define owners in Cheffelo projects
 
 ## Usage
 Run the following command to install this package:
 
 ```bash
-chef add {{cookiecutter.package_name}}
+chef add project-owners
 ```
 
 ## Develop

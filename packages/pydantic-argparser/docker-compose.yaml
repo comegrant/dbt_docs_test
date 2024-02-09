@@ -1,0 +1,10 @@
+version: '3'
+services:
+  pydantic-argparser-test:
+    build:
+      context: ../../
+      dockerfile: packages/pydantic-argparser/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/pydantic-argparser
+    profiles: ["test"]

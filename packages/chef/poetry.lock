@@ -551,6 +551,19 @@ pyyaml = ">=5.1"
 virtualenv = ">=20.10.0"
 
 [[package]]
+name = "project-owners"
+version = "0.1.0"
+description = "A package to define owners in Cheffelo projects"
+optional = false
+python-versions = "^3.8"
+files = []
+develop = true
+
+[package.source]
+type = "directory"
+url = "../project-owners"
+
+[[package]]
 name = "pygments"
 version = "2.17.2"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -854,4 +867,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "93ec581d245b9895059c25578a5baaeb89299fb8091a8f2b4fe603ab7334e479"
+content-hash = "0a4b5cce15682155be6e620987fb45798be8112e7dc4589d0a01f631354c52c6"
