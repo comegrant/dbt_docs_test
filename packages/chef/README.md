@@ -37,10 +37,10 @@ Removes a dependency from the project.
 
 `chef remove lmkgroup-ds-utils`
 
-### List internal deps
-Lists the internal dependencies that exists.
+### List packages
+Lists the internal packages that exists.
 
-`chef list-internal-deps`
+`chef list-packages`
 
 ### Pin
 Pins an internal dependency to a spesified version.
@@ -84,7 +84,9 @@ Opens up an interactable bash shell in a Docker image.
 This can be very useful for debugging Docker images, or spesific commands.
 
 ### Test
-Runs all tests in the current package or project
+Runs all tests in the current package or project.
+
+This assumes that all tests are located at `./tests`.
 
 `chef test`
 

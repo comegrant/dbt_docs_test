@@ -74,8 +74,8 @@ def internal_projects() -> list[str]:
 
 
 @cli.command()
-def list_internal_deps() -> None:
-    echo_action("Internal dependencies:")
+def list_packages() -> None:
+    echo_action("Listing internal packages")
     for package in list_dirs_in(internal_package_path()):
         click.echo(f"- {package}")
 
