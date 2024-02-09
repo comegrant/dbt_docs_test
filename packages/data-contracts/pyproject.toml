@@ -10,6 +10,7 @@ python = "^3.10"
 aligned = "^0.0.70"
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.15.0"
+pyarrow = "^14.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
