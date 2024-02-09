@@ -2,22 +2,15 @@ import logging
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
-from dataclasses import dataclass
 from importlib import import_module
 from pathlib import Path
 
 import click
 import yaml
 from cookiecutter.main import cookiecutter
+from project_owners.owner import Owner, owner_for_email
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class UserInfo:
-    name: str
-    email: str
-    slack_member_id: str
 
 
 @click.group()
@@ -27,7 +20,7 @@ def cli() -> None:
 
 def root_dir() -> Path:
     if is_root():
-        return Path(".")
+        return Path()
     if Path("../.git").is_dir():
         return Path("../")
     return Path("../../")
@@ -58,11 +51,11 @@ def is_root() -> bool:
 
 
 def is_project() -> bool:
-    return Path(".").resolve().parent.name == "projects"
+    return Path().resolve().parent.name == "projects"
 
 
 def folder_name() -> str | Exception:
-    return Path(".").resolve().name
+    return Path().resolve().name
 
 
 def internal_packages() -> list[str]:
@@ -92,36 +85,24 @@ def echo_action(action: str) -> None:
     click.echo(action)
 
 
-def user_info() -> UserInfo | Exception:
-    name = git_config("user.name")
+def owner() -> Owner | Exception:
     email = git_config("user.email")
-    slack_member_id = git_config("user.slack-member-id")
-
-    missing_info = []
-    if not name:
-        missing_info.append("name")
 
     if not email:
-        missing_info.append("email")
+        return ValueError("Missing user.email in git config")
 
-    if not slack_member_id:
-        missing_info.append("slack-member-id")
+    owner = owner_for_email(email)
+    if owner:
+        return owner
 
-    if missing_info:
-        return ValueError(f"Missing git config: {', '.join(missing_info)}")
-
-    if not name or not email or not slack_member_id:
-        return ValueError("Missing git config")
-
-    return UserInfo(
-        name=name,
-        email=email,
-        slack_member_id=slack_member_id,
+    return ValueError(
+        f"No owner found for email: '{email}'. "
+        "Please add your info to the project-owners.owner:Owner.all_owners() function.",
     )
 
 
-def setup_user_info():
-    info = user_info()
+def setup_user_info() -> None:
+    info = owner()
     if not isinstance(info, Exception):
         click.echo("✅ User info is complete")
         return
@@ -133,13 +114,6 @@ def setup_user_info():
     if "email" in info.args[0]:
         email = click.prompt("What is your email?")
         set_git_config("user.email", email)
-
-    if "slack-member-id" in info.args[0]:
-        click.echo(
-            "You can find your slack member id by going to your profile and clicking 'Copy member ID'",
-        )
-        slack_member_id = click.prompt("What is your slack member id?")
-        set_git_config("user.slack-member-id", slack_member_id)
 
 
 @cli.command()
@@ -155,26 +129,26 @@ def add(name: str, extras: str | None) -> None:
         command = ["poetry", "add", "--editable", path.as_posix()]
         if extras:
             command.extend(["--extras", f"{extras}"])
-        subprocess.run(command)
+        subprocess.run(command, check=False)
     else:
         click.echo("Looking for external package")
         command = ["poetry", "add", name]
         if extras:
             command.extend(["--extras", f"{extras}"])
-        subprocess.run(command)
+        subprocess.run(command, check=False)
 
 
 @cli.command()
 @click.argument("name")
 def remove(name: str) -> None:
     echo_action(f"Removing {name}")
-    subprocess.run(["poetry", "remove", name])
+    subprocess.run(["poetry", "remove", name], check=False)
 
 
 @cli.command()
 def install() -> None:
     echo_action("Installing dependencies")
-    subprocess.run(["poetry", "install"])
+    subprocess.run(["poetry", "install"], check=False)
 
 
 @cli.command()
@@ -227,6 +201,7 @@ def pin(name: str, version: str | None, repo: str | None) -> None:
             "add",
             f"git+ssh://{repo}@{version}#subdirectory={path}",
         ],
+        check=False,
     )
 
 
@@ -234,14 +209,14 @@ def pin(name: str, version: str | None, repo: str | None) -> None:
 @click.argument("port")
 def expose(port: str) -> None:
     echo_action(f"Exposing port {port} to a public url")
-    subprocess.run(["ngrok", "http", f"{port}"])
+    subprocess.run(["ngrok", "http", f"{port}"], check=False)
 
 
 def load_compose_file(
     folder_path: Path,
     compose_file: str = "docker-compose.yaml",
 ) -> dict:
-    with open(folder_path / compose_file) as file:
+    with (folder_path / compose_file).open() as file:
         return yaml.safe_load(file)
 
 
@@ -295,7 +270,7 @@ def build(project: str | None) -> None:
     echo_action(f"Building project '{name}'")
     commands = compose_command(projects_path() / name)
     commands.extend(["build"])
-    subprocess.run(commands)
+    subprocess.run(commands, check=False)
 
 
 def is_module(module_name: str) -> bool:
@@ -305,7 +280,7 @@ def is_module(module_name: str) -> bool:
 
 @cli.command()
 @click.argument("subcommand", nargs=-1)
-def run(subcommand) -> None:
+def run(subcommand: tuple) -> None:
     name: str | Exception = ValueError("No project name found")
 
     if subcommand and subcommand[0] in internal_projects():
@@ -362,7 +337,7 @@ def run(subcommand) -> None:
         click.echo("Streamlit app at: http://127.0.0.1:8501")
         click.echo("---------------------------------")
 
-    subprocess.run(commands)
+    subprocess.run(commands, check=False)
 
 
 @cli.command()
@@ -399,7 +374,7 @@ def up(project: str | None, profile: str) -> None:
 
     command = compose_command(projects_path() / name)
     command.extend(["--profile", profile, "up", "--remove-orphans"])
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 @cli.command()
@@ -418,7 +393,7 @@ def down(project: str | None) -> None:
     echo_action(f"Running project '{name}'")
     command = compose_command(projects_path() / name)
     command.extend(["down"])
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 @cli.command()
@@ -443,11 +418,11 @@ def shell(project: str | None, service: str | None) -> None:
     command = compose_command(projects_path() / name)
     command.extend(["run", "-i", service, "bash"])
     click.echo(f"Running command: {command}")
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 def set_git_config(key: str, value: str) -> None:
-    subprocess.run(["git", "config", "--global", key, value])
+    subprocess.run(["git", "config", "--global", key, value], check=False)
 
 
 def git_config(key: str) -> str | None:
@@ -472,10 +447,12 @@ def git_config(key: str) -> str | None:
 def create(type_name: str) -> None:
     echo_action(f"Creating new {type_name}")
 
-    info = user_info()
+    minor_version_location = 3
+
+    info = owner()
     if isinstance(info, Exception):
         setup_user_info()
-        info = user_info()
+        info = owner()
 
         if isinstance(info, Exception):
             raise info
@@ -491,7 +468,7 @@ def create(type_name: str) -> None:
         .replace("Python ", "")
         .strip()
     )
-    if len(python_version.split(".")) >= 3:
+    if len(python_version.split(".")) >= minor_version_location:
         python_version = ".".join(python_version.split(".")[:2])
 
     extra_context = {
@@ -520,7 +497,7 @@ def create(type_name: str) -> None:
             output_dir=internal_package_path().as_posix(),
             extra_context=extra_context,
         )
-    subprocess.run(["poetry", "lock", f"--directory={output_dir}"])
+    subprocess.run(["poetry", "lock", f"--directory={output_dir}"], check=False)
 
 
 @cli.command()
@@ -547,14 +524,14 @@ def test(project: str | None, test_service: str | None) -> None:
     else:
         command = compose_command(projects_path() / name)
     command.extend(["run", test_service])
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 @cli.command(name="format")
 def format_code() -> None:
     echo_action("Formatting project")
     command = ["black", "."]
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 @cli.command()
@@ -565,7 +542,7 @@ def lint(fix: bool) -> None:
     if fix:
         command.append("--fix")
 
-    subprocess.run(command)
+    subprocess.run(command, check=False)
 
 
 @cli.command()
@@ -592,7 +569,7 @@ def generate_dotenv(settings_path: str, env_file: str) -> None:
             env_file += f" # {value.description}"
         env_file += "\n"
 
-    with open(env_file, "w") as file:
+    with Path(env_file).open("w") as file:
         file.write(env_file)
 
 

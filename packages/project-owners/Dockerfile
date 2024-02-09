@@ -1,11 +1,11 @@
-FROM python:{{cookiecutter.python_version}}-slim-buster
+FROM python:3.8-slim-buster
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
 
 # set the home directory
 ENV APP_HOME /opt
-ENV PACKAGE_HOME $APP_HOME/packages/{{cookiecutter.package_name}}
+ENV PACKAGE_HOME $APP_HOME/packages/project-owners
 
 WORKDIR $APP_HOME
 COPY packages packages
@@ -13,18 +13,18 @@ COPY packages packages
 WORKDIR $PACKAGE_HOME
 
 # Only copy the package file for imporoved build caching
-COPY packages/{{cookiecutter.package_name}}/pyproject.toml .
-COPY packages/{{cookiecutter.package_name}}/poetry.lock .
+COPY packages/project-owners/pyproject.toml .
+COPY packages/project-owners/poetry.lock .
 
 # create a dummy package to satisfy Poetry and improve caching
-RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/__init__.py
+RUN mkdir -p project_owners && touch project_owners/__init__.py
 
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
 # copy source code
-COPY packages/{{cookiecutter.package_name}} .
+COPY packages/project-owners .
 
 # store the git branch and commit hash as env variables
 ARG GIT_BRANCH
