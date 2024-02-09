@@ -62,9 +62,6 @@ def is_project() -> bool:
 
 
 def folder_name() -> str | Exception:
-    if not is_project():
-        return ValueError("Not in a project directory")
-
     return Path(".").resolve().name
 
 
@@ -545,7 +542,10 @@ def test(project: str | None, test_service: str | None) -> None:
     if not test_service:
         test_service = f"{name}-test"
 
-    command = compose_command(projects_path() / name)
+    if name not in internal_projects():
+        command = compose_command(internal_package_path() / name)
+    else:
+        command = compose_command(projects_path() / name)
     command.extend(["run", test_service])
     subprocess.run(command)
 

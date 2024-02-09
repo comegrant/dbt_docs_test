@@ -1,0 +1,10 @@
+version: '3'
+services:
+  {{cookiecutter.package_name}}-test:
+    build:
+      context: ../../
+      dockerfile: packages/{{ cookiecutter.package_name }}/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/{{cookiecutter.package_name}}
+    profiles: ["test"]

@@ -1,0 +1,3 @@
+company_id,recommendation_json,agreement_id
+Testing Run,"[{""year"": 2023, ""week"": 44, ""productIds"": [""a"", ""e"", ""b"", ""g"", ""i""]}, {""year"": 2023, ""week"": 45, ""productIds"": [""c"", ""d"", ""f"", ""h"", ""j""]}]",1
+Testing Run,"[{""year"": 2023, ""week"": 44, ""productIds"": [""a"", ""e"", ""b"", ""g"", ""i""]}, {""year"": 2023, ""week"": 45, ""productIds"": [""c"", ""d"", ""f"", ""h"", ""j""]}]",2
