@@ -59,7 +59,7 @@ def pydantic_form(key: str, model: type[T]) -> T | None:
 
             if not is_optional:
                 required_fields.add(name)
-                values[name] = component(f"{name} **", field)
+                values[name] = component(f"{name} - REquired", field)
             else:
                 values[name] = component(name, field)
 

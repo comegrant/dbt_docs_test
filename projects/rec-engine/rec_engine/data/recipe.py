@@ -56,13 +56,12 @@ WHERE DATEDIFF(MONTH, dbo.find_first_day_of_week(bao.year, bao.week), GETDATE())
 """
 
 recipe_ingredients_sql = """
+SELECT i.ingredient_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
+FROM pim.ingredients i
+INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
+WHERE s.supplier_name != 'Basis'
 SELECT recipe_id, all_ingredients, GETDATE() as loaded_at
-FROM (
-    SELECT recipe_id, STRING_AGG(ingredient_name, ',') as all_ingredients
-    FROM ml.input_dishes_ingredients i
-    WHERE i.ingredient_category_id NOT IN ('192', '235') -- Removing base ingredients
-    GROUP BY recipe_id
-) as ing
 """
 
 ingredients_sql = """
@@ -104,9 +103,9 @@ class HistoricalRecipeOrders:
 
     delivered_at = EventTimestamp()
 
-    rating = (
-        Int32().is_optional().lower_bound(0).upper_bound(5).clip(1, 5)
-    ).description("Avoid 0 values, as this can lead to odd predictions.")
+    rating = (Int32().is_optional().lower_bound(0).upper_bound(5)).description(
+        "Avoid 0 values, as this can lead to odd predictions.",
+    )
 
 
 

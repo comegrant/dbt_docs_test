@@ -12,7 +12,6 @@ services:
     volumes:
       - ./:/opt/projects/{{cookiecutter.project_name}}
       - ./../../packages:/opt/packages
-    profiles: ["base"]
 
   {{cookiecutter.project_name}}-app:
     platform: linux/amd64
@@ -27,7 +26,8 @@ services:
       - 8501:8501
     depends_on:
       - {{cookiecutter.project_name}}
-    profiles: ["app"]
+    env_file:
+      - .env
 
   {{cookiecutter.project_name}}-test:
     platform: linux/amd64

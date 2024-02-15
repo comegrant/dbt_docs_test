@@ -1,0 +1,18 @@
+---
+name: CI projects/semantic-search
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_semantic_search.yml'
+      - 'projects/semantic-search**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  ci-libs-semantic-search:
+    uses:
+      ./.github/workflows/python_reusable.yml
+    with:
+      working-directory: projects/semantic-search
+    secrets: inherit

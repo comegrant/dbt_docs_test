@@ -49,11 +49,7 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = (
-        recommendations[["recipe_id", "score"]]
-        .groupby("recipe_id", as_index=False)
-        .median()
-    )
+    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
     recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
