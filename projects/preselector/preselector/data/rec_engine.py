@@ -9,7 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_recommendation_score_for_company_id_and_yearweek(
-    company_id: str, year: int, week: int, db: DB,
+    company_id: str,
+    year: int,
+    week: int,
+    db: DB,
 ) -> pd.DataFrame:
     """Gets all active customers for a given company id
 

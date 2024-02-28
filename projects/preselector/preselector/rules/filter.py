@@ -14,10 +14,7 @@ logger = logging.getLogger()
 
 def has_taste_restrictions(customer: pd.DataFrame) -> bool:
     """Check if customer has taste restrictions"""
-    if (
-        customer["taste_preference_ids"] is None
-        or customer["taste_preference_ids"] == []
-    ):
+    if customer["taste_preference_ids"] is None or customer["taste_preference_ids"] == []:
         return False
     return True
 
@@ -28,7 +25,9 @@ def list_contains_preference_value(column, preference_restrictions):
 
 
 def filter_taste_restrictions(
-    possible_dishes: pd.DataFrame, taste_preference_ids: list[str], debug_summary: dict,
+    possible_dishes: pd.DataFrame,
+    taste_preference_ids: list[str],
+    debug_summary: dict,
 ) -> tuple[pd.DataFrame, dict] | Exception:
     """Filters out dishes that contains unwanted preferences"""
     if not taste_preference_ids:
@@ -64,7 +63,9 @@ def filter_taste_restrictions(
 
 
 def filter_portion_size(
-    possible_dishes: pd.DataFrame, portion_size: int, debug_summary: dict,
+    possible_dishes: pd.DataFrame,
+    portion_size: int,
+    debug_summary: dict,
 ) -> tuple[pd.DataFrame, dict] | Exception:
     """Filter out dish variation with correct portion size"""
     total_dishes_before_filtering = len(possible_dishes)

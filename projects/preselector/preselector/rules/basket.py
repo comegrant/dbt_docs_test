@@ -58,7 +58,9 @@ def check_dish_combination(
     # Check preference rules
     if run_config.should_evaluate_preference_rules:
         preference_rules_broken, combo_debug_summary = check_preference_rules(
-            preference_variety_count, df_preference_rules, combo_debug_summary,
+            preference_variety_count,
+            df_preference_rules,
+            combo_debug_summary,
         )
         combo_debug_summary["basket_preference_rules_broken"] = preference_rules_broken
         total_rules_broken += preference_rules_broken
@@ -66,7 +68,8 @@ def check_dish_combination(
     # Check repeated proteins
     if run_config.should_evaluate_protein_variety:
         proteins_repeated, combo_debug_summary = check_protein_variety(
-            preference_variety_count, combo_debug_summary,
+            preference_variety_count,
+            combo_debug_summary,
         )
         total_rules_broken += proteins_repeated
 
@@ -126,7 +129,8 @@ def check_preference_rules(
 
 
 def check_protein_variety(
-    preference_variety_count: Counter, combo_debug_summary: dict,
+    preference_variety_count: Counter,
+    combo_debug_summary: dict,
 ) -> tuple[int, dict]:
     """Checks the protein variety in the combination passed.
     The idea is to have a balance of different proteins and not repeat the same protein twice.
@@ -139,19 +143,13 @@ def check_protein_variety(
         int: _description_
     """
     proteins_existing = {
-        c: preference_variety_count[c]
-        for c in preference_variety_count
-        if c in PROTEINS_AVAILABLE
+        c: preference_variety_count[c] for c in preference_variety_count if c in PROTEINS_AVAILABLE
     }
 
     # Idea is to not have repeated proteins, one rule broken for each repeated protein
     num_unique_proteins = len(proteins_existing)
     num_repeated_proteins = len(
-        [
-            preference
-            for preference, occurrences in proteins_existing.items()
-            if occurrences > 1
-        ],
+        [preference for preference, occurrences in proteins_existing.items() if occurrences > 1],
     )
     combo_debug_summary["basket_proteins_unique"] = num_unique_proteins
     combo_debug_summary["basket_proteins_repeated"] = num_repeated_proteins
@@ -159,7 +157,8 @@ def check_protein_variety(
 
 
 def check_cost_of_food(
-    dish_combination: pd.DataFrame, combo_debug_summary: dict,
+    dish_combination: pd.DataFrame,
+    combo_debug_summary: dict,
 ) -> tuple[int, dict]:
     """
     Compute the cost of food for a given dish combination.

@@ -31,17 +31,25 @@ def run_preselector_for(
         Dict: dictionary of selected dishes and debug summary
     """
     df_rec = pd.DataFrame()
-    if run_config.should_rank_using_rec_engine and isinstance(
-        df_recommendations, pd.DataFrame,
-    ) and not df_recommendations.empty:
-        df_rec = df_recommendations.loc[
-            df_recommendations["agreement_id"] == customer.agreement_id
-        ]
+    if (
+        run_config.should_rank_using_rec_engine
+        and isinstance(
+            df_recommendations,
+            pd.DataFrame,
+        )
+        and not df_recommendations.empty
+    ):
+        df_rec = df_recommendations.loc[df_recommendations["agreement_id"] == customer.agreement_id]
 
     df_quarantined_dishes_for_customer = pd.DataFrame()
-    if run_config.should_rank_with_quarantine and isinstance(
-        df_quarantined_dishes, pd.DataFrame,
-    ) and not df_quarantined_dishes.empty:
+    if (
+        run_config.should_rank_with_quarantine
+        and isinstance(
+            df_quarantined_dishes,
+            pd.DataFrame,
+        )
+        and not df_quarantined_dishes.empty
+    ):
         df_quarantined_dishes_for_customer = df_quarantined_dishes.loc[
             df_quarantined_dishes["agreement_id"] == customer.agreement_id
         ]

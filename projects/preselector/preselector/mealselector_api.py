@@ -49,7 +49,9 @@ async def analytics_api_token() -> str | Exception:
             "Content-Type": "application/x-www-form-urlencoded",
         }
         response = await client.post(
-            url, data={"username": username, "password": password}, headers=headers,
+            url,
+            data={"username": username, "password": password},
+            headers=headers,
         )
 
         try:
@@ -64,7 +66,10 @@ async def analytics_api_token() -> str | Exception:
 
 
 async def run_mealselector(
-    customer: PreselectorCustomer, year: int, week: int, menu: pd.DataFrame,
+    customer: PreselectorCustomer,
+    year: int,
+    week: int,
+    menu: pd.DataFrame,
 ) -> list[int] | Exception:
     from httpx import AsyncClient
 
@@ -97,7 +102,9 @@ async def run_mealselector(
     async with AsyncClient() as client:
         headers = {"Authorization": f"Bearer {token}"}
         response = await client.post(
-            url, content=body.model_dump_json(), headers=headers,
+            url,
+            content=body.model_dump_json(),
+            headers=headers,
         )
 
         try:

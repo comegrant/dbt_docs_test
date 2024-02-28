@@ -11,8 +11,10 @@ azure_dl_creds = AzureBlobConfig(
     client_secret_env="DATALAKE_SERVICE_PRINCIPAL_CLIENT_SECRET",
 )
 
-folder = azure_dl_creds.directory("data-science/test/data")
-model_preds = folder.sub_dir("predictions")
+data_science_data_lake = azure_dl_creds.directory("data-science")
+
+folder = data_science_data_lake.directory("test/data")
+model_preds = folder.directory("predictions")
 
 local_mssql = SqlServerConfig("LOCAL_SQL", schema="dbo")
 

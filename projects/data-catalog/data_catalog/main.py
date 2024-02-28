@@ -1854,7 +1854,8 @@ class NotSupportedTransformation(Transformation):
 
 
 async def test_view():
-    load_dotenv()
+    if not load_dotenv():
+        st.warning("No .env file found.")
 
     st.set_page_config(page_title="Data Catalog", page_icon=":books:", layout="wide")
 

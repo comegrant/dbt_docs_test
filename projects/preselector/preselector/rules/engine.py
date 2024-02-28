@@ -98,7 +98,9 @@ def run_filter_rules(
     """
     if run_config.should_filter_portion_size:
         result = filter_portion_size(
-            possible_dishes, customer.portion_size, debug_summary,
+            possible_dishes,
+            customer.portion_size,
+            debug_summary,
         )
 
         if isinstance(result, Exception):
@@ -108,7 +110,9 @@ def run_filter_rules(
 
     if run_config.should_filter_taste_restrictions:
         result = filter_taste_restrictions(
-            possible_dishes, customer.taste_preference_ids, debug_summary,
+            possible_dishes,
+            customer.taste_preference_ids,
+            debug_summary,
         )
 
         if isinstance(result, Exception):
@@ -141,12 +145,16 @@ def run_ranking_rules(
 
     if run_config.should_rank_using_rec_engine:
         possible_dishes, debug_summary = rank_dishes_basked_on_rec_engine(
-            possible_dishes, df_rec, debug_summary,
+            possible_dishes,
+            df_rec,
+            debug_summary,
         )
 
     if run_config.should_rank_with_quarantine:
         possible_dishes, debug_summary = rank_dishes_based_on_quarantine(
-            possible_dishes, df_quarantined_dishes_for_customer, debug_summary,
+            possible_dishes,
+            df_quarantined_dishes_for_customer,
+            debug_summary,
         )
 
     return possible_dishes, debug_summary
@@ -181,14 +189,14 @@ def run_basket_rules(
         df_preference_rules_for_product = df_preference_rules
     else:
         df_preference_rules_for_product = df_preference_rules[
-            df_preference_rules["product_id"]
-            == customer.subscribed_product_variation_id
+            df_preference_rules["product_id"] == customer.subscribed_product_variation_id
         ]
 
     # Get the first combination
     start_time = time.time()
     basket_combinations = generate_basket_combinations(
-        possible_dishes, customer.number_of_recipes,
+        possible_dishes,
+        customer.number_of_recipes,
     )
     debug_summary["basket_combinations_time"] = time.time() - start_time
     debug_summary["basket_combinations_length"] = len(basket_combinations)

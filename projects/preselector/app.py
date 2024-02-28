@@ -93,7 +93,10 @@ def set_cache(key: str, value):
 
 
 async def load_recipe_information(
-    main_recipe_id: list[int], year: int, week: int, db_config: SqlServerConfig,
+    main_recipe_id: list[int],
+    year: int,
+    week: int,
+    db_config: SqlServerConfig,
 ) -> pd.DataFrame:
     key_value_cache_key = f"load_recipe_information{main_recipe_id}_{year}_{week}"
     cache_value = read_cache(key_value_cache_key)
@@ -133,7 +136,8 @@ WHERE recipes.nr = 1"""
 
 
 async def load_customer_information(
-    agreement_id: int, db_config: SqlServerConfig,
+    agreement_id: int,
+    db_config: SqlServerConfig,
 ) -> PreselectorCustomer:
     key_value_cache_key = f"load_customer_information{agreement_id}"
     cache_value = read_cache(key_value_cache_key)
@@ -218,7 +222,10 @@ SELECT ba.agreement_id
 
 
 async def load_recommendations(
-    agreement_id: int, year: int, week: int, db_config: SqlServerConfig,
+    agreement_id: int,
+    year: int,
+    week: int,
+    db_config: SqlServerConfig,
 ) -> pd.DataFrame:
     key_value_cache_key = f"load_recommendations{agreement_id}_{year}_{week}"
     cache_value = read_cache(key_value_cache_key)
@@ -244,7 +251,10 @@ SELECT [agreement_id]
 
 
 async def load_menu_for(
-    company_id: str, year: int, week: int, db_config: SqlServerConfig,
+    company_id: str,
+    year: int,
+    week: int,
+    db_config: SqlServerConfig,
 ) -> pd.DataFrame:
     key_value_cache_key = f"load_menu_for{company_id}_{year}_{week}.parquet"
     cache = preselector_ab_test_folder.parquet_at(key_value_cache_key)
@@ -333,7 +343,9 @@ WHERE pvc.company_id=@company """,
 
     # Merge together information to menu product with preferences
     df_menu_products_with_preferences = df_menu_with_preferences.merge(
-        df_products, on="variation_id", how="left",
+        df_products,
+        on="variation_id",
+        how="left",
     )
 
     # Replace nan values for no preferences with empty bracked []
@@ -387,7 +399,10 @@ def mealkit(recipe_information: pd.DataFrame, container: DeltaGenerator):
 
 
 async def run_comparison_for(
-    year: int, week: int, customer: PreselectorCustomer, run_config: RunConfig,
+    year: int,
+    week: int,
+    customer: PreselectorCustomer,
+    run_config: RunConfig,
 ):
     st.write(
         f"Creating a menu with {customer.number_of_recipes} recipes and {customer.portion_size} portions",
@@ -420,7 +435,10 @@ async def run_comparison_for(
 
     with st.spinner("Loading recommendation data..."):
         recommendations = await load_recommendations(
-            agreement_id=customer.agreement_id, year=year, week=week, db_config=adb,
+            agreement_id=customer.agreement_id,
+            year=year,
+            week=week,
+            db_config=adb,
         )
 
     if recommendations.empty:
@@ -441,7 +459,9 @@ async def run_comparison_for(
         if len(year_weeks) == 1:
             set_deeplink(
                 CompareWeekState(
-                    agreement_id=customer.agreement_id, year=year, week=week + 1,
+                    agreement_id=customer.agreement_id,
+                    year=year,
+                    week=week + 1,
                 ),
             )
 
@@ -455,9 +475,9 @@ async def run_comparison_for(
     with st.spinner("Loading Meny data..."):
         menu = await load_menu_for(customer.company_id, year, week, adb)
 
-    df_flex_products = menu[
-        menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()
-    ].explode("main_recipe_id")
+    df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
+        "main_recipe_id",
+    )
 
     with st.spinner("Running preselector..."):
         preselector_result = run_preselector_for(
@@ -492,7 +512,10 @@ async def run_comparison_for(
             db_config=adb,
         )
         meal_selector_recipe_info = await load_recipe_information(
-            main_recipe_id=mealselector_result, year=year, week=week, db_config=adb,
+            main_recipe_id=mealselector_result,
+            year=year,
+            week=week,
+            db_config=adb,
         )
 
         pre_selector_recipe_info = await RecipeInformation.process_input(
@@ -605,7 +628,8 @@ async def compare_week(state: CompareWeekState):
 
     with st.spinner("Loading Customer data..."):
         customer = await load_customer_information(
-            agreement_id=state.agreement_id, db_config=adb,
+            agreement_id=state.agreement_id,
+            db_config=adb,
         )
 
     await run_comparison_for(state.year, state.week, customer, config)
@@ -659,7 +683,8 @@ async def collect_feedback(state: ExplainSelectionState):
         images_looks_better = right.checkbox("Images looked more delicious")
 
         other_feedback = st.text_area(
-            "Other Feedback", placeholder="Any other reason you choose this mealkit?",
+            "Other Feedback",
+            placeholder="Any other reason you choose this mealkit?",
         )
 
         submitted = st.form_submit_button(label="To next week")
@@ -717,7 +742,9 @@ async def collect_feedback(state: ExplainSelectionState):
     else:
         set_deeplink(
             CompareWeekState(
-                agreement_id=state.agreement_id, year=state.year, week=state.week + 1,
+                agreement_id=state.agreement_id,
+                year=state.year,
+                week=state.week + 1,
             ),
         )
 

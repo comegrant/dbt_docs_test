@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, Field
 
 from .order import DeliveredOrder, PlannedOrder

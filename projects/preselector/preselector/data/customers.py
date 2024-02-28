@@ -33,7 +33,8 @@ class CustomerData:
             return self.db.read_data(f.read().format(**args))
 
     def get_customer_information_for_agreement_id(
-        self, agreement_id: str,
+        self,
+        agreement_id: str,
     ) -> pd.DataFrame:
         """Get customer information for one agreement id
 
@@ -46,11 +47,13 @@ class CustomerData:
         """
         logger.info("Reading customer information for agreement id %s", agreement_id)
         return self._read_data_from_db(
-            query_file="get_customer_information.sql", agreement_id=agreement_id,
+            query_file="get_customer_information.sql",
+            agreement_id=agreement_id,
         )
 
     def get_customer_information_for_agreement_ids(
-        self, agreement_ids: list,
+        self,
+        agreement_ids: list,
     ) -> pd.DataFrame:
         """Gets customer information for a list of agreement ids
 
@@ -63,7 +66,8 @@ class CustomerData:
         """
         logger.info("Reading customer information in batch")
         df_customers = self._read_data_from_db(
-            query_file="get_customer_information_batch.sql", agreement_ids=agreement_ids,
+            query_file="get_customer_information_batch.sql",
+            agreement_ids=agreement_ids,
         )
 
         if df_customers is None:
@@ -75,7 +79,8 @@ class CustomerData:
         return df_customers
 
     def get_customer_information_for_company_id(
-        self, status: str = "10",
+        self,
+        status: str = "10",
     ) -> pd.DataFrame:
         """Gets all active customers for a given company id
 
@@ -87,7 +92,8 @@ class CustomerData:
             DataFrame: pandas dataframe of customer information
         """
         logger.info(
-            "Reading customer information in batch for company %s", self.company_id,
+            "Reading customer information in batch for company %s",
+            self.company_id,
         )
         df_customers_information = self._read_data_from_db(
             query_file="get_customer_information_for_company_id.sql",
@@ -105,7 +111,8 @@ class CustomerData:
         logger.info("Fetched %s customers", len(df_customers_information))
 
         df_customers_information = df_customers_information.dropna(
-            subset=["taste_preference_ids", "concept_preference_ids"], how="all",
+            subset=["taste_preference_ids", "concept_preference_ids"],
+            how="all",
         )
         return df_customers_information
 
@@ -126,7 +133,10 @@ class CustomerData:
         return df_customer_deviations
 
     def get_customers_deviations_for_weeks(
-        self, start_year: int, start_week: int, num_weeks: int,
+        self,
+        start_year: int,
+        start_week: int,
+        num_weeks: int,
     ) -> pd.DataFrame:
         """Fetches the deviations for last n weeks given a start date
 
@@ -169,7 +179,10 @@ class CustomerData:
         return df_customer_deviations
 
     def get_customers_past_orders_for_weeks(
-        self, start_year: int, start_week: int, num_weeks: int,
+        self,
+        start_year: int,
+        start_week: int,
+        num_weeks: int,
     ) -> pd.DataFrame:
         """Fetches the deviations for last n weeks given a start date
 
@@ -196,7 +209,9 @@ class CustomerData:
         return pd.concat(past_order_weeks)
 
     def get_customers_default_dishes_for_week(
-        self, year: int, week: int,
+        self,
+        year: int,
+        week: int,
     ) -> pd.DataFrame:
         logger.info("Get customers past orders for week %s and year %s", week, year)
         df_customer_default_dishes = self._read_data_from_db(
@@ -214,7 +229,10 @@ class CustomerData:
         return df_customer_default_dishes
 
     def get_customers_default_dishes_for_weeks(
-        self, start_year: int, start_week: int, num_weeks: int,
+        self,
+        start_year: int,
+        start_week: int,
+        num_weeks: int,
     ) -> pd.DataFrame:
         """Fetches the deviations for last n weeks given a start date
 
@@ -241,7 +259,10 @@ class CustomerData:
         return pd.concat(default_dishes_weeks)
 
     def get_customer_quarantined_dishes(
-        self, start_year: int, start_week: int, num_quarantine_weeks: int,
+        self,
+        start_year: int,
+        start_week: int,
+        num_quarantine_weeks: int,
     ) -> pd.DataFrame:
         """Generate the quarantined dishes from past orders and default and deviated dishes in planned orders
 
@@ -255,13 +276,17 @@ class CustomerData:
         """
         # Get past orders
         df_customers_past_orders = self.get_customers_past_orders_for_weeks(
-            num_weeks=num_quarantine_weeks, start_year=start_year, start_week=start_week,
+            num_weeks=num_quarantine_weeks,
+            start_year=start_year,
+            start_week=start_week,
         ).set_index(["agreement_id", "year", "week"])
         df_customers_past_orders["source"] = "default_dishes"
 
         # Get default dishes
         df_customers_default_dishes = self.get_customers_default_dishes_for_weeks(
-            num_weeks=num_quarantine_weeks, start_year=start_year, start_week=start_week,
+            num_weeks=num_quarantine_weeks,
+            start_year=start_year,
+            start_week=start_week,
         ).set_index(["agreement_id", "year", "week"])
         df_customers_default_dishes["source"] = "default_dishes"
 
@@ -280,9 +305,7 @@ class CustomerData:
         # Add dishes from past orders if exist
         if not df_customers_past_orders.empty:
             logger.info("past orders not empty, adding to quarantined dishes")
-            df_customers_past_orders = df_customers_past_orders[
-                ["main_recipe_id", "source"]
-            ]
+            df_customers_past_orders = df_customers_past_orders[["main_recipe_id", "source"]]
             df_quarantine_dishes = pd.concat(
                 [df_quarantine_dishes, df_customers_past_orders],
             )
@@ -290,9 +313,7 @@ class CustomerData:
         # If customer has deviated from default dishes, add these to the dishes in quarantine
         if not df_customers_deviations.empty:
             logger.info("agreement deviation not empty, adding to quarantined dishes")
-            df_customers_deviations = df_customers_deviations[
-                ["main_recipe_id", "source"]
-            ]
+            df_customers_deviations = df_customers_deviations[["main_recipe_id", "source"]]
             df_quarantine_dishes = pd.concat(
                 [df_quarantine_dishes, df_customers_deviations],
             )
@@ -300,13 +321,17 @@ class CustomerData:
         return df_quarantine_dishes.reset_index()
 
     def get_customers_orders(
-        self, num_weeks: int, year: int, week: int,
+        self,
+        num_weeks: int,
+        year: int,
+        week: int,
     ) -> pd.DataFrame:
         logger.info("Get customers orders from week %s", week)
 
 
 def get_customers_with_mealbox(
-    df_customers: pd.DataFrame, df_mealboxes: pd.DataFrame,
+    df_customers: pd.DataFrame,
+    df_mealboxes: pd.DataFrame,
 ) -> pd.DataFrame:
     """Find all customers subscribed to a mealbox
 
@@ -325,7 +350,9 @@ def get_customers_with_mealbox(
 
     # Merge in subscription information, such as portion, meals and price
     df_customers = df_customers.merge(
-        df_mealboxes, right_on="variation_id", left_on="subscribed_product_variation_id",
+        df_mealboxes,
+        right_on="variation_id",
+        left_on="subscribed_product_variation_id",
     )
 
     df_customers = df_customers.assign(

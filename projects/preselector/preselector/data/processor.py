@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 from preselector.data.customers import get_customers_with_mealbox
@@ -79,9 +78,7 @@ def process_raw_data(
     run_config: dict | None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     # Merge productinformation to customer subscription
-    df_mealboxes = df_menu[
-        df_menu["product_type_id"] == MEALBOX_PRODUCT_TYPE_ID.upper()
-    ][
+    df_mealboxes = df_menu[df_menu["product_type_id"] == MEALBOX_PRODUCT_TYPE_ID.upper()][
         [
             "product_id",
             "variation_id",
@@ -90,9 +87,9 @@ def process_raw_data(
             "variation_price",
         ]
     ].drop_duplicates()
-    df_flex_products = df_menu[
-        df_menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()
-    ].explode("main_recipe_id")
+    df_flex_products = df_menu[df_menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
+        "main_recipe_id",
+    )
 
     df_customers = get_customers_with_mealbox(df_customers, df_mealboxes)
 

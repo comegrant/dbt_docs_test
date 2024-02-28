@@ -1,4 +1,3 @@
-
 from lmkgroup_ds_utils.db.connector import DB
 
 from .customers import CustomerData
@@ -23,7 +22,9 @@ def get_data_from_db(company_id: str, yearweek: Yearweek, db: DB, run_config: di
     df_customers = customer_data.get_customer_information_for_company_id()
 
     df_menu = get_menu_products_with_preferences(
-        company_id=company_id, yearweek=yearweek, db=db,
+        company_id=company_id,
+        yearweek=yearweek,
+        db=db,
     )
 
     df_preference_rules = None
@@ -33,7 +34,10 @@ def get_data_from_db(company_id: str, yearweek: Yearweek, db: DB, run_config: di
     df_recommendations = None
     if run_config["ranking"]["rec_engine"]:
         df_recommendations = get_recommendation_score_for_company_id_and_yearweek(
-            company_id=company_id, year=yearweek.year, week=yearweek.week, db=db,
+            company_id=company_id,
+            year=yearweek.year,
+            week=yearweek.week,
+            db=db,
         )
 
     df_quarantined_dishes = None

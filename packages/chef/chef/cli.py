@@ -2,6 +2,7 @@ import logging
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
+from datetime import datetime
 from importlib import import_module
 from pathlib import Path
 
@@ -245,7 +246,8 @@ def compose_exposed_ports(
 
 @cli.command()
 @click.argument("project", default=None, required=False)
-def build(project: str | None) -> None:
+@click.argument("profile", default="app", required=False)
+def build(project: str | None, profile: str) -> None:
     name = project or folder_name()
 
     if isinstance(name, Exception):
@@ -269,7 +271,7 @@ def build(project: str | None) -> None:
 
     echo_action(f"Building project '{name}'")
     commands = compose_command(projects_path() / name)
-    commands.extend(["build"])
+    commands.extend(["--profile", profile, "build"])
     subprocess.run(commands, check=False)
 
 
@@ -338,6 +340,44 @@ def run(subcommand: tuple) -> None:
         click.echo("---------------------------------")
 
     subprocess.run(commands, check=False)
+
+
+@cli.command()
+@click.option("--registry", default="bhregistry.azurecr.io", required=False)
+@click.option("--project", default=None, required=False)
+@click.option("--tag", default=None, required=False)
+@click.option("--image", default=None, required=False)
+def push_image(registry: str, project: str | None, tag: str | None, image: str | None) -> None:
+    if not project:
+        name = folder_name()
+
+        if isinstance(name, Exception):
+            click.echo(name)
+            click.echo(
+                "An error occured while trying to get the project name. "
+                "Make sure you run this command from a project directory.",
+                err=True,
+            )
+            return
+
+        project = name
+
+    if not image:
+        image = f"{project}-{project}"
+
+    if not tag:
+        tag = f"push-{datetime.utcnow().timestamp()}"
+
+    url = f"{registry}/{project}:{tag}"
+    echo_action(f"Pushing image '{image}' to {url}")
+
+    path = projects_path() / project
+    command = compose_command(path)
+    command.extend(["build", project])
+    subprocess.run(command, check=True)
+
+    subprocess.run(["docker", "tag", image, url], check=False)
+    subprocess.run(["docker", "push", url], check=False)
 
 
 @cli.command()
@@ -417,7 +457,6 @@ def shell(project: str | None, service: str | None) -> None:
 
     command = compose_command(projects_path() / name)
     command.extend(["run", "-i", service, "bash"])
-    click.echo(f"Running command: {command}")
     subprocess.run(command, check=False)
 
 
@@ -498,6 +537,24 @@ def create(type_name: str) -> None:
             extra_context=extra_context,
         )
     subprocess.run(["poetry", "lock", f"--directory={output_dir}"], check=False)
+
+
+@cli.command()
+@click.argument("project", default=None, required=False)
+def lock(project: str | None) -> None:
+    name = project or folder_name()
+    if isinstance(name, Exception):
+        click.echo(name)
+        click.echo(
+            "An error occured while trying to get the project name. "
+            "Make sure you run this command from a project directory.",
+            err=True,
+        )
+        return
+
+    echo_action(f"Locking project '{name}'")
+    command = ["poetry", "lock", f"--directory={projects_path() / name}"]
+    subprocess.run(command, check=False)
 
 
 @cli.command()

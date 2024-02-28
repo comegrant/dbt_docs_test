@@ -124,7 +124,12 @@ def run_test():
 
 
 def load_data_from_adb(
-    local: bool, company: str, year: int, week: int, config: str, run_config: dict,
+    local: bool,
+    company: str,
+    year: int,
+    week: int,
+    config: str,
+    run_config: dict,
 ):
     yearweek = Yearweek(year=year, week=week)
     config_dict = get_company_configs(company_code=company, config_name=config)

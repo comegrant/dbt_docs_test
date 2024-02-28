@@ -39,7 +39,9 @@ def get_recipe_preferences(company_id: str, yearweek: Yearweek, db: DB) -> pd.Da
     with open(SQL_DIR / "menu" / "get_recipe_preferences.sql") as f:
         return db.read_data(
             f.read().format(
-                company_id=company_id, year=yearweek.year, week=yearweek.week,
+                company_id=company_id,
+                year=yearweek.year,
+                week=yearweek.week,
             ),
         )
 
@@ -59,13 +61,17 @@ def get_menu_for_year_week(company_id: str, yearweek: Yearweek, db: DB) -> pd.Da
     with open(SQL_DIR / "menu" / "get_menu_for_yearweek_company.sql") as f:
         return db.read_data(
             f.read().format(
-                company_id=company_id, year=yearweek.year, week=yearweek.week,
+                company_id=company_id,
+                year=yearweek.year,
+                week=yearweek.week,
             ),
         )
 
 
 def get_menu_for_year_week_with_preferences(
-    company_id: str, yearweek: Yearweek, db: DB,
+    company_id: str,
+    yearweek: Yearweek,
+    db: DB,
 ) -> pd.DataFrame:
     """Get menu information for year week
 
@@ -81,7 +87,9 @@ def get_menu_for_year_week_with_preferences(
     with open(SQL_DIR / "menu" / "get_menu_for_yearweek_company_with_pref.sql") as f:
         return db.read_data(
             f.read().format(
-                company_id=company_id, year=yearweek.year, week=yearweek.week,
+                company_id=company_id,
+                year=yearweek.year,
+                week=yearweek.week,
             ),
         )
 
@@ -103,7 +111,9 @@ def get_menu_preference_rules(db: DB) -> pd.DataFrame:
 
 
 def get_menu_products_with_preferences(
-    company_id: str, yearweek: Yearweek, db: DB,
+    company_id: str,
+    yearweek: Yearweek,
+    db: DB,
 ) -> pd.DataFrame:
     """Gets the menu products with preference information
 
@@ -120,12 +130,16 @@ def get_menu_products_with_preferences(
 
     # Get menu information with preferences
     df_menu_with_preferences = get_menu_for_year_week_with_preferences(
-        company_id=company_id, yearweek=yearweek, db=db,
+        company_id=company_id,
+        yearweek=yearweek,
+        db=db,
     )
 
     # Merge together information to menu product with preferences
     df_menu_products_with_preferences = df_menu_with_preferences.merge(
-        df_products, on="variation_id", how="left",
+        df_products,
+        on="variation_id",
+        how="left",
     )
 
     # Replace nan values for no preferences with empty bracked []

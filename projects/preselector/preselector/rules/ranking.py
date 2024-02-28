@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 
@@ -78,8 +77,6 @@ def rank_dishes_basked_on_rec_engine(
         possible_dishes_with_rec_engine["score"]
         + possible_dishes_with_rec_engine["order_of_relevance_cluster"]
     )
-    debug_summary[
-        "ranking_rec_engine"
-    ] = "Possible dishes reordered based on rec engine score"
+    debug_summary["ranking_rec_engine"] = "Possible dishes reordered based on rec engine score"
 
     return possible_dishes_with_rec_engine.sort_values(by="score"), debug_summary
