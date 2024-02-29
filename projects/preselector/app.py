@@ -408,20 +408,28 @@ async def run_comparison_for(
         f"Creating a menu with {customer.number_of_recipes} recipes and {customer.portion_size} portions",
     )
 
+    def to_next_week():
+        set_deeplink(
+            CompareWeekState(
+                agreement_id=customer.agreement_id,
+                year=year,
+                week=week + 1,
+            ),
+        )
+
+
     def view_results():
         current_date = date.today() + timedelta(weeks=1)
-        year = current_date.isocalendar()[0]
-        week = current_date.isocalendar()[1]
+        current_year = current_date.isocalendar()[0]
+        current_week = current_date.isocalendar()[1]
 
         year_weeks = []
 
-        while year != year or week != week:
-            year_weeks.append((year, week))
+        while year != current_year or week != current_week:
+            year_weeks.append((current_year, current_week))
             current_date = current_date + timedelta(weeks=1)
-            year = current_date.isocalendar()[0]
-            week = current_date.isocalendar()[1]
-
-        year_weeks.append((year, week))
+            current_year = current_date.isocalendar()[0]
+            current_week = current_date.isocalendar()[1]
 
         st.info("Showing results.")
 
@@ -443,27 +451,19 @@ async def run_comparison_for(
 
     if recommendations.empty:
         current_date = date.today() + timedelta(weeks=1)
-        year = current_date.isocalendar()[0]
-        week = current_date.isocalendar()[1]
+        current_year = current_date.isocalendar()[0]
+        current_week = current_date.isocalendar()[1]
 
         year_weeks = []
 
-        while year != year or week != week:
-            year_weeks.append((year, week))
+        while year != current_year or week != current_week:
+            year_weeks.append((current_year, current_week))
             current_date = current_date + timedelta(weeks=1)
-            year = current_date.isocalendar()[0]
-            week = current_date.isocalendar()[1]
+            current_year = current_date.isocalendar()[0]
+            current_week = current_date.isocalendar()[1]
 
-        year_weeks.append((year, week))
-
-        if len(year_weeks) == 1:
-            set_deeplink(
-                CompareWeekState(
-                    agreement_id=customer.agreement_id,
-                    year=year,
-                    week=week + 1,
-                ),
-            )
+        if len(year_weeks) == 0:
+            to_next_week()
 
         st.info("No recommendations found for this week. Showing results.")
 
@@ -487,8 +487,15 @@ async def run_comparison_for(
             df_recommendations=recommendations,
         )
 
+
     if isinstance(preselector_result, Exception):
-        st.error(f"An error occurred: {preselector_result}")
+        st.error(f"An error occurred when running the pre-selector: {preselector_result}")
+        to_next_week()
+        return
+
+    if len(preselector_result.main_recipe_ids) == 0:
+        st.error("No recipes found for the preselector.")
+        to_next_week()
         return
 
     with st.spinner("Fetching chef's selection..."):
@@ -500,9 +507,16 @@ async def run_comparison_for(
             mealselector_result = await run_mealselector(customer, year, week, menu)
             set_cache(cache_key, mealselector_result)
 
-    if isinstance(mealselector_result, Exception):
-        st.error(f"An error occurred: {mealselector_result}")
+    if isinstance(mealselector_result, Exception) or not mealselector_result:
+        st.error(f"An error occurred when fetching the chef-selection: {mealselector_result}")
+        to_next_week()
         return
+
+    if len(mealselector_result) == 0:
+        st.info("No recipes found for the mealselector")
+        to_next_week()
+        return
+
 
     with st.spinner("Loading recipe information..."):
         pre_selector_recipe_info = await load_recipe_information(
@@ -681,6 +695,7 @@ async def collect_feedback(state: ExplainSelectionState):
         has_better_protines = right.checkbox("Recipes had better proteins")
         has_better_sides = right.checkbox("Recipes had better sides")
         images_looks_better = right.checkbox("Images looked more delicious")
+        similar_recipes_as_last_week = right.checkbox("The other recipes was in a previous week")
 
         other_feedback = st.text_area(
             "Other Feedback",
@@ -715,38 +730,19 @@ async def collect_feedback(state: ExplainSelectionState):
                 "was_better_sides": [has_better_sides],
                 "was_better_images": [images_looks_better],
                 "was_fewer_unwanted_ingredients": [had_fewer_unwanted_ingredients],
+                "had_recipes_last_week": [similar_recipes_as_last_week],
                 "compared_number_of_recipes_to_change": [state.other_number_of_changes],
                 "number_of_recipes_to_change": [state.selected_number_of_changes],
             },
         )
 
-    current_week = date.today().isocalendar()[1]
-    if abs(state.week + 1 - current_week) > 5:
-        current_date = date.today() + timedelta(weeks=1)
-        year = current_date.isocalendar()[0]
-        week = current_date.isocalendar()[1]
-
-        year_weeks = []
-
-        while year != state.year or week != state.week:
-            year_weeks.append((year, week))
-            current_date = current_date + timedelta(weeks=1)
-            year = current_date.isocalendar()[0]
-            week = current_date.isocalendar()[1]
-
-        year_weeks.append((state.year, state.week))
-
-        set_deeplink(
-            ShowChoicesState(agreement_id=state.agreement_id, year_weeks=year_weeks),
+    set_deeplink(
+        CompareWeekState(
+            agreement_id=state.agreement_id,
+            year=state.year,
+            week=state.week + 1,
         )
-    else:
-        set_deeplink(
-            CompareWeekState(
-                agreement_id=state.agreement_id,
-                year=state.year,
-                week=state.week + 1,
-            ),
-        )
+    )
 
 
 async def show_choices(state: ShowChoicesState):
@@ -780,6 +776,7 @@ async def show_choices(state: ShowChoicesState):
             "was_better_proteins",
             "was_better_sides",
             "was_better_images",
+            "had_recipes_last_week"
         ]
     ].sum()
     why_stats.sort_values(ascending=False, inplace=True)

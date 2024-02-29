@@ -56,6 +56,7 @@ class PreselectorTestChoice:
     was_better_sides = Bool()
     was_better_images = Bool()
     was_fewer_unwanted_ingredients = Bool()
+    had_recipes_last_week = Bool()
 
     created_at = Timestamp()
     updated_at = Timestamp()
