@@ -51,7 +51,7 @@ class Owner:
 
     @staticmethod
     def all_owners() -> list[Owner]:
-        return [Owner.matsmoll(), Owner.jose(), Owner.niladri()]
+        return [Owner.matsmoll(), Owner.jose(), Owner.niladri(), Owner.thomassve()]
 
 
 def owner_for_email(email: str) -> Owner | None:
