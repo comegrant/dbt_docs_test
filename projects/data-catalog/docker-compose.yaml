@@ -14,7 +14,9 @@ services:
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
-    command: python -m streamlit run /opt/projects/data-catalog/app/app.py
+    command: python -m streamlit run /opt/projects/data-catalog/data_catalog/main.py
+    env_file:
+      - .env
     ports:
       - 8501:8501
     volumes:

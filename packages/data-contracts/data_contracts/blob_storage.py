@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import logging
+from collections import OrderedDict
 from dataclasses import dataclass, field
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
@@ -9,6 +12,7 @@ import polars as pl
 from aligned.data_source.batch_data_source import BatchDataSource, ColumnFeatureMappable
 from aligned.exceptions import UnableToFindFileException
 from aligned.feature_source import WritableFeatureSource
+from aligned.local.job import FileDateJob, FileFactualJob, FileFullJob
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.sources.local import (
     CsvConfig,
@@ -24,6 +28,8 @@ from azure.storage.blob import BlobServiceClient
 from httpx import HTTPStatusError
 
 from data_contracts.sql_server import MarkdownDescribable
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -343,9 +349,9 @@ Path: *{self.path}*"""
         return self.config.storage
 
     async def read_pandas(self) -> pd.DataFrame:
-        return (await self.to_polars()).collect().to_pandas()
+        return (await self.to_polars()).to_pandas()
 
-    async def to_polars(self) -> pl.LazyFrame:
+    async def to_lazy_polars(self) -> pl.LazyFrame:
         try:
             url = f"az://{self.path}"
             creds = self.config.read_creds()
@@ -354,6 +360,20 @@ Path: *{self.path}*"""
             raise UnableToFindFileException()
         except HTTPStatusError:
             raise UnableToFindFileException()
+
+    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+        return FileFactualJob(self, [request], facts)
+
+    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+        return FileFullJob(self, request, limit)
+
+    def all_between_dates(
+        self,
+        request: RetrivalRequest,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> RetrivalJob:
+        return FileDateJob(source=self, request=request, start_date=start_date, end_date=end_date)
 
     async def write_pandas(self, df: pd.DataFrame) -> None:
         await self.write_polars(pl.from_pandas(df).lazy())
@@ -367,3 +387,141 @@ Path: *{self.path}*"""
             storage_options=creds,
             mode="append",
         )
+
+    async def insert(self, job: RetrivalJob, requests: list[RetrivalRequest]) -> None:
+        import pyarrow as pa
+        from aligned.schemas.constraints import Optional
+        from aligned.schemas.feature import Feature
+
+        df = await job.to_polars()
+        url = f"az://{self.path}"
+
+        def pa_field(feature: Feature) -> pa.Field:
+            is_nullable = Optional() in (feature.constraints or set())
+
+            pa_types = {
+                "int8": pa.int8(),
+                "int16": pa.int16(),
+                "int32": pa.int32(),
+                "int64": pa.int64(),
+                "float": pa.float64(),
+                "double": pa.float64(),
+                "string": pa.large_string(),
+                "date": pa.date64(),
+                "datetime": pa.float64(),
+                "list": pa.large_list(pa.int32()),
+                "array": pa.large_list(pa.int32()),
+                "bool": pa.bool_(),
+            }
+
+            if feature.dtype.name in pa_types:
+                return pa.field(feature.name, pa_types[feature.dtype.name], nullable=is_nullable)
+
+            raise ValueError(f"Unsupported dtype: {feature.dtype}")
+
+        dtypes = dict(zip(df.columns, df.dtypes))
+        schemas = {}
+
+        for request in requests:
+            for feature in request.all_features.union(request.entities):
+                schemas[feature.name] = pa_field(feature)
+                if dtypes[feature.name] == pl.Null:
+                    df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))
+                elif feature.dtype.name == "array":
+                    df = df.with_columns(pl.col(feature.name).cast(pl.List(pl.Int32())))
+                elif feature.dtype.name == "datetime":
+                    df = df.with_columns(pl.col(feature.name).dt.timestamp("ms").cast(pl.Float64()))
+                else:
+                    df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))
+
+        orderd_schema = OrderedDict(sorted(schemas.items()))
+        schema = list(orderd_schema.values())
+
+        df.select(list(orderd_schema.keys())).write_delta(
+            url,
+            storage_options=self.config.read_creds(),
+            mode="append",
+            delta_write_options={"schema": pa.schema(schema)},
+        )
+
+    async def upsert(self, job: RetrivalJob, requests: list[RetrivalRequest]) -> None:
+        import pyarrow as pa
+        from aligned.schemas.constraints import Optional
+        from aligned.schemas.feature import Feature
+        from deltalake.exceptions import TableNotFoundError
+
+        df = await job.to_polars()
+
+        url = f"az://{self.path}"
+        merge_on = set()
+
+        def pa_field(feature: Feature) -> pa.Field:
+            is_nullable = Optional() in (feature.constraints or set())
+
+            pa_types = {
+                "int8": pa.int8(),
+                "int16": pa.int16(),
+                "int32": pa.int32(),
+                "int64": pa.int64(),
+                "float": pa.float64(),
+                "double": pa.float64(),
+                "string": pa.large_string(),
+                "date": pa.date64(),
+                "datetime": pa.float64(),
+                "list": pa.large_list(pa.int32()),
+                "array": pa.large_list(pa.int32()),
+                "bool": pa.bool_(),
+            }
+
+            if feature.dtype.name in pa_types:
+                return pa.field(feature.name, pa_types[feature.dtype.name], nullable=is_nullable)
+
+            raise ValueError(f"Unsupported dtype: {feature.dtype}")
+
+        dtypes = dict(zip(df.columns, df.dtypes))
+        schemas = {}
+
+        for request in requests:
+            merge_on.update(request.entity_names)
+
+            for feature in request.all_features.union(request.entities):
+                schemas[feature.name] = pa_field(feature)
+                if dtypes[feature.name] == pl.Null:
+                    df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))
+                elif feature.dtype.name == "array":
+                    df = df.with_columns(pl.col(feature.name).cast(pl.List(pl.Int32())))
+                elif feature.dtype.name == "datetime":
+                    df = df.with_columns(pl.col(feature.name).dt.timestamp("ms").cast(pl.Float64()))
+                else:
+                    df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))
+
+        orderd_schema = OrderedDict(sorted(schemas.items()))
+        schema = list(orderd_schema.values())
+
+        predicate = " AND ".join([f"s.{key} = t.{key}" for key in merge_on])
+
+        try:
+            from deltalake import DeltaTable
+
+            table = DeltaTable(url, storage_options=self.config.read_creds())
+            pa_df = df.select(list(orderd_schema.keys())).to_arrow().cast(pa.schema(schema))
+
+            (
+                table.merge(
+                    pa_df,
+                    predicate=predicate,
+                    source_alias="s",
+                    target_alias="t",
+                )
+                .when_matched_update_all()
+                .when_not_matched_insert_all()
+                .execute()
+            )
+
+        except TableNotFoundError:
+            df.write_delta(
+                url,
+                mode="append",
+                storage_options=self.config.read_creds(),
+                delta_write_options={"schema": pa.schema(schema)},
+            )

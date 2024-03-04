@@ -83,11 +83,11 @@ Query:
             right_on=right_on,
         )
 
-    async def to_polars(self) -> pl.LazyFrame:
+    async def to_lazy_polars(self) -> pl.LazyFrame:
         return pl.from_pandas(await self.to_pandas()).lazy()
 
     async def to_pandas(self) -> pd.DataFrame:
-        return pd.read_sql(self.query, con=self.config.connection.connect())
+        return pd.read_sql(self.query, con=self.config.connection.raw_connection())
 
     def describe(self) -> str:
         return f"SqlServer Job: \n{self.query}\n"
