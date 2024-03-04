@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Callable
 
 import pandas as pd
 from pydantic import BaseModel
@@ -70,6 +71,8 @@ async def run_mealselector(
     year: int,
     week: int,
     menu: pd.DataFrame,
+    token: str | None = None,
+    on_new_token: Callable[[str], None] | None = None,
 ) -> list[int] | Exception:
     from httpx import AsyncClient
 
@@ -90,14 +93,21 @@ async def run_mealselector(
                 "preferenceTypeId": "4C679266-7DC0-4A8E-B72D-E9BB8DADC7EB".lower(),
                 "preferencePriority": "0",
             }
-            for pref in customer.taste_preference_ids
+            for pref in customer.taste_preference_ids or []
         ],
         price=0,
     )
 
-    token = await analytics_api_token()
-    if isinstance(token, Exception):
-        return token
+    if not token:
+        new_token = await analytics_api_token()
+
+        if isinstance(new_token, Exception):
+            return new_token
+
+        token = new_token
+
+        if on_new_token:
+            on_new_token(token)
 
     async with AsyncClient() as client:
         headers = {"Authorization": f"Bearer {token}"}

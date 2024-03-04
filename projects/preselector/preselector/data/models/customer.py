@@ -41,7 +41,7 @@ class PreselectorCustomer(BaseModel):
     agreement_id: int
     company_id: str
     concept_preference_id: str
-    taste_preference_ids: list[str]
+    taste_preference_ids: list[str] | None
 
     portion_size: int
     number_of_recipes: int

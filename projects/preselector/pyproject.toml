@@ -12,6 +12,7 @@ data-contracts = {path = "../../packages/data-contracts", develop = true}
 lmkgroup-ds-utils = {path = "../../packages/lmk-ds-utils", extras = ["msdb"], develop = true}
 tqdm = "^4.66.2"
 deltalake = "^0.15.3"
+streamlit-pages = {path = "../../packages/streamlit-pages", develop = true}
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

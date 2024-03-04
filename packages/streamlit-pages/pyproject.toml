@@ -1,20 +1,20 @@
 [tool.poetry]
-name = "data_contracts"
+name = "streamlit_pages"
 version = "0.1.0"
-description = "A set of data contracts that ML project expect to be upheld"
-authors = ["Mats E. Mollestad <mats.mollestad@cheffelo.com>"]
-packages = [{include = "data_contracts"}]
+description = "A package to manage streamlit pages state"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "streamlit_pages"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-aligned = "^0.0.74"
-azure-storage-blob = "^12.19.0"
-azure-identity = "^1.15.0"
+streamlit = "^1.31.1"
+pydantic = "^2.6.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
 pre-commit = "*"
 pytest = "*"
+pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
 

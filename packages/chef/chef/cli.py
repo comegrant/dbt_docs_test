@@ -67,6 +67,12 @@ def internal_projects() -> list[str]:
     return list_dirs_in(projects_path())
 
 
+def compose_path(name: str) -> Path:
+    if name in internal_projects():
+        return projects_path() / name
+    return internal_package_path() / name
+
+
 @cli.command()
 def list_packages() -> None:
     echo_action("Listing internal packages")
@@ -394,8 +400,9 @@ def up(project: str | None, profile: str) -> None:
         )
         return
 
+    path = compose_path(name)
     echo_action(f"Running project '{name}'")
-    ports = compose_exposed_ports(projects_path() / name)
+    ports = compose_exposed_ports(path)
 
     if ports:
         click.echo("")
@@ -412,7 +419,7 @@ def up(project: str | None, profile: str) -> None:
         click.echo("-------------------------------")
         click.echo("")
 
-    command = compose_command(projects_path() / name)
+    command = compose_command(path)
     command.extend(["--profile", profile, "up", "--remove-orphans"])
     subprocess.run(command, check=False)
 
@@ -431,7 +438,7 @@ def down(project: str | None) -> None:
         return
 
     echo_action(f"Running project '{name}'")
-    command = compose_command(projects_path() / name)
+    command = compose_command(compose_path(name))
     command.extend(["down"])
     subprocess.run(command, check=False)
 
@@ -455,7 +462,7 @@ def shell(project: str | None, service: str | None) -> None:
     if not service:
         service = name
 
-    command = compose_command(projects_path() / name)
+    command = compose_command(compose_path(name))
     command.extend(["run", "-i", service, "bash"])
     subprocess.run(command, check=False)
 
