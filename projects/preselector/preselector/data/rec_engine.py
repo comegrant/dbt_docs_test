@@ -2,6 +2,7 @@ import logging
 
 import pandas as pd
 from lmkgroup_ds_utils.db.connector import DB
+from path import Path
 
 from preselector.utils.paths import SQL_REC_ENGINE_DIR
 
@@ -29,7 +30,7 @@ def get_recommendation_score_for_company_id_and_yearweek(
         year,
         week,
     )
-    with open(SQL_REC_ENGINE_DIR / "get_recommendations_for_company_id.sql") as f:
+    with Path.open(SQL_REC_ENGINE_DIR / "get_recommendations_for_company_id.sql") as f:
         df = db.read_data(
             f.read().format(
                 company_id=company_id,

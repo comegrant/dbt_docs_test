@@ -10,4 +10,4 @@ class Yearweek(BaseModel):
         return self.year * 100 + self.week
 
     class PydanticMeta:
-        computed = ["yearweek"]
+        computed = ["yearweek"]  # type: ignore

@@ -17,9 +17,7 @@ def upload_file_to_datalake(
     file_name: str,
     subdirectory: str,
 ) -> None:
-    remote_filepath = (
-        f"personalization/preselector/{ENVIRONMENT}/results/{company}/{subdirectory}"
-    )
+    remote_filepath = f"personalization/preselector/{ENVIRONMENT}/results/{company}/{subdirectory}"
     datalake_handler.upload_df(
         container="data-science",
         dataframe=df,
@@ -28,14 +26,14 @@ def upload_file_to_datalake(
     )
 
 
-def write_result_to_file(output: list, fn: str):
+def write_result_to_file(output: list, fn: str) -> None:
     output_file = OUTPUT_DIR / fn
 
     with open(output_file, "w+") as f:
         f.write(json.dumps(output, indent=4))
 
 
-def save_outputs_locally(output_dict: dict, file_name: str):
+def save_outputs_locally(output_dict: dict, file_name: str) -> None:
     data = pd.DataFrame(output_dict)
     output_file = OUTPUT_DIR / file_name
     data.to_csv(output_file, index=False)
@@ -48,7 +46,7 @@ def upload_outputs_to_datalake(
     df: pd.DataFrame,
     file_name: str,
     subdirectory: str,
-):
+) -> None:
     upload_file_to_datalake(
         company=company,
         df=df,

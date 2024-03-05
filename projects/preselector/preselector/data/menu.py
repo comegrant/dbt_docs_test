@@ -2,6 +2,7 @@ import logging
 
 import pandas as pd
 from lmkgroup_ds_utils.db.connector import DB
+from path import Path
 from perselector.utils.paths import SQL_DIR
 
 from .models import Yearweek
@@ -9,7 +10,7 @@ from .models import Yearweek
 logger = logging.getLogger(__name__)
 
 
-def get_product_informaiton(company_id: str, db: DB) -> pd.DataFrame:
+def get_product_informaiton(company_id: str, db: DB) -> pd.DataFrame | None:
     """Get product information for company
 
     Args:
@@ -20,11 +21,11 @@ def get_product_informaiton(company_id: str, db: DB) -> pd.DataFrame:
         pd.DataFrame: dataframe of product information
     """
     logger.info("Get product information from database...")
-    with open(SQL_DIR / "menu" / "get_product_information.sql") as f:
+    with Path.open(SQL_DIR / "menu" / "get_product_information.sql") as f:
         return db.read_data(f.read().format(company_id=company_id))
 
 
-def get_recipe_preferences(company_id: str, yearweek: Yearweek, db: DB) -> pd.DataFrame:
+def get_recipe_preferences(company_id: str, yearweek: Yearweek, db: DB) -> pd.DataFrame | None:
     """Get recipe preferences for company
 
     Args:
@@ -36,7 +37,7 @@ def get_recipe_preferences(company_id: str, yearweek: Yearweek, db: DB) -> pd.Da
         pd.DataFrame: dataframe of recipe and preferences for a given menu week
     """
     logger.info("Get recipe preferences from database...")
-    with open(SQL_DIR / "menu" / "get_recipe_preferences.sql") as f:
+    with Path.open(SQL_DIR / "menu" / "get_recipe_preferences.sql") as f:
         return db.read_data(
             f.read().format(
                 company_id=company_id,
@@ -46,7 +47,7 @@ def get_recipe_preferences(company_id: str, yearweek: Yearweek, db: DB) -> pd.Da
         )
 
 
-def get_menu_for_year_week(company_id: str, yearweek: Yearweek, db: DB) -> pd.DataFrame:
+def get_menu_for_year_week(company_id: str, yearweek: Yearweek, db: DB) -> pd.DataFrame | None:
     """Get menu information for year week
 
     Args:
@@ -58,7 +59,7 @@ def get_menu_for_year_week(company_id: str, yearweek: Yearweek, db: DB) -> pd.Da
         pd.DataFrame: dataframe of menu products for a given yearweek and company
     """
     logger.info("Get menu products from database...")
-    with open(SQL_DIR / "menu" / "get_menu_for_yearweek_company.sql") as f:
+    with Path.open(SQL_DIR / "menu" / "get_menu_for_yearweek_company.sql") as f:
         return db.read_data(
             f.read().format(
                 company_id=company_id,
@@ -72,7 +73,7 @@ def get_menu_for_year_week_with_preferences(
     company_id: str,
     yearweek: Yearweek,
     db: DB,
-) -> pd.DataFrame:
+) -> pd.DataFrame | None:
     """Get menu information for year week
 
     Args:
@@ -84,7 +85,7 @@ def get_menu_for_year_week_with_preferences(
         pd.DataFrame: dataframe of menu products for a given yearweek and company
     """
     logger.info("Get menu products from database...")
-    with open(SQL_DIR / "menu" / "get_menu_for_yearweek_company_with_pref.sql") as f:
+    with Path.open(SQL_DIR / "menu" / "get_menu_for_yearweek_company_with_pref.sql") as f:
         return db.read_data(
             f.read().format(
                 company_id=company_id,
@@ -101,8 +102,11 @@ def get_menu_preference_rules(db: DB) -> pd.DataFrame:
         pd.DataFrame: dataframe of preference rules and their lower and upper values
     """
     logger.info("Get menu preference rules from database...")
-    with open(SQL_DIR / "menu" / "get_menu_preference_rules.sql") as f:
+    with Path.open(SQL_DIR / "menu" / "get_menu_preference_rules.sql") as f:
         df = db.read_data(f.read())
+
+    if df is None:
+        return pd.DataFrame()
 
     df = df.assign(preference_id=df["preference_id"].apply(lambda x: x.lower()))
     df = df.fillna(0)
@@ -134,6 +138,9 @@ def get_menu_products_with_preferences(
         yearweek=yearweek,
         db=db,
     )
+
+    if df_products is None or df_menu_with_preferences is None:
+        return pd.DataFrame()
 
     # Merge together information to menu product with preferences
     df_menu_products_with_preferences = df_menu_with_preferences.merge(

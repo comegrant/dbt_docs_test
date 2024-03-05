@@ -7,20 +7,24 @@ def rank_dishes_based_on_quarantine(
     debug_summary: dict,
     quarantine_penalization: int = 5,
 ) -> tuple[pd.DataFrame, dict]:
-    """Rank dishes based on quarantine, add a penalty to dishes that are already getting delivered / has been delivered to customer in previous weeks
+    """Rank dishes based on quarantine, add a penalty to dishes that are already getting delivered
+    / has been delivered to customer in previous weeks
 
     Args:
         possible_dishes (pd.DataFrame): All possible dishes in menu
-        df_quarantined_dishes_for_customer (pd.DataFrame): Dishes that are already getting delivered / has been delivered to customer
+        df_quarantined_dishes_for_customer (pd.DataFrame): Dishes that are already getting delivered
+            / has been delivered to customer
         debug_summary (Dict): Summary of log
 
     Returns:
         Tuple[pd.DataFrame, Dict]: _description_
     """
-    # Compare basket history vs dishes in menu, dishes that the customer has recently ordered or will recieve in weeks before, rank to lower position
+    # Compare basket history vs dishes in menu, dishes that the customer has recently ordered
+    # or will recieve in weeks before, rank to lower position
 
     # TODO: Implement with talks to recipes linking
-    # One change from PIM, dishes can be linked together, same dish but small differences such in protein (recipes_linking).
+    # One change from PIM, dishes can be linked together,
+    # same dish but small differences such in protein (recipes_linking).
 
     # Move dishes that has been bought last 3 weeks down 5 spots
     if df_quarantined_dishes_for_customer.empty:
@@ -74,8 +78,7 @@ def rank_dishes_basked_on_rec_engine(
         how="left",
     )
     possible_dishes_with_rec_engine["score"] = (
-        possible_dishes_with_rec_engine["score"]
-        + possible_dishes_with_rec_engine["order_of_relevance_cluster"]
+        possible_dishes_with_rec_engine["score"] + possible_dishes_with_rec_engine["order_of_relevance_cluster"]
     )
     debug_summary["ranking_rec_engine"] = "Possible dishes reordered based on rec engine score"
 

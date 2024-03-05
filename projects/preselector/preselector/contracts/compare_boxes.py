@@ -5,6 +5,9 @@ import polars as pl
 from aligned import Bool, Float, Int32, String, Timestamp, feature_view
 from aligned.compiler.feature_factory import List
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
+import logging
+
+logger = logging.getLogger(__name__)
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
@@ -166,8 +169,8 @@ WITH concept_preferences AS (
 taste_preferences AS (
     SELECT
         bap.agreement_id,
-        STRING_AGG(convert(nvarchar(36), bap.preference_id), ', ') as preference_ids,
-        STRING_AGG(pref.name, ',') as preferences
+        CONCAT(CONCAT('["', STRING_AGG(convert(nvarchar(36), bap.preference_id), '", "')), '"]') as preference_ids,
+        CONCAT(CONCAT('["', STRING_AGG(pref.name, '","')), '"]') as preferences
     from cms.billing_agreement_preference bap
         JOIN cms.preference pref on pref.preference_id = bap.preference_id
         WHERE pref.preference_type_id = @taste_preference_type_id

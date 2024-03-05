@@ -1,26 +1,15 @@
 import json
-import os.path as osp
 
 from preselector.utils.paths import TEST_DATA_DIR
 
 
-def open_file(fn):
-    with open(fn) as f:
-        data = json.load(f)
-    return data
-
-
-def load_test_data():
+def load_test_data() -> tuple:
     # Load data from json
-    agreements = open_file(osp.join(TEST_DATA_DIR, "agreements.json"))
-    product_information = open_file(osp.join(TEST_DATA_DIR, "product_information.json"))
-    menu_products = open_file(osp.join(TEST_DATA_DIR, "menu_products.json"))
-    recommendation_scores = open_file(
-        osp.join(TEST_DATA_DIR, "recommendation_scores.json"),
-    )
-    preference_rules = open_file(
-        osp.join(TEST_DATA_DIR, "product_preference_rules.json"),
-    )
+    agreements = json.loads((TEST_DATA_DIR / "agreements.json").read_text())
+    product_information = json.loads((TEST_DATA_DIR / "product_information.json").read_text())
+    menu_products = json.loads((TEST_DATA_DIR / "menu_products.json").read_text())
+    recommendation_scores = json.loads((TEST_DATA_DIR / "recommendation_scores.json").read_text())
+    preference_rules = json.loads((TEST_DATA_DIR / "product_preference_rules.json").read_text())
 
     return (
         agreements,

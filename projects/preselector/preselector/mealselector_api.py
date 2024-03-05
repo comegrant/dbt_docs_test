@@ -130,13 +130,11 @@ async def run_mealselector(
 
     if week_response.result == "DEFAULT":
         default_mealbox = menu[menu["variation_id"] == product_variation_id]
-        default_mealbox = default_mealbox[
-            default_mealbox["menu_recipe_order"] <= customer.number_of_recipes
-        ]
+        default_mealbox = default_mealbox[default_mealbox["menu_recipe_order"] <= customer.number_of_recipes]
         recipes = default_mealbox["main_recipe_id"].tolist()
     else:
-        variation_ids = [x.variationId for x in week_response.products]
-        selected_mealbox = menu[menu["variation_id"].isin(variation_ids)]
+        variation_ids = [x.variationId.lower() for x in week_response.products]
+        selected_mealbox = menu[menu["variation_id"].str.lower().isin(variation_ids)]
         recipes = selected_mealbox["main_recipe_id"].tolist()
 
     return recipes

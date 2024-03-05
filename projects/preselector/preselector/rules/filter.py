@@ -19,7 +19,7 @@ def has_taste_restrictions(customer: pd.DataFrame) -> bool:
     return True
 
 
-def list_contains_preference_value(column, preference_restrictions):
+def list_contains_preference_value(column, preference_restrictions):  # noqa: ANN001
     """Checks if any of the value in column exist in the unwanted recipe preferences"""
     return any(value in preference_restrictions for value in column)
 
@@ -50,9 +50,10 @@ def filter_taste_restrictions(
     possible_dishes_after_filtering = len(possible_dishes)
     total_dishes_removed = possible_dishes_before - possible_dishes_after_filtering
 
-    debug_summary[
-        "filter_taste_restrictions"
-    ] = f"Removed {total_dishes_removed} dishes due to taste restrictions ({possible_dishes_before} to {possible_dishes_after_filtering})"
+    debug_summary["filter_taste_restrictions"] = (
+        f"Removed {total_dishes_removed} dishes due to taste "
+        f"restrictions ({possible_dishes_before} to {possible_dishes_after_filtering})"
+    )
 
     if possible_dishes_after_filtering == 0:
         return ValueError(
@@ -69,9 +70,7 @@ def filter_portion_size(
 ) -> tuple[pd.DataFrame, dict] | Exception:
     """Filter out dish variation with correct portion size"""
     total_dishes_before_filtering = len(possible_dishes)
-    possible_dishes = possible_dishes[
-        possible_dishes["variation_portions"].astype(int) == portion_size
-    ]
+    possible_dishes = possible_dishes[possible_dishes["variation_portions"].astype(int) == portion_size]
 
     # Calculate how many dishes removed
     total_dishes_after_filtering = len(possible_dishes)

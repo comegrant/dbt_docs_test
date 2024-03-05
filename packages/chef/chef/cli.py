@@ -602,7 +602,7 @@ def format_code() -> None:
 @click.option("--fix", default=True, is_flag=True)
 def lint(fix: bool) -> None:
     echo_action("Linting project")
-    command = ["ruff", "."]
+    command = ["ruff", "check", "."]
     if fix:
         command.append("--fix")
 

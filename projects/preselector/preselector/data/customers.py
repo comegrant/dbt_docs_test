@@ -1,6 +1,7 @@
 import logging
 import sys
 from datetime import date, timedelta
+from pathlib import Path
 
 import pandas as pd
 from lmkgroup_ds_utils.db.connector import DB
@@ -20,7 +21,7 @@ class CustomerData:
         self.company_id = company_id
         self.db = db
 
-    def _read_data_from_db(self, query_file: str, **args):
+    def _read_data_from_db(self, query_file: str, **args) -> pd.DataFrame | None:  # noqa: ANN003
         """Reaad data from database
 
         Args:
@@ -29,13 +30,13 @@ class CustomerData:
         Returns:
             _type_: _description_
         """
-        with open(SQL_CUSTOMER_DIR / query_file) as f:
+        with Path.open(SQL_CUSTOMER_DIR / query_file) as f:
             return self.db.read_data(f.read().format(**args))
 
     def get_customer_information_for_agreement_id(
         self,
         agreement_id: str,
-    ) -> pd.DataFrame:
+    ) -> pd.DataFrame | None:
         """Get customer information for one agreement id
 
         Args:
@@ -319,14 +320,6 @@ class CustomerData:
             )
 
         return df_quarantine_dishes.reset_index()
-
-    def get_customers_orders(
-        self,
-        num_weeks: int,
-        year: int,
-        week: int,
-    ) -> pd.DataFrame:
-        logger.info("Get customers orders from week %s", week)
 
 
 def get_customers_with_mealbox(

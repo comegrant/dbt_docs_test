@@ -4,6 +4,7 @@ services:
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
   {{cookiecutter.project_name}}:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
@@ -14,6 +15,7 @@ services:
     profiles: ["base"]
 
   {{cookiecutter.project_name}}-app:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
@@ -28,6 +30,7 @@ services:
     profiles: ["app"]
 
   {{cookiecutter.project_name}}-test:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile.testing

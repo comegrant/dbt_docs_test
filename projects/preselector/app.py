@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 preselector_ab_test_folder = data_science_data_lake.directory("preselector/ab-test")
 
 
-def read_cache(key: str) -> Any | None:
+def read_cache(key: str) -> Any | None:  # noqa: ANN401
     return st.session_state.get(key, None)
 
 

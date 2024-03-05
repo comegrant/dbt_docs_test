@@ -255,7 +255,7 @@ async def compare_week(state: CompareWeekState) -> None:
         f"Creating a menu with {customer.number_of_recipes} recipes and {customer.portion_size} portions",
     )
 
-    def to_next_week() -> NoReturn:
+    def to_next_week() -> None:
         set_deeplink(
             CompareWeekState(
                 agreement_id=customer.agreement_id,
@@ -264,7 +264,7 @@ async def compare_week(state: CompareWeekState) -> None:
             ),
         )
 
-    def view_results() -> NoReturn:
+    def view_results() -> None:
         current_date = date.today() + timedelta(weeks=1)
         current_year = current_date.isocalendar()[0]
         current_week = current_date.isocalendar()[1]
@@ -364,7 +364,8 @@ async def compare_week(state: CompareWeekState) -> None:
         st.error(
             f"An error occurred when fetching the chef-selection: {mealselector_result}",
         )
-        to_next_week()
+        # to_next_week()
+        return
 
     if len(mealselector_result) == 0:
         st.info("No recipes found for the mealselector")
