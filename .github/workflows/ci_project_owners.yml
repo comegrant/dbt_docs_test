@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/python_reusable.yml'
       - '.github/workflows/ci_project_owners.yml'
-      - 'packages/project_owners/**'
+      - 'packages/project-owners/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
@@ -14,5 +14,5 @@ jobs:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: packages/project_owners
+      working-directory: packages/project-owners
     secrets: inherit

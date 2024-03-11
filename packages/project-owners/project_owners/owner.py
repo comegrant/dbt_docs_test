@@ -42,8 +42,16 @@ class Owner:
         )
 
     @staticmethod
+    def thomassve() -> Owner:
+        return Owner(
+            name="Thomas Sve",
+            slack_member_id="U03EC1FF10T",
+            email="thomas.sve@cheffelo.com",
+        )
+
+    @staticmethod
     def all_owners() -> list[Owner]:
-        return [Owner.matsmoll(), Owner.jose(), Owner.niladri()]
+        return [Owner.matsmoll(), Owner.jose(), Owner.niladri(), Owner.thomassve()]
 
 
 def owner_for_email(email: str) -> Owner | None:

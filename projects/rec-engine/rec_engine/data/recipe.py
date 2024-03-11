@@ -65,6 +65,14 @@ FROM (
 ) as ing
 """
 
+ingredients_sql = """
+SELECT i.ingredient_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
+FROM pim.ingredients i
+INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
+WHERE s.supplier_name != 'Basis'
+SELECT recipe_id, all_ingredients, GETDATE() as loaded_at
+"""
 
 @feature_view(
     name="recipe_taxonomies",
@@ -99,6 +107,7 @@ class HistoricalRecipeOrders:
     rating = (
         Int32().is_optional().lower_bound(0).upper_bound(5).clip(1, 5)
     ).description("Avoid 0 values, as this can lead to odd predictions.")
+
 
 
 @feature_view(

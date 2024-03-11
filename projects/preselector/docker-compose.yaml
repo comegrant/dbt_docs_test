@@ -1,0 +1,45 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  preselector:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    command: ["echo", "'Hello from preselector'"]
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    profiles: ["base", "app"]
+
+  preselector-app:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    # watcher leads to an OSError on startup in amd mode.
+    command: ["python", "-m", "streamlit", "run", "app.py", "--server.fileWatcherType", "poll"]
+    ports:
+      - 8501:8501
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+    profiles: ["app"]
+
+  preselector-test:
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    depends_on:
+      - preselector
+    profiles: ["test"]

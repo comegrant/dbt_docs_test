@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "preselector"
+version = "0.1.0"
+description = "A Python project by Cheffelo."
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "preselector"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+lmkgroup-ds-utils = {path = "../../packages/lmk-ds-utils", extras = ["msdb"], develop = true}
+tqdm = "^4.66.2"
+deltalake = "^0.15.3"
+streamlit-pages = {path = "../../packages/streamlit-pages", develop = true}
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.30.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

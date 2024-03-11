@@ -32,7 +32,8 @@ def default_value(info: FieldInfo) -> Any:
 streamlit_components: dict[str, Callable[[str, FieldInfo], Any]] = {
     "str": lambda name, info: st.text_input(name, value=default_value(info)),
     "list": lambda name, info: list_input(name, info),
-    "int": lambda name, info: st.number_input(name, value=default_value(info)),
+    "int": lambda name, info: st.number_input(name, value=default_value(info), step=1),
+    "bool": lambda name, info: st.checkbox(name, value=default_value(info)),
     "Optional": lambda name, info: st.text_input(name),
 }
 

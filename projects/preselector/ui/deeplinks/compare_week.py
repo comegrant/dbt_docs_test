@@ -1,0 +1,460 @@
+from collections.abc import Awaitable
+from datetime import date, timedelta
+from random import choice, seed
+from typing import Any, NoReturn
+
+import pandas as pd
+import streamlit as st
+from preselector.contracts.compare_boxes import (
+    SqlServerConfig,
+    adb,
+    customer_information,
+    data_science_data_lake,
+    recipe_information_for_ids,
+)
+from preselector.data.models.customer import PreselectorCustomer
+from preselector.main import RunConfig, run_preselector_for
+from preselector.mealselector_api import run_mealselector
+from preselector.utils.constants import FLEX_PRODUCT_TYPE_ID
+from pydantic import BaseModel
+from streamlit_pages import set_deeplink
+from ui.components.mealkit import mealkit
+from ui.deeplinks.collect_feedback import ExplainSelectionState
+from ui.deeplinks.show_results import ShowChoicesState
+
+preselector_ab_test_folder = data_science_data_lake.directory("preselector/ab-test")
+
+
+def read_cache(key: str) -> Any | None:
+    return st.session_state.get(key, None)
+
+
+def set_cache(key: str, value: Any) -> None:  # noqa: ANN401
+    st.session_state[key] = value
+
+
+async def load_recommendations(
+    agreement_id: int,
+    year: int,
+    week: int,
+    db_config: SqlServerConfig,
+) -> pd.DataFrame:
+    key_value_cache_key = f"load_recommendations{agreement_id}_{year}_{week}"
+    cache_value = read_cache(key_value_cache_key)
+    if cache_value is not None:
+        return cache_value
+
+    recommendation_sql = f"""
+declare @agreement_id int = '{agreement_id}', @week int = '{week}', @year int = '{year}';
+
+SELECT [agreement_id]
+      ,[run_timestamp]
+      ,[product_id]
+      ,[order_of_relevance]
+      ,[order_of_relevance_cluster]
+      ,[cluster]
+  FROM [ml_output].[latest_recommendations]
+  WHERE agreement_id = @agreement_id
+  AND week = @week
+  AND year = @year"""
+
+    df = await db_config.fetch(recommendation_sql).to_pandas()
+    set_cache(key_value_cache_key, df)
+    return df
+
+
+async def load_menu_for(
+    company_id: str,
+    year: int,
+    week: int,
+    db_config: SqlServerConfig,
+) -> pd.DataFrame:
+    key_value_cache_key = f"load_menu_for{company_id}_{year}_{week}.parquet"
+    cache = preselector_ab_test_folder.parquet_at(key_value_cache_key)
+
+    try:
+        return await cache.to_pandas()
+    except Exception:
+        pass
+
+    df_menu_with_preferences = await db_config.fetch(
+        f"""declare @company uniqueidentifier = '{company_id}', @week int = '{week}', @year int = '{year}';
+
+with recipe_preferences AS (
+    SELECT
+        recipe_id,
+        portion_id,
+        STRING_AGG(convert(nvarchar(36), preference_id), ', ') as preference_ids
+        FROM pim.recipes_category_preferences_mapping
+        GROUP BY recipe_id, portion_id
+    )
+
+
+SELECT
+    wm.menu_week,
+    wm.menu_year,
+    mv.menu_variation_ext_id as variation_id,
+    r.main_recipe_id as main_recipe_id,
+    rcpm.recipe_id,
+    rcpm.portion_id,
+    rcpm.preference_ids,
+    rp.recipe_portion_id,
+    mr.menu_recipe_order
+  FROM pim.weekly_menus wm
+  JOIN pim.menus m on m.weekly_menus_id = wm.weekly_menus_id
+  JOIN pim.menu_variations mv on mv.menu_id = m.menu_id
+  JOIN pim.menu_recipes mr on mr.menu_id = m.menu_id
+  JOIN pim.recipes r on r.recipe_id = mr.RECIPE_ID
+  INNER JOIN pim.recipe_portions rp ON rp.RECIPE_ID = r.recipe_id AND rp.portion_id = mv.PORTION_ID
+  JOIN recipe_preferences rcpm on rcpm.recipe_id = mr.recipe_id and rcpm.portion_id = mv.portion_id
+  where m.RECIPE_STATE = 1
+  AND wm.menu_week = @week AND wm.menu_year = @year AND wm.company_id = @company""",
+    ).to_pandas()
+
+    df_products = await db_config.fetch(
+        f"""
+    declare @company uniqueidentifier = '{company_id}';
+
+SELECT
+    p.id AS product_id
+,	p.name AS product_name
+,	pt.product_type_name AS product_type
+,       pt.product_type_id
+,	pv.id AS variation_id
+,	pv.sku AS variation_sku
+,	pvc.name AS variation_name
+,	pvc.company_id AS company_id
+,	ISNULL(pvav.attribute_value, pvat.default_value) AS variation_meals
+,	ISNULL(pvav2.attribute_value, pvat2.default_value) AS variation_portions
+,	ISNULL(pvav4.attribute_value, pvat4.default_value) AS variation_price
+,	ROUND(CAST(ISNULL(pvav4.attribute_value, pvat4.default_value) AS FLOAT) * (1.0 + (CAST(ISNULL(pvav5.attribute_value, pvat5.default_value) AS FLOAT) / 100)), 2) AS variation_price_incl_vat
+,	ISNULL(pvav5.attribute_value, pvat5.default_value) AS variation_vat
+FROM product_layer.product p
+INNER JOIN product_layer.product_type pt ON pt.product_type_id = p.product_type_id
+INNER JOIN product_layer.product_variation pv ON pv.product_id = p.id
+INNER JOIN product_layer.product_variation_company pvc ON pvc.variation_id = pv.id
+INNER JOIN cms.company c ON c.id = pvc.company_id
+
+-- MEALS
+LEFT JOIN product_layer.product_variation_attribute_template pvat
+    ON pvat.product_type_id = p.product_type_id AND pvat.attribute_name = 'Meals'
+LEFT JOIN product_layer.product_variation_attribute_value pvav
+    ON pvav.attribute_id = pvat.attribute_id
+    AND pvav.variation_id = pvc.variation_id AND pvav.company_id = pvc.company_id
+
+-- PORTIONS
+LEFT JOIN product_layer.product_variation_attribute_template pvat2
+    ON pvat2.product_type_id = p.product_type_id AND pvat2.attribute_name = 'Portions'
+LEFT JOIN product_layer.product_variation_attribute_value pvav2
+    ON pvav2.attribute_id = pvat2.attribute_id
+    AND pvav2.variation_id = pvc.variation_id AND pvav2.company_id = pvc.company_id
+
+-- PRICE
+LEFT JOIN product_layer.product_variation_attribute_template pvat4
+    ON pvat4.product_type_id = p.product_type_id AND pvat4.attribute_name = 'PRICE'
+LEFT JOIN product_layer.product_variation_attribute_value pvav4
+    ON pvav4.attribute_id = pvat4.attribute_id AND pvav4.variation_id = pvc.variation_id
+        AND pvav4.company_id = pvc.company_id
+
+-- VAT
+LEFT JOIN product_layer.product_variation_attribute_template pvat5
+    ON pvat5.product_type_id = p.product_type_id AND pvat5.attribute_name = 'VAT'
+LEFT JOIN product_layer.product_variation_attribute_value pvav5
+    ON pvav5.attribute_id = pvat5.attribute_id
+    AND pvav5.variation_id = pvc.variation_id AND pvav5.company_id = pvc.company_id
+
+WHERE pvc.company_id=@company """,
+    ).to_pandas()
+
+    # Merge together information to menu product with preferences
+    df_menu_products_with_preferences = df_menu_with_preferences.merge(
+        df_products,
+        on="variation_id",
+        how="left",
+    )
+
+    # Replace nan values for no preferences with empty bracked []
+    df_menu_products_with_preferences = df_menu_products_with_preferences.assign(
+        preference_ids=df_menu_products_with_preferences["preference_ids"].apply(
+            lambda x: x.lower().split(", ") if isinstance(x, str) else [],
+        ),
+    )
+    df_menu_products_with_preferences = df_menu_products_with_preferences.astype(
+        {"variation_price": float},
+    )
+
+    await cache.write_pandas(df_menu_products_with_preferences)
+
+    return df_menu_products_with_preferences
+
+
+async def cached_recipe_info(main_recipe_ids: list[int], year: int, week: int) -> pd.DataFrame:
+    key_value_cache_key = f"cached_recipe_info{year}_{week}_{main_recipe_ids}"
+
+    return await cache_awaitable(
+        key_value_cache_key,
+        recipe_information_for_ids(main_recipe_ids, year, week),
+    )
+
+
+async def cache_awaitable(key: str, function: Awaitable) -> Any:
+    if key in st.session_state:
+        return st.session_state[key]
+
+    result = await function
+    st.session_state[key] = result
+    return result
+
+
+class CompareWeekState(BaseModel):
+    agreement_id: int
+    year: int
+    week: int
+
+
+async def compare_week(state: CompareWeekState) -> None:
+    st.title(f"Compare for year: {state.year} - week: {state.week}")
+
+    back, _, forward = st.columns([1, 5, 1])
+
+    if back.button("<-  Go to previous week"):
+        set_deeplink(
+            CompareWeekState(
+                agreement_id=state.agreement_id,
+                year=state.year,
+                week=state.week - 1,
+            ),
+        )
+    if forward.button("Go to next week  ->"):
+        set_deeplink(
+            CompareWeekState(
+                agreement_id=state.agreement_id,
+                year=state.year,
+                week=state.week + 1,
+            ),
+        )
+
+    run_config = RunConfig()
+
+    with st.spinner("Loading Customer data..."):
+        customers = await cache_awaitable(
+            f"customer_{state.agreement_id}",
+            customer_information([state.agreement_id]),
+        )
+
+        if customers.empty:
+            st.error(f"Could not find customer with agreement id {state.agreement_id}")
+            return
+
+        customer = PreselectorCustomer(**customers.iloc[0].to_dict())
+
+    year = state.year
+    week = state.week
+
+    st.write(
+        f"Creating a menu with {customer.number_of_recipes} recipes and {customer.portion_size} portions",
+    )
+
+    def to_next_week() -> None:
+        set_deeplink(
+            CompareWeekState(
+                agreement_id=customer.agreement_id,
+                year=year,
+                week=week + 1,
+            ),
+        )
+
+    def view_results() -> None:
+        current_date = date.today() + timedelta(weeks=1)
+        current_year = current_date.isocalendar()[0]
+        current_week = current_date.isocalendar()[1]
+
+        year_weeks = []
+
+        while year != current_year or week != current_week:
+            year_weeks.append((current_year, current_week))
+            current_date = current_date + timedelta(weeks=1)
+            current_year = current_date.isocalendar()[0]
+            current_week = current_date.isocalendar()[1]
+
+        st.info("Showing results.")
+
+        set_deeplink(
+            ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
+        )
+
+    if st.button("Skip weeks and view results"):
+        view_results()
+
+    with st.spinner("Loading recommendation data..."):
+        recommendations = await load_recommendations(
+            agreement_id=customer.agreement_id,
+            year=year,
+            week=week,
+            db_config=adb,
+        )
+
+    if recommendations.empty:
+        current_date = date.today() + timedelta(weeks=1)
+        current_year = current_date.isocalendar()[0]
+        current_week = current_date.isocalendar()[1]
+
+        year_weeks = []
+
+        while year != current_year or week != current_week:
+            year_weeks.append((current_year, current_week))
+            current_date = current_date + timedelta(weeks=1)
+            current_year = current_date.isocalendar()[0]
+            current_week = current_date.isocalendar()[1]
+
+        if len(year_weeks) == 0:
+            to_next_week()
+
+        st.info("No recommendations found for this week. Showing results.")
+
+        set_deeplink(
+            ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
+        )
+
+    with st.spinner("Loading Meny data..."):
+        menu = await load_menu_for(customer.company_id, year, week, adb)
+
+    df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
+        "main_recipe_id",
+    )
+
+    with st.spinner("Running preselector..."):
+        preselector_result = run_preselector_for(
+            customer=customer,
+            run_config=run_config,
+            df_flex_products=df_flex_products,
+            df_recommendations=recommendations,
+        )
+
+    if isinstance(preselector_result, Exception):
+        st.error(
+            f"An error occurred when running the pre-selector: {preselector_result}",
+        )
+        to_next_week()
+
+    if len(preselector_result.main_recipe_ids) == 0:
+        st.error("No recipes found for the preselector.")
+        to_next_week()
+
+    with st.spinner("Fetching chef's selection..."):
+        cache_key = f"mealselector_{customer.model_dump_json()}_{year}_{week}"
+
+        mealselector_result = read_cache(cache_key)
+
+        def set_api_token(token: str) -> None:
+            set_cache("mealselector_token", token)
+
+        if not mealselector_result:
+            mealselector_result = await run_mealselector(
+                customer,
+                year,
+                week,
+                menu,
+                token=read_cache("mealselector_token"),
+                on_new_token=set_api_token,
+            )
+            set_cache(cache_key, mealselector_result)
+
+    if isinstance(mealselector_result, Exception) or not mealselector_result:
+        st.error(
+            f"An error occurred when fetching the chef-selection: {mealselector_result}",
+        )
+        # to_next_week()
+        return
+
+    if len(mealselector_result) == 0:
+        st.info("No recipes found for the mealselector")
+        to_next_week()
+
+    with st.spinner("Loading recipe information..."):
+        pre_selector_recipe_info = await cached_recipe_info(
+            main_recipe_ids=preselector_result.main_recipe_ids,
+            year=year,
+            week=week,
+        )
+        other_recipe_info = await cached_recipe_info(
+            main_recipe_ids=mealselector_result,
+            year=year,
+            week=week,
+        )
+
+    choices = {"P": pre_selector_recipe_info, "M": other_recipe_info}
+
+    # Needed to make sure the random selection is the same when navigating
+    seed(100 * year + week + customer.agreement_id * 1000)
+    first_choice = choice(list(choices.keys()))
+
+    if first_choice == "P":
+        infos = [
+            ("pre-selector", pre_selector_recipe_info),
+            ("chef-selection", other_recipe_info),
+        ]
+    else:
+        infos = [
+            ("chef-selection", other_recipe_info),
+            ("pre-selector", pre_selector_recipe_info),
+        ]
+
+    left, right = st.columns(2)
+
+    left = left.container(border=True)
+    left.header("Mealkit A")
+    mealkit(infos[0][1], left)
+
+    right = right.container(border=True)
+    right.header("Mealkit B")
+    mealkit(infos[1][1], right)
+
+    left.markdown("---")
+    right.markdown("---")
+
+    change_a = left.radio(
+        "Optional - How many would you change in A?",
+        options=list(range(len(infos[0][1]) + 1)),
+        index=None,
+    )
+    change_b = right.radio(
+        "Optional - How many would you change in B?",
+        options=list(range(len(infos[0][1]) + 1)),
+        index=None,
+    )
+
+    # if change_a is None or change_b is None:
+
+    # if change_a == change_b:
+    if left.button("I choose mealkit A"):
+        set_deeplink(
+            ExplainSelectionState(
+                agreement_id=customer.agreement_id,
+                year=year,
+                week=week,
+                selected_create=infos[0][0],
+                selected_recipe_ids=infos[0][1]["main_recipe_id"].tolist(),
+                other_recipe_ids=infos[1][1]["main_recipe_id"].tolist(),
+                selected_number_of_changes=int(change_a) if change_a else None,
+                other_number_of_changes=int(change_b) if change_b else None,
+            ),
+        )
+
+    if right.button("I choose mealkit B"):
+        set_deeplink(
+            ExplainSelectionState(
+                agreement_id=customer.agreement_id,
+                year=year,
+                week=week,
+                selected_create=infos[1][0],
+                selected_recipe_ids=infos[1][1]["main_recipe_id"].tolist(),
+                other_recipe_ids=infos[0][1]["main_recipe_id"].tolist(),
+                selected_number_of_changes=int(change_b) if change_b else None,
+                other_number_of_changes=int(change_a) if change_a else None,
+            ),
+        )
+    #
+    #     set_deeplink(
+    #         ExplainSelectionState(
+    #

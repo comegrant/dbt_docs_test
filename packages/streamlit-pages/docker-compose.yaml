@@ -1,0 +1,33 @@
+version: '3'
+services:
+  streamlit-pages-test:
+    build:
+      context: ../../
+      dockerfile: packages/streamlit-pages/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/streamlit-pages
+    profiles: ["test"]
+
+
+  streamlit-single-page-example:
+    build:
+      context: ../../
+      dockerfile: packages/streamlit-pages/Dockerfile
+    command: ["python", "-m", "streamlit", "run", "app.py"]
+    working_dir: "/opt/packages/streamlit-pages/example/single-page"
+    volumes:
+      - ./:/opt/packages/streamlit-pages
+    ports:
+      - 8502:8501
+
+  streamlit-multi-page-example:
+    build:
+      context: ../../
+      dockerfile: packages/streamlit-pages/Dockerfile
+    command: ["python", "-m", "streamlit", "run", "app.py"]
+    working_dir: "/opt/packages/streamlit-pages/example/multi-page"
+    volumes:
+      - ./:/opt/packages/streamlit-pages
+    ports:
+      - 8503:8501

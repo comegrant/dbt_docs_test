@@ -17,7 +17,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 
 [tool.ruff]
-select = [
+lint.select = [
     "E",    # pycodestyle
     "F",    # pyflakes
     "W",    # pycodestyle (warnings)
@@ -41,10 +41,12 @@ select = [
     "RUF",  # ruff specific rules
     "PL",   # pylint
 ]
-ignore = [
+lint.ignore = [
     "ANN101", # Missing type annotation for self in method
     "ANN204", # Missing type annotation for special method
-    "UP017"
+    "UP017",
+    "DTZ011", # Use of `datetime.now` without timezone
 ]
+lint.pylint.max-args = 6
 line-length = 120
 target-version = "py311"
