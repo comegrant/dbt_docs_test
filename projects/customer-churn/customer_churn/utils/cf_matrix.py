@@ -73,9 +73,15 @@ def make_confusion_matrix(
     # CODE TO GENERATE TEXT INSIDE EACH SQUARE
     blanks = ["" for i in range(cf.size)]
 
-    group_labels = [f"{value}\n" for value in group_names] if group_names and len(group_names) == cf.size else blanks
+    group_labels = (
+        [f"{value}\n" for value in group_names]
+        if group_names and len(group_names) == cf.size
+        else blanks
+    )
     group_counts = [f"{value:0.0f}\n" for value in cf.flatten()] if COUNT else blanks
-    group_percentages = [f"{value:.2%}" for value in cf.flatten() / np.sum(cf)] if PERCENT else blanks
+    group_percentages = (
+        [f"{value:.2%}" for value in cf.flatten() / np.sum(cf)] if PERCENT else blanks
+    )
 
     box_labels = [
         f"{v1}{v2}{v3}".strip()
@@ -99,12 +105,11 @@ def make_confusion_matrix(
             precision = cf[1, 1] / sum(cf[:, 1])
             recall = cf[1, 1] / sum(cf[1, :])
             f1_score = 2 * precision * recall / (precision + recall)
-            stats_text = "\n\nAccuracy={:0.3f}\nPrecision={:0.3f}\nRecall={:0.3f}\nF1 Score={:0.3f}".format(
-                accuracy,
-                precision,
-                recall,
-                f1_score,
-            )
+            stats_text = f"""
+                          \n\nAccuracy={accuracy:0.3f}
+                          \nPrecision={precision:0.3f}
+                          \nRecall={recall:0.3f}
+                          \nF1 Score={f1_score:0.3f}"""
         else:
             stats_text = f"\n\nAccuracy={accuracy:0.3f}"
     else:

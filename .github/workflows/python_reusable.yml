@@ -57,7 +57,7 @@ jobs:
 
       - name: Typecheck
         run: |
-          poetry run ruff .
+          poetry run ruff check .
 
       - name: Test
         run: |
