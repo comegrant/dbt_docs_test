@@ -26,6 +26,7 @@ pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true
 chef = {path = "../../packages/chef", develop = true}
 jupyter = "^1.0.0"
 pytest = "^8.0.2"
+ruff = "*"
 
 [build-system]
 requires = ["poetry-core"]
