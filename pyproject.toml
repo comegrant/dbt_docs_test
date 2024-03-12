@@ -46,6 +46,6 @@ lint.ignore = [
     "ANN204", # Missing type annotation for special method
     "DTZ011", # Use of `datetime.now` without timezone
 ]
-lint.pylint.max-args = 6
+lint.pylint.max-args = 7
 line-length = 120
 target-version = "py311"

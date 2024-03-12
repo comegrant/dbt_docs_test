@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  customer_churn:
+    build:
+      context: ../../
+      dockerfile: projects/customer_churn/Dockerfile
+    command: ["echo", "'Hello from customer_churn'"]
+    volumes:
+      - ./:/opt/projects/customer_churn
+      - ./../../packages:/opt/packages
+    profiles: ["base", "app"]
+
+  customer_churn-app:
+    build:
+      context: ../../
+      dockerfile: projects/customer_churn/Dockerfile
+    volumes:
+      - ./:/opt/projects/customer_churn
+      - ./../../packages:/opt/packages
+    command: ["python", "-m", "streamlit", "run", "app.py"]
+    ports:
+      - 8501:8501
+    depends_on:
+      - customer_churn
+    profiles: ["app"]
+
+  customer_churn-test:
+    build:
+      context: ../../
+      dockerfile: projects/customer_churn/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/customer_churn
+      - ./../../packages:/opt/packages
+    depends_on:
+      - customer_churn
+    profiles: ["test"]

@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "customer_churn"
+version = "0.1.0"
+description = "A Python project by Cheffelo."
+authors = ["Thomas Sve <thomas.sve@cheffelo.com>"]
+packages = [{include = "customer_churn"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic-settings = "^2.1.0"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+lmkgroup-ds-utils = {path = "../../packages/lmkgroup-ds-utils", develop = true, extras = ["datalake", "msdb"]}
+pyyaml = "^6.0.1"
+pytest = "^8.0.2"
+seaborn = "^0.13.2"
+scikit-learn = "^1.4.1.post1"
+psycopg2 = "^2.9.9"
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.30.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+chef = {path = "../../packages/chef", develop = true}
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
