@@ -61,4 +61,4 @@ jobs:
 
       - name: Test
         run: |
-          python3 -m pytest tests/  # Assume that tests are in folder "tests/"
+          poetry run python -m pytest tests/  # Assume that tests are in folder "tests/"
