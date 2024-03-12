@@ -48,7 +48,7 @@ jobs:
             ${{ inputs.working-directory }}/poetry.lock
 
       - name: Install Python packages
-        run: poetry install --with test
+        run: poetry install --with dev
 
       - name: Install extra packages
         if: ${{ inputs.install-packages != ''}}
