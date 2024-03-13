@@ -34,6 +34,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create dummy env file
+        run: touch ../../.env
+
       - name: Build docker images
         run: docker-compose -f docker-compose.yaml build ${{ inputs.base-service }}
 
