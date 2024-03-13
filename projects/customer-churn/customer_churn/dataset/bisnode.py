@@ -3,21 +3,20 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from lmkgroup_ds_utils.db.connector import DB
 
 from customer_churn.paths import SQL_DIR
+
+from .base import Dataset
 
 logger = logging.getLogger(__name__)
 
 
-class Bisnode:
-    def __init__(self, company_id: str, db: DB, model_training: bool = False):
-        self.company_id = company_id
-        self.db = db
-        self.df = pd.DataFrame()
-        self.model_training = model_training
+class Bisnode(Dataset):
+    def __init__(self, **kwargs: int):
+        super().__init__(**kwargs)
+        self.datetime_columns = ["created_at"]
+        self.entity_columns = ["agreement_id"]
         self.feature_columns = [
-            "agreement_id",
             "impulsiveness",
             "created_at",
             "cultural_class",
@@ -29,6 +28,9 @@ class Bisnode:
             "type_of_housing",
             "confidence_level",
         ]
+        self.columns_out = self.entity_columns + self.feature_columns
+
+        self.df = self.load()
 
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get bisnode data from database...")
@@ -36,7 +38,7 @@ class Bisnode:
             bisnode = self.db.read_data(f.read().format(company_id=self.company_id))
         return bisnode
 
-    def load(self, reload_data: bool = False) -> None:
+    def load(self) -> None:
         """Get bisnode data for company
 
         Args:
@@ -44,13 +46,14 @@ class Bisnode:
             db (DB): database connection
         """
 
-        if self.df.empty or reload_data:
-            self.df = self.read_from_db()
+        df = self.read_from_file() if self.input_file else self.read_from_db()
 
-        self.df["children_probability"] = self.df[["probability_children_0_to_6", "probability_children_7_to_17"]].max(
+        df["children_probability"] = df[
+            ["probability_children_0_to_6", "probability_children_7_to_17"]
+        ].max(
             axis=1,
         )
-        self.df = self.df[self.feature_columns].dropna()
+        df = df[self.columns_out].dropna()
 
         for col in [
             "cultural_class",
@@ -60,7 +63,14 @@ class Bisnode:
             "type_of_housing",
             "confidence_level",
         ]:
-            self.df[col] = self.df[col].str.replace(" ", "", regex=True).str.replace(".", "_", regex=True).str.lower()
+            df[col] = (
+                df[col]
+                .str.replace(" ", "", regex=True)
+                .str.replace(".", "_", regex=True)
+                .str.lower()
+            )
+
+        return df
 
     def get_for_date(self, snapshot_date: datetime) -> pd.DataFrame:
         """
@@ -76,6 +86,9 @@ class Bisnode:
 
     def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
         snapshot_df = self.get_for_date(snapshot_date)
+
+        if snapshot_df.empty:
+            return snapshot_df
 
         diff = snapshot_df.created_at - pd.to_datetime(snapshot_date)
         df_min = diff.abs().groupby(snapshot_df["agreement_id"]).idxmin()

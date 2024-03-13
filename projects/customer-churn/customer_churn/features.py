@@ -3,11 +3,14 @@
 import logging
 import time
 from datetime import datetime
+from functools import reduce
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from customer_churn.config import PREP_CONFIG
 from customer_churn.constants import LABEL_TEXT_CHURNED, LABEL_TEXT_DELETED, CompanyID
 from customer_churn.dataset.bisnode import Bisnode
 from customer_churn.dataset.complaints import Complaints
@@ -26,78 +29,110 @@ class Features:
 
     def __init__(
         self,
-        config: str,
+        company_id: str,
         out_dir: str = "",
-        save_snapshot: bool | None = None,
+        save_snapshot: bool = False,
+        model_training: bool = False,
+        prep_config: dict = PREP_CONFIG,
     ) -> None:
         """
         :param config: config_input_files i.e. just the path to the source files but not the content
         """
-        self.config = config
-        self.feature_set = [
-            Customers(self.config["input_files"]["customers"]),
-            Events(self.config["input_files"]["events"]),
-            Orders(self.config["input_files"]["orders"]),
-            CRMSegments(self.config["input_files"]["crm_segments"]),
-            Complaints(self.config["input_files"]["complaints"]),
-            Bisnode(self.config["input_files"]["bisnode"]),
-        ]
+        self.feature_set = self._get_feature_set(
+            company_id,
+            model_training,
+            prep_config["snapshot"],
+            prep_config["input_files"],
+        )
         self.save_snapshot = save_snapshot
         self.out_dir = out_dir
+        self.buy_history_churn_weeks = prep_config["snapshot"].get(
+            "buy_history_churn_weeks",
+            4,
+        )
+        self.model_training = model_training
+
+    def _get_feature_set(
+        self,
+        company_id: str,
+        model_training: bool,
+        snapshot_config: dict,
+        input_files: dict,
+    ) -> list:
+        return [
+            Customers(
+                company_id=company_id,
+                model_training=model_training,
+                onboarding_weeks=snapshot_config.get("onboarding_weeks", 12),
+                input_file=input_files.get("customers"),
+            ),
+            Events(
+                company_id=company_id,
+                model_training=model_training,
+                forecast_weeks=snapshot_config.get("forecast_weeks", 4),
+                events_last_n_weeks=snapshot_config.get("events_last_n_weeks", 4),
+                average_last_n_weeks=snapshot_config.get("average_last_n_weeks", 10),
+                input_file=input_files.get("events"),
+            ),
+            Orders(
+                company_id=company_id,
+                model_training=model_training,
+                input_file=input_files.get("orders"),
+            ),
+            CRMSegments(
+                company_id=company_id,
+                model_training=model_training,
+                input_file=input_files.get("crm_segments"),
+            ),
+            Complaints(
+                company_id=company_id,
+                model_training=model_training,
+                input_file=input_files.get("complaints"),
+                complaints_last_n_weeks=snapshot_config.get("complaints_last_n_weeks"),
+            ),
+            Bisnode(
+                company_id=company_id,
+                model_training=model_training,
+                input_file=input_files.get("bisnode"),
+            ),
+        ]
 
     def get_snapshot_features_for_date(
         self,
         snapshot_date: str,
-        forecast_weeks: int = 4,
-        buy_history_churn_weeks: int = 4,
-        model_training: bool = False,
         customer_id: str | None = None,
     ) -> None | pd.DataFrame:
         """
         :param customer: Customer DataFrame (single customer)
         :param snapshot_date: snapshot data
-        :param df_events: Events DataFrame
-        :param df_orders: Orders DataFrame
-        :param forecast_weeks: Number of forecast weeks
-        :param buy_history_churn_weeks:
-            Set customer status to churned if customer didn't make any orders within this period
-        :param model_training: Prepare dataset with future features (used for model training)
         :return: None or Merged snapshot from events, orders and customer dataset for given snapshot date
         """
 
         if customer_id:
-            raise NotImplementedError("Features for single customer not implemented yet")
+            raise NotImplementedError(
+                "Features for single customer not implemented yet",
+            )
 
-        snapshot_features = self._get_features(
-            snapshot_date=snapshot_date,
-            forecast_weeks=forecast_weeks,
-            model_training=model_training,
-        )
+        snapshot_features = self._get_features(snapshot_date=snapshot_date)
+        snapshot_features_with_labels = self._add_labels(df=snapshot_features)
 
-        snapshot_features = snapshot_features.apply(
-            lambda agreement: self._get_label_for_agreement(agreement, buy_history_churn_weeks, model_training),
-        )
+        return snapshot_features_with_labels
 
-        return snapshot_features
-
-    def generate_features(self, model_training: bool = False) -> list:
+    def generate_features(self) -> list:
         logger.info("Starting with preperation of features...")
 
-        _forecast_weeks = self.config["snapshot"]["forecast_weeks"]
-        _buy_history_churn_weeks = self.config["snapshot"]["buy_history_churn_weeks"]
-        _output_dir = self.config["output_dir"]
+        _forecast_weeks = PREP_CONFIG["snapshot"]["forecast_weeks"]
+        _buy_history_churn_weeks = PREP_CONFIG["snapshot"]["buy_history_churn_weeks"]
+        _output_dir = PREP_CONFIG["output_dir"]
         _output_file_prefix = "snapshot_"
 
         snapshot_dates = self._get_snapshot_dates_based_on_company(
-            self.config["snapshot"]["start_date"],
-            self.config["snapshot"]["end_date"],
-            self.config["company_id"],
+            PREP_CONFIG["snapshot"]["start_date"],
+            PREP_CONFIG["snapshot"]["end_date"],
+            PREP_CONFIG["company_id"],
         )
 
         assert len(snapshot_dates) >= 1
-
-        # Load datasets
-        self._load_datasets()
 
         snap_list = []
 
@@ -109,7 +144,12 @@ class Features:
                 f"Getting snapshot for: {snapshot_date}",
             )
 
-            out_file = _output_dir + _output_file_prefix + snapshot_date.replace("-", "") + ".csv"
+            out_file = (
+                _output_dir
+                + _output_file_prefix
+                + snapshot_date.replace("-", "")
+                + ".csv"
+            )
             snap_list.append(out_file)
 
             logger.info(f"Output file: {out_file}")
@@ -119,7 +159,6 @@ class Features:
                 snapshot_date=snapshot_date,
                 forecast_weeks=_forecast_weeks,
                 buy_history_churn_weeks=_buy_history_churn_weeks,
-                model_training=model_training,
             )
 
             with Path.open(out_file, "a") as f:
@@ -127,7 +166,9 @@ class Features:
 
             snapshot_dt_end = time.time()
             logger.info(
-                "Snapshot done in " + str(int(snapshot_dt_end - snapshot_dt_start)) + " (sec)",
+                "Snapshot done in "
+                + str(int(snapshot_dt_end - snapshot_dt_start))
+                + " (sec)",
             )
 
             if self.save_snapshot is not None:
@@ -168,29 +209,42 @@ class Features:
         for dataset in self.feature_set:
             dataset.load()
 
-    def _get_features(self, snapshot_date: datetime, forecast_weeks: int) -> pd.DataFrame:
-        logger.info("Generating features for snapshot...")
+    def _get_features(self, snapshot_date: datetime) -> pd.DataFrame:
+        logger.info("Generating features from date " + str(snapshot_date))
         features = []
         for cls in self.feature_set:
-            features.append(cls.get_features_for_snapshot(snapshot_date, forecast_weeks))
+            logger.info(f"Generating features for {cls.__class__.__name__}...")
+            f = cls.get_features_for_snapshot(snapshot_date)
+            if f.empty:
+                continue
+            features.append(f)
 
-        df = pd.concat(features)
+        logger.info("Merging features...")
+        df = reduce(
+            lambda left, right: pd.merge(left, right, on="agreement_id"),
+            features,
+        )
+
+        logging.info(df)
 
         return df
 
-    def _get_label_for_agreement(
+    def _add_labels(
         self,
         df: pd.DataFrame,
-        buy_history_churn_weeks: int,
-        model_training: bool,
     ) -> pd.DataFrame:
+        # TODO: Refactor to be all customers in groupby instead of pr customer
         logger.info("Processing labels...")
-        if model_training:
+        if self.model_training:
+            df["forecast_status"] = np.where(
+                df["number_of_forecast_orders"] == 0,
+                LABEL_TEXT_CHURNED,
+            )
             # Setting status 'churned'
             if df.iloc[0]["number_of_forecast_orders"] == 0:
                 df["forecast_status"] = LABEL_TEXT_CHURNED
             if (
-                df.iloc[0]["weeks_since_last_delivery"] > buy_history_churn_weeks
+                df.iloc[0]["weeks_since_last_delivery"] > self.buy_history_churn_weeks
                 and df.iloc[0]["number_of_forecast_orders"] == 0
                 and df.iloc[0]["number_of_total_orders"] == 0
             ):
@@ -198,7 +252,7 @@ class Features:
             df.drop(["number_of_forecast_orders"], inplace=True, axis=1)
         else:  # When model_training is False
             if (
-                df.iloc[0]["weeks_since_last_delivery"] > buy_history_churn_weeks
+                df.iloc[0]["weeks_since_last_delivery"] > self.buy_history_churn_weeks
                 and df.iloc[0]["number_of_total_orders"] == 0
             ):
                 df["snapshot_status"] = LABEL_TEXT_CHURNED
@@ -217,10 +271,8 @@ class Features:
     def generate_features_for_customer(self, customer_id: int) -> pd.DataFrame:
         logger.info(f"Generating features for single customer {customer_id}")
 
-        _snapshot_date_start = self.config["snapshot"]["start_date"]
-        _snapshot_date_end = self.config["snapshot"]["end_date"]
-        _forecast_weeks = self.config["snapshot"]["forecast_weeks"]
-        _buy_history_churn_weeks = self.config["snapshot"]["buy_history_churn_weeks"]
+        _snapshot_date_start = PREP_CONFIG["snapshot"]["start_date"]
+        _snapshot_date_end = PREP_CONFIG["snapshot"]["end_date"]
 
         snapshot_date = (
             pd.date_range(
@@ -232,11 +284,12 @@ class Features:
             .tolist()[-1]
         )
 
-        self._load_datasets()
-
         df_snapshot_cust = self.customers.get_for_date(snapshot_date=snapshot_date)
         logger.info(
-            "Getting snapshot for: " + snapshot_date + ", total customers: " + str(df_snapshot_cust.shape[0]),
+            "Getting snapshot for: "
+            + snapshot_date
+            + ", total customers: "
+            + str(df_snapshot_cust.shape[0]),
         )
 
         df_snapshot_cust.reset_index(inplace=True)
@@ -245,9 +298,6 @@ class Features:
         if not customer.empty:
             customer_snapshot = self.get_snapshot_features_for_date(
                 snapshot_date=snapshot_date,
-                forecast_weeks=_forecast_weeks,
-                buy_history_churn_weeks=_buy_history_churn_weeks,
-                model_training=False,
                 customer_id=customer_id,
             )
             return customer_snapshot

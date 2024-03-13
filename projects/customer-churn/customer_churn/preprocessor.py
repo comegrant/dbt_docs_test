@@ -60,19 +60,24 @@ class Preprocessor:
 
         # Remove customers that already churned or have -1 weeks_since_last_delivery
         logger.info(
-            "Dataset size before weeks_since_last_delivery delete: " + str(df_prep.shape[0]),
+            "Dataset size before weeks_since_last_delivery delete: "
+            + str(df_prep.shape[0]),
         )
         df_prep.weeks_since_last_delivery = df_prep.weeks_since_last_delivery.astype(
             int,
         )  # Adding this as the next line breaks otherwise
-        df_prep = df_prep[df_prep["weeks_since_last_delivery"] < no_delivery_churned_weeks]
+        df_prep = df_prep[
+            df_prep["weeks_since_last_delivery"] < no_delivery_churned_weeks
+        ]
         logger.info(
-            "Dataset size after weeks_since_last_delivery delete: " + str(df_prep.shape[0]),
+            "Dataset size after weeks_since_last_delivery delete: "
+            + str(df_prep.shape[0]),
         )
 
         df_prep = df_prep[df_prep.weeks_since_last_delivery >= 0]
         logger.info(
-            "Dataset size after removing -1 weeks_since_last_delivery: " + str(df_prep.shape[0]),
+            "Dataset size after removing -1 weeks_since_last_delivery: "
+            + str(df_prep.shape[0]),
         )  # Basically all entries containing '-1' as value
 
         # Fill 0 to complaints.category (customers that had no complaints)

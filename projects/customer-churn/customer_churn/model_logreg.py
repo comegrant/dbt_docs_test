@@ -27,10 +27,19 @@ class ModelLogReg(Model):
     PREDICTION_LABEL: ClassVar[list[str]] = ["forecast_status"]
     CUSTOMER_ID_LABEL: str = "agreement_id"
 
-    TRAINING_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
-    PREDICTION_FETURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
+    TRAINING_FEATURES: ClassVar[list[str]] = (
+        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
+    )
+    PREDICTION_FETURES: ClassVar[list[str]] = (
+        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
+    )
 
-    def __init__(self, data: pd.DataFrame, config: dict, probability_threshold: float = 0.3):
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        config: dict,
+        probability_threshold: float = 0.3,
+    ):
         """
         :param data: Pandas Dataframe (merged dataset coming from gen.py)
         :probability_threshold: Probability threshold for model estimator
@@ -47,7 +56,11 @@ class ModelLogReg(Model):
         self.df_y_val = None
         self.model = None
 
-    def prep_training(self, validation_split_months: int = 2, num_indeces_drop: int = 10) -> None:
+    def prep_training(
+        self,
+        validation_split_months: int = 2,
+        num_indeces_drop: int = 10,
+    ) -> None:
         """
         Data preprocessing for model training
         :validation_split: Validation split in months
@@ -55,20 +68,25 @@ class ModelLogReg(Model):
         """
         # Check to make sure snapshot_date has right type of data
         # If merging snapshot_* files locally to create full_training_snapshot, then headers can come in the merged file
-        indices_to_drop = self.df[self.df.snapshot_date.str.len() > num_indeces_drop].index
+        indices_to_drop = self.df[
+            self.df.snapshot_date.str.len() > num_indeces_drop
+        ].index
         self.df.drop(indices_to_drop, axis=0, inplace=True)
         self.df["snapshot_date"] = pd.to_datetime(self.df["snapshot_date"])
         max_df_date = self.df.snapshot_date.max()
         dt_from = max_df_date - pd.DateOffset(months=validation_split_months)
         logger.info(
-            "Removing data prior to forecast_weeks. Data size before: " + str(self.df.shape[0]),
+            "Removing data prior to forecast_weeks. Data size before: "
+            + str(self.df.shape[0]),
         )  # Is it forecast weeks or validation_split_months = 2?
         self.df = self.df[self.df["snapshot_date"] <= dt_from]
         logger.info("Data size after: %s" % str(self.df.shape[0]))
 
         validation_split_date = dt_from - pd.DateOffset(months=self.forecast_weeks)
         # Train / Test set
-        logger.info("Train / test dataset with snapshot date <: %s" % validation_split_date)
+        logger.info(
+            "Train / test dataset with snapshot date <: %s" % validation_split_date,
+        )
         self.df_x, self.df_y = Preprocessor().prep_training(
             pd.DataFrame(self.df[self.df.snapshot_date < validation_split_date].copy()),
             self.TRAINING_FEATURES,
@@ -78,7 +96,9 @@ class ModelLogReg(Model):
         )
 
         # Validation set
-        logger.info("Validation dataset with snapshot date >=: %s" % validation_split_date)
+        logger.info(
+            "Validation dataset with snapshot date >=: %s" % validation_split_date,
+        )
         self.df_x_val, self.df_y_val = Preprocessor().prep_training(
             self.df[self.df.snapshot_date >= validation_split_date].copy(),
             self.TRAINING_FEATURES,
@@ -124,7 +144,9 @@ class ModelLogReg(Model):
         self.model.fit(x_train, y_train)
 
         logger.info(f"Training features columns: {x_train.columns!s}")
-        y_val_pred = (self.model.predict_proba(self.df_x_val)[:, 1] >= self.probability_threshold).astype(int)
+        y_val_pred = (
+            self.model.predict_proba(self.df_x_val)[:, 1] >= self.probability_threshold
+        ).astype(int)
 
         precision, recall, fscore, _ = score(self.df_y_val, y_val_pred, average="macro")
         logger.info(f"precision: {precision}")

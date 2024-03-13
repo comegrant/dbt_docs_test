@@ -1,62 +1,53 @@
 import logging
+from pathlib import Path
 
 import pandas as pd
-from customer_churn.dataset.bisnode import Bisnode
-from customer_churn.dataset.complaints import Complaints
-from customer_churn.dataset.crm_segments import CRMSegments
-from customer_churn.dataset.customers import Customers
-from customer_churn.dataset.events import Events
-from customer_churn.dataset.orders import Orders
 from customer_churn.features import Features
+from lmkgroup_ds_utils.constants import Company
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
 
 
+TEST_DATA_DIR = Path("tests/snapshot_test")
+PREP_CONFIG = {
+    "snapshot": {
+        "start_date": "2021-01-01",  # Data snapshot start date
+        "end_date": "2021-11-01",  # Data snapshot end date
+        "forecast_weeks": 4,  # Prediction n-weeks ahead
+        "buy_history_churn_weeks": 4,  # Number of customer weeks to include in data model history
+        "complaints_last_n_weeks": 4,
+        "onboarding_weeks": 12,
+    },
+    "input_files": {
+        "customers": TEST_DATA_DIR / "customers.csv",
+        "events": TEST_DATA_DIR / "events.csv",
+        "orders": TEST_DATA_DIR / "orders.csv",
+        "crm_segments": TEST_DATA_DIR / "crm_segments_cleared.csv",
+        "complaints": TEST_DATA_DIR / "complaints.csv",
+        "bisnode": TEST_DATA_DIR / "bisnode_enrichments.csv",
+    },
+    "output_dir": TEST_DATA_DIR / "processed",  # Output directory
+    "company_id": Company.RN,  # Company ID
+}
+
+
 def test_prep_get_snapshot_case_1() -> None:
     # forecast_status = freezed (changed during prediction period)
-
-    snapshot_date = "2021-10-25"
+    snapshot_date = pd.to_datetime("2021-10-25")
     agreement_id = 112211
-    _forecast_weeks = 4
-    _buy_history_churn_weeks = 4
-    dummy_config = "dummy_config"
-    gen = Features(dummy_config)
 
-    customers = Customers()
-    events = Events()
-    orders = Orders()
-    bisnode = Bisnode()
-    complaints = Complaints()
-    crm = CRMSegments()
-
-    customers.load("src/tests/dataset/snapshot_test2/customers.csv")
-    orders.load("src/tests/dataset/snapshot_test2/orders.csv")
-    bisnode.load("src/tests/dataset/snapshot_test2/bisnode.csv")
-    events.load("src/tests/dataset/snapshot_test2/events.csv")
-    complaints.load("src/tests/dataset/snapshot_test2/complaints.csv")
-    crm.load("src/tests/dataset/snapshot_test2/crm.csv")
-
-    df_snapshot_cust = customers.get_for_date(snapshot_date=snapshot_date)
-    dt_from = pd.to_datetime(snapshot_date) + pd.DateOffset(weeks=_forecast_weeks)
-    df_snapshot_events = events.get_for_date(dt_from)
-    df_snapshot_orders = orders.get_for_date(dt_from)
-    df_snapshot_crm_segments = crm.get_for_date(snapshot_date)
-    df_snapshot_complaints = complaints.get_for_date(snapshot_date)
-    df_snapshot_bisnode = bisnode.get_for_date(snapshot_date)
-
-    customer = df_snapshot_cust[df_snapshot_cust.agreement_id == agreement_id].iloc[0]
-    customer_snapshot = gen.generate_features_for_customer(
-        customer,
-        snapshot_date=snapshot_date,
-        df_events=df_snapshot_events,
-        df_orders=df_snapshot_orders,
-        forecast_weeks=_forecast_weeks,
-        df_complaints=df_snapshot_complaints,
-        df_bisnode=df_snapshot_bisnode,
-        df_crm_segments=df_snapshot_crm_segments,
-        buy_history_churn_weeks=_buy_history_churn_weeks,
-        model_training=True,
+    features = Features(
+        company_id=Company.RN,
+        prep_config=PREP_CONFIG,
     )
 
-    assert customer_snapshot
+    snapshot_features = features.get_snapshot_features_for_date(
+        snapshot_date=snapshot_date,
+    )
+
+    customer_features = snapshot_features[
+        snapshot_features.agreement_id == agreement_id
+    ].iloc[0]
+
+    assert customer_features

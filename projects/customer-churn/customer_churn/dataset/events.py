@@ -1,12 +1,15 @@
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from lmkgroup_ds_utils.constants import Company
-from lmkgroup_ds_utils.db.connector import DB
 
 from customer_churn.paths import SQL_DIR
+
+from .base import Dataset
 
 logger = logging.getLogger(__name__)
 
@@ -52,21 +55,33 @@ SCHEMAS = {
 }
 
 
-class Events:
-    def __init__(self, company_id: str, db: DB, model_training: bool = False):
-        self.company_id = company_id
-        self.db = db
-        self.df = pd.DataFrame()
-        self.model_training = model_training
+class Events(Dataset):
+    def __init__(
+        self,
+        forecast_weeks: int = 4,
+        events_last_n_weeks: int = 4,
+        average_last_n_weeks: int = 10,
+        **kwargs: int,
+    ):
+        super().__init__(**kwargs)
+
+        self.forecast_weeks = forecast_weeks
+        self.events_last_n_weeks = events_last_n_weeks
+        self.average_last_n_weeks = average_last_n_weeks
+        self.feature_columns = []
+        self.datetime_columns = ["timestamp"]
+        self.sql_file = "events.sql"
+
+        self.df = self.load()
 
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get events data from database...")
-        with Path.open(SQL_DIR / "events.sql") as f:
+        with Path.open(SQL_DIR / self.sql_file) as f:
             events = self.db.read_data(f.read().format(SCHEMAS[self.company_id]))
 
         return events
 
-    def load(self, reload_data: bool = False) -> pd.DataFrame:
+    def load(self) -> pd.DataFrame:
         """Get events data for company
 
         Args:
@@ -76,29 +91,51 @@ class Events:
         Returns:
             pd.DataFrame: dataframe of events data
         """
-        if self.df.empty or reload_data:
-            self.df = self.read_from_db()
+        mult = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 
-        self.df["account_event"] = self.df["event_text"].isin(ACCOUNT_MANAGEMENT)
-        self.df["normal_event"] = self.df["event_text"].isin(NORMAL_ACTIVITIES)
-        self.df["status_change"] = self.df["event_text"].isin(STATUS_CHANGE)
+        df = self.read_from_file() if self.input_file else self.read_from_db()
+
+        df["event_text"] = (
+            df["event_text"]
+            .apply(lambda x: mult.sub(r"_\1", x).replace(" ", "_"))
+            .str.lower()
+        )
+
+        df["account_event"] = np.where(
+            df["event_text"].isin(ACCOUNT_MANAGEMENT),
+            True,
+            False,
+        )
+        df["normal_event"] = np.where(
+            df["event_text"].isin(NORMAL_ACTIVITIES),
+            True,
+            False,
+        )
+        df["status_change"] = np.where(
+            df["event_text"].isin(STATUS_CHANGE),
+            True,
+            False,
+        )
+
+        return df
 
     def get_features_for_snapshot(
         self,
         snapshot_date: datetime,
-        forecast_weeks: int = 4,
-        events_last_n_weeks: int = 4,
-        average_last_n_weeks: int = 10,
     ) -> pd.DataFrame:
         if self.df.empty:
             return self.df
 
         # Get data for snapshot
-        snapshot_df = self.df.loc[self.df.delivery_date <= snapshot_date]
+        snapshot_df = self.df.loc[self.df.timestamp <= snapshot_date]
 
-        date_event_last_n_weeks = snapshot_date + pd.DateOffset(weeks=-events_last_n_weeks)
-        date_average_last_n_week = snapshot_date + pd.DateOffset(weeks=-average_last_n_weeks)
-        date_last_week = snapshot_date + +pd.DateOffset(weeks=-1)
+        date_event_last_n_weeks = snapshot_date + pd.DateOffset(
+            weeks=-self.events_last_n_weeks,
+        )
+        date_average_last_n_week = snapshot_date + pd.DateOffset(
+            weeks=-self.average_last_n_weeks,
+        )
+        date_last_week = snapshot_date + pd.DateOffset(weeks=-1)
 
         df_normal_events_features = self.get_features_for_event_type(
             snapshot_df,
@@ -117,23 +154,43 @@ class Events:
         df_status = snapshot_df[snapshot_df["status_change"]]
 
         # Get forecast status
-        forecast_date = snapshot_date + pd.DateOffset(weeks=forecast_weeks)
-        df_forecast_status = self.get_status_at_date(df_status=df_status, date=forecast_date).reset_index(
-            name="forecast_status",
-        )
+        forecast_date = snapshot_date + pd.DateOffset(weeks=self.forecast_weeks)
+        df_forecast_status = self.get_status_at_date(
+            df_status=df_status,
+            date=forecast_date,
+        ).rename("forecast_status")
 
         # Get current status
-        df_current_status = self.get_status_at_date(df_status=df_status, date=snapshot_date).reset_index(
-            name="snapshot_status",
+        df_current_status = self.get_status_at_date(
+            df_status=df_status,
+            date=snapshot_date,
+        ).rename("snapshot_status")
+
+        df_event_features = df_normal_events_features.join(
+            df_account_events_features,
+            on="agreement_id",
+            how="left",
         )
 
-        df_event_features = df_normal_events_features.join(df_account_events_features, on="agreement_id", how="left")
-        df_event_features = df_event_features.join(df_current_status, on="agreement_id", how="left")
-        df_event_features = df_event_features.join(df_forecast_status, on="agreement_id", how="left")
+        df_event_features = df_event_features.join(
+            df_current_status,
+            on="agreement_id",
+            how="left",
+        )
+
+        df_event_features = df_event_features.join(
+            df_forecast_status,
+            on="agreement_id",
+            how="left",
+        )
 
         return df_event_features
 
-    def get_status_at_date(self, df_status: pd.DataFrame, date: datetime) -> pd.DataFrame:
+    def get_status_at_date(
+        self,
+        df_status: pd.DataFrame,
+        date: datetime,
+    ) -> pd.DataFrame:
         """Returns status at date
 
         Args:
@@ -150,7 +207,9 @@ class Events:
         if df.empty:
             return df
 
-        df = df.groupby("agreement_id")["event_text"].apply(lambda x: parse_user_status(x["event_text"].iloc[0]))
+        df = df.groupby("agreement_id")["event_text"].apply(
+            lambda x: parse_user_status(x.iloc[0]),
+        )
         return df
 
     def get_features_for_event_type(
@@ -183,25 +242,50 @@ class Events:
         df_account_last_n_days = (
             df[df.timestamp >= date_last_n_weeks]
             .groupby("agreement_id")
-            .aggregate(number_of_activities_last_N_weeks=pd.NamedAgg(column="timestamp", aggfunc="count"))
+            .aggregate(
+                number_of_activities_last_N_weeks=pd.NamedAgg(
+                    column="timestamp",
+                    aggfunc="count",
+                ),
+            )
         )
         df_activity_current_week = (
             df[df.timestamp >= date_last_week]
             .groupby("agreement_id")
-            .aggregate(number_of_activities_last_week=pd.NamedAgg(column="timestamp", aggfunc="count"))
+            .aggregate(
+                number_of_activities_last_week=pd.NamedAgg(
+                    column="timestamp",
+                    aggfunc="count",
+                ),
+            )
         )
 
         average_activity_difference = (
             df[df.timestamp >= date_average_last_n_week]
             .groupby("agreement_id")
             .aggregate(
-                average_activity_difference=pd.NamedAgg(column="timestamp", aggfunc="count") / date_average_last_n_week,
+                average_activity_difference=pd.NamedAgg(
+                    column="timestamp",
+                    aggfunc="count",
+                ),
             )
-        )
+        ) / self.average_last_n_weeks
 
-        df_agreement_features = df_agreement_features.merge(df_activity_current_week, how="left", on="agreement_id")
-        df_agreement_features = df_agreement_features.merge(average_activity_difference, how="left", on="agreement_id")
-        df_agreement_features = df_agreement_features.merge(df_account_last_n_days, how="left", on="agreement_id")
+        df_agreement_features = df_agreement_features.merge(
+            df_activity_current_week,
+            how="left",
+            on="agreement_id",
+        )
+        df_agreement_features = df_agreement_features.merge(
+            average_activity_difference,
+            how="left",
+            on="agreement_id",
+        )
+        df_agreement_features = df_agreement_features.merge(
+            df_account_last_n_days,
+            how="left",
+            on="agreement_id",
+        )
 
         return df_agreement_features.rename(
             columns={

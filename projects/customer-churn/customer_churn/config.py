@@ -39,6 +39,8 @@ PREP_CONFIG = {
         "end_date": "2021-11-01",  # Data snapshot end date
         "forecast_weeks": 4,  # Prediction n-weeks ahead
         "buy_history_churn_weeks": 4,  # Number of customer weeks to include in data model history
+        "complaints_last_n_weeks": 4,
+        "onboarding_weeks": 12,
     },
     "input_files": {
         "customers": "../data/raw/customers.csv",

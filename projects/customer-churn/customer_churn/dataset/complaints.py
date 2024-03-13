@@ -3,19 +3,33 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from lmkgroup_ds_utils.db.connector import DB
 
 from customer_churn.paths import SQL_DIR
+
+from .base import Dataset
 
 logger = logging.getLogger(__name__)
 
 
-class Complaints:
-    def __init__(self, company_id: str, db: DB, model_training: bool = False):
-        self.company_id = company_id
-        self.db = db
-        self.df = pd.DataFrame()
-        self.model_training = model_training
+class Complaints(Dataset):
+    def __init__(
+        self,
+        complaints_last_n_weeks: int = 4,
+        **kwargs: int,
+    ):
+        super().__init__(**kwargs)
+        self.datetime_columns = []
+        self.feature_columns = [
+            "total_complaints",
+            "weeks_since_last_complaint",
+            "number_of_complaints_last_n_weeks",
+            "category",
+        ]
+        self.entity_columns = ["agreement_id"]
+        self.columns_out = self.entity_columns + self.feature_columns
+        self.complaints_last_n_weeks = complaints_last_n_weeks
+
+        self.df = self.load()
 
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get complaints data from database...")
@@ -23,24 +37,22 @@ class Complaints:
             df = self.db.read_data(f.read().format(company_id=self.company_id))
         return df
 
-    def load(self, reload_data: bool = False) -> None:
-        """Get complaints data for company
+    def load(self) -> None:
+        """Get crm segment data for company
 
         Args:
             company_id (str): company id
             db (DB): database connection
-
-        Returns:
-            pd.DataFrame: dataframe of complaints data
         """
-        if self.df.empty or reload_data:
-            self.df = self.read_from_db()
+        df = self.read_from_file() if self.input_file else self.read_from_db()
 
-        self.df.category = self.df.category.str.lower().replace(" ", "")
-        self.df["delivery_date"] = pd.to_datetime(
-            self.df.delivery_year * 1000 + self.df.delivery_week * 10 + 0,
+        df.category = df.category.str.lower().replace(" ", "")
+        df["delivery_date"] = pd.to_datetime(
+            df.delivery_year * 1000 + df.delivery_week * 10 + 0,
             format="%Y%W%w",
         )
+
+        return df
 
     def get_for_date(self, snapshot_date: datetime) -> pd.DataFrame:
         """
@@ -51,8 +63,11 @@ class Complaints:
             return self.df
         return self.df.loc[self.df.delivery_date <= snapshot_date]
 
-    def get_features_for_snapshot(self, snapshot_date: datetime, complaints_last_n_weeks: int = 4) -> pd.DataFrame:
+    def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
         snapshot_df = self.get_for_date(snapshot_date)
+
+        if self.df.empty:
+            return self.df
 
         # Group by agreement and compute certain features
         agreement_complaints = snapshot_df.groupby("agreement_id").aggregate(
@@ -68,24 +83,24 @@ class Complaints:
 
         # Find number of complaints last n weeks
         agreement_complaints_last_n_weeks = snapshot_df[
-            snapshot_df.delivery_date >= (snapshot_date + pd.DateOffset(weeks=-complaints_last_n_weeks))
+            snapshot_df.delivery_date
+            >= (snapshot_date + pd.DateOffset(weeks=-self.complaints_last_n_weeks))
         ]
-        num_agreements_last_n_weeks = agreement_complaints_last_n_weeks.groupby("agreement_id").aggregate(
+        num_agreements_last_n_weeks = agreement_complaints_last_n_weeks.groupby(
+            "agreement_id",
+        ).aggregate(
             number_of_complaints_last_n_weeks=pd.NamedAgg("agreement_id", "count"),
         )
 
         # Join together number of complaints last n weeks with the other features
-        agreement_complaints = agreement_complaints.join(num_agreements_last_n_weeks, how="left").reset_index()
+        agreement_complaints = agreement_complaints.join(
+            num_agreements_last_n_weeks,
+            how="left",
+        ).reset_index()
         agreement_complaints["number_of_complaints_last_n_weeks"] = (
-            agreement_complaints["number_of_complaints_last_n_weeks"].fillna(0).astype(int)
+            agreement_complaints["number_of_complaints_last_n_weeks"]
+            .fillna(0)
+            .astype(int)
         )
 
-        return agreement_complaints[
-            [
-                "agreement_id",
-                "total_complaints",
-                "weeks_since_last_complaint",
-                "number_of_complaints_last_n_weeks",
-                "category",
-            ]
-        ]
+        return agreement_complaints.set_index("agreement_id")[self.feature_columns]

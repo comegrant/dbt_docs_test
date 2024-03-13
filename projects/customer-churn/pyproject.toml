@@ -14,6 +14,7 @@ pyyaml = "^6.0.1"
 seaborn = "^0.13.2"
 scikit-learn = "^1.4.1.post1"
 psycopg2 = "^2.9.9"
+tqdm = "^4.66.2"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"
@@ -26,6 +27,7 @@ pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true
 chef = {path = "../../packages/chef", develop = true}
 jupyter = "^1.0.0"
 pytest = "^8.0.2"
+pytest-asyncio = "^0.23.5.post1"
 ruff = "*"
 
 [build-system]
