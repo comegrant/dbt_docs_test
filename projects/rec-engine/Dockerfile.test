@@ -1,0 +1,3 @@
+FROM rec-engine-rec-engine:latest
+
+RUN poetry install

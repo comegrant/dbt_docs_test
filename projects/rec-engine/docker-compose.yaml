@@ -28,6 +28,37 @@ services:
       - ../../.env
     profiles: ["app"]
 
+  rec-engine-test:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile.test
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/rec-engine
+      - ./../../packages:/opt/packages
+    depends_on:
+      - rec-engine
+
+
+  rec-engine-catalog:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile.ui
+    command: ["python", "-m", "streamlit", "run", "/app/app.py", "--server.fileWatcherType", "none"]
+    profiles: ["catalog"]
+    ports:
+      - 8000:8501
+    volumes:
+      - ./:/opt/projects/rec-engine
+      - ./catalog_setup.py:/app/custom_store.py
+      - ./mermaid.py:/app/mermiad.py
+      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+    working_dir: "/app"
+
 
   mssql-db:
     platform: linux/amd64

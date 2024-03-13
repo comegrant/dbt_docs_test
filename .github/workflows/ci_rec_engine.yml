@@ -12,7 +12,8 @@ on:
 jobs:
   ci-libs-rec-engine:
     uses:
-      ./.github/workflows/python_reusable.yml
+      ./.github/workflows/test_in_docker.yml
     with:
+      base-service: rec-engine
       working-directory: projects/rec-engine
     secrets: inherit

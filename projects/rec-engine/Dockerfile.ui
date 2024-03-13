@@ -1,0 +1,31 @@
+FROM aligned.azurecr.io/aligned-catalog:latest
+
+# install Poetry
+RUN pip install --no-cache-dir poetry
+
+# set the home directory
+ENV APP_HOME /opt
+ENV SERVICE_HOME $APP_HOME/projects/rec-engine
+
+
+# Installing utils deps
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y g++ make libc6-dev unixodbc-dev libpq-dev curl gnupg2
+
+# copy source code
+WORKDIR $APP_HOME
+COPY packages packages
+
+WORKDIR $SERVICE_HOME
+RUN mkdir -p rec_engine && touch rec_engine/__init__.py
+
+COPY projects/rec-engine/pyproject.toml .
+COPY projects/rec-engine/poetry.lock .
+
+# install requirements
+RUN poetry config virtualenvs.create false
+RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
+RUN pip install polars-lts-cpu
+
+# copy source code
+COPY projects/rec-engine .
