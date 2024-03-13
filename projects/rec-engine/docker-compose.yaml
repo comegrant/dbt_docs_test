@@ -2,6 +2,7 @@ version: '3'
 services:
   rec-engine:
     platform: linux/amd64
+    image: rec-engine-rec-engine
     build:
       context: ../../
       dockerfile: projects/rec-engine/Dockerfile
