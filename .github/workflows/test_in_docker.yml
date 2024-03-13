@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build docker images
-        run: docker-compose -f ${{ inputs.working-directory }}/docker-compose.yaml build ${{ inputs.base-service }}
+        run: docker-compose -f docker-compose.yaml build ${{ inputs.base-service }}
 
       - name: Test
-        run: docker-compose -f ${{ inputs.working-directory }}/docker-compose.yaml run ${{ inputs.base-service }}-test
+        run: docker-compose -f docker-compose.yaml run ${{ inputs.base-service }}-test
