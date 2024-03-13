@@ -8,6 +8,10 @@ on:
         required: true
         type: string
         description: "The docker compose service to build"
+      test-service:
+        required: true
+        type: string
+        description: "The docker compose service to build"
       working-directory:
         required: true
         type: string
@@ -41,4 +45,4 @@ jobs:
         run: docker-compose -f docker-compose.yaml build ${{ inputs.base-service }}
 
       - name: Test
-        run: docker-compose -f docker-compose.yaml run ${{ inputs.base-service }}-test
+        run: docker-compose -f docker-compose.yaml run ${{ inputs.test-service }}

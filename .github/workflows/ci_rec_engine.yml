@@ -4,16 +4,17 @@ name: CI projects/rec-engine
 on:
   pull_request:
     paths:
-      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/test_in_docker.yml'
       - '.github/workflows/ci_rec_engine.yml'
       - 'projects/rec-engine**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  ci-libs-rec-engine:
+  test-rec-engine:
     uses:
       ./.github/workflows/test_in_docker.yml
     with:
       base-service: rec-engine
+      test-service: rec-engine-test
       working-directory: projects/rec-engine
     secrets: inherit
