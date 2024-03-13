@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -9,6 +10,10 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import KernelPCA
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
+
+from rec_engine.logger import Logger
+
+file_logger = logging.getLogger(__name__)
 
 
 def preprocessing_cluster(data: pd.DataFrame) -> pd.DataFrame:
@@ -51,6 +56,7 @@ class ClusterModel:
         self,
         recipes: pd.DataFrame,
         store: FeatureStore,
+        logger: Logger | None = None,
     ) -> pd.DataFrame:
         entities = recipes[["recipe_id", "year", "week"]].drop_duplicates()
         data = await store.model(self.model_contract_name).features_for(entities).to_pandas()
@@ -69,7 +75,10 @@ class ClusterModel:
         data: pd.DataFrame,
         model_contract_name: str,
         model_version: str | None = None,
+        logger: Logger | None = None,
     ) -> "ClusterModel":
+        logger = logger or file_logger
+
         model = Pipeline(
             [
                 ("one-hot-encode", FunctionTransformer(preprocessing_cluster)),
@@ -86,6 +95,9 @@ class ClusterModel:
                 ),
             ],
         )
+
+        logger.info(f"Training Cluster Model with {data.shape[0]} recipes")
+        logger.info(f"Example row:\n\n{data.head(5)}")
         model.fit(data)
 
         return ClusterModel(
@@ -100,7 +112,13 @@ class ClusterModel:
         store: FeatureStore,
         model_contract: str,
         model_version: str | None = None,
+        logger: Logger | None = None,
     ) -> "ClusterModel":
         recipe_features = await store.model(model_contract).features_for(entities).to_pandas()
 
-        return ClusterModel.train(recipe_features, model_contract, model_version)
+        return ClusterModel.train(
+            recipe_features,
+            model_contract,
+            model_version,
+            logger=logger,
+        )

@@ -5,7 +5,9 @@ from aligned import FeatureStore, FileSource
 from aligned.feature_source import BatchFeatureSource
 from aligned.schemas.feature import FeatureLocation
 
-logger = logging.getLogger(__name__)
+from rec_engine.logger import Logger
+
+file_logger: Logger = logging.getLogger(__name__)
 
 
 def use_cache_for_model_inputs(
@@ -32,6 +34,7 @@ def use_local_sources_in(
     store: FeatureStore,
     contracts: list[str],
     write_to_path: str,
+    logger: Logger | None = None,
 ) -> FeatureStore:
     """
     Sets the feature sources to a local dir.
@@ -41,6 +44,8 @@ def use_local_sources_in(
         raise ValueError(
             "Unable to set local sources when the feature source is not a BatchFeatureSource",
         )
+
+    logger = logger or file_logger
 
     sources = store.feature_source
 

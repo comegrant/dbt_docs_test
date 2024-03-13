@@ -46,6 +46,9 @@ lint.ignore = [
     "ANN204", # Missing type annotation for special method
     "UP017",
     "DTZ011", # Use of `datetime.now` without timezone
+    "ARG002", # Unused argument
+    "ARG005", # Unused lambda variable
+    "SIM108", # Enforce turnary expression
 ]
 lint.pylint.max-args = 6
 line-length = 120

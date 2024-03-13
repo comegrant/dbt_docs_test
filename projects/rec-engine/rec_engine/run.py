@@ -12,6 +12,7 @@ from data_contracts.sql_server import SqlServerConfig
 from rec_engine.clustering import ClusterModel
 from rec_engine.content_based import CBModel
 from rec_engine.log_step import log_step
+from rec_engine.logger import Logger
 from rec_engine.model_registry import (
     InMemoryModelRegistry,
     ModelRegistry,
@@ -24,7 +25,7 @@ from rec_engine.update_source import (
     update_view_from_source_if_older_than,
 )
 
-logger = logging.getLogger(__name__)
+file_logger: Logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -67,7 +68,10 @@ async def run(  # noqa: PLR0913, PLR0915
     ratings_view: str = "historical_recipe_orders",
     recipe_rating_contract: str = "user_recipe_likability",
     recipe_cluster_contract: str = "recipe_cluster",
+    logger: Logger | None = None,
 ) -> None:
+    logger = logger or file_logger
+
     if model_regristry is None:
         model_regristry = InMemoryModelRegistry()
 
@@ -80,32 +84,34 @@ async def run(  # noqa: PLR0913, PLR0915
         )
 
     if update_source_threshold:
-        with log_step("Updating model freshness"):
+        with log_step("Updating model freshness", logger=logger):
             model_contracts = [recipe_rating_contract, recipe_cluster_contract]
 
             await update_models_from_source_if_older_than(
                 threshold=update_source_threshold,
                 models=model_contracts,
                 store=store,
+                logger=logger,
             )
 
     if ratings_update_source_threshold:
-        with log_step("Updating ratings view"):
+        with log_step("Updating ratings view", logger=logger):
             views = [ratings_view]
             await update_view_from_source_if_older_than(
                 threshold=ratings_update_source_threshold,
                 views=views,
                 store=store,
+                logger=logger,
             )
 
-    with log_step("Selecting who to train and predict for"):
-        recipe_entities, menus = await select_entities(dataset)
+    with log_step("Selecting who to train and predict for", logger=logger):
+        recipe_entities, menus = await select_entities(dataset, logger=logger)
 
     company_id = "Testing Run"
     if isinstance(dataset, CompanyDataset):
         company_id = dataset.company_id
 
-    with log_step("Training CB Model"):
+    with log_step("Training CB Model", logger=logger):
         model_id = f"{run_id}_{recipe_rating_contract}"
         rating_model = await CBModel.train_using(
             recipe_entities,
@@ -114,10 +120,11 @@ async def run(  # noqa: PLR0913, PLR0915
             ratings_view=ratings_view,
             agreement_ids_subset=agreement_ids_subset,
             model_version=model_id,
+            logger=logger,
         )
         model_regristry.store_model(rating_model, model_id)
 
-    with log_step("Training cluster model"):
+    with log_step("Training cluster model", logger=logger):
         for yearweek in menus["yearweek"].unique():
             weekly_recipes = menus[menus["yearweek"] == yearweek]
 
@@ -127,6 +134,7 @@ async def run(  # noqa: PLR0913, PLR0915
                 store,
                 model_contract=recipe_cluster_contract,
                 model_version=model_id,
+                logger=logger,
             )
             model_regristry.store_model(model, model_id)
 
@@ -134,23 +142,32 @@ async def run(  # noqa: PLR0913, PLR0915
     #     feature_cache_location,
 
     if write_to_path:
-        with log_step(f"Setting sources to local file system {write_to_path}"):
+        with log_step(
+            f"Setting sources to local file system {write_to_path}",
+            logger=logger,
+        ):
             contracts = list(store.models.keys())
-            store = use_local_sources_in(store, contracts, write_to_path)
+            store = use_local_sources_in(store, contracts, write_to_path, logger=logger)
 
-    with log_step("Predict user-recipe likability"):
-        ratings_preds = await rating_model.predict_over(menus, store)
+    with log_step("Predict user-recipe likability", logger=logger):
+        ratings_preds = await rating_model.predict_over(menus, store, logger=logger)
 
-    with log_step(f"Store {ratings_preds.shape[0]} user-recipe likability predictions"):
+    with log_step(
+        f"Store {ratings_preds.shape[0]} user-recipe likability predictions",
+        logger=logger,
+    ):
         logger.info(ratings_preds.head())
         await store.model(rating_model.model_contract_name).insert_predictions(
             ratings_preds,
         )
 
-    with log_step("Predict backup recommendations"):
+    with log_step("Predict backup recommendations", logger=logger):
         backup_recs = backup_recommendations(ratings_preds)
 
-    with log_step(f"Storing {backup_recs.shape[0]} backup recommendations"):
+    with log_step(
+        f"Storing {backup_recs.shape[0]} backup recommendations",
+        logger=logger,
+    ):
         logger.info(backup_recs.head())
         await store.model("backup_recommendations").insert_predictions(backup_recs)
 
@@ -163,19 +180,23 @@ async def run(  # noqa: PLR0913, PLR0915
                 f"Unable to find model with id {model_id} in model registry",
             )
 
-        with log_step("Predict recipe cluster"):
+        with log_step("Predict recipe cluster", logger=logger):
             cluster_preds = await cluster_model.predict_over(
                 menus[menus["yearweek"] == yearweek],
                 store,
+                logger=logger,
             )
 
-        with log_step(f"Storing {cluster_preds.shape[0]} cluster predictions"):
+        with log_step(
+            f"Storing {cluster_preds.shape[0]} cluster predictions",
+            logger=logger,
+        ):
             logger.info(cluster_preds.head())
             await store.model(cluster_model.model_contract_name).insert_predictions(
                 cluster_preds,
             )
 
-    with log_step("Predicting ranking for recipes"):
+    with log_step("Predicting ranking for recipes", logger=logger):
         # Should in theory be the menu recipe ids x agreement ids
         agreement_ids = ratings_preds["agreement_id"].unique()
         menu_per_agreement = menus.loc[menus.index.repeat(agreement_ids.shape[0])]
@@ -188,21 +209,27 @@ async def run(  # noqa: PLR0913, PLR0915
         recipes_to_rank = await rec_store.features_for(
             recipes_to_rank_entities,
         ).to_pandas()
-        ranking = predict_rankings(recipes_to_rank, menus)
+        ranking = predict_rankings(recipes_to_rank, menus, logger=logger)
         ranking["company_id"] = company_id
 
-    with log_step(f"Writing {ranking.shape[0]} rankings for point in time storage"):
+    with log_step(
+        f"Writing {ranking.shape[0]} rankings for point in time storage",
+        logger=logger,
+    ):
         logger.info(ranking.head())
         await rec_store.insert_predictions(ranking)
 
     if write_to_path is None and rec_store.model.predictions_view.application_source:
-        with log_step(f"Writing {ranking.shape[0]} rankings to application source"):
+        with log_step(
+            f"Writing {ranking.shape[0]} rankings to application source",
+            logger=logger,
+        ):
             logger.info(ranking.head())
             await rec_store.using_source(
                 rec_store.model.predictions_view.application_source,
             ).upsert_predictions(ranking)
 
-    with log_step("Formatting frontend format"):
+    with log_step("Formatting frontend format", logger=logger):
         formatted_recommendations = format_ranking_recommendations(
             ranking,
             number_of_recommendations_per_week,
@@ -210,7 +237,10 @@ async def run(  # noqa: PLR0913, PLR0915
         formatted_recommendations["run_timestamp"] = datetime.now(tz=timezone.utc)
         formatted_recommendations["company_id"] = company_id
 
-    with log_step(f"Writing {formatted_recommendations.shape[0]} to frontend source"):
+    with log_step(
+        f"Writing {formatted_recommendations.shape[0]} to frontend source",
+        logger=logger,
+    ):
         logger.info(formatted_recommendations.head())
         await store.model("presented_recommendations").upsert_predictions(
             formatted_recommendations,
@@ -250,12 +280,14 @@ def format_ranking_recommendations(
 
 async def select_entities(
     dataset: ManualDataset | CompanyDataset,
+    logger: Logger | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Selects the entities to train and predict over.
     This can either be a manually set of recipe_ids, and the menus to predict over.
     Or it can be dynamically set based on a company constraint.
     """
+    func_logger = logger or file_logger
     recommend_for_entities: RetrivalJob | ConvertableToRetrivalJob
     if isinstance(dataset, CompanyDataset):
         year_week_strings = ", ".join(
@@ -263,6 +295,9 @@ async def select_entities(
         )
         year_week_train_string = ", ".join(
             [str(yw) for yw in dataset.year_weeks_to_train_on],
+        )
+        func_logger.info(
+            f"Using company recipes: {dataset.company_id} and year weeks: {year_week_strings}",
         )
 
         recipes = dataset.db_to_use.fetch(
@@ -317,7 +352,7 @@ WHERE company_id = '{dataset.company_id}'
                 "week": [int(yw % 100) for yw in menus.year_weeks],
             },
         )
-        logger.info(f"Using custom menus: {menu_job}")
+        func_logger.info(f"Using custom menus: {menu_job}")
     else:
         raise ValueError(
             f"Unsupported dataset {type(dataset)} expected either a CompanyDataset, or ManualDataset",

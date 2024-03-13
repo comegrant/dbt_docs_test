@@ -21,6 +21,7 @@ rec_contacts = [
     Contacts.matsmoll().markdown(),
 ]
 
+
 delivered_recipes = HistoricalRecipeOrders()
 
 
@@ -39,18 +40,22 @@ class RecommendatedDish:
     agreement_id = Int32().as_entity()
     year = Int32().as_entity()
     week = Int32().as_entity()
-    product_id = String().as_entity().description("The external menu ID for the recipe")
-
+    product_id = (
+        String()
+        .as_entity()
+        .description(
+            "The external menu ID for the recipe. "
+            "This is what the frontend uses to identify the recipe. "
+            "For a given week, and portion I think.",
+        )
+    )
     predicted_at = EventTimestamp()
-
     company_id = String()
 
     order_of_relevance_cluster = (
         Int32().lower_bound(1)
         # .as_recommendation_target()
-        # .as_recommendation_ranking()
-        # .binary_target(delivered_recipes)
-        # .scalar_target(delivered_recipes.rating)
+        # .estemating_rank(delivered_recipes.rating)
     )
 
 

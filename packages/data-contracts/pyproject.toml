@@ -11,6 +11,10 @@ aligned = "^0.0.74"
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.15.0"
 pyarrow = "^14.0.0"
+pyodbc = {version = "4.0.34", optional = true }
+
+[tool.poetry.extras]
+mssql = ["pyodbc"]
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

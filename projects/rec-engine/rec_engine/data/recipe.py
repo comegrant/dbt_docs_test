@@ -56,22 +56,25 @@ WHERE DATEDIFF(MONTH, dbo.find_first_day_of_week(bao.year, bao.week), GETDATE())
 """
 
 recipe_ingredients_sql = """
-SELECT i.ingredient_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
-FROM pim.ingredients i
-INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
-INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
-WHERE s.supplier_name != 'Basis'
-SELECT recipe_id, all_ingredients, GETDATE() as loaded_at
+SELECT
+    recipe_id,
+    CONCAT('["', STRING_AGG(REPLACE(ingredient_name, '"', ''), '","'), '"]') as all_ingredients,
+    MAX(created_at) as loaded_at
+FROM (
+    SELECT rp.RECIPE_ID as recipe_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
+    FROM pim.RECIPE_PORTIONS rp
+    INNER JOIN pim.PORTIONS p on p.PORTION_ID = rp.PORTION_ID
+    INNER JOIN pim.CHEF_INGREDIENT_SECTIONS cis ON cis.recipe_portion_id = rp.recipe_portion_id
+    INNER JOIN pim.chef_ingredients ci ON ci.chef_ingredient_section_id = cis.chef_ingredient_section_id
+    INNER JOIN pim.order_ingredients oi ON oi.order_ingredient_id = ci.order_ingredient_id
+    INNER JOIN pim.ingredients i on i.ingredient_internal_reference = oi.INGREDIENT_INTERNAL_REFERENCE
+    INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+    INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
+    WHERE rp.CREATED_DATE > '2023-01-01' AND s.supplier_name != 'Basis'
+) as ingredients
+GROUP BY recipe_id
 """
 
-ingredients_sql = """
-SELECT i.ingredient_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
-FROM pim.ingredients i
-INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
-INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
-WHERE s.supplier_name != 'Basis'
-SELECT recipe_id, all_ingredients, GETDATE() as loaded_at
-"""
 
 @feature_view(
     name="recipe_taxonomies",
@@ -86,7 +89,7 @@ class RecipeTaxonomies:
     loaded_at = EventTimestamp()
 
     recipe_taxonomies = String().description(
-        "A list of taxonomies seperated by a ',' char.",
+        "All the taxonomies seperated by a ',' char.",
     )
 
 
@@ -106,7 +109,6 @@ class HistoricalRecipeOrders:
     rating = (Int32().is_optional().lower_bound(0).upper_bound(5)).description(
         "Avoid 0 values, as this can lead to odd predictions.",
     )
-
 
 
 @feature_view(

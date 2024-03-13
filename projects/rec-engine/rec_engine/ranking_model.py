@@ -3,7 +3,9 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+from rec_engine.logger import Logger
+
+file_logger: Logger = logging.getLogger(__name__)
 
 
 def rank_recipes(
@@ -61,8 +63,10 @@ def predict_rankings(
     recipes: pd.DataFrame,
     menus: pd.DataFrame,
     id_column: str = "recipe_id",
+    logger: Logger | None = None,
 ) -> pd.DataFrame:
     rankings: pd.DataFrame | None = None
+    logger = logger or file_logger
 
     for year_week in menus["yearweek"].unique():
         logger.info(f"Predicting recommendation ratings for year week {year_week}")
@@ -84,7 +88,7 @@ def predict_rankings(
         with_product_id["week"] = week
         with_product_id["year"] = int((year_week - week) / 100)
 
-        if rankings is not None:  # noqa: SIM108
+        if rankings is not None:
             rankings = pd.concat([with_product_id, rankings], axis=0)
         else:
             rankings = with_product_id

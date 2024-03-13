@@ -7,7 +7,9 @@ import pandas as pd
 from aligned import FeatureStore
 from aligned.retrival_job import ConvertableToRetrivalJob, RetrivalJob
 
-logger = logging.getLogger(__name__)
+from rec_engine.logger import Logger
+
+file_logger: Logger = logging.getLogger(__name__)
 
 
 def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
@@ -52,7 +54,11 @@ class CBModel:
     model_contract_name: str
     model_version: str
 
-    def predict(self, recipes: pd.DataFrame) -> pd.DataFrame:
+    def predict(
+        self,
+        recipes: pd.DataFrame,
+        logger: Logger | None = None,
+    ) -> pd.DataFrame:
         """
             Predicting for data in given week
             Dot product of matrix 1 (matrix of userIDs with recipe ingredients + taxonomies of trained model)
@@ -63,6 +69,7 @@ class CBModel:
         Returns:
             [DF]: DF contains scores of dishes for each customer
         """
+        logger = logger or file_logger
         if recipes.shape[0] == 0:
             return pd.DataFrame({"agreement_id": [], "recipe_id": [], "score": []})
 
@@ -104,7 +111,9 @@ class CBModel:
         self,
         menu: pd.DataFrame,
         store: FeatureStore,
+        logger: Logger | None = None,
     ) -> pd.DataFrame:
+        logger = logger or file_logger
         model_store = store.model(self.model_contract_name)
         needed_entities = [entity.name for entity in model_store.needed_entities()]
 
@@ -125,7 +134,7 @@ class CBModel:
         predicted_at = datetime.now(tz=timezone.utc)
         recipe_features.index = recipe_features["recipe_id"]
 
-        preds = self.predict(recipe_features)
+        preds = self.predict(recipe_features, logger)
         preds["predicted_at"] = predicted_at
         preds["model_version"] = self.model_version
 
@@ -137,7 +146,10 @@ class CBModel:
         ratings: pd.DataFrame,
         model_contract_name: str,
         model_version: str | None = None,
+        logger: Logger | None = None,
     ) -> "CBModel":
+        logger = logger or file_logger
+
         if not model_version:
             model_version = str(uuid4())
 
@@ -182,14 +194,20 @@ class CBModel:
         ratings_view: str,
         agreement_ids_subset: list[int] | None = None,
         model_version: str | None = None,
+        logger: Logger | None = None,
     ) -> "CBModel":
         from aligned.validation.pandera import PanderaValidator
 
+        logger.info("Loading recipes")
         recipes = await (
             store.model(model_contract_name).features_for(entities).drop_invalid(PanderaValidator()).to_pandas()
         )
+        logger.info(f"Loaded {recipes.shape[0]} recipes")
+        logger.info("Loading recipes")
         ratings = await store.feature_view(ratings_view).all().drop_invalid(PanderaValidator()).to_pandas()
+        logger.info(f"Loaded {ratings.shape[0]} ratings")
 
+        logger.info("Filling in missing ratings")
         mean_recipe_rating = ratings.groupby("recipe_id")["rating"].mean().reset_index()
         ratings["rating"] = (
             ratings["rating"]
@@ -205,6 +223,16 @@ class CBModel:
         )
 
         if agreement_ids_subset:
+            logger.info("Subsetting to only the subset of agreement_ids if given")
             ratings = ratings[ratings["agreement_id"].isin(agreement_ids_subset)]
+        else:
+            logger.info("No subset of agreement_ids given")
 
-        return CBModel.train(recipes, ratings, model_contract_name, model_version)
+        logger.info("Training model")
+        return CBModel.train(
+            recipes,
+            ratings,
+            model_contract_name,
+            model_version,
+            logger=logger,
+        )

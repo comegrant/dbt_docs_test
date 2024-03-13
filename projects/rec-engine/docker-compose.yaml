@@ -1,19 +1,42 @@
 version: '3'
 services:
-  # rec-engine:
-  #   build:
-  #     context: ../../
-  #     dockerfile: projects/rec-engine/Dockerfile
-  #   volumes:
-  #     - ./rec_engine:/opt/projects/rec-engine/rec_engine
+  rec-engine:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile
+    command: ["echo", "'Hello from Rec Engine'"]
+    volumes:
+      - ./rec_engine:/opt/projects/rec-engine/rec_engine
+      - ./../../packages:/opt/packages
+
 
   rec-engine-app:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: projects/rec-engine/Dockerfile
     volumes:
-      # - ./rec_engine:/opt/projects/rec-engine/rec_engine
       - ./:/opt/projects/rec-engine/
-    command: ["python", "-m", "streamlit", "run", "app_ui.py"]
+      - ./../../packages:/opt/packages
+    command: ["python", "-m", "streamlit", "run", "app_ui.py", "--server.fileWatcherType", "poll"]
+    depends_on:
+      - rec-engine
     ports:
       - 8501:8501
+    env_file:
+      - ../../.env
+    profiles: ["app"]
+
+
+  mssql-db:
+    platform: linux/amd64
+    image: mcr.microsoft.com/mssql/server
+  # environments:
+  #   ACCEPT_EULA: "y"
+  # ports:
+  #   - 1432:1433
+  # volumns:
+  #   - ./.mssql_data/data:/var/opt/mssql/data
+  #   - ./.mssql_data/log:/var/opt/mssql/log
+  #   - ./.mssql_data/secrets:/var/opt/mssql/secrets

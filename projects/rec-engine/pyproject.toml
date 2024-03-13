@@ -8,11 +8,13 @@ packages = [{include = "rec_engine"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
-data-contracts = {path = "../../packages/data-contracts", develop = true}
+data-contracts = {path = "../../packages/data-contracts", develop = true, extras = ["mssql"]}
 scikit-learn = "^1.4.0"
 mlflow = "^2.10.1"
-pydantic-form = {path = "../../packages/pydantic-form", develop = true}
 pandera = "^0.18.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+adlfs = "^2024.2.0"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

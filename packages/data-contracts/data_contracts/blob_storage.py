@@ -216,7 +216,7 @@ Path: *{self.path}*
     def storage(self) -> Storage:
         return self.config.storage
 
-    async def to_polars(self) -> pl.LazyFrame:
+    async def to_lazy_polars(self) -> pl.LazyFrame:
         url = f"az://{self.path}"
         return pl.scan_csv(
             url,
@@ -233,10 +233,10 @@ Path: *{self.path}*
                 sep=self.csv_config.seperator,
                 compression=self.csv_config.compression,
             )
-        except FileNotFoundError:
-            raise UnableToFindFileException()
-        except HTTPStatusError:
-            raise UnableToFindFileException()
+        except FileNotFoundError as error:
+            raise UnableToFindFileException() from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException() from error
 
     async def write_pandas(self, df: pd.DataFrame) -> None:
         url = f"az://{self.path}"
@@ -292,20 +292,20 @@ Path: *{self.path}*"""
             data = await self.storage.read(self.path)
             buffer = BytesIO(data)
             return pd.read_parquet(buffer)
-        except FileNotFoundError:
-            raise UnableToFindFileException(self.path)
-        except HTTPStatusError:
-            raise UnableToFindFileException(self.path)
+        except FileNotFoundError as error:
+            raise UnableToFindFileException(self.path) from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException(self.path) from error
 
-    async def to_polars(self) -> pl.LazyFrame:
+    async def to_lazy_polars(self) -> pl.LazyFrame:
         try:
             url = f"az://{self.path}"
             creds = self.config.read_creds()
             return pl.scan_parquet(url, storage_options=creds)
-        except FileNotFoundError:
-            raise UnableToFindFileException(self.path)
-        except HTTPStatusError:
-            raise UnableToFindFileException(self.path)
+        except FileNotFoundError as error:
+            raise UnableToFindFileException(self.path) from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException(self.path) from error
 
     async def write_pandas(self, df: pd.DataFrame) -> None:
         buffer = BytesIO()
@@ -356,10 +356,10 @@ Path: *{self.path}*"""
             url = f"az://{self.path}"
             creds = self.config.read_creds()
             return pl.scan_delta(url, storage_options=creds)
-        except FileNotFoundError:
-            raise UnableToFindFileException()
-        except HTTPStatusError:
-            raise UnableToFindFileException()
+        except FileNotFoundError as error:
+            raise UnableToFindFileException() from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException() from error
 
     def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
         return FileFactualJob(self, [request], facts)
@@ -419,7 +419,7 @@ Path: *{self.path}*"""
 
             raise ValueError(f"Unsupported dtype: {feature.dtype}")
 
-        dtypes = dict(zip(df.columns, df.dtypes))
+        dtypes = dict(zip(df.columns, df.dtypes, strict=False))
         schemas = {}
 
         for request in requests:
@@ -478,7 +478,7 @@ Path: *{self.path}*"""
 
             raise ValueError(f"Unsupported dtype: {feature.dtype}")
 
-        dtypes = dict(zip(df.columns, df.dtypes))
+        dtypes = dict(zip(df.columns, df.dtypes, strict=False))
         schemas = {}
 
         for request in requests:

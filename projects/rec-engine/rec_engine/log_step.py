@@ -4,11 +4,16 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import datetime, timezone
 
-logger = logging.getLogger(__name__)
+from rec_engine.logger import Logger
+
+file_logger = logging.getLogger(__name__)
 
 
 @contextmanager
-def log_step(step_name: str) -> Iterator[None]:
+def log_step(step_name: str, logger: Logger | None = None) -> Iterator[None]:
+    if logger is None:
+        logger = file_logger
+
     if tracemalloc.is_tracing():
         now, max_memory = tracemalloc.get_traced_memory()
         megabytes = 2**20
