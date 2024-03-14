@@ -97,6 +97,12 @@ class Features:
             ),
         ]
 
+    def _get_default_values(self) -> dict:
+        default_values = {}
+        for feature in self.feature_set:
+            default_values.update(feature.get_default_values())
+        return default_values
+
     def get_snapshot_features_for_date(
         self,
         snapshot_date: str,
@@ -215,17 +221,20 @@ class Features:
         for cls in self.feature_set:
             logger.info(f"Generating features for {cls.__class__.__name__}...")
             f = cls.get_features_for_snapshot(snapshot_date)
-            if f.empty:
-                continue
             features.append(f)
 
         logger.info("Merging features...")
         df = reduce(
-            lambda left, right: pd.merge(left, right, on="agreement_id"),
+            lambda left, right: pd.merge(left, right, on="agreement_id", how="outer"),
             features,
         )
 
-        logging.info(df)
+        # date features
+        df["year"] = snapshot_date.year
+        df["month"] = snapshot_date.month
+        df["week"] = snapshot_date.week
+
+        df.fillna(self._get_default_values(), inplace=True)
 
         return df
 
@@ -233,38 +242,38 @@ class Features:
         self,
         df: pd.DataFrame,
     ) -> pd.DataFrame:
-        # TODO: Refactor to be all customers in groupby instead of pr customer
         logger.info("Processing labels...")
         if self.model_training:
+            # Set forecast status
             df["forecast_status"] = np.where(
                 df["number_of_forecast_orders"] == 0,
                 LABEL_TEXT_CHURNED,
+                df["forecast_status"],
             )
             # Setting status 'churned'
-            if df.iloc[0]["number_of_forecast_orders"] == 0:
-                df["forecast_status"] = LABEL_TEXT_CHURNED
-            if (
-                df.iloc[0]["weeks_since_last_delivery"] > self.buy_history_churn_weeks
-                and df.iloc[0]["number_of_forecast_orders"] == 0
-                and df.iloc[0]["number_of_total_orders"] == 0
-            ):
-                df["snapshot_status"] = LABEL_TEXT_CHURNED
+            df["snapshot_status"] = np.where(
+                (df["weeks_since_last_delivery"] > self.buy_history_churn_weeks)
+                & (df["number_of_forecast_orders"] == 0)
+                & (df["number_of_total_orders"] == 0),
+                LABEL_TEXT_CHURNED,
+                df["snapshot_status"],
+            )
             df.drop(["number_of_forecast_orders"], inplace=True, axis=1)
         else:  # When model_training is False
             if (
                 df.iloc[0]["weeks_since_last_delivery"] > self.buy_history_churn_weeks
-                and df.iloc[0]["number_of_total_orders"] == 0
-            ):
+            ) & (df.iloc[0]["number_of_total_orders"] == 0):
                 df["snapshot_status"] = LABEL_TEXT_CHURNED
             df.drop(["forecast_status"], inplace=True, axis=1)
 
         # Handle delete customers with zero events and order history (set status to deleted)
-        if (
-            df.iloc[0]["weeks_since_last_delivery"] == -1
-            and df.iloc[0]["number_of_total_orders"] == 0
-            and df["agreement_status"] == LABEL_TEXT_DELETED
-        ):
-            df["snapshot_status"] = LABEL_TEXT_DELETED
+        df["snapshot_status"] = np.where(
+            (df["weeks_since_last_delivery"] == -1)
+            & (df["number_of_total_orders"] == 0)
+            & (df["agreement_status"] == LABEL_TEXT_DELETED),
+            LABEL_TEXT_DELETED,
+            df["snapshot_status"],
+        )
 
         return df
 

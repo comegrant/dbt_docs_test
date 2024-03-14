@@ -23,8 +23,11 @@ class Dataset:
         self.model_training = model_training
         self.datetime_columns = None
 
+    def get_default_values(self) -> dict:
+        return {}
+
     def read_from_file(self) -> pd.DataFrame:
-        logger.info(f"Get {self.input_file} data from file...")
+        logger.info(f"Reading {self.input_file} data from file...")
         with Path.open(DATA_DIR / self.input_file) as f:
             df = pd.read_csv(f)
             for col in self.datetime_columns:

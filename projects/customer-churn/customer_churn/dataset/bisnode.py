@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -55,6 +56,7 @@ class Bisnode(Dataset):
         )
         df = df[self.columns_out].dropna()
 
+        mult = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
         for col in [
             "cultural_class",
             "perceived_purchasing_power",
@@ -65,8 +67,9 @@ class Bisnode(Dataset):
         ]:
             df[col] = (
                 df[col]
-                .str.replace(" ", "", regex=True)
-                .str.replace(".", "_", regex=True)
+                .apply(lambda x: mult.sub("r\1", x))
+                .str.replace(" ", "")
+                .str.replace(".", "_")
                 .str.lower()
             )
 

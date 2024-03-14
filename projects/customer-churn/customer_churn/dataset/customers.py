@@ -86,4 +86,9 @@ class Customers(Dataset):
         return df[self.columns_out]
 
     def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
-        return self.get_for_date(snapshot_date=snapshot_date).set_index("agreement_id")
+        df = self.get_for_date(snapshot_date=snapshot_date).set_index("agreement_id")
+        df["customer_since_weeks"] = (
+            snapshot_date - df.agreement_start_date
+        ).dt.days // 7
+
+        return df

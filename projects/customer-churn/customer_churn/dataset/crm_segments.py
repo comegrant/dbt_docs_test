@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from customer_churn.paths import SQL_DIR
@@ -41,6 +42,7 @@ class CRMSegments(Dataset):
             db (DB): database connection
         """
         df = self.read_from_file() if self.input_file else self.read_from_db()
+        df = df.replace(np.nan, "", regex=True)
         df["delivery_date"] = pd.to_datetime(
             df.current_delivery_year * 1000 + df.current_delivery_week * 10 + 0,
             format="%Y%W%w",
@@ -74,6 +76,7 @@ class CRMSegments(Dataset):
         )
         return (
             snapshot_df.loc[date_filter]
+            .sort_values(by="delivery_date", ascending=False)
             .groupby("agreement_id")
             .first()[self.feature_columns]
         )

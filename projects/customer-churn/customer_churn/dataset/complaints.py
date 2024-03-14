@@ -31,6 +31,15 @@ class Complaints(Dataset):
 
         self.df = self.load()
 
+    def get_default_values(self) -> dict:
+        return {
+            "weeks_since_last_complaint": -1,
+            "total_complaints": -1,
+            "last_n_complaints": -1,
+            "number_of_complaints_last_n_weeks": -1,
+            "category": "",
+        }
+
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get complaints data from database...")
         with Path.open(SQL_DIR / "complaints.sql") as f:
@@ -66,8 +75,10 @@ class Complaints(Dataset):
     def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
         snapshot_df = self.get_for_date(snapshot_date)
 
-        if self.df.empty:
-            return self.df
+        if snapshot_df.empty:
+            return pd.DataFrame(columns=self.feature_columns).rename_axis(
+                "agreement_id",
+            )
 
         # Group by agreement and compute certain features
         agreement_complaints = snapshot_df.groupby("agreement_id").aggregate(
@@ -96,11 +107,6 @@ class Complaints(Dataset):
         agreement_complaints = agreement_complaints.join(
             num_agreements_last_n_weeks,
             how="left",
-        ).reset_index()
-        agreement_complaints["number_of_complaints_last_n_weeks"] = (
-            agreement_complaints["number_of_complaints_last_n_weeks"]
-            .fillna(0)
-            .astype(int)
         )
 
-        return agreement_complaints.set_index("agreement_id")[self.feature_columns]
+        return agreement_complaints[self.feature_columns]

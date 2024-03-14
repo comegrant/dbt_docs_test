@@ -74,6 +74,18 @@ class Events(Dataset):
 
         self.df = self.load()
 
+    def get_default_values(self) -> dict:
+        return {
+            "total_normal_activities": 0,
+            "number_of_normal_activities_last_week": 0,
+            "average_normal_activity_difference": 0,
+            "number_of_normal_activities_last_N_weeks": 0,
+            "total_account_activities": 0,
+            "number_of_account_activities_last_week": 0,
+            "average_account_activity_difference": 0,
+            "number_of_account_activities_last_N_weeks": 0,
+        }
+
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get events data from database...")
         with Path.open(SQL_DIR / self.sql_file) as f:
@@ -128,7 +140,6 @@ class Events(Dataset):
 
         # Get data for snapshot
         snapshot_df = self.df.loc[self.df.timestamp <= snapshot_date]
-
         date_event_last_n_weeks = snapshot_date + pd.DateOffset(
             weeks=-self.events_last_n_weeks,
         )
@@ -151,21 +162,21 @@ class Events(Dataset):
             date_average_last_n_week,
             date_last_week,
         )
-        df_status = snapshot_df[snapshot_df["status_change"]]
-
-        # Get forecast status
-        forecast_date = snapshot_date + pd.DateOffset(weeks=self.forecast_weeks)
-        df_forecast_status = self.get_status_at_date(
-            df_status=df_status,
-            date=forecast_date,
-        ).rename("forecast_status")
-
         # Get current status
         df_current_status = self.get_status_at_date(
-            df_status=df_status,
+            df_status=snapshot_df[snapshot_df["status_change"]],
             date=snapshot_date,
         ).rename("snapshot_status")
 
+        # Get forecast status
+        forecast_date = snapshot_date + pd.DateOffset(weeks=self.forecast_weeks)
+        forecasted_df = self.df.loc[self.df.timestamp <= forecast_date]
+        df_forecast_status = self.get_status_at_date(
+            df_status=forecasted_df[forecasted_df["status_change"]],
+            date=forecast_date,
+        ).rename("forecast_status")
+
+        # Join all
         df_event_features = df_normal_events_features.join(
             df_account_events_features,
             on="agreement_id",
@@ -182,6 +193,14 @@ class Events(Dataset):
             df_forecast_status,
             on="agreement_id",
             how="left",
+        )
+
+        # Fill missing values
+        df_event_features = df_event_features.fillna(
+            {
+                "snapshot_status": DEFAULT_START_STATUS,
+                "forecast_status": DEFAULT_START_STATUS,
+            },
         )
 
         return df_event_features
@@ -203,10 +222,6 @@ class Events(Dataset):
         df = df_status[df_status.timestamp <= date]
         max_snapshot_date = df.timestamp.max()
         df = df.loc[df.timestamp == max_snapshot_date]
-
-        if df.empty:
-            return df
-
         df = df.groupby("agreement_id")["event_text"].apply(
             lambda x: parse_user_status(x.iloc[0]),
         )
@@ -239,6 +254,7 @@ class Events(Dataset):
         df_agreement_features = df.groupby("agreement_id").aggregate(
             total_activities=pd.NamedAgg(column="timestamp", aggfunc="count"),
         )
+
         df_account_last_n_days = (
             df[df.timestamp >= date_last_n_weeks]
             .groupby("agreement_id")
@@ -249,6 +265,7 @@ class Events(Dataset):
                 ),
             )
         )
+
         df_activity_current_week = (
             df[df.timestamp >= date_last_week]
             .groupby("agreement_id")
@@ -286,6 +303,8 @@ class Events(Dataset):
             how="left",
             on="agreement_id",
         )
+
+        df_agreement_features = df_agreement_features.fillna(0)
 
         return df_agreement_features.rename(
             columns={

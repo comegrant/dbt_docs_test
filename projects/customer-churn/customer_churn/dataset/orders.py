@@ -63,15 +63,12 @@ class Orders(Dataset):
 
         df_labels = pd.DataFrame()
         if self.model_training:
-            df_labels = (
-                df_snapshot.loc[df_snapshot.delivery_date > snapshot_date]
-                .groupby("agreement_id")
-                .agg(
-                    number_of_forecast_orders=pd.NamedAgg(
-                        column="delivery_date",
-                        aggfunc="count",
-                    ),
-                )
+            df_forecast = self.df.loc[self.df.delivery_date > snapshot_date]
+            df_labels = df_forecast.groupby("agreement_id").agg(
+                number_of_forecast_orders=pd.NamedAgg(
+                    column="delivery_date",
+                    aggfunc="count",
+                ),
             )
 
         orders_features = orders_features.groupby("agreement_id").aggregate(
@@ -82,7 +79,7 @@ class Orders(Dataset):
 
         orders_features["weeks_since_last_delivery"] = (
             snapshot_date - orders_features["last_delivery_date"]
-        ).dt.days / 7
+        ).dt.days // 7
 
         if self.model_training:
             orders_features = orders_features.merge(
