@@ -30,4 +30,4 @@ class YourModelContract:
 
     predicted_at = EventTimestamp()
 
-    predicted_rating = HistoricalRecipeOrders().rating.as_regression_label()
+    predicted_rating = HistoricalRecipeOrders().rating.as_recommendation_target()

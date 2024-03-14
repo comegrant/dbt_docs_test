@@ -35,9 +35,12 @@ WITH velgandvrak AS (
 
 SELECT
     ba.agreement_id,
+    ba.company_id,
     COALESCE(bao.cutoff_date, bao.created_date) as delivered_at,
     r.recipe_id,
-    rr.RATING as rating
+    rr.RATING as rating,
+    wm.MENU_WEEK as week,
+    wm.MENU_YEAR as year
 FROM cms.billing_agreement ba
          INNER JOIN cms.billing_agreement_order bao ON bao.agreement_id = ba.agreement_id
          INNER JOIN cms.billing_agreement_order_line baol ON baol.agreement_order_id = bao.id
@@ -103,6 +106,10 @@ class RecipeTaxonomies:
 class HistoricalRecipeOrders:
     agreement_id = Int32().as_entity()
     recipe_id = Int32().as_entity()
+
+    company_id = String()
+    week = Int32()
+    year = Int32()
 
     delivered_at = EventTimestamp()
 

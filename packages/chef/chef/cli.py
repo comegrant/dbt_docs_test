@@ -234,20 +234,50 @@ def compose_command(
     return ["docker", "compose", "-f", (folder_path / compose_file).as_posix()]
 
 
+def compose_services(
+    compose: dict,
+    profile: str | None = None,
+    service_name: str | None = None,
+) -> list[str]:
+    all_services = []
+
+    for service, content in compose["services"].items():
+        if profile and profile in content.get("profiles", []):
+            all_services.append(service)
+
+        if service_name and service_name == service:
+            all_services.append(service)
+
+    if not all_services and (profile or service_name):
+        raise ValueError(f"Unable to find service with profile '{profile}' or name '{service_name}'")
+
+    return all_services
+
+
+def compose_content_exposed_ports(
+    compose: dict,
+    service_names: list[str] | None = None,
+) -> dict[str, list[str]]:
+    all_service_ports: dict[str, list[str]] = defaultdict(list)
+
+    for service, content in compose["services"].items():
+        if service_names and service not in service_names:
+            continue
+
+        for port in content.get("ports", []):
+            localhost_port, _ = port.split(":")
+            all_service_ports[service].append(localhost_port)
+
+    return all_service_ports
+
+
 def compose_exposed_ports(
     folder_path: Path,
     compose_file: str = "docker-compose.yaml",
 ) -> dict[str, list[str]]:
     compose = load_compose_file(folder_path, compose_file)
 
-    all_service_ports: dict[str, list[str]] = defaultdict(list)
-
-    for service, content in compose["services"].items():
-        for port in content.get("ports", []):
-            localhost_port, _ = port.split(":")
-            all_service_ports[service].append(localhost_port)
-
-    return all_service_ports
+    return compose_content_exposed_ports(compose)
 
 
 @cli.command()
@@ -387,9 +417,9 @@ def push_image(registry: str, project: str | None, tag: str | None, image: str |
 
 
 @cli.command()
-@click.argument("project", default=None, required=False)
-@click.option("--profile", default="app", required=False)
-def up(project: str | None, profile: str) -> None:
+@click.argument("profile_or_service", default=None, required=False)
+@click.option("--project", default=None, required=False)
+def up(profile_or_service: str | None, project: str | None) -> None:
     name = project or folder_name()
     if isinstance(name, Exception):
         click.echo(name)
@@ -402,7 +432,11 @@ def up(project: str | None, profile: str) -> None:
 
     path = compose_path(name)
     echo_action(f"Running project '{name}'")
-    ports = compose_exposed_ports(path)
+
+    compose = load_compose_file(path)
+
+    services = compose_services(compose, profile=profile_or_service, service_name=profile_or_service)
+    ports = compose_content_exposed_ports(compose, service_names=services)
 
     if ports:
         click.echo("")
@@ -420,7 +454,10 @@ def up(project: str | None, profile: str) -> None:
         click.echo("")
 
     command = compose_command(path)
-    command.extend(["--profile", profile, "up", "--remove-orphans"])
+    command.append("up")
+    command.extend(services)
+    command.append("--remove-orphans")
+
     subprocess.run(command, check=False)
 
 

@@ -306,6 +306,8 @@ Path: *{self.path}*"""
             raise UnableToFindFileException(self.path) from error
         except HTTPStatusError as error:
             raise UnableToFindFileException(self.path) from error
+        except pl.ComputeError as error:
+            raise UnableToFindFileException(self.path) from error
 
     async def write_pandas(self, df: pd.DataFrame) -> None:
         buffer = BytesIO()

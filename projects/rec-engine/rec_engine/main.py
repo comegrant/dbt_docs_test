@@ -81,6 +81,7 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
             company_id=args.company_id,
             year_weeks_to_predict_on=year_weeks,
             year_weeks_to_train_on=train_year_weeks,
+            only_for_agreement_ids=args.only_for_agreement_ids,
         )
     else:
         raise ValueError("Unable to create dataset")
@@ -96,7 +97,6 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
         dataset=dataset,
         store=store,
         write_to_path=args.write_to,
-        agreement_ids_subset=args.only_for_agreement_ids,
         update_source_threshold=args.update_source_threshold,
         ratings_update_source_threshold=args.ratings_update_threshold,
         logger=logger,

@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 import pandas as pd
+import polars as pl
 from aligned import FeatureStore
 from aligned.retrival_job import ConvertableToRetrivalJob, RetrivalJob
 
@@ -156,15 +157,17 @@ class CBModel:
         if "delivered_at" in ratings.columns:
             ratings = ratings.drop(columns=["delivered_at"])
 
-        processed = preprocessing(recipes)
-        joined_ratings = ratings.merge(
+        processed = preprocessing(recipes[["recipe_taxonomies", "all_ingredients"]])
+
+        logger.info("Preprocessing done")
+
+        joined_ratings = ratings[["recipe_id", "rating", "agreement_id"]].merge(
             pd.concat([processed, recipes["recipe_id"]], axis=1),
             how="inner",
             on="recipe_id",
         )
 
         logger.info(f"Training CB Model with {joined_ratings.shape[0]} ratings")
-
         dynamic_feature_columns = list(
             set(joined_ratings.columns) - {"agreement_id", "recipe_id", "rating"},
         )
@@ -180,6 +183,7 @@ class CBModel:
             raise ValueError(
                 "Unable to train CB Model, as no users preferences were produced",
             )
+
         return CBModel(
             summed_per_user,
             model_contract_name,
@@ -187,24 +191,32 @@ class CBModel:
         )
 
     @staticmethod
-    async def train_using(  # noqa: PLR0913
+    async def train_using(
         entities: RetrivalJob | ConvertableToRetrivalJob,
         store: FeatureStore,
         model_contract_name: str,
         ratings_view: str,
-        agreement_ids_subset: list[int] | None = None,
         model_version: str | None = None,
         logger: Logger | None = None,
     ) -> "CBModel":
         from aligned.validation.pandera import PanderaValidator
 
-        logger.info("Loading recipes")
+        logger.info("Loading recipes and ratings")
+        if isinstance(entities, pl.LazyFrame):
+            recipe_entities = entities.select("recipe_id").unique("recipe_id")
+        elif isinstance(entities, pd.DataFrame):
+            recipe_entities = entities[["recipe_id"]].drop_duplicates()
+        else:
+            recipe_entities = entities
+
         recipes = await (
-            store.model(model_contract_name).features_for(entities).drop_invalid(PanderaValidator()).to_pandas()
+            store.model(model_contract_name).features_for(recipe_entities).drop_invalid(PanderaValidator()).to_polars()
         )
         logger.info(f"Loaded {recipes.shape[0]} recipes")
-        logger.info("Loading recipes")
-        ratings = await store.feature_view(ratings_view).all().drop_invalid(PanderaValidator()).to_pandas()
+
+        ratings = (
+            await store.feature_view(ratings_view).features_for(entities).drop_invalid(PanderaValidator()).to_pandas()
+        )
         logger.info(f"Loaded {ratings.shape[0]} ratings")
 
         logger.info("Filling in missing ratings")
@@ -221,12 +233,6 @@ class CBModel:
             )
             .fillna(3)
         )
-
-        if agreement_ids_subset:
-            logger.info("Subsetting to only the subset of agreement_ids if given")
-            ratings = ratings[ratings["agreement_id"].isin(agreement_ids_subset)]
-        else:
-            logger.info("No subset of agreement_ids given")
 
         logger.info("Training model")
         return CBModel.train(

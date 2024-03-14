@@ -54,7 +54,6 @@ services:
     volumes:
       - ./:/opt/projects/rec-engine
       - ./catalog_setup.py:/app/custom_store.py
-      - ./mermaid.py:/app/mermiad.py
       - ./../../packages:/opt/packages
     env_file:
       - ../../.env

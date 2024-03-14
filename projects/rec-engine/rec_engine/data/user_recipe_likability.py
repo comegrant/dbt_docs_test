@@ -1,13 +1,11 @@
-from aligned import EventTimestamp, Float, Int32, String, model_contract
+from aligned import EventTimestamp, Int32, String, model_contract
 from rec_engine.contacts import Contacts
-from rec_engine.data.recipe import (
-    RecipeIngredient,
-    RecipeTaxonomies,
-)
+from rec_engine.data.recipe import HistoricalRecipeOrders, RecipeIngredient, RecipeTaxonomies
 from rec_engine.sources import model_preds
 
 ingredient = RecipeIngredient()
 recipes_taxonomies = RecipeTaxonomies()
+orders = HistoricalRecipeOrders()
 
 
 @model_contract(
@@ -28,4 +26,4 @@ class UserRecipeLikability:
     predicted_at = EventTimestamp()
     model_version = String().as_model_version()
 
-    score = Float().is_required()
+    score = orders.rating.as_regression_label()

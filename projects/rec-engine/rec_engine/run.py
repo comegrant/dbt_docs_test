@@ -2,15 +2,18 @@ import json
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
 import dotenv
 import pandas as pd
+import polars as pl
 from aligned import FeatureStore
 from aligned.feature_store import ConvertableToRetrivalJob, RetrivalJob
 from data_contracts.sql_server import SqlServerConfig
 
 from rec_engine.clustering import ClusterModel
 from rec_engine.content_based import CBModel
+from rec_engine.data.recipe import HistoricalRecipeOrders
 from rec_engine.log_step import log_step
 from rec_engine.logger import Logger
 from rec_engine.model_registry import (
@@ -46,6 +49,7 @@ class CompanyDataset:
     company_id: str
     year_weeks_to_predict_on: list[int]
     year_weeks_to_train_on: list[int]
+    only_for_agreement_ids: list[int] | None = None
     db_to_use: SqlServerConfig = field(default_factory=lambda: adb)
 
 
@@ -58,7 +62,6 @@ def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
 async def run(  # noqa: PLR0913, PLR0915
     dataset: ManualDataset | CompanyDataset,
     store: FeatureStore,
-    agreement_ids_subset: list[int] | None = None,
     run_id: str | None = None,
     model_regristry: ModelRegistry | None = None,
     write_to_path: str | None = "data/rec_engine",
@@ -118,7 +121,6 @@ async def run(  # noqa: PLR0913, PLR0915
             store,
             model_contract_name=recipe_rating_contract,
             ratings_view=ratings_view,
-            agreement_ids_subset=agreement_ids_subset,
             model_version=model_id,
             logger=logger,
         )
@@ -281,7 +283,7 @@ def format_ranking_recommendations(
 async def select_entities(
     dataset: ManualDataset | CompanyDataset,
     logger: Logger | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[Annotated[pd.DataFrame, "entities to train over"], Annotated[pd.DataFrame, "entities to predict over"]]:
     """
     Selects the entities to train and predict over.
     This can either be a manually set of recipe_ids, and the menus to predict over.
@@ -292,9 +294,6 @@ async def select_entities(
     if isinstance(dataset, CompanyDataset):
         year_week_strings = ", ".join(
             [str(yw) for yw in dataset.year_weeks_to_predict_on],
-        )
-        year_week_train_string = ", ".join(
-            [str(yw) for yw in dataset.year_weeks_to_train_on],
         )
         func_logger.info(
             f"Using company recipes: {dataset.company_id} and year weeks: {year_week_strings}",
@@ -315,16 +314,25 @@ WHERE company_id = '{dataset.company_id}'
     AND mv.PORTION_ID != 7 -- Removing protion size of 1""",
         )
 
-        train_on_entities = await dataset.db_to_use.fetch(
-            f"""SELECT DISTINCT mr.recipe_id
-FROM pim.MENU_RECIPES mr
-INNER JOIN pim.MENUS m ON m.MENU_ID = mr.MENU_ID AND m.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
-INNER JOIN pim.weekly_menus wm ON m.WEEKLY_MENUS_ID = wm.weekly_menus_id
-INNER JOIN pim.MENU_VARIATIONS mv ON m.MENU_ID = mv.MENU_ID
-WHERE company_id = '{dataset.company_id}'
-    AND menu_year * 100 + menu_week IN ({year_week_train_string})
-    AND mv.PORTION_ID != 7 -- Removing protion size of 1""",
-        ).to_pandas()
+        ratings_filter = [
+            pl.col("company_id") == dataset.company_id,
+        ]
+        if dataset.year_weeks_to_train_on:
+            ratings_filter.append(
+                (pl.col("year") * 100 + pl.col("week")).is_in(dataset.year_weeks_to_train_on),
+            )
+        if dataset.only_for_agreement_ids:
+            ratings_filter.append(pl.col("agreement_id").is_in(dataset.only_for_agreement_ids))
+
+        train_on_entities = (
+            (await HistoricalRecipeOrders.query().all().to_lazy_polars())
+            .filter(
+                *ratings_filter,
+            )
+            .select(["recipe_id", "agreement_id", "delivered_at"])
+            .collect()
+            .to_pandas()
+        )
 
         menu_job = await recipes.to_pandas()
 
