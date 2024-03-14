@@ -47,6 +47,7 @@ async def test_training_pipelines(model_contracts: FeatureStore) -> None:
     nr_agreements = 2
     dataset = ManualDataset(
         train_on_recipe_ids=[1, 2, 3, 4],
+        train_on_agreement_ids=[1, 2, 1, 2],
         rate_menus=RateMenuRecipes(
             year_weeks=[
                 202344,
@@ -145,7 +146,10 @@ def test_json_formatting() -> None:
 
         for expected_item in expected_list:
             output_item: dict = next(
-                i for i in output_list if i["year"] == expected_item["year"] and i["week"] == expected_item["week"]
+                i
+                for i in output_list
+                if i["year"] == expected_item["year"]
+                and i["week"] == expected_item["week"]
             )
 
             for key in expected_item:

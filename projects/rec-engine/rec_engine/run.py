@@ -41,6 +41,7 @@ class RateMenuRecipes:
 @dataclass
 class ManualDataset:
     train_on_recipe_ids: list[int]
+    train_on_agreement_ids: list[int]
     rate_menus: RateMenuRecipes
 
 
@@ -54,7 +55,11 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
+    recs = (
+        recommendations[["recipe_id", "score"]]
+        .groupby("recipe_id", as_index=False)
+        .median()
+    )
     recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
@@ -283,7 +288,10 @@ def format_ranking_recommendations(
 async def select_entities(
     dataset: ManualDataset | CompanyDataset,
     logger: Logger | None = None,
-) -> tuple[Annotated[pd.DataFrame, "entities to train over"], Annotated[pd.DataFrame, "entities to predict over"]]:
+) -> tuple[
+    Annotated[pd.DataFrame, "entities to train over"],
+    Annotated[pd.DataFrame, "entities to predict over"],
+]:
     """
     Selects the entities to train and predict over.
     This can either be a manually set of recipe_ids, and the menus to predict over.
@@ -319,10 +327,14 @@ WHERE company_id = '{dataset.company_id}'
         ]
         if dataset.year_weeks_to_train_on:
             ratings_filter.append(
-                (pl.col("year") * 100 + pl.col("week")).is_in(dataset.year_weeks_to_train_on),
+                (pl.col("year") * 100 + pl.col("week")).is_in(
+                    dataset.year_weeks_to_train_on,
+                ),
             )
         if dataset.only_for_agreement_ids:
-            ratings_filter.append(pl.col("agreement_id").is_in(dataset.only_for_agreement_ids))
+            ratings_filter.append(
+                pl.col("agreement_id").is_in(dataset.only_for_agreement_ids),
+            )
 
         train_on_entities = (
             (await HistoricalRecipeOrders.query().all().to_lazy_polars())
@@ -342,7 +354,10 @@ WHERE company_id = '{dataset.company_id}'
         recommend_for_entities = train_on_entities.drop_duplicates()
 
     elif isinstance(dataset, ManualDataset):
-        recommend_for_entities = {"recipe_id": dataset.train_on_recipe_ids}
+        recommend_for_entities = {
+            "recipe_id": dataset.train_on_recipe_ids,
+            "agreement_id": dataset.train_on_agreement_ids,
+        }
 
         menus = dataset.rate_menus
         if len(menus.recipe_ids) != len(menus.year_weeks):

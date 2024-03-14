@@ -210,12 +210,19 @@ class CBModel:
             recipe_entities = entities
 
         recipes = await (
-            store.model(model_contract_name).features_for(recipe_entities).drop_invalid(PanderaValidator()).to_polars()
+            store.model(model_contract_name)
+            .features_for(recipe_entities)
+            .drop_invalid(PanderaValidator())
+            .to_pandas()
         )
         logger.info(f"Loaded {recipes.shape[0]} recipes")
 
         ratings = (
-            await store.feature_view(ratings_view).features_for(entities).drop_invalid(PanderaValidator()).to_pandas()
+            await store.feature_view(ratings_view)
+            .select({"rating"})
+            .features_for(entities)
+            .drop_invalid(PanderaValidator())
+            .to_pandas()
         )
         logger.info(f"Loaded {ratings.shape[0]} ratings")
 
