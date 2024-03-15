@@ -814,13 +814,13 @@ sql = ["numpy (>=1.15)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.21.0"
+version = "0.22.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "databricks-sdk-0.21.0.tar.gz", hash = "sha256:a32d72b5fa000c120d6787cbdfaf797eadf59ca18c76eda1960d26f4386011fb"},
-    {file = "databricks_sdk-0.21.0-py3-none-any.whl", hash = "sha256:943d5196fe169027e0cd0d533b850d2e946a860a121ead23a91afbd695bfd954"},
+    {file = "databricks-sdk-0.22.0.tar.gz", hash = "sha256:545b7159fb5ba1391bbbd832a7c9691812889968d37333b3d89bb2dda8c6f568"},
+    {file = "databricks_sdk-0.22.0-py3-none-any.whl", hash = "sha256:1983dc26913b686aee5eb89c192608588ccee15e3373852a801d1f1888fe6998"},
 ]
 
 [package.dependencies]
@@ -2229,13 +2229,13 @@ webpdf = ["playwright"]
 
 [[package]]
 name = "nbformat"
-version = "5.10.2"
+version = "5.10.3"
 description = "The Jupyter Notebook format"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "nbformat-5.10.2-py3-none-any.whl", hash = "sha256:7381189a0d537586b3f18bae5dbad347d7dd0a7cf0276b09cdcd5c24d38edd99"},
-    {file = "nbformat-5.10.2.tar.gz", hash = "sha256:c535b20a0d4310167bf4d12ad31eccfb0dc61e6392d6f8c570ab5b45a06a49a3"},
+    {file = "nbformat-5.10.3-py3-none-any.whl", hash = "sha256:d9476ca28676799af85385f409b49d95e199951477a159a576ef2a675151e5e8"},
+    {file = "nbformat-5.10.3.tar.gz", hash = "sha256:60ed5e910ef7c6264b87d644f276b1b49e24011930deef54605188ddeb211685"},
 ]
 
 [package.dependencies]
@@ -4013,13 +4013,13 @@ tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
 name = "streamlit"
-version = "1.32.1"
+version = "1.32.2"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = ">=3.8, !=3.9.7"
 files = [
-    {file = "streamlit-1.32.1-py2.py3-none-any.whl", hash = "sha256:fe30ce26f08a5b50b3cb2b349c49c0ad9d3bba6c5ed2f19aac05e39026a30fcc"},
-    {file = "streamlit-1.32.1.tar.gz", hash = "sha256:ec6400496f678852143cbc23c4c43889f78b6c93c2e2756fd8e060cccde4b8fd"},
+    {file = "streamlit-1.32.2-py2.py3-none-any.whl", hash = "sha256:a0b8044e76fec364b07be145f8b40dbd8d083e20ebbb189ceb1fa9423f3dedea"},
+    {file = "streamlit-1.32.2.tar.gz", hash = "sha256:1258b9cbc3ff957bf7d09b1bfc85cedc308f1065b30748545295a9af8d5577ab"},
 ]
 
 [package.dependencies]
@@ -4200,13 +4200,13 @@ test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,
 
 [[package]]
 name = "types-python-dateutil"
-version = "2.8.19.20240311"
+version = "2.9.0.20240315"
 description = "Typing stubs for python-dateutil"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-python-dateutil-2.8.19.20240311.tar.gz", hash = "sha256:51178227bbd4cbec35dc9adffbf59d832f20e09842d7dcb8c73b169b8780b7cb"},
-    {file = "types_python_dateutil-2.8.19.20240311-py3-none-any.whl", hash = "sha256:ef813da0809aca76472ca88807addbeea98b19339aebe56159ae2f4b4f70857a"},
+    {file = "types-python-dateutil-2.9.0.20240315.tar.gz", hash = "sha256:c1f6310088eb9585da1b9f811765b989ed2e2cdd4203c1a367e944b666507e4e"},
+    {file = "types_python_dateutil-2.9.0.20240315-py3-none-any.whl", hash = "sha256:78aa9124f360df90bb6e85eb1a4d06e75425445bf5ecb13774cb0adef7ff3956"},
 ]
 
 [[package]]

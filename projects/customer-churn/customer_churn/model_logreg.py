@@ -8,13 +8,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_recall_fscore_support as score
 from sklearn.model_selection import train_test_split
 
-from customer_churn.model import Model
 from customer_churn.preprocessor import Preprocessor
 
 logger = logging.getLogger(__name__)
 
 
-class ModelLogReg(Model):
+class ModelLogReg:
     """Model: Logistic Regression"""
 
     CATEGORICAL_FEATURES: ClassVar[list[str]] = ["snapshot_status", "planned_delivery"]
@@ -90,7 +89,6 @@ class ModelLogReg(Model):
         self.df_x, self.df_y = Preprocessor().prep_training(
             pd.DataFrame(self.df[self.df.snapshot_date < validation_split_date].copy()),
             self.TRAINING_FEATURES,
-            categ_columns=self.CATEGORICAL_FEATURES,
             drop_nan=True,
             label_column="forecast_status",
         )
@@ -102,7 +100,6 @@ class ModelLogReg(Model):
         self.df_x_val, self.df_y_val = Preprocessor().prep_training(
             self.df[self.df.snapshot_date >= validation_split_date].copy(),
             self.TRAINING_FEATURES,
-            categ_columns=self.CATEGORICAL_FEATURES,
             drop_nan=True,
             label_column="forecast_status",
         )
@@ -130,7 +127,7 @@ class ModelLogReg(Model):
         )
 
         # Dimensions of the train-test set
-        logger.info(x_train.shape, x_test.shape)
+        logger.info(f"train {x_train.shape}, test {x_test.shape}")
 
         # Class distribution between train-test set
         logger.info(
@@ -177,7 +174,6 @@ class ModelLogReg(Model):
         df_predict = Preprocessor().prep_prediction(
             df=df,
             columns_to_keep=self.PREDICTION_FETURES,
-            categ_columns=self.CATEGORICAL_FEATURES,
         )
 
         if model_filename is not None:

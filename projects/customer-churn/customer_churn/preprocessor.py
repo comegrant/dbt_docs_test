@@ -135,7 +135,6 @@ class Preprocessor:
     def prep_training(
         df: pd.DataFrame,
         columns_to_keep: list,
-        categ_columns: list,
         drop_nan: bool = False,
         label_column: str = "forecast_status",
         no_delivery_churned_weeks: int = 4,
@@ -165,7 +164,6 @@ class Preprocessor:
             df_prep,
             columns_to_keep=columns_to_keep,
             drop_nan=drop_nan,
-            categ_columns=categ_columns,
             no_delivery_churned_weeks=no_delivery_churned_weeks,
         )
 
