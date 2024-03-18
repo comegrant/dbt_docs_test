@@ -72,7 +72,7 @@ def pydantic_form(key: str, model: type[T]) -> T | None:
         st.form_submit_button()
 
     for field in required_fields:
-        if not values[field] or values[field] == "" or values[field] == "\n":
+        if values[field] is None or values[field] == "" or values[field] == "\n":
             return None
 
     return model(**values)

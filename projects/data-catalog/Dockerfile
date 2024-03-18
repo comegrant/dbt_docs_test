@@ -1,10 +1,10 @@
-FROM python:3.10-slim-buster
+FROM aligned.azurecr.io/aligned-catalog/slim-buster:latest
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
 
 # set the home directory
-ENV APP_HOME /opt
+ENV APP_HOME /app
 ENV SERVICE_HOME $APP_HOME/projects/data-catalog
 
 # copy source code
@@ -21,6 +21,7 @@ RUN mkdir -p data_catalog && touch data_catalog/__init__.py
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
+RUN pip install polars-lts-cpu
 
 # copy source code
 COPY projects/data-catalog .
@@ -33,4 +34,3 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 # set starting command
 WORKDIR $SERVICE_HOME
-CMD python -m streamlit run data_catalog/main.py

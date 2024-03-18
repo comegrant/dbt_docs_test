@@ -3,11 +3,11 @@ import logging
 import tracemalloc
 from datetime import date, datetime, timedelta, timezone
 
+from data_contracts.recommendations.store import recommendation_feature_contracts
 from pydantic import BaseModel, Field
 from pydantic_argparser import parser_for
 from pydantic_argparser.parser import decode_args
 
-from rec_engine.data.store import recommendation_feature_contracts
 from rec_engine.logger import Logger
 from rec_engine.run import (
     CompanyDataset,
@@ -33,6 +33,7 @@ class RunArgs(BaseModel):
 
     train_year_weeks: list[int] | None = Field(None)
     write_to: str = Field(f"data/rec_engine/{date.today().isoformat()}")
+    should_write_to_application_source: bool = Field(False)
 
     manual_year_week: list[int] | None = Field(None)
     manual_recipe_ids: list[int] | None = Field(None)
@@ -52,7 +53,7 @@ def setup_logger(log_dir: str | None) -> None:
 
 
 async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
-    if args.manual_year_week and args.manual_recipe_ids and args.manual_product_ids:
+    if args.manual_year_week and args.manual_recipe_ids and args.manual_product_ids and args.manual_train_recipe_ids:
         recipe_ids = args.manual_recipe_ids
         year_weeks = args.manual_year_week
         product_ids = args.manual_product_ids
@@ -61,6 +62,7 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
 
         dataset = ManualDataset(
             train_on_recipe_ids=train_on_recipe_ids,
+            train_on_agreement_ids=args.only_for_agreement_ids,
             rate_menus=RateMenuRecipes(
                 year_weeks=year_weeks,
                 recipe_ids=recipe_ids,
@@ -100,6 +102,7 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
         update_source_threshold=args.update_source_threshold,
         ratings_update_source_threshold=args.ratings_update_threshold,
         logger=logger,
+        should_write_to_application_source=args.should_write_to_application_source,
     )
 
 

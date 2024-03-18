@@ -14,6 +14,7 @@ from aligned.exceptions import UnableToFindFileException
 from aligned.feature_source import WritableFeatureSource
 from aligned.local.job import FileDateJob, FileFactualJob, FileFullJob
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
+from aligned.schemas.feature import FeatureType
 from aligned.sources.local import (
     CsvConfig,
     CsvFileSource,
@@ -26,8 +27,6 @@ from aligned.sources.local import (
 from aligned.storage import Storage
 from azure.storage.blob import BlobServiceClient
 from httpx import HTTPStatusError
-
-from data_contracts.sql_server import MarkdownDescribable
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +60,24 @@ class AzureBlobConfig:
     client_id_env: str
     client_secret_env: str
     account_name_env: str
+
+    @property
+    def to_markdown(self) -> str:
+        return f"""Type: **Azure Blob Config**
+
+You can choose between two ways of authenticating with Azure Blob Storage.
+
+1. Using Account Name and Account Key
+
+- Account Name Env: `{self.account_name_env}`
+- Account Id Env: `{self.account_id_env}`
+
+2. Using Tenant Id, Client Id and Client Secret
+
+- Tenant Id Env: `{self.tenent_id_env}`
+- Client Id Env: `{self.client_id_env}`
+- Client Secret Env: `{self.client_secret_env}`
+"""
 
     def parquet_at(self, path: str) -> AzureBlobParquetDataSource:
         return AzureBlobParquetDataSource(self, path)
@@ -194,7 +211,6 @@ class AzureBlobCsvDataSource(
     BatchDataSource,
     DataFileReference,
     ColumnFeatureMappable,
-    MarkdownDescribable,
 ):
     config: AzureBlobConfig
     path: str
@@ -203,11 +219,13 @@ class AzureBlobCsvDataSource(
 
     type_name: str = "azure_blob_csv"
 
-    def as_markdown(self) -> str:
+    @property
+    def to_markdown(self) -> str:
         return f"""Type: *Azure Blob Csv File*
 
 Path: *{self.path}*
-"""
+
+{self.config.to_markdown}"""
 
     def job_group_key(self) -> str:
         return f"{self.type_name}/{self.path}"
@@ -215,6 +233,16 @@ Path: *{self.path}*
     @property
     def storage(self) -> Storage:
         return self.config.storage
+
+    async def schema(self) -> dict[str, FeatureType]:
+        try:
+            schema = (await self.to_lazy_polars()).schema
+            return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
+
+        except FileNotFoundError as error:
+            raise UnableToFindFileException() from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException() from error
 
     async def to_lazy_polars(self) -> pl.LazyFrame:
         url = f"az://{self.path}"
@@ -264,7 +292,6 @@ class AzureBlobParquetDataSource(
     BatchDataSource,
     DataFileReference,
     ColumnFeatureMappable,
-    MarkdownDescribable,
 ):
     config: AzureBlobConfig
     path: str
@@ -272,10 +299,13 @@ class AzureBlobParquetDataSource(
     parquet_config: ParquetConfig = field(default_factory=ParquetConfig)
     type_name: str = "azure_blob_parquet"
 
-    def as_markdown(self) -> str:
+    @property
+    def to_markdown(self) -> str:
         return f"""Type: *Azure Blob Parquet File*
 
-Path: *{self.path}*"""
+Path: *{self.path}*
+
+{self.config.to_markdown}"""
 
     def job_group_key(self) -> str:
         return f"{self.type_name}/{self.path}"
@@ -286,6 +316,16 @@ Path: *{self.path}*"""
     @property
     def storage(self) -> Storage:
         return self.config.storage
+
+    async def schema(self) -> dict[str, FeatureType]:
+        try:
+            schema = (await self.to_lazy_polars()).schema
+            return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
+
+        except FileNotFoundError as error:
+            raise UnableToFindFileException() from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException() from error
 
     async def read_pandas(self) -> pd.DataFrame:
         try:
@@ -331,7 +371,6 @@ class AzureBlobDeltaDataSource(
     DataFileReference,
     ColumnFeatureMappable,
     WritableFeatureSource,
-    MarkdownDescribable,
 ):
     config: AzureBlobConfig
     path: str
@@ -341,10 +380,13 @@ class AzureBlobDeltaDataSource(
     def job_group_key(self) -> str:
         return f"{self.type_name}/{self.path}"
 
-    def as_markdown(self) -> str:
+    @property
+    def to_markdown(self) -> str:
         return f"""Type: Azure Blob Delta File
 
-Path: *{self.path}*"""
+Path: *{self.path}*
+
+{self.config.to_markdown}"""
 
     @property
     def storage(self) -> Storage:
@@ -365,6 +407,16 @@ Path: *{self.path}*"""
 
     def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
         return FileFactualJob(self, [request], facts)
+
+    async def schema(self) -> dict[str, FeatureType]:
+        try:
+            schema = (await self.to_lazy_polars()).schema
+            return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
+
+        except FileNotFoundError as error:
+            raise UnableToFindFileException() from error
+        except HTTPStatusError as error:
+            raise UnableToFindFileException() from error
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
         return FileFullJob(self, request, limit)

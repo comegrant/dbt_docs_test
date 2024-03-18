@@ -23,11 +23,12 @@ services:
     command: ["python", "-m", "streamlit", "run", "app_ui.py", "--server.fileWatcherType", "poll"]
     depends_on:
       - rec-engine
+      - mssql-db
     ports:
       - 8501:8501
     env_file:
       - ../../.env
-    profiles: ["app"]
+      - .env
 
   rec-engine-test:
     platform: linux/amd64
@@ -42,32 +43,12 @@ services:
       - rec-engine
 
 
-  rec-engine-catalog:
-    platform: linux/amd64
-    build:
-      context: ../../
-      dockerfile: projects/rec-engine/Dockerfile.ui
-    command: ["python", "-m", "streamlit", "run", "/app/app.py", "--server.fileWatcherType", "none"]
-    profiles: ["catalog"]
-    ports:
-      - 8000:8501
-    volumes:
-      - ./:/opt/projects/rec-engine
-      - ./catalog_setup.py:/app/custom_store.py
-      - ./../../packages:/opt/packages
-    env_file:
-      - ../../.env
-    working_dir: "/app"
-
-
   mssql-db:
-    platform: linux/amd64
-    image: mcr.microsoft.com/mssql/server
-  # environments:
-  #   ACCEPT_EULA: "y"
-  # ports:
-  #   - 1432:1433
-  # volumns:
-  #   - ./.mssql_data/data:/var/opt/mssql/data
-  #   - ./.mssql_data/log:/var/opt/mssql/log
-  #   - ./.mssql_data/secrets:/var/opt/mssql/secrets
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "yourStrong(!)Passwor!"
+    ports:
+      - 1432:1433
+    volumes:
+      - "./mssql-data:/var/opt/mssql"

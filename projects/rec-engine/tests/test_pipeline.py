@@ -8,7 +8,7 @@ from aligned.compiler.model import uuid4
 from aligned.feature_source import BatchFeatureSource
 from aligned.schemas.feature import FeatureLocation
 from data_contracts.blob_storage import LocalFolder
-from rec_engine.data.store import recommendation_feature_contracts
+from data_contracts.recommendations.store import recommendation_feature_contracts
 from rec_engine.run import (
     ManualDataset,
     RateMenuRecipes,
@@ -146,10 +146,7 @@ def test_json_formatting() -> None:
 
         for expected_item in expected_list:
             output_item: dict = next(
-                i
-                for i in output_list
-                if i["year"] == expected_item["year"]
-                and i["week"] == expected_item["week"]
+                i for i in output_list if i["year"] == expected_item["year"] and i["week"] == expected_item["week"]
             )
 
             for key in expected_item:

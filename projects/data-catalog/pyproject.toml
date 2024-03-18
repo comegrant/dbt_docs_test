@@ -10,6 +10,7 @@ python = "^3.10"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 streamlit = "^1.30.0"
 pydantic-settings = "^2.1.0"
+project-owners = {path = "../../packages/project-owners", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

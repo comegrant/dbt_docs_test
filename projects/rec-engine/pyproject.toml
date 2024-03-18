@@ -15,6 +15,8 @@ pandera = "^0.18.0"
 pydantic-form = {path = "../../packages/pydantic-form", develop = true}
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
 adlfs = "^2024.2.0"
+project-owners = {path = "../../packages/project-owners", develop = true}
+aioodbc = "0.4.1"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

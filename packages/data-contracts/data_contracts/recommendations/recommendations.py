@@ -1,5 +1,4 @@
 from aligned import EventTimestamp, Float, Int32, Json, String, model_contract
-from data_contracts.contacts import Contacts
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders
 from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.user_recipe_likability import (
@@ -11,15 +10,17 @@ from data_contracts.sources import (
     model_preds,
     segment_personas_db,
 )
+from project_owners.owner import Owner
 
 likability = UserRecipeLikability()
 cluster = RecipeCluster()
 
 rec_contacts = [
-    Contacts.niladri().markdown(),
-    Contacts.jose().markdown(),
-    Contacts.matsmoll().markdown(),
+    Owner.niladri().markdown(),
+    Owner.jose().markdown(),
+    Owner.matsmoll().markdown(),
 ]
+
 
 delivered_recipes = HistoricalRecipeOrders()
 
@@ -39,18 +40,22 @@ class RecommendatedDish:
     agreement_id = Int32().as_entity()
     year = Int32().as_entity()
     week = Int32().as_entity()
-    product_id = String().as_entity().description("The external menu ID for the recipe")
-
+    product_id = (
+        String()
+        .as_entity()
+        .description(
+            "The external menu ID for the recipe. "
+            "This is what the frontend uses to identify the recipe. "
+            "For a given week, and portion I think.",
+        )
+    )
     predicted_at = EventTimestamp()
-
     company_id = String()
 
     order_of_relevance_cluster = (
         Int32().lower_bound(1)
         # .as_recommendation_target()
-        # .as_recommendation_ranking()
-        # .binary_target(delivered_recipes)
-        # .scalar_target(delivered_recipes.rating)
+        # .estemating_rank(delivered_recipes.rating)
     )
 
 

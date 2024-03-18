@@ -2,6 +2,8 @@ version: '3'
 services:
 
   data-catalog:
+    image: data-catalog-data-catalog
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
@@ -11,17 +13,21 @@ services:
       - ./../../packages:/opt/packages
 
   data-catalog-app:
+    platform: linux/amd64
+    image: data-catalog-data-catalog-app
     build:
       context: ../../
       dockerfile: ./projects/data-catalog/Dockerfile
-    command: python -m streamlit run /opt/projects/data-catalog/data_catalog/main.py
-    env_file:
-      - .env
+    command: ["python", "-m", "streamlit", "run", "/app/app.py", "--server.fileWatcherType", "poll"]
+    profiles: ["catalog"]
     ports:
-      - 8501:8501
+      - 8000:8501
     volumes:
-      - ./:/opt/projects/data-catalog
-      - ./../../packages:/opt/packages
+      - ./data_catalog/load_contracts.py:/app/custom_store.py
+      - ./../../packages:/app/packages
+    env_file:
+      - ../../.env
+    working_dir: "/app"
 
   data-catalog-test:
     build:

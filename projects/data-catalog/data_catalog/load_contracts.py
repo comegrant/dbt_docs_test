@@ -20,19 +20,14 @@ def inject_sources() -> None:
         AzureBlobDeltaDataSource,
         SqlServerDataSource,
     ]:
-        if (
-            data_source.type_name
-            in BatchDataSourceFactory.shared().supported_data_sources
-        ):
+        if data_source.type_name in BatchDataSourceFactory.shared().supported_data_sources:
             continue
 
-        BatchDataSourceFactory.shared().supported_data_sources[
-            data_source.type_name
-        ] = data_source
+        BatchDataSourceFactory.shared().supported_data_sources[data_source.type_name] = data_source
 
 
 async def custom_store() -> FeatureStore:
-    from rec_engine.data.store import recommendation_feature_contracts
+    from data_contracts.recommendations.store import recommendation_feature_contracts
 
     inject_sources()
     return recommendation_feature_contracts()

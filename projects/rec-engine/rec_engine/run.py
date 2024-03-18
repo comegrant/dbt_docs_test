@@ -9,11 +9,11 @@ import pandas as pd
 import polars as pl
 from aligned import FeatureStore
 from aligned.feature_store import ConvertableToRetrivalJob, RetrivalJob
+from data_contracts.recommendations.recipe import HistoricalRecipeOrders
 from data_contracts.sql_server import SqlServerConfig
 
 from rec_engine.clustering import ClusterModel
 from rec_engine.content_based import CBModel
-from rec_engine.data.recipe import HistoricalRecipeOrders
 from rec_engine.log_step import log_step
 from rec_engine.logger import Logger
 from rec_engine.model_registry import (
@@ -55,11 +55,7 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = (
-        recommendations[["recipe_id", "score"]]
-        .groupby("recipe_id", as_index=False)
-        .median()
-    )
+    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
     recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
@@ -77,6 +73,7 @@ async def run(  # noqa: PLR0913, PLR0915
     recipe_rating_contract: str = "user_recipe_likability",
     recipe_cluster_contract: str = "recipe_cluster",
     logger: Logger | None = None,
+    should_write_to_application_source: bool = False,
 ) -> None:
     logger = logger or file_logger
 
@@ -226,15 +223,21 @@ async def run(  # noqa: PLR0913, PLR0915
         logger.info(ranking.head())
         await rec_store.insert_predictions(ranking)
 
-    if write_to_path is None and rec_store.model.predictions_view.application_source:
-        with log_step(
-            f"Writing {ranking.shape[0]} rankings to application source",
-            logger=logger,
-        ):
-            logger.info(ranking.head())
-            await rec_store.using_source(
-                rec_store.model.predictions_view.application_source,
-            ).upsert_predictions(ranking)
+    if should_write_to_application_source:
+        if not rec_store.model.predictions_view.application_source:
+            logger.warning(
+                "No application source set, "
+                f"therefore skipping writing to application source for model: {rec_store.model.name}",
+            )
+        else:
+            with log_step(
+                f"Writing {ranking.shape[0]} rankings to application source",
+                logger=logger,
+            ):
+                logger.info(ranking.head())
+                await rec_store.using_source(
+                    rec_store.model.predictions_view.application_source,
+                ).upsert_predictions(ranking)
 
     with log_step("Formatting frontend format", logger=logger):
         formatted_recommendations = format_ranking_recommendations(
@@ -288,10 +291,7 @@ def format_ranking_recommendations(
 async def select_entities(
     dataset: ManualDataset | CompanyDataset,
     logger: Logger | None = None,
-) -> tuple[
-    Annotated[pd.DataFrame, "entities to train over"],
-    Annotated[pd.DataFrame, "entities to predict over"],
-]:
+) -> tuple[Annotated[pd.DataFrame, "entities to train over"], Annotated[pd.DataFrame, "entities to predict over"]]:
     """
     Selects the entities to train and predict over.
     This can either be a manually set of recipe_ids, and the menus to predict over.

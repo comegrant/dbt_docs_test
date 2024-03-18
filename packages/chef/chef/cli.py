@@ -2,7 +2,7 @@ import logging
 import subprocess
 from collections import defaultdict
 from contextlib import suppress
-from datetime import datetime
+from datetime import datetime, timezone
 from importlib import import_module
 from pathlib import Path
 
@@ -402,7 +402,7 @@ def push_image(registry: str, project: str | None, tag: str | None, image: str |
         image = f"{project}-{project}"
 
     if not tag:
-        tag = f"push-{datetime.utcnow().timestamp()}"
+        tag = f"push-{datetime.now(tz=timezone.utc).timestamp()}"
 
     url = f"{registry}/{project}:{tag}"
     echo_action(f"Pushing image '{image}' to {url}")
@@ -672,6 +672,24 @@ def generate_dotenv(settings_path: str, env_file: str) -> None:
 
     with Path(env_file).open("w") as file:
         file.write(env_file)
+
+
+@cli.command()
+def catalog() -> None:
+    echo_action("Spinning up the catalog")
+
+    catalog_path = projects_path() / "data-catalog"
+    compose_file = "docker-compose.yaml"
+
+    ports = compose_exposed_ports(catalog_path, compose_file)
+    for service, exposed_ports in ports.items():
+        click.echo(f"Service: {service}")
+        for port in exposed_ports:
+            click.echo(f"- http://127.0.0.1:{port}")
+
+    command = compose_command(catalog_path, compose_file)
+    command.extend(["run", "--service-ports", "data-catalog-app"])
+    subprocess.run(command, check=False)
 
 
 if __name__ == "__main__":
