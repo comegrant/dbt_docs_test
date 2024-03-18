@@ -6,7 +6,7 @@ authors = ["Thomas Sve <thomas.sve@cheffelo.com>"]
 packages = [{include = "customer_churn"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 pydantic-settings = "^2.1.0"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 lmkgroup-ds-utils = {path = "../../packages/lmkgroup-ds-utils", develop = true, extras = ["datalake", "msdb"]}
