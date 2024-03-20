@@ -105,7 +105,7 @@ class Events(Dataset):
         """
         mult = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 
-        df = self.read_from_file() if self.input_file else self.read_from_db()
+        df = self.read_from_file() if self.file_exists() else self.read_from_db()
 
         df["event_text"] = (
             df["event_text"]

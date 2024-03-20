@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -26,6 +27,9 @@ class Dataset:
     def get_default_values(self) -> dict:
         return {}
 
+    def file_exists(self) -> bool:
+        return self.input_file is not None and Path.exists(DATA_DIR / self.input_file)
+
     def read_from_file(self) -> pd.DataFrame:
         logger.info(f"Reading {self.input_file} data from file...")
         with Path.open(DATA_DIR / self.input_file) as f:
@@ -41,3 +45,6 @@ class Dataset:
         with Path.open(SQL_DIR / filename) as f:
             df = self.db.read_data(f.read().format(company_id=self.company_id))
         return df
+
+    def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
+        raise NotImplementedError

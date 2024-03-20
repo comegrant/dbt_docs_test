@@ -47,7 +47,7 @@ class Bisnode(Dataset):
             db (DB): database connection
         """
 
-        df = self.read_from_file() if self.input_file else self.read_from_db()
+        df = self.read_from_file() if self.file_exists() else self.read_from_db()
 
         df["children_probability"] = df[
             ["probability_children_0_to_6", "probability_children_7_to_17"]

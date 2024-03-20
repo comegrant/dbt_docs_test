@@ -1,0 +1,62 @@
+import logging
+from datetime import datetime, timedelta
+
+from lmkgroup_ds_utils.constants import Company
+from lmkgroup_ds_utils.db.connector import DB
+from pydantic import BaseModel, Field
+from pydantic_argparser import parser_for
+from pydantic_argparser.parser import decode_args
+
+from customer_churn.config import PREP_CONFIG
+from customer_churn.data.load_data import DataLoader
+from customer_churn.data.snapshot import generate_snapshots_for_period
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class RunArgs(BaseModel):
+    company_id: str = Field(Company.RN)
+
+    start_date: datetime = Field(datetime.now(tz="UTC") - timedelta(days=30))
+    end_date: datetime = Field(datetime.now(tz="UTC"))
+
+    save_snapshot: bool = Field(False)
+    output_dir: str = Field("")
+    output_file_prefix: str = Field("snapshot_")
+
+    input_files: dict = Field(PREP_CONFIG["input_files"])
+    snapshot_config: dict = Field(PREP_CONFIG["snapshot"])
+
+    db_env: str = Field("prod")
+    db_connection_string: str = Field("")
+
+    local: bool = Field(True)
+
+
+def generate_snapshot(args: RunArgs) -> None:
+    adb = DB(db_name="analytics_db", env=args.db_env, local=args.local)
+    postgres_db = DB(db_name="postgres_db", env=args.db_env, local=args.local)
+
+    data_loader = DataLoader(
+        args.company_id,
+        input_files=args.input_files,
+        snapshot_config=args.snapshot_config,
+        adb=adb,
+        postgres_db=postgres_db,
+    )
+
+    generate_snapshots_for_period(
+        data_loader=data_loader,
+        company_id=args.company_id,
+        start_date=args.start_date,
+        end_date=args.end_date,
+        save_snapshot=args.save_snapshot,
+        output_dir=args.output_dir,
+        output_file_prefix=args.output_file_prefix,
+    )
+
+
+if __name__ == "__main__":
+    args = parser_for(RunArgs).parse_args()
+    generate_snapshot(decode_args(args, RunArgs))

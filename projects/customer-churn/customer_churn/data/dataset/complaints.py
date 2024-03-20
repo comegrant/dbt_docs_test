@@ -53,7 +53,7 @@ class Complaints(Dataset):
             company_id (str): company id
             db (DB): database connection
         """
-        df = self.read_from_file() if self.input_file else self.read_from_db()
+        df = self.read_from_file() if self.file_exists() else self.read_from_db()
 
         df.category = df.category.str.lower().replace(" ", "")
         df["delivery_date"] = pd.to_datetime(

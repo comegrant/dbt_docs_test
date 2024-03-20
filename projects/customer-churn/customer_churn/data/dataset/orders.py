@@ -43,7 +43,7 @@ class Orders(Dataset):
         Returns:
             pd.DataFrame: dataframe of orders data
         """
-        return self.read_from_file() if self.input_file else self.read_from_db()
+        return self.read_from_file() if self.file_exists() else self.read_from_db()
 
     def get_for_date(self, snapshot_date: datetime) -> pd.DataFrame:
         if self.df.empty:
