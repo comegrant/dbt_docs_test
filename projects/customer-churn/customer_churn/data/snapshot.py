@@ -26,12 +26,15 @@ def generate_snapshots_for_period(
         start_date,
         end_date,
         company_id,
-        save_snapshot,
-        output_dir,
-        output_file_prefix,
     )
     for snapshot_date in snapshot_dates:
-        generate_snapshot_for_date(data_loader, snapshot_date)
+        generate_snapshot_for_date(
+            data_loader,
+            snapshot_date,
+            save_snapshot,
+            output_dir,
+            output_file_prefix,
+        )
 
 
 def generate_snapshot_for_date(

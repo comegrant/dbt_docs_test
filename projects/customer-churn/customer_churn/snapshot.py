@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 from lmkgroup_ds_utils.constants import Company
 from lmkgroup_ds_utils.db.connector import DB
@@ -10,6 +11,7 @@ from pydantic_argparser.parser import decode_args
 from customer_churn.config import PREP_CONFIG
 from customer_churn.data.load_data import DataLoader
 from customer_churn.data.snapshot import generate_snapshots_for_period
+from customer_churn.paths import DATA_DIR
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,11 +20,11 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     company_id: str = Field(Company.RN)
 
-    start_date: datetime = Field(datetime.now(tz="UTC") - timedelta(days=30))
-    end_date: datetime = Field(datetime.now(tz="UTC"))
+    start_date: datetime = Field(datetime.now(tz=UTC) - timedelta(days=30))
+    end_date: datetime = Field(datetime.now(tz=UTC))
 
     save_snapshot: bool = Field(False)
-    output_dir: str = Field("")
+    output_dir: Path = Field(DATA_DIR / "snapshot")
     output_file_prefix: str = Field("snapshot_")
 
     input_files: dict = Field(PREP_CONFIG["input_files"])
