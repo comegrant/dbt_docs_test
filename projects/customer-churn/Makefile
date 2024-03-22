@@ -6,11 +6,11 @@ help:
 
 .PHONY: snapshot
 snapshot:
-	poetry run python -m customer_churn.snapshot
+	poetry run python -m customer_churn.snapshot --company $(company) --start_date $(start-date) --save_snapshot $(save-snapshot)
 
 .PHONY: predict
 predict:
-	poetry run python -m customer_churn.predict
+	poetry run python -m customer_churn.predict --company $(company) --start_date $(start-date)
 
 .PHONY: train
 train:

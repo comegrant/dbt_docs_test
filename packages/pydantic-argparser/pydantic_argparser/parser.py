@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 from typing import TypeVar, get_origin
 
@@ -18,7 +19,7 @@ def is_list_annotation(dtype: type) -> bool:
     return get_origin(dtype) == list
 
 
-def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]):
+def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
     "Add Pydantic model to an ArgumentParser"
 
     for name, field in model.model_fields.items():
@@ -29,6 +30,12 @@ def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]):
         nargs = 1
         if is_list_annotation(field.annotation):
             nargs = "*"
+
+        if field.annotation == datetime.datetime:
+            field.annotation = lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S").astimezone(tz=datetime.UTC)
+
+        if field.annotation == datetime.date:
+            field.annotation = lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").astimezone(tz=datetime.UTC).date()
 
         parser.add_argument(
             f"--{name}",
@@ -61,6 +68,11 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
         if is_list_annotation(field.annotation):
             parser_values = getattr(parser, name)
             value = ["".join(sub_value) for sub_value in parser_values]
+            values[name] = value
+        elif callable(field.annotation):
+            value = getattr(parser, name)
+            if isinstance(value, list):
+                value = value[0]
             values[name] = value
         elif issubclass(field.annotation, str):
             value = getattr(parser, name)

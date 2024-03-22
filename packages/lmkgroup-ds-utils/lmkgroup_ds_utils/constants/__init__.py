@@ -11,6 +11,10 @@ class Company:
     def get_dict_variables(cls: type["Company"]) -> dict:
         return {key: value for key, value in cls.__dict__.items() if not key.startswith("__") and not callable(key)}
 
+    @classmethod
+    def get_id_from_name(cls: type["Company"], name: str) -> dict:
+        return {key: value for key, value in cls.get_dict_variables().items() if value == name}
+
 
 class ProductType:
     MEALBOX = "2F163D69-8AC1-6E0C-8793-FF0000804EB3"

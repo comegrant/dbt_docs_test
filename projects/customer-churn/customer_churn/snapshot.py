@@ -1,5 +1,5 @@
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from lmkgroup_ds_utils.constants import Company
@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     company_id: str = Field(Company.RN)
 
-    start_date: datetime = Field(datetime.now(tz=UTC) - timedelta(days=30))
-    end_date: datetime = Field(datetime.now(tz=UTC))
+    start_date: date = Field(datetime.now(tz=UTC).date() - timedelta(days=30))
+    end_date: date = Field(datetime.now(tz=UTC).date())
 
     save_snapshot: bool = Field(False)
     output_dir: Path = Field(DATA_DIR / "snapshot")
