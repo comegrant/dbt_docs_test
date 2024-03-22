@@ -99,8 +99,8 @@ class RecipeTaxonomies:
 @feature_view(
     name="historical_recipe_orders",
     description="The recipes that our customers have recived. Together with the rating of the dish.",
-    materialized_source=folder.parquet_at("historical_recipe_orders.parquet"),
     source=adb_ml.fetch(historical_orders_sql),
+    materialized_source=folder.parquet_at("historical_recipe_orders.parquet"),
     contacts=contacts,
 )
 class HistoricalRecipeOrders:
@@ -138,6 +138,7 @@ class RecipeIngredient:
 @feature_view(
     name="basket_deviation",
     source=adb.with_schema("cms").table("billing_agreement_basket_deviation"),
+    materialized_source=folder.parquet_at("basket_deviation.parquet"),
     contacts=contacts,
 )
 class BasketDeviation:

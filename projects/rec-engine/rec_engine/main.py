@@ -32,7 +32,7 @@ class RunArgs(BaseModel):
     ratings_update_threshold: timedelta | None = Field(None)
 
     train_year_weeks: list[int] | None = Field(None)
-    write_to: str = Field(f"data/rec_engine/{date.today().isoformat()}")
+    write_to: str | None = Field(f"data/rec_engine/{date.today().isoformat()}")
     should_write_to_application_source: bool = Field(False)
 
     manual_year_week: list[int] | None = Field(None)

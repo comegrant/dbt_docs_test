@@ -19,6 +19,7 @@ model_preds = folder.directory("predictions")
 local_mssql = SqlServerConfig("LOCAL_SQL", schema="dbo")
 
 adb = SqlServerConfig("ADB_CONNECTION")
+
 adb_ml = adb.with_schema("ml")
 adb_ml_output = adb.with_schema("ml_output")
 

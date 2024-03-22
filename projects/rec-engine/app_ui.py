@@ -30,9 +30,6 @@ async def view_predictions(inputs: RunArgs) -> None:
 
     view = store.model(model_to_view)
 
-    if view.model.predictions_view.application_source:
-        view = view.using_source(view.model.predictions_view.application_source)
-
     entities = view.model.predictions_view.entities
     with st.form(key="entity_form"):
         entity_df = st.data_editor(
@@ -44,10 +41,10 @@ async def view_predictions(inputs: RunArgs) -> None:
     if not submit or entity_df.empty:
         return
 
-    description = view.all_predictions(limit=100).describe()
-    st.write(description)
+    job = view.predictions_for(entity_df)
+    st.code(job.describe(), language="sql")
 
-    preds = await view.predictions_for(entity_df).to_polars()
+    preds = await job.to_polars()
 
     st.dataframe(preds.to_pandas())
 
