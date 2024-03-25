@@ -9,20 +9,16 @@ from urllib.parse import urlparse
 
 import pandas as pd
 from azure.storage.blob import BlobServiceClient
-
-try:
-    from databricks.sdk.runtime import dbutils
-except Exception:
-    dbutils = None
-
+from databricks.sdk import WorkspaceClient
 from dotenv import find_dotenv, load_dotenv
 
-logger = logging.getLogger()
+logger = logging.getLogger("ds_utils.azure.storage")
 load_dotenv(find_dotenv())
 
 
 class BlobConnector:
     def __init__(self, local: bool = False, **kwargs: int) -> None:
+        self.w = WorkspaceClient()
         try:
             if local:
                 account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY")
@@ -263,11 +259,11 @@ class BlobMount:
                 logger.info("Source already is mounted on %s", self.mounts[source])
                 return
 
-            dbutils.fs.mount(
+            self.w.dbutils.fs.mount(
                 source=source,
                 mount_point=path,
                 extra_configs={
-                    f"fs.azure.account.key.{storage_account}.blob.core.windows.net": dbutils.secrets.get(
+                    f"fs.azure.account.key.{storage_account}.blob.core.windows.net": self.w.dbutils.secrets.get(
                         scope=scope,
                         key=secret,
                     ),
@@ -285,7 +281,7 @@ class BlobMount:
         path -- the mounting folder for the storage
         """
         try:
-            dbutils.fs.unmount(path)
+            self.w.dbutils.fs.unmount(path)
             self.mounts = {key: val for key, val in self.mounts.items() if val != path}
         except Exception as e:
             logger.exception("Error unmounting storage: %s", e)
@@ -314,7 +310,7 @@ class BlobMount:
         Path.mkdir(old_dbfs, parents=True)
         try:
             shutil.copyfile(file, Path(old_dbfs, filename))
-            dbutils.fs.cp(Path(new_dbfs, filename), path)
+            self.w.dbutils.fs.cp(Path(new_dbfs, filename), path)
         except Exception as e:
             logger.exception("Failed to copy file: %s", e)
         finally:
@@ -335,7 +331,7 @@ class BlobMount:
 
         try:
             shutil.copytree(folder, Path(old_dbfs, folder_name))
-            dbutils.fs.cp(Path(new_dbfs, folder_name), path, recurse=True)
+            self.w.dbutils.fs.cp(Path(new_dbfs, folder_name), path, recurse=True)
         except Exception as e:
             logger.exception("Failed to copy folder: %s", e)
         finally:

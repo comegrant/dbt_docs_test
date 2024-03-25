@@ -15,6 +15,6 @@ def make_predictions(
 ) -> None:
     logger.info("Make predictions")
     logger.info(features.columns)
-    model = LogisticRegression(forecast_weeks=forecast_weeks, company_name=company_name, version=model_version)
+    model = LogisticRegression(forecast_weeks=forecast_weeks, model_version=model_version, company_name=company_name)
 
     return model.predict(features)

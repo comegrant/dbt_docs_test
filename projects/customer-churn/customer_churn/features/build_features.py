@@ -45,10 +45,10 @@ def get_features(
 ) -> pd.DataFrame:
     logger.info(f"Get features for {company_id} from {start_date} to {end_date}")
 
-    # TODO: if local, read from local file, else download from Azure data lake
+    # if local, read from local file, else download from Databricks mlflow
     df = read_files(company_id, start_date, end_date, local)
 
-    # TODO: build features
+    # build features
     df_features = Preprocessor().prep_prediction(df=df)
 
     return df_features

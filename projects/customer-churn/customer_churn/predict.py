@@ -10,7 +10,6 @@ from customer_churn.features.build_features import get_features
 from customer_churn.models.predict import make_predictions
 
 logging.basicConfig(level=logging.INFO)
-
 logger = logging.getLogger(__name__)
 
 logger.info("Starting predict")
