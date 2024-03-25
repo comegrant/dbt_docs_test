@@ -16,8 +16,12 @@ class Preprocessor:
     ]
     PREDICTION_LABEL: ClassVar[list[str]] = ["forecast_status"]
     CUSTOMER_ID_LABEL: str = "agreement_id"
-    TRAINING_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
-    PREDICTION_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
+    TRAINING_FEATURES: ClassVar[list[str]] = (
+        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
+    )
+    PREDICTION_FEATURES: ClassVar[list[str]] = (
+        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
+    )
 
     @classmethod
     def normalize_df(cls: type["Preprocessor"], df: pd.DataFrame) -> pd.DataFrame:
@@ -97,6 +101,8 @@ class Preprocessor:
         df.loc[df[label_column] == "freezed", label_column] = "active"
         df.loc[df[label_column] == "active", label_column] = 0
         df.loc[df[label_column] == "churned", label_column] = 1
+        logger.info(df[label_column])
+
         df[label_column] = df[label_column].astype(int)
         df_prep = cls.prep(
             df,
@@ -120,7 +126,9 @@ class Preprocessor:
         and optionally after another date.
         """
         if after_date:
-            return data[(data[date_column] < before_date) & (data[date_column] >= after_date)]
+            return data[
+                (data[date_column] < before_date) & (data[date_column] >= after_date)
+            ]
         return data[data[date_column] < before_date]
 
     @classmethod
@@ -140,42 +148,52 @@ class Preprocessor:
         :param forecast_weeks: Number of weeks for forecasting.
         :return: Tuple containing training features, training labels, validation features, and validation labels.
         """
+        date_column = "snapshot_date"
+
         if training_features is None:
             training_features = cls.TRAINING_FEATURES
 
         # Ensure snapshot_date is in datetime format and filter out unwanted indices
-        data = data[data["snapshot_date"].apply(lambda x: len(str(x)) <= num_indices_drop)]
-        data["snapshot_date"] = pd.to_datetime(data["snapshot_date"])
+        data = data[data[date_column].apply(lambda x: len(str(x)) <= num_indices_drop)]
+        data[date_column] = pd.to_datetime(data[date_column])
+        data.dropna(subset=["forecast_status"], inplace=True)
 
-        max_date = data["snapshot_date"].max()
+        max_date = data[date_column].max()
         validation_split_date = max_date - pd.DateOffset(months=validation_split_months)
         forecast_split_date = validation_split_date - pd.DateOffset(
             weeks=forecast_weeks,
         )
 
         logger.info(
-            f"Data size before removing data prior to forecast_weeks: {data.shape[0]}",
-        )
-        training_data = cls.filter_data_by_date(
-            data,
-            "snapshot_date",
-            forecast_split_date,
-        )
-        logger.info(
-            f"Training data size after date filtering: {training_data.shape[0]}",
+            f"Validation split date: {validation_split_date}, forecast split date: {forecast_split_date}",
         )
 
+        logger.info(
+            f"Data size before removing data prior to forecast_weeks: {data.shape[0]}",
+        )
         training_set = cls.filter_data_by_date(
-            training_data,
-            "snapshot_date",
+            data,
+            date_column,
             validation_split_date,
         )
+        logger.info(
+            f"Training set size: {len(training_set)} with max date: {training_set[date_column].max()}",
+        )
+
         validation_set = cls.filter_data_by_date(
-            training_data,
-            "snapshot_date",
+            data,
+            date_column,
             max_date,
             validation_split_date,
         )
+        logger.info(
+            f"Validation set size: {len(validation_set)} with max date: {validation_set[date_column].max()}",
+        )
+
+        if validation_set.empty:
+            raise ValueError(
+                f"Validation set is empty! Validation split is set to {validation_split_date}. Max date is {max_date}",
+            )
 
         # Preprocess training and validation sets
         df_x_train, df_y_train = cls.prep_training(
@@ -190,6 +208,11 @@ class Preprocessor:
             drop_nan=True,
             label_column="forecast_status",
         )
+
+        if df_x_val.empty:
+            raise ValueError(
+                f"Validation set is empty! Max date for training set is {df_x_train[date_column].max()}",
+            )
 
         logger.info(
             f"Train data size: {df_x_train.shape}, Validation data size: {df_x_val.shape}",

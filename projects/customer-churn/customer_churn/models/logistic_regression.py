@@ -23,13 +23,7 @@ class LogisticRegression:
 
     CUSTOMER_ID_LABEL: str = "agreement_id"
 
-    def __init__(
-        self,
-        forecast_weeks: int = 4,
-        probability_threshold: float = 0.3,
-        model_version: str = "1",
-        company_name: str = "LMK",
-    ):
+    def __init__(self, forecast_weeks: int = 4, probability_threshold: float = 0.3):
         """
         :param data: Pandas Dataframe (merged dataset coming from gen.py)
         :probability_threshold: Probability threshold for model estimator
@@ -37,25 +31,6 @@ class LogisticRegression:
         """
         self.probability_threshold = probability_threshold
         self.forecast_weeks = forecast_weeks
-
-        self.model = self.load_mlflow_model(model_name=f"{company_name}_CHURN", version=model_version)
-
-    def load_mlflow_model(self, model_name: str, version: str = "1") -> mlflow.sklearn.Model | None:
-        w = WorkspaceClient(
-            host=DATABRICKS_HOST,
-            token=DATABRICKS_TOKEN,
-        )
-
-        mlflow.login(backend=MLFLOW_TRACKING_URI)
-
-        model = mlflow.artifacts.download_artifacts(
-            artifact_uri=w.model_registry.get_model_version_download_uri(model_name, version).artifact_uri,
-        )
-
-        if model:
-            return mlflow.sklearn.load_model(model)
-
-        return None
 
     def fit(
         self,
@@ -94,7 +69,9 @@ class LogisticRegression:
         model.fit(x_train, y_train)
 
         logger.info(f"Training features columns: {x_train.columns!s}")
-        y_val_pred = (model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold).astype(int)
+        y_val_pred = (
+            model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold
+        ).astype(int)
 
         precision, recall, fscore, _ = score(df_y_val, y_val_pred, average="macro")
         logger.info(f"precision: {precision}")
@@ -111,8 +88,8 @@ class LogisticRegression:
 
     def load(
         self,
-        model_obj: SKLogisticRegression | None,
-        model_filename: str | None = None,
+        model_filename: str,
+        model_version: str = "1",
     ) -> None:
         """
         Model loading
@@ -120,12 +97,17 @@ class LogisticRegression:
         :return:
         """
         logger.info(f"Loading model from file: {model_filename}")
-        if model_obj is not None:
-            self.model = model_obj
-            return
 
-        with Path.open(model_filename, "rb") as file:
-            self.model = pickle.load(file)
+        model = self._load_mlflow_model(
+            model_name=model_filename,
+            version=model_version,
+        )
+
+        if model:
+            self.model = model
+        else:
+            with Path.open(model_filename, "rb") as file:
+                self.model = pickle.load(file)
 
     def predict(
         self,
@@ -149,3 +131,27 @@ class LogisticRegression:
         features["score"] = predictions_score
         features["model_type"] = "original_pred_proba"
         return features
+
+    def _load_mlflow_model(
+        self,
+        model_name: str,
+        version: str = "1",
+    ) -> mlflow.sklearn.Model | None:
+        w = WorkspaceClient(
+            host=DATABRICKS_HOST,
+            token=DATABRICKS_TOKEN,
+        )
+
+        mlflow.login(backend=MLFLOW_TRACKING_URI)
+
+        model = mlflow.artifacts.download_artifacts(
+            artifact_uri=w.model_registry.get_model_version_download_uri(
+                model_name,
+                version,
+            ).artifact_uri,
+        )
+
+        if model:
+            return mlflow.sklearn.load_model(model)
+
+        return None
