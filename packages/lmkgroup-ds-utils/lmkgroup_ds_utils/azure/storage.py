@@ -9,7 +9,12 @@ from urllib.parse import urlparse
 
 import pandas as pd
 from azure.storage.blob import BlobServiceClient
-from databricks.sdk.runtime import dbutils
+
+try:
+    from databricks.sdk.runtime import dbutils
+except Exception:
+    dbutils = None
+
 from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger()

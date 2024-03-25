@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from datetime import date, timedelta
 
@@ -11,7 +10,10 @@ from customer_churn.features.build_features import get_features
 from customer_churn.models.predict import make_predictions
 
 logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
+
+logger.info("Starting predict")
 
 
 class RunArgs(BaseModel):
@@ -19,6 +21,7 @@ class RunArgs(BaseModel):
 
     start_date: date = Field(date.today() - timedelta(days=30))
     end_date: date = Field(date.today())
+    local: bool = Field(True)
 
     forecast_weeks: int = Field(4)
     onboarding_weeks: int = Field(12)
@@ -28,30 +31,30 @@ class RunArgs(BaseModel):
     write_to: str = Field(f"data/customer_churn/{date.today().isoformat()}")
 
 
-async def run_with_args(args: RunArgs) -> None:
-    logger.info(args)
-    logger.info(Company.get_id_from_name(args.company))
+def run_with_args(args: RunArgs) -> None:
+    logger.info(f"Running predict with args {args}")
     if args.company:
         features = get_features(
             company_id=Company.get_id_from_name(args.company),
             start_date=args.start_date,
             end_date=args.end_date,
+            local=args.local,
         )
         if logger:
             logger.info(f"Start processing data for {args.company}")
     else:
         raise ValueError("Unable to create features")
 
-    return await make_predictions(features)
+    predictions = make_predictions(features, company_name=args.company, forecast_weeks=args.forecast_weeks)
+
+    logger.info(predictions)
 
 
 def run() -> None:
     args = parser_for(RunArgs).parse_args()
 
-    asyncio.run(
-        run_with_args(
-            decode_args(args, RunArgs),
-        ),
+    run_with_args(
+        decode_args(args, RunArgs),
     )
 
 

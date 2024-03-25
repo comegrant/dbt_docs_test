@@ -1,17 +1,20 @@
-import mlflow
+import logging
+
 import pandas as pd
 
 from customer_churn.models.logistic_regression import LogisticRegression
 
+logger = logging.getLogger(__name__)
 
-async def make_predictions(
+
+def make_predictions(
     features: pd.DataFrame,
-    pretrained_model: str | None = None,
+    company_name: str,
+    forecast_weeks: int = 4,
+    model_version: str = "1",
 ) -> None:
-    model = LogisticRegression(forecast_weeks=features.forecast_weeks)
-
-    if pretrained_model:
-        mlflow.set_tracking_uri(pretrained_model)
-        model.load(pretrained_model)
+    logger.info("Make predictions")
+    logger.info(features.columns)
+    model = LogisticRegression(forecast_weeks=forecast_weeks, company_name=company_name, version=model_version)
 
     return model.predict(features)

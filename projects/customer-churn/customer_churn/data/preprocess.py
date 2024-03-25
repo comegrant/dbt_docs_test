@@ -16,12 +16,8 @@ class Preprocessor:
     ]
     PREDICTION_LABEL: ClassVar[list[str]] = ["forecast_status"]
     CUSTOMER_ID_LABEL: str = "agreement_id"
-    TRAINING_FEATURES: ClassVar[list[str]] = (
-        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
-    )
-    PREDICTION_FEATURES: ClassVar[list[str]] = (
-        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
-    )
+    TRAINING_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
+    PREDICTION_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
 
     @classmethod
     def normalize_df(cls: type["Preprocessor"], df: pd.DataFrame) -> pd.DataFrame:
@@ -41,6 +37,15 @@ class Preprocessor:
         for feature in cls.CATEGORICAL_FEATURES:
             dummies = pd.get_dummies(df[feature], prefix=feature)
             df = pd.concat([df, dummies], axis=1).drop(feature, axis=1)
+
+        for col in [
+            "snapshot_status_active",
+            "snapshot_status_freezed",
+            "planned_delivery_True",
+            "planned_delivery_False",
+        ]:
+            if col not in df.columns:
+                df[col] = 0
         return df
 
     @classmethod
@@ -59,8 +64,9 @@ class Preprocessor:
         df = df[df["weeks_since_last_delivery"] < no_delivery_churned_weeks]
         df = df[df["weeks_since_last_delivery"] >= 0]
         df["category"] = df["category"].fillna(value="0")
-        df = cls.handle_categorical_features(df)
         df = df[columns_to_keep]
+        df = cls.handle_categorical_features(df)
+        logger.info(df.columns)
         if drop_nan:
             df = df.dropna()
             logger.info(f"Total NaN rows dropped: {df.shape[0]}")
@@ -74,6 +80,7 @@ class Preprocessor:
         customer_id_label: str = "agreement_id",
         drop_nan: bool = True,
     ) -> pd.DataFrame:
+        logger.info(df.columns)
         df_prep = cls.prep(df, columns_to_keep=columns_to_keep, drop_nan=drop_nan)
         df_prep[customer_id_label] = df[customer_id_label]
         return df_prep
@@ -113,9 +120,7 @@ class Preprocessor:
         and optionally after another date.
         """
         if after_date:
-            return data[
-                (data[date_column] < before_date) & (data[date_column] >= after_date)
-            ]
+            return data[(data[date_column] < before_date) & (data[date_column] >= after_date)]
         return data[data[date_column] < before_date]
 
     @classmethod
@@ -139,9 +144,7 @@ class Preprocessor:
             training_features = cls.TRAINING_FEATURES
 
         # Ensure snapshot_date is in datetime format and filter out unwanted indices
-        data = data[
-            data["snapshot_date"].apply(lambda x: len(str(x)) <= num_indices_drop)
-        ]
+        data = data[data["snapshot_date"].apply(lambda x: len(str(x)) <= num_indices_drop)]
         data["snapshot_date"] = pd.to_datetime(data["snapshot_date"])
 
         max_date = data["snapshot_date"].max()

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class RunArgs(BaseModel):
-    company_id: str = Field(Company.RN)
+    company: str = Field("RN")
 
     start_date: date = Field(datetime.now(tz=UTC).date() - timedelta(days=30))
     end_date: date = Field(datetime.now(tz=UTC).date())
@@ -41,7 +41,7 @@ def generate_snapshot(args: RunArgs) -> None:
     postgres_db = DB(db_name="postgres_db", env=args.db_env, local=args.local)
 
     data_loader = DataLoader(
-        args.company_id,
+        Company.get_id_from_name(args.company),
         input_files=args.input_files,
         snapshot_config=args.snapshot_config,
         adb=adb,
@@ -50,7 +50,7 @@ def generate_snapshot(args: RunArgs) -> None:
 
     generate_snapshots_for_period(
         data_loader=data_loader,
-        company_id=args.company_id,
+        company_id=args.company,
         start_date=args.start_date,
         end_date=args.end_date,
         save_snapshot=args.save_snapshot,

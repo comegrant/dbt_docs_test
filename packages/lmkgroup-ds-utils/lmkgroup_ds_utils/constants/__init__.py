@@ -1,4 +1,7 @@
 """ Stores constants commonly used in the code """
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Company:
@@ -13,7 +16,11 @@ class Company:
 
     @classmethod
     def get_id_from_name(cls: type["Company"], name: str) -> dict:
-        return {key: value for key, value in cls.get_dict_variables().items() if value == name}
+        return cls.get_dict_variables()[name.upper()]
+
+    @classmethod
+    def get_name_from_id(cls: type["Company"], company_id: str) -> dict:
+        return {value: key for key, value in cls.get_dict_variables().items()}[company_id]
 
 
 class ProductType:
