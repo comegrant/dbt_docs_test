@@ -3,11 +3,10 @@ import json
 import pandas as pd
 import pytest
 import pytest_asyncio
-from aligned import FeatureStore, FileSource
+from aligned import Directory, FeatureStore, FileSource
 from aligned.compiler.model import uuid4
 from aligned.feature_source import BatchFeatureSource
 from aligned.schemas.feature import FeatureLocation
-from data_contracts.blob_storage import LocalFolder
 from data_contracts.recommendations.store import recommendation_feature_contracts
 from rec_engine.run import (
     ManualDataset,
@@ -21,7 +20,7 @@ from rec_engine.run import (
 async def model_contracts() -> FeatureStore:
     store = recommendation_feature_contracts()
 
-    test_folder = LocalFolder("test_data")
+    test_folder: Directory = FileSource.directory("test_data")
 
     location_source_map = {
         FeatureLocation.feature_view("recipe_taxonomies"): test_folder.csv_at(

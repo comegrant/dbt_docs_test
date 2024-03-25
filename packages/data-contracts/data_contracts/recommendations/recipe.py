@@ -1,5 +1,5 @@
 from aligned import Bool, EventTimestamp, Int32, String, feature_view
-from data_contracts.sources import adb, adb_ml, folder
+from data_contracts.sources import adb, adb_ml, materialized_data
 from project_owners.owner import Owner
 
 flex_dish_id = "CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1"
@@ -82,7 +82,7 @@ GROUP BY recipe_id
 @feature_view(
     name="recipe_taxonomies",
     description="The taxonomies associated with a recipe.",
-    materialized_source=folder.parquet_at("recipe_taxonomies.parquet"),
+    materialized_source=materialized_data.delta_at("recipe_taxonomies"),
     source=adb_ml.fetch(taxonomies_sql),
     contacts=contacts,
 )
@@ -100,7 +100,7 @@ class RecipeTaxonomies:
     name="historical_recipe_orders",
     description="The recipes that our customers have recived. Together with the rating of the dish.",
     source=adb_ml.fetch(historical_orders_sql),
-    materialized_source=folder.parquet_at("historical_recipe_orders.parquet"),
+    materialized_source=materialized_data.delta_at("historical_recipe_orders"),
     contacts=contacts,
 )
 class HistoricalRecipeOrders:
@@ -120,7 +120,7 @@ class HistoricalRecipeOrders:
 
 @feature_view(
     name="recipe_ingredients",
-    materialized_source=folder.parquet_at("recipe_ingredients.parquet"),
+    materialized_source=materialized_data.delta_at("recipe_ingredients"),
     source=adb_ml.fetch(recipe_ingredients_sql),
     description="All non base ingredients that a recipe contains.",
     contacts=contacts,
@@ -138,7 +138,7 @@ class RecipeIngredient:
 @feature_view(
     name="basket_deviation",
     source=adb.with_schema("cms").table("billing_agreement_basket_deviation"),
-    materialized_source=folder.parquet_at("basket_deviation.parquet"),
+    materialized_source=materialized_data.delta_at("basket_deviation"),
     contacts=contacts,
 )
 class BasketDeviation:

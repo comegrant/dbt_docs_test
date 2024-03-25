@@ -1,6 +1,6 @@
 from aligned import EventTimestamp, Int32, String, model_contract
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeIngredient, RecipeTaxonomies
-from data_contracts.sources import model_preds
+from data_contracts.sources import recommendations_dir
 from project_owners.owner import Owner
 
 ingredient = RecipeIngredient()
@@ -17,7 +17,7 @@ orders = HistoricalRecipeOrders()
         Owner.matsmoll().markdown(),
     ],
     features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
-    prediction_source=model_preds.parquet_at("user_recipe_likability.parquet"),
+    prediction_source=recommendations_dir.delta_at("user_recipe_likability"),
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()

@@ -463,6 +463,7 @@ Path: *{self.path}*
                 "string": pa.large_string(),
                 "date": pa.date64(),
                 "datetime": pa.float64(),
+                "datetime-UTC": pa.float64(),
                 "list": pa.large_list(pa.int32()),
                 "array": pa.large_list(pa.int32()),
                 "bool": pa.bool_(),
@@ -483,7 +484,7 @@ Path: *{self.path}*
                     df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))
                 elif feature.dtype.name == "array":
                     df = df.with_columns(pl.col(feature.name).cast(pl.List(pl.Int32())))
-                elif feature.dtype.name == "datetime":
+                elif feature.dtype.is_datetime:
                     df = df.with_columns(pl.col(feature.name).dt.timestamp("ms").cast(pl.Float64()))
                 else:
                     df = df.with_columns(pl.col(feature.name).cast(feature.dtype.polars_type))

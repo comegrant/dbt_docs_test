@@ -168,13 +168,13 @@ tz = ["backports.zoneinfo"]
 
 [[package]]
 name = "aligned"
-version = "0.0.84"
+version = "0.0.85"
 description = "A data managment and lineage tool for ML applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "aligned-0.0.84-py3-none-any.whl", hash = "sha256:dea54df5ed57d40ba04cd46075cb93ca9bbbf9f999067746dfc03dab65c71d42"},
-    {file = "aligned-0.0.84.tar.gz", hash = "sha256:6642eca1b5fcbe0af4d5807dfc6cce4227874687ec8033faa06636e03dbe65e3"},
+    {file = "aligned-0.0.85-py3-none-any.whl", hash = "sha256:38f665a4f5507c0997b5e341fa9f89db1041559457c94189cab8ec6b22ee5bca"},
+    {file = "aligned-0.0.85.tar.gz", hash = "sha256:9bb892b2484118b2c80a341ed2231d7b26142d733e385bc7de08b0426b7223b0"},
 ]
 
 [package.dependencies]
@@ -888,7 +888,7 @@ develop = true
 
 [package.dependencies]
 aioodbc = {version = "0.4.1", optional = true}
-aligned = "^0.0.84"
+aligned = "^0.0.85"
 azure-identity = "^1.15.0"
 azure-storage-blob = "^12.19.0"
 project-owners = {path = "../../packages/project-owners", develop = true}
