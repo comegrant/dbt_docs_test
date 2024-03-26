@@ -1,8 +1,4 @@
 # Databricks notebook source
-
-
-# COMMAND ----------
-
 import sys
 import os
 import logging
@@ -10,10 +6,8 @@ import logging
 logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-internal_packages = ["pydantic_argparser"]
-
 # Insert customer_churn to path
-sys.path.insert(0, '..')
+sys.path.insert(0, '../')
 
 # Insert lmk_utils package to path
 sys.path.insert(0, "../../../packages/lmkgroup-ds-utils/")
@@ -61,22 +55,3 @@ predictions = run_with_args(
 # COMMAND ----------
 
 predictions.head()
-
-# COMMAND ----------
-
-
-import mlflow
-from databricks.sdk import WorkspaceClient
-
-w = WorkspaceClient()
-        
-model_download_uri = w.model_registry.get_model_version_download_uri(
-    "RN_CHURN",
-    "1")
-model = mlflow.artifacts.download_artifacts(
-    artifact_uri=model_download_uri.artifact_uri,
-)
-
-# COMMAND ----------
-
-

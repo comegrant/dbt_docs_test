@@ -54,9 +54,7 @@ def run_with_args(args: RunArgs) -> None:
 
     features = Preprocessor().prep_prediction(df=features)
 
-    predictions = pd.DataFrame()
-    
-    make_predictions(
+    predictions = make_predictions(
         features,
         company_name=args.company,
         forecast_weeks=args.forecast_weeks,

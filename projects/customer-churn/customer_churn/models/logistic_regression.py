@@ -142,6 +142,8 @@ class LogisticRegression:
             host=DATABRICKS_HOST,
             token=DATABRICKS_TOKEN,
         )
+
+        mlflow.login()
         
         model_download_uri = w.model_registry.get_model_version_download_uri(
             model_name,
