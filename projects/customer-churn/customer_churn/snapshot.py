@@ -2,7 +2,7 @@ import logging
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
-from lmkgroup_ds_utils.constants import Company
+from lmkgroup_ds_utils.constants import Companies
 from lmkgroup_ds_utils.db.connector import DB
 from pydantic import BaseModel, Field
 from pydantic_argparser import parser_for
@@ -41,7 +41,7 @@ def generate_snapshot(args: RunArgs) -> None:
     postgres_db = DB(db_name="postgres_db", env=args.db_env, local=args.local)
 
     data_loader = DataLoader(
-        Company.get_id_from_name(args.company),
+        Companies.get_id_from_name(args.company),
         input_files=args.input_files,
         snapshot_config=args.snapshot_config,
         adb=adb,

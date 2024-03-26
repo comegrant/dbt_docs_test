@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from lmkgroup_ds_utils.constants import Company
+from lmkgroup_ds_utils.constants import Companies
 
 from customer_churn.paths import SQL_DIR
 
@@ -48,10 +48,10 @@ LABEL_TEXT_DELETED = "deleted"
 LABEL_TEXT_CHURNED = "churned"
 
 SCHEMAS = {
-    Company.GL: "js",
-    Company.LMK: "javascript_lmk",
-    Company.AMK: "javascript_adams",
-    Company.RN: "javascript_retnment",
+    Companies.GL.code: "js",
+    Companies.LMK.code: "javascript_lmk",
+    Companies.AMK.code: "javascript_adams",
+    Companies.RN.code: "javascript_retnment",
 }
 
 
