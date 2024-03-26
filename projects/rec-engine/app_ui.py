@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from contextlib import suppress
 
 import pandas as pd
@@ -10,8 +9,6 @@ from pydantic_form import pydantic_form
 from rec_engine.logger import StreamlitLogger
 from rec_engine.main import RunArgs, run_with_args
 from rec_engine.source_selector import use_local_sources_in
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 def has_run(state: RunArgs) -> bool:
@@ -27,7 +24,11 @@ async def view_raw_source(inputs: RunArgs) -> None:
     if inputs.write_to:
         store = use_local_sources_in(store, list(store.models.keys()), inputs.write_to)
 
-    model_to_view = st.selectbox("Select model to view", list(store.models.keys()), key="raw_source")
+    model_to_view = st.selectbox(
+        "Select model to view",
+        list(store.models.keys()),
+        key="raw_source",
+    )
     if not model_to_view:
         return
 
@@ -51,7 +52,11 @@ async def view_input_feature(inputs: RunArgs) -> None:
     if inputs.write_to:
         store = use_local_sources_in(store, list(store.models.keys()), inputs.write_to)
 
-    model_to_view = st.selectbox("Select model to view", list(store.models.keys()), key="input_feature")
+    model_to_view = st.selectbox(
+        "Select model to view",
+        list(store.models.keys()),
+        key="input_feature",
+    )
 
     if not model_to_view:
         return
@@ -121,7 +126,10 @@ async def setup_ddl() -> None:
     source = None
     if pred_view.source and isinstance(pred_view.source, SqlServerDataSource):
         source = pred_view.source
-    elif pred_view.application_source and isinstance(pred_view.application_source, SqlServerDataSource):
+    elif pred_view.application_source and isinstance(
+        pred_view.application_source,
+        SqlServerDataSource,
+    ):
         source = pred_view.application_source
 
     if not source:
@@ -145,7 +153,9 @@ async def setup_ddl() -> None:
     if source.config.schema:
         table = f"{source.config.schema}.{table}"
 
-    st.write("The following queries will be run on the database described at the environment var below:")
+    st.write(
+        "The following queries will be run on the database described at the environment var below:",
+    )
     st.write(source.config.env_var)
 
     mssql_ddl_table_create += f"""CREATE TABLE {table} ("""
@@ -155,14 +165,19 @@ async def setup_ddl() -> None:
 
     for feature in request.features.union(pred_view.entities):
         dtype = mssql_dtype_map.get(feature.dtype.name, "text").upper()
-        is_optional = feature.constraints is not None and Optional() in feature.constraints
+        is_optional = (
+            feature.constraints is not None and Optional() in feature.constraints
+        )
         if not is_optional:
             dtype = f"{dtype} NOT NULL"
         column_name = inverse_map.get(feature.name, feature.name)
         mssql_ddl_table_create += f"\n    {column_name} {dtype},"
 
     if request.event_timestamp:
-        column_name = inverse_map.get(request.event_timestamp.name, request.event_timestamp.name)
+        column_name = inverse_map.get(
+            request.event_timestamp.name,
+            request.event_timestamp.name,
+        )
         mssql_ddl_table_create += f"\n    {column_name} DATETIME NOT NULL,"
 
     mssql_ddl_table_create = mssql_ddl_table_create[:-1] + "\n);"
@@ -197,7 +212,9 @@ async def main() -> None:
         return
 
     st.write(inputs)
-    view_preds, raw_source, ddl, predict = st.tabs(["View predictions", "View raw source", "DDL", "Predict"])
+    view_preds, raw_source, ddl, predict = st.tabs(
+        ["View predictions", "View raw source", "DDL", "Predict"],
+    )
 
     with view_preds:
         await view_predictions(inputs)
@@ -210,7 +227,9 @@ async def main() -> None:
 
     with predict:
         st.write("This will run the whole recommendation engine pipeline.")
-        st.write("This will train and predict over the data, and can be quite resource intensive.")
+        st.write(
+            "This will train and predict over the data, and can be quite resource intensive.",
+        )
         st.write(
             "Therefore, make sure to either set of ≈ 10 GB of memory, "
             "or only predict for a subset of agreement ids, "
