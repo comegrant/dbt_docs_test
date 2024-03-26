@@ -106,6 +106,7 @@ class LogisticRegression:
         if model:
             self.model = model
         else:
+            logger.info("Model returned empty, trying to load from local using pickle")
             with Path.open(model_filename, "rb") as file:
                 self.model = pickle.load(file)
 
@@ -141,14 +142,13 @@ class LogisticRegression:
             host=DATABRICKS_HOST,
             token=DATABRICKS_TOKEN,
         )
-
-        mlflow.login(backend=MLFLOW_TRACKING_URI)
-
+        
+        model_download_uri = w.model_registry.get_model_version_download_uri(
+            model_name,
+            version)
+        logger.info(f"Downloading model from {model_download_uri}")
         model = mlflow.artifacts.download_artifacts(
-            artifact_uri=w.model_registry.get_model_version_download_uri(
-                model_name,
-                version,
-            ).artifact_uri,
+            artifact_uri=model_download_uri.artifact_uri,
         )
 
         if model:

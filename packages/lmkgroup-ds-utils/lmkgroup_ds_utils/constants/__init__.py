@@ -1,26 +1,47 @@
 """ Stores constants commonly used in the code """
 import logging
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
 
-class Company:
-    LMK = LINAS_MATKASSE = "6A2D0B60-84D6-4830-9945-58D518D27AC2"
-    AMK = ADAMS_MATKASSE = "8A613C15-35E4-471F-91CC-972F933331D7"
-    GL = GODTLEVERT = "09ECD4F0-AE58-4539-8E8F-9275B1859A19"
-    RN = RETNEMT = "5E65A955-7B1A-446C-B24F-CFE576BF52D7"
+class Company(BaseModel):
+    id: str
+    name: str
+    code: str
+
+
+class Companies:
+    LMK = Company(id="6A2D0B60-84D6-4830-9945-58D518D27AC2", name="LINAS_MATKASSE", code="LMK")
+    AMK = Company(id="8A613C15-35E4-471F-91CC-972F933331D7", name="ADAMS_MATKASSE", code="AMK")
+    GL = Company(id="09ECD4F0-AE58-4539-8E8F-9275B1859A19", name="GODTLEVERT", code="GL")
+    RN = Company(id="5E65A955-7B1A-446C-B24F-CFE576BF52D7", name="RETNEMNT", code="RN")
+
+    ALL = [LMK, AMK, GL, RN]
 
     @classmethod
-    def get_dict_variables(cls: type["Company"]) -> dict:
-        return {key: value for key, value in cls.__dict__.items() if not key.startswith("__") and not callable(key)}
+    def get_id_from_name(cls, name: str) -> str:
+        for company in cls.ALL:
+            if company.name == name:
+                return company.id
+            
+    @classmethod
+    def get_id_from_code(cls, code: str) -> str:
+        for company in cls.ALL:
+            if company.code == code:
+                return company.id
 
     @classmethod
-    def get_id_from_name(cls: type["Company"], name: str) -> dict:
-        return cls.get_dict_variables()[name.upper()]
+    def get_name_from_id(cls, id: str) -> str:
+        for company in cls.ALL:
+            if company.id == id:
+                return company.name
 
     @classmethod
-    def get_name_from_id(cls: type["Company"], company_id: str) -> dict:
-        return {value: key for key, value in cls.get_dict_variables().items()}[company_id]
+    def get_code_from_id(cls, id: str) -> str:
+        for company in cls.ALL:
+            if company.id == id:
+                return company.code
 
 
 class ProductType:

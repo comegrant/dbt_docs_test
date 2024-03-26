@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 from lmkgroup_ds_utils.azure.storage import BlobConnector
-from lmkgroup_ds_utils.constants import Company
+from lmkgroup_ds_utils.constants import Companies
 
 from customer_churn.paths import DATA_PROCESSED_DIR, INTERIM_DATA_DIR
 
@@ -19,7 +19,7 @@ def read_files(
     blob_connector: BlobConnector | None = None,
 ) -> pd.DataFrame:
     if blob_connector is None:
-        blob_connector = BlobConnector(local=True)
+        blob_connector = BlobConnector(local=local)
 
     logger.info(f"Read files for {company_id} from {start_date} to {end_date}")
     if local:
@@ -28,10 +28,11 @@ def read_files(
         logger.info(f"Reading {last_snapshot}")
         return pd.read_csv(last_snapshot), last_snapshot
 
-    filespath = f"churn-ai/{Company.get_name_from_id(company_id)}/data/interm/"
-    last_snapshot = blob_connector.list_blobs("data-science", filespath)[0]
+    filespath = f"churn-ai/{Companies.get_code_from_id(company_id)}/data/interm/"
+    logger.info(f"Listing files in filespath {filespath}")
+    last_snapshot = sorted(blob_connector.list_blobs(filespath), reverse=True)[0]
     logger.info(f"Downloading {last_snapshot} from Azure data lake")
-    df = blob_connector.download_csv_to_df(last_snapshot)
+    df = blob_connector.download_csv_to_df(blob=last_snapshot)
 
     return df, last_snapshot
 

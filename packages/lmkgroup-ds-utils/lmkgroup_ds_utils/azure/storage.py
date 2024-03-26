@@ -19,6 +19,7 @@ load_dotenv(find_dotenv())
 class BlobConnector:
     def __init__(self, local: bool = False, **kwargs: int) -> None:
         self.w = WorkspaceClient()
+        self.dbutils = self.w.dbutils
         try:
             if local:
                 account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY")
@@ -28,10 +29,10 @@ class BlobConnector:
                 account_url = os.getenv("DATALAKE_SERVICE_ACCOUNT_URL")
             else:
                 account_key = None
-                tenant_id = kwargs["tenant_id"]
-                client_id = kwargs["client_id"]
-                client_secret = kwargs["client_secret"]
-                account_url = kwargs["account_url"]
+                account_url = "https://gganalyticsdatalake.blob.core.windows.net/"
+                tenant_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-DirID"),
+                client_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-AppID"),
+                client_secret=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret")
 
             if account_key is not None:
                 self.blob_service_client = BlobServiceClient(
@@ -41,7 +42,11 @@ class BlobConnector:
             elif client_id is not None and client_secret is not None and tenant_id is not None:
                 from azure.identity import ClientSecretCredential
 
-                token = ClientSecretCredential(tenant_id, client_id, client_secret)
+                token = ClientSecretCredential(
+                    tenant_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-DirID"),
+                    client_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-AppID"),
+                    client_secret=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret")
+                )
 
                 self.blob_service_client = BlobServiceClient(
                     account_url=account_url,
@@ -52,7 +57,7 @@ class BlobConnector:
         except Exception as exception:
             logger.exception(exception)
 
-    def list_blobs(self, container: str, path: str = "/") -> list:
+    def list_blobs(self, path: str = "/", container: str = "data-science") -> list:
         """
         List files existing on a container
         Keyword arguments:
@@ -66,21 +71,22 @@ class BlobConnector:
             files.append(blob.name)
         return files
 
-    def upload_df(self, container: str, dataframe: pd.DataFrame, file_path: str, filename: str) -> None:
+    def upload_df(self, dataframe: pd.DataFrame, file_path: str, filename: str, container: str = "data-science") -> None:
         """
         Upload DataFrame to Azure Blob Storage to given container
         Keyword arguments:
         container -- name of the container
         dataframe -- the dataframe(df) object (default None)
-        file_path -- source folder
+        file_path -- path folder to store the dataframe
         filename -- the filename to use for the blob (default None)
 
-        eg: upload_df(container="test", dataframe=df, file_path="/tmp/file.csv", filename="test.csv")
+        eg: upload_df(container="test", dataframe=df, file_path="", filename="test.csv")
         """
-        upload_file_path = Path(file_path / filename)
+        upload_file_path = Path(file_path) / filename
+        logger.info(f"Uploading to {upload_file_path} in container {container}")
         blob_client = self.blob_service_client.get_blob_client(
             container=container,
-            blob=upload_file_path,
+            blob=str(upload_file_path),
         )
         try:
             output = dataframe.to_csv(index=False, encoding="utf-8")
@@ -88,11 +94,11 @@ class BlobConnector:
             logger.exception("Failed to save dataframe: %s", exception)
             return
         try:
-            blob_client.upload_blob(output, blob_type="BlockBlob", overwrite=True)
+            blob_client.upload_blob(data=output, blob_type="BlockBlob", overwrite=True)
         except Exception as exception:
             logger.exception("Failed to save dataframe: %s", exception)
 
-    def download_file(self, filename: str, url: str | None = None) -> None | BytesIO:
+    def download_file(self, filename: str, blob: str, container: str = "data-science") -> None | BytesIO:
         """
         Download dataframe from Azure Blob Storage for given url
         Keyword arguments:
@@ -100,28 +106,22 @@ class BlobConnector:
 
         Function uses following enviornment variables
         AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
-        eg: download_file("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        eg: download_file(filename=<file_name>, blob=<blob_name>, container=<container_name>)
         """
-        if url:
-            path = urlparse(url).path
-            path = path.split("/")
-            container = path[1]
-            blob = "/".join(path[2:])
-            blob_client = self.blob_service_client.get_blob_client(container=container, blob=blob)
-            with BytesIO() as input_blob:
-                try:
-                    blob_client.download_blob().download_to_stream(input_blob)
-                    input_blob.seek(0)
-                    with Path.open(filename, "wb") as f:
-                        f.write(input_blob.getbuffer())
-                        return f
-                except Exception as exception:
-                    logger.exception("Failed to download file: %s", exception)
-                    return None
-        else:
-            return None
 
-    def download_csv_to_df(self, url: str | None = None, **kwargs: int) -> pd.DataFrame | None:
+        blob_client = self.blob_service_client.get_blob_client(container=container, blob=blob)
+        with BytesIO() as input_blob:
+            try:
+                blob_client.download_blob().download_to_stream(input_blob)
+                input_blob.seek(0)
+                with Path.open(filename, "wb") as f:
+                    f.write(input_blob.getbuffer())
+                    return f
+            except Exception as exception:
+                logger.exception("Failed to download file: %s", exception)
+                return None
+
+    def download_csv_to_df(self, blob: str, container: str = "data-science", **kwargs: int) -> pd.DataFrame | None:
         """
         Download dataframe from Azure Blob Storage for given url
         Keyword arguments:
@@ -129,25 +129,18 @@ class BlobConnector:
 
         Function uses following enviornment variables
         AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
-        eg: download_csv_to_df("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        eg: download_csv_to_df(blob=<blob_name>, container=<container_name>)
         """
-        if url:
-            path = urlparse(url).path
-            path = path.split("/")
-            container = path[1]
-            blob = "/".join(path[2:])
-            blob_client = self.blob_service_client.get_blob_client(container=container, blob=blob)
-            with BytesIO() as input_blob:
-                try:
-                    blob_client.download_blob().download_to_stream(input_blob)
-                    input_blob.seek(0)
-                    df = pd.read_csv(input_blob, **kwargs)
-                    return df
-                except Exception as exception:
-                    logger.exception("Failed to download dataframe: %s", exception)
-                    return None
-        else:
-            return None
+        blob_client = self.blob_service_client.get_blob_client(container=container, blob=blob)
+        with BytesIO() as input_blob:
+            try:
+                blob_client.download_blob().download_to_stream(input_blob)
+                input_blob.seek(0)
+                df = pd.read_csv(input_blob, **kwargs)
+                return df
+            except Exception as exception:
+                logger.exception("Failed to download dataframe: %s", exception)
+                return None
 
     def download_json_to_df(self, blob: str, container: str = "data-science", **kwargs: int) -> pd.DataFrame | None:
         """
@@ -156,7 +149,7 @@ class BlobConnector:
         url -- the url of the blob (default None)
         Function uses following enviornment variables
         AZURE_STORAGE_CONNECTION_STRING -- the connection string for the account
-        eg: download_json_to_df("https://<account_name>.blob.core.windows.net/<container_name>/<blob_name>")
+        eg: download_json_to_df(blob=<blob_name>, container=<container_name>)
         """
         blob_client = self.blob_service_client.get_blob_client(container=container, blob=blob)
         with BytesIO() as input_blob:
@@ -190,10 +183,12 @@ class BlobConnector:
             remote_file_path="dbfs:/folder/",
             filename="test.csv")
         """
-        upload_file_path = Path(remote_file_path, filename)
+        upload_file_path = Path(remote_file_path) / filename
+
+        logger.info(f"Creating blob client {upload_file_path} in container {container}")
         blob_client = self.blob_service_client.get_blob_client(
             container=container,
-            blob=upload_file_path,
+            blob=str(upload_file_path),
         )
         try:
             with Path.open(local_file_path, "rb") as data:

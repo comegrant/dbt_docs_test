@@ -16,9 +16,7 @@ def make_predictions(
     logger.info("Make predictions")
     logger.info(features.columns)
     model = LogisticRegression(
-        forecast_weeks=forecast_weeks,
-        model_version=model_version,
-        company_name=company_name,
+        forecast_weeks=forecast_weeks
     )
 
     model.load(model_filename=f"{company_name}_CHURN", model_version=model_version)

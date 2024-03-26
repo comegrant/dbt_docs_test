@@ -6,7 +6,5 @@ CONFIG_DIR = PROJECT_DIR / "configs"
 DATA_DIR = PROJECT_DIR.parent / "data"
 OUTPUT_DIR = DATA_DIR / "results"
 
-DATALAKE_DIR = Path("customer_churn")
-
 INTERIM_DATA_DIR = DATA_DIR / "interim"
 DATA_PROCESSED_DIR = DATA_DIR / "processed"
