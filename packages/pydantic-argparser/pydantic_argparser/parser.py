@@ -1,6 +1,7 @@
 import argparse
 import logging
-from typing import TypeVar, get_origin
+from types import UnionType
+from typing import TypeVar, get_args, get_origin
 
 from pydantic import BaseModel
 
@@ -18,8 +19,10 @@ def is_list_annotation(dtype: type) -> bool:
     return get_origin(dtype) == list
 
 
-def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]):
+def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
     "Add Pydantic model to an ArgumentParser"
+
+    optional_union_type_langth = 2
 
     for name, field in model.model_fields.items():
         if not field.annotation:
@@ -30,11 +33,19 @@ def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]):
         if is_list_annotation(field.annotation):
             nargs = "*"
 
+        annotation = field.annotation
+
+        if isinstance(field.annotation, UnionType):
+            sub_types = list(get_args(field.annotation))
+
+            if len(sub_types) == optional_union_type_langth and type(None) in sub_types:
+                annotation = sub_types[0] if sub_types[0] != type(None) else sub_types[1]
+
         parser.add_argument(
             f"--{name}",
             dest=name,
             nargs=nargs,
-            type=field.annotation,
+            type=annotation,
             default=field.default,
             help=field.description,
         )
@@ -62,11 +73,7 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
             parser_values = getattr(parser, name)
             value = ["".join(sub_value) for sub_value in parser_values]
             values[name] = value
-        elif issubclass(field.annotation, str):
-            value = getattr(parser, name)
-            if isinstance(value, list):
-                value = "".join(value)
-
-            values[name] = value
+        else:
+            values[name] = getattr(parser, name)
 
     return model(**values)

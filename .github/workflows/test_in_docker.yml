@@ -1,0 +1,48 @@
+---
+name: Reusable Docker library CI
+
+on:
+  workflow_call:
+    inputs:
+      base-service:
+        required: true
+        type: string
+        description: "The docker compose service to build"
+      test-service:
+        required: true
+        type: string
+        description: "The docker compose service to build"
+      working-directory:
+        required: true
+        type: string
+        description: "From which folder this pipeline executes"
+      # To avoid being billed 360 minutes if a step does not terminate
+      # (we've seen the setup-python step below do so!)
+      ci-timeout:
+        description: "The timeout of the ci job. Default is 25min"
+        default: 25
+        type: number
+
+jobs:
+  test-ci:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create dummy env file
+        run: touch ../../.env & touch .env
+
+      - name: Build docker images
+        run: docker-compose -f docker-compose.yaml build ${{ inputs.base-service }}
+
+      - name: Test
+        run: docker-compose -f docker-compose.yaml run ${{ inputs.test-service }}

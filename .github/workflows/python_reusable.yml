@@ -20,7 +20,7 @@ on:
         type: number
 
 jobs:
-  local-ci-py-template:
+  test-ci:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
 
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-python@v4
         timeout-minutes: 5
         with:
-          python-version: '3.11'
+          python-version-file: 'pyproject.toml'
           cache: "poetry"
           cache-dependency-path: |
             poetry.lock
@@ -61,4 +61,4 @@ jobs:
 
       - name: Test
         run: |
-          python3 -m pytest tests/  # Assume that tests are in folder "tests/"
+          poetry run pytest -rav tests  # Assume that tests are in folder "tests/"

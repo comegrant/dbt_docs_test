@@ -22,13 +22,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MarkdownDescribable:
-    def as_markdown(self) -> str:
-        raise NotImplementedError(f"{type(self)}")
-
-
 @dataclass
-class SqlServerJob(RetrivalJob, BatchDataSource, MarkdownDescribable):
+class SqlServerJob(RetrivalJob, BatchDataSource):
     config: SqlServerConfig
     query: str
     requests: list[RetrivalRequest] = field(default_factory=list)
@@ -37,10 +32,11 @@ class SqlServerJob(RetrivalJob, BatchDataSource, MarkdownDescribable):
     def job_group_key(self) -> str:
         return self.query
 
-    def as_markdown(self) -> str:
+    @property
+    def to_markdown(self) -> str:
         return f"""Type: *Sql Server Query*
 
-Connection Env Var: *{self.config.env_var}*
+Connection Env Var: `{self.config.env_var}`
 
 Query:
 ```sql
@@ -72,7 +68,10 @@ Query:
         if isinstance(job, SqlServerJob):
             return SqlServerJob(
                 self.config,
-                query=f"SELECT * FROM ({self.query}) as left {method} JOIN ({job.query}) as right ON left.{left_on} = right.{right_on}",
+                query=(
+                    f"SELECT * FROM ({self.query}) as left {method} JOIN ({job.query})"
+                    "as right ON left.{left_on} = right.{right_on}"
+                ),
             )
 
         return JoinJobs(
@@ -105,7 +104,9 @@ Query:
 
         event_column = request.event_timestamp.name
 
-        query = f"SELECT * FROM ({self.query}) sub WHERE {start_date} <= {event_column} AND {event_column} <= {end_date}"
+        query = (
+            f"SELECT * FROM ({self.query}) sub WHERE {start_date} <= {event_column} AND {event_column} <= {end_date}"
+        )
         return SqlServerJob(self.config, query=query, requests=[request])
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
@@ -131,7 +132,7 @@ class SqlServerConfig(Codable):
         return os.environ[self.env_var]
 
     @property
-    def connection(self) -> Any:
+    def connection(self) -> Any:  # noqa: ANN401
         from sqlalchemy import create_engine
         from sqlalchemy.engine import URL
 
@@ -237,10 +238,13 @@ def build_full_select_query_mssql(
     Generates the SQL query needed to select all features related to a psql data source
     """
     all_features = request.feature_names + list(request.entity_names)
+    if request.event_timestamp:
+        all_features.append(request.event_timestamp.name)
+
     sql_columns = source.feature_identifier_for(all_features)
     columns = [
         f'"{sql_col}" AS {alias}' if sql_col != alias else sql_col
-        for sql_col, alias in zip(sql_columns, all_features)
+        for sql_col, alias in zip(sql_columns, all_features, strict=False)
     ]
     column_select = ", ".join(columns)
 
@@ -304,9 +308,12 @@ def factual_mssql_query(
     entities: SqlServerJob,
     sources: dict[str, SqlServerDataSource],
 ) -> str:
-    entity_name = list(requests[0].entity_names)[0]
+    entity_name = next(iter(requests[0].entity_names))
 
-    entity_sql = f"WITH entities AS (SELECT *, ROW_NUMBER() OVER (ORDER BY {entity_name}) AS row_id FROM ({entities.query}) entities)"
+    entity_sql = (
+        f"WITH entities AS (SELECT *, ROW_NUMBER() OVER (ORDER BY {entity_name})"
+        f"AS row_id FROM ({entities.query}) entities)"
+    )
 
     full_cte = entity_sql
 
@@ -354,7 +361,11 @@ def factual_mssql_query(
         FROM entities
         LEFT JOIN {source_table} {table_alias} ON {join_sql}"""
 
-        sub_select = f"SELECT row_id, {columns} FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY row_id ORDER BY {sort}) as sub_id FROM ({sub_select}) {table_alias}) {table_alias} WHERE sub_id = 1"
+        sub_select = f"""SELECT row_id, {columns}
+FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY row_id ORDER BY {sort}) as sub_id
+    FROM ({sub_select}) {table_alias}
+) {table_alias} WHERE sub_id = 1"""
 
         cte_sql = f"{request.name} AS ({sub_select})"
 
@@ -443,7 +454,6 @@ class SqlServerDataSource(
     BatchDataSource,
     ColumnFeatureMappable,
     WritableFeatureSource,
-    MarkdownDescribable,
 ):
     config: SqlServerConfig
     table: str
@@ -451,21 +461,22 @@ class SqlServerDataSource(
 
     type_name = "sqlserver"
 
-    def as_markdown(self) -> str:
-        return f"""Type: *Sql Server*
+    @property
+    def to_markdown(self) -> str:
+        return f"""Type: **Sql Server**
 
-Schema: *{self.config.schema}*
+Schema: `{self.config.schema}`
 
-Table: *{self.table}*
+Table: `{self.table}`
 
-Connection Env Var: *{self.config.env_var}*
+Connection Env Var: `{self.config.env_var}`
 
 Column Mappings: *{self.mapping_keys}*"""
 
     def job_group_key(self) -> str:
         return self.config.env_var
 
-    def contains_config(self, config: Any) -> bool:
+    def contains_config(self, config: Any) -> bool:  # noqa: ANN401
         return isinstance(config, SqlServerConfig) and config.env_var == self.config.env_var
 
     def __hash__(self) -> int:
@@ -488,7 +499,7 @@ Column Mappings: *{self.mapping_keys}*"""
                     f"Currently support one aggregation when using fetch all, got {len(group_bys)}",
                 )
 
-            agg_over, aggregations = list(group_bys)[0]
+            agg_over, aggregations = next(iter(group_bys))
             agg_sql = build_aggregation_over(agg_over, aggregations, self)
 
             # Removes the "core features" from the aggregation response
@@ -515,7 +526,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
     @classmethod
     def multi_source_features_for(
-        cls,
+        cls: type[SqlServerDataSource],
         facts: RetrivalJob,
         requests: list[tuple[SqlServerDataSource, RetrivalRequest]],
     ) -> RetrivalJob:
@@ -523,7 +534,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
         sources = {request.name: source for source, request in requests}
         reqs = [request for _, request in requests]
-        config = list(sources.values())[0].config
+        config = next(iter(sources.values())).config
 
         if isinstance(facts, LiteralRetrivalJob):
             values_sql = df_to_values_query(facts.df.collect().to_pandas(), "entities")
@@ -579,7 +590,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
         all_columns = request.all_returned_columns
         renamed_columns = self.feature_identifier_for(all_columns)
-        rename_map = dict(zip(all_columns, renamed_columns))
+        rename_map = dict(zip(all_columns, renamed_columns, strict=False))
 
         data = data.rename(columns=rename_map)
 
@@ -596,7 +607,7 @@ Column Mappings: *{self.mapping_keys}*"""
                     try:
                         await cur.execute(query)
                     except Exception as error:
-                        print(f"Failed to run query: {query}, error: {error}")
+                        logger.error(f"Failed to run query: {query}, error: {error}")
                         raise
 
         await asyncio.gather(*[insert_query(query) for query in queries])

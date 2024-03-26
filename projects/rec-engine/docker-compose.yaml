@@ -1,0 +1,56 @@
+version: '3'
+services:
+  rec-engine:
+    platform: linux/amd64
+    image: rec-engine-rec-engine
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile
+    command: ["echo", "'Hello from Rec Engine'"]
+    volumes:
+      - ./rec_engine:/opt/projects/rec-engine/rec_engine
+      - ./../../packages:/opt/packages
+
+
+  rec-engine-app:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile
+    volumes:
+      - ./:/opt/projects/rec-engine/
+      - ./../../packages:/opt/packages
+      - ./../../../aligned/aligned:/usr/local/lib/python3.10/site-packages/aligned
+    command: ["python", "-m", "streamlit", "run", "app_ui.py", "--server.fileWatcherType", "poll"]
+
+    depends_on:
+      - rec-engine
+      - mssql-db
+    ports:
+      - 8501:8501
+    env_file:
+      - ../../.env
+      - .env
+
+  rec-engine-test:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile.test
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/rec-engine
+      - ./../../packages:/opt/packages
+    depends_on:
+      - rec-engine
+
+
+  mssql-db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "yourStrong(!)Passwor!"
+    ports:
+      - 1432:1433
+    volumes:
+      - "./mssql-data:/var/opt/mssql"

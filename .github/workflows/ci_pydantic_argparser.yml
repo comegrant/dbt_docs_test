@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/python_reusable.yml'
       - '.github/workflows/ci_pydantic_argparser.yml'
-      - 'packages/pydantic_argparser/**'
+      - 'packages/pydantic-argparser/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
@@ -14,5 +14,5 @@ jobs:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: packages/pydantic_argparser
+      working-directory: packages/pydantic-argparser
     secrets: inherit

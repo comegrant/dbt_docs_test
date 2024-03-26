@@ -1,7 +1,7 @@
 from aligned import Bool, Float, Int32, String, feature_view
 from aligned.compiler.feature_factory import List
 
-from data_contracts.azure_blob import AzureBlobConfig
+from data_contracts.blob_storage import AzureBlobConfig
 
 azure_dl_creds = AzureBlobConfig(
     account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",

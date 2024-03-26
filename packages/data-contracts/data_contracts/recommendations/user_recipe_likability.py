@@ -1,22 +1,27 @@
-from aligned import EventTimestamp, Float, Int32, String, model_contract
-from data_contracts.contacts import Contacts
-from data_contracts.recommendations.recipe import RecipeIngredient, RecipeTaxonomies
-from data_contracts.sources import model_preds
+from aligned import EventTimestamp, Int32, String, model_contract
+from aligned.schemas.date_formatter import DateFormatter
+from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeIngredient, RecipeTaxonomies
+from data_contracts.sources import recommendations_dir
+from project_owners.owner import Owner
 
 ingredient = RecipeIngredient()
 recipes_taxonomies = RecipeTaxonomies()
+orders = HistoricalRecipeOrders()
 
 
 @model_contract(
     name="user_recipe_likability",
     description="The score of a recipe per user.",
     contacts=[
-        Contacts.niladri().markdown(),
-        Contacts.jose().markdown(),
-        Contacts.matsmoll().markdown(),
+        Owner.niladri().markdown(),
+        Owner.jose().markdown(),
+        Owner.matsmoll().markdown(),
     ],
     features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
-    prediction_source=model_preds.parquet_at("user_recipe_likability.parquet"),
+    prediction_source=recommendations_dir.delta_at(
+        "user_recipe_likability",
+        date_formatter=DateFormatter.unix_timestamp(),
+    ),
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()
@@ -25,4 +30,4 @@ class UserRecipeLikability:
     predicted_at = EventTimestamp()
     model_version = String().as_model_version()
 
-    score = Float().is_required()
+    score = orders.rating.as_regression_label()

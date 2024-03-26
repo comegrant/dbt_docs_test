@@ -1,5 +1,5 @@
 from aligned import EventTimestamp, Float, Int32, Json, String, model_contract
-from data_contracts.contacts import Contacts
+from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders
 from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.user_recipe_likability import (
@@ -8,18 +8,20 @@ from data_contracts.recommendations.user_recipe_likability import (
 from data_contracts.sources import (
     adb_ml,
     adb_ml_output,
-    model_preds,
+    recommendations_dir,
     segment_personas_db,
 )
+from project_owners.owner import Owner
 
 likability = UserRecipeLikability()
 cluster = RecipeCluster()
 
 rec_contacts = [
-    Contacts.niladri().markdown(),
-    Contacts.jose().markdown(),
-    Contacts.matsmoll().markdown(),
+    Owner.niladri().markdown(),
+    Owner.jose().markdown(),
+    Owner.matsmoll().markdown(),
 ]
+
 
 delivered_recipes = HistoricalRecipeOrders()
 
@@ -29,7 +31,10 @@ delivered_recipes = HistoricalRecipeOrders()
     contacts=rec_contacts,
     description="The ranking of recipes per user, within a given week menu.",
     features=[likability.score, cluster.cluster],
-    prediction_source=model_preds.parquet_at("recommendation_products.parquet"),
+    prediction_source=recommendations_dir.delta_at(
+        "recommended_recipe_rank",
+        date_formatter=DateFormatter.unix_timestamp(),
+    ),
     application_source=adb_ml_output.table(
         "latest_recommendations",
         mapping_keys={"run_timestamp": "predicted_at"},
@@ -39,18 +44,22 @@ class RecommendatedDish:
     agreement_id = Int32().as_entity()
     year = Int32().as_entity()
     week = Int32().as_entity()
-    product_id = String().as_entity().description("The external menu ID for the recipe")
-
+    product_id = (
+        String()
+        .as_entity()
+        .description(
+            "The external menu ID for the recipe. "
+            "This is what the frontend uses to identify the recipe. "
+            "For a given week, and portion I think.",
+        )
+    )
     predicted_at = EventTimestamp()
-
     company_id = String()
 
     order_of_relevance_cluster = (
         Int32().lower_bound(1)
         # .as_recommendation_target()
-        # .as_recommendation_ranking()
-        # .binary_target(delivered_recipes)
-        # .scalar_target(delivered_recipes.rating)
+        # .estemating_rank(delivered_recipes.rating)
     )
 
 
@@ -59,7 +68,7 @@ class RecommendatedDish:
     contacts=rec_contacts,
     description="The recommendation used when we have no data on the user.",
     features=[likability.score],
-    prediction_source=model_preds.parquet_at("backup_recommendations.parquet"),
+    prediction_source=recommendations_dir.delta_at("backup_recommendations"),
 )
 class BackupRecommendations:
     recipe_id = String().as_entity()
