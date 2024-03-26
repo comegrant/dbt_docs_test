@@ -1,14 +1,10 @@
 # Combines necessary info into a configuration script
 
 import os
-import sys
-from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
 
 from customer_churn.constants import CompanyID
-
-sys.path.append(Path(Path.cwd(), ".."))
 
 # Creating .env variables
 load_dotenv(find_dotenv())

@@ -1,9 +1,8 @@
 import logging
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
-import pandas as pd
 from lmkgroup_ds_utils.azure.storage import BlobConnector
 from lmkgroup_ds_utils.constants import Companies
 from pydantic import BaseModel, Field
@@ -61,7 +60,7 @@ def run_with_args(args: RunArgs) -> None:
     )
 
     predictions["run_id"] = uuid.uuid4()
-    predictions["run_date"] = datetime.now(tz=timezone.utc).strftime(
+    predictions["run_date"] = datetime.now(tz=UTC).strftime(
         "%Y-%m-%d %H:%M:%S",
     )
     predictions["snapshot_based_on"] = snapshot_read
@@ -71,7 +70,7 @@ def run_with_args(args: RunArgs) -> None:
         save_predictions_locally(
             predictions=predictions,
             local_file_dir=args.write_to,
-            local_filename="predictions.csv"
+            local_filename="predictions.csv",
         )
     else:
         logger.info(f"Writing predictions to {args.write_to}")

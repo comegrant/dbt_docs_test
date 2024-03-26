@@ -1,10 +1,7 @@
 import os
-import sys
-from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
 
-sys.path.append(Path(Path.cwd(), ".."))
 # Creating .env variables
 load_dotenv(find_dotenv())
 
