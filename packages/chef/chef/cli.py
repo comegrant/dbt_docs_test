@@ -249,7 +249,9 @@ def compose_services(
             all_services.append(service)
 
     if not all_services and (profile or service_name):
-        raise ValueError(f"Unable to find service with profile '{profile}' or name '{service_name}'")
+        raise ValueError(
+            f"Unable to find service with profile '{profile}' or name '{service_name}'",
+        )
 
     return all_services
 
@@ -282,8 +284,8 @@ def compose_exposed_ports(
 
 @cli.command()
 @click.argument("project", default=None, required=False)
-@click.argument("profile", default="app", required=False)
-def build(project: str | None, profile: str) -> None:
+@click.option("--profile-or-service", default=None, required=False)
+def build(project: str | None, profile_or_service: str | None) -> None:
     name = project or folder_name()
 
     if isinstance(name, Exception):
@@ -306,8 +308,19 @@ def build(project: str | None, profile: str) -> None:
         return
 
     echo_action(f"Building project '{name}'")
+    compose = load_compose_file(projects_path() / name)
+    services = compose_services(
+        compose,
+        profile=profile_or_service,
+        service_name=profile_or_service,
+    )
+
     commands = compose_command(projects_path() / name)
-    commands.extend(["--profile", profile, "build"])
+    commands.append("build")
+
+    if services:
+        commands.extend(services)
+
     subprocess.run(commands, check=False)
 
 
@@ -383,7 +396,12 @@ def run(subcommand: tuple) -> None:
 @click.option("--project", default=None, required=False)
 @click.option("--tag", default=None, required=False)
 @click.option("--image", default=None, required=False)
-def push_image(registry: str, project: str | None, tag: str | None, image: str | None) -> None:
+def push_image(
+    registry: str,
+    project: str | None,
+    tag: str | None,
+    image: str | None,
+) -> None:
     if not project:
         name = folder_name()
 
@@ -435,7 +453,11 @@ def up(profile_or_service: str | None, project: str | None) -> None:
 
     compose = load_compose_file(path)
 
-    services = compose_services(compose, profile=profile_or_service, service_name=profile_or_service)
+    services = compose_services(
+        compose,
+        profile=profile_or_service,
+        service_name=profile_or_service,
+    )
     ports = compose_content_exposed_ports(compose, service_names=services)
 
     if ports:
