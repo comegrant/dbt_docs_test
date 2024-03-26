@@ -48,7 +48,7 @@ predictions = run_with_args(
     onboarding_weeks = 12,
     buy_history_churn_weeks = 4,
     complaints_last_n_weeks = 4,
-    write_to=Path(f"churn-ai/{COMPANY_CODE}/output/predictions/")
+    write_to=Path(f"customer-churn/{COMPANY_CODE}/output/predictions/")
   )
 )
 
