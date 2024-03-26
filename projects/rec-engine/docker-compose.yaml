@@ -20,7 +20,9 @@ services:
     volumes:
       - ./:/opt/projects/rec-engine/
       - ./../../packages:/opt/packages
+      - ./../../../aligned/aligned:/usr/local/lib/python3.10/site-packages/aligned
     command: ["python", "-m", "streamlit", "run", "app_ui.py", "--server.fileWatcherType", "poll"]
+
     depends_on:
       - rec-engine
       - mssql-db

@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def inject_sources() -> None:
     from aligned.data_source.batch_data_source import BatchDataSourceFactory
-    from data_contracts.blob_storage import (
+    from aligned.sources.azure_blob_storage import (
         AzureBlobCsvDataSource,
         AzureBlobDeltaDataSource,
         AzureBlobParquetDataSource,

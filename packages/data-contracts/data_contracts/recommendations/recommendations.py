@@ -1,4 +1,5 @@
 from aligned import EventTimestamp, Float, Int32, Json, String, model_contract
+from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders
 from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.user_recipe_likability import (
@@ -30,7 +31,10 @@ delivered_recipes = HistoricalRecipeOrders()
     contacts=rec_contacts,
     description="The ranking of recipes per user, within a given week menu.",
     features=[likability.score, cluster.cluster],
-    prediction_source=recommendations_dir.delta_at("recommended_recipe_rank"),
+    prediction_source=recommendations_dir.delta_at(
+        "recommended_recipe_rank",
+        date_formatter=DateFormatter.unix_timestamp(),
+    ),
     application_source=adb_ml_output.table(
         "latest_recommendations",
         mapping_keys={"run_timestamp": "predicted_at"},

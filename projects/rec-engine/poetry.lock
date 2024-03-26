@@ -168,13 +168,13 @@ tz = ["backports.zoneinfo"]
 
 [[package]]
 name = "aligned"
-version = "0.0.85"
+version = "0.0.90"
 description = "A data managment and lineage tool for ML applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "aligned-0.0.85-py3-none-any.whl", hash = "sha256:38f665a4f5507c0997b5e341fa9f89db1041559457c94189cab8ec6b22ee5bca"},
-    {file = "aligned-0.0.85.tar.gz", hash = "sha256:9bb892b2484118b2c80a341ed2231d7b26142d733e385bc7de08b0426b7223b0"},
+    {file = "aligned-0.0.90-py3-none-any.whl", hash = "sha256:b0212bc526342b93fdb9db51054d0cf8959be474cb961a0081106b3171f0d3e8"},
+    {file = "aligned-0.0.90.tar.gz", hash = "sha256:fa9560f6f8244b47533fad42c7624a0f302a228f2d55dd1c2ec0a1a0167415d5"},
 ]
 
 [package.dependencies]
@@ -888,9 +888,10 @@ develop = true
 
 [package.dependencies]
 aioodbc = {version = "0.4.1", optional = true}
-aligned = "^0.0.85"
+aligned = "^0.0.90"
 azure-identity = "^1.15.0"
 azure-storage-blob = "^12.19.0"
+deltalake = "^0.16.2"
 project-owners = {path = "../../packages/project-owners", develop = true}
 pyarrow = "^14.0.0"
 pyodbc = {version = "4.0.35", optional = true}
@@ -901,6 +902,30 @@ mssql = ["aioodbc (==0.4.1)", "pyodbc (==4.0.35)"]
 [package.source]
 type = "directory"
 url = "../../packages/data-contracts"
+
+[[package]]
+name = "deltalake"
+version = "0.16.3"
+description = "Native Delta Lake Python binding based on delta-rs with Pandas integration"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "deltalake-0.16.3-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:0de0cfe64aff4b41f8cc7a2b4acc59a1bfa7149afd2bdca5d48cac457e72622f"},
+    {file = "deltalake-0.16.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:c9f7b039f9cd457480442f3e3de06e383f09e68306a20ae8acaf28b0d25f8529"},
+    {file = "deltalake-0.16.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cc00c0d208c5c6c5a89889712f1c8e74901b43b41ef1384e7bd186f9f9407a82"},
+    {file = "deltalake-0.16.3-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5112fb67ac7a630d47907a98f16eab1957e97a55b4fb593ffdfbbb96705aa202"},
+    {file = "deltalake-0.16.3-cp38-abi3-win_amd64.whl", hash = "sha256:a5861233d052960517cbfe57ab2d77fb79d8d87b1bf4a51f2c7ad11810c5d163"},
+    {file = "deltalake-0.16.3.tar.gz", hash = "sha256:aa972900c8f956d64edb4a93b548b18ae40d31fca602186b83b4a5370d6ebd24"},
+]
+
+[package.dependencies]
+pyarrow = ">=8"
+pyarrow-hotfix = "*"
+
+[package.extras]
+devel = ["mypy (>=1.8.0,<1.9.0)", "packaging (>=20)", "pytest", "pytest-benchmark", "pytest-cov", "pytest-mock", "pytest-timeout", "ruff (>=0.3.0,<0.4.0)", "sphinx (<=4.5)", "sphinx-rtd-theme", "toml", "wheel"]
+pandas = ["pandas"]
+pyspark = ["delta-spark", "numpy (==1.22.2)", "pyspark"]
 
 [[package]]
 name = "dill"
@@ -976,18 +1001,18 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "filelock"
-version = "3.13.1"
+version = "3.13.3"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "filelock-3.13.1-py3-none-any.whl", hash = "sha256:57dbda9b35157b05fb3e58ee91448612eb674172fab98ee235ccb0b5bee19a1c"},
-    {file = "filelock-3.13.1.tar.gz", hash = "sha256:521f5f56c50f8426f5e03ad3b281b490a87ef15bc6c526f168290f0c7148d44e"},
+    {file = "filelock-3.13.3-py3-none-any.whl", hash = "sha256:5ffa845303983e7a0b7ae17636509bc97997d58afeafa72fb141a17b152284cb"},
+    {file = "filelock-3.13.3.tar.gz", hash = "sha256:a79895a25bbefdf55d1a2a0a80968f7dbb28edcd6d4234a0afb3f37ecde4b546"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.24)"]
-testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
+docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.25.2)"]
+testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8.0.1)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
 typing = ["typing-extensions (>=4.8)"]
 
 [[package]]
@@ -2580,6 +2605,17 @@ files = [
 
 [package.dependencies]
 numpy = ">=1.16.6"
+
+[[package]]
+name = "pyarrow-hotfix"
+version = "0.6"
+description = ""
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "pyarrow_hotfix-0.6-py3-none-any.whl", hash = "sha256:dcc9ae2d220dff0083be6a9aa8e0cdee5182ad358d4931fce825c545e5c89178"},
+    {file = "pyarrow_hotfix-0.6.tar.gz", hash = "sha256:79d3e030f7ff890d408a100ac16d6f00b14d44a502d7897cd9fc3e3a534e9945"},
+]
 
 [[package]]
 name = "pycparser"

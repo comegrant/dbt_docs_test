@@ -1,4 +1,5 @@
 from aligned import EventTimestamp, Int32, String, model_contract
+from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeIngredient, RecipeTaxonomies
 from data_contracts.sources import recommendations_dir
 from project_owners.owner import Owner
@@ -17,7 +18,10 @@ orders = HistoricalRecipeOrders()
         Owner.matsmoll().markdown(),
     ],
     features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
-    prediction_source=recommendations_dir.delta_at("user_recipe_likability"),
+    prediction_source=recommendations_dir.delta_at(
+        "user_recipe_likability",
+        date_formatter=DateFormatter.unix_timestamp(),
+    ),
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()

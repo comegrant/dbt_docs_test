@@ -2,13 +2,13 @@
 
 [[package]]
 name = "aligned"
-version = "0.0.83"
+version = "0.0.85"
 description = "A data managment and lineage tool for ML applications."
 optional = false
-python-versions = ">=3.10,<4.0"
+python-versions = "<4.0,>=3.10"
 files = [
-    {file = "aligned-0.0.83-py3-none-any.whl", hash = "sha256:6413f6ae00bf8da3ef40af0e292a5eb04dde9d3f5659071cb57262ade4ad7fc2"},
-    {file = "aligned-0.0.83.tar.gz", hash = "sha256:a2913d2fc98dbe46179fd732e78d601b93808d5310887761957c77f95626bc16"},
+    {file = "aligned-0.0.85-py3-none-any.whl", hash = "sha256:38f665a4f5507c0997b5e341fa9f89db1041559457c94189cab8ec6b22ee5bca"},
+    {file = "aligned-0.0.85.tar.gz", hash = "sha256:9bb892b2484118b2c80a341ed2231d7b26142d733e385bc7de08b0426b7223b0"},
 ]
 
 [package.dependencies]
@@ -591,9 +591,10 @@ files = []
 develop = true
 
 [package.dependencies]
-aligned = "^0.0.83"
+aligned = "^0.0.85"
 azure-identity = "^1.15.0"
 azure-storage-blob = "^12.19.0"
+deltalake = "^0.16.2"
 project-owners = {path = "../../packages/project-owners", develop = true}
 pyarrow = "^14.0.0"
 
@@ -603,6 +604,30 @@ mssql = ["aioodbc (==0.4.1)", "pyodbc (==4.0.35)"]
 [package.source]
 type = "directory"
 url = "../../packages/data-contracts"
+
+[[package]]
+name = "deltalake"
+version = "0.16.2"
+description = "Native Delta Lake Python binding based on delta-rs with Pandas integration"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "deltalake-0.16.2-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:5afe957335cf6af00cb9d1ab5b7d1715bc9df18a8d49cc94808db7d4bba81716"},
+    {file = "deltalake-0.16.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:fdb68ce8629fc66118e06c67f5c8ace7af37c380232b5e50f58bf7c10b1c7803"},
+    {file = "deltalake-0.16.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ca8ca49f31782259fac7e2987277ca8a8114da34fbde28f622b5b39c5049eb28"},
+    {file = "deltalake-0.16.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:959c378f5f462d30a33768f73081108622f67617d84b2e54abf8290941cc2ff0"},
+    {file = "deltalake-0.16.2-cp38-abi3-win_amd64.whl", hash = "sha256:8cfdf412c2d82ae352ce792d57c26d706eac8d3b9aa46357f2cdbc89ac842766"},
+    {file = "deltalake-0.16.2.tar.gz", hash = "sha256:2df55ee56df6271685a877ca5c06edb0b2f94e38177857ed1a44016314a63b50"},
+]
+
+[package.dependencies]
+pyarrow = ">=8"
+pyarrow-hotfix = "*"
+
+[package.extras]
+devel = ["mypy (>=1.8.0,<1.9.0)", "packaging (>=20)", "pytest", "pytest-benchmark", "pytest-cov", "pytest-mock", "pytest-timeout", "ruff (>=0.3.0,<0.4.0)", "sphinx (<=4.5)", "sphinx-rtd-theme", "toml", "wheel"]
+pandas = ["pandas"]
+pyspark = ["delta-spark", "numpy (==1.22.2)", "pyspark"]
 
 [[package]]
 name = "dill"
@@ -1363,13 +1388,13 @@ tests = ["pytest (>=5.4.1)", "pytest-cov (>=2.8.1)", "pytest-mypy (>=0.8.0)", "p
 
 [[package]]
 name = "pre-commit"
-version = "3.6.2"
+version = "3.7.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pre_commit-3.6.2-py2.py3-none-any.whl", hash = "sha256:ba637c2d7a670c10daedc059f5c49b5bd0aadbccfcd7ec15592cf9665117532c"},
-    {file = "pre_commit-3.6.2.tar.gz", hash = "sha256:c3ef34f463045c88658c5b99f38c1e297abdcc0ff13f98d3370055fbbfabc67e"},
+    {file = "pre_commit-3.7.0-py2.py3-none-any.whl", hash = "sha256:5eae9e10c2b5ac51577c3452ec0a490455c45a0533f7960f993a0d01e59decab"},
+    {file = "pre_commit-3.7.0.tar.gz", hash = "sha256:e209d61b8acdcf742404408531f0c37d49d2c734fd7cff2d6076083d191cb060"},
 ]
 
 [package.dependencies]
@@ -1473,6 +1498,17 @@ files = [
 
 [package.dependencies]
 numpy = ">=1.16.6"
+
+[[package]]
+name = "pyarrow-hotfix"
+version = "0.6"
+description = ""
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "pyarrow_hotfix-0.6-py3-none-any.whl", hash = "sha256:dcc9ae2d220dff0083be6a9aa8e0cdee5182ad358d4931fce825c545e5c89178"},
+    {file = "pyarrow_hotfix-0.6.tar.gz", hash = "sha256:79d3e030f7ff890d408a100ac16d6f00b14d44a502d7897cd9fc3e3a534e9945"},
+]
 
 [[package]]
 name = "pycparser"

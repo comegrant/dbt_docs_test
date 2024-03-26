@@ -47,9 +47,9 @@ def setup_logger(log_dir: str | None) -> None:
     )
     now = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d_%H:%M:%S")
     if log_dir:
-        logging.basicConfig(level=logging.INFO, filename=f"{log_dir}/{now}")
+        logging.basicConfig(level=logging.DEBUG, filename=f"{log_dir}/{now}")
     else:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
 
 
 async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:

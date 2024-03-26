@@ -1,4 +1,5 @@
 from aligned import EventTimestamp, Int32, String, model_contract
+from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.recommendations.recipe import RecipeTaxonomies
 from data_contracts.sources import recommendations_dir
 from project_owners.owner import Owner
@@ -15,7 +16,10 @@ recipes_taxonomies = RecipeTaxonomies()
         Owner.matsmoll().markdown(),
     ],
     features=[recipes_taxonomies.recipe_taxonomies],
-    prediction_source=recommendations_dir.delta_at("recipe_cluster_preds"),
+    prediction_source=recommendations_dir.delta_at(
+        "recipe_cluster_preds",
+        date_formatter=DateFormatter.unix_timestamp(),
+    ),
 )
 class RecipeCluster:
     recipe_id = Int32().as_entity()

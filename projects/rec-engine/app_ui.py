@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from contextlib import suppress
 
 import pandas as pd
@@ -10,6 +11,8 @@ from rec_engine.logger import StreamlitLogger
 from rec_engine.main import RunArgs, run_with_args
 from rec_engine.source_selector import use_local_sources_in
 
+logging.basicConfig(level=logging.DEBUG)
+
 
 def has_run(state: RunArgs) -> bool:
     return st.session_state.get(state.model_dump_json(), False)
@@ -17,6 +20,57 @@ def has_run(state: RunArgs) -> bool:
 
 def set_has_run(state: RunArgs) -> None:
     st.session_state[state.model_dump_json()] = True
+
+
+async def view_raw_source(inputs: RunArgs) -> None:
+    store = recommendation_feature_contracts()
+    if inputs.write_to:
+        store = use_local_sources_in(store, list(store.models.keys()), inputs.write_to)
+
+    model_to_view = st.selectbox("Select model to view", list(store.models.keys()), key="raw_source")
+    if not model_to_view:
+        return
+
+    view = store.model(model_to_view)
+
+    pred_view = view.model.predictions_view
+    if not pred_view.source:
+        st.write("No source found")
+        return
+
+    if not pred_view.source:
+        st.write("No source found")
+        return
+
+    loaded = await view.all_predictions().to_polars()
+    st.dataframe(loaded.to_pandas())
+
+
+async def view_input_feature(inputs: RunArgs) -> None:
+    store = recommendation_feature_contracts()
+    if inputs.write_to:
+        store = use_local_sources_in(store, list(store.models.keys()), inputs.write_to)
+
+    model_to_view = st.selectbox("Select model to view", list(store.models.keys()), key="input_feature")
+
+    if not model_to_view:
+        return
+
+    view = store.model(model_to_view)
+
+    entities = view.request().request_result.entities
+    with st.form(key="input_entity_form"):
+        entity_df = st.data_editor(
+            pd.DataFrame(columns=[entity.name for entity in entities]),
+            num_rows="dynamic",
+        )
+        submit = st.form_submit_button("View")
+
+    if not submit or entity_df.empty:
+        return
+
+    df = await view.features_for(entity_df).to_polars()
+    st.dataframe(df.to_pandas())
 
 
 async def view_predictions(inputs: RunArgs) -> None:
@@ -143,10 +197,13 @@ async def main() -> None:
         return
 
     st.write(inputs)
-    view_preds, ddl, predict = st.tabs(["View predictions", "DDL", "Predict"])
+    view_preds, raw_source, ddl, predict = st.tabs(["View predictions", "View raw source", "DDL", "Predict"])
 
     with view_preds:
         await view_predictions(inputs)
+
+    with raw_source:
+        await view_raw_source(inputs)
 
     with ddl:
         await setup_ddl()

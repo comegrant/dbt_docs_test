@@ -210,8 +210,12 @@ async def run(  # noqa: PLR0913, PLR0915
 
         recipes_to_rank_entities = menu_per_agreement.reset_index(drop=True)
         rec_store = store.model("rec_engine")
-        recipes_to_rank = await rec_store.features_for(
-            recipes_to_rank_entities,
+        recipes_to_rank = (
+            await rec_store.features_for(
+                recipes_to_rank_entities,
+            )
+            .log_each_job()
+            .to_polars()
         ).to_pandas()
         ranking = predict_rankings(recipes_to_rank, menus, logger=logger)
         ranking["company_id"] = company_id
