@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 def train_model(
     features: pd.DataFrame,
     company_code: str,
-    write_to: Path,
+    write_to: Path | None = None,
     forecast_weeks: int = 4,
     mlflow_tracking_uri: str | None = None,
-    experiment_name: str | None = None
+    experiment_name: str | None = None,
 ) -> None:
     logger.info("Make predictions")
     logger.info(features.columns)
@@ -39,7 +39,12 @@ def train_model(
         )
 
 
-def train_model_locally(features: pd.DataFrame, company_code: str, write_to: Path, forecast_weeks: int = 4) -> None:
+def train_model_locally(
+    features: pd.DataFrame,
+    company_code: str | None = None,
+    write_to: Path | None = None,
+    forecast_weeks: int = 4,
+) -> None:
     # Generate training data
     df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
         features,
@@ -53,11 +58,12 @@ def train_model_locally(features: pd.DataFrame, company_code: str, write_to: Pat
     model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
 
     # Save model
-    runtime = datetime.now(tz=UTC).strftime("%Y%m%d-%H%M%S")
-    model.save(
-        local_path=write_to,
-        model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
-    )
+    if write_to:
+        runtime = datetime.now(tz=UTC).strftime("%Y%m%d-%H%M%S")
+        model.save(
+            local_path=write_to,
+            model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
+        )
 
 
 def train_model_with_mlflow(
@@ -65,9 +71,8 @@ def train_model_with_mlflow(
     company_code: str,
     forecast_weeks: int = 4,
     mlflow_tracking_uri: str | None = None,
-    experiment_name: str | None = None
+    experiment_name: str | None = None,
 ) -> None:
-
     mlflow.set_tracking_uri(mlflow_tracking_uri)
     mlflow.set_experiment(experiment_name=experiment_name)
 
@@ -96,4 +101,7 @@ def train_model_with_mlflow(
             local_path=Path.cwd() / "models",
             model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
         )
-        mlflow.register_model(f"runs:/{run_id}/model", "customer_churn_model_%s" % company_code)
+        mlflow.register_model(
+            f"runs:/{run_id}/model",
+            "customer_churn_model_%s" % company_code,
+        )
