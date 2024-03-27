@@ -12,7 +12,6 @@ from sklearn.model_selection import train_test_split
 from customer_churn.constants import (
     DATABRICKS_HOST,
     DATABRICKS_TOKEN,
-    MLFLOW_TRACKING_URI,
 )
 
 logger = logging.getLogger(__name__)
@@ -38,12 +37,9 @@ class LogisticRegression:
         df_y: pd.DataFrame,
         df_x_val: pd.DataFrame,
         df_y_val: pd.DataFrame,
-        save_model_filename: str | None = None,
     ) -> bool:
         """
         Main function for model fit
-        :save_model_filename: Default None. If given model will be saved to given path/name (pickle format)
-        :return:
         """
         logger.info("Fitting/Training the model..")
 
@@ -65,26 +61,37 @@ class LogisticRegression:
             "Class distribution in test set: %s" % y_test.value_counts(normalize=True),
         )
 
-        model = SKLogisticRegression(random_state=0, max_iter=1000)
-        model.fit(x_train, y_train)
+        self.model = SKLogisticRegression(random_state=0, max_iter=1000)
+        self.model.fit(x_train, y_train)
 
         logger.info(f"Training features columns: {x_train.columns!s}")
-        y_val_pred = (
-            model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold
-        ).astype(int)
+        y_val_pred = (self.model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold).astype(int)
 
         precision, recall, fscore, _ = score(df_y_val, y_val_pred, average="macro")
         logger.info(f"precision: {precision}")
         logger.info(f"recall: {recall}")
         logger.info(f"f1-score: {fscore}")
 
-        if save_model_filename:
-            logger.info("Saving model to: " + save_model_filename)
-            with Path.open(save_model_filename, "wb") as file:
-                pickle.dump(model, file)
-            logger.info("Model saved!")
-
         return True
+
+    def save(
+        self,
+        local_path: Path,
+        model_filename: str,
+        external_path: Path | None = None,
+    ) -> None:
+        logger.info("Saving model to: " + model_filename)
+        if not local_path.exists():
+            logger.info(f"Creating folder {local_path} for model")
+            local_path.mkdir(parents=True, exist_ok=True)
+
+        with Path.open(local_path / model_filename, "wb") as file:
+            pickle.dump(self.model, file)
+
+        if external_path:
+            logger.info("Uploading model to: " + external_path)
+            mlflow.log_artifact(local_path / model_filename, external_path)
+        logger.info("Model saved!")
 
     def load(
         self,
@@ -144,10 +151,8 @@ class LogisticRegression:
         )
 
         mlflow.login()
-        
-        model_download_uri = w.model_registry.get_model_version_download_uri(
-            model_name,
-            version)
+
+        model_download_uri = w.model_registry.get_model_version_download_uri(model_name, version)
         logger.info(f"Downloading model from {model_download_uri}")
         model = mlflow.artifacts.download_artifacts(
             artifact_uri=model_download_uri.artifact_uri,

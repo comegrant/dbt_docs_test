@@ -17,7 +17,7 @@ load_dotenv(find_dotenv())
 
 
 class BlobConnector:
-    def __init__(self, local: bool = False, **kwargs: int) -> None:
+    def __init__(self, local: bool = False) -> None:
         self.w = WorkspaceClient()
         self.dbutils = self.w.dbutils
         try:
@@ -30,9 +30,9 @@ class BlobConnector:
             else:
                 account_key = None
                 account_url = "https://gganalyticsdatalake.blob.core.windows.net/"
-                tenant_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-DirID"),
-                client_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-AppID"),
-                client_secret=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret")
+                tenant_id = (self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-DirID"),)
+                client_id = (self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-AppID"),)
+                client_secret = self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret")
 
             if account_key is not None:
                 self.blob_service_client = BlobServiceClient(
@@ -45,7 +45,7 @@ class BlobConnector:
                 token = ClientSecretCredential(
                     tenant_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-DirID"),
                     client_id=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-AppID"),
-                    client_secret=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret")
+                    client_secret=self.dbutils.secrets.get(scope="BlobStorage", key="DataLake-Secret"),
                 )
 
                 self.blob_service_client = BlobServiceClient(
@@ -71,7 +71,13 @@ class BlobConnector:
             files.append(blob.name)
         return files
 
-    def upload_df(self, dataframe: pd.DataFrame, file_path: str, filename: str, container: str = "data-science") -> None:
+    def upload_df(
+        self,
+        dataframe: pd.DataFrame,
+        file_path: str,
+        filename: str,
+        container: str = "data-science",
+    ) -> None:
         """
         Upload DataFrame to Azure Blob Storage to given container
         Keyword arguments:

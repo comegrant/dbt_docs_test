@@ -52,13 +52,23 @@ def get_features(
 
 
 def load_training_data(
-    company: str,
+    company_code: str,
     start_date: datetime,
     end_date: datetime,
     local: bool,
+    blob_connector: BlobConnector | None = None,
 ) -> pd.DataFrame:
-    logger.info(f"Load training data for {company} from {start_date} to {end_date}")
+    logger.info(f"Load training data for {company_code} from {start_date} to {end_date}")
     if local:
-        return pd.read_csv(DATA_PROCESSED_DIR / company / "full_snapshot_training.csv")
-    else:
-        raise NotImplementedError()
+        return pd.read_csv(DATA_PROCESSED_DIR / company_code / "full_snapshot_training.csv")
+
+    if blob_connector is None:
+        blob_connector = BlobConnector(local=local)
+
+    filespath = f"churn-ai/{company_code}/data/processed/"
+    logger.info(f"Listing files in filespath {filespath}")
+    last_snapshot = sorted(blob_connector.list_blobs(filespath), reverse=True)[0]
+    logger.info(f"Downloading {last_snapshot} from Azure data lake")
+    df = blob_connector.download_csv_to_df(blob=last_snapshot)
+
+    return df

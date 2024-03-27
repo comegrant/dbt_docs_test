@@ -1,5 +1,8 @@
 import logging
+from datetime import UTC, datetime
+from pathlib import Path
 
+import mlflow
 import pandas as pd
 
 from customer_churn.data.preprocess import Preprocessor
@@ -10,25 +13,83 @@ logger = logging.getLogger(__name__)
 
 def train_model(
     features: pd.DataFrame,
-    company_name: str,
+    company_code: str,
+    write_to: Path,
     forecast_weeks: int = 4,
-    model_version: str = "1",
+    mlflow_tracking_uri: str | None = None,
 ) -> None:
     logger.info("Make predictions")
     logger.info(features.columns)
+
+    if mlflow_tracking_uri:
+        train_model_with_mlflow(
+            features,
+            company_code=company_code,
+            forecast_weeks=forecast_weeks,
+            mlflow_tracking_uri=mlflow_tracking_uri,
+        )
+    else:
+        train_model_locally(
+            features,
+            company_code=company_code,
+            write_to=write_to,
+            forecast_weeks=forecast_weeks,
+        )
+
+
+def train_model_locally(features: pd.DataFrame, company_code: str, write_to: Path, forecast_weeks: int = 4) -> None:
     # Generate training data
     df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
         features,
     )
 
-    logger.info(df_x_train)
-
-    logger.info(df_x_val)
-
     model = LogisticRegression(
         forecast_weeks=forecast_weeks,
-        model_version=model_version,
-        company_name=company_name,
     )
 
-    return model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
+    # Train model
+    model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
+
+    # Save model
+    runtime = datetime.now(tz=UTC).strftime("%Y%m%d-%H%M%S")
+    model.save(
+        local_path=write_to,
+        model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
+    )
+
+
+def train_model_with_mlflow(
+    features: pd.DataFrame,
+    company_code: str,
+    forecast_weeks: int = 4,
+    mlflow_tracking_uri: str | None = None,
+) -> None:
+    mlflow.set_tracking_uri(mlflow_tracking_uri)
+    mlflow.set_experiment(experiment_name="customer_churn")
+
+    with mlflow.start_run() as mlflow_run:
+        df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
+            features,
+        )
+
+        mlflow.log_param("forecast_weeks", forecast_weeks)
+        mlflow.sklearn.autolog()
+
+        model = LogisticRegression(
+            forecast_weeks=forecast_weeks,
+        )
+
+        # Train model
+        model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
+
+        logger.info("Resource ID (Run ID): %s" % mlflow_run.info.run_uuid)
+        logger.info("Experiment ID: %s" % mlflow_run.info.experiment_id)
+
+        # Save model
+        runtime = datetime.now(tz=UTC).strftime("%Y%m%d-%H%M%S")
+        model.save(
+            local_path=Path.cwd() / "models",
+            model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
+        )
+
+        mlflow.register_model("runs:%s" % mlflow_run.info.run_uuid, "customer_churn_model_%s" % company_code)
