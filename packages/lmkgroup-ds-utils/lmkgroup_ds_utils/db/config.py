@@ -1,11 +1,5 @@
 import os
 
-from dotenv import find_dotenv, load_dotenv
-
-# Creating .env variables
-load_dotenv(find_dotenv())
-
-#
 DB = {
     "analytics_db_prod": {
         "dbname": "AnalyticsDB",
