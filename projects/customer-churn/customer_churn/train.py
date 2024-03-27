@@ -32,6 +32,7 @@ class RunArgs(BaseModel):
     model: str = Field("log_reg")
     model_version: str = Field("1.0.0")
     mlflow_tracking_uri: str | None = Field(None)
+    experiment_name: str | None = Field(None)
 
 
 def run_with_args(args: RunArgs) -> None:
@@ -49,7 +50,7 @@ def run_with_args(args: RunArgs) -> None:
         f"Features loaded for {args.company} from {args.start_date} to {args.end_date}",
     )
 
-    write_to = args.write_to / args.model / args.model_version
+    write_to = args.write_to / args.model / f"{args.model}_{args.model_version}"
 
     # Train model
     train_model(
@@ -57,6 +58,7 @@ def run_with_args(args: RunArgs) -> None:
         company_code=args.company,
         write_to=write_to,
         mlflow_tracking_uri=args.mlflow_tracking_uri,
+        experiment_name=args.experiment_name
     )
 
 

@@ -17,6 +17,7 @@ def train_model(
     write_to: Path,
     forecast_weeks: int = 4,
     mlflow_tracking_uri: str | None = None,
+    experiment_name: str | None = None
 ) -> None:
     logger.info("Make predictions")
     logger.info(features.columns)
@@ -27,6 +28,7 @@ def train_model(
             company_code=company_code,
             forecast_weeks=forecast_weeks,
             mlflow_tracking_uri=mlflow_tracking_uri,
+            experiment_name=experiment_name,
         )
     else:
         train_model_locally(
@@ -63,9 +65,11 @@ def train_model_with_mlflow(
     company_code: str,
     forecast_weeks: int = 4,
     mlflow_tracking_uri: str | None = None,
+    experiment_name: str | None = None
 ) -> None:
+
     mlflow.set_tracking_uri(mlflow_tracking_uri)
-    mlflow.set_experiment(experiment_name="customer_churn")
+    mlflow.set_experiment(experiment_name=experiment_name)
 
     with mlflow.start_run() as mlflow_run:
         df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
@@ -82,7 +86,8 @@ def train_model_with_mlflow(
         # Train model
         model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
 
-        logger.info("Resource ID (Run ID): %s" % mlflow_run.info.run_uuid)
+        run_id = mlflow_run.info.run_uuid
+        logger.info("Resource ID (Run ID): %s" % run_id)
         logger.info("Experiment ID: %s" % mlflow_run.info.experiment_id)
 
         # Save model
@@ -91,5 +96,4 @@ def train_model_with_mlflow(
             local_path=Path.cwd() / "models",
             model_filename=f"customer_churn_model_{company_code}_{runtime}.pkl",
         )
-
-        mlflow.register_model("runs:%s" % mlflow_run.info.run_uuid, "customer_churn_model_%s" % company_code)
+        mlflow.register_model(f"runs:/{run_id}/model", "customer_churn_model_%s" % company_code)

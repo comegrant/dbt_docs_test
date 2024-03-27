@@ -1,4 +1,5 @@
 models/
+notebooks/models/
 mlruns/
 data/raw
 data/processed
