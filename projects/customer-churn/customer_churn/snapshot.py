@@ -2,6 +2,7 @@ import logging
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
+from dotenv import find_dotenv, load_dotenv
 from lmkgroup_ds_utils.constants import Companies
 from lmkgroup_ds_utils.db.connector import DB
 from pydantic import BaseModel, Field
@@ -13,7 +14,6 @@ from customer_churn.data.load_data import DataLoader
 from customer_churn.data.snapshot import generate_snapshots_for_period
 from customer_churn.paths import DATA_DIR
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -37,9 +37,17 @@ class RunArgs(BaseModel):
 
 
 def generate_snapshot(args: RunArgs) -> None:
+    # Set up logging
+    logging.basicConfig(level=logging.INFO)
+
+    # Load environment variables
+    load_dotenv(find_dotenv())
+
+    # Connect to databases
     adb = DB(db_name="analytics_db", env=args.db_env, local=args.local)
     postgres_db = DB(db_name="postgres_db", env=args.db_env, local=args.local)
 
+    # Fetch data
     data_loader = DataLoader(
         Companies.get_id_from_name(args.company),
         input_files=args.input_files,
@@ -48,6 +56,7 @@ def generate_snapshot(args: RunArgs) -> None:
         postgres_db=postgres_db,
     )
 
+    # Generate snapshots
     generate_snapshots_for_period(
         data_loader=data_loader,
         company_id=args.company,

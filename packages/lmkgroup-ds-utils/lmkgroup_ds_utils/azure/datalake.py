@@ -4,14 +4,9 @@ Connect to the datalake by setting the spark configuration value
 import logging
 import os
 
-from databricks.connect import DatabricksSession
-from dotenv import find_dotenv, load_dotenv
-
-load_dotenv(find_dotenv())
+from pyspark.sql import SparkSession
 
 logger = logging.getLogger(__name__)
-
-spark = DatabricksSession.builder.getOrCreate()
 
 
 def connect_to_datalake_spark(
@@ -22,6 +17,8 @@ def connect_to_datalake_spark(
     """
     Create spark connection to datalake
     """
+    spark = SparkSession.builder.getOrCreate()
+
     if not application_id:
         application_id = os.getenv("DATALAKE_SERVICE_PRINCIPAL_CLIENT_ID")
 

@@ -7,9 +7,6 @@ import pytest
 from customer_churn.model_logreg import ModelLogReg
 from customer_churn.paths import DATA_DIR
 
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-
 logger = logging.getLogger(__name__)
 
 FEATURES = [

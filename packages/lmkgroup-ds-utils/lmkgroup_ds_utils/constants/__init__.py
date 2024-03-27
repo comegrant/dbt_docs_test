@@ -1,5 +1,7 @@
 """ Stores constants commonly used in the code """
 import logging
+from typing import ClassVar
+
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -17,30 +19,30 @@ class Companies:
     GL = Company(id="09ECD4F0-AE58-4539-8E8F-9275B1859A19", name="GODTLEVERT", code="GL")
     RN = Company(id="5E65A955-7B1A-446C-B24F-CFE576BF52D7", name="RETNEMNT", code="RN")
 
-    ALL = [LMK, AMK, GL, RN]
+    ALL: ClassVar[list[Company]] = [LMK, AMK, GL, RN]
 
     @classmethod
-    def get_id_from_name(cls, name: str) -> str:
+    def get_id_from_name(cls: "Companies", name: str) -> str:
         for company in cls.ALL:
             if company.name == name:
                 return company.id
-            
+
     @classmethod
-    def get_id_from_code(cls, code: str) -> str:
+    def get_id_from_code(cls: "Companies", code: str) -> str:
         for company in cls.ALL:
             if company.code == code:
                 return company.id
 
     @classmethod
-    def get_name_from_id(cls, id: str) -> str:
+    def get_name_from_id(cls: "Companies", company_id: str) -> str:
         for company in cls.ALL:
-            if company.id == id:
+            if company.id == company_id:
                 return company.name
 
     @classmethod
-    def get_code_from_id(cls, id: str) -> str:
+    def get_code_from_id(cls: "Companies", company_id: str) -> str:
         for company in cls.ALL:
-            if company.id == id:
+            if company.id == company_id:
                 return company.code
 
 

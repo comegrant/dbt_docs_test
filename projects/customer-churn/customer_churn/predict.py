@@ -3,6 +3,7 @@ import uuid
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
+from dotenv import find_dotenv, load_dotenv
 from lmkgroup_ds_utils.azure.storage import BlobConnector
 from lmkgroup_ds_utils.constants import Companies
 from pydantic import BaseModel, Field
@@ -18,10 +19,7 @@ from customer_churn.utils.file import (
     save_predictions_locally,
 )
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-logger.info("Starting predict")
 
 
 class RunArgs(BaseModel):
@@ -40,7 +38,14 @@ class RunArgs(BaseModel):
 
 
 def run_with_args(args: RunArgs) -> None:
+    # Set up logging
+    logging.basicConfig(level=logging.INFO)
+    # Load environment variables
+    load_dotenv(find_dotenv())
+
     logger.info(f"Running predict with args {args}")
+
+    # Get features
     company_id = Companies.get_id_from_code(args.company)
     if args.company:
         features, snapshot_read = get_features(
@@ -54,8 +59,10 @@ def run_with_args(args: RunArgs) -> None:
     else:
         raise ValueError("Unable to create features")
 
+    # Preprocess features for prediction
     features = Preprocessor().prep_prediction(df=features)
 
+    # Make predictions
     predictions = make_predictions(
         features,
         company_name=args.company,
@@ -69,6 +76,7 @@ def run_with_args(args: RunArgs) -> None:
     predictions["snapshot_based_on"] = snapshot_read
     predictions["company_id"] = company_id
 
+    # Save predictions
     if args.local:
         save_predictions_locally(
             predictions=predictions,

@@ -2,6 +2,7 @@ import logging
 from datetime import date, timedelta
 from pathlib import PosixPath
 
+from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel, Field
 from pydantic_argparser import parser_for
 from pydantic_argparser.parser import decode_args
@@ -10,10 +11,7 @@ from customer_churn.features.build_features import load_training_data
 from customer_churn.models.train import train_model
 from customer_churn.paths import MODEL_DIR
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-logger.info("Starting predict")
 
 
 class RunArgs(BaseModel):
@@ -37,6 +35,11 @@ class RunArgs(BaseModel):
 
 def run_with_args(args: RunArgs) -> None:
     logger.info(f"Training model with args {args}")
+    # Set up logging
+    logging.basicConfig(level=logging.INFO)
+
+    # Load environment variables
+    load_dotenv(find_dotenv())
 
     # Read features data
     df_training_data = load_training_data(
@@ -58,7 +61,7 @@ def run_with_args(args: RunArgs) -> None:
         company_code=args.company,
         write_to=write_to,
         mlflow_tracking_uri=args.mlflow_tracking_uri,
-        experiment_name=args.experiment_name
+        experiment_name=args.experiment_name,
     )
 
 

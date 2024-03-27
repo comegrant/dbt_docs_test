@@ -10,10 +10,8 @@ from urllib.parse import urlparse
 import pandas as pd
 from azure.storage.blob import BlobServiceClient
 from databricks.sdk import WorkspaceClient
-from dotenv import find_dotenv, load_dotenv
 
-logger = logging.getLogger("ds_utils.azure.storage")
-load_dotenv(find_dotenv())
+logger = logging.getLogger(__name__)
 
 
 class BlobConnector:

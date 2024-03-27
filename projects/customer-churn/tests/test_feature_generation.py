@@ -7,9 +7,6 @@ import pytest
 from customer_churn.features import Features
 from lmkgroup_ds_utils.constants import Company
 
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-
 logger = logging.getLogger(__name__)
 
 
@@ -51,13 +48,11 @@ logger = logging.getLogger(__name__)
                     "customers": Path("tests/snapshot_test") / "customers.csv",
                     "events": Path("tests/snapshot_test") / "events.csv",
                     "orders": Path("tests/snapshot_test") / "orders.csv",
-                    "crm_segments": Path("tests/snapshot_test")
-                    / "crm_segments_cleared.csv",
+                    "crm_segments": Path("tests/snapshot_test") / "crm_segments_cleared.csv",
                     "complaints": Path("tests/snapshot_test") / "complaints.csv",
                     "bisnode": Path("tests/snapshot_test") / "bisnode_enrichments.csv",
                 },
-                "output_dir": Path("tests/snapshot_test")
-                / "processed",  # Output directory
+                "output_dir": Path("tests/snapshot_test") / "processed",  # Output directory
                 "company_id": Company.RN,  # Company ID
             },
         ),
@@ -91,13 +86,11 @@ logger = logging.getLogger(__name__)
                     "customers": Path("tests/snapshot_test2") / "customers.csv",
                     "events": Path("tests/snapshot_test2") / "events.csv",
                     "orders": Path("tests/snapshot_test2") / "orders.csv",
-                    "crm_segments": Path("tests/snapshot_test2")
-                    / "crm_segments_cleared.csv",
+                    "crm_segments": Path("tests/snapshot_test2") / "crm_segments_cleared.csv",
                     "complaints": Path("tests/snapshot_test2") / "complaints.csv",
                     "bisnode": Path("tests/snapshot_test2") / "bisnode_enrichments.csv",
                 },
-                "output_dir": Path("tests/snapshot_test2")
-                / "processed",  # Output directory
+                "output_dir": Path("tests/snapshot_test2") / "processed",  # Output directory
                 "company_id": Company.RN,  # Company ID
             },
         ),
@@ -121,9 +114,7 @@ def test_get_snapshot_features_for_date_single_agreement(
         snapshot_date=snapshot_date,
     )
 
-    customer_features = snapshot_features[
-        snapshot_features.agreement_id == agreement_id
-    ].iloc[0]
+    customer_features = snapshot_features[snapshot_features.agreement_id == agreement_id].iloc[0]
 
     logger.info(customer_features)
 

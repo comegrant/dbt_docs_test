@@ -2,13 +2,7 @@
 
 import os
 
-from dotenv import find_dotenv, load_dotenv
-
 from customer_churn.constants import CompanyID
-
-# Creating .env variables
-load_dotenv(find_dotenv())
-
 
 DB = {
     "read_db": {
