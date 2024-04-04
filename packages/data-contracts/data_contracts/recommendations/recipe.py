@@ -1,4 +1,4 @@
-from aligned import Bool, EventTimestamp, Int32, String, feature_view
+from aligned import Bool, EventTimestamp, Float, Int32, List, String, feature_view
 from data_contracts.sources import adb, adb_ml, materialized_data
 from project_owners.owner import Owner
 
@@ -37,6 +37,7 @@ SELECT
     ba.agreement_id,
     ba.company_id,
     COALESCE(bao.cutoff_date, bao.created_date) as delivered_at,
+    p.variation_portions as portion_size,
     r.recipe_id,
     rr.RATING as rating,
     wm.MENU_WEEK as week,
@@ -78,6 +79,56 @@ FROM (
 GROUP BY recipe_id
 """
 
+recipe_features_sql = """WITH taxonomies AS (
+    SELECT
+        rt.RECIPE_ID as recipe_id,
+        CONCAT('["', STRING_AGG(tt.TAXONOMIES_NAME, '", "'), '"]') as taxonomies
+    FROM pim.TAXONOMIES_TRANSLATIONS tt
+    INNER JOIN pim.RECIPES_TAXONOMIES rt on rt.TAXONOMIES_ID = tt.TAXONOMIES_ID
+    INNER JOIN pim.taxonomies t ON t.taxonomies_id = tt.TAXONOMIES_ID
+    WHERE t.taxonomy_type IN ('1', '11', '12')
+    GROUP BY rt.RECIPE_ID
+)
+
+SELECT *
+FROM (SELECT rec.recipe_id,
+             rec.main_recipe_id,
+             rec.recipes_year as year,
+             rec.recipes_week as week,
+             rm.RECIPE_PHOTO as recipe_photo,
+             rm.COOKING_TIME_FROM as cooking_time_from,
+             rm.COOKING_TIME_TO as cooking_time_to,
+             rmt.recipe_name,
+             tx.taxonomies,
+             ROW_NUMBER() over (PARTITION BY rec.recipe_id ORDER BY rmt.language_id) as nr
+      FROM pim.recipes rec
+        INNER JOIN pim.recipes_metadata rm ON rec.recipe_metadata_id = rm.RECIPE_METADATA_ID
+        INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
+        INNER JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
+) as recipes
+WHERE recipes.nr = 1"""
+
+
+@feature_view(
+    name="recipe_features",
+    source=adb.fetch(recipe_features_sql),
+    materialized_source=materialized_data.delta_at("recipe_features"),
+)
+class RecipeFeatures:
+    recipe_id = Int32().as_entity()
+
+    year = Int32()
+    week = Int32()
+
+    recipe_name = String()
+
+    cooking_time_from = Int32()
+    cooking_time_to = Int32()
+
+    taxonomies = List(String())
+    is_family_friendly = taxonomies.contains("Familiefavoritter")
+    is_kids_friendly = taxonomies.contains("Barnevennlig")
+
 
 @feature_view(
     name="recipe_taxonomies",
@@ -111,11 +162,14 @@ class HistoricalRecipeOrders:
     week = Int32()
     year = Int32()
 
+    portion_size = Int32()
+
     delivered_at = EventTimestamp()
 
     rating = (Int32().is_optional().lower_bound(0).upper_bound(5)).description(
-        "Avoid 0 values, as this can lead to odd predictions.",
+        "A value of 0 means that the user did not make the dish. While a missing values means did not rate",
     )
+    did_make_dish = rating != 0
 
 
 @feature_view(
@@ -154,3 +208,57 @@ class BasketDeviation:
     was_user, was_meal_selector = origin.one_hot_encode(
         [user_origin_id, recommendation_engine_origin_id],
     )
+
+
+@feature_view(
+    name="recipe_nutrition",
+    source=adb.with_schema("pim").table("RECIPE_NUTRITION_FACTS"),
+    materialized_source=materialized_data.parquet_at("recipe_nutrition.parquet"),
+)
+class RecipeNutrition:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    energy_kcal_100g = Float().lower_bound(0).is_optional()
+    carbs_100g = Float().lower_bound(0).is_optional()
+    fat_100g = Float().lower_bound(0).is_optional()
+    fat_saturated_100g = Float().lower_bound(0).is_optional()
+    protein_100g = Float().lower_bound(0).is_optional()
+    fruit_veg_fresh_100g = Float().lower_bound(0).is_optional()
+
+
+@feature_view(
+    name="recipe_cost",
+    source=adb.with_schema("mb").table(
+        "recipe_costs_pim",
+        mapping_keys={
+            "PORTION_SIZE": "portion_size",
+            "PORTION_ID": "portion_id",
+            "recipe_cost_whole_units_pim": "recipe_cost_whole_units",
+            "recipes_year": "menu_year",
+            "recipes_week": "menu_week",
+        },
+    ),
+    materialized_source=materialized_data.delta_at("recipe_cost"),
+)
+class RecipeCost:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    menu_year = Int32()
+    menu_week = Int32()
+
+    country = String()
+    company_name = String()
+
+    main_recipe_id = Int32()
+    recipe_name = String()
+    portions = String().description("Needs to be a string because we have instances of '2+' in Danmark.")
+    portion_id = Int32()
+
+    recipe_cost_whole_units = Float()
+
+    price_category_max_price = Int32()
+    price_category_level = Int32()
+
+    suggested_selling_price_incl_vat = Float()

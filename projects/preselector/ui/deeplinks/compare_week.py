@@ -1,7 +1,7 @@
 from collections.abc import Awaitable
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from random import choice, seed
-from typing import Any, NoReturn
+from typing import Any
 
 import pandas as pd
 import streamlit as st
@@ -10,11 +10,12 @@ from preselector.contracts.compare_boxes import (
     adb,
     customer_information,
     data_science_data_lake,
+    historical_preselector_vector,
     recipe_information_for_ids,
 )
 from preselector.data.models.customer import PreselectorCustomer
-from preselector.main import RunConfig, run_preselector_for
 from preselector.mealselector_api import run_mealselector
+from preselector.new_main import run_preselector_with_menu
 from preselector.utils.constants import FLEX_PRODUCT_TYPE_ID
 from pydantic import BaseModel
 from streamlit_pages import set_deeplink
@@ -25,7 +26,7 @@ from ui.deeplinks.show_results import ShowChoicesState
 preselector_ab_test_folder = data_science_data_lake.directory("preselector/ab-test")
 
 
-def read_cache(key: str) -> Any | None:
+def read_cache(key: str) -> Any | None:  # noqa: ANN401
     return st.session_state.get(key, None)
 
 
@@ -127,7 +128,9 @@ SELECT
 ,	ISNULL(pvav.attribute_value, pvat.default_value) AS variation_meals
 ,	ISNULL(pvav2.attribute_value, pvat2.default_value) AS variation_portions
 ,	ISNULL(pvav4.attribute_value, pvat4.default_value) AS variation_price
-,	ROUND(CAST(ISNULL(pvav4.attribute_value, pvat4.default_value) AS FLOAT) * (1.0 + (CAST(ISNULL(pvav5.attribute_value, pvat5.default_value) AS FLOAT) / 100)), 2) AS variation_price_incl_vat
+,	ROUND(CAST(ISNULL(pvav4.attribute_value, pvat4.default_value) AS FLOAT) * (
+            1.0 + (CAST(ISNULL(pvav5.attribute_value, pvat5.default_value) AS FLOAT) / 100)), 2
+        ) AS variation_price_incl_vat
 ,	ISNULL(pvav5.attribute_value, pvat5.default_value) AS variation_vat
 FROM product_layer.product p
 INNER JOIN product_layer.product_type pt ON pt.product_type_id = p.product_type_id
@@ -212,7 +215,7 @@ class CompareWeekState(BaseModel):
     week: int
 
 
-async def compare_week(state: CompareWeekState) -> None:
+async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR0912
     st.title(f"Compare for year: {state.year} - week: {state.week}")
 
     back, _, forward = st.columns([1, 5, 1])
@@ -234,7 +237,11 @@ async def compare_week(state: CompareWeekState) -> None:
             ),
         )
 
-    run_config = RunConfig()
+    shown_recipe_ids = read_cache("shown_recipe_ids")
+
+    if not shown_recipe_ids:
+        shown_recipe_ids = dict[int, list[int]]()
+        set_cache("shown_recipe_ids", shown_recipe_ids)
 
     with st.spinner("Loading Customer data..."):
         customers = await cache_awaitable(
@@ -248,6 +255,7 @@ async def compare_week(state: CompareWeekState) -> None:
 
         customer = PreselectorCustomer(**customers.iloc[0].to_dict())
 
+    # st.write(f"Customer: {customer}")
     year = state.year
     week = state.week
 
@@ -316,30 +324,74 @@ async def compare_week(state: CompareWeekState) -> None:
             ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
         )
 
-    with st.spinner("Loading Meny data..."):
+    with st.spinner("Loading Menu data..."):
         menu = await load_menu_for(customer.company_id, year, week, adb)
 
     df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
         "main_recipe_id",
     )
 
-    with st.spinner("Running preselector..."):
-        preselector_result = run_preselector_for(
-            customer=customer,
-            run_config=run_config,
-            df_flex_products=df_flex_products,
-            df_recommendations=recommendations,
+    number_of_weeks_back = 10
+
+    with st.spinner(f"Computing Prefered Mealkit Behaviour, using {number_of_weeks_back} weeks"):
+        today = datetime.now()
+
+        year_weeks = []
+
+        for i in range(1, number_of_weeks_back):
+            year_week = today - timedelta(weeks=i)
+            year_weeks.append((year_week.year, year_week.isocalendar()[1]))
+
+        target = await cache_awaitable(
+            f"preselector_target_vector_{customer.agreement_id}",
+            historical_preselector_vector(agreement_id=customer.agreement_id, year_weeks=year_weeks),
         )
+
+    with st.expander("Target mealkit"):
+        st.write("Target mealkit:")
+        st.dataframe(target.to_pandas())
+
+    selected_recipe_ids = set()
+
+    for shown_yearweek, main_recipe_ids in shown_recipe_ids.items():
+        if shown_yearweek < year * 100 + week:
+            selected_recipe_ids.update(main_recipe_ids)
+
+    if selected_recipe_ids:
+        not_shown_recipes = df_flex_products[~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))]
+    else:
+        not_shown_recipes = df_flex_products
+
+    if not isinstance(not_shown_recipes, pd.DataFrame):
+        st.error("No menu found for this week.")
+        return
+
+    with st.spinner("Running preselector..."):
+        preselector_result = await run_preselector_with_menu(
+            customer=customer,
+            menu=not_shown_recipes,
+            target_vector=target,
+            recommendations=recommendations,
+        )
+
+        # preselector_result = run_preselector_for(
+        #     customer=customer,
+        #     run_config=run_config,
+        #     df_flex_products=df_flex_products,
+        #     df_recommendations=recommendations,
+        # )
 
     if isinstance(preselector_result, Exception):
         st.error(
             f"An error occurred when running the pre-selector: {preselector_result}",
         )
         to_next_week()
+        return
 
     if len(preselector_result.main_recipe_ids) == 0:
         st.error("No recipes found for the preselector.")
         to_next_week()
+        return
 
     with st.spinner("Fetching chef's selection..."):
         cache_key = f"mealselector_{customer.model_dump_json()}_{year}_{week}"
@@ -364,12 +416,15 @@ async def compare_week(state: CompareWeekState) -> None:
         st.error(
             f"An error occurred when fetching the chef-selection: {mealselector_result}",
         )
-        # to_next_week()
+        to_next_week()
         return
 
     if len(mealselector_result) == 0:
         st.info("No recipes found for the mealselector")
         to_next_week()
+
+    shown_recipe_ids[year * 100 + week] = list(preselector_result.main_recipe_ids) + list(mealselector_result)
+    set_cache("shown_recipe_ids", shown_recipe_ids)
 
     with st.spinner("Loading recipe information..."):
         pre_selector_recipe_info = await cached_recipe_info(

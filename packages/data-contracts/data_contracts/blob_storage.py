@@ -153,6 +153,7 @@ class AzureBlobDirectory:
         self,
         path: str,
         mapping_keys: dict[str, str] | None = None,
+        date_formatter: str | None = None,
     ) -> AzureBlobDeltaDataSource:
         sub_path = self.sub_path / path
         return self.config.delta_at(sub_path.as_posix(), mapping_keys)

@@ -24,3 +24,6 @@ This can be done by running the following command and go to the url shown in the
 ```bash
 chef up
 ```
+
+
+### Algorithm

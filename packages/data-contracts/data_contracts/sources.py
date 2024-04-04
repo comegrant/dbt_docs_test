@@ -1,6 +1,7 @@
 from aligned import PostgreSQLConfig
 from aligned.sources.azure_blob_storage import AzureBlobConfig
 
+# from data_contracts.blob_storage import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
 
 azure_dl_creds = AzureBlobConfig(
