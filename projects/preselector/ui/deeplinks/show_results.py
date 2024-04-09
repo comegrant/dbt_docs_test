@@ -2,7 +2,10 @@ from collections import defaultdict
 
 import pandas as pd
 import streamlit as st
-from preselector.contracts.compare_boxes import PreselectorTestChoice, recipe_information_for_ids
+from preselector.contracts.compare_boxes import (
+    PreselectorTestChoice,
+    recipe_information_for_ids,
+)
 from pydantic import BaseModel
 from ui.components.mealkit import badge, mealkit
 
@@ -19,6 +22,11 @@ async def show_choices(state: ShowChoicesState) -> None:
         entites["year"].append(year)
         entites["week"].append(week)
         entites["agreement_id"].append(state.agreement_id)
+
+    if not entites["year"]:
+        st.title("Your choices")
+        st.warning("Found no weeks to show choices for.")
+        return
 
     with st.spinner("Loading choices..."):
         choices = await PreselectorTestChoice.query().features_for(entites).to_pandas()

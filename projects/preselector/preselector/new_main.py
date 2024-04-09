@@ -3,10 +3,14 @@ from typing import Annotated
 
 import pandas as pd
 import polars as pl
-from aligned import FileSource, Int32, List, String, check_schema, feature_view
+from aligned import FileSource, Int32, String, check_schema, feature_view
 from aligned.compiler.aggregation_factory import PolarsTransformationFactoryAggregation
 from aligned.compiler.feature_factory import FeatureFactory
-from data_contracts.recommendations.recipe import RecipeCost, RecipeFeatures, RecipeNutrition
+from data_contracts.recommendations.recipe import (
+    RecipeCost,
+    RecipeFeatures,
+    RecipeNutrition,
+)
 from data_contracts.recommendations.recommendations import RecommendatedDish
 
 from preselector.data.models.customer import PreselectorCustomer, PreselectorResult
@@ -19,7 +23,11 @@ recipe_nutrition = RecipeNutrition()
 recipe_cost = RecipeCost()
 
 
-def custom_aggregation(method, using_features: list[FeatureFactory], as_dtype: FeatureFactory) -> FeatureFactory:
+def custom_aggregation(
+    method: pl.Expr,
+    using_features: list[FeatureFactory],
+    as_dtype: FeatureFactory,
+) -> FeatureFactory:
     as_dtype.transformation = PolarsTransformationFactoryAggregation(
         as_dtype,
         method=method,
@@ -67,7 +75,10 @@ class BasketFeatures:
 
     is_family_friendly_mean = custom_aggregation(
         (pl.col("is_family_friendly") | pl.col("is_kids_friendly")).mean(),
-        using_features=[recipe_features.is_family_friendly, recipe_features.is_kids_friendly],
+        using_features=[
+            recipe_features.is_family_friendly,
+            recipe_features.is_kids_friendly,
+        ],
         as_dtype=Int32(),
     )
 
@@ -91,11 +102,22 @@ def select_next_vector(
         .transpose()
     )
 
-    distance = available_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
-    return distance.select(pl.exclude(["distance", "basket_id"]), pl.col("basket_id").alias("recipe_id"))
+    distance = (
+        available_vectors.with_columns(distance=distance["column_0"])
+        .sort("distance", descending=False)
+        .limit(1)
+    )
+    return distance.select(
+        pl.exclude(["distance", "basket_id"]),
+        pl.col("basket_id").alias("recipe_id"),
+    )
 
 
-async def compute_vector(df: pl.DataFrame, column_order: list[str], basket_column: str | None = None) -> pl.Series:
+async def compute_vector(
+    df: pl.DataFrame,
+    column_order: list[str],
+    basket_column: str | None = None,
+) -> pl.Series:
     if not basket_column:
         df = df.with_columns(pl.lit(1).alias("basket_id"))
     else:
@@ -153,9 +175,13 @@ async def find_best_combination(
 
         current_vector = await compute_vector(final_combination, columns)
 
-        recipes_to_choose_from = recipes_to_choose_from.filter(pl.col("recipe_id") != selected_recipe_id)
+        recipes_to_choose_from = recipes_to_choose_from.filter(
+            pl.col("recipe_id") != selected_recipe_id,
+        )
 
-        raw_recipe_nudge = recipes_to_choose_from.with_columns(pl.col("recipe_id").alias("basket_id"))
+        raw_recipe_nudge = recipes_to_choose_from.with_columns(
+            pl.col("recipe_id").alias("basket_id"),
+        )
 
         for recipe_id in raw_recipe_nudge["recipe_id"].to_list():
             raw_recipe_nudge = raw_recipe_nudge.vstack(
@@ -163,12 +189,16 @@ async def find_best_combination(
             )
 
         # Sorting in order to get deterministic results
-        recipe_nudge = (await BasketFeatures.process_input(raw_recipe_nudge).to_polars()).sort(
+        recipe_nudge = (
+            await BasketFeatures.process_input(raw_recipe_nudge).to_polars()
+        ).sort(
             "basket_id",
             descending=False,
         )
 
-    error = dict(zip(columns, (current_vector - target_combination).to_list(), strict=False))
+    error = dict(
+        zip(columns, (current_vector - target_combination).to_list(), strict=False),
+    )
 
     # Error debugging in Streamlit
     # st.write(((current_vector - target_combination) / normalization_vector).pow(2).sum())
@@ -188,7 +218,6 @@ class Menu:
     main_recipe_id = Int32()
     variation_id = String()
     product_id = String()
-    preference_ids = List(String())
 
     variation_portions = Int32()
 
@@ -207,7 +236,11 @@ async def run_preselector_with_menu(
         target_vector=target_vector,
     )
 
-    return PreselectorResult(agreement_id=customer.agreement_id, main_recipe_ids=selected_recipe_ids, debug_summary={})
+    return PreselectorResult(
+        agreement_id=customer.agreement_id,
+        main_recipe_ids=selected_recipe_ids,
+        debug_summary={},
+    )
 
 
 async def run_preselector(
@@ -217,6 +250,7 @@ async def run_preselector(
     target_vector: pl.DataFrame,
     select_top_n: int = 20,
 ) -> list[int]:
+    from data_contracts.preselector.store import RecipePreferences
     from data_contracts.recommendations.store import recommendation_feature_contracts
 
     from preselector.recipe_contracts import Preselector
@@ -227,20 +261,38 @@ async def run_preselector(
     recipes = available_recipes
 
     logger.info(f"Filtering based on portion size: {recipes.height}")
-    recipes = recipes.filter(pl.col("variation_portions").cast(pl.Int32) == customer.portion_size)
+    recipes = recipes.filter(
+        pl.col("variation_portions").cast(pl.Int32) == customer.portion_size,
+    )
     logger.info(f"Filtering based on portion size done: {recipes.height}")
 
     if customer.taste_preference_ids:
+        preferences = (
+            await RecipePreferences.query()
+            .select({"recipe_id", "preference_ids"})
+            .features_for(available_recipes)
+            .to_polars()
+        )
+
+        upper_and_lower = {
+            preference.lower() for preference in customer.taste_preference_ids
+        }.union({preference.upper() for preference in customer.taste_preference_ids})
+
         logger.info(f"Filtering based on taste preferences: {recipes.height}")
         acceptable_recipe_ids = (
-            available_recipes.lazy()
+            preferences.lazy()
             .select(["recipe_id", "preference_ids"])
             .explode(columns=["preference_ids"])
-            .filter(pl.col("preference_ids").is_in(customer.taste_preference_ids).is_not())
+            .with_columns(contains_pref=pl.col("preference_ids").is_in(upper_and_lower))
+            .groupby(["recipe_id"])
+            .agg(pl.sum("contains_pref").alias("taste_conflicts"))
+            .filter(pl.col("taste_conflicts") == 0)
             .unique("recipe_id")
             .collect()
         )
-        recipes = recipes.filter(pl.col("recipe_id").is_in(acceptable_recipe_ids["recipe_id"]))
+        recipes = recipes.filter(
+            pl.col("recipe_id").is_in(acceptable_recipe_ids["recipe_id"]),
+        )
         logger.info(f"Filtering based on taste preferences done: {recipes.height}")
 
     if recommendations.height > 0:
@@ -253,17 +305,27 @@ async def run_preselector(
             .limit(select_top_n)
         )
 
-        recipes = recipes.filter(pl.col("product_id").is_in(top_n_recipes["product_id"]))
+        recipes = recipes.filter(
+            pl.col("product_id").is_in(top_n_recipes["product_id"]),
+        )
         logger.info(f"Filtering based on recommendations done: {recipes.height}")
 
     recipe_features = await (
         store.model("preselector")
-        .features_for(recipes.with_columns(pl.lit(customer.portion_size).alias("portion_size")))
+        .features_for(
+            recipes.with_columns(pl.lit(customer.portion_size).alias("portion_size")),
+        )
         .to_polars()
     )
 
-    best_recipe_ids, error = await find_best_combination(target_vector, recipe_features, customer.number_of_recipes)
+    best_recipe_ids, error = await find_best_combination(
+        target_vector,
+        recipe_features,
+        customer.number_of_recipes,
+    )
 
     logging.info(f"Preselector Error: {error}")
 
-    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))["main_recipe_id"].to_list()
+    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))[
+        "main_recipe_id"
+    ].to_list()

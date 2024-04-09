@@ -81,24 +81,13 @@ async def load_menu_for(
     df_menu_with_preferences = await db_config.fetch(
         f"""declare @company uniqueidentifier = '{company_id}', @week int = '{week}', @year int = '{year}';
 
-with recipe_preferences AS (
-    SELECT
-        recipe_id,
-        portion_id,
-        STRING_AGG(convert(nvarchar(36), preference_id), ', ') as preference_ids
-        FROM pim.recipes_category_preferences_mapping
-        GROUP BY recipe_id, portion_id
-    )
-
-
 SELECT
     wm.menu_week,
     wm.menu_year,
     mv.menu_variation_ext_id as variation_id,
     r.main_recipe_id as main_recipe_id,
-    rcpm.recipe_id,
-    rcpm.portion_id,
-    rcpm.preference_ids,
+    r.recipe_id,
+    mv.portion_id,
     rp.recipe_portion_id,
     mr.menu_recipe_order
   FROM pim.weekly_menus wm
@@ -107,7 +96,6 @@ SELECT
   JOIN pim.menu_recipes mr on mr.menu_id = m.menu_id
   JOIN pim.recipes r on r.recipe_id = mr.RECIPE_ID
   INNER JOIN pim.recipe_portions rp ON rp.RECIPE_ID = r.recipe_id AND rp.portion_id = mv.PORTION_ID
-  JOIN recipe_preferences rcpm on rcpm.recipe_id = mr.recipe_id and rcpm.portion_id = mv.portion_id
   where m.RECIPE_STATE = 1
   AND wm.menu_week = @week AND wm.menu_year = @year AND wm.company_id = @company""",
     ).to_pandas()
@@ -177,11 +165,6 @@ WHERE pvc.company_id=@company """,
     )
 
     # Replace nan values for no preferences with empty bracked []
-    df_menu_products_with_preferences = df_menu_products_with_preferences.assign(
-        preference_ids=df_menu_products_with_preferences["preference_ids"].apply(
-            lambda x: x.lower().split(", ") if isinstance(x, str) else [],
-        ),
-    )
     df_menu_products_with_preferences = df_menu_products_with_preferences.astype(
         {"variation_price": float},
     )
@@ -191,7 +174,11 @@ WHERE pvc.company_id=@company """,
     return df_menu_products_with_preferences
 
 
-async def cached_recipe_info(main_recipe_ids: list[int], year: int, week: int) -> pd.DataFrame:
+async def cached_recipe_info(
+    main_recipe_ids: list[int],
+    year: int,
+    week: int,
+) -> pd.DataFrame:
     key_value_cache_key = f"cached_recipe_info{year}_{week}_{main_recipe_ids}"
 
     return await cache_awaitable(
@@ -200,7 +187,7 @@ async def cached_recipe_info(main_recipe_ids: list[int], year: int, week: int) -
     )
 
 
-async def cache_awaitable(key: str, function: Awaitable) -> Any:
+async def cache_awaitable(key: str, function: Awaitable) -> Any:  # noqa: ANN401
     if key in st.session_state:
         return st.session_state[key]
 
@@ -256,6 +243,7 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
         customer = PreselectorCustomer(**customers.iloc[0].to_dict())
 
     # st.write(f"Customer: {customer}")
+
     year = state.year
     week = state.week
 
@@ -272,24 +260,34 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             ),
         )
 
-    def view_results() -> None:
+    def answered_year_weeks() -> list[tuple[int, int]]:
+        reference_date = date(year, 1, 1)
+        reference_date = reference_date + timedelta(weeks=week)
+
         current_date = date.today() + timedelta(weeks=1)
         current_year = current_date.isocalendar()[0]
         current_week = current_date.isocalendar()[1]
 
         year_weeks = []
 
-        while year != current_year or week != current_week:
+        while current_date < reference_date:
             year_weeks.append((current_year, current_week))
             current_date = current_date + timedelta(weeks=1)
             current_year = current_date.isocalendar()[0]
             current_week = current_date.isocalendar()[1]
 
+        return year_weeks
+
+    def view_results() -> None:
+        year_weeks = answered_year_weeks()
         st.info("Showing results.")
 
         set_deeplink(
             ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
         )
+
+    if len(shown_recipe_ids.keys()) >= 5:  # noqa: PLR2004
+        view_results()
 
     if st.button("Skip weeks and view results"):
         view_results()
@@ -303,38 +301,34 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
         )
 
     if recommendations.empty:
-        current_date = date.today() + timedelta(weeks=1)
-        current_year = current_date.isocalendar()[0]
-        current_week = current_date.isocalendar()[1]
-
-        year_weeks = []
-
-        while year != current_year or week != current_week:
-            year_weeks.append((current_year, current_week))
-            current_date = current_date + timedelta(weeks=1)
-            current_year = current_date.isocalendar()[0]
-            current_week = current_date.isocalendar()[1]
+        year_weeks = answered_year_weeks()
 
         if len(year_weeks) == 0:
             to_next_week()
 
-        st.info("No recommendations found for this week. Showing results.")
-
-        set_deeplink(
-            ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
-        )
+        # st.info("No recommendations found for this week. Showing results.")
+        #
+        # await asyncio.sleep(2)
+        #
+        # set_deeplink(
+        #     ShowChoicesState(agreement_id=customer.agreement_id, year_weeks=year_weeks),
+        # )
 
     with st.spinner("Loading Menu data..."):
         menu = await load_menu_for(customer.company_id, year, week, adb)
 
-    df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
+    df_flex_products = menu[
+        menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()
+    ].explode(
         "main_recipe_id",
     )
 
     number_of_weeks_back = 10
 
-    with st.spinner(f"Computing Prefered Mealkit Behaviour, using {number_of_weeks_back} weeks"):
-        today = datetime.now()
+    with st.spinner(
+        f"Computing Prefered Mealkit Behaviour, using {number_of_weeks_back} weeks",
+    ):
+        today = datetime.now()  # noqa: DTZ005
 
         year_weeks = []
 
@@ -344,7 +338,7 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
 
         target = await cache_awaitable(
             f"preselector_target_vector_{customer.agreement_id}",
-            historical_preselector_vector(agreement_id=customer.agreement_id, year_weeks=year_weeks),
+            historical_preselector_vector(customer=customer, year_weeks=year_weeks),
         )
 
     with st.expander("Target mealkit"):
@@ -358,7 +352,9 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             selected_recipe_ids.update(main_recipe_ids)
 
     if selected_recipe_ids:
-        not_shown_recipes = df_flex_products[~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))]
+        not_shown_recipes = df_flex_products[
+            ~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))
+        ]
     else:
         not_shown_recipes = df_flex_products
 
@@ -367,11 +363,14 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
         return
 
     with st.spinner("Running preselector..."):
-        preselector_result = await run_preselector_with_menu(
-            customer=customer,
-            menu=not_shown_recipes,
-            target_vector=target,
-            recommendations=recommendations,
+        preselector_result = await cache_awaitable(
+            f"preselector_result_{customer.agreement_id}_{year}_{week}_{selected_recipe_ids}",
+            run_preselector_with_menu(
+                customer=customer,
+                menu=not_shown_recipes,
+                target_vector=target,
+                recommendations=recommendations,
+            ),
         )
 
         # preselector_result = run_preselector_for(
@@ -423,7 +422,9 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
         st.info("No recipes found for the mealselector")
         to_next_week()
 
-    shown_recipe_ids[year * 100 + week] = list(preselector_result.main_recipe_ids) + list(mealselector_result)
+    shown_recipe_ids[year * 100 + week] = list(
+        preselector_result.main_recipe_ids,
+    ) + list(mealselector_result)
     set_cache("shown_recipe_ids", shown_recipe_ids)
 
     with st.spinner("Loading recipe information..."):
