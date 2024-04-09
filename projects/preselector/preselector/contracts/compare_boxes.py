@@ -26,7 +26,7 @@ async def historical_preselector_vector(
     customer: PreselectorCustomer,
     year_weeks: list[tuple[int, int]],
 ) -> pl.DataFrame:
-    from preselector.new_main import BasketFeatures
+    from preselector.main import BasketFeatures
 
     df = await HistoricalRecipeOrders.query().all().to_lazy_polars()
 

@@ -3,10 +3,8 @@ from datetime import datetime
 from typing import Any
 
 import streamlit as st
-from preselector.contracts.compare_boxes import (
-    PreselectorTestChoice,
-    recipe_information_for_ids,
-)
+from data_contracts.preselector.store import PreselectorTestChoice
+from preselector.contracts.compare_boxes import recipe_information_for_ids
 from pydantic import BaseModel
 from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
@@ -40,12 +38,8 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
     st.title("Why did you choose this mealkit?")
 
     with st.spinner("Loading recipe information..."):
-        key_value_cache_key = (
-            f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
-        )
-        key_value_cache_key_other = (
-            f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
-        )
+        key_value_cache_key = f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
+        key_value_cache_key_other = f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
 
         choosen_recipes = await cache_awaitable(
             key_value_cache_key,

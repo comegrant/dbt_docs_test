@@ -2,10 +2,8 @@ from collections import defaultdict
 
 import pandas as pd
 import streamlit as st
-from preselector.contracts.compare_boxes import (
-    PreselectorTestChoice,
-    recipe_information_for_ids,
-)
+from data_contracts.preselector.store import PreselectorTestChoice
+from preselector.contracts.compare_boxes import recipe_information_for_ids
 from pydantic import BaseModel
 from ui.components.mealkit import badge, mealkit
 

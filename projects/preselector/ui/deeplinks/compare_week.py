@@ -5,6 +5,7 @@ from typing import Any
 
 import pandas as pd
 import streamlit as st
+from preselector.constants import FLEX_PRODUCT_TYPE_ID
 from preselector.contracts.compare_boxes import (
     SqlServerConfig,
     adb,
@@ -14,9 +15,8 @@ from preselector.contracts.compare_boxes import (
     recipe_information_for_ids,
 )
 from preselector.data.models.customer import PreselectorCustomer
+from preselector.main import run_preselector_with_menu
 from preselector.mealselector_api import run_mealselector
-from preselector.new_main import run_preselector_with_menu
-from preselector.utils.constants import FLEX_PRODUCT_TYPE_ID
 from pydantic import BaseModel
 from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
@@ -317,9 +317,7 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
     with st.spinner("Loading Menu data..."):
         menu = await load_menu_for(customer.company_id, year, week, adb)
 
-    df_flex_products = menu[
-        menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()
-    ].explode(
+    df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
         "main_recipe_id",
     )
 
@@ -352,9 +350,7 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             selected_recipe_ids.update(main_recipe_ids)
 
     if selected_recipe_ids:
-        not_shown_recipes = df_flex_products[
-            ~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))
-        ]
+        not_shown_recipes = df_flex_products[~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))]
     else:
         not_shown_recipes = df_flex_products
 

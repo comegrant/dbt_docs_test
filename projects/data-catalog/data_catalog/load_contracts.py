@@ -27,7 +27,9 @@ def inject_sources() -> None:
 
 
 async def custom_store() -> FeatureStore:
+    from data_contracts.preselector.store import preselector_contracts
     from data_contracts.recommendations.store import recommendation_feature_contracts
 
     inject_sources()
-    return recommendation_feature_contracts()
+
+    return preselector_contracts().combine(recommendation_feature_contracts())

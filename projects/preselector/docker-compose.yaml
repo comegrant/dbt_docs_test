@@ -9,9 +9,9 @@ services:
       context: ../../
       dockerfile: projects/preselector/Dockerfile
     command: ["echo", "'Hello from preselector'"]
-    volumes:
-      - ./:/opt/projects/preselector
-      - ./../../packages:/opt/packages
+    # volumes:
+    #   - ./:/opt/projects/preselector
+    #   - ./../../packages:/opt/packages
     profiles: ["base", "app"]
     env_file:
       - ../../.env
