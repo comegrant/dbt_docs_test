@@ -291,8 +291,23 @@ async def run_preselector(
         )
         logger.info(f"Filtering based on taste preferences done: {recipes.height}")
 
-    if recommendations.height > 0:
-        logger.info(f"Filtering based on recommendations: {recipes.height}")
+    logger.info(f"Loading preselector recipe features: {recipes.height}")
+    recipe_features = await (
+        store.model("preselector")
+        .features_for(
+            recipes.with_columns(pl.lit(customer.portion_size).alias("portion_size")),
+        )
+        .to_polars()
+    )
+
+    logger.info(f"Filtering out cheep and premium recipes: {recipe_features.height}")
+    recipe_features = recipe_features.filter(pl.col("is_premium").is_not() & pl.col("is_cheep").is_not()).select(
+        pl.exclude(["is_premium", "is_cheep"]),
+    )
+    logger.info(f"Filtered out cheep and premium recipes: {recipe_features.height}")
+
+    if recommendations.height > select_top_n:
+        logger.info(f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}")
         product_ids = recipes["product_id"].to_list()
 
         top_n_recipes = (
@@ -304,16 +319,12 @@ async def run_preselector(
         recipes = recipes.filter(
             pl.col("product_id").is_in(top_n_recipes["product_id"]),
         )
-        logger.info(f"Filtering based on recommendations done: {recipes.height}")
-
-    recipe_features = await (
-        store.model("preselector")
-        .features_for(
-            recipes.with_columns(pl.lit(customer.portion_size).alias("portion_size")),
+        recipe_features = recipe_features.filter(
+            pl.col("recipe_id").is_in(recipes["recipe_id"]),
         )
-        .to_polars()
-    )
+        logger.info(f"Filtering based on recommendations done: {recipe_features.height}")
 
+    logger.info(f"Selecting the best combination based on {recipe_features.height} recipes.")
     best_recipe_ids, error = await find_best_combination(
         target_vector,
         recipe_features,
