@@ -18,7 +18,7 @@ class TestPredict(TestCase):
             {
                 "agreement_id": [1, 2, 2, 1, 2],
                 "recipe_id": [1, 1, 2, 2, 3],
-                "rating": [3, 3, 1, 3, 5],
+                "rating": [2, 3, 1, 5, 5],
             },
         )
         model = CBModel.train(
@@ -39,7 +39,7 @@ class TestPredict(TestCase):
         recipe_to_predict = pd.DataFrame(
             data={
                 "recipe_taxonomies": ["rask", "laktosefri"],
-                "all_ingredients": ["kylling", "laks, kylling"],
+                "all_ingredients": ["kjøtt", "laks, spagetti"],
             },
             index=recipe_ids_to_predict,
         )
@@ -50,6 +50,21 @@ class TestPredict(TestCase):
             assert column in preds.columns
 
         assert preds["recipe_id"].isin(recipe_ids_to_predict).all()
+
+        # The best recipes will be first in the list
+        user_one_recipe_order = (
+            preds[preds["agreement_id"] == 1]
+            .sort_values("score", ascending=False)["recipe_id"]
+            .tolist()
+        )
+        assert user_one_recipe_order == [10, 13]
+
+        user_two_recipe_order = (
+            preds[preds["agreement_id"] == 2]  # noqa: PLR2004
+            .sort_values("score", ascending=False)["recipe_id"]
+            .tolist()
+        )
+        assert user_two_recipe_order == [13, 10]
 
     def test_ranking(self) -> None:
         expected = pd.Series([7, 4, 5, 6, 2, 1, 3])
@@ -83,7 +98,9 @@ class TestPredict(TestCase):
         result = predict_order_of_relevance(recipe_subset)
         assert result.shape[0] == expected.shape[0]
         assert expected.equals(
-            result[["agreement_id", "recipe_id", "order_of_relevance_cluster"]].reset_index(drop=True),
+            result[
+                ["agreement_id", "recipe_id", "order_of_relevance_cluster"]
+            ].reset_index(drop=True),
         )
 
 

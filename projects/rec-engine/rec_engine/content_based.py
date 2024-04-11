@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
 
+import numpy as np
 import pandas as pd
 import polars as pl
 from aligned import FeatureStore
@@ -176,6 +177,7 @@ class CBModel:
             joined_ratings["rating"] ** 3,
             axis=0,
         )
+        weighted.apply(lambda x: x * np.log(len(x) / (1 + x[x > 0].count())), axis=0)
         weighted["agreement_id"] = joined_ratings["agreement_id"]
 
         summed_per_user = weighted.groupby("agreement_id").sum()
