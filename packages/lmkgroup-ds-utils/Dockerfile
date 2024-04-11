@@ -5,7 +5,7 @@ RUN pip install --no-cache-dir poetry
 
 # set the home directory
 ENV APP_HOME /opt
-ENV PACKAGE_HOME $APP_HOME/packages/lmk-ds-utils
+ENV PACKAGE_HOME $APP_HOME/packages/lmkgroup-ds-utils
 
 WORKDIR $APP_HOME
 COPY packages packages
@@ -13,8 +13,8 @@ COPY packages packages
 WORKDIR $PACKAGE_HOME
 
 # Only copy the package file for imporoved build caching
-COPY packages/lmk-ds-utils/pyproject.toml .
-COPY packages/lmk-ds-utils/poetry.lock .
+COPY packages/lmkgroup-ds-utils/pyproject.toml .
+COPY packages/lmkgroup-ds-utils/poetry.lock .
 
 # create a dummy package to satisfy Poetry and improve caching
 RUN mkdir -p lmk_ds_utils && touch lmk_ds_utils/__init__.py
@@ -24,7 +24,7 @@ RUN poetry config virtualenvs.create false
 RUN poetry install
 
 # copy source code
-COPY packages/lmk-ds-utils .
+COPY packages/lmkgroup-ds-utils .
 
 # store the git branch and commit hash as env variables
 ARG GIT_BRANCH

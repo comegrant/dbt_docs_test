@@ -1,4 +1,4 @@
-# lmk-ds-utils
+# lmkgroup-ds-utils
 
 A Python package by Cheffelo.
 
@@ -6,7 +6,7 @@ A Python package by Cheffelo.
 Run the following command to install this package:
 
 ```bash
-chef add lmk-ds-utils
+chef add lmkgroup-ds-utils
 ```
 
 ## Develop
