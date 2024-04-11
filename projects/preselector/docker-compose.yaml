@@ -13,6 +13,9 @@ services:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
     profiles: ["base", "app"]
+    env_file:
+      - ../../.env
+      - .env
 
   preselector-app:
     platform: linux/amd64

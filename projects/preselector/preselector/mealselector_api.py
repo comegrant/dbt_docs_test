@@ -11,15 +11,15 @@ logger = logging.getLogger(__name__)
 
 class MealSelectorRequest(BaseModel):
     weeks: list[dict[str, int]]
-    companyId: str
-    agreementId: int
+    companyId: str  # noqa: N815
+    agreementId: int  # noqa: N815
     products: list[dict[str, str]]
     preferences: list[dict[str, str]]
     price: int
 
 
 class MealSelectorProductResponse(BaseModel):
-    variationId: str
+    variationId: str  # noqa: N815
     quantity: int
 
 
@@ -31,7 +31,7 @@ class MealSelectorWeekResponse(BaseModel):
 
 
 class MealSelectorReponse(BaseModel):
-    agreementId: int
+    agreementId: int  # noqa: N815
     weeks: list[MealSelectorWeekResponse]
 
 
@@ -76,7 +76,7 @@ async def run_mealselector(
 ) -> list[int] | Exception:
     from httpx import AsyncClient
 
-    url = "https://analytics.godtlevert.no/Preferences/GeneratePersonalizedDeviation"
+    url = "https://gg-analytics-api-warmup.azurewebsites.net/Preferences/GeneratePersonalizedDeviation"
     product_variation_id = customer.subscribed_product_variation_id
 
     if not product_variation_id:

@@ -1,15 +1,45 @@
+import logging
 from typing import Annotated
 
 import pandas as pd
 import polars as pl
 from aligned import Bool, Float, Int32, String, Timestamp, feature_view
 from aligned.compiler.feature_factory import List
+from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeCost, RecipeFeatures, RecipeNutrition
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
-import logging
 
 logger = logging.getLogger(__name__)
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
+
+
+async def historical_preselector_vector(agreement_id: int, year_weeks: list[tuple[int, int]]) -> pl.DataFrame:
+    from preselector.new_main import BasketFeatures
+
+    df = await HistoricalRecipeOrders.query().all().to_lazy_polars()
+
+    year_week_number = [year * 100 + week for year, week in year_weeks]
+
+    df = df.filter(
+        pl.col("agreement_id") == agreement_id,
+        (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
+    )
+
+    nutrition = RecipeNutrition.query().features_for(df)
+    cost = RecipeCost.query().features_for(df)
+
+    vectors = (
+        await RecipeFeatures.query()
+        .features_for(df)
+        .job.join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
+        .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
+        .join(cost, method="inner", left_on=["recipe_id", "portion_size"], right_on=["recipe_id", "portion_size"])
+        .rename({"agreement_id": "basket_id"})
+        .aggregate(BasketFeatures.query().request)
+        .to_polars()
+    )
+
+    return vectors.select(pl.exclude("basket_id"))
 
 
 @feature_view(

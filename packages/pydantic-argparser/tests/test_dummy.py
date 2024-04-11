@@ -11,11 +11,23 @@ class CliInput(BaseModel):
 
 @pytest.mark.asyncio()
 async def test_cli_tool() -> None:
+    expected_output = CliInput(
+        name="John",
+        hobbies=["reading", "running"],
+    )
     parser = parser_for(CliInput)
 
-    namespace = parser.parse_args(["--name", "John", "--hobbies", "reading", "running"])
+    namespace = parser.parse_args(
+        [
+            "--name",
+            expected_output.name,
+            "--hobbies",
+            expected_output.hobbies[0],
+            expected_output.hobbies[1],
+        ],
+    )
     model = decode_args(namespace, CliInput)
 
-    assert model.name == "John"
-    assert model.hobbies == ["reading", "running"]
-    assert model.age == 20
+    assert model.name == expected_output.name
+    assert model.hobbies == expected_output.hobbies
+    assert model.age == expected_output.age

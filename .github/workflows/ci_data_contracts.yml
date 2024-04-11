@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/python_reusable.yml'
       - '.github/workflows/ci_data_contracts.yml'
-      - 'packages/data_contracts/**'
+      - 'packages/data-contracts/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
@@ -14,5 +14,5 @@ jobs:
     uses:
       ./.github/workflows/python_reusable.yml
     with:
-      working-directory: packages/data_contracts
+      working-directory: packages/data-contracts
     secrets: inherit

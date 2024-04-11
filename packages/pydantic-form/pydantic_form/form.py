@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from datetime import timedelta
 from types import UnionType
 from typing import Any, TypeVar, get_args
 
@@ -19,13 +20,16 @@ def list_input(name: str, info: FieldInfo) -> list[str] | None:
     return str(values).split(",")
 
 
-def default_value(info: FieldInfo) -> Any:
+def default_value(info: FieldInfo) -> Any:  # noqa: ANN401
     if info.default_factory:
         return info.default_factory()
 
     value = info.default
     if str(value) == "PydanticUndefined":
         return None
+
+    if isinstance(value, timedelta):
+        return value.total_seconds()
     return value
 
 
@@ -34,6 +38,7 @@ streamlit_components: dict[str, Callable[[str, FieldInfo], Any]] = {
     "list": lambda name, info: list_input(name, info),
     "int": lambda name, info: st.number_input(name, value=default_value(info), step=1),
     "bool": lambda name, info: st.checkbox(name, value=default_value(info)),
+    "timedelta": lambda name, info: st.number_input(name, value=default_value(info)),
     "Optional": lambda name, info: st.text_input(name),
 }
 
@@ -41,6 +46,7 @@ streamlit_components: dict[str, Callable[[str, FieldInfo], Any]] = {
 def pydantic_form(key: str, model: type[T]) -> T | None:
     values = {}
     required_fields = set()
+    optional_union_type_length = 2
 
     with st.form(key=key):
         for name, field in model.model_fields.items():
@@ -50,7 +56,7 @@ def pydantic_form(key: str, model: type[T]) -> T | None:
             if isinstance(annotation, UnionType):
                 sub_types = list(get_args(annotation))
 
-                if len(sub_types) == 2 and type(None) in sub_types:
+                if len(sub_types) == optional_union_type_length and type(None) in sub_types:
                     is_optional = True
                     annotation = sub_types[0] if sub_types[0] != type(None) else sub_types[1]
 
@@ -59,14 +65,14 @@ def pydantic_form(key: str, model: type[T]) -> T | None:
 
             if not is_optional:
                 required_fields.add(name)
-                values[name] = component(f"{name} **", field)
+                values[name] = component(f"{name} - Required", field)
             else:
                 values[name] = component(name, field)
 
         st.form_submit_button()
 
     for field in required_fields:
-        if not values[field] or values[field] == "" or values[field] == "\n":
+        if values[field] is None or values[field] == "" or values[field] == "\n":
             return None
 
     return model(**values)

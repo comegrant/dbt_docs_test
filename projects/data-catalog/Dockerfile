@@ -1,11 +1,21 @@
-FROM python:3.10-slim-buster
+FROM aligned.azurecr.io/aligned-catalog/slim-buster:latest
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
 
 # set the home directory
-ENV APP_HOME /opt
+ENV APP_HOME /app
 ENV SERVICE_HOME $APP_HOME/projects/data-catalog
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y g++ make libc6-dev unixodbc-dev libpq-dev curl gnupg2
+
+# Install Microsoft ODBC driver for SQL Server
+RUN apt-get install -y apt-transport-https && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install --no-install-recommends -y msodbcsql18 mssql-tools18
 
 # copy source code
 WORKDIR $APP_HOME
@@ -21,6 +31,7 @@ RUN mkdir -p data_catalog && touch data_catalog/__init__.py
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
+RUN pip install polars-lts-cpu
 
 # copy source code
 COPY projects/data-catalog .
@@ -33,4 +44,3 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 # set starting command
 WORKDIR $SERVICE_HOME
-CMD python -m streamlit run data_catalog/main.py

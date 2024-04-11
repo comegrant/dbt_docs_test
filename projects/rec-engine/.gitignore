@@ -1,0 +1,5 @@
+test_data/test-runs/**
+/data
+.mssql_data/**
+mssql-data/**
+mssql-data/

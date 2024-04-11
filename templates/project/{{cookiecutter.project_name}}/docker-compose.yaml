@@ -4,6 +4,7 @@ services:
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
   {{cookiecutter.project_name}}:
+    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}
     platform: linux/amd64
     build:
       context: ../../
@@ -12,9 +13,9 @@ services:
     volumes:
       - ./:/opt/projects/{{cookiecutter.project_name}}
       - ./../../packages:/opt/packages
-    profiles: ["base"]
 
   {{cookiecutter.project_name}}-app:
+    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}-app
     platform: linux/amd64
     build:
       context: ../../
@@ -27,9 +28,11 @@ services:
       - 8501:8501
     depends_on:
       - {{cookiecutter.project_name}}
-    profiles: ["app"]
+    env_file:
+      - .env
 
   {{cookiecutter.project_name}}-test:
+    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}-test
     platform: linux/amd64
     build:
       context: ../../
