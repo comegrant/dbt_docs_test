@@ -54,7 +54,7 @@ def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
 
             if len(sub_types) == optional_union_type_langth and type(None) in sub_types:
                 annotation = (
-                    sub_types[0] if sub_types[0] is not type(None) else sub_types[1]
+                    sub_types[0] if sub_types[0] != type(None) else sub_types[1]
                 )
 
         parser.add_argument(
