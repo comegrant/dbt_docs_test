@@ -3,7 +3,7 @@ from typing import Annotated
 
 import pandas as pd
 import polars as pl
-from aligned import FileSource, Int32, String, check_schema, feature_view
+from aligned import FileSource, Float, Int32, String, check_schema, feature_view
 from aligned.compiler.aggregation_factory import PolarsTransformationFactoryAggregation
 from aligned.compiler.feature_factory import FeatureFactory
 from data_contracts.recommendations.recipe import (
@@ -36,6 +36,16 @@ def custom_aggregation(
     return as_dtype
 
 
+fat_agg = recipe_nutrition.fat_100g.aggregate()
+protein_agg = recipe_nutrition.protein_100g.aggregate()
+veg_fruit_agg = recipe_nutrition.fruit_veg_fresh_100g.aggregate()
+fat_saturated_agg = recipe_nutrition.fat_saturated_100g.aggregate()
+price_category_level_agg = recipe_cost.price_category_level.aggregate()
+recipe_cost_whole_units_agg = recipe_cost.recipe_cost_whole_units.aggregate()
+max_cooking_time_agg = recipe_features.cooking_time_from.aggregate()
+energy_kcal_agg = recipe_nutrition.energy_kcal_100g.aggregate()
+
+
 @feature_view(
     name="basket_features",
     source=FileSource.parquet_at("data.parquet"),
@@ -43,35 +53,25 @@ def custom_aggregation(
 class BasketFeatures:
     basket_id = Int32().as_entity()
 
-    max_cooking_time_agg = recipe_features.cooking_time_from.aggregate()
-
-    energy_kcal_agg = recipe_nutrition.energy_kcal_100g.aggregate()
-    fat_agg = recipe_nutrition.fat_100g.aggregate()
-    fat_saturated_agg = recipe_nutrition.fat_saturated_100g.aggregate()
-    protein_agg = recipe_nutrition.protein_100g.aggregate()
-    veg_fruit_agg = recipe_nutrition.fruit_veg_fresh_100g.aggregate()
-    price_category_level_agg = recipe_cost.price_category_level.aggregate()
-    recipe_cost_whole_units_agg = recipe_cost.recipe_cost_whole_units.aggregate()
-
-    mean_energy = energy_kcal_agg.mean()
     mean_fat = fat_agg.mean()
-    mean_fat_saturated = fat_saturated_agg.mean()
-    mean_coocking_time = max_cooking_time_agg.mean()
     mean_protein = protein_agg.mean()
     mean_veg_fruit = veg_fruit_agg.mean()
+    mean_fat_saturated = fat_saturated_agg.mean()
     mean_price_category_level = price_category_level_agg.mean()
     mean_recipe_cost_whole_units = recipe_cost_whole_units_agg.mean()
+    mean_coocking_time = max_cooking_time_agg.mean()
+    mean_energy = energy_kcal_agg.mean()
 
     median_cooking_time = max_cooking_time_agg.median()
 
-    std_cooking_time = max_cooking_time_agg.std()
-    std_energy = energy_kcal_agg.std()
     std_fat = fat_agg.std()
-    std_fat_saturated = fat_saturated_agg.std()
     std_protein = protein_agg.std()
     std_veg_fruit = veg_fruit_agg.std()
+    std_fat_saturated = fat_saturated_agg.std()
     std_price_category_level = price_category_level_agg.std()
     std_recipe_cost_whole_units = recipe_cost_whole_units_agg.std()
+    std_cooking_time = max_cooking_time_agg.std()
+    std_energy = energy_kcal_agg.std()
 
     is_family_friendly_mean = custom_aggregation(
         (pl.col("is_family_friendly") | pl.col("is_kids_friendly")).mean(),
@@ -79,7 +79,7 @@ class BasketFeatures:
             recipe_features.is_family_friendly,
             recipe_features.is_kids_friendly,
         ],
-        as_dtype=Int32(),
+        as_dtype=Float(),
     )
 
 
@@ -104,7 +104,11 @@ def select_next_vector(
         .transpose()
     )
 
-    distance = available_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
+    distance = (
+        available_vectors.with_columns(distance=distance["column_0"])
+        .sort("distance", descending=False)
+        .limit(1)
+    )
     return distance.select(
         pl.exclude(["distance", exclude_column]),
         pl.col(exclude_column).alias(rename_column),
@@ -187,7 +191,9 @@ async def find_best_combination(
             )
 
         # Sorting in order to get deterministic results
-        recipe_nudge = (await BasketFeatures.process_input(raw_recipe_nudge).to_polars()).sort(
+        recipe_nudge = (
+            await BasketFeatures.process_input(raw_recipe_nudge).to_polars()
+        ).sort(
             "basket_id",
             descending=False,
         )
@@ -270,7 +276,9 @@ async def run_preselector(
             .to_polars()
         )
 
-        upper_and_lower = {preference.lower() for preference in customer.taste_preference_ids}.union(
+        upper_and_lower = {
+            preference.lower() for preference in customer.taste_preference_ids
+        }.union(
             {preference.upper() for preference in customer.taste_preference_ids},
         )
 
@@ -301,13 +309,17 @@ async def run_preselector(
     )
 
     logger.info(f"Filtering out cheep and premium recipes: {recipe_features.height}")
-    recipe_features = recipe_features.filter(pl.col("is_premium").is_not() & pl.col("is_cheep").is_not()).select(
+    recipe_features = recipe_features.filter(
+        pl.col("is_premium").is_not() & pl.col("is_cheep").is_not(),
+    ).select(
         pl.exclude(["is_premium", "is_cheep"]),
     )
     logger.info(f"Filtered out cheep and premium recipes: {recipe_features.height}")
 
     if recommendations.height > select_top_n:
-        logger.info(f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}")
+        logger.info(
+            f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}",
+        )
         product_ids = recipes["product_id"].to_list()
 
         top_n_recipes = (
@@ -322,9 +334,13 @@ async def run_preselector(
         recipe_features = recipe_features.filter(
             pl.col("recipe_id").is_in(recipes["recipe_id"]),
         )
-        logger.info(f"Filtering based on recommendations done: {recipe_features.height}")
+        logger.info(
+            f"Filtering based on recommendations done: {recipe_features.height}",
+        )
 
-    logger.info(f"Selecting the best combination based on {recipe_features.height} recipes.")
+    logger.info(
+        f"Selecting the best combination based on {recipe_features.height} recipes.",
+    )
     best_recipe_ids, error = await find_best_combination(
         target_vector,
         recipe_features,
@@ -333,4 +349,6 @@ async def run_preselector(
 
     logging.info(f"Preselector Error: {error}")
 
-    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))["main_recipe_id"].to_list()
+    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))[
+        "main_recipe_id"
+    ].to_list()
