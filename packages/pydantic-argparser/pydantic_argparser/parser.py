@@ -88,6 +88,8 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
             parser_values = getattr(parser, name)
             value = ["".join(sub_value) for sub_value in parser_values]
             values[name] = value
+        elif field.annotation == str:
+            values[name] = "".join(getattr(parser, name))
         else:
             values[name] = getattr(parser, name)
 
