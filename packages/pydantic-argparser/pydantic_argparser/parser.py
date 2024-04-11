@@ -34,21 +34,20 @@ def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
         if is_list_annotation(field.annotation):
             nargs = "*"
 
-        annotation = field.annotation
-
-        if annotation == datetime.datetime:
+        if field.annotation == datetime.datetime:
             field.annotation = lambda x: datetime.datetime.strptime(
                 x,
                 "%Y-%m-%d %H:%M:%S",
             ).astimezone(tz=datetime.UTC)
 
-        if annotation == datetime.date:
+        if field.annotation == datetime.date:
             field.annotation = (
                 lambda x: datetime.datetime.strptime(x, "%Y-%m-%d")
                 .astimezone(tz=datetime.UTC)
                 .date()
             )
 
+        annotation = field.annotation
         if isinstance(field.annotation, UnionType):
             sub_types = list(get_args(field.annotation))
 
