@@ -45,6 +45,7 @@ class Preprocessor:
         for col in [
             "snapshot_status_active",
             "snapshot_status_freezed",
+            "snapshot_status_churned",
             "planned_delivery_True",
             "planned_delivery_False",
         ]:
@@ -67,6 +68,7 @@ class Preprocessor:
         logger.info(f"Dataset size before preprocessing: {df.shape[0]}")
         df = df[df["weeks_since_last_delivery"] < no_delivery_churned_weeks]
         df = df[df["weeks_since_last_delivery"] >= 0]
+        logger.info(df.columns)
         df["category"] = df["category"].fillna(value="0")
         df = df[columns_to_keep]
         df = cls.handle_categorical_features(df)
@@ -74,6 +76,10 @@ class Preprocessor:
         if drop_nan:
             df = df.dropna()
             logger.info(f"Total NaN rows dropped: {df.shape[0]}")
+
+        # Sort columns to match training and prediction
+        df.reindex(sorted(df.columns), axis=1)
+
         return cls.normalize_df(df)
 
     @classmethod
@@ -136,14 +142,12 @@ class Preprocessor:
         cls: type["Preprocessor"],
         data: pd.DataFrame,
         validation_split_months: int = 2,
-        num_indices_drop: int = 10,
         training_features: list[str] | None = None,
         forecast_weeks: int = 4,
     ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
         Data preprocessing for model training.
         :param validation_split_months: Validation split in months.
-        :param num_indices_drop: Number of indices to drop based on condition.
         :param training_features: Features to include in the training data.
         :param forecast_weeks: Number of weeks for forecasting.
         :return: Tuple containing training features, training labels, validation features, and validation labels.
@@ -153,8 +157,6 @@ class Preprocessor:
         if training_features is None:
             training_features = cls.TRAINING_FEATURES
 
-        # Ensure snapshot_date is in datetime format and filter out unwanted indices
-        data = data[data[date_column].apply(lambda x: len(str(x)) <= num_indices_drop)]
         data[date_column] = pd.to_datetime(data[date_column])
         data.dropna(subset=["forecast_status"], inplace=True)
 
@@ -208,6 +210,9 @@ class Preprocessor:
             drop_nan=True,
             label_column="forecast_status",
         )
+
+        logger.info(df_x_train.columns)
+        logger.info(df_x_val.columns)
 
         if df_x_val.empty:
             raise ValueError(

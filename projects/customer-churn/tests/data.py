@@ -79,6 +79,10 @@ def generate_complaints_data(rows: int = 10) -> pd.DataFrame:
 
     for _ in range(rows):
         year = random.choice([2020, 2021])
+        registration_date = generate_random_date(
+            start_date=datetime(year, 1, 1, tzinfo=UTC),
+            end_date=datetime(year, 12, 31, tzinfo=UTC),
+        )
         record = Complaints(
             agreement_id=random.randint(100000, 999999),
             order_id=random.randint(1000, 9999),
@@ -91,7 +95,7 @@ def generate_complaints_data(rows: int = 10) -> pd.DataFrame:
             responsible=random.choice(responsibles),
             cause=random.choice(causes),
             comment=random.choice(comments),
-            registration_date=generate_random_date(year),
+            registration_date=registration_date,
         )
         records.append(record.model_dump())
 
@@ -186,9 +190,9 @@ def generate_customer_data(rows: int = 10) -> pd.DataFrame:
             sms_reservation=random.choice([True, False]),
             agreement_regret_weeks=random.uniform(0, 52),
             agreement_start_year=2020,
-            agreement_start_week=float,
-            agreement_first_delivery_year=float(agreement_first_delivery_date.year),
-            agreement_first_delivery_week=float(
+            agreement_start_week=random.randint(1, 52),
+            agreement_first_delivery_year=int(agreement_first_delivery_date.year),
+            agreement_first_delivery_week=int(
                 agreement_first_delivery_date.isocalendar()[1],
             ),
             sign_up_payment_method="cc",
@@ -233,18 +237,21 @@ def generate_orders_data(rows: int = 10) -> pd.DataFrame:
 
     for _ in range(rows):
         year = random.choice([2020, 2021])
-        delivery_date, delivery_week = generate_random_date(year)
+        delivery_date = generate_random_date(
+            start_date=datetime(year, 1, 1, tzinfo=UTC),
+            end_date=datetime(year, 12, 31, tzinfo=UTC),
+        )
         record = OrderRecord(
             agreement_id=112211,
             company_name=company_name,
             order_id=random.uniform(1000000, 9999999),
             delivery_date=delivery_date,
             delivery_year=year,
-            delivery_week=delivery_week,
+            delivery_week=delivery_date.isocalendar()[1],
             net_revenue_ex_vat=round(random.uniform(300, 900), 4),
             gross_revenue_ex_vat=round(random.uniform(300, 900), 4),
         )
-        records.append(record.dict())
+        records.append(record.model_dump())
 
     df = pd.DataFrame(records)
     return df

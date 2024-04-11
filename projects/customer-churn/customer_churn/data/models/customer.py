@@ -37,8 +37,8 @@ class Customer(BaseModel):
     sms_reservation: bool
     agreement_regret_weeks: float
     agreement_start_year: int
-    agreement_start_week: float
-    agreement_first_delivery_year: float
-    agreement_first_delivery_week: float
+    agreement_start_week: int
+    agreement_first_delivery_year: int
+    agreement_first_delivery_week: int
     sign_up_payment_method: str
     subscribed_delivery_week_interval: str
