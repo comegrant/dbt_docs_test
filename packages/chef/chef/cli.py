@@ -618,8 +618,13 @@ def lock(project: str | None) -> None:
         )
         return
 
-    echo_action(f"Locking project '{name}'")
-    command = ["poetry", "lock", f"--directory={projects_path() / name}"]
+    if name in internal_projects():
+        path = projects_path() / name
+    else:
+        path = internal_package_path() / name
+
+    echo_action(f"Locking '{name}' {path}")
+    command = ["poetry", "lock", f"--directory={path}"]
     subprocess.run(command, check=False)
 
 
