@@ -32,7 +32,6 @@ COPY projects/preselector/poetry.lock .
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
-RUN pip uninstall polars -y
 RUN pip install polars-lts-cpu
 
 # copy source code

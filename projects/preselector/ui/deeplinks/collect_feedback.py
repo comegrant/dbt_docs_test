@@ -3,13 +3,14 @@ from datetime import datetime
 from typing import Any
 
 import streamlit as st
-from preselector.contracts.compare_boxes import PreselectorTestChoice, recipe_information_for_ids
+from data_contracts.preselector.store import PreselectorTestChoice
+from preselector.contracts.compare_boxes import recipe_information_for_ids
 from pydantic import BaseModel
 from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
 
 
-async def cache_awaitable(key: str, function: Awaitable) -> Any:
+async def cache_awaitable(key: str, function: Awaitable) -> Any:  # noqa: ANN401
     if key in st.session_state:
         return st.session_state[key]
 
@@ -37,12 +38,8 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
     st.title("Why did you choose this mealkit?")
 
     with st.spinner("Loading recipe information..."):
-        key_value_cache_key = (
-            f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
-        )
-        key_value_cache_key_other = (
-            f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
-        )
+        key_value_cache_key = f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
+        key_value_cache_key_other = f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
 
         choosen_recipes = await cache_awaitable(
             key_value_cache_key,
@@ -107,12 +104,13 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
                 "agreement_id": [state.agreement_id],
                 "year": [state.year],
                 "week": [state.week],
+                "preselector_version": ["vector_search_v1"],
                 "main_recipe_ids": [state.selected_recipe_ids],
                 "compared_main_recipe_ids": [state.other_recipe_ids],
                 "chosen_mealkit": [state.selected_create],
                 "description": [other_feedback],
-                "created_at": [datetime.now()],
-                "updated_at": [datetime.now()],
+                "created_at": [datetime.now()],  # noqa: DTZ005
+                "updated_at": [datetime.now()],  # noqa: DTZ005
                 "concept_revenue": [None],
                 "total_cost_of_food": [None],
                 "was_lower_cooking_time": [its_cooking_time],

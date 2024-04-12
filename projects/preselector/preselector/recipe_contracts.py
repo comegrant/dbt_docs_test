@@ -20,6 +20,8 @@ recipe_cost = RecipeCost()
         recipe_nutrition.fruit_veg_fresh_100g,
         recipe_cost.price_category_level,
         recipe_cost.recipe_cost_whole_units,
+        recipe_cost.is_premium,
+        recipe_cost.is_cheep,
     ],
     contacts=[Owner.matsmoll().markdown()],
     description="Selects an optimal mealkit based on a few features by finding the combination that is closest to a target vector.",

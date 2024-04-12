@@ -3,27 +3,54 @@ from typing import Annotated
 
 import pandas as pd
 import polars as pl
-from aligned import Bool, Float, Int32, String, Timestamp, feature_view
+from aligned import Int32, String, feature_view
 from aligned.compiler.feature_factory import List
-from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeCost, RecipeFeatures, RecipeNutrition
+from data_contracts.preselector.store import (
+    DefaultMealboxRecipes,
+)
+from data_contracts.recommendations.recipe import (
+    HistoricalRecipeOrders,
+    RecipeCost,
+    RecipeFeatures,
+    RecipeNutrition,
+)
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
+from preselector.data.models.customer import PreselectorCustomer
 
 logger = logging.getLogger(__name__)
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
 
-async def historical_preselector_vector(agreement_id: int, year_weeks: list[tuple[int, int]]) -> pl.DataFrame:
-    from preselector.new_main import BasketFeatures
+async def historical_preselector_vector(
+    customer: PreselectorCustomer,
+    year_weeks: list[tuple[int, int]],
+) -> pl.DataFrame:
+    from preselector.main import BasketFeatures
 
     df = await HistoricalRecipeOrders.query().all().to_lazy_polars()
 
     year_week_number = [year * 100 + week for year, week in year_weeks]
 
     df = df.filter(
-        pl.col("agreement_id") == agreement_id,
+        pl.col("agreement_id") == customer.agreement_id,
         (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
-    )
+    ).collect()
+
+    if df.height == 0:
+        default = await DefaultMealboxRecipes.query().all().to_lazy_polars()
+        df = (
+            default.filter(
+                pl.col("variation_id") == customer.subscribed_product_variation_id,
+                (pl.col("menu_year") * 100 + pl.col("menu_week")).is_in(
+                    year_week_number,
+                ),
+            )
+            .explode("recipe_ids")
+            .rename({"recipe_ids": "recipe_id"})
+            .collect()
+            .with_columns(pl.lit(customer.agreement_id).alias("agreement_id"))
+        )
 
     nutrition = RecipeNutrition.query().features_for(df)
     cost = RecipeCost.query().features_for(df)
@@ -33,7 +60,12 @@ async def historical_preselector_vector(agreement_id: int, year_weeks: list[tupl
         .features_for(df)
         .job.join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
         .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
-        .join(cost, method="inner", left_on=["recipe_id", "portion_size"], right_on=["recipe_id", "portion_size"])
+        .join(
+            cost,
+            method="inner",
+            left_on=["recipe_id", "portion_size"],
+            right_on=["recipe_id", "portion_size"],
+        )
         .rename({"agreement_id": "basket_id"})
         .aggregate(BasketFeatures.query().request)
         .to_polars()
@@ -115,43 +147,6 @@ WHERE recipes.nr = 1"""
     query = database.fetch(recipe_sql)
 
     return await RecipeInformation.query().using_source(query).all().to_pandas()
-
-
-@feature_view(
-    name="preselector_test_choice",
-    source=preselector_ab_test_dir.delta_at("preselector_test_result.delta"),
-)
-class PreselectorTestChoice:
-    agreement_id = Int32().as_entity()
-    year = Int32().as_entity()
-    week = Int32().as_entity()
-
-    main_recipe_ids = List(Int32())
-    number_of_recipes_to_change = Int32().is_optional()
-
-    compared_main_recipe_ids = List(Int32())
-    compared_number_of_recipes_to_change = Int32().is_optional()
-
-    chosen_mealkit = String().accepted_values(["pre-selector", "chef-selection"])
-
-    was_lower_cooking_time = Bool()
-    was_more_variety = Bool()
-    was_more_interesting = Bool()
-    was_more_family_friendly = Bool()
-    was_better_recipes = Bool()
-    was_better_proteins = Bool()
-    was_better_sides = Bool()
-    was_better_images = Bool()
-    was_fewer_unwanted_ingredients = Bool()
-    had_recipes_last_week = Bool()
-
-    created_at = Timestamp()
-    updated_at = Timestamp()
-
-    total_cost_of_food = Float().is_optional()
-    concept_revenue = Float().is_optional()
-
-    description = String().is_optional()
 
 
 @feature_view(
@@ -247,7 +242,9 @@ SELECT ba.agreement_id
         .using_source(adb.fetch(customer_sql))
         .all()
         .polars_method(
-            lambda df: df.with_columns(pl.col("taste_preference_ids").cast(pl.List(pl.Utf8()))),
+            lambda df: df.with_columns(
+                pl.col("taste_preference_ids").cast(pl.List(pl.Utf8())),
+            ),
         )
         .to_pandas()
     )

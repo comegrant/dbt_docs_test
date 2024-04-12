@@ -4,6 +4,7 @@ services:
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
   preselector:
+    image: preselector-preselector
     platform: linux/amd64
     build:
       context: ../../
@@ -12,7 +13,6 @@ services:
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
-    profiles: ["base", "app"]
     env_file:
       - ../../.env
       - .env
@@ -33,9 +33,9 @@ services:
       - preselector
     env_file:
       - .env
-    profiles: ["app"]
 
   preselector-test:
+    platform: linux/amd64
     build:
       context: ../../
       dockerfile: projects/preselector/Dockerfile.testing
@@ -45,4 +45,3 @@ services:
       - ./../../packages:/opt/packages
     depends_on:
       - preselector
-    profiles: ["test"]
