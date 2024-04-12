@@ -3,7 +3,7 @@ name = "customer_churn"
 version = "0.1.0"
 description = "A Python project by Cheffelo."
 authors = ["Thomas Sve <thomas.sve@cheffelo.com>"]
-packages = [{include = "customer_churn"}]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
