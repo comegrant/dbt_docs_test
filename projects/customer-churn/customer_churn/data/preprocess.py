@@ -72,7 +72,7 @@ class Preprocessor:
         df["category"] = df["category"].fillna(value="0")
         df = df[columns_to_keep]
         df = cls.handle_categorical_features(df)
-        logger.info(df.columns)
+
         if drop_nan:
             df = df.dropna()
             logger.info(f"Total NaN rows dropped: {df.shape[0]}")
@@ -209,9 +209,6 @@ class Preprocessor:
             drop_nan=True,
             label_column="forecast_status",
         )
-
-        logger.info(df_x_train.columns)
-        logger.info(df_x_val.columns)
 
         if df_x_val.empty:
             raise ValueError(
