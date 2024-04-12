@@ -30,7 +30,8 @@ class Preprocessor:
         df[numerical_cols] = (df[numerical_cols] - df[numerical_cols].min()) / (
             df[numerical_cols].max() - df[numerical_cols].min()
         )
-        return df.fillna(0)
+        df[numerical_cols] = df[numerical_cols].fillna(0)
+        return df
 
     @classmethod
     def handle_categorical_features(
@@ -108,7 +109,7 @@ class Preprocessor:
         df.loc[df[label_column] == "churned", label_column] = 1
         logger.info(df[label_column])
 
-        df[label_column] = df[label_column].astype(int)
+        df.loc[:, label_column] = df[label_column].astype(int)
         df_prep = cls.prep(
             df,
             columns_to_keep=columns_to_keep,
