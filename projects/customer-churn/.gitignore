@@ -1,0 +1,6 @@
+notebooks/models/
+mlruns/
+data/raw
+data/processed
+data/interim
+data/results

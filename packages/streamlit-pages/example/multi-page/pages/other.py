@@ -5,7 +5,7 @@ from streamlit_pages.router import deeplinks
 
 
 @deeplinks({})
-async def other_page():
+async def other_page() -> None:
     st.title("Welcome to the other page")
 
 

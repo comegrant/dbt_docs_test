@@ -1,0 +1,10 @@
+version: '3'
+services:
+  lmkgroup-ds-utils-test:
+    build:
+      context: ../../
+      dockerfile: packages/lmkgroup-ds-utils/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/lmkgroup-ds-utils
+    profiles: ["test"]

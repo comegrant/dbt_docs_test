@@ -9,14 +9,14 @@ class WelcomePage(BaseModel):
     name: str
 
 
-async def welcome_page(state: WelcomePage):
+async def welcome_page(state: WelcomePage) -> None:
     st.title(f"Welcome {state.name}!")
 
     if st.button("Go to the next page"):
         set_deeplink(None)
 
 
-async def initial_page():
+async def initial_page() -> None:
     st.title("Welcome to the app")
 
     with st.form(key="welcome_form"):

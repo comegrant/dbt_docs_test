@@ -40,3 +40,11 @@ class Contacts:
             slack_handel="@Dr. N",
             email="niladri.banerjee@cheffelo.com",
         )
+
+    @staticmethod
+    def thomassve() -> Contacts:
+        return Contacts(
+            name="Thomas Sve",
+            slack_handel="@Thomas Sve",
+            email="thomas.sve@cheffelo.com",
+        )

@@ -56,9 +56,14 @@ def pydantic_form(key: str, model: type[T]) -> T | None:
             if isinstance(annotation, UnionType):
                 sub_types = list(get_args(annotation))
 
-                if len(sub_types) == optional_union_type_length and type(None) in sub_types:
+                if (
+                    len(sub_types) == optional_union_type_length
+                    and type(None) in sub_types
+                ):
                     is_optional = True
-                    annotation = sub_types[0] if sub_types[0] != type(None) else sub_types[1]
+                    annotation = (
+                        sub_types[0] if sub_types[0] != type(None) else sub_types[1]
+                    )
 
             type_name = annotation.__name__
             component = streamlit_components[type_name]

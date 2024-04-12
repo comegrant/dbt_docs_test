@@ -3,7 +3,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+.vscode/
 # MacOS
 .DS_Store
 
@@ -171,3 +171,5 @@ cython_debug/
 
 # TODO files
 **/TODO
+
+.databricks
