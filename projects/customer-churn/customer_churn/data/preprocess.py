@@ -77,10 +77,9 @@ class Preprocessor:
             df = df.dropna()
             logger.info(f"Total NaN rows dropped: {df.shape[0]}")
 
-        # Sort columns to match training and prediction
-        df.reindex(sorted(df.columns), axis=1)
+        df = cls.normalize_df(df)
 
-        return cls.normalize_df(df)
+        return df.reindex(sorted(df.columns), axis=1)
 
     @classmethod
     def prep_prediction(
