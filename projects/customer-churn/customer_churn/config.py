@@ -38,7 +38,6 @@ PREP_CONFIG = {
         "orders": "../data/raw/orders.csv",
         "crm_segments": "../data/raw/crm_segments_cleared.csv",
         "complaints": "../data/raw/complaints.csv",
-        "bisnode": "../data/raw/bisnode_enrichments.csv",
     },
     "output_dir": "../data/processed/",  # Output directory
     "company_id": CompanyID.RN,  # Company ID

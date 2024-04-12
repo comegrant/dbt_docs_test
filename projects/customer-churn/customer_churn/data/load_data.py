@@ -10,7 +10,6 @@ from lmkgroup_ds_utils.db.connector import DB
 
 from customer_churn.config import PREP_CONFIG
 from customer_churn.constants import LABEL_TEXT_CHURNED, LABEL_TEXT_DELETED
-from customer_churn.data.dataset.bisnode import Bisnode
 from customer_churn.data.dataset.complaints import Complaints
 from customer_churn.data.dataset.crm_segments import CRMSegments
 from customer_churn.data.dataset.customers import Customers
@@ -153,12 +152,6 @@ class DataLoader:
                 model_training=model_training,
                 input_file=input_files.get("complaints"),
                 complaints_last_n_weeks=snapshot_config.get("complaints_last_n_weeks"),
-                db=self.adb,
-            ),
-            Bisnode(
-                company_id=company_id,
-                model_training=model_training,
-                input_file=input_files.get("bisnode"),
                 db=self.adb,
             ),
         ]

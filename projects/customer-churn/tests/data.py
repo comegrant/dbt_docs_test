@@ -3,7 +3,6 @@ import random
 from datetime import UTC, datetime, timedelta
 
 import pandas as pd
-from customer_churn.data.models.bisnode import Bisnode
 from customer_churn.data.models.complaints import Complaints
 from customer_churn.data.models.crm import CRMSegment
 from customer_churn.data.models.customer import Customer
@@ -27,46 +26,6 @@ def generate_random_timestamp(start_year: int, end_year: int) -> datetime:
     int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
     random_second = random.randrange(int_delta)
     return start_date + timedelta(seconds=random_second)
-
-
-def generate_bisnode_data(rows: int = 10) -> pd.DataFrame:
-    records = []
-    for _ in range(rows):
-        record = Bisnode(
-            agreement_id=112211,
-            gedi="A2GF2XH3G42R",
-            impulsiveness=random.uniform(0, 50),
-            installment_affinity=random.uniform(0, 30),
-            profile_online_media=random.choice([4.0, 5.0, 6.0]),
-            cultural_class=random.choice(["02. Medium", "03. Høy"]),
-            perceived_purchasing_power=random.choice(["02. Medium", "03. Høy"]),
-            consumption=random.uniform(90, 100),
-            profile_newspaper=random.choice([5.0, 6.0]),
-            financial_class=random.choice(["02. Medium", "03. Høy"]),
-            probability_children_0_to_6=random.uniform(0, 30),
-            probability_children_7_to_17=random.uniform(0, 30),
-            education_years=random.uniform(12, 20),
-            purchase_power=random.uniform(20000, 30000),
-            level_of_education="04. Universitet, høyskole - lavere nivå",
-            life_stage="05. Etablerte barnefamilier",
-            type_of_housing="01. Enebolig",
-            confidence_level=random.choice(["green", "yellow", "red"]),
-            number_of_hits=random.randint(0, 5),
-            created_at=generate_random_date(
-                datetime(2020, 1, 1, tzinfo=UTC),
-                datetime(2021, 12, 31, tzinfo=UTC),
-            ),
-            updated_at=generate_random_date(
-                datetime(2020, 1, 1, tzinfo=UTC),
-                datetime(2021, 12, 31, tzinfo=UTC),
-            ),
-            persons_in_household=random.choice([1, 2, 3, 4]),
-            household_id=random.uniform(10000000, 99999999),
-        )
-        records.append(record.model_dump())
-
-    df = pd.DataFrame(records)
-    return df
 
 
 def generate_complaints_data(rows: int = 10) -> pd.DataFrame:
