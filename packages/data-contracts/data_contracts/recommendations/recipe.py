@@ -262,7 +262,7 @@ class RecipeCost:
     price_category_max_price = Int32()
     price_category_level = Int32()
 
-    is_premium = price_category_level >= 4
+    is_premium = price_category_level >= 4  # noqa: PLR2004
     is_cheep = price_category_level <= -1
 
     suggested_selling_price_incl_vat = Float()
