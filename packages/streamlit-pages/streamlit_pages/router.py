@@ -1,7 +1,7 @@
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from time import sleep
-from typing import NoReturn, TypeVar
+from typing import TypeVar
 
 import streamlit as st
 from pydantic import BaseModel
@@ -13,7 +13,7 @@ def has_deeplink() -> bool:
     return st.query_params.get("state") is not None
 
 
-def set_deeplink(state: BaseModel | None) -> NoReturn | None:
+def set_deeplink(state: BaseModel | None) -> None:
     # Need to sleep in order to get out of the corutine, and therefore set the query parameters
     wait_duration = 0.1
 
@@ -71,7 +71,7 @@ class DeeplinkRouter:
     ) -> None:
         self.routes[state] = handler
 
-    def main(self):
+    def main(self) -> None:
         import asyncio
 
         asyncio.run(self.run())
