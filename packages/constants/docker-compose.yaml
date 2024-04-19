@@ -1,0 +1,12 @@
+version: '3'
+services:
+  constants-test:
+    image: constants-constants-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/constants/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/constants
+    profiles: ["test"]

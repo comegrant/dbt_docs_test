@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "constants"
+version = "0.1.0"
+description = "A python package that contains the commonly used constants at Cheffelo"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "constants"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
