@@ -12,8 +12,16 @@ terraform {
   }
 }
 
+variable "azure_client_id" {}
+variable "azure_subscription_id" {}
+variable "azure_tenant_id" {}
+
 provider "azurerm" {
   features {}
+  use_oidc = true
+  client_id = var.azure_client_id
+  subscription_id = var.azure_subscription_id
+  tenant_id = var.azure_tenant_id
 }
 
 resource "azurerm_resource_group" "this" {

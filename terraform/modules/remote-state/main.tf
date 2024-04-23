@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "sa" {
     versioning_enabled = true
     delete_retention_policy {
       days = 365
-    }   
+    }
   }
 }
 
@@ -40,12 +40,12 @@ resource "azurerm_storage_container" "ct" {
 
 
 resource "azurerm_key_vault" "key_vault" {
-  name = var.key_vault_name
-  location = azurerm_resource_group.setup.location
-  resource_group_name = azurerm_resource_group.setup.name
-  tenant_id = data.azuread_client_config.current.tenant_id
+  name                       = var.key_vault_name
+  location                   = azurerm_resource_group.setup.location
+  resource_group_name        = azurerm_resource_group.setup.name
+  tenant_id                  = data.azuread_client_config.current.tenant_id
   soft_delete_retention_days = 90
-  sku_name = "standard"
+  sku_name                   = "standard"
   access_policy {
     tenant_id = data.azuread_client_config.current.tenant_id
     object_id = data.azuread_client_config.current.object_id
@@ -61,42 +61,36 @@ resource "azurerm_key_vault" "key_vault" {
 }
 
 
-data "azurerm_storage_account" "sa" {
-  name = azurerm_storage_account.sa.name
-  resource_group_name = azurerm_resource_group.setup.name
-}
-
-
 resource "azurerm_key_vault_secret" "sub_id" {
-  name          = "tfsSubscriptionId"
-  value         = data.azurerm_client_config.current.subscription_id
-  key_vault_id  = azurerm_key_vault.key_vault.id
+  name         = "tfsSubscriptionId"
+  value        = data.azurerm_client_config.current.subscription_id
+  key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 
 resource "azurerm_key_vault_secret" "rg_name" {
-  name          = "tfsResourceGroupName"
-  value         = azurerm_resource_group.setup.name
-  key_vault_id  = azurerm_key_vault.key_vault.id
+  name         = "tfsResourceGroupName"
+  value        = azurerm_resource_group.setup.name
+  key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 
 resource "azurerm_key_vault_secret" "sa_name" {
-  name          = "tfsStorageAccountName"
-  value         = azurerm_storage_account.sa.name
-  key_vault_id  = azurerm_key_vault.key_vault.id
+  name         = "tfsStorageAccountName"
+  value        = azurerm_storage_account.sa.name
+  key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "ct_name" {
-  name          = "tfsStorageContainerName"
-  value         = azurerm_storage_container.ct.name
-  key_vault_id  = azurerm_key_vault.key_vault.id
+  name         = "tfsStorageContainerName"
+  value        = azurerm_storage_container.ct.name
+  key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "sa_key" {
-  name          = "tfsStorageAccountKey"
-  value         = azurerm_storage_account.sa.primary_access_key
-  key_vault_id  = azurerm_key_vault.key_vault.id
+  name         = "tfsStorageAccountKey"
+  value        = azurerm_storage_account.sa.primary_access_key
+  key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 

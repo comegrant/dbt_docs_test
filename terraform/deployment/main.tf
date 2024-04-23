@@ -17,6 +17,10 @@ terraform {
 
 provider "azurerm" {
   features {}
+  use_oidc            = true
+  client_id           = var.azure_client_id
+  subscription_id     = var.azure_subscription_id
+  tenant_id           = var.azure_tenant_id
   storage_use_azuread = true
 }
 
@@ -35,15 +39,27 @@ locals {
   network_security_group_name            = "nsg-${var.project_name}-${terraform.workspace}"
   data_lake_private_endpoint_name        = "pe-${var.project_name}-dls-${terraform.workspace}"
   data_lake_network_interface_name       = "nic-${var.project_name}-dls-${terraform.workspace}"
-  ip_rules = [
-    "109.74.178.186" #Office
-  ]
+  ip_rules                               = ["109.74.178.186"] #Office
+  databricks_repo_path                   = "/Repos/${var.azure_client_id}/${terraform.workspace}"
 }
 
 module "resource_group_core" {
-  source              = "../modules/resource-group-core"
-  location            = var.location
-  resource_group_name = local.resource_group_name
+  source                = "../modules/resource-group-core"
+  location              = var.location
+  resource_group_name   = local.resource_group_name
+  azure_client_id       = var.azure_client_id
+  azure_subscription_id = var.azure_subscription_id
+  azure_tenant_id       = var.azure_tenant_id
+}
+
+module "databricks_connector_core" {
+  source                                 = "../modules/databricks-connector-core"
+  location                               = module.resource_group_core.location
+  resource_group_name                    = module.resource_group_core.name
+  azure_client_id                        = var.azure_client_id
+  azure_subscription_id                  = var.azure_subscription_id
+  azure_tenant_id                        = var.azure_tenant_id
+  azure_databricks_access_connector_name = local.azure_databricks_access_connector_name
 }
 
 
@@ -52,15 +68,17 @@ module "data_lake_core" {
   location                            = module.resource_group_core.location
   data_lake_name                      = local.data_lake_name
   resource_group_name                 = module.resource_group_core.name
-  databricks_service_principal_name   = var.databricks_service_principal_name
   ip_rules                            = local.ip_rules
-  databricks_access_connector_id      = module.databricks_core.databricks_access_connector_id
+  databricks_access_connector_id      = module.databricks_connector_core.databricks_access_connector_sp_id
   private_endpoint_name               = local.data_lake_private_endpoint_name
   network_interface_name              = local.data_lake_network_interface_name
   virtual_network_resource_group_name = module.virtual_network_core.resource_group_name
   virtual_network_id                  = module.virtual_network_core.id
   subnet_id                           = module.virtual_network_core.subnet_endpoints_id
   data_lake_containers                = var.medallion_layers
+  azure_client_id                     = var.azure_client_id
+  azure_subscription_id               = var.azure_subscription_id
+  azure_tenant_id                     = var.azure_tenant_id
 }
 
 
@@ -72,7 +90,6 @@ module "databricks_core" {
   resource_group_managed_name            = local.resource_group_managed_name
   databricks_sku                         = var.databricks_sku
   storage_account_managed_name           = local.storage_account_managed_name
-  databricks_service_principal_name      = var.databricks_service_principal_name
   data_lake_name                         = local.data_lake_name
   key_vault_common_name                  = local.key_vault_common_name
   resource_group_common_name             = local.resource_group_common_name
@@ -83,9 +100,13 @@ module "databricks_core" {
   subnet_private_name                    = module.virtual_network_core.subnet_private_name
   nsg_association_private_id             = module.virtual_network_core.nsg_association_private_id
   nsg_association_public_id              = module.virtual_network_core.nsg_association_public_id
-  resource_group_vnet_name               = module.resource_group_core.name
   databricks_spark_version               = var.databricks_spark_version
   schemas                                = var.medallion_layers
+  azure_client_id                        = var.azure_client_id
+  azure_subscription_id                  = var.azure_subscription_id
+  azure_tenant_id                        = var.azure_tenant_id
+  access_connector_id                    = module.databricks_connector_core.databricks_access_connector_id
+  databricks_repo_path                   = local.databricks_repo_path
 }
 
 module "virtual_network_core" {
@@ -95,4 +116,13 @@ module "virtual_network_core" {
   virtual_network_name        = local.virtual_network_name
   subnet_name_prefix          = local.subnet_name_prefix
   network_security_group_name = local.network_security_group_name
+  azure_client_id             = var.azure_client_id
+  azure_subscription_id       = var.azure_subscription_id
+  azure_tenant_id             = var.azure_tenant_id
+}
+
+module "databricks_workflow" {
+  source                   = "../modules/databricks-workflows"
+  databricks_id            = module.databricks_core.databricks_id
+  databricks_workspace_url = module.databricks_core.databricks_workspace_url
 }

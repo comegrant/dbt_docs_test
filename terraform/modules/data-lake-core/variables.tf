@@ -1,6 +1,5 @@
 variable "location" {
-  type        = string
-  #default     = "North Europe"
+  type = string
   description = "Azure region to locate resource."
 }
 
@@ -20,25 +19,9 @@ variable "data_lake_containers" {
     "bronze",
     "silver",
     "gold",
+    "mltesting",
   ]
   description = "Names of containers within the Data Lake resource."
-}
-
-variable "data_lake_tier" {
-  type        = string
-  default     = "Standard"
-  description = "Tier of Data Lake."
-}
-
-variable "data_lake_replication_type" {
-  type        = string
-  default     = "LRS"
-  description = "Replication type of Data Lake."
-}
-
-variable "databricks_service_principal_name" {
-  type        = string
-  description = "Name of the Databricks service principal."
 }
 
 variable "ip_rules" {
@@ -47,7 +30,7 @@ variable "ip_rules" {
 }
 
 variable "databricks_access_connector_id" {
-  type = string
+  type        = string
   description = "Principal Id of managed identity of the Access connector of Azure Databricks."
 }
 
@@ -75,4 +58,21 @@ variable "virtual_network_id" {
 variable "subnet_id" {
   type        = string
   description = "Resource ID of the subnet which the private endpoint is set up to."
+}
+
+variable "azure_client_id" {
+  type        = string
+  description = "Client id of service principal used in Github Actions for running the code."
+}
+
+variable "azure_subscription_id" {
+  type        = string
+  default     = "5a07602a-a1a5-43ee-9770-2cf18d1fdaf1"
+  description = "Subscription id of the subscription where the service principal have permission and resources should be deployed."
+}
+
+variable "azure_tenant_id" {
+  type        = string
+  default     = "f02c0daa-f4a6-41df-9fbb-df3be1b2b577"
+  description = "Tenant Id of the tenant where the service princial exist and resources will be deployed."
 }

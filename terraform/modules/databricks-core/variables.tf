@@ -18,11 +18,6 @@ variable "storage_account_managed_name" {
   description = "Name of the storage account managed by the Databricks instance."
 }
 
-variable "databricks_service_principal_name" {
-  type        = string
-  description = "Name of the service principal which will act as the Databricks identity."
-}
-
 variable "data_lake_name" {
   type        = string
   description = "Name of the Data Lake which will act as the Databricks' Delta Lake."
@@ -33,7 +28,17 @@ variable "databricks_workspace_name" {
   description = "Name of the Databricks workspace."
 }
 
+variable "databricks_repo_path" {
+  type        = string
+  description = "Path in databricks to repo with code that will be used in jobs etc."
+}
+
 variable "azure_databricks_access_connector_name" {
+  type        = string
+  description = "Name of the Access Connector for Azure Databricks"
+}
+
+variable "access_connector_id" {
   type        = string
   description = "Name of the Access Connector for Azure Databricks"
 }
@@ -69,14 +74,9 @@ variable "schemas" {
     "bronze",
     "silver",
     "gold",
+    "mltesting",
   ]
   description = "Names of schemas within the Databricks catalogs."
-}
-
-variable "resource_group_vnet_name" {
-  type        = string
-  description = "Resource group which contains the virtual network that Databricks will be injected in."
-
 }
 
 variable "virtual_network_id" {
@@ -167,10 +167,27 @@ variable "databricks_serverless_sql_max_num_clusters" {
   type        = number
   default     = 2
   description = "Maximum number of clusters available when a SQL warehouse is running"
-} 
+}
 
 variable "databricks_serverless_sql_idle_termination" {
   type        = number
   default     = 10
   description = "Shut down time after inactivity on serverless sql warehouse."
+}
+
+variable "azure_client_id" {
+  type        = string
+  description = "Client id of service principal used in Github Actions for running the code."
+}
+
+variable "azure_subscription_id" {
+  type        = string
+  default     = "5a07602a-a1a5-43ee-9770-2cf18d1fdaf1"
+  description = "Subscription id of the subscription where the service principal have permission and resources should be deployed."
+}
+
+variable "azure_tenant_id" {
+  type        = string
+  default     = "f02c0daa-f4a6-41df-9fbb-df3be1b2b577"
+  description = "Tenant Id of the tenant where the service princial exist and resources will be deployed."
 }

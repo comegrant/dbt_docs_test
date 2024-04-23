@@ -13,8 +13,11 @@ terraform {
 
 provider "azurerm" {
   features {}
+  use_oidc = true
   storage_use_azuread = true
-  skip_provider_registration = true
+  client_id = var.azure_client_id
+  subscription_id = var.azure_subscription_id
+  tenant_id = var.azure_tenant_id
 }
 
 provider "databricks" {
@@ -79,11 +82,27 @@ resource "azurerm_role_assignment" "queue_data_contributor" {
   principal_id         = var.databricks_access_connector_id
 }
 
-resource "azurerm_storage_container" "this" {
-  for_each              = toset(var.data_lake_containers)
-  name = each.key
-  storage_account_name = azurerm_storage_account.this.name
-  container_access_type = "private"
+resource "azurerm_resource_group_template_deployment" "container" {
+  // This is a workaround since it is not possible to use the normal approach when deploying containers if firewall is enabled.
+  for_each            = toset(var.data_lake_containers)
+  deployment_mode     = "Incremental"
+  name                = each.key
+  resource_group_name = azurerm_storage_account.this.resource_group_name
+  parameters_content = jsonencode(
+    {
+      "storageAccountName" = {
+        value = azurerm_storage_account.this.name
+      },
+      "containerName" = {
+        value = each.key
+      }
+    }
+  )
+  template_content = file("${path.module}/arm-container.json")
+
+  depends_on = [
+    azurerm_storage_account.this
+  ]
 }
 
 resource "azurerm_private_endpoint" "this" {

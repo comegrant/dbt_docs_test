@@ -18,8 +18,11 @@ terraform {
 
 provider "azurerm" {
   features {}
+  use_oidc = true
   storage_use_azuread = true
-  skip_provider_registration = true
+  client_id = var.azure_client_id
+  subscription_id = var.azure_subscription_id
+  tenant_id = var.azure_tenant_id
 }
 
 locals {
@@ -55,22 +58,16 @@ resource "azurerm_databricks_workspace" "this" {
   
 }
 
-resource "azurerm_databricks_access_connector" "this" {
-  name = var.azure_databricks_access_connector_name
-  resource_group_name = azurerm_databricks_workspace.this.resource_group_name
-  location = azurerm_databricks_workspace.this.location
-  identity {
-    type = "SystemAssigned"
+resource "databricks_workspace_conf" "this" {
+  custom_config = {
+    "enableDcs": true
   }
-  tags = merge(local.common_tags)
-  lifecycle { ignore_changes = [tags["created_at"]] }
 }
-
 
 resource "databricks_storage_credential" "this" {
   name = var.azure_databricks_access_connector_name
   azure_managed_identity {
-    access_connector_id = azurerm_databricks_access_connector.this.id
+    access_connector_id = var.access_connector_id 
   }
   comment = "Managed identy credential using the databricks access connector, managed by Terraform"
 }
@@ -142,9 +139,14 @@ resource "databricks_sql_endpoint" "this" {
   }
 }
 
-output "databricks_access_connector_id" {
-  value = azurerm_databricks_access_connector.this.identity[0].principal_id
+
+
+
+
+output "databricks_workspace_url" {
+  value = azurerm_databricks_workspace.this.workspace_url
 }
 
-
-
+output "databricks_id" {
+  value = azurerm_databricks_workspace.this.id
+}

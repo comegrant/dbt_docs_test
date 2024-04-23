@@ -1,33 +1,11 @@
 variable "location" {
   type        = string
-  description = "Location to deploy resources in."
+  description = "Region to deploy resource in."
 }
 
-variable "project_name" {
+variable "resource_group_name" {
   type        = string
-  description = "Name of the project of the core services."
-}
-
-variable "databricks_sku" {
-  type        = string
-  description = "Sku of Databricks."
-
-}
-
-variable "medallion_layers" {
-  type = list(string)
-  default = [
-    "bronze",
-    "silver",
-    "gold",
-    "mltesting",
-  ]
-  description = "Names of containers and schemas within the Data Lake resource and Databricks catalogs, respectively."
-}
-
-variable "databricks_spark_version" {
-  type        = string
-  description = "Spark runtime on clusters."
+  description = "Resource group to contain Databricks workspace resource."
 }
 
 variable "azure_client_id" {
@@ -45,4 +23,9 @@ variable "azure_tenant_id" {
   type        = string
   default     = "f02c0daa-f4a6-41df-9fbb-df3be1b2b577"
   description = "Tenant Id of the tenant where the service princial exist and resources will be deployed."
+}
+
+variable "azure_databricks_access_connector_name" {
+  type        = string
+  description = "Name of the Access Connector for Azure Databricks"
 }
