@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/deploy_terraform.yml'
-      - '.github/workflows/deploy_terraform_template.yml'
+      - '.github/workflows/cd_terraform.yml'
+      - '.github/workflows/cd_terraform_template.yml'
       - 'terraform**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
@@ -18,7 +18,7 @@ jobs:
         target: [Test, Production]
       max-parallel: 1
       fail-fast: true
-    uses: ./.github/workflows/deploy_terraform_template.yml
+    uses: ./.github/workflows/cd_terraform_template.yml
     with:
       target-env: ${{matrix.target}}
     secrets: inherit
