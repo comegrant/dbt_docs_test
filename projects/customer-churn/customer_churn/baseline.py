@@ -44,24 +44,18 @@ def baseline_pred(
     # Rule 2 x-1 weeks without delivery and freeze is churn
     # Create mask
     a = df_d[df_d["customer_since_weeks"] > customer_since_weeks].index
-    b = df_d[
-        ((df_d["number_of_total_orders"] / df_d["customer_since_weeks"]) > threshold)
-    ].index
+    b = df_d[((df_d["number_of_total_orders"] / df_d["customer_since_weeks"]) > threshold)].index
     c = a.intersection(b)
     # Clear earlier predictions of loyal customers
     df_d.loc[c, "pred_churned"] = 0
 
     # Loyal rule 1
-    rule_1_mask = df_d[
-        df_d["weeks_since_last_delivery"] >= num_weeks_without_delivery + 1
-    ].index
+    rule_1_mask = df_d[df_d["weeks_since_last_delivery"] >= num_weeks_without_delivery + 1].index
     rule_1_mask = rule_1_mask.intersection(c)
     df_d.loc[rule_1_mask, "pred_churned"] += 1
 
     # Loyal rule 2
-    rule_2_mask = df_d[
-        df_d["weeks_since_last_delivery"] >= num_weeks_without_delivery - 1
-    ].index
+    rule_2_mask = df_d[df_d["weeks_since_last_delivery"] >= num_weeks_without_delivery - 1].index
     rule_2_mask = rule_2_mask.intersection(
         df_d[df_d["snapshot_status"] == "freezed"].index,
     )

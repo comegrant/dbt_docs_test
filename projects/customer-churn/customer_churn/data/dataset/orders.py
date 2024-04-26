@@ -15,7 +15,8 @@ class Orders(Dataset):
     def __init__(self, **kwargs: int):
         super().__init__(**kwargs)
         self.datetime_columns = ["delivery_date"]
-        self.sql_file = "events.sql"
+        self.sql_file = "orders.sql"
+        self.input_file = "orders.csv"
         self.entity_columns = ["agreement_id"]
         self.feature_columns = [
             "number_of_forecast_orders",
@@ -43,7 +44,15 @@ class Orders(Dataset):
         Returns:
             pd.DataFrame: dataframe of orders data
         """
-        return self.read_from_file() if self.file_exists() else self.read_from_db()
+        df = (
+            self.read_from_file()
+            if self.file_exists()
+            else self.read_from_databricks(filename="orders.sql", save_to_path=True)
+        )
+        logger.info(df.delivery_date.dtype)
+        df.delivery_date = pd.to_datetime(df.delivery_date).dt.to_pydatetime()
+        logger.info(df.delivery_date.dtype)
+        return df
 
     def get_for_date(self, snapshot_date: datetime) -> pd.DataFrame:
         if self.df.empty:
@@ -87,10 +96,6 @@ class Orders(Dataset):
                 how="left",
                 on="agreement_id",
             )
-            orders_features["number_of_forecast_orders"] = orders_features[
-                "number_of_forecast_orders"
-            ].fillna(0)
-        else:
-            orders_features["number_of_forecast_orders"] = None
+            orders_features["number_of_forecast_orders"] = orders_features["number_of_forecast_orders"].fillna(0)
 
         return orders_features[self.feature_columns]

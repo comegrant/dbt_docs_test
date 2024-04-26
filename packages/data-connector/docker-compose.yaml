@@ -1,0 +1,12 @@
+version: '3'
+services:
+  data-connector-test:
+    image: data-connector-data-connector-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/data-connector/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/data-connector
+    profiles: ["test"]

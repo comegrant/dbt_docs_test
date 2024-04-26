@@ -22,11 +22,7 @@ def date_from_week(year: int, month: int, week: int) -> datetime.date:
     start_day_of_week = first_day.weekday()
     # Calculate the start date of the first week
     # If the first day is not Monday, adjust to the previous Monday
-    start_date_of_first_week = (
-        first_day - timedelta(days=start_day_of_week)
-        if start_day_of_week
-        else first_day
-    )
+    start_date_of_first_week = first_day - timedelta(days=start_day_of_week) if start_day_of_week else first_day
 
     # Calculate the start date of the given week
     week_start_date = start_date_of_first_week + timedelta(weeks=week - 1)

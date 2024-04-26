@@ -2,7 +2,7 @@
 
 import os
 
-from customer_churn.constants import CompanyID
+from constants.companies import company_rt
 
 DB = {
     "read_db": {
@@ -40,5 +40,5 @@ PREP_CONFIG = {
         "complaints": "../data/raw/complaints.csv",
     },
     "output_dir": "../data/processed/",  # Output directory
-    "company_id": CompanyID.RN,  # Company ID
+    "company_id": company_rt.company_code,  # Company ID
 }

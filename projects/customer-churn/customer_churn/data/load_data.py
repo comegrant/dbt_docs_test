@@ -6,15 +6,15 @@ from functools import reduce
 
 import numpy as np
 import pandas as pd
-from lmkgroup_ds_utils.db.connector import DB
+from constants.companies import Company
 
 from customer_churn.config import PREP_CONFIG
-from customer_churn.constants import LABEL_TEXT_CHURNED, LABEL_TEXT_DELETED
 from customer_churn.data.dataset.complaints import Complaints
 from customer_churn.data.dataset.crm_segments import CRMSegments
 from customer_churn.data.dataset.customers import Customers
 from customer_churn.data.dataset.events import Events
 from customer_churn.data.dataset.orders import Orders
+from customer_churn.env import LABEL_TEXT_ACTIVE, LABEL_TEXT_CHURNED, LABEL_TEXT_DELETED
 
 logger = logging.getLogger(__name__)
 
@@ -26,20 +26,16 @@ class DataLoader:
 
     def __init__(
         self,
-        company_id: str,
-        model_training: bool = False,
+        company: Company,
+        model_training: bool,
         input_files: dict = PREP_CONFIG["input_files"],
         snapshot_config: dict = PREP_CONFIG["snapshot"],
-        adb: DB = None,
-        postgres_db: DB = None,
     ) -> None:
         """
         :param config: config_input_files i.e. just the path to the source files but not the content
         """
-        self.adb = adb
-        self.postgres_db = postgres_db
         self.datasets = self._load_data(
-            company_id,
+            company,
             model_training,
             snapshot_config,
             input_files,
@@ -52,7 +48,7 @@ class DataLoader:
 
     def generate_features_for_date(
         self,
-        snapshot_date: str,
+        snapshot_date: datetime,
         customer_id: str | None = None,
     ) -> None | pd.DataFrame:
         """
@@ -77,20 +73,17 @@ class DataLoader:
         _snapshot_date_start = PREP_CONFIG["snapshot"]["start_date"]
         _snapshot_date_end = PREP_CONFIG["snapshot"]["end_date"]
 
-        snapshot_date = (
-            pd.date_range(
-                start=_snapshot_date_start,
-                end=_snapshot_date_end,
-                freq="W-MON",
-            )
-            .strftime("%Y-%m-%d")
-            .tolist()[-1]
+        snapshot_date = pd.date_range(
+            start=_snapshot_date_start,
+            end=_snapshot_date_end,
+            freq="W-MON",
+            tz="UTC",
         )
 
         df_snapshot_cust = self.customers.get_for_date(snapshot_date=snapshot_date)
         logger.info(
             "Getting snapshot for: "
-            + snapshot_date
+            + snapshot_date.strftime("%Y-%m-%d")
             + ", total customers: "
             + str(df_snapshot_cust.shape[0]),
         )
@@ -113,46 +106,41 @@ class DataLoader:
 
     def _load_data(
         self,
-        company_id: str,
+        company: Company,
         model_training: bool,
         snapshot_config: dict,
         input_files: dict,
     ) -> list:
         return [
             Customers(
-                company_id=company_id,
+                company_id=company.company_id,
                 model_training=model_training,
                 onboarding_weeks=snapshot_config.get("onboarding_weeks", 12),
                 input_file=input_files.get("customers"),
-                db=self.adb,
             ),
             Events(
-                company_id=company_id,
+                company_id=company.company_id,
                 model_training=model_training,
                 forecast_weeks=snapshot_config.get("forecast_weeks", 4),
                 events_last_n_weeks=snapshot_config.get("events_last_n_weeks", 4),
                 average_last_n_weeks=snapshot_config.get("average_last_n_weeks", 10),
                 input_file=input_files.get("events"),
-                db=self.postgres_db,
             ),
             Orders(
-                company_id=company_id,
+                company_id=company.company_id,
                 model_training=model_training,
                 input_file=input_files.get("orders"),
-                db=self.adb,
             ),
             CRMSegments(
-                company_id=company_id,
+                company_id=company.company_id,
                 model_training=model_training,
                 input_file=input_files.get("crm_segments"),
-                db=self.adb,
             ),
             Complaints(
-                company_id=company_id,
+                company_id=company.company_id,
                 model_training=model_training,
                 input_file=input_files.get("complaints"),
                 complaints_last_n_weeks=snapshot_config.get("complaints_last_n_weeks"),
-                db=self.adb,
             ),
         ]
 
@@ -176,6 +164,7 @@ class DataLoader:
         )
 
         # date features
+        df["snapshot_date"] = snapshot_date
         df["year"] = snapshot_date.year
         df["month"] = snapshot_date.month
         df["week"] = snapshot_date.week
@@ -185,7 +174,12 @@ class DataLoader:
         return df
 
     def _get_default_values(self) -> dict:
-        default_values = {}
+        default_values = {
+            "planned_delivery": 0,
+            "number_of_forecast_orders": 0,
+            "forecast_status": LABEL_TEXT_ACTIVE,
+            "snapshot_status": LABEL_TEXT_ACTIVE,
+        }
         for ds in self.datasets:
             default_values.update(ds.get_default_values())
         return default_values
@@ -195,7 +189,9 @@ class DataLoader:
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         logger.info("Processing labels...")
+        logger.info(df.columns)
         if self.model_training:
+            logger.info("Model training set to true, adding labels...")
             # Set forecast status
             df["forecast_status"] = np.where(
                 df["number_of_forecast_orders"] == 0,

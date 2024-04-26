@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from lmkgroup_ds_utils.constants import Companies
+from constants.companies import company_amk, company_gl, company_lmk, company_rt
 
 from customer_churn.paths import SQL_DIR
 
@@ -48,10 +48,10 @@ LABEL_TEXT_DELETED = "deleted"
 LABEL_TEXT_CHURNED = "churned"
 
 SCHEMAS = {
-    Companies.GL.code: "js",
-    Companies.LMK.code: "javascript_lmk",
-    Companies.AMK.code: "javascript_adams",
-    Companies.RN.code: "javascript_retnment",
+    company_gl.company_code: "js",
+    company_lmk.company_code: "javascript_lmk",
+    company_amk.company_code: "javascript_adams",
+    company_rt.company_code: "javascript_retnment",
 }
 
 
@@ -71,6 +71,7 @@ class Events(Dataset):
         self.feature_columns = []
         self.datetime_columns = ["timestamp"]
         self.sql_file = "events.sql"
+        self.input_file = "events.csv"
 
         self.df = self.load()
 
@@ -105,7 +106,11 @@ class Events(Dataset):
         """
         mult = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 
-        df = self.read_from_file() if self.file_exists() else self.read_from_db()
+        df = (
+            self.read_from_file()
+            if self.file_exists()
+            else self.read_from_databricks(filename=self.sql_file, save_to_path=True)
+        )
 
         df["event_text"] = (
             df["event_text"]

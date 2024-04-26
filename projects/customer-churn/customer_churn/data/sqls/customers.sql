@@ -1,5 +1,3 @@
-DECLARE @COMPANY_ID UNIQUEIDENTIFIER = '{company_id}'; -- '09ECD4F0-AE58-4539-8E8F-9275B1859A19';  -- GL
-
 
 SELECT
         agreement_id
@@ -14,6 +12,6 @@ SELECT
     ,   last_delivery_date
     ,   next_estimated_delivery_date
 
-    FROM mb.customers
-    WHERE company_id = @COMPANY_ID
+    FROM dev.mltesting.mb_customers
+    WHERE company_id = '{company_id}' -- '09ECD4F0-AE58-4539-8E8F-9275B1859A19';  -- GL
     AND agreement_status_id != 40

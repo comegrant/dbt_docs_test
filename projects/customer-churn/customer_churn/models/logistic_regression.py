@@ -1,4 +1,5 @@
 import logging
+import os
 import pickle
 from pathlib import Path
 
@@ -9,7 +10,7 @@ from sklearn.linear_model import LogisticRegression as SKLogisticRegression
 from sklearn.metrics import precision_recall_fscore_support as score
 from sklearn.model_selection import train_test_split
 
-from customer_churn.constants import (
+from customer_churn.env import (
     DATABRICKS_HOST,
     DATABRICKS_TOKEN,
 )
@@ -65,7 +66,9 @@ class LogisticRegression:
         self.model.fit(x_train, y_train)
 
         logger.info(f"Training features columns: {x_train.columns!s}")
-        y_val_pred = (self.model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold).astype(int)
+        y_val_pred = (
+            self.model.predict_proba(df_x_val)[:, 1] >= self.probability_threshold
+        ).astype(int)
 
         precision, recall, fscore, _ = score(df_y_val, y_val_pred, average="macro")
         logger.info(f"precision: {precision}")
@@ -96,26 +99,30 @@ class LogisticRegression:
     def load(
         self,
         model_filename: str,
-        model_version: str = "1",
+        mlflow_model_version: str = "1",
+        local_path: Path | None = None,
     ) -> None:
         """
         Model loading
         :param model_filename: model filename / path
         :return:
         """
-        logger.info(f"Loading model from file: {model_filename}")
-
-        model = self._load_mlflow_model(
-            model_name=model_filename,
-            version=model_version,
-        )
-
-        if model:
-            self.model = model
-        else:
-            logger.info("Model returned empty, trying to load from local using pickle")
+        if local_path:
+            all_models = Path.glob(local_path, "*.pkl")
+            latest_model = max(all_models, key=os.path.getctime)
+            model_filename = local_path / latest_model
+            logger.info("Loading model locally from: " + str(model_filename))
+            # Find latest trained model from the local path
             with Path.open(model_filename, "rb") as file:
                 self.model = pickle.load(file)
+        else:
+            logger.info(
+                f"Loading model from MLflow: {model_filename} version {mlflow_model_version}",
+            )
+            self.model = self._load_mlflow_model(
+                model_name=model_filename,
+                version=mlflow_model_version,
+            )
 
     def predict(
         self,
@@ -152,7 +159,10 @@ class LogisticRegression:
 
         mlflow.login()
 
-        model_download_uri = w.model_registry.get_model_version_download_uri(model_name, version)
+        model_download_uri = w.model_registry.get_model_version_download_uri(
+            model_name,
+            version,
+        )
         logger.info(f"Downloading model from {model_download_uri}")
         model = mlflow.artifacts.download_artifacts(
             artifact_uri=model_download_uri.artifact_uri,

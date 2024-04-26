@@ -5,14 +5,14 @@ import sys
 logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Insert customer_churn to path
-sys.path.insert(0, "../")
+packages = [
+    "../",
+    "../../../packages/data-connector/",
+    "../../../packages/pydantic-argparser/",
+    "../../../packages/constants/",
+]
 
-# Insert lmk_utils package to path
-sys.path.insert(0, "../../../packages/lmkgroup-ds-utils/")
-
-# Insert package pydantic_argparser to path
-sys.path.insert(0, "../../../packages/pydantic-argparser/")
+sys.path.extend(packages)
 
 
 # COMMAND ----------
@@ -22,7 +22,6 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
 # COMMAND ----------
 
 from datetime import date, timedelta
-from pathlib import Path
 
 from customer_churn.predict import RunArgs, run_with_args
 
@@ -32,21 +31,21 @@ try:
     COMPANY_CODE = str(getArgument("company"))
 except:
     logger.warning("Failed to read company id from argument, using default")
-    COMPANY_CODE = "RN"
+    COMPANY_CODE = "RT"
 
 # COMMAND ----------
 
 predictions = run_with_args(
     RunArgs(
         company=COMPANY_CODE,
-        start_date=date.today() - timedelta(days=30),
+        start_date=date.today() - timedelta(days=300),
         end_date=date.today(),
-        local=False,
+        env="dev",
         forecast_weeks=4,
         onboarding_weeks=12,
         buy_history_churn_weeks=4,
         complaints_last_n_weeks=4,
-        write_to=Path(f"customer-churn/{COMPANY_CODE}/output/predictions/"),
+        write_to="customer_churn_predictions",
     ),
 )
 

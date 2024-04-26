@@ -3,16 +3,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import mlflow
-import pandas as pd
 
-from customer_churn.data.preprocess import Preprocessor
 from customer_churn.models.logistic_regression import LogisticRegression
 
 logger = logging.getLogger(__name__)
 
 
 def train_model(
-    features: pd.DataFrame,
+    data: dict,
     company_code: str,
     write_to: Path | None = None,
     forecast_weeks: int = 4,
@@ -20,11 +18,10 @@ def train_model(
     experiment_name: str | None = None,
 ) -> None:
     logger.info("Make predictions")
-    logger.info(features.columns)
 
     if mlflow_tracking_uri:
         train_model_with_mlflow(
-            features,
+            data,
             company_code=company_code,
             forecast_weeks=forecast_weeks,
             mlflow_tracking_uri=mlflow_tracking_uri,
@@ -32,7 +29,7 @@ def train_model(
         )
     else:
         train_model_locally(
-            features,
+            data,
             company_code=company_code,
             write_to=write_to,
             forecast_weeks=forecast_weeks,
@@ -40,22 +37,19 @@ def train_model(
 
 
 def train_model_locally(
-    features: pd.DataFrame,
+    data: dict,
     company_code: str | None = None,
     write_to: Path | None = None,
     forecast_weeks: int = 4,
 ) -> None:
-    # Generate training data
-    df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
-        features,
-    )
+    logger.info("Training model locally")
 
     model = LogisticRegression(
         forecast_weeks=forecast_weeks,
     )
 
     # Train model
-    model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
+    model.fit(data["x_train"], data["y_train"], data["x_val"], data["y_val"])
 
     # Save model
     if write_to:
@@ -67,20 +61,17 @@ def train_model_locally(
 
 
 def train_model_with_mlflow(
-    features: pd.DataFrame,
+    data: dict,
     company_code: str,
     forecast_weeks: int = 4,
     mlflow_tracking_uri: str | None = None,
     experiment_name: str | None = None,
 ) -> None:
+    logger.info("Training model with MLflow")
     mlflow.set_tracking_uri(mlflow_tracking_uri)
     mlflow.set_experiment(experiment_name=experiment_name)
 
     with mlflow.start_run() as mlflow_run:
-        df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
-            features,
-        )
-
         mlflow.log_param("forecast_weeks", forecast_weeks)
         mlflow.sklearn.autolog()
 
@@ -89,7 +80,7 @@ def train_model_with_mlflow(
         )
 
         # Train model
-        model.fit(df_x_train, df_y_train, df_x_val, df_y_val)
+        model.fit(data["x_train"], data["y_train"], data["x_val"], data["y_val"])
 
         run_id = mlflow_run.info.run_uuid
         logger.info("Resource ID (Run ID): %s" % run_id)

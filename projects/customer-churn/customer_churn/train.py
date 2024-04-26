@@ -1,12 +1,14 @@
 import logging
-from datetime import date, timedelta
+from datetime import date
 from pathlib import PosixPath
 
+from constants.companies import get_company_by_code
 from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel, Field
 from pydantic_argparser import parser_for
 from pydantic_argparser.parser import decode_args
 
+from customer_churn.data.preprocess import Preprocessor
 from customer_churn.features.build_features import load_training_data
 from customer_churn.models.train import train_model
 from customer_churn.paths import MODEL_DIR
@@ -17,9 +19,8 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     company: str = Field("RN")
 
-    start_date: date = Field(date.today() - timedelta(days=30))
-    end_date: date = Field(date.today())
-    local: bool = Field(True)
+    start_date: date | None = Field(None)
+    end_date: date | None = Field(None)
 
     forecast_weeks: int = Field(4)
     onboarding_weeks: int = Field(12)
@@ -28,7 +29,8 @@ class RunArgs(BaseModel):
 
     write_to: PosixPath = Field(MODEL_DIR)
     model: str = Field("log_reg")
-    model_version: str = Field("1.0.0")
+    env: str = Field("dev")
+    mlflow_model_version: str = Field("1")
     mlflow_tracking_uri: str | None = Field(None)
     experiment_name: str | None = Field(None)
 
@@ -41,23 +43,38 @@ def run_with_args(args: RunArgs) -> None:
     # Load environment variables
     load_dotenv(find_dotenv())
 
+    company = get_company_by_code(args.company)
+
     # Read features data
     df_training_data = load_training_data(
-        company_code=args.company,
+        company=company,
         start_date=args.start_date,
         end_date=args.end_date,
-        local=args.local,
+        env=args.env,
     )
+
+    if len(df_training_data) == 0:
+        raise ValueError("No data available for training!")
 
     logger.info(
-        f"Features loaded for {args.company} from {args.start_date} to {args.end_date}",
+        f"Features loaded for {company.company_name} from {args.start_date} to {args.end_date}",
     )
 
-    write_to = args.write_to / args.model / f"{args.model}_{args.model_version}"
+    # Generate training data
+    df_x_train, df_y_train, df_x_val, df_y_val = Preprocessor().prep_training_data(
+        df_training_data,
+    )
+
+    write_to = args.write_to / args.model / f"{args.model}_{args.mlflow_model_version}"
 
     # Train model
     train_model(
-        df_training_data,
+        data={
+            "x_train": df_x_train,
+            "y_train": df_y_train,
+            "x_val": df_x_val,
+            "y_val": df_y_val,
+        },
         company_code=args.company,
         write_to=write_to,
         mlflow_tracking_uri=args.mlflow_tracking_uri,

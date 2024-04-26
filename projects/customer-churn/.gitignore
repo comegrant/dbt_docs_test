@@ -1,6 +1,7 @@
+connection.json
 notebooks/models/
 mlruns/
-data/raw
-data/processed
-data/interim
-data/results
+data/**/**
+models/**/**
+!customer_churn/data
+!customer_churn/models

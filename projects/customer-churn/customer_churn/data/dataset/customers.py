@@ -37,7 +37,7 @@ class Customers(Dataset):
             "agreement_start_date",
         ]
         self.columns_out = self.entity_columns + self.feature_columns
-
+        self.input_file = "customers.csv"
         self.df = self.load()
 
     def read_from_db(self) -> pd.DataFrame:
@@ -53,12 +53,18 @@ class Customers(Dataset):
             company_id (str): company id
             db (DB): database connection
         """
-        df = self.read_from_file() if self.file_exists() else self.read_from_db()
+        df = (
+            self.read_from_file()
+            if self.file_exists()
+            else self.read_from_databricks(filename="customers.sql", save_to_path=True)
+        )
+
+        logger.info("Total Customers: " + str(df.shape[0]))
+        logger.info("Fetched data with columns " + str(list(df.columns)))
 
         customers_to_delete = df[df.agreement_status == "deleted"].shape[0]
         logger.info(
-            "Total customers with delete status (will be ignored): "
-            + str(customers_to_delete),
+            "Total customers with delete status (will be ignored): " + str(customers_to_delete),
         )
         df = df.loc[df.agreement_status != "deleted"].copy()
 
@@ -87,8 +93,6 @@ class Customers(Dataset):
 
     def get_features_for_snapshot(self, snapshot_date: datetime) -> pd.DataFrame:
         df = self.get_for_date(snapshot_date=snapshot_date).set_index("agreement_id")
-        df["customer_since_weeks"] = (
-            snapshot_date - df.agreement_start_date
-        ).dt.days // 7
+        df["customer_since_weeks"] = (snapshot_date - df.agreement_start_date).dt.days // 7
 
         return df

@@ -28,6 +28,7 @@ class Complaints(Dataset):
         self.entity_columns = ["agreement_id"]
         self.columns_out = self.entity_columns + self.feature_columns
         self.complaints_last_n_weeks = complaints_last_n_weeks
+        self.input_file = "complaints.csv"
 
         self.df = self.load()
 
@@ -53,12 +54,17 @@ class Complaints(Dataset):
             company_id (str): company id
             db (DB): database connection
         """
-        df = self.read_from_file() if self.file_exists() else self.read_from_db()
+        df = (
+            self.read_from_file()
+            if self.file_exists()
+            else self.read_from_databricks(filename="complaints.sql", save_to_path=True)
+        )
 
         df.category = df.category.str.lower().replace(" ", "")
         df["delivery_date"] = pd.to_datetime(
             df.delivery_year * 1000 + df.delivery_week * 10 + 0,
             format="%Y%W%w",
+            utc=True,
         )
 
         return df
@@ -94,8 +100,7 @@ class Complaints(Dataset):
 
         # Find number of complaints last n weeks
         agreement_complaints_last_n_weeks = snapshot_df[
-            snapshot_df.delivery_date
-            >= (snapshot_date + pd.DateOffset(weeks=-self.complaints_last_n_weeks))
+            snapshot_df.delivery_date >= (snapshot_date + pd.DateOffset(weeks=-self.complaints_last_n_weeks))
         ]
         num_agreements_last_n_weeks = agreement_complaints_last_n_weeks.groupby(
             "agreement_id",

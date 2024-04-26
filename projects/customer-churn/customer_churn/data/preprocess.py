@@ -16,12 +16,8 @@ class Preprocessor:
     ]
     PREDICTION_LABEL: ClassVar[list[str]] = ["forecast_status"]
     CUSTOMER_ID_LABEL: str = "agreement_id"
-    TRAINING_FEATURES: ClassVar[list[str]] = (
-        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
-    )
-    PREDICTION_FEATURES: ClassVar[list[str]] = (
-        CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
-    )
+    TRAINING_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + PREDICTION_LABEL
+    PREDICTION_FEATURES: ClassVar[list[str]] = CATEGORICAL_FEATURES + NUMERICAL_FEATURES + [CUSTOMER_ID_LABEL]
 
     @classmethod
     def normalize_df(cls: type["Preprocessor"], df: pd.DataFrame) -> pd.DataFrame:
@@ -132,9 +128,7 @@ class Preprocessor:
         and optionally after another date.
         """
         if after_date:
-            return data[
-                (data[date_column] < before_date) & (data[date_column] >= after_date)
-            ]
+            return data[(data[date_column] < before_date) & (data[date_column] >= after_date)]
         return data[data[date_column] < before_date]
 
     @classmethod
@@ -161,6 +155,14 @@ class Preprocessor:
         data.dropna(subset=["forecast_status"], inplace=True)
 
         max_date = data[date_column].max()
+        min_date = data[date_column].min()
+        min_max_diff = (max_date - min_date).days // 30
+        if min_max_diff < validation_split_months:
+            logger.info(f"Number of days between min and max: {(max_date - min_date).days}")
+            raise ValueError(
+                f"({min_max_diff}) must be bigger than ({validation_split_months})",
+            )
+
         validation_split_date = max_date - pd.DateOffset(months=validation_split_months)
         forecast_split_date = validation_split_date - pd.DateOffset(
             weeks=forecast_weeks,

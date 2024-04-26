@@ -18,17 +18,13 @@ class CRMSegments(Dataset):
         self.entity_columns = ["agreement_id"]
         self.feature_columns = ["planned_delivery"]
         self.columns_out = self.entity_columns + self.feature_columns
-
+        self.input_file = "crm_segment_buyer.csv"
         self.datetime_columns = []
         self.df = self.load()
 
     def read_from_db(self) -> pd.DataFrame:
         logger.info("Get crm segment data from database...")
-        file_name = (
-            "crm_segment_buyer.sql"
-            if self.model_training
-            else "crm_segment_deleted.sql"
-        )
+        file_name = "crm_segment_buyer.sql" if self.model_training else "crm_segment_deleted.sql"
 
         with Path.open(SQL_DIR / file_name) as f:
             df = self.db.read_data(f.read().format(company_id=self.company_id))
@@ -41,11 +37,16 @@ class CRMSegments(Dataset):
             company_id (str): company id
             db (DB): database connection
         """
-        df = self.read_from_file() if self.file_exists() else self.read_from_db()
+        df = (
+            self.read_from_file()
+            if self.file_exists()
+            else self.read_from_databricks(filename="crm_segment_buyer.sql", save_to_path=True)
+        )
         df = df.replace(np.nan, "", regex=True)
         df["delivery_date"] = pd.to_datetime(
             df.current_delivery_year * 1000 + df.current_delivery_week * 10 + 0,
             format="%Y%W%w",
+            utc=True,
         )
 
         return df

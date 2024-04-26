@@ -1,3 +1,6 @@
+models/*.pkl
+connection.json
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -185,4 +188,3 @@ crash.log
 crash.*.log
 
 .databricks
-

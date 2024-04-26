@@ -1,0 +1,18 @@
+---
+name: CI packages/data-connector
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_data_connector.yml'
+      - 'packages/data-connector/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  ci-libs-data-connector:
+    uses:
+      ./.github/workflows/python_reusable.yml
+    with:
+      working-directory: packages/data-connector
+    secrets: inherit
