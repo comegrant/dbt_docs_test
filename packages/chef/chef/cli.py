@@ -67,6 +67,16 @@ def internal_projects() -> list[str]:
     return list_dirs_in(projects_path())
 
 
+def is_existing_package(name: str) -> bool:
+    import importlib
+
+    try:
+        importlib.import_module(name)
+        return True
+    except ImportError:
+        return False
+
+
 def compose_path(name: str) -> Path:
     if name in internal_projects():
         return projects_path() / name
@@ -590,18 +600,23 @@ def create(type_name: str) -> None:
 
     output_dir: str | None = None
 
-    if type_name == "project":
-        output_dir = cookiecutter(
-            (template_path() / "project").as_posix(),
-            output_dir=projects_path().as_posix(),
-            extra_context=extra_context,
-        )
-    elif type_name == "package":
-        output_dir = cookiecutter(
-            (template_path() / "package").as_posix(),
-            output_dir=internal_package_path().as_posix(),
-            extra_context=extra_context,
-        )
+    try:
+        if type_name == "project":
+            output_dir = cookiecutter(
+                (template_path() / "project").as_posix(),
+                output_dir=projects_path().as_posix(),
+                extra_context=extra_context,
+            )
+        elif type_name == "package":
+            output_dir = cookiecutter(
+                (template_path() / "package").as_posix(),
+                output_dir=internal_package_path().as_posix(),
+                extra_context=extra_context,
+            )
+    except Exception:
+        click.echo(f"\nAn error occured while creating the {type_name}.\n")
+        return
+
     subprocess.run(["poetry", "lock", f"--directory={output_dir}"], check=False)
 
 
