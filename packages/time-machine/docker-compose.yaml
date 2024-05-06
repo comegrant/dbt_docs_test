@@ -1,0 +1,12 @@
+version: '3'
+services:
+  time-machine-test:
+    image: time-machine-time-machine-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/time-machine/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/time-machine
+    profiles: ["test"]

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "time_machine"
+version = "0.1.0"
+description = "A Python pacakge relating to dates, holidays, and calendars"
+authors = ["Stephen ALlwright <stephen.allwright@cheffelo.com>"]
+packages = [{include = "time_machine"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+holidays = "^0.47"
+pandas = "^2.2.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
