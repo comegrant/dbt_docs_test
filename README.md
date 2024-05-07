@@ -3,7 +3,7 @@ Sous-chef 🧑‍🍳
 </h1>
 
 <p align="center">
-<img src="sous-chef.png" alt="sous-chef" width="200"/>
+<img src="assets/sous-chef.png" alt="sous-chef" width="200"/>
 </p>
 
 <p align="center">
