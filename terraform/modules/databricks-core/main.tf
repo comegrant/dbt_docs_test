@@ -76,12 +76,22 @@ resource "databricks_storage_credential" "this" {
 resource "databricks_external_location" "this" {
   for_each = toset(var.schemas)
   name = "delta_lake_${terraform.workspace}_${each.key}"
-  url = format("abfss://%s@%s.dfs.core.windows.net",
+  url = format("abfss://%s@%s.dfs.core.windows.net/",
     each.key,
     var.data_lake_name
   )
   credential_name = databricks_storage_credential.this.id
   comment = "Managed by Terraform"
+  skip_validation = true
+}
+
+resource "databricks_grants" "this" {
+  for_each = toset(var.schemas)
+  external_location = databricks_external_location.this[each.key].id
+  grant {
+    principal = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
 }
 
 resource "databricks_schema" "this" {

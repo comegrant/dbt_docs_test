@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=bundle_config_schema.json
+bundle:
+  name: data-model
+
+workspace:
+  host: adb-4291784437205825.5.azuredatabricks.net
+  azure_client_id: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
+
+
+resources:
+  jobs:
+    dab-job:
+      name: dab-job
+      tasks:
+        - task_key: bronze_cms
+          new_cluster:
+            num_workers: 1
+            spark_version: 7.3.x-scala2.12
+            node_type_id: Standard_F4s
+          notebook_task: 
+            notebook_path: ./01. bronze/bronze_cms.py

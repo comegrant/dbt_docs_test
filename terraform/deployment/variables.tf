@@ -21,6 +21,9 @@ variable "medallion_layers" {
     "silver",
     "gold",
     "mltesting",
+    "temppocbronze",
+    "temppocsilver",
+    "temppocgold"
   ]
   description = "Names of containers and schemas within the Data Lake resource and Databricks catalogs, respectively."
 }
