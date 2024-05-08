@@ -3,6 +3,8 @@ name: CI projects/terraform
 
 on:
   pull_request:
+    branches: 
+      - main
     paths:
       - '.github/workflows/ci_terraform.yml'
       - 'terraform**'
