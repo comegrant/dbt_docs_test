@@ -1,6 +1,8 @@
 import holidays
 import pandas as pd
 
+from time_machine.calendars import get_calendar_dataframe
+
 
 def get_holidays_dictionary(
     start_date: str,
@@ -110,55 +112,60 @@ def get_calendar_dataframe_with_holiday_features(
     - ValueError: If the country is not "Sweden", "Norway", and "Denmark"
 
     Returns:
-        pd.DataFrame: A DataFrame with the following columns: "date", "year", "week",
-        "days_until_next_holiday", "days_since_last_holiday", "is_squeeze_day", "is_long_weekend",
+        pd.DataFrame: A DataFrame with the following columns: 'date', 'year', 'week',
+        'datekey', 'day_of_week', 'weekday_name', 'quarter', 'month_number', 'month_name'
+        "days_until_next_holiday", "days_since_last_holiday", "is_squeeze_day", "is_long_weekend","is_holiday"
         and one-hot encoded columns for each holiday.
     """
 
-    date_range = pd.date_range(start=start_date, end=end_date)
     holiday_obj = get_holidays_dictionary(
         start_date=start_date,
         end_date=end_date,
         country=country,
     )
 
-    holiday_list = [date for date in date_range if date in holiday_obj]
-
-    df_holidays = pd.DataFrame(
+    df_holidays = get_calendar_dataframe(start_date=start_date, end_date=end_date)
+    df_holidays = df_holidays[
         [
-            (
-                date,
-                date.isocalendar().year,
-                date.isocalendar().week,
-                holiday_obj.get(date),
-                abs(
-                    (
-                        date
-                        - min(
-                            [d for d in holiday_list if d > date],
-                            default=max(date_range),
-                        )
-                    ).days,
-                ),
-                (
-                    date
-                    - max(
-                        [d for d in holiday_list if d < date],
-                        default=min(date_range),
-                    )
-                ).days,
-            )
-            for date in date_range
-        ],
-        columns=[
             "date",
             "year",
             "week",
-            "holiday",
-            "days_until_next_holiday",
-            "days_since_last_holiday",
-        ],
-    )
+            "datekey",
+            "day_of_week",
+            "weekday_name",
+            "quarter",
+            "month_number",
+            "month_name",
+        ]
+    ]
+
+    holiday_list = [date for date in df_holidays["date"] if date in holiday_obj]
+
+    df_holidays["holiday"] = [holiday_obj.get(date) for date in df_holidays["date"]]
+    df_holidays["days_until_next_holiday"] = [
+        abs(
+            (
+                date
+                - min(
+                    [d for d in holiday_list if d > date],
+                    default=max(df_holidays["date"]),
+                )
+            ).days,
+        )
+        for date in df_holidays["date"]
+    ]
+    df_holidays["days_since_last_holiday"] = [
+        abs(
+            (
+                date
+                - max(
+                    [d for d in holiday_list if d < date],
+                    default=min(df_holidays["date"]),
+                )
+            ).days,
+        )
+        for date in df_holidays["date"]
+    ]
 
     prev_holidays = [
         d + pd.Timedelta(days=1) for d in holiday_list if d.weekday() not in [5, 6]
@@ -176,6 +183,7 @@ def get_calendar_dataframe_with_holiday_features(
         df_holidays["date"].apply(lambda x: x.dayofweek).isin([0, 4])
     ) & (df_holidays["holiday"].notna())
 
+    df_holidays["is_holiday"] = df_holidays["holiday"].notna()
     one_hot = pd.get_dummies(df_holidays["holiday"])
     one_hot.columns = one_hot.columns.str.replace(" ", "_").str.lower()
     df_holidays = pd.concat([df_holidays, one_hot], axis=1)
