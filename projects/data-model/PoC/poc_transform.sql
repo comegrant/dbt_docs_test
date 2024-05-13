@@ -1,20 +1,23 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC
-
--- COMMAND ----------
-
--- MAGIC %md
 -- MAGIC # DIM BILLING AGREEMENT
 
 -- COMMAND ----------
 
+SELECT COUNT(*) FROM dev.temppocbronze.cms_billing_agreement
+
+-- COMMAND ----------
+
+SELECT COUNT(DISTINCT agreement_id) FROM dev.temppocbronze.cms_billing_agreement
+
+-- COMMAND ----------
+
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement (
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_billing_agreement BIGINT GENERATED ALWAYS AS IDENTITY,
   agreement_id INT NOT NULL,
   company_id CHAR(36) NOT NULL,
   status_id INT NOT NULL,
-  start_date DATE NOT NULL, -- How to deal with start date?
+  --start_date DATE NOT NULL, -- How to deal with start date when reporting?
   source VARCHAR(126)
 );
 
@@ -25,14 +28,14 @@ INSERT INTO
     agreement_id,
     company_id,
     status_id,
-    start_date,
+  --  start_date,
     source
   )
 SELECT
   agreement_id,
   company_id,
   status,
-  start_date,
+--  start_date,
   source
 FROM
   dev.temppocbronze.cms_billing_agreement
@@ -40,7 +43,7 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_status (
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_billing_agreement_status BIGINT GENERATED ALWAYS AS IDENTITY,
   status_id INT NOT NULL,
   status_description VARCHAR(50) NOT NULL
 );
@@ -58,10 +61,10 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_billing_agreement (
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_billing_agreement BIGINT GENERATED ALWAYS AS IDENTITY,
   agreement_id INT NOT NULL,
   status VARCHAR(50) NOT NULL,
-  start_date TIMESTAMP NOT NULL,
+--  start_date TIMESTAMP NOT NULL,
   source VARCHAR(126)
 );
 
@@ -71,13 +74,13 @@ INSERT INTO
   dev.temppocgold.dim_billing_agreement(
     agreement_id,
     status,
-    start_date,
+--   start_date,
     source
   )
 SELECT
   cba.agreement_id,
   cbas.status_description AS status,
-  cba.start_date,
+--  cba.start_date,
   cba.source
 FROM
   dev.temppocsilver.cms_billing_agreement cba
@@ -99,7 +102,7 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_company(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_company BIGINT GENERATED ALWAYS AS IDENTITY,
   company_id CHAR(36) NOT NULL,
   company_name VARCHAR(512) NOT NULL
 )
@@ -119,7 +122,7 @@ WHERE
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_company(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_company BIGINT GENERATED ALWAYS AS IDENTITY,
   company_id CHAR(36) NOT NULL,
   company_name VARCHAR(512) NOT NULL
 )
@@ -145,7 +148,7 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_address(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_address BIGINT GENERATED ALWAYS AS IDENTITY,
 	agreement_id INT NOT NULL,
   agreement_address_id CHAR(36) NOT NULL,
   address_id VARCHAR(32),
@@ -177,22 +180,11 @@ SELECT
   street
 FROM
   dev.temppocbronze.cms_address_live
-UNION
-SELECT
-  agreement_id,
-  id,
-  MD5(CONCAT(postal_code, country, city, street)),
-  postal_code,
-  country,
-  city,
-  street
-FROM
-  dev.temppocbronze.cms_address_history
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_address(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_address BIGINT GENERATED ALWAYS AS IDENTITY,
   address_id VARCHAR(32),
   postal_code VARCHAR(256) NOT NULL,
   country VARCHAR(32) NOT NULL,
@@ -210,7 +202,7 @@ INSERT INTO
       city,
       street
 	)
-    SELECT
+    SELECT DISTINCT
       address_id,
       postal_code,
       country,
@@ -272,7 +264,7 @@ INSERT INTO
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.product_layer_product_variation(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_product_layer_product_variation BIGINT GENERATED ALWAYS AS IDENTITY,
   product_id CHAR(36) NOT NULL,
   product_name VARCHAR(255) NOT NULL,
   product_type_id CHAR(36) NOT NULL,
@@ -400,8 +392,9 @@ INSERT INTO
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_product_variation(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_product_variation BIGINT GENERATED ALWAYS AS IDENTITY,
   variation_id CHAR(36) NOT NULL,
+  company_id CHAR(36) NOT NULL,
   variation_sku VARCHAR(255) NOT NULL,
   variation_name VARCHAR(255) NOT NULL,
   variation_meals INT,
@@ -416,6 +409,7 @@ CREATE OR REPLACE TABLE dev.temppocgold.dim_product_variation(
 INSERT INTO
   dev.temppocgold.dim_product_variation (
     variation_id,
+    company_id,
     variation_sku,
     variation_name,
     variation_meals,
@@ -424,8 +418,9 @@ INSERT INTO
     product_type_name,
     product_concept_name
   )
-SELECT
+SELECT DISTINCT
   variation_id,
+  company_id,
   variation_sku,
   variation_name,
   variation_meals,
@@ -444,7 +439,7 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order_line(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_billing_agreement_order_line BIGINT GENERATED ALWAYS AS IDENTITY,
   order_line_id CHAR(36) NOT NULL,
   order_id CHAR(36) NOT NULL,
   variation_id CHAR(36),
@@ -457,7 +452,7 @@ CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order_line(
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_cms_billing_agreement_order BIGINT GENERATED ALWAYS AS IDENTITY,
   order_id CHAR(36) NOT NULL,
   agreement_id INT NOT NULL,
   company_id CHAR(36) NOT NULL,
@@ -466,29 +461,6 @@ CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order(
   created_date TIMESTAMP NOT NULL,
   has_recipe_leaflets BOOLEAN
 )
-
--- COMMAND ----------
-
-INSERT INTO
-  dev.temppocsilver.cms_billing_agreement_order_line(
-    order_line_id,
-    order_id,
-    variation_id,
-    variation_qty,
-    price,
-    vat,
-    line_type
-  )
-SELECT
-  id,
-  agreement_order_id,
-  variation_id,
-  variation_qty,
-  price,
-  vat,
-  typeOfLine
-FROM
-  dev.temppocbronze.cms_billing_agreement_order_line
 
 -- COMMAND ----------
 
@@ -518,9 +490,32 @@ LEFT JOIN dev.temppocsilver.cms_address a ON bao.shipping_address_id = a.agreeme
 
 -- COMMAND ----------
 
+INSERT INTO
+  dev.temppocsilver.cms_billing_agreement_order_line(
+    order_line_id,
+    order_id,
+    variation_id,
+    variation_qty,
+    price,
+    vat,
+    line_type
+  )
+SELECT
+  id,
+  agreement_order_id,
+  variation_id,
+  variation_qty,
+  price,
+  vat,
+  typeOfLine
+FROM
+  dev.temppocbronze.cms_billing_agreement_order_line
+
+-- COMMAND ----------
+
 CREATE
 OR REPLACE TABLE dev.temppocgold.fact_order_line(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_fact_order_line BIGINT GENERATED ALWAYS AS IDENTITY,
   order_id CHAR(36) NOT NULL,
   order_number BIGINT,
   order_line_id CHAR(36) NOT NULL,
@@ -552,7 +547,7 @@ INSERT INTO
     fk_dim_company,
     fk_dim_billing_agreement,
     fk_dim_address,
-    fk_dim_product_variation
+    fk_dim_product_variation,
   )
 SELECT
   bao.order_id,
@@ -564,17 +559,24 @@ SELECT
   baol.line_type,
   bao.created_date,
   bao.has_recipe_leaflets,
-  dim_co.id AS fk_dim_company,
-  dim_ba.id AS fk_dim_billing_agreement,
-  dim_ad.id AS fk_dim_address,
-  dim_pv.id AS fk_dim_product_variation
+  dim_co.pk_dim_company,
+  dim_ba.pk_dim_billing_agreement,
+  dim_ad.pk_dim_address,
+  dim_pv.pk_dim_product_variation
 FROM
   dev.temppocsilver.cms_billing_agreement_order_line baol
-  LEFT JOIN dev.temppocsilver.cms_billing_agreement_order bao ON baol.order_id = bao.order_id
-  LEFT JOIN dev.temppocgold.dim_company dim_co ON bao.company_id = dim_co.company_id
-  LEFT JOIN dev.temppocgold.dim_billing_agreement dim_ba ON bao.agreement_id = dim_ba.agreement_id
-  LEFT JOIN dev.temppocgold.dim_address dim_ad ON bao.address_id = dim_ad.address_id
-  LEFT JOIN dev.temppocgold.dim_product_variation dim_pv ON baol.variation_id = dim_pv.variation_id
+  LEFT JOIN dev.temppocsilver.cms_billing_agreement_order bao 
+    ON baol.order_id = bao.order_id
+  LEFT JOIN dev.temppocgold.dim_company dim_co 
+    ON bao.company_id = dim_co.company_id
+  LEFT JOIN dev.temppocgold.dim_billing_agreement dim_ba 
+    ON bao.agreement_id = dim_ba.agreement_id
+  LEFT JOIN dev.temppocgold.dim_address dim_ad 
+    ON bao.address_id = dim_ad.address_id
+  LEFT JOIN dev.temppocgold.dim_product_variation dim_pv 
+    ON baol.variation_id = dim_pv.variation_id 
+    AND dim_co.company_id = dim_pv.company_id
+  WHERE bao.created_date >= '2023-01-01'
 
 -- COMMAND ----------
 
@@ -584,39 +586,109 @@ FROM
 -- COMMAND ----------
 
 CREATE
-OR REPLACE TABLE dev.temppocgold.fact_freezed_subscription_survey(
-  id BIGINT GENERATED ALWAYS AS IDENTITY,
+OR REPLACE TABLE dev.temppocsilver.fact_freezed_subscription_survey(
+  pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY,
   original_timestamp TIMESTAMP,
+  company_id CHAR(36) NOT NULL,
+  agreement_id CHAR(36),
   anonymous_id CHAR(36),
-  where_will_you_eat STRING,
-  freeze_reason_comment STRING,
-  main_freeze_reason STRING,
-  sub_freeze_reason STRING,
-  fk_dim_company BIGINT,
-  fk_dim_billing_agreement BIGINT
+  where_will_you_eat STRING NOT NULL,
+  freeze_reason_comment STRING NOT NULL,
+  main_freeze_reason STRING NOT NULL,
+  sub_freeze_reason STRING NOT NULL
 )
 
 -- COMMAND ----------
 
-INSERT INTO dev.temppocgold.fact_freezed_subscription_survey(
-    original_timestamp
-    ,anonymous_id
-    ,where_will_you_eat
-    ,freeze_reason_comment
-    ,main_freeze_reason
-    ,sub_freeze_reason
-    ,fk_dim_company
-    ,fk_dim_billing_agreement
-)
+INSERT INTO
+  dev.temppocsilver.fact_freezed_subscription_survey(
+  original_timestamp,
+  company_id,
+  agreement_id,
+  anonymous_id,
+  where_will_you_eat,
+  freeze_reason_comment,
+  main_freeze_reason,
+  sub_freeze_reason
+  )
 SELECT
-    original_timestamp
-    ,anonymous_id
-    ,where_will_you_eat
-    ,freeze_reason_comment
-    ,main_freeze_reason
-    ,sub_freeze_reason
-    ,dim_co.id AS fk_dim_company
-    ,COALESCE(dim_ba.id, '-1') AS fk_dim_billing_agreement
-  FROM dev.temppocsilver.fact_freezed_subscription_survey ffss
+  original_timestamp,
+  UPPER(company_id),
+  user_id,
+  anonymous_id,
+  coalesce(where_will_you_eat, 'NA'),
+  coalesce(freeze_reason_comment, 'NA'),
+  coalesce(main_freeze_reason, 'NA'),
+  coalesce(sub_freeze_reason, 'NA')
+FROM
+  dev.temppocbronze.fact_freezed_subscription_survey ffss
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE dev.temppocgold.dim_where_eat (
+  pk_dim_where_eat BIGINT GENERATED ALWAYS AS IDENTITY,
+  where_will_you_eat STRING
+);
+
+-- COMMAND ----------
+
+INSERT INTO dev.temppocgold.dim_where_eat (where_will_you_eat)
+SELECT DISTINCT where_will_you_eat
+FROM dev.temppocsilver.fact_freezed_subscription_survey
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE dev.temppocgold.dim_freeze_reason (
+  pk_dim_freeze_reason BIGINT GENERATED ALWAYS AS IDENTITY,
+  main_freeze_reason STRING,
+  sub_freeze_reason STRING
+);
+
+-- COMMAND ----------
+
+INSERT INTO dev.temppocgold.dim_freeze_reason (main_freeze_reason, sub_freeze_reason)
+SELECT DISTINCT main_freeze_reason, sub_freeze_reason
+FROM dev.temppocsilver.fact_freezed_subscription_survey
+
+-- COMMAND ----------
+
+CREATE
+OR REPLACE TABLE dev.temppocgold.fact_freezed_subscription_survey(
+  pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY,
+  original_timestamp TIMESTAMP,
+  anonymous_id CHAR(36),
+  where_will_you_eat STRING,
+  freeze_reason_comment STRING,
+  fk_dim_company BIGINT NOT NULL,
+  fk_dim_billing_agreement BIGINT NOT NULL,
+  fk_dim_freeze_reason BIGINT NOT NULL,
+  fk_dim_where_eat BIGINT NOT NULL
+)
+
+-- COMMAND ----------
+
+INSERT INTO
+  dev.temppocgold.fact_freezed_subscription_survey(
+    original_timestamp,
+    anonymous_id,
+    freeze_reason_comment,
+    fk_dim_company,
+    fk_dim_billing_agreement,
+    fk_dim_freeze_reason,
+    fk_dim_where_eat
+  )
+SELECT
+  original_timestamp,
+  anonymous_id,
+  freeze_reason_comment,
+  dim_co.pk_dim_company,
+  COALESCE(dim_ba.pk_dim_billing_agreement, '-1'),
+  dim_fr.pk_dim_freeze_reason,
+  dim_we.pk_dim_where_eat
+FROM
+  dev.temppocsilver.fact_freezed_subscription_survey ffss
   LEFT JOIN dev.temppocgold.dim_company dim_co ON ffss.company_id = dim_co.company_id
-  LEFT JOIN dev.temppocgold.dim_billing_agreement dim_ba ON ffss.user_id = dim_ba.agreement_id
+  LEFT JOIN dev.temppocgold.dim_billing_agreement dim_ba ON ffss.agreement_id = dim_ba.agreement_id
+  LEFT JOIN dev.temppocgold.dim_freeze_reason dim_fr ON ffss.main_freeze_reason = dim_fr.main_freeze_reason
+  AND ffss.sub_freeze_reason = dim_fr.sub_freeze_reason
+  LEFT JOIN dev.temppocgold.dim_where_eat dim_we ON ffss.where_will_you_eat = dim_we.where_will_you_eat
