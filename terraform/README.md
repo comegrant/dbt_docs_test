@@ -1,7 +1,15 @@
 # Getting started
 
+## Set environmental variables
+This is only needed when running locally. 
+The client secret used below as environmental variable can be found in key vault: https://portal.azure.com/#@godtlevertno.onmicrosoft.com/asset/Microsoft_Azure_KeyVault/Secret/https://kv-chefdp-common.vault.azure.net/secrets/clientSecret
+
+export TF_VAR_client_secret="your-client-secret"
+
+## Go to directory
 cd deployment
 
+## Terraforming
 terraform init -backend-config=backend.conf
 
 terraform workspace new dev

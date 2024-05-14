@@ -85,9 +85,17 @@ resource "databricks_external_location" "this" {
   skip_validation = true
 }
 
-resource "databricks_grants" "this" {
+resource "databricks_grants" "external_location" {
   for_each = toset(var.schemas)
   external_location = databricks_external_location.this[each.key].id
+  grant {
+    principal = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+}
+
+resource "databricks_grants" "storage_credential" {
+  storage_credential = databricks_storage_credential.this.id
   grant {
     principal = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]

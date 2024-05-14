@@ -17,10 +17,13 @@ terraform {
 
 provider "azurerm" {
   features {}
-  use_oidc            = true
-  client_id           = var.azure_client_id
-  subscription_id     = var.azure_subscription_id
-  tenant_id           = var.azure_tenant_id
+  client_id       = var.azure_client_id
+  subscription_id = var.azure_subscription_id
+  tenant_id       = var.azure_tenant_id
+
+  use_oidc      = var.use_oidc
+  client_secret = var.use_oidc ? null : var.azure_client_secret
+
   storage_use_azuread = true
 }
 

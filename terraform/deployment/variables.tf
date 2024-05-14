@@ -36,7 +36,15 @@ variable "databricks_spark_version" {
 
 variable "azure_client_id" {
   type        = string
-  description = "Client id of service principal used in Github Actions for running the code."
+  default     = "9d48429c-9bb6-4c22-ae63-26095e7aab6f"
+  description = "Client id of service principal used for running the code."
+}
+
+variable "azure_client_secret" {
+  type        = string
+  description = "Client secret of service principal only used when running locally."
+  default     = null
+  sensitive   = true
 }
 
 variable "azure_subscription_id" {
@@ -49,4 +57,10 @@ variable "azure_tenant_id" {
   type        = string
   default     = "f02c0daa-f4a6-41df-9fbb-df3be1b2b577"
   description = "Tenant Id of the tenant where the service princial exist and resources will be deployed."
+}
+
+variable "use_oidc" {
+  type        = bool
+  description = "Whether to use OIDC for authentication. This should be done when running in GitHub Actions, but not locally."
+  default     = false
 }
