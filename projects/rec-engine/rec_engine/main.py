@@ -76,7 +76,7 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
             train_year_weeks = args.train_year_weeks
         else:
             today = date.today()
-            number_of_weeks = 24
+            number_of_weeks = 36
             train_year_weeks = [int((today - timedelta(weeks=i)).strftime("%Y%W")) for i in range(number_of_weeks)]
 
         dataset = CompanyDataset(

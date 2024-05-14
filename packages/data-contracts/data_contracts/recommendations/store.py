@@ -13,12 +13,17 @@ def recommendation_feature_contracts() -> FeatureStore:
     """
     from data_contracts.recommendations.recipe import (
         BasketDeviation,
+        DeselectedRecipes,
         HistoricalRecipeOrders,
+        MealboxChanges,
+        MealboxChangesAsRating,
         RecipeCost,
         RecipeFeatures,
         RecipeIngredient,
         RecipeNutrition,
         RecipeTaxonomies,
+        UserSubscription,
+        YearWeekMenu,
     )
     from data_contracts.recommendations.recommendations import (
         BackupRecommendations,
@@ -38,6 +43,11 @@ def recommendation_feature_contracts() -> FeatureStore:
         RecipeFeatures,
         RecipeNutrition,
         RecipeCost,
+        DeselectedRecipes,
+        UserSubscription,
+        MealboxChanges,
+        MealboxChangesAsRating,
+        YearWeekMenu,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,

@@ -9,7 +9,6 @@ packages = [{include = "preselector"}]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
-lmkgroup-ds-utils = {path = "../../packages/lmk-ds-utils", extras = ["msdb"], develop = true}
 tqdm = "^4.66.2"
 streamlit-pages = {path = "../../packages/streamlit-pages", develop = true}
 

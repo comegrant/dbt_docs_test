@@ -217,13 +217,22 @@ async def main() -> None:
     )
 
     with view_preds:
-        await view_predictions(inputs)
+        try:
+            await view_predictions(inputs)
+        except Exception as e:
+            st.write(e)
 
     with raw_source:
-        await view_raw_source(inputs)
+        try:
+            await view_raw_source(inputs)
+        except Exception as e:
+            st.write(e)
 
     with ddl:
-        await setup_ddl()
+        try:
+            await setup_ddl()
+        except Exception as e:
+            st.write(e)
 
     with predict:
         st.write("This will run the whole recommendation engine pipeline.")

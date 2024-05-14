@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Annotated
 
 import pandas as pd
@@ -40,11 +41,12 @@ fat_agg = recipe_nutrition.fat_100g.aggregate()
 protein_agg = recipe_nutrition.protein_100g.aggregate()
 veg_fruit_agg = recipe_nutrition.fruit_veg_fresh_100g.aggregate()
 fat_saturated_agg = recipe_nutrition.fat_saturated_100g.aggregate()
-price_category_level_agg = recipe_cost.price_category_level.aggregate()
-recipe_cost_whole_units_agg = recipe_cost.recipe_cost_whole_units.aggregate()
-max_cooking_time_agg = recipe_features.cooking_time_from.aggregate()
 energy_kcal_agg = recipe_nutrition.energy_kcal_100g.aggregate()
 
+price_category_level_agg = recipe_cost.price_category_level.aggregate()
+recipe_cost_whole_units_agg = recipe_cost.recipe_cost_whole_units.aggregate()
+
+max_cooking_time_agg = recipe_features.cooking_time_from.aggregate()
 
 @feature_view(
     name="basket_features",
@@ -81,6 +83,33 @@ class BasketFeatures:
         ],
         as_dtype=Float(),
     )
+    is_vegan_mean = custom_aggregation(
+        (pl.col("is_vegan") | pl.col("is_vegetarian")).mean(),
+        using_features=[
+            recipe_features.is_vegan,
+            recipe_features.is_vegetarian,
+        ],
+        as_dtype=Float(),
+    )
+    is_fish_mean = custom_aggregation(
+        pl.col("is_fish").mean(),
+        using_features=[
+            recipe_features.is_fish,
+        ],
+        as_dtype=Float(),
+    )
+    is_poultry_mean = custom_aggregation(
+        pl.col("is_poultry").mean(),
+        using_features=[
+            recipe_features.is_poultry,
+        ],
+        as_dtype=Float(),
+    )
+    is_pork_mean = custom_aggregation(
+        pl.col("is_pork").mean(),
+        using_features=[recipe_features.is_pork],
+        as_dtype=Float(),
+    )
 
 
 def select_next_vector(
@@ -99,16 +128,12 @@ def select_next_vector(
         .select(columns)
         .transpose()
         .lazy()
-        .select(((pl.all() - optimal_vector) / normalization_vector).pow(2).sum())
+        .select(((pl.all() - optimal_vector) / normalization_vector).pow(2).mean())
         .collect()
         .transpose()
     )
 
-    distance = (
-        available_vectors.with_columns(distance=distance["column_0"])
-        .sort("distance", descending=False)
-        .limit(1)
-    )
+    distance = available_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
     return distance.select(
         pl.exclude(["distance", exclude_column]),
         pl.col(exclude_column).alias(rename_column),
@@ -191,9 +216,7 @@ async def find_best_combination(
             )
 
         # Sorting in order to get deterministic results
-        recipe_nudge = (
-            await BasketFeatures.process_input(raw_recipe_nudge).to_polars()
-        ).sort(
+        recipe_nudge = (await BasketFeatures.process_input(raw_recipe_nudge).to_polars()).sort(
             "basket_id",
             descending=False,
         )
@@ -257,6 +280,8 @@ async def run_preselector(
 
     from preselector.recipe_contracts import Preselector
 
+    top_n_percent = 0.4
+
     store = recommendation_feature_contracts()
     store.add_compiled_model(Preselector.compile())
 
@@ -276,9 +301,7 @@ async def run_preselector(
             .to_polars()
         )
 
-        upper_and_lower = {
-            preference.lower() for preference in customer.taste_preference_ids
-        }.union(
+        upper_and_lower = {preference.lower() for preference in customer.taste_preference_ids}.union(
             {preference.upper() for preference in customer.taste_preference_ids},
         )
 
@@ -300,6 +323,7 @@ async def run_preselector(
         logger.info(f"Filtering based on taste preferences done: {recipes.height}")
 
     logger.info(f"Loading preselector recipe features: {recipes.height}")
+
     recipe_features = await (
         store.model("preselector")
         .features_for(
@@ -315,6 +339,14 @@ async def run_preselector(
         pl.exclude(["is_premium", "is_cheep"]),
     )
     logger.info(f"Filtered out cheep and premium recipes: {recipe_features.height}")
+
+    select_top_n = min(
+        max(
+            customer.number_of_recipes * 4,
+            int(recipe_features.height * top_n_percent),
+        ), 
+        recipe_features.height
+    )
 
     if recommendations.height > select_top_n:
         logger.info(
@@ -341,14 +373,15 @@ async def run_preselector(
     logger.info(
         f"Selecting the best combination based on {recipe_features.height} recipes.",
     )
-    best_recipe_ids, error = await find_best_combination(
+
+    start = time.monotonic()
+    best_recipe_ids, error_metric = await find_best_combination(
         target_vector,
         recipe_features,
         customer.number_of_recipes,
     )
+    end = time.monotonic()
+    logging.info(f"Preselector took {end - start} seconds")
+    logging.info(f"Preselector Error metric: {error_metric}")
 
-    logging.info(f"Preselector Error: {error}")
-
-    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))[
-        "main_recipe_id"
-    ].to_list()
+    return recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))["main_recipe_id"].to_list()

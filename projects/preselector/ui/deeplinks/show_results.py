@@ -27,7 +27,7 @@ async def show_choices(state: ShowChoicesState) -> None:
         return
 
     with st.spinner("Loading choices..."):
-        choices = await PreselectorTestChoice.query().features_for(entites).to_pandas()
+        choices = (await PreselectorTestChoice.query().features_for(entites).to_polars()).to_pandas()
 
     counts = choices["chosen_mealkit"].value_counts()
     preselector_count = counts.get("pre-selector", 0)

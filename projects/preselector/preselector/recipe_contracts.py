@@ -9,15 +9,22 @@ recipe_cost = RecipeCost()
 
 @model_contract(
     name="preselector",
-    features=[
+    input_features=[
         recipe_features.cooking_time_from,
         recipe_features.is_kids_friendly,
         recipe_features.is_family_friendly,
+        recipe_features.is_vegetarian,
+        recipe_features.is_vegan,
+        recipe_features.is_pork,
+        recipe_features.is_poultry,
+        recipe_features.is_fish,
+
         recipe_nutrition.energy_kcal_100g,
         recipe_nutrition.fat_100g,
         recipe_nutrition.fat_saturated_100g,
         recipe_nutrition.protein_100g,
         recipe_nutrition.fruit_veg_fresh_100g,
+
         recipe_cost.price_category_level,
         recipe_cost.recipe_cost_whole_units,
         recipe_cost.is_premium,

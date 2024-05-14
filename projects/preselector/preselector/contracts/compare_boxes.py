@@ -73,6 +73,36 @@ async def historical_preselector_vector(
 
     return vectors.select(pl.exclude("basket_id"))
 
+def preselector_target_vector_key(agreement_id: int) -> str:
+    return f"preselector_target_vector_{agreement_id}"
+
+async def update_target(target: pl.DataFrame, selected_recipes: pl.DataFrame) -> pl.DataFrame:
+    from data_contracts.recommendations.store import recommendation_feature_contracts
+    from preselector.recipe_contracts import Preselector
+    from preselector.main import BasketFeatures
+
+    store = recommendation_feature_contracts()
+    store.add_model(Preselector)
+
+    features = await (store.model("preselector")
+        .features_for(selected_recipes)
+        .to_polars()
+    )
+
+    features = await BasketFeatures.process_input(
+        features.with_columns(
+            pl.lit(4).alias("basket_id"),
+        )
+    ).to_polars()
+
+    # Stacking target two times so 
+    # the recipes are not weighted equally
+    # This will simulate changes over time
+    return target.vstack(target).vstack(
+        features.select(target.columns),
+    ).mean()
+    
+
 
 @feature_view(
     name="recipe_information",

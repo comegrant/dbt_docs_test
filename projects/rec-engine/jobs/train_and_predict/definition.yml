@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../bundle_config_schema.json
+resources:
+  jobs:
+    rec_engine_train_and_predict:
+      name: ${bundle.target}-train-and-predict
+
+      job_clusters:
+        - job_cluster_key: rec-engine
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            docker_image:
+              url: "bhregistry.azurecr.io/rec-engine-databricks:latest"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 30 11 ? * MON-FRI'
+        timezone_id: UTC
+
+      email_notifications:
+        on_failure:
+          - mats.mollestad@cheffelo.com
+        on_success:
+          - mats.mollestad@cheffelo.com
+
+      tasks:
+        - task_key: RecEngineTrainAndPredict
+          job_cluster_key: rec-engine
+          notebook_task:
+            notebook_path: train_and_predict.py

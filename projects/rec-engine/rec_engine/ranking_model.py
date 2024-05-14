@@ -10,7 +10,6 @@ file_logger: Logger = logging.getLogger(__name__)
 
 def rank_recipes(
     recipes: pd.DataFrame,
-    cluster_column: str = "cluster",
     score_column: str = "score",
 ) -> pd.Series:
     """
@@ -30,19 +29,10 @@ def rank_recipes(
     """
     if score_column not in recipes.columns:
         raise ValueError(f"Needs a {score_column} column to rank recipes")
-    if cluster_column not in recipes.columns:
-        raise ValueError(f"Needs a {cluster_column} column to rank recipes")
-
-    for value in recipes[cluster_column].unique():
-        mask = recipes[cluster_column] == value
-        recipes.loc[mask, "cluster_rank"] = recipes.loc[mask, score_column].rank(
-            method="min",
-            ascending=False,
-        )
 
     sorted_recipes = recipes.sort_values(
-        by=["cluster_rank", score_column],
-        ascending=[True, False],
+        by=[score_column],
+        ascending=[False],
     )
     sorted_recipes["order_of_relevance_cluster"] = range(1, sorted_recipes.shape[0] + 1)
 

@@ -32,4 +32,4 @@ async def custom_store() -> FeatureStore:
 
     inject_sources()
 
-    return preselector_contracts().combine(recommendation_feature_contracts())
+    return preselector_contracts().combined_with(recommendation_feature_contracts())

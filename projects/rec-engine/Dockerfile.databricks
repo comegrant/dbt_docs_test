@@ -1,0 +1,33 @@
+FROM databricksruntime/python:14.3-LTS
+
+SHELL ["/bin/bash", "-c"]
+
+RUN /databricks/python3/bin/pip install poetry
+
+# set the home directory
+ENV APP_HOME /opt
+ENV SERVICE_HOME $APP_HOME/projects/rec-engine
+
+# copy source code
+WORKDIR $APP_HOME
+COPY packages packages
+
+WORKDIR $SERVICE_HOME
+COPY projects/rec-engine/pyproject.toml .
+COPY projects/rec-engine/poetry.lock .
+
+# create a dummy package to satisfy Poetry
+RUN mkdir -p rec_engine && touch rec_engine/__init__.py
+
+RUN source /databricks/python3/bin/activate \
+	&& echo "$(which poetry)" \
+	&& poetry config virtualenvs.create false \
+	&& poetry install --without=dev
+
+
+RUN /databricks/python3/bin/pip install polars-lts-cpu
+
+ENV PYTHONPATH /databricks/python3/bin
+ENV PATH /databricks/python3/bin:$PATH
+
+COPY projects/rec-engine/rec_engine rec_engine

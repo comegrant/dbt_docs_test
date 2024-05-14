@@ -10,6 +10,15 @@ from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
 
 
+def read_cache(key):
+    if key in st.session_state:
+        return st.session_state[key]
+
+    return None
+
+def set_cache(key, value):
+    st.session_state[key] = value
+
 async def cache_awaitable(key: str, function: Awaitable) -> Any:  # noqa: ANN401
     if key in st.session_state:
         return st.session_state[key]
@@ -128,6 +137,8 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
             },
         )
 
+    await update_target_vector(state.selected_recipe_ids, state.agreement_id)
+
     set_deeplink(
         CompareWeekState(
             agreement_id=state.agreement_id,
@@ -135,3 +146,24 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
             week=state.week + 1,
         ),
     )
+
+async def update_target_vector(recipe_ids: list[int], agreement_id: int):
+    from preselector.contracts.compare_boxes import preselector_target_vector_key, update_target
+    import polars as pl
+
+    with st.spinner("Updating target vector..."):
+        key = preselector_target_vector_key(agreement_id)
+        target = read_cache(key)
+        if target is None:
+            return
+
+        recipe_entities = pl.DataFrame({
+            "recipe_id": recipe_ids,
+            "portion_size": [4] * len(recipe_ids),
+        })
+
+        new_target = await update_target(
+            target=target, 
+            selected_recipes=recipe_entities,
+        )
+        set_cache(key, new_target)

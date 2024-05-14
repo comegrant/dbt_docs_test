@@ -17,8 +17,8 @@ orders = HistoricalRecipeOrders()
         Owner.jose().markdown(),
         Owner.matsmoll().markdown(),
     ],
-    features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
-    prediction_source=recommendations_dir.delta_at(
+    input_features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
+    output_source=recommendations_dir.delta_at(
         "user_recipe_likability",
         date_formatter=DateFormatter.unix_timestamp(),
     ),

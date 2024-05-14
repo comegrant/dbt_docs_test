@@ -34,32 +34,30 @@ def set_cache(key: str, value: Any) -> None:  # noqa: ANN401
     st.session_state[key] = value
 
 
-async def load_recommendations(
-    agreement_id: int,
-    year: int,
-    week: int,
-    db_config: SqlServerConfig,
-) -> pd.DataFrame:
+async def load_recommendations(agreement_id: int, year: int, week: int) -> pd.DataFrame:
+    import polars as pl
+    from data_contracts.recommendations.store import recommendation_feature_contracts
+
     key_value_cache_key = f"load_recommendations{agreement_id}_{year}_{week}"
     cache_value = read_cache(key_value_cache_key)
     if cache_value is not None:
         return cache_value
 
-    recommendation_sql = f"""
-declare @agreement_id int = '{agreement_id}', @week int = '{week}', @year int = '{year}';
+    store = recommendation_feature_contracts()
 
-SELECT [agreement_id]
-      ,[run_timestamp]
-      ,[product_id]
-      ,[order_of_relevance]
-      ,[order_of_relevance_cluster]
-      ,[cluster]
-  FROM [ml_output].[latest_recommendations]
-  WHERE agreement_id = @agreement_id
-  AND week = @week
-  AND year = @year"""
+    preds = await store.model("rec_engine").all_predictions().to_lazy_polars()
+    df = (
+        preds.filter(
+            pl.col("agreement_id") == agreement_id,
+            pl.col("week") == week,
+            pl.col("year") == year,
+        )
+        .sort("predicted_at", descending=True)
+        .unique(["agreement_id", "week", "year", "product_id"], keep="first")
+        .collect()
+        .to_pandas()
+    )
 
-    df = await db_config.fetch(recommendation_sql).to_pandas()
     set_cache(key_value_cache_key, df)
     return df
 
@@ -203,6 +201,8 @@ class CompareWeekState(BaseModel):
 
 
 async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR0912
+    from preselector.contracts.compare_boxes import preselector_target_vector_key
+
     st.title(f"Compare for year: {state.year} - week: {state.week}")
 
     back, _, forward = st.columns([1, 5, 1])
@@ -297,7 +297,6 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             agreement_id=customer.agreement_id,
             year=year,
             week=week,
-            db_config=adb,
         )
 
     if recommendations.empty:
@@ -335,7 +334,7 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             year_weeks.append((year_week.year, year_week.isocalendar()[1]))
 
         target = await cache_awaitable(
-            f"preselector_target_vector_{customer.agreement_id}",
+            preselector_target_vector_key(customer.agreement_id),
             historical_preselector_vector(customer=customer, year_weeks=year_weeks),
         )
 
@@ -368,13 +367,6 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
                 recommendations=recommendations,
             ),
         )
-
-        # preselector_result = run_preselector_for(
-        #     customer=customer,
-        #     run_config=run_config,
-        #     df_flex_products=df_flex_products,
-        #     df_recommendations=recommendations,
-        # )
 
     if isinstance(preselector_result, Exception):
         st.error(

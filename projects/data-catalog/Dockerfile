@@ -1,4 +1,4 @@
-FROM aligned.azurecr.io/aligned-catalog/slim-buster:latest
+FROM matsmoll/aligned-catalog-free
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -32,6 +32,7 @@ RUN mkdir -p data_catalog && touch data_catalog/__init__.py
 RUN poetry config virtualenvs.create false
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
 RUN pip install polars-lts-cpu
+RUN pip install "aligned==0.0.95"
 
 # copy source code
 COPY projects/data-catalog .

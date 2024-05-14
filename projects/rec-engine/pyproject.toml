@@ -22,12 +22,12 @@ aioodbc = "0.4.1"
 streamlit = "^1.30.0"
 
 [tool.poetry.group.dev.dependencies]
+chef = {path = "../../packages/chef", develop = true}
 black = "*"
 pre-commit = "*"
 pytest = "*"
 pytest-asyncio = "*"
 ruff = "*"
-chef = {path = "../../packages/chef", develop = true}
 
 [build-system]
 requires = ["poetry-core"]

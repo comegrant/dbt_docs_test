@@ -51,6 +51,7 @@ lint.ignore = [
     "SIM108", # Enforce turnary expression
     "SIM117", # Enforce multiple context managers on one line
     "ERA001",
+    "COM812",
 ]
 lint.pylint.max-args = 7
 line-length = 120

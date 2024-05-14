@@ -18,11 +18,13 @@ from rec_engine.run import (
 
 @pytest_asyncio.fixture
 async def model_contracts() -> FeatureStore:
+    from aligned.data_source.batch_data_source import BatchDataSource, DummyDataSource
+
     store = recommendation_feature_contracts()
 
     test_folder: Directory = FileSource.directory("test_data")
 
-    location_source_map = {
+    location_source_map: dict[FeatureLocation, BatchDataSource] = {
         FeatureLocation.feature_view("recipe_taxonomies"): test_folder.csv_at(
             "recipe.csv",
         ),
@@ -33,6 +35,14 @@ async def model_contracts() -> FeatureStore:
             "recipe_ingredients.csv",
         ),
     }
+
+    for view_name in store.feature_views:
+        location = FeatureLocation.feature_view(view_name)
+
+        if location in location_source_map:
+            continue
+
+        location_source_map[location] = DummyDataSource()
 
     return store.with_source(
         BatchFeatureSource(

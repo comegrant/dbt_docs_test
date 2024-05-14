@@ -38,8 +38,18 @@ def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     └────────────┴─────────────┴──────────┴──────────┴────────────┴───────────┴──────────┴─────────────┘
     ```
     """
-    data_tax = data["recipe_taxonomies"].str.replace(" ", "").str.get_dummies(sep=",")
-    data_ing = data["all_ingredients"].str.replace(" ", "").str.get_dummies(sep=",")
+    data_tax = data["recipe_taxonomies"].str.lower().str.replace(" ", "").str.get_dummies(sep=",")
+    data_ing = (data["all_ingredients"]
+        .str.lower()
+        .str.replace(" ", "")
+        .str.replace("[", "")
+        .str.replace("]", "")
+        .str.replace("\"", "")
+        .str.replace("\d+pk", "", regex=True)
+        .str.replace("\d+", "", regex=True)
+        .str.get_dummies(sep=",")
+    )
+
 
     processed = pd.concat(
         [data_tax.add_prefix(prefix="tax_"), data_ing.add_prefix("ing_")],
@@ -89,21 +99,11 @@ class CBModel:
         data_pred = user_data.dot(recipe_data.T)
         logger.info("Completed dot product predictions")
 
-        def normalise(x):  # noqa
-            denum = recipe_data.loc[x.name].sum()
-            if (denum != 0).all():
-                return x / denum
-            else:
-                return x
-
         # Normalization of agreement-recipe total value (using to number of taxonomies and ingredients)
-
-        logger.info("Will normalize predictions")
-        normalised = data_pred.apply(normalise)  # type: ignore
 
         logger.info("Normalized. Will melt and return predictions")
         return pd.melt(
-            normalised.reset_index(),
+            data_pred.reset_index(),
             id_vars="agreement_id",
             var_name="recipe_id",
             value_name="score",
@@ -160,10 +160,13 @@ class CBModel:
 
         processed = preprocessing(recipes[["recipe_taxonomies", "all_ingredients"]])
 
+        processed["recipe_id"] = recipes["recipe_id"].astype("int32")
+        ratings["recipe_id"] = ratings["recipe_id"].astype("int32")
+
         logger.info("Preprocessing done")
 
         joined_ratings = ratings[["recipe_id", "rating", "agreement_id"]].merge(
-            pd.concat([processed, recipes["recipe_id"]], axis=1),
+            processed,
             how="inner",
             on="recipe_id",
         )
@@ -177,7 +180,14 @@ class CBModel:
             joined_ratings["rating"] ** 3,
             axis=0,
         )
-        weighted.apply(lambda x: x * np.log(len(x) / (1 + x[x > 0].count())), axis=0)
+
+        def inverse_frequency(x: pd.Series): 
+            inv_feq_smooth = np.log(
+                x.shape[0] / (1 + x[x > 0].count())
+            ) + 1
+            return x * inv_feq_smooth
+
+        weighted = weighted.apply(inverse_frequency, axis=0)
         weighted["agreement_id"] = joined_ratings["agreement_id"]
 
         summed_per_user = weighted.groupby("agreement_id").sum()
@@ -203,6 +213,10 @@ class CBModel:
     ) -> "CBModel":
         from aligned.validation.pandera import PanderaValidator
 
+        origin_value = 3
+        if logger is None:
+            logger = file_logger
+
         logger.info("Loading recipes and ratings")
         if isinstance(entities, pl.LazyFrame):
             recipe_entities = entities.select("recipe_id").unique("recipe_id")
@@ -218,7 +232,6 @@ class CBModel:
             .to_pandas()
         )
         logger.info(f"Loaded {recipes.shape[0]} recipes")
-
         ratings = (
             await store.feature_view(ratings_view)
             .select({"rating"})
@@ -226,22 +239,34 @@ class CBModel:
             .drop_invalid(PanderaValidator())
             .to_pandas()
         )
+        ratings["rating"] = (ratings["rating"] - origin_value) * 2
         logger.info(f"Loaded {ratings.shape[0]} ratings")
 
+        logger.info("Loading behavioral rating")
+        behavioral_rating_pl = (
+            await store.feature_view("mealbox_changes_as_rating")
+            .all()
+            .to_lazy_polars()
+        )
+        behavioral_rating_pl = behavioral_rating_pl.filter(
+            pl.col("agreement_id").is_in(entities["agreement_id"].unique()),
+        ).with_columns(
+            (pl.col("rating") + 2) - origin_value
+        )
+        behavioral_rating = behavioral_rating_pl.collect().to_pandas()
+
+        logger.info(f"Loaded {behavioral_rating.shape[0]} behavioral ratings")
+
+
+        ratings = pd.concat([ratings, behavioral_rating], axis=0)
+
         logger.info("Filling in missing ratings")
-        mean_recipe_rating = ratings.groupby("recipe_id")["rating"].mean().reset_index()
         ratings["rating"] = (
             ratings["rating"]
             .astype("float")
-            .fillna(
-                ratings[["recipe_id"]].merge(
-                    mean_recipe_rating,
-                    on="recipe_id",
-                    how="left",
-                )["rating"],
-            )
-            .fillna(3)
         )
+
+        ratings = ratings[~ratings["rating"].isnull()]
 
         logger.info("Training model")
         return CBModel.train(

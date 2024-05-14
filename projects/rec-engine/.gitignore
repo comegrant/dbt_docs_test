@@ -3,3 +3,5 @@ test_data/test-runs/**
 .mssql_data/**
 mssql-data/**
 mssql-data/
+
+.databricks

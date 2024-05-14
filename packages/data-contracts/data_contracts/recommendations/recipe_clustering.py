@@ -15,8 +15,8 @@ recipes_taxonomies = RecipeTaxonomies()
         Owner.jose().markdown(),
         Owner.matsmoll().markdown(),
     ],
-    features=[recipes_taxonomies.recipe_taxonomies],
-    prediction_source=recommendations_dir.delta_at(
+    input_features=[recipes_taxonomies.recipe_taxonomies],
+    output_source=recommendations_dir.delta_at(
         "recipe_cluster_preds",
         date_formatter=DateFormatter.unix_timestamp(),
     ),
