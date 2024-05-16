@@ -1,42 +1,37 @@
----
-name: CI projects/rec-engine
+name: Deploy rec-engine
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
     paths:
-      - '.github/workflows/test_in_docker.yml'
-      - '.github/workflows/ci_rec_engine.yml'
+      - '.github/workflows/cd_rec_engine.yml'
       - 'projects/rec-engine**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  test-rec-engine:
-    uses:
-      ./.github/workflows/test_in_docker.yml
-    with:
-      base-service: rec-engine
-      test-service: rec-engine-test
-      working-directory: projects/rec-engine
-    secrets: inherit
-
   build-rec-engine-image:
-    needs: test-rec-engine
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/rec-engine
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: rec-engine-databricks
       dockerfile: Dockerfile.databricks
-      tag: dev-latest
+      tag: ${{ github.sha }}
     secrets: inherit
 
-  deploy-to-dev:
+  deploy-rec-engine:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
     needs: build-rec-engine-image
     uses: ./.github/workflows/cd_dab_template.yml
     with:
       working-directory: projects/rec-engine
-      target-env: Development
+      target-env: ${{matrix.target}}
 
       # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/rec-engine-databricks:dev-latest"'
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/rec-engine-databricks:${{ github.sha }}"'
     secrets: inherit

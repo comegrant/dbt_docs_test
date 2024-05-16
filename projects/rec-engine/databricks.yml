@@ -5,6 +5,10 @@ bundle:
 include:
   - "jobs/**/*.yml"
 
+variables:
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+
 workspace:
   host: https://adb-4291784437205825.5.azuredatabricks.net
 
@@ -17,3 +21,7 @@ targets:
     # automatic triggers for jobs and enables the 'development' mode for Delta Live Tables pipelines.
     mode: development
     default: true
+
+  test:
+    workspace:
+      host: https://adb-3194696976104051.11.azuredatabricks.net

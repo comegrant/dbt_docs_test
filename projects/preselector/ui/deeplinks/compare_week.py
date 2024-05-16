@@ -52,9 +52,9 @@ async def load_recommendations(agreement_id: int, year: int, week: int) -> pd.Da
             pl.col("week") == week,
             pl.col("year") == year,
         )
-        .sort("predicted_at", descending=True)
         .unique(["agreement_id", "week", "year", "product_id"], keep="first")
         .collect()
+        .sort("predicted_at", descending=True)
         .to_pandas()
     )
 
@@ -316,7 +316,9 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
     with st.spinner("Loading Menu data..."):
         menu = await load_menu_for(customer.company_id, year, week, adb)
 
-    df_flex_products = menu[menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()].explode(
+    df_flex_products = menu[
+        menu["product_type_id"] == FLEX_PRODUCT_TYPE_ID.upper()
+    ].explode(
         "main_recipe_id",
     )
 
@@ -349,7 +351,9 @@ async def compare_week(state: CompareWeekState) -> None:  # noqa: PLR0915, PLR09
             selected_recipe_ids.update(main_recipe_ids)
 
     if selected_recipe_ids:
-        not_shown_recipes = df_flex_products[~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))]
+        not_shown_recipes = df_flex_products[
+            ~df_flex_products["main_recipe_id"].isin(list(selected_recipe_ids))
+        ]
     else:
         not_shown_recipes = df_flex_products
 

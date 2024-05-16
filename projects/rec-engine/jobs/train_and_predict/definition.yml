@@ -11,7 +11,7 @@ resources:
             spark_version: 14.3.x-scala2.12
             node_type_id: Standard_DS4_v2
             docker_image:
-              url: "bhregistry.azurecr.io/rec-engine-databricks:latest"
+              url: "${var.docker_image_url}"
               basic_auth:
                 username: "{{secrets/auth_common/docker-registry-username}}"
                 password: "{{secrets/auth_common/docker-registry-password}}"
