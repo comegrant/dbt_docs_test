@@ -4,20 +4,11 @@
 
 -- COMMAND ----------
 
-SELECT COUNT(*) FROM dev.temppocbronze.cms_billing_agreement
-
--- COMMAND ----------
-
-SELECT COUNT(DISTINCT agreement_id) FROM dev.temppocbronze.cms_billing_agreement
-
--- COMMAND ----------
-
 CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement (
   pk_cms_billing_agreement BIGINT GENERATED ALWAYS AS IDENTITY,
   agreement_id INT NOT NULL,
   company_id CHAR(36) NOT NULL,
   status_id INT NOT NULL,
-  --start_date DATE NOT NULL, -- How to deal with start date when reporting?
   source VARCHAR(126)
 );
 
@@ -28,14 +19,12 @@ INSERT INTO
     agreement_id,
     company_id,
     status_id,
-  --  start_date,
     source
   )
 SELECT
   agreement_id,
   company_id,
   status,
---  start_date,
   source
 FROM
   dev.temppocbronze.cms_billing_agreement
@@ -85,6 +74,15 @@ SELECT
 FROM
   dev.temppocsilver.cms_billing_agreement cba
   LEFT JOIN dev.temppocsilver.cms_billing_agreement_status cbas ON cba.status_id = cbas.status_id
+
+-- COMMAND ----------
+
+INSERT INTO dev.temppocgold.dim_billing_agreement (
+  agreement_id,
+  status,
+  source
+)
+VALUES (-1, 'not available', 'not available');
 
 -- COMMAND ----------
 
@@ -213,6 +211,23 @@ INSERT INTO
 
 -- COMMAND ----------
 
+INSERT INTO
+  dev.temppocgold.dim_address(
+		  address_id,
+      postal_code,
+      country,
+      city,
+      street
+	)
+  VALUES
+      ('NA',
+      'not available',
+      'not available',
+      'not available',
+      'not available')
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC # DIM CALENDAR
 
@@ -227,14 +242,9 @@ INSERT INTO
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC print(sys.path)
-
--- COMMAND ----------
-
--- MAGIC %python
--- MAGIC from time_machine.holidays import *
+-- MAGIC from time_machine.calendars import *
 -- MAGIC
--- MAGIC dates = get_calendar_dataframe_with_holiday_features("2022-01-01", "2025-12-31", "Norway")
+-- MAGIC dates = get_calendar_dataframe("2022-01-01", "2025-12-31")
 
 -- COMMAND ----------
 
@@ -244,12 +254,22 @@ INSERT INTO
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC dates = dates[['date', 'year', 'week']]
+-- MAGIC dates['year'] = dates['year'].astype('int32')
+-- MAGIC dates['week'] = dates['week'].astype('int32')
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC dates = dates.rename(columns={'datekey': 'pk_dim_date'})
 
 -- COMMAND ----------
 
 -- MAGIC %python
 -- MAGIC dates = spark.createDataFrame(dates)
+
+-- COMMAND ----------
+
+DROP TABLE IF EXISTS dev.temppocgold.dim_date
 
 -- COMMAND ----------
 
@@ -451,45 +471,6 @@ CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order_line(
 
 -- COMMAND ----------
 
-CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order(
-  pk_cms_billing_agreement_order BIGINT GENERATED ALWAYS AS IDENTITY,
-  order_id CHAR(36) NOT NULL,
-  agreement_id INT NOT NULL,
-  company_id CHAR(36) NOT NULL,
-  address_id CHAR(36),
-  order_number BIGINT,
-  created_date TIMESTAMP NOT NULL,
-  has_recipe_leaflets BOOLEAN
-)
-
--- COMMAND ----------
-
-INSERT INTO
-  dev.temppocsilver.cms_billing_agreement_order(
-    order_id,
-    agreement_id,
-    company_id,
-    address_id,
-    order_number,
-    created_date,
-    has_recipe_leaflets
-  )
-SELECT
-  bao.id,
-  bao.agreement_id,
-  ba.company_id,
-  a.address_id,
-  bao.order_id,
-  bao.created_date,
-  bao.has_recipe_leaflets
-FROM
-  dev.temppocbronze.cms_billing_agreement_order bao
-LEFT JOIN dev.temppocsilver.cms_billing_agreement ba ON bao.agreement_id = ba.agreement_id
-LEFT JOIN dev.temppocsilver.cms_address a ON bao.shipping_address_id = a.agreement_address_id
-
-
--- COMMAND ----------
-
 INSERT INTO
   dev.temppocsilver.cms_billing_agreement_order_line(
     order_line_id,
@@ -513,6 +494,45 @@ FROM
 
 -- COMMAND ----------
 
+CREATE OR REPLACE TABLE dev.temppocsilver.cms_billing_agreement_order(
+  pk_cms_billing_agreement_order BIGINT GENERATED ALWAYS AS IDENTITY,
+  order_id CHAR(36) NOT NULL,
+  agreement_id INT NOT NULL,
+  company_id CHAR(36) NOT NULL,
+  address_id VARCHAR(32) NOT NULL,
+  order_number BIGINT,
+  delivery_week_date DATE NOT NULL,
+  has_recipe_leaflets BOOLEAN
+)
+
+-- COMMAND ----------
+
+INSERT INTO
+  dev.temppocsilver.cms_billing_agreement_order(
+    order_id,
+    agreement_id,
+    company_id,
+    address_id,
+    order_number,
+    delivery_week_date,
+    has_recipe_leaflets
+  )
+SELECT
+  bao.id,
+  coalesce(bao.agreement_id, -1),
+  ba.company_id,
+  coalesce(a.address_id, 'NA'),
+  bao.order_id,
+  date_trunc('WEEK', dateadd(day, 8, bao.created_date)),
+  bao.has_recipe_leaflets
+FROM
+  dev.temppocbronze.cms_billing_agreement_order bao
+LEFT JOIN dev.temppocsilver.cms_billing_agreement ba ON bao.agreement_id = ba.agreement_id
+LEFT JOIN dev.temppocsilver.cms_address a ON bao.shipping_address_id = a.agreement_address_id
+
+
+-- COMMAND ----------
+
 CREATE
 OR REPLACE TABLE dev.temppocgold.fact_order_line(
   pk_fact_order_line BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -523,12 +543,12 @@ OR REPLACE TABLE dev.temppocgold.fact_order_line(
   price NUMERIC(20, 6),
   vat INT,
   line_type CHAR(25),
-  created_date DATE NOT NULL,
   has_recipe_leaflets BOOLEAN,
-  fk_dim_company BIGINT,
-  fk_dim_billing_agreement BIGINT,
-  fk_dim_address BIGINT,
-  fk_dim_product_variation BIGINT
+  fk_dim_date BIGINT NOT NULL,
+  fk_dim_company BIGINT NOT NULL,
+  fk_dim_billing_agreement BIGINT NOT NULL,
+  fk_dim_address BIGINT NOT NULL,
+  fk_dim_product_variation BIGINT NOT NULL
 )
 
 -- COMMAND ----------
@@ -542,12 +562,12 @@ INSERT INTO
     price,
     vat,
     line_type,
-    created_date,
     has_recipe_leaflets,
+    fk_dim_date,
     fk_dim_company,
     fk_dim_billing_agreement,
     fk_dim_address,
-    fk_dim_product_variation,
+    fk_dim_product_variation
   )
 SELECT
   bao.order_id,
@@ -557,8 +577,8 @@ SELECT
   baol.price,
   baol.vat,
   baol.line_type,
-  bao.created_date,
   bao.has_recipe_leaflets,
+  BIGINT(date_format(bao.delivery_week_date, "yyyyMMdd")),
   dim_co.pk_dim_company,
   dim_ba.pk_dim_billing_agreement,
   dim_ad.pk_dim_address,
@@ -576,7 +596,7 @@ FROM
   LEFT JOIN dev.temppocgold.dim_product_variation dim_pv 
     ON baol.variation_id = dim_pv.variation_id 
     AND dim_co.company_id = dim_pv.company_id
-  WHERE bao.created_date >= '2023-01-01'
+  WHERE bao.delivery_week_date >= '2023-01-01' AND bao.delivery_week_date < '2024-05-06'
 
 -- COMMAND ----------
 
@@ -590,7 +610,7 @@ OR REPLACE TABLE dev.temppocsilver.fact_freezed_subscription_survey(
   pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY,
   original_timestamp TIMESTAMP,
   company_id CHAR(36) NOT NULL,
-  agreement_id CHAR(36),
+  agreement_id INT,
   anonymous_id CHAR(36),
   where_will_you_eat STRING NOT NULL,
   freeze_reason_comment STRING NOT NULL,
@@ -614,7 +634,7 @@ INSERT INTO
 SELECT
   original_timestamp,
   UPPER(company_id),
-  user_id,
+  coalesce(user_id,-1),
   anonymous_id,
   coalesce(where_will_you_eat, 'NA'),
   coalesce(freeze_reason_comment, 'NA'),
@@ -655,10 +675,8 @@ FROM dev.temppocsilver.fact_freezed_subscription_survey
 CREATE
 OR REPLACE TABLE dev.temppocgold.fact_freezed_subscription_survey(
   pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY,
-  original_timestamp TIMESTAMP,
-  anonymous_id CHAR(36),
-  where_will_you_eat STRING,
   freeze_reason_comment STRING,
+  fk_dim_date BIGINT NOT NULL,
   fk_dim_company BIGINT NOT NULL,
   fk_dim_billing_agreement BIGINT NOT NULL,
   fk_dim_freeze_reason BIGINT NOT NULL,
@@ -669,20 +687,18 @@ OR REPLACE TABLE dev.temppocgold.fact_freezed_subscription_survey(
 
 INSERT INTO
   dev.temppocgold.fact_freezed_subscription_survey(
-    original_timestamp,
-    anonymous_id,
     freeze_reason_comment,
+    fk_dim_date,
     fk_dim_company,
     fk_dim_billing_agreement,
     fk_dim_freeze_reason,
     fk_dim_where_eat
   )
 SELECT
-  original_timestamp,
-  anonymous_id,
-  freeze_reason_comment,
+  ffss.freeze_reason_comment,
+  BIGINT(date_format(ffss.original_timestamp, "yyyyMMdd")),
   dim_co.pk_dim_company,
-  COALESCE(dim_ba.pk_dim_billing_agreement, '-1'),
+  dim_ba.pk_dim_billing_agreement,
   dim_fr.pk_dim_freeze_reason,
   dim_we.pk_dim_where_eat
 FROM
@@ -692,3 +708,76 @@ FROM
   LEFT JOIN dev.temppocgold.dim_freeze_reason dim_fr ON ffss.main_freeze_reason = dim_fr.main_freeze_reason
   AND ffss.sub_freeze_reason = dim_fr.sub_freeze_reason
   LEFT JOIN dev.temppocgold.dim_where_eat dim_we ON ffss.where_will_you_eat = dim_we.where_will_you_eat
+  WHERE ffss.original_timestamp < '2024-05-06'
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC # FACT SPICE COMBO
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE temppocsilver.pim_spice_combo(
+    pk_pim_spice_combo BIGINT GENERATED ALWAYS AS IDENTITY,
+    variation_id CHAR(36),
+    company_id CHAR(36),
+    chef_ingredient_section_id BIGINT,
+    chef_ingredient_section_name STRING,
+    spice_combo STRING,
+    spice_combo_names STRING
+);
+
+-- COMMAND ----------
+
+INSERT INTO temppocsilver.pim_spice_combo(
+    variation_id,
+    company_id,
+    chef_ingredient_section_id,
+    chef_ingredient_section_name,
+    spice_combo,
+    spice_combo_names
+)
+SELECT DISTINCT
+    UPPER(variation_id),
+    UPPER(company_id),
+    chef_ingredient_section_id,
+    chef_ingredient_section_name,
+    spice_combo,
+    spice_combo_names
+FROM temppocbronze.pim_spice_combo;
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE temppocgold.fact_spice_combo(
+    pk_fact_spice_combo BIGINT GENERATED ALWAYS AS IDENTITY,
+    CHEF_INGREDIENT_SECTION_ID BIGINT,
+    CHEF_INGREDIENT_SECTION_NAME STRING,
+    spice_combo STRING,
+    spice_combo_names STRING,
+    fk_dim_company BIGINT,
+    fk_dim_product_variation BIGINT
+);
+
+-- COMMAND ----------
+
+INSERT INTO temppocgold.fact_spice_combo(
+    chef_ingredient_section_id,
+    chef_ingredient_section_name,
+    spice_combo,
+    spice_combo_names,
+    fk_dim_company,
+    fk_dim_product_variation
+)
+SELECT DISTINCT
+    sc.chef_ingredient_section_id,
+    sc.chef_ingredient_section_name,
+    sc.spice_combo,
+    sc.spice_combo_names,
+    c.pk_dim_company AS fk_dim_company,
+    pv.pk_dim_product_variation AS fk_dim_product_variation
+FROM temppocsilver.pim_spice_combo sc
+LEFT JOIN temppocgold.dim_company c
+ON sc.company_id = c.company_id
+LEFT JOIN temppocgold.dim_product_variation pv
+ON sc.variation_id = pv.variation_id
+AND sc.company_id = pv.company_id;
