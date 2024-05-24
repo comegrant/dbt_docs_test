@@ -7,6 +7,7 @@ terraform {
 
     databricks = {
       source = "databricks/databricks"
+      version = ">= 1.45.0"
     }
 
     azuread = {
@@ -83,6 +84,7 @@ resource "databricks_external_location" "this" {
   credential_name = databricks_storage_credential.this.id
   comment = "Managed by Terraform"
   skip_validation = true
+  owner = "location-owners"
 }
 
 resource "databricks_grants" "external_location" {
@@ -91,6 +93,21 @@ resource "databricks_grants" "external_location" {
   grant {
     principal = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]
+  }
+  # Only add this grant if environment is dev
+  dynamic "grant" {
+    for_each = terraform.workspace == "dev" ? [1] : []
+    content {
+      principal  = "data-scientists"
+      privileges = ["ALL_PRIVILEGES"]
+    }
+  }
+  dynamic "grant" {
+    for_each = terraform.workspace == "dev" ? [1] : []
+    content {
+      principal  = "data-engineers"
+      privileges = ["ALL_PRIVILEGES"]
+    }
   }
 }
 
@@ -157,8 +174,37 @@ resource "databricks_sql_endpoint" "this" {
   }
 }
 
+resource "time_rotating" "this" {
+  rotation_days = 30
+}
 
+resource "databricks_token" "pat" {
+  comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
+  # Token is valid for 60 days but is rotated after 30 days.
+  # Run `terraform apply` within 60 days to refresh before it expires.
+  lifetime_seconds = 60 * 24 * 60 * 60
+}
 
+data "azurerm_key_vault" "this" {
+  name = var.key_vault_common_name
+  resource_group_name = var.resource_group_common_name
+}
+
+resource "azurerm_key_vault_secret" "databricks_token" {
+  name = "databricksToken-${terraform.workspace}"
+  value = databricks_token.pat.token_value
+  key_vault_id = data.azurerm_key_vault.this.id
+  content_type = "Terraform (created: ${time_rotating.this.rfc3339}). Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
+}
+
+resource "azurerm_key_vault_secret" "databricks_url" {
+  name = "databricksUrl-${terraform.workspace}"
+  value = azurerm_databricks_workspace.this.workspace_url
+  key_vault_id = data.azurerm_key_vault.this.id
+  content_type = "Managed by Terraform"
+  expiration_date = "2050-01-01T00:00:00Z"
+}
 
 
 output "databricks_workspace_url" {

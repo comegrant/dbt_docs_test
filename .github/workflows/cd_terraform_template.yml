@@ -78,6 +78,9 @@ jobs:
         use_oidc = true
         EOF
 
+    - name: Key vault public access allow
+      run: az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+
     - name: Terraform plan
       run: terraform plan
       env:
@@ -85,8 +88,10 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
         TF_VAR_use_oidc: true
-
     
+    - name: Key vault public access deny
+      if: always()
+      run: az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
 
   terraform-apply:
     name: 'Terraform Apply'
@@ -146,6 +151,9 @@ jobs:
         use_oidc = true
         EOF
 
+    - name: Key vault public access allow
+      run: az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+
     - name: Terraform apply
       run: terraform apply -auto-approve
       env:
@@ -153,3 +161,7 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
         TF_VAR_use_oidc: true
+
+    - name: Key vault public access deny
+      if: always()
+      run: az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
