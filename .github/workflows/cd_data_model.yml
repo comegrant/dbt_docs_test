@@ -1,0 +1,23 @@
+name: Deploy data-model
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/cd_data_model.yml'
+      - 'projects/data-model**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  deploy-data-model:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/data-model
+      target-env: ${{matrix.target}}
+    secrets: inherit

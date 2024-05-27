@@ -2,20 +2,27 @@
 bundle:
   name: data-model
 
+variables:
+  client-id: 
+    description: The ID of the service Service Principal
+    default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
+  existing-cluster-id: 
+    description: The ID of an existing cluster called "cluster"
+    lookup:
+      cluster: "cluster"
+
 workspace:
   host: adb-4291784437205825.5.azuredatabricks.net
-  azure_client_id: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
+  #root_path: /Users/${var.client-id}/.bundle/${bundle.name}/my-envs/${bundle.target}
 
 
-resources:
-  jobs:
-    dab-job:
-      name: dab-job
-      tasks:
-        - task_key: bronze_cms
-          new_cluster:
-            num_workers: 1
-            spark_version: 7.3.x-scala2.12
-            node_type_id: Standard_F4s
-          notebook_task: 
-            notebook_path: ./01. bronze/bronze_cms.py
+run_as: 
+  service_principal_name: ${var.client-id}
+
+include:
+  - "bundle*.yml"
+
+
+
+
+

@@ -1,0 +1,9 @@
+resources:
+  jobs:
+    dab-job:
+      name: dab-job
+      tasks:
+        - task_key: bronze_cms
+          existing_cluster_id: ${var.existing-cluster-id}
+          notebook_task: 
+            notebook_path: /01. bronze/bronze_cms.py
