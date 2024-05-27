@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ci_data_model.yml'
-      - 'projects/data_model**'
+      - 'projects/data-model**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
