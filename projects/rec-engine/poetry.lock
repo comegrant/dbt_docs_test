@@ -907,6 +907,19 @@ type = "directory"
 url = "../../packages/data-contracts"
 
 [[package]]
+name = "databricks-env"
+version = "0.1.0"
+description = "A package to set the databricks environment for notebooks"
+optional = false
+python-versions = "^3.8"
+files = []
+develop = true
+
+[package.source]
+type = "directory"
+url = "../../packages/databricks-env"
+
+[[package]]
 name = "deltalake"
 version = "0.16.4"
 description = "Native Delta Lake Python binding based on delta-rs with Pandas integration"
@@ -4020,4 +4033,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b27826a757b05f14a33ec925352d97d7837c291fbfc55e8648de97ce0f499309"
+content-hash = "494350eebe1155450487a23a2efe0aed2415b32afa693529e6a5cb453c18dc89"

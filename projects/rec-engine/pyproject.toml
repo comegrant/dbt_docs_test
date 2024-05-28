@@ -17,6 +17,7 @@ pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true
 adlfs = "^2024.2.0"
 project-owners = {path = "../../packages/project-owners", develop = true}
 aioodbc = "0.4.1"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

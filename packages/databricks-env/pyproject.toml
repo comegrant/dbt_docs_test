@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "databricks_env"
+version = "0.1.0"
+description = "A package to set the databricks environment for notebooks"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "databricks_env"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
