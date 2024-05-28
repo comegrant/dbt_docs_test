@@ -754,6 +754,7 @@ CREATE OR REPLACE TABLE temppocgold.fact_spice_combo(
     CHEF_INGREDIENT_SECTION_NAME STRING,
     spice_combo STRING,
     spice_combo_names STRING,
+    variation_id CHAR(36),
     fk_dim_company BIGINT,
     fk_dim_product_variation BIGINT
 );
@@ -765,6 +766,7 @@ INSERT INTO temppocgold.fact_spice_combo(
     chef_ingredient_section_name,
     spice_combo,
     spice_combo_names,
+    variation_id,
     fk_dim_company,
     fk_dim_product_variation
 )
@@ -773,6 +775,7 @@ SELECT DISTINCT
     sc.chef_ingredient_section_name,
     sc.spice_combo,
     sc.spice_combo_names,
+    sc.variation_id,
     c.pk_dim_company AS fk_dim_company,
     pv.pk_dim_product_variation AS fk_dim_product_variation
 FROM temppocsilver.pim_spice_combo sc
