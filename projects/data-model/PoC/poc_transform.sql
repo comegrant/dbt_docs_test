@@ -50,11 +50,12 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_billing_agreement (
-  pk_dim_billing_agreement BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_billing_agreement BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   agreement_id INT NOT NULL,
   status VARCHAR(50) NOT NULL,
 --  start_date TIMESTAMP NOT NULL,
-  source VARCHAR(126)
+  source VARCHAR(126),
+  PRIMARY KEY (pk_dim_billing_agreement)
 );
 
 -- COMMAND ----------
@@ -120,9 +121,10 @@ WHERE
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_company(
-  pk_dim_company BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_company BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   company_id CHAR(36) NOT NULL,
-  company_name VARCHAR(512) NOT NULL
+  company_name VARCHAR(512) NOT NULL,
+  PRIMARY KEY(pk_dim_company)
 )
 
 -- COMMAND ----------
@@ -182,12 +184,13 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_address(
-  pk_dim_address BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_address BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   address_id VARCHAR(32),
   postal_code VARCHAR(256) NOT NULL,
   country VARCHAR(32) NOT NULL,
   city VARCHAR(64) NOT NULL,
-  street VARCHAR(256) NOT NULL
+  street VARCHAR(256) NOT NULL,
+  PRIMARY KEY(pk_dim_address)
 )
 
 -- COMMAND ----------
@@ -275,6 +278,17 @@ DROP TABLE IF EXISTS dev.temppocgold.dim_date
 
 -- MAGIC %python
 -- MAGIC dates.write.mode("overwrite").saveAsTable("dev.temppocgold.dim_date")
+
+-- COMMAND ----------
+
+ALTER TABLE dev.temppocgold.dim_date
+ALTER COLUMN pk_dim_date SET NOT NULL;
+
+
+-- COMMAND ----------
+
+ALTER TABLE dev.temppocgold.dim_date
+ADD CONSTRAINT pk_dim_date PRIMARY KEY (pk_dim_date);
 
 -- COMMAND ----------
 
@@ -412,7 +426,7 @@ INSERT INTO
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_product_variation(
-  pk_dim_product_variation BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_product_variation BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   variation_id CHAR(36) NOT NULL,
   company_id CHAR(36) NOT NULL,
   variation_sku VARCHAR(255) NOT NULL,
@@ -421,7 +435,8 @@ CREATE OR REPLACE TABLE dev.temppocgold.dim_product_variation(
   variation_portions INT,
   product_name VARCHAR(255) NOT NULL,
   product_type_name VARCHAR(255) NOT NULL,
-  product_concept_name VARCHAR(255)
+  product_concept_name VARCHAR(255),
+  PRIMARY KEY(pk_dim_product_variation)
 )
 
 -- COMMAND ----------
@@ -535,7 +550,7 @@ LEFT JOIN dev.temppocsilver.cms_address a ON bao.shipping_address_id = a.agreeme
 
 CREATE
 OR REPLACE TABLE dev.temppocgold.fact_order_line(
-  pk_fact_order_line BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_fact_order_line BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   order_id CHAR(36) NOT NULL,
   order_number BIGINT,
   order_line_id CHAR(36) NOT NULL,
@@ -548,7 +563,13 @@ OR REPLACE TABLE dev.temppocgold.fact_order_line(
   fk_dim_company BIGINT NOT NULL,
   fk_dim_billing_agreement BIGINT NOT NULL,
   fk_dim_address BIGINT NOT NULL,
-  fk_dim_product_variation BIGINT NOT NULL
+  fk_dim_product_variation BIGINT NOT NULL,
+  PRIMARY KEY(pk_fact_order_line),
+  FOREIGN KEY(fk_dim_date) REFERENCES dev.temppocgold.dim_date(pk_dim_date),
+  FOREIGN KEY(fk_dim_company) REFERENCES dev.temppocgold.dim_company(pk_dim_company),
+  FOREIGN KEY(fk_dim_billing_agreement) REFERENCES dev.temppocgold.dim_billing_agreement(pk_dim_billing_agreement),
+  FOREIGN KEY(fk_dim_address) REFERENCES dev.temppocgold.dim_address(pk_dim_address),
+  FOREIGN KEY(fk_dim_product_variation) REFERENCES dev.temppocgold.dim_product_variation(pk_dim_product_variation)
 )
 
 -- COMMAND ----------
@@ -646,8 +667,9 @@ FROM
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_where_eat (
-  pk_dim_where_eat BIGINT GENERATED ALWAYS AS IDENTITY,
-  where_will_you_eat STRING
+  pk_dim_where_eat BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+  where_will_you_eat STRING,
+  PRIMARY KEY(pk_dim_where_eat)
 );
 
 -- COMMAND ----------
@@ -659,9 +681,10 @@ FROM dev.temppocsilver.fact_freezed_subscription_survey
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE dev.temppocgold.dim_freeze_reason (
-  pk_dim_freeze_reason BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_dim_freeze_reason BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   main_freeze_reason STRING,
-  sub_freeze_reason STRING
+  sub_freeze_reason STRING,
+  PRIMARY KEY(pk_dim_freeze_reason)
 );
 
 -- COMMAND ----------
@@ -674,13 +697,19 @@ FROM dev.temppocsilver.fact_freezed_subscription_survey
 
 CREATE
 OR REPLACE TABLE dev.temppocgold.fact_freezed_subscription_survey(
-  pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY,
+  pk_fact_freezed_subscription_survey BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
   freeze_reason_comment STRING,
   fk_dim_date BIGINT NOT NULL,
   fk_dim_company BIGINT NOT NULL,
   fk_dim_billing_agreement BIGINT NOT NULL,
   fk_dim_freeze_reason BIGINT NOT NULL,
-  fk_dim_where_eat BIGINT NOT NULL
+  fk_dim_where_eat BIGINT NOT NULL,
+  PRIMARY KEY(pk_fact_freezed_subscription_survey),
+  FOREIGN KEY(fk_dim_date) REFERENCES dev.temppocgold.dim_date(pk_dim_date),
+  FOREIGN KEY(fk_dim_company) REFERENCES dev.temppocgold.dim_company(pk_dim_company),
+  FOREIGN KEY(fk_dim_billing_agreement) REFERENCES dev.temppocgold.dim_billing_agreement(pk_dim_billing_agreement),
+  FOREIGN KEY(fk_dim_freeze_reason) REFERENCES dev.temppocgold.dim_freeze_reason(pk_dim_freeze_reason),
+    FOREIGN KEY(fk_dim_where_eat) REFERENCES dev.temppocgold.dim_where_eat(pk_dim_where_eat)
 )
 
 -- COMMAND ----------
@@ -749,14 +778,17 @@ FROM temppocbronze.pim_spice_combo;
 -- COMMAND ----------
 
 CREATE OR REPLACE TABLE temppocgold.fact_spice_combo(
-    pk_fact_spice_combo BIGINT GENERATED ALWAYS AS IDENTITY,
+    pk_fact_spice_combo BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
     CHEF_INGREDIENT_SECTION_ID BIGINT,
     CHEF_INGREDIENT_SECTION_NAME STRING,
     spice_combo STRING,
     spice_combo_names STRING,
     variation_id CHAR(36),
     fk_dim_company BIGINT,
-    fk_dim_product_variation BIGINT
+    fk_dim_product_variation BIGINT,
+    PRIMARY KEY(pk_fact_spice_combo),
+    FOREIGN KEY(fk_dim_company) REFERENCES dev.temppocgold.dim_company(pk_dim_company),
+    FOREIGN KEY(fk_dim_product_variation) REFERENCES dev.temppocgold.dim_product_variation(pk_dim_product_variation)
 );
 
 -- COMMAND ----------
