@@ -1,3 +1,0 @@
-FROM {{cookiecutter.project_name}}-{{cookiecutter.project_name}}:latest
-
-RUN poetry install

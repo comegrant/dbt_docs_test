@@ -3,44 +3,27 @@ services:
 
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
-  {{cookiecutter.project_name}}:
-    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}
+  base:
+    image: {{cookiecutter.project_name}}-base
     platform: linux/amd64
     build:
       context: ../../
-      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
+      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile
     command: ["echo", "'Hello from {{cookiecutter.project_name}}'"]
     volumes:
       - ./:/opt/projects/{{cookiecutter.project_name}}
       - ./../../packages:/opt/packages
 
-  {{cookiecutter.project_name}}-app:
-    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}-app
+  test:
+    image: {{cookiecutter.project_name}}-test
     platform: linux/amd64
     build:
       context: ../../
-      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile
-    volumes:
-      - ./:/opt/projects/{{cookiecutter.project_name}}
-      - ./../../packages:/opt/packages
-    command: ["python", "-m", "streamlit", "run", "app.py"]
-    ports:
-      - 8501:8501
-    depends_on:
-      - {{cookiecutter.project_name}}
-    env_file:
-      - .env
-
-  {{cookiecutter.project_name}}-test:
-    image: {{cookiecutter.project_name}}-{{cookiecutter.project_name}}-test
-    platform: linux/amd64
-    build:
-      context: ../../
-      dockerfile: projects/{{ cookiecutter.project_name }}/Dockerfile.testing
+      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile.testing
     command: ["python", "-m", "pytest", "-rav", "tests"]
     volumes:
       - ./:/opt/projects/{{cookiecutter.project_name}}
       - ./../../packages:/opt/packages
     depends_on:
-      - {{cookiecutter.project_name}}
+      - base
     profiles: ["test"]

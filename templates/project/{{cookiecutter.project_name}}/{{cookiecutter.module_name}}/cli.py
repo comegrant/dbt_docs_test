@@ -3,11 +3,11 @@ from pydantic_argparser import parse_args
 from {{cookiecutter.module_name}}.main import RunArgs, run
 
 
-async def main() -> None:
+async def run_from_cli() -> None:
     """Main entry point. for the CLI """
     args = parse_args(RunArgs)
     await run(args)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run_from_cli())

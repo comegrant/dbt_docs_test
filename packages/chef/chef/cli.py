@@ -19,6 +19,17 @@ def cli() -> None:
     pass
 
 
+def init_dotenv(project: str) -> None:
+    root_env = root_dir() / ".env"
+    project_env = projects_path() / project / ".env"
+
+    if not root_env.exists():
+        root_env.touch()
+
+    if not project_env.exists():
+        project_env.touch()
+
+
 def root_dir() -> Path:
     if is_root():
         return Path()
@@ -458,6 +469,7 @@ def up(profile_or_service: str | None, project: str | None) -> None:
         )
         return
 
+    init_dotenv(project=name)
     path = compose_path(name)
     echo_action(f"Running project '{name}'")
 
