@@ -72,7 +72,7 @@ class Owner:
             slack_member_id="U058KUJC1PV",
             email="grant.levang@cheffelo.com",
         )
-    
+
     @staticmethod
     def marie() -> Owner:
         return Owner(
@@ -80,7 +80,7 @@ class Owner:
             slack_member_id="U06CHPA1CLU",
             email="marie.borg@cheffelo.com",
         )
-    
+
     @staticmethod
     def anna() -> Owner:
         return Owner(
