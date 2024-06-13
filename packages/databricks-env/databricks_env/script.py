@@ -34,7 +34,9 @@ def setup_env(project: str) -> None:
         os.chdir(project_dir)
         return
 
-    sys.path.remove(project_dir)
+    if project_dir in sys.path:
+        sys.path.remove(project_dir)
+
     new_root_dir = (
         current_dir_str.split(f"projects/{project}")[0] + f"projects/{project}"
     )
