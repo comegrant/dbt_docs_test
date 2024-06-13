@@ -1,0 +1,46 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  dishes-forecasting:
+    image: dishes-forecasting-dishes-forecasting
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/dishes-forecasting/Dockerfile
+    command: ["echo", "'Hello from dishes-forecasting'"]
+    volumes:
+      - ./:/opt/projects/dishes-forecasting
+      - ./../../packages:/opt/packages
+
+  dishes-forecasting-app:
+    image: dishes-forecasting-dishes-forecasting-app
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/dishes-forecasting/Dockerfile
+    volumes:
+      - ./:/opt/projects/dishes-forecasting
+      - ./../../packages:/opt/packages
+    command: ["python", "-m", "streamlit", "run", "app.py"]
+    ports:
+      - 8501:8501
+    depends_on:
+      - dishes-forecasting
+    env_file:
+      - .env
+
+  dishes-forecasting-test:
+    image: dishes-forecasting-dishes-forecasting-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/dishes-forecasting/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/dishes-forecasting
+      - ./../../packages:/opt/packages
+    depends_on:
+      - dishes-forecasting
+    profiles: ["test"]

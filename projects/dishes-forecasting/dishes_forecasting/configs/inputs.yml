@@ -1,0 +1,14 @@
+---
+GL:
+  min_yyyyww: 202101
+  number_of_recipe_steps_default: 6
+  cooking_time_from_default: 20
+  cooking_time_to_default: 30
+  average_recipe_rating_default: 4.0
+  num_recipe_rating_default: 0
+AMK:
+  min_yyyyww: 202101
+LMK:
+  min_yyyyww: 202101
+RT:
+  min_yyyyww: 202201

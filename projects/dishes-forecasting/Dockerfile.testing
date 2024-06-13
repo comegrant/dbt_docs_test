@@ -1,0 +1,3 @@
+FROM dishes-forecasting-dishes-forecasting:latest
+
+RUN poetry install

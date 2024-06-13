@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "dishes-forecasting"
+version = "0.1.0"
+description = "A machine learning algorithm for forecasting stand alone dishes quantity"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "dishes_forecasting"}]
+
+[tool.poetry.dependencies]
+python = "^3.10, <3.13"
+pydantic-settings = "^2.1.0"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+constants = {path = "../../packages/constants", develop = true}
+pandera = "^0.18.3"
+nltk = "^3.8.1"
+scikit-learn = "^1.4.2"
+databricks-feature-engineering = "^0.2.0"
+kaleido = "0.2.1"
+time-machine = {path = "../../packages/time-machine", develop = true}
+pycaret = "^3.3.2"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.30.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
