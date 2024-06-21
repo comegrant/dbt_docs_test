@@ -1,6 +1,15 @@
 # Databricks notebook source
+# temp solution until Mats have fixed docker stuff
+import sys
+
+packages = ["../", "../../../packages/data-connector"]
+sys.path.extend(packages)
+
+# COMMAND ----------
+
 from datetime import datetime, timedelta
-from coredb_connector import load_coredb_query
+
+from data_connector.coredb_connector import load_coredb_full
 
 # COMMAND ----------
 
@@ -27,4 +36,4 @@ query = f"(SELECT * FROM {table} WHERE {date_column} BETWEEN '{from_date}' AND '
 
 # COMMAND ----------
 
-load_coredb_query(dbutils, database, table, query)
+load_coredb_query(database, table, query)
