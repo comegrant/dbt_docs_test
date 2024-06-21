@@ -1,4 +1,3 @@
-version: '3'
 services:
   data-connector-test:
     image: data-connector-data-connector-test

@@ -1,0 +1,61 @@
+import os
+
+from pyspark.sql import SparkSession
+
+
+def create_or_replace_table_query(host: str, database: str, table: str, query: str, user: str, password: str) -> None:
+    """
+    Extract data from CoreDB and load it into a table the bronze layer in Databricks.
+
+    Args:
+        host(str): The hostname of the CoreDB server
+        database (str): The database in CoreDB to extract data from
+        table (str): The table to extract data from
+        query (str): Query to run towards the database in CoreDB
+        user (str): The username for CoreDB
+        password (str): The password for CoreDB
+    """
+
+    spark = SparkSession.builder.getOrCreate()
+    remote_table = (spark.read
+        .format("sqlserver")
+        .option("host", host)
+        .option("port", "1433")
+        .option("user", user)
+        .option("password", password)
+        .option("database", database)
+        .option("query", query)
+        .load()
+    )
+
+    database = database.lower()
+
+    remote_table.write.mode("overwrite").saveAsTable(f"bronze.{database}_{table}")
+
+def load_coredb_full(database: str, table: str) -> None:
+    """
+    Executes query that loads all rows from a table
+
+    Args:
+        database (str): The database in CoreDB to extract data from
+        table (str): The table to extract
+    """
+
+    query = f"(SELECT * FROM {table})"
+    load_coredb_query(database, table, query)
+
+def load_coredb_query(database: str, table: str, query: str, host: str = "brandhub-fog.database.windows.net") -> None:
+    """
+    Executes custom query that loads selected data from a table in CoreDB
+
+    Args:
+        host(str): The hostname of the CoreDB server
+        database (str): The database in CoreDB to extract data from
+        table (str): The table to extract
+        query (str): Query to run towards datab
+    """
+
+    username = os.getenv('CORE_DB_USERNAME')
+    password = os.getenv('CORE_DB_PASSWORD')
+
+    create_or_replace_table_query(host, database, table, query, username, password)

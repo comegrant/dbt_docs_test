@@ -1,5 +1,5 @@
 ---
-name: Reusable Python library CI
+name: Reusable dbt CI
 
 on:
   workflow_call:
@@ -11,20 +11,33 @@ on:
       python-version:
         required: false
         type: string
+      target-env:
+        required: true
+        type: string
+        description: "Target environment in Github Actions"
+      # TODO: Not being used
       install-packages:
         description: "Space seperated list of packages to install using apt-get."
         default: ""
         type: string
+      # TODO: Did not understand the message under here
       # To avoid being billed 360 minutes if a step does not terminate
       # (we've seen the setup-python step below do so!)
       ci-timeout:
         description: "The timeout of the ci job. Default is 25min"
         default: 25
         type: number
+      dbt-target:
+        required: true
+        type: string
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  test-ci:
+  dbt-ci:
+    name: 'Deploy dbt models in ${{inputs.working-directory}}'
     runs-on: ubuntu-22.04
+    # TODO: Do not get this fully
+    environment: ${{ inputs.target-env }}
     timeout-minutes: 30
 
     defaults:
@@ -54,15 +67,14 @@ jobs:
       - name: Install Python packages
         run: poetry install --with dev
 
-      - name: Install extra packages
-        if: ${{ inputs.install-packages != ''}}
-        run: |
-          sudo apt-get install -y ${{ inputs.install-packages }}
+      - name: Install dbt dependencies
+        run: poetry run dbt deps --project-dir ./transform
 
-      - name: Typecheck
-        run: |
-          poetry run ruff check .
-
-      - name: Test
-        run: |
-          poetry run pytest -rav tests  # Assume that tests are in folder "tests/"
+      - name: dbt build
+        # TODO: Should maybe not deploy automatically in prod?
+        run: poetry run dbt build --target=${{ inputs.dbt-target }} --full-refresh --project-dir ./transform --profiles-dir ./transform
+        env:
+          # TODO: Need to add secrets
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DBT_TOKEN }}

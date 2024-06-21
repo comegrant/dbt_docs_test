@@ -1,0 +1,65 @@
+resources:
+  jobs:
+    main_data_model_job:
+      name: main-data-model-job
+
+      #schedule:
+      # Run every day at 9:27 AM
+      # quartz_cron_expression: 21 27 9 * * ?
+      # timezone_id: UTC
+
+      email_notifications:
+        on_failure:
+          - marie.borg@cheffelo.com
+
+      # TODO: Should we have two clusters?
+      job_clusters:
+        - job_cluster_key: main-data-model-ingest
+          new_cluster:
+            num_workers: 1
+            spark_version: 7.3.x-scala2.12
+            node_type_id: Standard_F4s
+            spark_env_vars: {
+              "COREDB_USERNAME": "{{secrets/auth_common/coreDbUsername}}",
+              "COREDB_PASSWORD": "{{secrets/auth_common/coreDbPassword}}"
+            }  
+        - job_cluster_key: main-data-model-transform
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_D3_v2
+            data_security_mode: SINGLE_USER
+            num_workers: 0
+            spark_conf:
+              spark.master: "local[*, 4]"
+              spark.databricks.cluster.profile: singleNode
+            # TODO: what about test and prod?
+            spark_env_vars: {
+              "DBT_ACCESS_TOKEN": "{{secrets/auth_common/databricksToken-dev}}"
+            }
+            custom_tags:
+              ResourceClass: SingleNode
+
+      tasks:
+        - task_key: bronze_cms_full
+          job_cluster_key: main-data-model-ingest
+          notebook_task: 
+            notebook_path: /ingest/bronze_cms_full.py
+          libraries:
+            - pypi:
+                package: -e ${workspace.file_path}/packages/data-connector
+          depends_on: []
+          
+
+        - task_key: dbt
+          job_cluster_key: main-data-model-transform
+          dbt_task:
+            project_directory: ../transform/
+            profiles_directory: ./
+            commands:
+              # The dbt commands to run (see also settings/dbt_profiles/profiles.yml; dev_schema is used in the dev profile)
+              - 'dbt build --target=${bundle.target} --vars "{ dev_schema: ${workspace.current_user.short_name} }"'
+          libraries:
+            - pypi:
+                package: dbt-databricks>=1.0.0,<2.0.0      
+          depends_on: 
+            - task_key: bronze_cms_full

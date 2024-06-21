@@ -1,0 +1,62 @@
+
+# This file defines dbt profiles for deployed dbt jobs.
+transform:
+   target: dev # default target
+   outputs:
+    # The default target when deployed with the Databricks CLI
+    # N.B. when you use dbt from the command line, it uses the profile from .dbt/profiles.yml
+    dev:
+      type: databricks
+      method: http
+      catalog: dev
+      schema: "{{ var('dev_schema') }}"
+
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+
+      # The workspace host / token are provided by Databricks
+      # see databricks.yml for the workspace host used for 'dev'
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+    
+    # Used for the CI pipeline
+    ci:
+      type: databricks
+      method: http
+      catalog: dev
+      schema: ci
+
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+
+      # The workspace host / token are provided by Databricks
+      # see databricks.yml for the workspace host used for 'dev'
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+
+    # The production target when deployed with the Databricks CLI
+    test:
+      type: databricks
+      method: http
+      catalog: test
+      schema: test
+
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+
+      # The workspace host / token are provided by Databricks
+      # see databricks.yml for the workspace host used for 'test'
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+
+
+    # The production target when deployed with the Databricks CLI
+    prod:
+      type: databricks
+      method: http
+      catalog: prod
+      schema: prod
+
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+
+      # The workspace host / token are provided by Databricks
+      # see databricks.yml for the workspace host used for 'prod'
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"

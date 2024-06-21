@@ -10,6 +10,7 @@ on:
       target-env:
         required: true
         type: string
+        description: "Target environment in Github Actions"
       extra-args:
         type: string
         default: ""

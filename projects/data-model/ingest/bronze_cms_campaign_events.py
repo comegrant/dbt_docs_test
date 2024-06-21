@@ -1,8 +1,6 @@
 # Databricks notebook source
-import sys
-sys.path.append('./../reusable')
 from datetime import datetime, timedelta
-from ingest import load_coredb_query
+from coredb_connector import load_coredb_query
 
 # COMMAND ----------
 

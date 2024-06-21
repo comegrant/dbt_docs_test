@@ -1,28 +1,42 @@
 # yaml-language-server: $schema=bundle_config_schema.json
+
+# This file defines the structure of this project and how it is deployed
+# to production using Databricks Asset Bundles.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
 bundle:
   name: data-model
+
+include:
+- resources/*.yml
 
 variables:
   client-id: 
     description: The ID of the service Service Principal
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
-  existing-cluster-id: 
-    description: The ID of an existing cluster called "cluster"
-    lookup:
-      cluster: "cluster"
 
-workspace:
-  host: adb-4291784437205825.5.azuredatabricks.net
-  #root_path: /Users/${var.client-id}/.bundle/${bundle.name}/my-envs/${bundle.target}
+run_as:
+      # This runs as marie.borg@cheffelo.com in production. We could also use a service principal here
+      # using service_principal_name (see the Databricks documentation).
+      service_principal_name: ${var.client-id}
 
+# Deployment targets.
+# The default schema, catalog, etc. for dbt are defined in dbt_profiles/profiles.yml
+targets:
+  dev:
+    default: true
+    # We use 'mode: development' to indicate this is a personal development copy.
+    # Any job schedules and triggers are paused by default.
+    mode: development
+    workspace:
+      host: https://adb-4291784437205825.5.azuredatabricks.net
 
-run_as: 
-  service_principal_name: ${var.client-id}
-
-include:
-  - "bundle*.yml"
-
-
-
-
-
+  test:
+    mode: production
+    workspace:
+      host: https://adb-3194696976104051.11.azuredatabricks.net
+      
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-3181126873992963.3.azuredatabricks.net

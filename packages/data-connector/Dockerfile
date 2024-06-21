@@ -1,35 +1,38 @@
-FROM python:3.11-slim-buster
+FROM databricksruntime/python:14.3-LTS
 
-# install Poetry
-RUN pip install --no-cache-dir poetry
+SHELL ["/bin/bash", "-c"]
+
+# Defaulting to utf-8 to fixe a few charset bugs
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 # set the home directory
 ENV APP_HOME /opt
-ENV PACKAGE_HOME $APP_HOME/packages/data-connector
+ENV SERVICE_HOME $APP_HOME/packages/data-connector/
 
+RUN /databricks/python3/bin/pip install poetry
+
+# copy source code
 WORKDIR $APP_HOME
 COPY packages packages
 
-WORKDIR $PACKAGE_HOME
-
-# Only copy the package file for imporoved build caching
+WORKDIR $SERVICE_HOME
 COPY packages/data-connector/pyproject.toml .
 COPY packages/data-connector/poetry.lock .
 
-# create a dummy package to satisfy Poetry and improve caching
+# create a dummy package to satisfy Poetry
 RUN mkdir -p data_connector && touch data_connector/__init__.py
 
-# install requirements
-RUN poetry config virtualenvs.create false
-RUN poetry install
+RUN source /databricks/python3/bin/activate \
+	&& echo "$(which poetry)" \
+	&& poetry config virtualenvs.create false \
+	&& poetry install --with=dev
+
+
+ENV PYTHONPATH /databricks/python3/bin
+ENV PATH /databricks/python3/bin:$PATH
 
 # copy source code
 COPY packages/data-connector .
 
-# store the git branch and commit hash as env variables
-ARG GIT_BRANCH
-ARG GIT_COMMIT_HASH
-ENV GIT_BRANCH=${GIT_BRANCH}
-ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
-
-CMD python -m pytest tests
+WORKDIR $SERVICE_HOME

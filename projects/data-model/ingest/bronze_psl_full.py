@@ -1,7 +1,5 @@
 # Databricks notebook source
-import sys
-sys.path.append('./../reusable')
-from ingest import load_coredb_full
+from coredb_connector import load_coredb_full
 
 # COMMAND ----------
 

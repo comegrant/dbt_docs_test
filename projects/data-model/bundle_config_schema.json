@@ -526,6 +526,7 @@
                       "description": "If new_cluster, a description of a cluster that is created for each task.",
                       "properties": {
                         "apply_policy_default_values": {
+                          "description": "When set to true, fixed and default values from the policy will be used for fields that are omitted. When set to false, only fixed values from the policy will be applied.",
                           "anyOf": [
                             {
                               "type": "boolean"
@@ -721,20 +722,6 @@
                           },
                           "additionalProperties": false
                         },
-                        "clone_from": {
-                          "type": "object",
-                          "description": "When specified, this clones libraries from a source cluster during the creation of a new cluster.",
-                          "properties": {
-                            "source_cluster_id": {
-                              "type": "string",
-                              "description": "The cluster that is being cloned."
-                            }
-                          },
-                          "additionalProperties": false,
-                          "required": [
-                            "source_cluster_id"
-                          ]
-                        },
                         "cluster_log_conf": {
                           "type": "object",
                           "description": "The configuration for delivering spark logs to a long-term storage destination.\nTwo kinds of destinations (dbfs and s3) are supported. Only one destination can be specified\nfor one cluster. If the conf is given, the logs will be delivered to the destination every\n`5 mins`. The destination of driver logs is `$destination/$clusterId/driver`, while\nthe destination of executor logs is `$destination/$clusterId/executor`.",
@@ -805,9 +792,6 @@
                         "cluster_name": {
                           "type": "string",
                           "description": "Cluster name requested by the user. This doesn't have to be unique.\nIf not specified at creation, the cluster name will be an empty string.\n"
-                        },
-                        "cluster_source": {
-                          "type": "string"
                         },
                         "custom_tags": {
                           "type": "object",
@@ -1659,6 +1643,7 @@
                       "description": "If new_cluster, a description of a new cluster that is created for each run.",
                       "properties": {
                         "apply_policy_default_values": {
+                          "description": "When set to true, fixed and default values from the policy will be used for fields that are omitted. When set to false, only fixed values from the policy will be applied.",
                           "anyOf": [
                             {
                               "type": "boolean"
@@ -1854,20 +1839,6 @@
                           },
                           "additionalProperties": false
                         },
-                        "clone_from": {
-                          "type": "object",
-                          "description": "When specified, this clones libraries from a source cluster during the creation of a new cluster.",
-                          "properties": {
-                            "source_cluster_id": {
-                              "type": "string",
-                              "description": "The cluster that is being cloned."
-                            }
-                          },
-                          "additionalProperties": false,
-                          "required": [
-                            "source_cluster_id"
-                          ]
-                        },
                         "cluster_log_conf": {
                           "type": "object",
                           "description": "The configuration for delivering spark logs to a long-term storage destination.\nTwo kinds of destinations (dbfs and s3) are supported. Only one destination can be specified\nfor one cluster. If the conf is given, the logs will be delivered to the destination every\n`5 mins`. The destination of driver logs is `$destination/$clusterId/driver`, while\nthe destination of executor logs is `$destination/$clusterId/executor`.",
@@ -1938,9 +1909,6 @@
                         "cluster_name": {
                           "type": "string",
                           "description": "Cluster name requested by the user. This doesn't have to be unique.\nIf not specified at creation, the cluster name will be an empty string.\n"
-                        },
-                        "cluster_source": {
-                          "type": "string"
                         },
                         "custom_tags": {
                           "type": "object",
@@ -2512,7 +2480,6 @@
                         },
                         "python_named_params": {
                           "type": "object",
-                          "description": "A map from keys to values for jobs with Python wheel task, for example `\"python_named_params\": {\"name\": \"task\", \"data\": \"dbfs:/path/to/data.json\"}`.",
                           "additionalProperties": {
                             "type": "string"
                           }
@@ -2768,7 +2735,7 @@
                     },
                     "webhook_notifications": {
                       "type": "object",
-                      "description": "A collection of system notification IDs to notify when runs of this job begin or complete.",
+                      "description": "A collection of system notification IDs to notify when runs of this task begin or complete. The default behavior is to not send any system notifications.",
                       "properties": {
                         "on_duration_warning_threshold_exceeded": {
                           "type": "array",
@@ -3227,6 +3194,18 @@
                               "type": "object",
                               "description": "OpenAI Config. Only required if the provider is 'openai'.",
                               "properties": {
+                                "microsoft_entra_client_id": {
+                                  "type": "string",
+                                  "description": "This field is only required for Azure AD OpenAI and is the Microsoft Entra Client ID.\n"
+                                },
+                                "microsoft_entra_client_secret": {
+                                  "type": "string",
+                                  "description": "The Databricks secret key reference for the Microsoft Entra Client Secret that is\nonly required for Azure AD OpenAI.\n"
+                                },
+                                "microsoft_entra_tenant_id": {
+                                  "type": "string",
+                                  "description": "This field is only required for Azure AD OpenAI and is the Microsoft Entra Tenant ID.\n"
+                                },
                                 "openai_api_base": {
                                   "type": "string",
                                   "description": "This is the base URL for the OpenAI API (default: \"https://api.openai.com/v1\").\nFor Azure OpenAI, this field is required, and is the base URL for the Azure OpenAI API service\nprovided by Azure.\n"
@@ -3252,10 +3231,7 @@
                                   "description": "This is an optional field to specify the organization in OpenAI or Azure OpenAI.\n"
                                 }
                               },
-                              "additionalProperties": false,
-                              "required": [
-                                "openai_api_key"
-                              ]
+                              "additionalProperties": false
                             },
                             "palm_config": {
                               "type": "object",
@@ -3362,7 +3338,7 @@
                         },
                         "model_name": {
                           "type": "string",
-                          "description": "The name of the model in Databricks Model Registry to be served or if the model resides in Unity Catalog, the full name of model, \nin the form of __catalog_name__.__schema_name__.__model_name__.\n"
+                          "description": "The name of the model in Databricks Model Registry to be served or if the model resides in Unity Catalog, the full name of model,\nin the form of __catalog_name__.__schema_name__.__model_name__.\n"
                         },
                         "model_version": {
                           "type": "string",
@@ -3503,6 +3479,18 @@
                     "renewal_period"
                   ]
                 }
+              },
+              "route_optimized": {
+                "description": "Enable route optimization for the serving endpoint.",
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                  }
+                ]
               },
               "tags": {
                 "type": "array",
@@ -4326,6 +4314,29 @@
                 },
                 "additionalProperties": false
               },
+              "gateway_definition": {
+                "type": "object",
+                "description": "The definition of a gateway pipeline to support CDC.",
+                "properties": {
+                  "connection_id": {
+                    "type": "string",
+                    "description": "Immutable. The Unity Catalog connection this gateway pipeline uses to communicate with the source."
+                  },
+                  "gateway_storage_catalog": {
+                    "type": "string",
+                    "description": "Required, Immutable. The name of the catalog for the gateway pipeline's storage location."
+                  },
+                  "gateway_storage_name": {
+                    "type": "string",
+                    "description": "Required. The Unity Catalog-compatible naming for the gateway storage location.\nThis is the destination to use for the data that is extracted by the gateway.\nDelta Live Tables system will automatically create the storage location under the catalog and schema.\n"
+                  },
+                  "gateway_storage_schema": {
+                    "type": "string",
+                    "description": "Required, Immutable. The name of the schema for the gateway pipelines's storage location."
+                  }
+                },
+                "additionalProperties": false
+              },
               "id": {
                 "type": "string",
                 "description": "Unique identifier for this pipeline."
@@ -4367,6 +4378,36 @@
                             "source_schema": {
                               "type": "string",
                               "description": "Required. Schema name in the source database."
+                            },
+                            "table_configuration": {
+                              "type": "object",
+                              "description": "Configuration settings to control the ingestion of tables. These settings are applied to all tables in this schema and override the table_configuration defined in the ManagedIngestionPipelineDefinition object.",
+                              "properties": {
+                                "primary_keys": {
+                                  "type": "array",
+                                  "description": "The primary key of the table used to apply changes.",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "salesforce_include_formula_fields": {
+                                  "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "string",
+                                      "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                                    }
+                                  ]
+                                },
+                                "scd_type": {
+                                  "type": "string",
+                                  "description": "The SCD type to use to ingest the table."
+                                }
+                              },
+                              "additionalProperties": false
                             }
                           },
                           "additionalProperties": false
@@ -4398,6 +4439,36 @@
                             "source_table": {
                               "type": "string",
                               "description": "Required. Table name in the source database."
+                            },
+                            "table_configuration": {
+                              "type": "object",
+                              "description": "Configuration settings to control the ingestion of tables. These settings override the table_configuration defined in the ManagedIngestionPipelineDefinition object and the SchemaSpec.",
+                              "properties": {
+                                "primary_keys": {
+                                  "type": "array",
+                                  "description": "The primary key of the table used to apply changes.",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "salesforce_include_formula_fields": {
+                                  "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "string",
+                                      "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                                    }
+                                  ]
+                                },
+                                "scd_type": {
+                                  "type": "string",
+                                  "description": "The SCD type to use to ingest the table."
+                                }
+                              },
+                              "additionalProperties": false
                             }
                           },
                           "additionalProperties": false
@@ -4405,6 +4476,36 @@
                       },
                       "additionalProperties": false
                     }
+                  },
+                  "table_configuration": {
+                    "type": "object",
+                    "description": "Configuration settings to control the ingestion of tables. These settings are applied to all tables in the pipeline.",
+                    "properties": {
+                      "primary_keys": {
+                        "type": "array",
+                        "description": "The primary key of the table used to apply changes.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "salesforce_include_formula_fields": {
+                        "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "string",
+                            "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                          }
+                        ]
+                      },
+                      "scd_type": {
+                        "type": "string",
+                        "description": "The SCD type to use to ingest the table."
+                      }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false
@@ -4579,6 +4680,208 @@
               }
             },
             "additionalProperties": false
+          }
+        },
+        "quality_monitors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "assets_dir": {
+                "type": "string"
+              },
+              "baseline_table_name": {
+                "type": "string"
+              },
+              "custom_metrics": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "definition": {
+                      "type": "string"
+                    },
+                    "input_columns": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "output_data_type": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "definition",
+                    "input_columns",
+                    "name",
+                    "output_data_type",
+                    "type"
+                  ]
+                }
+              },
+              "data_classification_config": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "inference_log": {
+                "type": "object",
+                "properties": {
+                  "granularities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "label_col": {
+                    "type": "string"
+                  },
+                  "model_id_col": {
+                    "type": "string"
+                  },
+                  "prediction_col": {
+                    "type": "string"
+                  },
+                  "prediction_proba_col": {
+                    "type": "string"
+                  },
+                  "problem_type": {
+                    "type": "string"
+                  },
+                  "timestamp_col": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "granularities",
+                  "model_id_col",
+                  "prediction_col",
+                  "problem_type",
+                  "timestamp_col"
+                ]
+              },
+              "notifications": {
+                "type": "object",
+                "properties": {
+                  "on_failure": {
+                    "type": "object",
+                    "properties": {
+                      "email_addresses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "on_new_classification_tag_detected": {
+                    "type": "object",
+                    "properties": {
+                      "email_addresses": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "output_schema_name": {
+                "type": "string"
+              },
+              "schedule": {
+                "type": "object",
+                "properties": {
+                  "pause_status": {
+                    "type": "string"
+                  },
+                  "quartz_cron_expression": {
+                    "type": "string"
+                  },
+                  "timezone_id": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "quartz_cron_expression",
+                  "timezone_id"
+                ]
+              },
+              "skip_builtin_dashboard": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                  }
+                ]
+              },
+              "slicing_exprs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "snapshot": {
+                "type": "object",
+                "additionalProperties": false
+              },
+              "time_series": {
+                "type": "object",
+                "properties": {
+                  "granularities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "timestamp_col": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "granularities",
+                  "timestamp_col"
+                ]
+              },
+              "warehouse_id": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "assets_dir",
+              "output_schema_name"
+            ]
           }
         },
         "registered_models": {
@@ -5190,6 +5493,7 @@
                             "description": "If new_cluster, a description of a cluster that is created for each task.",
                             "properties": {
                               "apply_policy_default_values": {
+                                "description": "When set to true, fixed and default values from the policy will be used for fields that are omitted. When set to false, only fixed values from the policy will be applied.",
                                 "anyOf": [
                                   {
                                     "type": "boolean"
@@ -5385,20 +5689,6 @@
                                 },
                                 "additionalProperties": false
                               },
-                              "clone_from": {
-                                "type": "object",
-                                "description": "When specified, this clones libraries from a source cluster during the creation of a new cluster.",
-                                "properties": {
-                                  "source_cluster_id": {
-                                    "type": "string",
-                                    "description": "The cluster that is being cloned."
-                                  }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "source_cluster_id"
-                                ]
-                              },
                               "cluster_log_conf": {
                                 "type": "object",
                                 "description": "The configuration for delivering spark logs to a long-term storage destination.\nTwo kinds of destinations (dbfs and s3) are supported. Only one destination can be specified\nfor one cluster. If the conf is given, the logs will be delivered to the destination every\n`5 mins`. The destination of driver logs is `$destination/$clusterId/driver`, while\nthe destination of executor logs is `$destination/$clusterId/executor`.",
@@ -5469,9 +5759,6 @@
                               "cluster_name": {
                                 "type": "string",
                                 "description": "Cluster name requested by the user. This doesn't have to be unique.\nIf not specified at creation, the cluster name will be an empty string.\n"
-                              },
-                              "cluster_source": {
-                                "type": "string"
                               },
                               "custom_tags": {
                                 "type": "object",
@@ -6323,6 +6610,7 @@
                             "description": "If new_cluster, a description of a new cluster that is created for each run.",
                             "properties": {
                               "apply_policy_default_values": {
+                                "description": "When set to true, fixed and default values from the policy will be used for fields that are omitted. When set to false, only fixed values from the policy will be applied.",
                                 "anyOf": [
                                   {
                                     "type": "boolean"
@@ -6518,20 +6806,6 @@
                                 },
                                 "additionalProperties": false
                               },
-                              "clone_from": {
-                                "type": "object",
-                                "description": "When specified, this clones libraries from a source cluster during the creation of a new cluster.",
-                                "properties": {
-                                  "source_cluster_id": {
-                                    "type": "string",
-                                    "description": "The cluster that is being cloned."
-                                  }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "source_cluster_id"
-                                ]
-                              },
                               "cluster_log_conf": {
                                 "type": "object",
                                 "description": "The configuration for delivering spark logs to a long-term storage destination.\nTwo kinds of destinations (dbfs and s3) are supported. Only one destination can be specified\nfor one cluster. If the conf is given, the logs will be delivered to the destination every\n`5 mins`. The destination of driver logs is `$destination/$clusterId/driver`, while\nthe destination of executor logs is `$destination/$clusterId/executor`.",
@@ -6602,9 +6876,6 @@
                               "cluster_name": {
                                 "type": "string",
                                 "description": "Cluster name requested by the user. This doesn't have to be unique.\nIf not specified at creation, the cluster name will be an empty string.\n"
-                              },
-                              "cluster_source": {
-                                "type": "string"
                               },
                               "custom_tags": {
                                 "type": "object",
@@ -7176,7 +7447,6 @@
                               },
                               "python_named_params": {
                                 "type": "object",
-                                "description": "A map from keys to values for jobs with Python wheel task, for example `\"python_named_params\": {\"name\": \"task\", \"data\": \"dbfs:/path/to/data.json\"}`.",
                                 "additionalProperties": {
                                   "type": "string"
                                 }
@@ -7432,7 +7702,7 @@
                           },
                           "webhook_notifications": {
                             "type": "object",
-                            "description": "A collection of system notification IDs to notify when runs of this job begin or complete.",
+                            "description": "A collection of system notification IDs to notify when runs of this task begin or complete. The default behavior is to not send any system notifications.",
                             "properties": {
                               "on_duration_warning_threshold_exceeded": {
                                 "type": "array",
@@ -7891,6 +8161,18 @@
                                     "type": "object",
                                     "description": "OpenAI Config. Only required if the provider is 'openai'.",
                                     "properties": {
+                                      "microsoft_entra_client_id": {
+                                        "type": "string",
+                                        "description": "This field is only required for Azure AD OpenAI and is the Microsoft Entra Client ID.\n"
+                                      },
+                                      "microsoft_entra_client_secret": {
+                                        "type": "string",
+                                        "description": "The Databricks secret key reference for the Microsoft Entra Client Secret that is\nonly required for Azure AD OpenAI.\n"
+                                      },
+                                      "microsoft_entra_tenant_id": {
+                                        "type": "string",
+                                        "description": "This field is only required for Azure AD OpenAI and is the Microsoft Entra Tenant ID.\n"
+                                      },
                                       "openai_api_base": {
                                         "type": "string",
                                         "description": "This is the base URL for the OpenAI API (default: \"https://api.openai.com/v1\").\nFor Azure OpenAI, this field is required, and is the base URL for the Azure OpenAI API service\nprovided by Azure.\n"
@@ -7916,10 +8198,7 @@
                                         "description": "This is an optional field to specify the organization in OpenAI or Azure OpenAI.\n"
                                       }
                                     },
-                                    "additionalProperties": false,
-                                    "required": [
-                                      "openai_api_key"
-                                    ]
+                                    "additionalProperties": false
                                   },
                                   "palm_config": {
                                     "type": "object",
@@ -8026,7 +8305,7 @@
                               },
                               "model_name": {
                                 "type": "string",
-                                "description": "The name of the model in Databricks Model Registry to be served or if the model resides in Unity Catalog, the full name of model, \nin the form of __catalog_name__.__schema_name__.__model_name__.\n"
+                                "description": "The name of the model in Databricks Model Registry to be served or if the model resides in Unity Catalog, the full name of model,\nin the form of __catalog_name__.__schema_name__.__model_name__.\n"
                               },
                               "model_version": {
                                 "type": "string",
@@ -8167,6 +8446,18 @@
                           "renewal_period"
                         ]
                       }
+                    },
+                    "route_optimized": {
+                      "description": "Enable route optimization for the serving endpoint.",
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                        }
+                      ]
                     },
                     "tags": {
                       "type": "array",
@@ -8990,6 +9281,29 @@
                       },
                       "additionalProperties": false
                     },
+                    "gateway_definition": {
+                      "type": "object",
+                      "description": "The definition of a gateway pipeline to support CDC.",
+                      "properties": {
+                        "connection_id": {
+                          "type": "string",
+                          "description": "Immutable. The Unity Catalog connection this gateway pipeline uses to communicate with the source."
+                        },
+                        "gateway_storage_catalog": {
+                          "type": "string",
+                          "description": "Required, Immutable. The name of the catalog for the gateway pipeline's storage location."
+                        },
+                        "gateway_storage_name": {
+                          "type": "string",
+                          "description": "Required. The Unity Catalog-compatible naming for the gateway storage location.\nThis is the destination to use for the data that is extracted by the gateway.\nDelta Live Tables system will automatically create the storage location under the catalog and schema.\n"
+                        },
+                        "gateway_storage_schema": {
+                          "type": "string",
+                          "description": "Required, Immutable. The name of the schema for the gateway pipelines's storage location."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
                     "id": {
                       "type": "string",
                       "description": "Unique identifier for this pipeline."
@@ -9031,6 +9345,36 @@
                                   "source_schema": {
                                     "type": "string",
                                     "description": "Required. Schema name in the source database."
+                                  },
+                                  "table_configuration": {
+                                    "type": "object",
+                                    "description": "Configuration settings to control the ingestion of tables. These settings are applied to all tables in this schema and override the table_configuration defined in the ManagedIngestionPipelineDefinition object.",
+                                    "properties": {
+                                      "primary_keys": {
+                                        "type": "array",
+                                        "description": "The primary key of the table used to apply changes.",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "salesforce_include_formula_fields": {
+                                        "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                                        "anyOf": [
+                                          {
+                                            "type": "boolean"
+                                          },
+                                          {
+                                            "type": "string",
+                                            "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                                          }
+                                        ]
+                                      },
+                                      "scd_type": {
+                                        "type": "string",
+                                        "description": "The SCD type to use to ingest the table."
+                                      }
+                                    },
+                                    "additionalProperties": false
                                   }
                                 },
                                 "additionalProperties": false
@@ -9062,6 +9406,36 @@
                                   "source_table": {
                                     "type": "string",
                                     "description": "Required. Table name in the source database."
+                                  },
+                                  "table_configuration": {
+                                    "type": "object",
+                                    "description": "Configuration settings to control the ingestion of tables. These settings override the table_configuration defined in the ManagedIngestionPipelineDefinition object and the SchemaSpec.",
+                                    "properties": {
+                                      "primary_keys": {
+                                        "type": "array",
+                                        "description": "The primary key of the table used to apply changes.",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "salesforce_include_formula_fields": {
+                                        "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                                        "anyOf": [
+                                          {
+                                            "type": "boolean"
+                                          },
+                                          {
+                                            "type": "string",
+                                            "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                                          }
+                                        ]
+                                      },
+                                      "scd_type": {
+                                        "type": "string",
+                                        "description": "The SCD type to use to ingest the table."
+                                      }
+                                    },
+                                    "additionalProperties": false
                                   }
                                 },
                                 "additionalProperties": false
@@ -9069,6 +9443,36 @@
                             },
                             "additionalProperties": false
                           }
+                        },
+                        "table_configuration": {
+                          "type": "object",
+                          "description": "Configuration settings to control the ingestion of tables. These settings are applied to all tables in the pipeline.",
+                          "properties": {
+                            "primary_keys": {
+                              "type": "array",
+                              "description": "The primary key of the table used to apply changes.",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "salesforce_include_formula_fields": {
+                              "description": "If true, formula fields defined in the table are included in the ingestion. This setting is only valid for the Salesforce connector",
+                              "anyOf": [
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "string",
+                                  "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                                }
+                              ]
+                            },
+                            "scd_type": {
+                              "type": "string",
+                              "description": "The SCD type to use to ingest the table."
+                            }
+                          },
+                          "additionalProperties": false
                         }
                       },
                       "additionalProperties": false
@@ -9243,6 +9647,208 @@
                     }
                   },
                   "additionalProperties": false
+                }
+              },
+              "quality_monitors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "assets_dir": {
+                      "type": "string"
+                    },
+                    "baseline_table_name": {
+                      "type": "string"
+                    },
+                    "custom_metrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "definition": {
+                            "type": "string"
+                          },
+                          "input_columns": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "output_data_type": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "definition",
+                          "input_columns",
+                          "name",
+                          "output_data_type",
+                          "type"
+                        ]
+                      }
+                    },
+                    "data_classification_config": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "anyOf": [
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                            }
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "inference_log": {
+                      "type": "object",
+                      "properties": {
+                        "granularities": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "label_col": {
+                          "type": "string"
+                        },
+                        "model_id_col": {
+                          "type": "string"
+                        },
+                        "prediction_col": {
+                          "type": "string"
+                        },
+                        "prediction_proba_col": {
+                          "type": "string"
+                        },
+                        "problem_type": {
+                          "type": "string"
+                        },
+                        "timestamp_col": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "granularities",
+                        "model_id_col",
+                        "prediction_col",
+                        "problem_type",
+                        "timestamp_col"
+                      ]
+                    },
+                    "notifications": {
+                      "type": "object",
+                      "properties": {
+                        "on_failure": {
+                          "type": "object",
+                          "properties": {
+                            "email_addresses": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "on_new_classification_tag_detected": {
+                          "type": "object",
+                          "properties": {
+                            "email_addresses": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "output_schema_name": {
+                      "type": "string"
+                    },
+                    "schedule": {
+                      "type": "object",
+                      "properties": {
+                        "pause_status": {
+                          "type": "string"
+                        },
+                        "quartz_cron_expression": {
+                          "type": "string"
+                        },
+                        "timezone_id": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "quartz_cron_expression",
+                        "timezone_id"
+                      ]
+                    },
+                    "skip_builtin_dashboard": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "\\$\\{([a-zA-Z]+([-_]?[a-zA-Z0-9]+)*(\\.[a-zA-Z]+([-_]?[a-zA-Z0-9]+)*)*)\\}"
+                        }
+                      ]
+                    },
+                    "slicing_exprs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "snapshot": {
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "time_series": {
+                      "type": "object",
+                      "properties": {
+                        "granularities": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "timestamp_col": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "granularities",
+                        "timestamp_col"
+                      ]
+                    },
+                    "warehouse_id": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "assets_dir",
+                    "output_schema_name"
+                  ]
                 }
               },
               "registered_models": {
