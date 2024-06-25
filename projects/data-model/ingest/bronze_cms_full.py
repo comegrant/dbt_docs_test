@@ -1,9 +1,7 @@
 # Databricks notebook source
 # temp solution until Mats have fixed docker stuff
 import sys
-
-packages = ["../", "../../../packages/data-connector"]
-sys.path.extend(packages)
+sys.path.append('../../../packages/data-connector')
 
 # COMMAND ----------
 
