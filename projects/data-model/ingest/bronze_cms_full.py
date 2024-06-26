@@ -1,5 +1,4 @@
 # Databricks notebook source
-# temp solution until Mats have fixed docker stuff
 import sys
 sys.path.append('../../../packages/data-connector')
 
