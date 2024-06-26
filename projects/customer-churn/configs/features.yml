@@ -1,0 +1,46 @@
+target_table: # Table containing the label
+  name: customer_churn
+  columns:
+    primary_keys:
+      - agreement_id
+      - company_id
+    feature_columns:
+      - forecast_status
+target_col: forecast_status
+target_container: mltesting
+source_catalog_name: dev
+source_catalog_schema: mltesting
+feature_container_name: mlfeaturetesting
+feature_tables:
+  customer_snapshot_features:
+    name: customer_snapshot_features
+    columns:
+      primary_keys:
+        - agreement_id
+        - company_id
+      timeseries_columns:
+        - snapshot_date
+      feature_columns:
+        - agreement_start_year
+        - agreement_start_week
+        - agreement_first_delivery_year
+        - agreement_first_delivery_week
+        - agreement_status
+        - customer_since_weeks
+        - total_normal_activities
+        - number_of_normal_activities_last_week
+        - average_normal_activity_difference
+        - number_of_normal_activities_last_N_weeks
+        - total_account_activities
+        - number_of_account_activities_last_week
+        - average_account_activity_difference
+        - number_of_account_activities_last_N_weeks
+        - weeks_since_last_delivery
+        - number_of_total_orders
+        - planned_delivery
+        - sub_segment_name
+        - bargain_hunter
+        - number_of_complaints
+        - total_complaints
+        - number_of_complaints_last_N_weeks
+    table_description: Customer features at different snapshot date

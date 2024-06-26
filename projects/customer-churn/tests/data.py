@@ -1,6 +1,6 @@
 import logging
 import random
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 from customer_churn.data.models.complaints import Complaints
@@ -20,8 +20,8 @@ def generate_random_date(start_date: datetime, end_date: datetime) -> datetime:
 
 
 def generate_random_timestamp(start_year: int, end_year: int) -> datetime:
-    start_date = datetime(start_year, 1, 1, tzinfo=UTC)
-    end_date = datetime(end_year, 12, 31, 23, 59, 59, tzinfo=UTC)
+    start_date = datetime(start_year, 1, 1, tzinfo=timezone.utc)
+    end_date = datetime(end_year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
     delta = end_date - start_date
     int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
     random_second = random.randrange(int_delta)
@@ -39,8 +39,8 @@ def generate_complaints_data(rows: int = 10) -> pd.DataFrame:
     for _ in range(rows):
         year = random.choice([2020, 2021])
         registration_date = generate_random_date(
-            start_date=datetime(year, 1, 1, tzinfo=UTC),
-            end_date=datetime(year, 12, 31, tzinfo=UTC),
+            start_date=datetime(year, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(year, 12, 31, tzinfo=timezone.utc),
         )
         record = Complaints(
             agreement_id=random.randint(100000, 999999),
@@ -98,16 +98,16 @@ def generate_customer_data(rows: int = 10) -> pd.DataFrame:
     records = []
     for _ in range(rows):
         agreement_creation_date = generate_random_date(
-            datetime(2020, 1, 1, tzinfo=UTC),
-            datetime(2020, 12, 31, tzinfo=UTC),
+            datetime(2020, 1, 1, tzinfo=timezone.utc),
+            datetime(2020, 12, 31, tzinfo=timezone.utc),
         )
         agreement_start_date = agreement_creation_date + timedelta(
             days=random.randint(1, 30),
         )
         agreement_first_delivery_date = agreement_start_date
         last_delivery_date = generate_random_date(
-            datetime(2021, 1, 1, tzinfo=UTC),
-            datetime(2021, 12, 31, tzinfo=UTC),
+            datetime(2021, 1, 1, tzinfo=timezone.utc),
+            datetime(2021, 12, 31, tzinfo=timezone.utc),
         )
         next_estimated_delivery_date = last_delivery_date + timedelta(
             days=random.randint(7, 30),
@@ -197,8 +197,8 @@ def generate_orders_data(rows: int = 10) -> pd.DataFrame:
     for _ in range(rows):
         year = random.choice([2020, 2021])
         delivery_date = generate_random_date(
-            start_date=datetime(year, 1, 1, tzinfo=UTC),
-            end_date=datetime(year, 12, 31, tzinfo=UTC),
+            start_date=datetime(year, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(year, 12, 31, tzinfo=timezone.utc),
         )
         record = OrderRecord(
             agreement_id=112211,

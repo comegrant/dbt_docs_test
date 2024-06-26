@@ -7,7 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 def is_running_databricks() -> bool:
-    return os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+    return (
+        os.getenv("DATABRICKS_RUNTIME_VERSION") is not None
+        or os.getenv("RUN_DATABRICKS") is not None
+    )
 
 
 if not is_running_databricks():

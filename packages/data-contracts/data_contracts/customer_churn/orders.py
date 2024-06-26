@@ -45,5 +45,4 @@ class CustomersAggregated:
     month = Int32()
     week = Int32()
     number_of_total_orders = Int32()
-    number_of_forecast_orders = Int32()
     weeks_since_last_delivery = Int32()

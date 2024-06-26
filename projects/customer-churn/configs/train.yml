@@ -1,0 +1,21 @@
+
+target_col: forecast_status
+train_start_yyyyww: 202101
+num_holdout_weeks: 2
+buy_history_churn_weeks: 4
+
+
+ml_model_config:
+  num_holdout_weeks: 2
+  target: forecast_status
+  fold_strategy: kfold
+  data_split_shuffle: False
+  transform_target: True
+  transform_target_method: yeo-johnson
+  verbose: False
+  html: False
+  n_select: 3
+  model_list:
+    - lr
+    - lightgbm
+    - et

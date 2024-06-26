@@ -1,3 +1,4 @@
+bundle_config_schema.json
 connection.json
 notebooks/models/
 mlruns/

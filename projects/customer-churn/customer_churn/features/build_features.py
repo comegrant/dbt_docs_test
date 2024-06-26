@@ -1,122 +1,102 @@
 import logging
 from datetime import datetime
+from importlib import import_module
 
-import pandas as pd
 from constants.companies import Company
-from data_connector.databricks_connector import is_running_databricks, read_data
+from databricks.feature_engineering import FeatureEngineeringClient
+from pyspark.sql import DataFrame, SparkSession
 
-from customer_churn.paths import DATA_PROCESSED_DIR
+from customer_churn.features.customers import get_customers_features_for_date
+from customer_churn.models.features import FeaturesConfig, FeatureTableConfig
 
 logger = logging.getLogger(__name__)
+spark = SparkSession.getActiveSession()
 
 
-def read_files(
-    company: Company,
-    start_date: datetime,
-    end_date: datetime,
+def generate_features(
     env: str,
-    schema: str = "mltesting",
-) -> pd.DataFrame:
-    if is_running_databricks():
-        sql_query = (
-            f"SELECT * FROM {env}.{schema}.customer_churn_snapshot"
-            + f" WHERE snapshot_date BETWEEN '{start_date}' AND '{end_date}'"
-            + f" AND company_id = '{company.company_id}'"
-        )
-
-        logger.info(sql_query)
-        df = read_data(sql_query)
-    else:
-        df = pd.read_csv(
-            DATA_PROCESSED_DIR / company.company_code / "full_snapshot.csv",
-        )
-    return df
-
-
-def get_features(
     company: Company,
-    start_date: datetime,
-    end_date: datetime,
+    snapshot_date: datetime,
+    features_config: FeaturesConfig,
+) -> None:
+    """
+    Generate features for customers, events, orders, crm segments and complaints
+    """
+    feature_group_to_include = [
+        "events",
+        "orders",
+        "crm_segments",
+        "complaints",
+    ]
+    feature_table_config = features_config.feature_tables
+
+    fe = FeatureEngineeringClient()
+    df_customers_features = get_customers_features_for_date(env, company, snapshot_date)
+    feature_columns = feature_table_config[0].columns.feature_columns
+
+    for feature_set in feature_group_to_include:
+        logger.info(f"Generating {feature_set} features")
+        func = getattr(
+            import_module(f"customer_churn.features.{feature_set}"),
+            f"get_{feature_set}_features_for_date",
+        )
+        df = func(env, company, snapshot_date)
+
+        df_customers_features = df_customers_features.join(
+            df, on="agreement_id", how="left"
+        )
+
+        logger.info(f"Saving {feature_set} features to feature store")
+
+    df_customers_features = df_customers_features.fillna(0, subset=feature_columns)
+
+    logger.info("Saving customers features to feature store")
+    save_feature_table(
+        fe,
+        df_customers_features,
+        env,
+        feature_container=features_config.feature_container_name,
+        feature_table_config=feature_table_config[0],
+        feature_columns=feature_columns,
+    )
+
+
+def save_feature_table(
+    fe: FeatureEngineeringClient,
+    df: DataFrame,
     env: str,
-) -> pd.DataFrame:
-    logger.info(
-        f"Get features for {company.company_name} from {start_date} to {end_date}",
-    )
+    feature_container: str,
+    feature_table_config: FeatureTableConfig,
+    feature_columns: list,
+) -> None:
+    """Save a pyspark dataframe as a feature table in feature store
 
-    # if local, read from local file, else download from Databricks mlflow
-    df = read_files(company, start_date, end_date, env)
+    Args:
+        fe (FeatureEngineeringClient)
+        df (DataFrame): pyspark dataframe to be saved
+        env (str): the env of the workspace. dev/prod
+        feature_container (str): container of the feature table
+        feature_table_name (str): the table to be saved into
+        primary_keys (list[str]): the primary keys of the table
+        table_description (str | None, optional).
+    """
+    feature_table_name = feature_table_config.name
+    primary_keys = feature_table_config.columns.primary_keys
+    timeseries_columns = feature_table_config.columns.timeseries_columns
+    table_description = feature_table_config.description
 
-    if df.empty:
-        raise ValueError("Empty features!")
+    feature_table_name_full = f"{env}.{feature_container}.{feature_table_name}"
+    df = df.select(primary_keys + timeseries_columns + feature_columns)
 
-    return df
-
-
-def get_training_data_databricks(
-    company: Company,
-    start_date: datetime | None = None,
-    end_date: datetime | None = None,
-    env: str = "dev",
-    schema: str = "mltesting",
-) -> pd.DataFrame:
-    if end_date is None:
-        sql_query_end_date = (
-            "SELECT MAX(snapshot_date) as max_snapshot_date"
-            + f" FROM {env}.{schema}.customer_churn_snapshot"
+    if not spark.catalog.tableExists(feature_table_name_full):
+        logger.info(f"Creating table {feature_table_name_full}...")
+        fe.create_table(
+            name=feature_table_name_full,
+            primary_keys=primary_keys + timeseries_columns,
+            df=df,
+            schema=df.schema,
+            description=table_description,
+            timeseries_columns=timeseries_columns,
         )
-        end_date = pd.to_datetime(
-            read_data(sql_query_end_date.format(env=env, schema=schema))[
-                "max_snapshot_date"
-            ].iloc[0],
-        )
-
-    if start_date is None:
-        start_date = end_date - pd.Timedelta(days=30)
-
-    logger.info(
-        f"Fetching data for end date to {end_date} and start date to {start_date}",
-    )
-
-    sql_query = (
-        "SELECT * FROM {env}.{schema}.customer_churn_snapshot"
-        + " WHERE snapshot_date BETWEEN '{start_date}' AND '{end_date}'"
-        + " AND company_id = '{company_id}'"
-    )
-    df = read_data(
-        sql_query.format(
-            env=env,
-            schema=schema,
-            start_date=start_date,
-            end_date=end_date,
-            company_id=company.company_id,
-        ),
-    )
-    return df
-
-
-def load_local_training_data(company: Company) -> pd.DataFrame:
-    df = pd.read_csv(DATA_PROCESSED_DIR / company.company_code / "full_snapshot.csv")
-    return df
-
-
-def load_training_data(
-    company: Company,
-    start_date: datetime | None = None,
-    end_date: datetime | None = None,
-    env: str = "dev",
-    schema: str = "mltesting",
-) -> pd.DataFrame:
-    logger.info(
-        f"Load training data for {company.company_name} from {start_date} to {end_date}",
-    )
-
-    if is_running_databricks():
-        return get_training_data_databricks(
-            company=company,
-            start_date=start_date,
-            end_date=end_date,
-            env=env,
-            schema=schema,
-        )
-
-    return load_local_training_data(company)
+    logger.info(f"Writing into {feature_table_name_full}...")
+    fe.write_table(name=feature_table_name_full, df=df, mode="merge")

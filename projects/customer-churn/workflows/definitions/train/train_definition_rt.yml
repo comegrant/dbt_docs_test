@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../bundle_config_schema.json
+resources:
+  jobs:
+    customer_churn_train_rt:
+      name: customer-churn-train-rt-${bundle.target}
+
+      job_clusters:
+        - job_cluster_key: customer-churn
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS3_v2
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 30 02 ? * THU'
+        timezone_id: UTC
+        pause_status: PAUSED # UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - thomas.sve@cheffelo.com
+        on_success:
+          - thomas.sve@cheffelo.com
+
+      tasks:
+        - task_key: CustomerChurnGenerateFeatures
+          job_cluster_key: customer-churn
+          notebook_task:
+            notebook_path: ../../customer_churn_generate_features.py
+        - task_key: CustomerChurnTrain
+          job_cluster_key: customer-churn
+          notebook_task:
+            notebook_path: ../../customer_churn_train_model.py
+          depends_on:
+            - task_key: CustomerChurnGenerateFeatures
+        - task_key: CustomerChurnPredict
+          job_cluster_key: customer-churn
+          notebook_task:
+            notebook_path: ../../customer_churn_predict.py
+          depends_on:
+            - task_key: CustomerChurnTrain
+      parameters:
+        - name: company
+          default: "RT"
+        - name: env
+          default: "dev"

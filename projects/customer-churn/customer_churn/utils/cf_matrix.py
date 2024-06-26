@@ -73,9 +73,15 @@ def make_confusion_matrix(
     # CODE TO GENERATE TEXT INSIDE EACH SQUARE
     blanks = ["" for i in range(cf.size)]
 
-    group_labels = [f"{value}\n" for value in group_names] if group_names and len(group_names) == cf.size else blanks
+    group_labels = (
+        [f"{value}\n" for value in group_names]
+        if group_names and len(group_names) == cf.size
+        else blanks
+    )
     group_counts = [f"{value:0.0f}\n" for value in cf.flatten()] if COUNT else blanks
-    group_percentages = [f"{value:.2%}" for value in cf.flatten() / np.sum(cf)] if PERCENT else blanks
+    group_percentages = (
+        [f"{value:.2%}" for value in cf.flatten() / np.sum(cf)] if PERCENT else blanks
+    )
 
     box_labels = [
         f"{v1}{v2}{v3}".strip()

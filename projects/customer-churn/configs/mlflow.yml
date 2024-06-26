@@ -1,0 +1,8 @@
+dev:
+  experiment_tracking_dir: /Shared/ml_experiments/customer_churn/customer_churn_v1
+  experiment_name: customer_churn_v1
+  artifact_path: customer_churn_model
+  model_container_name: mlfeaturetesting
+  registered_model_name: customer_churn_logreg
+  mlflow_tracking_uri: databricks
+  experiment_id: 2560443690098625
