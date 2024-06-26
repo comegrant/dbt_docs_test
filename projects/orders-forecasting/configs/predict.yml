@@ -1,0 +1,40 @@
+dev:
+  num_total_orders:
+    GL:
+      model_name: orders_forecasting_model
+      model_uri: runs:/791f8688356649ef80cddf0e81bea248/orders_forecasting_model_num_total_orders_GL
+    RT:
+      model_name: orders_forecasting_model
+      model_uri: runs:/d8861b241d54442894e64204bc729e89/orders_forecasting_model_num_total_orders_RT
+    AMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/9699826406cf4ffc85da01510c89d008/orders_forecasting_model_num_total_orders_AMK
+    LMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/97bc6f70b2e74a24b6817cc674714f15/orders_forecasting_model_num_total_orders_LMK
+  num_dishes_orders:
+    GL:
+      model_name: orders_forecasting_model
+      model_uri: runs:/27c652dad7cb4fa9b9afb33f936069e2/orders_forecasting_model_num_dishes_orders_GL
+    RT:
+      model_name: orders_forecasting_model
+      model_uri: runs:/c8a6931d588045ad82d9828fe0304c23/orders_forecasting_model_num_dishes_orders_RT
+    AMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/18bd8ff0676649dc8ec853103aa177ba/orders_forecasting_model_num_dishes_orders_AMK
+    LMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/97bc6f70b2e74a24b6817cc674714f15/orders_forecasting_model_num_total_orders_LMK
+  perc_dishes_orders:
+    GL:
+      model_name: orders_forecasting_model
+      model_uri: runs:/315d9b1833ef4a3a954b62bd2ff3bf2a/orders_forecasting_model_perc_dishes_orders_GL
+    RT:
+      model_name: orders_forecasting_model
+      model_uri: runs:/9042387b183f4d408a1b6b139012b5bf/orders_forecasting_model_perc_dishes_orders_RT
+    AMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/c14b084edd2c48ecb0e0ae29121dd788/orders_forecasting_model_perc_dishes_orders_AMK
+    LMK:
+      model_name: orders_forecasting_model
+      model_uri: runs:/13c9af70cd4041ee9bdd69ffe8fd6fa5/orders_forecasting_model_perc_dishes_orders_LMK

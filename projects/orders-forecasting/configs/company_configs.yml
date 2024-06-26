@@ -1,0 +1,159 @@
+---
+AMK:
+  company_name: Adams_Matkasse
+  company_id: 8A613C15-35E4-471F-91CC-972F933331D7
+  language: norwegian
+  cut_off_day: 2
+  min_weeks_per_estm_date: 11
+  min_year: 2017
+  country: Norway
+  outlier_weeks:
+    - 202011
+    - 202012
+    - 202013
+    - 202014
+    - 202015
+    - 202016
+    - 202017
+    - 202018
+    - 202019
+    - 202020
+    - 202021
+    - 202022
+    - 202023
+    - 202024
+    - 202045
+    - 202046
+    - 202047
+    - 202048
+    - 202049
+    - 202050
+    - 202051
+    - 202052
+    - 202115
+    - 202116
+    - 202117
+    - 202118
+    - 202119
+    - 202120
+    - 202121
+    - 202122
+    - 202123
+    - 202124
+    - 202134
+    - 202135
+    - 202136
+    - 202137
+  train_start:
+    num_total_orders: 201701
+    num_dishes_orders: 202101
+    perc_dishes_orders: 202101
+
+GL:
+  company_name: Godtlevert
+  company_id: 09ECD4F0-AE58-4539-8E8F-9275B1859A19
+  language: norwegian
+  cut_off_day: 2
+  min_weeks_per_estm_date: 11
+  min_year: 2017
+  country: Norway
+  outlier_weeks:
+    - 202011
+    - 202012
+    - 202013
+    - 202014
+    - 202015
+    - 202016
+    - 202017
+    - 202018
+    - 202019
+    - 202020
+    - 202021
+    - 202022
+    - 202023
+    - 202024
+    - 202045
+    - 202046
+    - 202047
+    - 202048
+    - 202049
+    - 202050
+    - 202051
+    - 202052
+    - 202115
+    - 202116
+    - 202117
+    - 202118
+    - 202119
+    - 202120
+    - 202121
+    - 202122
+    - 202123
+    - 202124
+    - 202134
+    - 202135
+    - 202136
+    - 202137
+  train_start:
+    num_total_orders: 201701
+    num_dishes_orders: 202101
+    perc_dishes_orders: 202101
+
+LMK:
+  company_name: Linas_Matkasse
+  company_id: 6A2D0B60-84D6-4830-9945-58D518D27AC2
+  language: swedish
+  cut_off_day: 2
+  min_weeks_per_estm_date: 11
+  min_year: 2017
+  country: Sweden
+  outlier_weeks:
+    - 202011
+    - 202012
+    - 202013
+    - 202014
+    - 202015
+    - 202016
+    - 202017
+    - 202018
+    - 202019
+    - 202020
+    - 202021
+    - 202022
+    - 202023
+    - 202024
+    - 202043
+    - 202044
+    - 202045
+    - 202046
+    - 202047
+    - 202048
+    - 202049
+    - 202050
+    - 202051
+    - 202052
+    - 202115
+    - 202116
+    - 202117
+    - 202118
+    - 202119
+    - 202120
+  train_start:
+    num_total_orders: 201701
+    num_dishes_orders: 202101
+    perc_dishes_orders: 202101
+
+RT:
+  company_name: RetNemt
+  company_id: 5E65A955-7B1A-446C-B24F-CFE576BF52D7
+  language: danish
+  cut_off_day: 4
+  min_weeks_per_estm_date: 11
+  min_year: 2019
+  country: Denmark
+  outlier_weeks:
+    - 202138
+  train_start:
+    num_total_orders: 202139
+    num_dishes_orders: 202139
+    perc_dishes_orders: 202139

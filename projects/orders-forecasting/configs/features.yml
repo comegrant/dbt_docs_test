@@ -1,0 +1,144 @@
+target_table:
+  name: orders_weekly_aggregated
+  columns:
+    primary_keys:
+      - year
+      - week
+      - company_id
+    feature_columns:
+      - num_total_orders
+      - num_mealbox_orders
+      - num_dishes_orders
+      - perc_dishes_orders
+target_container: mltesting
+source_catalog_name: dev
+source_catalog_schema: mltesting
+feature_container_name: mlfeaturetesting
+feature_tables:
+  order_history_features:
+    name: order_history_features
+    columns:
+      primary_keys:
+        - year
+        - week
+        - company_id
+      feature_columns:
+        - first_date_of_week
+        - seasonality
+  order_estimation_features:
+    name: order_estimation_features
+    columns:
+      primary_keys:
+        - year
+        - week
+        - company_id
+      timeseries_columns:
+        - estimation_date
+      feature_columns:
+        - quantity_estimated_total
+        - quantity_estimated_dishes
+        - cut_off_date
+        - num_days_to_cut_off
+  order_estimation_history_retention_features:
+    name: order_estimation_history_retention_features
+    columns:
+      primary_keys:
+        - year
+        - week
+        - company_id
+      timeseries_columns:
+        - estimation_date
+      feature_columns:
+        - num_total_orders_retention_rate
+        - num_total_orders_retention_rate_total
+        - num_total_orders_retention_rate_dishes
+        - num_total_orders_retention_projection_total
+        - num_total_orders_retention_projection_dishes
+        - num_mealbox_orders_retention_rate
+        - num_mealbox_orders_retention_rate_total
+        - num_mealbox_orders_retention_rate_dishes
+        - num_mealbox_orders_retention_projection_total
+        - num_mealbox_orders_retention_projection_dishes
+        - num_dishes_orders_retention_rate
+        - num_dishes_orders_retention_rate_total
+        - num_dishes_orders_retention_rate_dishes
+        - num_dishes_orders_retention_projection_total
+        - num_dishes_orders_retention_projection_dishes
+        - perc_dishes_orders_retention_rate
+        - perc_dishes_orders_retention_rate_total
+        - perc_dishes_orders_retention_rate_dishes
+        - perc_dishes_orders_retention_projection_total
+        - perc_dishes_orders_retention_projection_dishes
+  holidays_features_norway:
+    name: holidays_features_norway
+    columns:
+      primary_keys:
+        - year
+        - week
+      feature_columns:
+        - is_long_weekend
+        - is_ascension_day
+        - is_christmas_day
+        - is_constitution_day
+        - is_easter_monday
+        - is_easter_sunday
+        - is_good_friday
+        - is_labor_day
+        - is_maundy_thursday
+        - is_new_year_s_day
+        - is_second_day_of_christmas
+        - is_whit_monday
+        - is_whit_sunday
+        - num_holidays
+  holidays_features_sweden:
+    name: holidays_features_sweden
+    columns:
+      primary_keys:
+        - year
+        - week
+      feature_columns:
+        - is_long_weekend
+        - is_all_saints_day
+        - is_ascension_day
+        - is_christmas_day
+        - is_christmas_day_sunday
+        - is_christmas_eve
+        - is_christmas_eve_sunday
+        - is_easter_monday
+        - is_easter_sunday_sunday
+        - is_epiphany
+        - is_good_friday
+        - is_may_day
+        - is_may_day_sunday
+        - is_midsummer_day
+        - is_midsummer_eve
+        - is_national_day_of_sweden
+        - is_national_day_of_sweden_sunday
+        - is_new_year_s_day
+        - is_new_year_s_day_sunday
+        - is_new_year_s_eve
+        - is_new_year_s_eve_sunday
+        - is_second_day_of_christmas
+        - is_second_day_of_christmas_sunday
+        - is_sunday_whit_sunday
+        - num_holidays
+  holidays_features_denmark:
+    name: holidays_features_denmark
+    columns:
+      primary_keys:
+        - year
+        - week
+      feature_columns:
+        - is_long_weekend
+        - is_ascension_day
+        - is_christmas_day
+        - is_easter_monday
+        - is_easter_sunday
+        - is_good_friday
+        - is_great_prayer_day
+        - is_maundy_thursday
+        - is_new_year_s_day
+        - is_second_day_of_christmas
+        - is_whit_monday
+        - is_whit_sunday
+        - num_holidays

@@ -43,6 +43,11 @@ def connect(
     Raises:
         ValueError: If DATABRICKS_SERVER_HOSTNAME or DATABRICKS_HTTP_PATH are not set.
     """
+    if not databricks_server_hostname:
+        databricks_server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME")
+    if not databricks_http_path:
+        databricks_http_path = os.getenv("DATABRICKS_HTTP_PATH")
+
     # Check if DATABRICKS_SERVER_HOSTNAME and DATABRICKS_HTTP_PATH are set
     if not databricks_server_hostname or not databricks_http_path:
         raise ValueError(

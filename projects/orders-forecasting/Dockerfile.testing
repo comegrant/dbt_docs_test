@@ -1,0 +1,3 @@
+FROM order-forecasting-order-forecasting:latest
+
+RUN poetry install

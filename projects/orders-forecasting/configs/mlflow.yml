@@ -1,0 +1,8 @@
+dev:
+    experiment_id: 2959266603557795
+    experiment_tracking_dir: /Shared/ml_experiments/orders_forecasting/orders_forecasting_v1
+    experiment_name: orders_forecasting_pycaret
+    artifact_path: orders_forecasting_model
+    model_container_name: mlfeaturetesting
+    registered_model_name: orders_forecasting_pycaret
+    mlflow_tracking_uri: databricks

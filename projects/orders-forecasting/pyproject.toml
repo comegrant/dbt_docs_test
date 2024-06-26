@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "orders-forecasting"
+version = "0.1.0"
+description = "A Machine learning algorithm for forecasting total orders for the upcoming 11/15 weeks"
+authors = ["Thomas Sve <thomas.sve@cheffelo.com>"]
+packages = [{include = "orders_forecasting"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+pydantic-settings = "^2.1.0"
+pycaret = {version = "^3.3.2", extras = ["models"]}
+pandera = "^0.19.3"
+pyspark = "3.4.1"
+mlflow-skinny = "2.9.2"
+databricks-feature-engineering = "0.2.0"
+kaleido = "0.2.1"
+time-machine = {path = "../../packages/time-machine", develop = true}
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+data-connector = {path = "../../packages/data-connector", develop = true}
+constants = {path = "../../packages/constants", develop = true}
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+
+
+[tool.poetry.group.app.dependencies]
+streamlit = "^1.30.0"
+pydantic-form = {path = "../../packages/pydantic-form", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
