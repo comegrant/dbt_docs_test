@@ -124,8 +124,3 @@ module "virtual_network_core" {
   azure_tenant_id             = var.azure_tenant_id
 }
 
-module "databricks_workflow" {
-  source                   = "../modules/databricks-workflows"
-  databricks_id            = module.databricks_core.databricks_id
-  databricks_workspace_url = module.databricks_core.databricks_workspace_url
-}

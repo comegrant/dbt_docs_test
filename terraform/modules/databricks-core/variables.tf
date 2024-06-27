@@ -75,6 +75,7 @@ variable "schemas" {
     "silver",
     "gold",
     "mltesting",
+    "archive"
   ]
   description = "Names of schemas within the Databricks catalogs."
 }
