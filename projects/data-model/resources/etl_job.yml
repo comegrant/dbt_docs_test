@@ -40,26 +40,26 @@ resources:
               ResourceClass: SingleNode
 
       tasks:
-        - task_key: bronze_cms_full
-          job_cluster_key: main-data-model-ingest
-          notebook_task: 
-            notebook_path: /ingest/bronze_cms_full.py
-          libraries:
-            - pypi:
-                package: -e ${workspace.file_path}/packages/data-connector
-          depends_on: []
+        #- task_key: bronze_cms_full
+        #  job_cluster_key: main-data-model-ingest
+        #  notebook_task: 
+        #    notebook_path: ../ingest/bronze_cms_full.py
+        #  libraries:
+        #    - pypi:
+        #        package: ${workspace.file_path}/packages/data-connector
+        #  depends_on: []
           
 
         - task_key: dbt
           job_cluster_key: main-data-model-transform
           dbt_task:
             project_directory: ../transform/
-            profiles_directory: ./
+            profiles_directory: profiles/
             commands:
               # The dbt commands to run (see also settings/dbt_profiles/profiles.yml; dev_schema is used in the dev profile)
               - 'dbt build --target=${bundle.target} --vars "{ dev_schema: ${workspace.current_user.short_name} }"'
           libraries:
             - pypi:
                 package: dbt-databricks>=1.0.0,<2.0.0      
-          depends_on: 
-            - task_key: bronze_cms_full
+          #depends_on: 
+          #  - task_key: bronze_cms_full

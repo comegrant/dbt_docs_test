@@ -72,9 +72,8 @@ jobs:
 
       - name: dbt build
         # TODO: Should maybe not deploy automatically in prod?
-        run: poetry run dbt build --target=${{ inputs.dbt-target }} --full-refresh --project-dir ./transform --profiles-dir ./transform
+        run: poetry run dbt build --target=${{ inputs.dbt-target }} --full-refresh --project-dir ./transform --profiles-dir ./transform/profiles
         env:
-          # TODO: Need to add secrets
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DBT_TOKEN }}
+          DATABRICKS_DBT_TOKEN: ${{ secrets.DATABRICKS_DBT_TOKEN }}

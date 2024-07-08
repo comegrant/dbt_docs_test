@@ -15,9 +15,7 @@ variables:
     description: The ID of the service Service Principal
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
 
-run_as:
-      # This runs as marie.borg@cheffelo.com in production. We could also use a service principal here
-      # using service_principal_name (see the Databricks documentation).
+run_as:    
       service_principal_name: ${var.client-id}
 
 # Deployment targets.

@@ -55,7 +55,7 @@ def load_coredb_query(database: str, table: str, query: str, host: str = "brandh
         query (str): Query to run towards datab
     """
 
-    username = os.getenv('CORE_DB_USERNAME')
-    password = os.getenv('CORE_DB_PASSWORD')
+    username = os.getenv('COREDB_USERNAME')
+    password = os.getenv('COREDB_PASSWORD')
 
     create_or_replace_table_query(host, database, table, query, username, password)
