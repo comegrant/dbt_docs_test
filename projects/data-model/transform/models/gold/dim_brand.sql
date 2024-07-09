@@ -1,6 +1,7 @@
-{{ config(alias='dim_company')}}
+{{ config(alias='dim_brand')}}
 
 SELECT
+    md5(company_id) AS pk_dim_brand,
     company_id,
     company_name,
     country_name
