@@ -30,11 +30,6 @@ variable "medallion_layers" {
   description = "Names of containers and schemas within the Data Lake resource and Databricks catalogs, respectively."
 }
 
-variable "databricks_spark_version" {
-  type        = string
-  description = "Spark runtime on clusters."
-}
-
 variable "azure_client_id" {
   type        = string
   default     = "9d48429c-9bb6-4c22-ae63-26095e7aab6f"

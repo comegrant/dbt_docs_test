@@ -103,7 +103,6 @@ module "databricks_core" {
   subnet_private_name                    = module.virtual_network_core.subnet_private_name
   nsg_association_private_id             = module.virtual_network_core.nsg_association_private_id
   nsg_association_public_id              = module.virtual_network_core.nsg_association_public_id
-  databricks_spark_version               = var.databricks_spark_version
   schemas                                = var.medallion_layers
   azure_client_id                        = var.azure_client_id
   azure_subscription_id                  = var.azure_subscription_id

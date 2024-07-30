@@ -17,7 +17,7 @@ terraform workspace new test
 terraform workspace new prod
 
 terraform workspace select dev
-terraform plan -var-file=dev.tfvars -out=dev
+terraform plan -out=dev
 terraform apply "dev"
 
 # Build and Test

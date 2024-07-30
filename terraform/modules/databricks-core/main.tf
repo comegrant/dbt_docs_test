@@ -138,38 +138,56 @@ resource "databricks_secret_scope" "auth_common" {
   }
 }
 
-resource "databricks_instance_pool" "this" {
-  instance_pool_name = "pool"
-  min_idle_instances = var.databricks_pool_min_idle
-  max_capacity = var.databricks_pool_max_capacity
-  node_type_id = var.databricks_node_type
-  idle_instance_autotermination_minutes = var.databricks_pool_idle_termination
-}
-
-resource "databricks_cluster" "this" {
-  cluster_name = "cluster"
-  spark_version = var.databricks_spark_version
-  instance_pool_id = databricks_instance_pool.this.id
-  driver_instance_pool_id = databricks_instance_pool.this.id
-  autotermination_minutes = var.databricks_cluster_idle_termination
-  data_security_mode = "USER_ISOLATION"
-  autoscale {
-    min_workers = var.databricks_cluster_min_workers
-    max_workers = var.databricks_cluster_max_workers
-  }
-}
-
-resource "databricks_sql_endpoint" "this" {
-  name             = "serverless sql wh"
-  cluster_size     = var.databricks_serverless_sql_cluster_size
-  min_num_clusters = var.databricks_serverless_sql_min_num_clusters
-  max_num_clusters = var.databricks_serverless_sql_max_num_clusters
-  auto_stop_mins   = var.databricks_serverless_sql_idle_termination
+resource "databricks_sql_endpoint" "db_wh_dbt" {
+  name             = "dbt SQL Warehouse"
+  cluster_size     = var.databricks_sql_warehouse_dbt_cluster_size
+  min_num_clusters = var.databricks_sql_warehouse_dbt_min_num_clusters
+  max_num_clusters = var.databricks_sql_warehouse_dbt_max_num_clusters
+  auto_stop_mins   = var.databricks_sql_warehouse_auto_stop_mins
   enable_serverless_compute = true
   tags {
     custom_tags {
-      key   = "Users"
-      value = "Data Team Serverless SQL"
+      key   = "user"
+      value = "dbt developers"
+    }
+    custom_tags {
+      key   = "tool"
+      value = "dbt"
+    }
+    custom_tags {
+      key   = "env"
+      value = "${terraform.workspace}"
+    }
+    custom_tags {
+      key = "managed_by"
+      value = "terraform"
+    }
+  }
+}
+
+resource "databricks_sql_endpoint" "db_wh_explore" {
+  name             = "Exploring SQL Warehouse"
+  cluster_size     = var.databricks_sql_warehouse_explore_cluster_size
+  min_num_clusters = var.databricks_sql_warehouse_explore_min_num_clusters
+  max_num_clusters = var.databricks_sql_warehouse_explore_max_num_clusters
+  auto_stop_mins   = var.databricks_sql_warehouse_auto_stop_mins
+  enable_serverless_compute = true
+  tags {
+    custom_tags {
+      key   = "user"
+      value = "Explorers"
+    }
+    custom_tags {
+      key   = "tool"
+      value = "Databricks SQL Editor"
+    }
+    custom_tags {
+      key   = "env"
+      value = "${terraform.workspace}"
+    }
+    custom_tags {
+      key = "managed_by"
+      value = "terraform"
     }
   }
 }

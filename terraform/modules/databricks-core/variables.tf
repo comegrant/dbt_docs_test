@@ -105,75 +105,48 @@ variable "nsg_association_private_id" {
   description = "?"
 }
 
-variable "databricks_node_type" {
-  type        = string
-  default     = "Standard_F4"
-  description = "Databricks cluster VM type."
-}
-
-variable "databricks_pool_min_idle" {
-  type        = number
-  default     = 0
-  description = "Lower bound for idle nodes in instance pool."
-}
-
-variable "databricks_pool_max_capacity" {
-  type        = number
-  default     = 10
-  description = "Upper bound for idle nodes in instance pool."
-}
-
-variable "databricks_pool_idle_termination" {
-  type        = number
-  default     = 10
-  description = "Minutes before idle nodes in instance pool are released."
-}
-
-variable "databricks_cluster_idle_termination" {
-  type        = number
-  default     = 40
-  description = "Shut down time after inactivity on all purpose cluster."
-}
-
-variable "databricks_spark_version" {
-  type        = string
-  description = "Spark runtime."
-}
-
-variable "databricks_cluster_min_workers" {
-  type        = number
-  default     = 1
-  description = "Lower bound for worker nodes on all purpose cluster."
-}
-
-variable "databricks_cluster_max_workers" {
-  type        = number
-  default     = 4
-  description = "Upper bound for worker nodes on all purpose cluster."
-}
-
-variable "databricks_serverless_sql_cluster_size" {
+variable "databricks_sql_warehouse_dbt_cluster_size" {
   type        = string
   default     = "2X-Small"
-  description = "Size of sql warehouse"
+  description = "Size of sql warehouse used with dbt"
 }
 
-variable "databricks_serverless_sql_min_num_clusters" {
+variable "databricks_sql_warehouse_dbt_min_num_clusters" {
   type        = number
   default     = 1
-  description = "Minimum number of clusters available when a SQL warehouse is running"
+  description = "Minimum number of clusters available when the dbt SQL warehouse is running"
 }
 
-variable "databricks_serverless_sql_max_num_clusters" {
+variable "databricks_sql_warehouse_dbt_max_num_clusters" {
   type        = number
   default     = 2
-  description = "Maximum number of clusters available when a SQL warehouse is running"
+  description = "Maximum number of clusters available when the dbt SQL warehouse is running"
 }
 
-variable "databricks_serverless_sql_idle_termination" {
+
+variable "databricks_sql_warehouse_explore_cluster_size" {
+  type        = string
+  default     = "2X-Small"
+  description = "Size of sql warehouse used for exploring data"
+}
+
+variable "databricks_sql_warehouse_explore_min_num_clusters" {
+  type        = number
+  default     = 1
+  description = "Minimum number of clusters available when the exploring SQL warehouse is running"
+}
+
+variable "databricks_sql_warehouse_explore_max_num_clusters" {
+  type        = number
+  default     = 2
+  description = "Maximum number of clusters available when the explore SQL warehouse is running"
+}
+
+
+variable "databricks_sql_warehouse_auto_stop_mins" {
   type        = number
   default     = 10
-  description = "Shut down time after inactivity on serverless sql warehouse."
+  description = "Number of minutes of inactivity before the SQL warehouses is stopped."
 }
 
 variable "azure_client_id" {
