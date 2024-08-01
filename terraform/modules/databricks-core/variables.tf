@@ -3,6 +3,11 @@ variable "location" {
   description = "Region to deploy resource in."
 }
 
+variable "databricks_account_id" {
+  type        = string
+  description = "The account id of the Databricks Account containing all workspaces"
+}
+
 variable "resource_group_workspace_name" {
   type        = string
   description = "Resource group to contain Databricks workspace resource."

@@ -14,25 +14,25 @@ terraform {
 
 provider "azurerm" {
   features {}
-  use_oidc = true
+  use_oidc            = true
   storage_use_azuread = true
-  client_id = var.azure_client_id
-  subscription_id = var.azure_subscription_id
-  tenant_id = var.azure_tenant_id
+  client_id           = var.azure_client_id
+  subscription_id     = var.azure_subscription_id
+  tenant_id           = var.azure_tenant_id
 }
 
 locals {
-    common_tags = {
+  common_tags = {
     created_at = timestamp()
-    env = terraform.workspace
-    }
+    env        = terraform.workspace
+  }
 }
 
 
 resource "azurerm_databricks_access_connector" "this" {
-  name = var.azure_databricks_access_connector_name
+  name                = var.azure_databricks_access_connector_name
   resource_group_name = var.resource_group_name
-  location = var.location
+  location            = var.location
   identity {
     type = "SystemAssigned"
   }

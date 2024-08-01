@@ -88,6 +88,7 @@ module "data_lake_core" {
 module "databricks_core" {
   source                                 = "../modules/databricks-core"
   location                               = var.location
+  databricks_account_id                  = var.databricks_account_id
   databricks_workspace_name              = local.databricks_workspace_name
   resource_group_workspace_name          = module.resource_group_core.name
   resource_group_managed_name            = local.resource_group_managed_name

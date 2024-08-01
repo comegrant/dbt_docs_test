@@ -18,7 +18,7 @@ variable "storage_account_name" {
 
 
 variable "key_vault_name" {
-  type       = string
-  default    = "kv-chefdp-tfstate"
+  type        = string
+  default     = "kv-chefdp-tfstate"
   description = "Name of key vault"
 }

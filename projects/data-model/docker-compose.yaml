@@ -1,0 +1,13 @@
+version: '3'
+services:
+  dev:
+    image: data-model
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/data-model/Dockerfile
+    command: ["echo", "'Hello from preselector'"]
+    volumes:
+      - ./:/opt/projects/data-model
+      - ./../../packages:/opt/packages
+      - ~/.dbt/profiles.yml:/root/.dbt/profiles.yml

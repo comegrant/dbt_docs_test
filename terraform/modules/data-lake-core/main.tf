@@ -13,11 +13,11 @@ terraform {
 
 provider "azurerm" {
   features {}
-  use_oidc = true
+  use_oidc            = true
   storage_use_azuread = true
-  client_id = var.azure_client_id
-  subscription_id = var.azure_subscription_id
-  tenant_id = var.azure_tenant_id
+  client_id           = var.azure_client_id
+  subscription_id     = var.azure_subscription_id
+  tenant_id           = var.azure_tenant_id
 }
 
 provider "databricks" {
@@ -28,7 +28,7 @@ provider "databricks" {
 locals {
   common_tags = {
     created_at = timestamp()
-    env = terraform.workspace
+    env        = terraform.workspace
   }
 }
 
@@ -61,8 +61,8 @@ resource "azurerm_storage_account" "this" {
 
   network_rules {
     default_action = "Deny"
-    ip_rules = var.ip_rules
-    bypass = ["AzureServices"]
+    ip_rules       = var.ip_rules
+    bypass         = ["AzureServices"]
   }
 
   tags = merge(local.common_tags)

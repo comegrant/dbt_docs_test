@@ -1,5 +1,5 @@
 variable "location" {
-  type = string
+  type        = string
   description = "Azure region to locate resource."
 }
 

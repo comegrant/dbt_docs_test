@@ -14,6 +14,11 @@ variable "databricks_sku" {
 
 }
 
+variable "databricks_account_id" {
+  type        = string
+  description = "The account id of the Databricks Account containing all workspaces"
+}
+
 variable "medallion_layers" {
   type = list(string)
   default = [
