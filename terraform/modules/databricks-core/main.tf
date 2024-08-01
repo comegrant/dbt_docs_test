@@ -248,6 +248,25 @@ resource "databricks_service_principal_secret" "this" {
   service_principal_id = databricks_service_principal.dbt_sp.id
 }
 
+data "databricks_service_principal" "admin-sp" {
+  application_id = var.azure_client_id
+}
+
+resource "databricks_access_control_rule_set" "automation_sp_rule_set" {
+  provider = databricks.accounts
+  name = "accounts/${var.databricks_account_id}/servicePrincipals/${databricks_service_principal.dbt_sp.application_id}/ruleSets/default"
+
+  grant_rules {
+    principals = [data.databricks_service_principal.admin-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.user"
+  }
+
+  grant_rules {
+    principals = [data.databricks_service_principal.admin-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.manager"
+  }
+}
+
 resource "azurerm_key_vault_secret" "dbt_sp_secret" {
   name            = "dbt-sp-secret-${terraform.workspace}"
   value           = databricks_service_principal_secret.this.secret
