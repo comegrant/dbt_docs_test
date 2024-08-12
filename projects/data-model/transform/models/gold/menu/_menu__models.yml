@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: dim_products
+    description: ""
+    latest_version: 1
+    config:
+      alias: products
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_products
+        data_type: string
+        description: ""
+
+      - name: product_concept_id
+        data_type: string
+        description: "{{ doc('column__product_concept_id') }}"
+
+      - name: product_type_id
+        data_type: string
+        description: "{{ doc('column__product_type_id') }}"
+
+      - name: product_id
+        data_type: string
+        description: "{{ doc('column__product_id') }}"
+
+      - name: product_status_id
+        data_type: int
+        description: "{{ doc('column__product_status_id') }}"
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+
+      - name: product_concept_name
+        data_type: string
+        description: "{{ doc('column__product_concept_name') }}"
+
+      - name: product_type_name
+        data_type: string
+        description: "{{ doc('column__product_type_name') }}"
+
+      - name: product_name
+        data_type: string
+        description: "{{ doc('column__product_name') }}"
+
+      - name: product_status_name
+        data_type: string
+        description: "{{ doc('column__product_status_name') }}"
+
+      - name: product_variation_name
+        data_type: string
+        description: "{{ doc('column__product_variation_name') }}"
+
+      - name: sku
+        data_type: string
+        description: "{{ doc('column__variation_sku') }}"
+
+      - name: number_of_meals
+        data_type: int
+        description: "" 
+      
+      - name: number_of_portions
+        data_type: int
+        description: "" 
+
+      - name: preselected_mealbox_product_id
+        data_type: string
+        description: "" 
+
+    versions:
+      - v: 1
+
+  - name: dim_recipes
+    description: ""
+    latest_version: 1
+    config:
+      alias: recipes
+
+    versions:
+      - v: 1
+
+  - name: fact_menus
+    description: ""
+    latest_version: 1
+    config:
+      alias: menus
+
+    versions:
+      - v: 1

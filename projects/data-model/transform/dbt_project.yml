@@ -24,13 +24,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# In this example config, we tell dbt to build all models in the example/
-# directory as views by default. These settings can be overridden in the
+# These settings can be overridden in the
 # individual model files using the `{{ config(...) }}` macro.
 models:
   transform:
     +materialized: table
     silver:
       +schema: silver
+    intermediate:
+      +schema: intermediate
+      +materalized: "{{ 'table' if target.name == 'dev' else 'ephemeral' }}"
     gold:
       +schema: gold

@@ -1,0 +1,190 @@
+version: 2
+
+models:
+  - name: fact_orders
+    description: ""
+    latest_version: 1
+    config:
+      alias: orders
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_order_line
+        data_type: string
+        description: "{{ doc('column__cms_order_id') }}"
+
+      - name: cms_order_id
+        data_type: string
+        description: "{{ doc('column__cms_order_id') }}"
+
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+
+      - name: order_status_id
+        data_type: string
+        description: "{{ doc('column__order_status_id') }}"
+
+      - name: order_type_id
+        data_type: string
+        description: "{{ doc('column__order_type_id') }}"
+
+      - name: order_line_id
+        data_type: string
+        description: "{{ doc('column__order_line_id') }}"
+
+      - name: agreement_id
+        data_type: int
+        description: "{{ doc('column__agreement_id') }}"
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+
+      - name: order_line_type_name
+        data_type: string
+        description: "{{ doc('column__order_line_type_name') }}"
+
+      - name: variation_qty
+        data_type: int
+        description: "{{ doc('column__variation_qty') }}"
+
+      - name: vat
+        data_type: decimal(10,8)
+        description: "{{ doc('column__order_line_vat') }}"
+
+      - name: unit_price_ex_vat
+        data_type: decimal(20,6)
+        description: "{{ doc('column__order_line_unit_price_ex_vat') }}"
+
+      - name: unit_price_inc_vat
+        data_type: decimal(32,14)
+        description: "{{ doc('column__order_line_unit_price_inc_vat') }}"
+
+      - name: total_amount_ex_vat
+        data_type: decimal(31,6)
+        description: "{{ doc('column__order_line_total_amount_ex_vat') }}"
+
+      - name: total_amount_inc_vat
+        data_type: decimal(38,9)
+        description: "{{ doc('column__order_line_total_amount_inc_vat') }}"
+
+      - name: has_delivery
+        data_type: boolean
+        description: ""
+
+      - name: has_recipe_leaflets
+        data_type: boolean
+        description: "{{ doc('column__order_has_recipe_leaflets') }}"
+
+      - name: delivery_week_monday_date
+        data_type: date
+        description: "{{ doc('column__delivery_week_monday_date') }}"
+
+      - name: order_created_at
+        data_type: timestamp
+        description: ""
+  
+      - name: fk_dim_order_types
+        data_type: string
+        description: ""
+
+      - name: fk_dim_order_status
+        data_type: string
+        description: ""
+      
+      - name: fk_dim_products
+        data_type: string
+        description: ""
+      
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: ""
+      
+      - name: fk_dim_companies
+        data_type: string
+        description: ""
+
+      - name: fk_dim_date
+        data_type: int
+        description: ""
+
+
+
+    versions:
+      - v: 1
+
+  - name: dim_order_status
+    description: ""
+    latest_version: 1
+    config:
+      alias: order_status
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_order_status
+        data_type: string
+        description: ""
+      
+      - name: order_status_id
+        data_type: string
+        description: "{{ doc('column__order_status_id') }}"
+
+      - name: order_status_name
+        data_type: string
+        description: "{{ doc('column__order_status_name') }}"
+
+      - name: can_be_cancelled
+        data_type: boolean
+        description: "{{ doc('column__order_status_can_be_cancelled') }}"
+
+    versions:
+      - v: 1
+
+  - name: dim_order_types
+    description: ""
+    latest_version: 1
+    config:
+      alias: order_types
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_order_types
+        data_type: string
+        description: ""
+
+      - name: order_type_id
+        data_type: string
+        description: "{{ doc('column__order_type_id') }}"
+
+      - name: order_type_name
+        data_type: string
+        description: "{{ doc('column__order_type_name') }}"
+
+      - name: is_direct_order
+        data_type: boolean
+        description: "{{ doc('column__order_type_is_direct_order') }}"
+
+      - name: allows_anonymous
+        data_type: boolean
+        description: "{{ doc('column__order_type_allow_anonymous') }}"
+
+      - name: is_direct_payment
+        data_type: boolean
+        description: "{{ doc('column__order_type_is_direct_payment') }}"
+
+    versions:
+      - v: 1
+
+
+  - name: dim_billing_agreements
+    description: ""
+    latest_version: 1
+    config:
+      alias: billing_agreements
+
+    versions:
+      - v: 1

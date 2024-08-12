@@ -1,0 +1,193 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: sil_cms__companies
+    description: Information about each company
+    config:
+      alias: cms__companies
+
+    columns:
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+
+      - name: company_name
+        data_type: string
+        description: "{{ doc('column__company_name') }}"
+
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
+
+  - name: sil_cms__countries
+    description: Table with countries
+    config:
+      alias: cms__countries
+
+    columns:
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
+
+      - name: country_name
+        data_type: string
+        description: "{{ doc('column__country_name') }}"
+
+  - name: sil_cms__billing_agreement_orders
+    description: "{{ doc('table__cms_billing_agreement_orders') }}"
+    config:
+      alias: cms__orders
+
+    columns:
+      - name: cms_order_id
+        data_type: string
+        description: "{{ doc('column__cms_order_id') }}"
+
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+
+      - name: order_type_id
+        data_type: string
+        description: "{{ doc('column__order_type_id') }}"
+
+      - name: order_status_id
+        data_type: string
+        description: "{{ doc('column__order_status_id') }}"
+
+      - name: agreement_id
+        data_type: int
+        description: "{{ doc('column__agreement_id') }}"
+
+      - name: delivery_year
+        data_type: int
+        description: "{{ doc('column__delivery_year') }}"
+
+      - name: delivery_week
+        data_type: int
+        description: "{{ doc('column__delivery_week') }}"
+
+      - name: has_recipe_leaflets
+        data_type: boolean
+        description: "{{ doc('column__order_has_recipe_leaflets') }}"
+
+      - name: delivery_week_monday_date
+        data_type: date
+        description: "{{ doc('column__delivery_week_monday_date') }}"
+
+  - name: sil_cms__billing_agreement_order_lines
+    description: "{{ doc('table__cms_billing_agreement_order_lines') }}"
+    config:
+      alias: cms__order_lines
+
+    columns:
+      - name: order_line_id
+        data_type: string
+        description: "{{ doc('column__order_line_id') }}"
+
+      - name: cms_order_id
+        data_type: string
+        description: "{{ doc('column__cms_order_id') }}"
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+
+      - name: order_line_type_name
+        data_type: string
+        description: "{{ doc('column__order_line_type_name') }}"
+
+      - name: variation_qty
+        data_type: int
+        description: "{{ doc('column__variation_qty') }}"
+
+      - name: vat
+        data_type: decimal(10,8)
+        description: "{{ doc('column__order_line_vat') }}"
+
+      - name: unit_price_ex_vat
+        data_type: decimal(20,6)
+        description: "{{ doc('column__order_line_unit_price_ex_vat') }}"
+
+      - name: unit_price_inc_vat
+        data_type: decimal(32,14)
+        description: "{{ doc('column__order_line_unit_price_inc_vat') }}"
+
+      - name: total_amount_ex_vat
+        data_type: decimal(31,6)
+        description: "{{ doc('column__order_line_total_amount_ex_vat') }}"
+
+      - name: total_amount_inc_vat
+        data_type: decimal(38,9)
+        description: "{{ doc('column__order_line_total_amount_inc_vat') }}"
+
+  - name: sil_cms__order_status
+    description: ""
+    config:
+      alias: cms__order_status
+
+    columns:
+      - name: order_status_id
+        data_type: string
+        description: "{{ doc('column__order_status_id') }}"
+
+      - name: order_status_name
+        data_type: string
+        description: "{{ doc('column__order_status_name') }}"
+
+      - name: can_be_cancelled
+        data_type: boolean
+        description: "{{ doc('column__order_status_can_be_cancelled') }}"
+
+  - name: sil_cms__order_types
+    description: ""
+    config:
+      alias: cms__order_types
+
+    columns:
+      - name: order_type_id
+        data_type: string
+        description: "{{ doc('column__order_type_id') }}"
+
+      - name: order_type_name
+        data_type: string
+        description: "{{ doc('column__order_type_name') }}"
+
+      - name: is_direct_order
+        data_type: boolean
+        description: "{{ doc('column__order_type_is_direct_order') }}"
+
+      - name: allow_anonymous
+        data_type: boolean
+        description: "{{ doc('column__order_type_allow_anonymous') }}"
+
+      - name: is_direct_payment
+        data_type: boolean
+        description: "{{ doc('column__order_type_is_direct_payment') }}"
+
+  - name: sil_cms__billing_agreements
+    description: ""
+    config:
+      alias: cms__billing_agreements
+  
+  - name: sil_cms__billing_agreement_status
+    description: ""
+    config:
+      alias: cms__billing_agreement_status
+  
+  - name: sil_cms__billing_agreement_addon_subscriptions
+    description: ""
+    config:
+      alias: cms__billing_agreement_addon_subscriptions
+  
+  - name: sil_cms__addon_subscriptions
+    description: ""
+    config:
+      alias: cms__addon_subscriptions
+  
+  - name: sil_cms__loyalty_agreement_ledger
+    description: ""
+    config:
+      alias: cms__loyalty_agreement_ledger

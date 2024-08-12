@@ -14,6 +14,8 @@ variables:
   client-id: 
     description: The ID of the service Service Principal
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
 
 run_as:    
       service_principal_name: ${var.client-id}

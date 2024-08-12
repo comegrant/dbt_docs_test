@@ -19,6 +19,7 @@ pre-commit = "*"
 pytest = "*"
 pytest-asyncio = "*"
 ruff = "*"
+sqlfluff= "*"
 chef = {path = "../../packages/chef", develop = true}
 
 [build-system]

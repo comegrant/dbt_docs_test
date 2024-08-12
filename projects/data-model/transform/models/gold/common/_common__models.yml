@@ -1,0 +1,64 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: dim_companies
+    description: ""
+    latest_version: 1
+    config:
+      alias: companies
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_companies
+        description: "{{ doc('column__product_concept_id') }}"
+        data_type: string
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        description: "{{ doc('column__product_concept_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+  
+      - name: language_id
+        description: ""
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: company_name
+        description: "{{ doc('column__product_concept_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: country_name
+        description: "{{ doc('column__product_concept_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      
+      - name: country_currency
+        description: "{{ doc('column__product_concept_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+          
+    versions:
+      - v: 1
+
+  - name: dim_calendar
+    description: ""
+    latest_version: 1
+    config:
+      alias: calendar
+      contract:
+        enforced: false
+          
+    versions:
+      - v: 1

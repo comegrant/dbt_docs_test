@@ -1,0 +1,238 @@
+version: 2
+
+sources:
+  - name: product_layer
+    description: "{{ doc('database__product_layer') }}"
+    schema: bronze
+    tables:
+      - name: product_layer_product_concept
+        description: "{{ doc('table__product_concepts') }}"
+        columns:
+          - name: product_concept_id
+            data_type: string
+            description: "{{ doc('column__product_concept_id') }}"
+
+          - name: product_concept_name
+            data_type: string
+            description: "{{ doc('column__product_concept_name') }}"
+
+          - name: product_concept_description
+            data_type: string
+            description: "{{ doc('column__product_concept_description') }}"
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: product_layer_product_type_concept
+        description: "{{ doc('table__product_types_concepts') }}"
+        columns:
+          - name: product_concept_id
+            data_type: string
+            description: "{{ doc('column__product_concept_id') }}"
+          
+          - name: product_type_id
+            data_type: string
+            description: "{{ doc('column__product_type_id') }}"
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+      - name: product_layer_product_type
+        description: "{{ doc('table__product_types') }}"
+        columns:
+          - name: product_type_id
+            data_type: string
+            description: "{{ doc('column__product_type_id') }}"
+          
+          - name: product_type_name
+            data_type: string
+            description: "{{ doc('column__product_type_name') }}"
+          
+          - name: product_type_description
+            data_type: string
+            description: "{{ doc('column__product_type_description') }}"
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+          
+          - name: physical_product
+            data_type: boolean
+            description: "{{ doc('column__is_physical_product') }}"
+      - name: product_layer_product
+        description: "{{ doc('table__products') }}"
+        columns:
+          - name: id
+            data_type: string
+            description: "{{ doc('column__product_id') }}"
+          
+          - name: product_type_id
+            data_type: string
+            description: "{{ doc('column__product_type_id') }}"
+          
+          - name: name
+            data_type: string
+            description: "{{ doc('column__product_name') }}"
+          
+          - name: description
+            data_type: string
+            description: "{{ doc('column__product_description') }}"
+          
+          - name: status
+            data_type: int
+            description: "{{ doc('column__product_status_id') }}"
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+          
+          - name: product_group
+            data_type: string
+            description: "{{ doc('column__product_group_id') }}"
+
+      - name: product_layer_product_status
+        description: "{{ doc('table__product_status') }}"
+        columns:
+          - name: status_id
+            data_type: string
+            description: "{{ doc('column__product_status_id') }}"
+          
+          - name: status_name
+            data_type: string
+            description: "{{ doc('column__product_status_name') }}"
+
+      - name: product_layer_product_variation
+        description: "{{ doc('table__product_variations') }}"
+        columns:
+          - name: id
+            data_type: string
+            description: "{{ doc('column__product_variation_id') }}"
+          
+          - name: sku
+            data_type: string
+            description: "{{ doc('column__variation_sku') }}"
+          
+          - name: product_id
+            data_type: string
+            description: "{{ doc('column__product_id') }}"
+          
+          - name: stock
+            data_type: int
+            description: ""
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: product_layer_product_variation_company
+        description: "{{ doc('table__product_variations_companies') }}"
+        columns:
+          
+          - name: variation_id
+            data_type: string
+            description: "{{ doc('column__product_variation_id') }}"
+          
+          - name: company_id
+            data_type: string
+            description: "{{ doc('column__company_id') }}"
+          
+          - name: name
+            data_type: string
+            description: "{{ doc('column__product_variation_name') }}"
+          
+          - name: description
+            data_type: string
+            description: "{{ doc('column__product_variation_description') }}"
+          
+          - name: send_frontend
+            data_type: boolean
+            description: ""
+          
+          - name: send_pim
+            data_type: boolean
+            description: ""
+          
+          - name: created_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_created_at') }}"
+          
+          - name: created_by
+            data_type: string
+            description: "{{ doc('column__coredb_created_by') }}"
+          
+          - name: updated_at
+            data_type: timestamp
+            description: "{{ doc('column__coredb_updated_at') }}"
+          
+          - name: updated_by
+            data_type: string
+            description: "{{ doc('column__coredb_updated_by') }}"
+          
+          - name: send_cs
+            data_type: boolean
+            description: ""
+      
+      - name: product_layer_product_variation_attribute_value
+
+      - name: product_layer_product_variation_attribute_template

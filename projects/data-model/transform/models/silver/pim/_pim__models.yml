@@ -1,0 +1,61 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: sil_pim__menu_recipes
+    description: ""
+    config:
+      alias: pim__menu_recipes
+
+  - name: sil_pim__menu_variations
+    description: ""
+    config:
+      alias: pim__menu_variations
+
+  - name: sil_pim__menus
+    description: ""
+    config:
+      alias: pim__menus
+
+  - name: sil_pim__portions
+    description: ""
+    config:
+      alias: pim__portions
+
+  - name: sil_pim__recipe_portions
+    description: ""
+    config:
+      alias: pim__recipe_portions
+
+  - name: sil_pim__weekly_menus
+    description: ""
+    config:
+      alias: pim__weekly_menus
+  
+  - name: sil_pim__recipes
+    description: ""
+    config:
+      alias: pim__recipes
+
+  - name: sil_pim__recipe_companies
+    description: ""
+    config:
+      alias: pim__recipe_companies
+  
+  - name: sil_pim__recipe_metadata
+    description: ""
+    config:
+      alias: pim__recipe_metadata
+
+  - name: sil_pim__recipe_metadata_translations
+    description: ""
+    config:
+      alias: pim__recipe_metadata_translations
+
+
+  - name: sil_pim__recipe_difficulty_levels_translations
+    description: ""
+    config:
+      alias: pim__recipe_difficulty_levels_translations
+  
