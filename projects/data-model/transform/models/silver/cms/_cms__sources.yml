@@ -695,3 +695,6 @@ sources:
           - name: id
             data_type: string
             description: ""
+      
+      - name: cms_loyalty_level
+        description: ""

@@ -19,10 +19,10 @@ orders as (
     select 
         agreement_id
         , first_delivery_week_monday_date
-        , extract('WEEK', first_delivery_week_monday_date) as first_delivery_week_isoweek
+        , extract('WEEK', first_delivery_week_monday_date) as first_delivery_week_week
         , extract('MONTH', first_delivery_week_monday_date) as first_delivery_week_month
         , extract('QUARTER', first_delivery_week_monday_date) as first_delivery_week_quarter
-        , extract('YEAROFWEEK', first_delivery_week_monday_date) as first_delivery_week_isoyear
+        , extract('YEAROFWEEK', first_delivery_week_monday_date) as first_delivery_week_year
     from first_orders
 
 )

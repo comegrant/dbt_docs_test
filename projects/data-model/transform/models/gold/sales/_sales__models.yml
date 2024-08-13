@@ -110,8 +110,6 @@ models:
         data_type: int
         description: ""
 
-
-
     versions:
       - v: 1
 
@@ -178,7 +176,6 @@ models:
 
     versions:
       - v: 1
-
 
   - name: dim_billing_agreements
     description: ""
