@@ -15,12 +15,12 @@ renamed as (
         , language_id
 
         {# strings #}
-        , recipe_name
-        , recipe_photo_caption
-        , roede_calculation_text
-        , recipe_extra_photo_caption
-        , general_text as recipe_general_text
-        , recipe_description
+        , initcap(recipe_name) as recipe_name
+        , initcap(recipe_photo_caption) as recipe_photo_caption
+        , initcap(roede_calculation_text) as roede_calculation_text
+        , initcap(recipe_extra_photo_caption) as recipe_extra_photo_caption
+        , initcap(general_text) as recipe_general_text
+        , initcap(recipe_description) as recipe_description
         
     from source
 

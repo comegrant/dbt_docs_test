@@ -55,7 +55,6 @@ companies as (
 
 ),
 
-
 weekly_menu_tables_joined as (
     select
         weekly_menus.company_id as weekly_menu_company_id
@@ -70,8 +69,6 @@ weekly_menu_tables_joined as (
         
         , weekly_menus.menu_year
         , weekly_menus.menu_week
-        , recipes.recipes_year
-        , recipes.recipes_week
 
         , menu_variations.menu_number_days
         , variation_portions.portion_size as variation_portion_size
@@ -87,8 +84,11 @@ weekly_menu_tables_joined as (
         , recipes.recipe_status_code_id
 
         {# FKS #}
-        , md5(cast(concat(recipes.recipe_metadata_id, companies.language_id) as string)) as fk_dim_recipes
-        , md5(menu_variations.product_variation_id) as fk_dim_products
+        , md5(cast(concat(recipes.recipe_id, companies.language_id) as string)) as fk_dim_recipes
+        , md5(concat(
+                menu_variations.product_variation_id,
+                weekly_menus.company_id)
+            ) as fk_dim_products
 
     from weekly_menus
     left join menus 
@@ -106,9 +106,9 @@ weekly_menu_tables_joined as (
     left join recipe_portions
         on recipes.recipe_id = recipe_portions.recipe_id
     left join portions
-        on recipe_portions.portion_id = recipe_portions.portion_id
+        on portions.portion_id = recipe_portions.portion_id
     left join companies
-        on recipe_companies.company_id = companies.company_id
+        on weekly_menus.company_id = companies.company_id
 
 )
 

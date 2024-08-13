@@ -53,9 +53,18 @@ models:
     config:
       alias: pim__recipe_metadata_translations
 
-
-  - name: sil_pim__recipe_difficulty_levels_translations
+  - name: sil_pim__recipe_difficulty_level_translations
     description: ""
     config:
-      alias: pim__recipe_difficulty_levels_translations
+      alias: pim__recipe_difficulty_level_translations
+  
+  - name: sil_pim__recipe_main_ingredient_translations
+    description: ""
+    config:
+      alias: pim__recipe_main_ingredient_translations
+ 
+  - name: sil_pim__recipe_main_ingredients
+    description: ""
+    config:
+      alias: pim__recipe_main_ingredients
   

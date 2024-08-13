@@ -15,8 +15,8 @@ renamed as (
         , language_id
 
         {# strings #}
-        , recipe_difficulty_name
-        , recipe_difficulty_description
+        , initcap(recipe_difficulty_name) as recipe_difficulty_name
+        , initcap(recipe_difficulty_description) as recipe_difficulty_description
         
     from source
 

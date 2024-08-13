@@ -1,54 +1,65 @@
 with 
 
-metadata as (
+recipes as (
 
-    select * from {{ ref('sil_pim__recipe_metadata') }}
-
-),
-
-metadata_translations as (
-
-    select * from {{ ref('sil_pim__recipe_metadata_translations') }}
+    select * from {{ ref('sil_pim__recipes') }}
 
 ),
 
-difficulty_levels_translations as (
+recipe_metadata as (
 
-    select * from {{ ref('sil_pim__recipe_difficulty_levels_translations') }}
+    select * from {{ ref('int_recipe_metadata_joined') }}
 
 ),
 
+recipe_main_ingredients as (
 
-metadata_tables_joined as (
+    select * from {{ ref('int_recipe_main_ingredients_joined') }}
+
+),
+
+join_tables as (
 
 select
 
-    md5(cast(concat(metadata.recipe_metadata_id, metadata_translations.language_id) as string)) as pk_dim_recipes
-    , metadata.recipe_metadata_id
-    , metadata.recipe_main_ingredient_id
-    , metadata.recipe_difficulty_level_id
-    , metadata_translations.language_id
+    md5(cast(concat(recipes.recipe_id, recipe_metadata.language_id) as string)) as pk_dim_recipes
+    , recipes.recipe_id
+    , recipes.recipe_metadata_id
+    , coalesce(recipes.main_recipe_id, recipes.recipe_id) as main_recipe_id
+    , recipes.recipe_status_code_id
+    , recipe_metadata.recipe_main_ingredient_id
+    , recipe_metadata.recipe_difficulty_level_id
+    , recipe_metadata.language_id
 
-    , metadata.cooking_time_from
-    , metadata.cooking_time_to
+    , recipe_metadata.cooking_time_from
+    , recipe_metadata.cooking_time_to
 
-    , metadata_translations.recipe_name
-    , metadata_translations.recipe_photo_caption
-    , metadata_translations.roede_calculation_text
-    , metadata_translations.recipe_extra_photo_caption
-    , metadata_translations.recipe_general_text
-    , metadata_translations.recipe_description
-    , difficulty_levels_translations.recipe_difficulty_name
-    , difficulty_levels_translations.recipe_difficulty_description
+    , recipe_metadata.recipe_name
+    --, recipe_metadata.recipe_photo_caption
+    --, recipe_metadata.roede_calculation_text
+    --, recipe_metadata.recipe_extra_photo_caption
+    --, recipe_metadata.recipe_general_text
+    --, recipe_metadata.recipe_description
+    , recipe_metadata.recipe_difficulty_name
+    --, recipe_metadata.recipe_difficulty_description
+
+    , recipe_main_ingredients.recipe_main_ingredient_name
+    --, recipe_main_ingredients.recipe_main_ingredient_description
+
+    , main_recipe_metadata.recipe_name as main_recipe_name
+    --, main_recipe_metadata.recipe_description as main_recipe_description
+    , case when main_recipe_id is null then true else false end as is_main_recipe
 
 
-from metadata
-left join metadata_translations
-on metadata.recipe_metadata_id = metadata_translations.recipe_metadata_id
-left join difficulty_levels_translations
-on metadata.recipe_difficulty_level_id = difficulty_levels_translations.recipe_difficulty_level_id
-and metadata_translations.language_id = difficulty_levels_translations.language_id
+from recipes
+left join recipe_metadata
+on recipes.recipe_metadata_id = recipe_metadata.recipe_metadata_id
+left join recipe_metadata as main_recipe_metadata
+on recipes.recipe_metadata_id = main_recipe_metadata.recipe_metadata_id
+left join recipe_main_ingredients
+on recipe_metadata.recipe_main_ingredient_id = recipe_main_ingredients.recipe_main_ingredient_id
+and recipe_metadata.language_id = recipe_main_ingredients.language_id
     
 )
 
-select * from metadata_tables_joined
+select * from join_tables

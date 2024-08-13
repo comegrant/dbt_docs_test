@@ -37,3 +37,9 @@ sources:
       
       - name: pim_recipe_difficulty_levels_translations
         description: ""
+      
+      - name: pim_recipe_main_ingredients
+        description: ""
+      
+      - name: pim_recipe_main_ingredients_translations
+        description: ""
