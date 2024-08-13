@@ -90,6 +90,14 @@ class Owner:
         )
 
     @staticmethod
+    def agathe() -> Owner:
+        return Owner(
+            name="Agathe Raaum",
+            slack_member_id="U07AVT7SG3D",
+            email="agathe.raaum@cheffelo.com",
+        )
+
+    @staticmethod
     def all_owners() -> list[Owner]:
         return [
             Owner.matsmoll(),
@@ -101,6 +109,7 @@ class Owner:
             Owner.grant(),
             Owner.marie(),
             Owner.anna(),
+            Owner.agathe(),
         ]
 
 
