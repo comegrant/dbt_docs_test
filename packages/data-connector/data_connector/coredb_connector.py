@@ -30,7 +30,7 @@ def create_or_replace_table_query(host: str, database: str, table: str, query: s
 
     database = database.lower()
 
-    remote_table.write.mode("overwrite").saveAsTable(f"bronze.{database}_{table}")
+    remote_table.write.mode("overwrite").saveAsTable(f"bronze.{database}__{table}")
 
 def load_coredb_full(database: str, table: str) -> None:
     """

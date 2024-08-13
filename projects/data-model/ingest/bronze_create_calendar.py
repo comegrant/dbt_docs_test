@@ -1,0 +1,37 @@
+# Databricks notebook source
+import sys
+
+packages = ["../", "../../../packages/time-machine/"]
+sys.path.extend(packages)
+
+# COMMAND ----------
+
+from time_machine.calendars import *
+
+dates = get_calendar_dataframe("2018-01-01", "2030-12-31")
+
+# COMMAND ----------
+
+dates.head()
+
+# COMMAND ----------
+
+dates['year'] = dates['year'].astype('int32')
+dates['week'] = dates['week'].astype('int32')
+
+# COMMAND ----------
+
+dates = dates.rename(columns={'datekey': 'pk_dim_date'})
+
+# COMMAND ----------
+
+dates = spark.createDataFrame(dates)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC DROP TABLE IF EXISTS dev.silver.silver_calendar
+
+# COMMAND ----------
+
+dates.write.mode("overwrite").saveAsTable("dev.silver.silver_calendar")
