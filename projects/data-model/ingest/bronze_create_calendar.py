@@ -29,8 +29,8 @@ dates = spark.createDataFrame(dates)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC DROP TABLE IF EXISTS dev.silver.silver_calendar
+# MAGIC DROP TABLE IF EXISTS silver.silver_calendar
 
 # COMMAND ----------
 
-dates.write.mode("overwrite").saveAsTable("dev.silver.silver_calendar")
+dates.write.mode("overwrite").saveAsTable("silver.silver_calendar")
