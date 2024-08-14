@@ -618,12 +618,16 @@ def create(type_name: str) -> None:
                 (template_path() / "project").as_posix(),
                 output_dir=projects_path().as_posix(),
                 extra_context=extra_context,
+                overwrite_if_exists=True,
+                skip_if_file_exists=True,
             )
         elif type_name == "package":
             output_dir = cookiecutter(
                 (template_path() / "package").as_posix(),
                 output_dir=internal_package_path().as_posix(),
                 extra_context=extra_context,
+                overwrite_if_exists=True,
+                skip_if_file_exists=True,
             )
     except Exception:
         click.echo(f"\nAn error occured while creating the {type_name}.\n")
