@@ -3,68 +3,42 @@
 version: 2
 
 models:
-  - name: sil_pim__menu_recipes
+  - name: pim__menu_recipes
     description: ""
-    config:
-      alias: pim__menu_recipes
 
-  - name: sil_pim__menu_variations
+  - name: pim__menu_variations
     description: ""
-    config:
-      alias: pim__menu_variations
 
-  - name: sil_pim__menus
+  - name: pim__menus
     description: ""
-    config:
-      alias: pim__menus
 
-  - name: sil_pim__portions
+  - name: pim__portions
     description: ""
-    config:
-      alias: pim__portions
 
-  - name: sil_pim__recipe_portions
+  - name: pim__recipe_portions
     description: ""
-    config:
-      alias: pim__recipe_portions
 
-  - name: sil_pim__weekly_menus
+  - name: pim__weekly_menus
     description: ""
-    config:
-      alias: pim__weekly_menus
+
+  - name: pim__recipes
+    description: ""
+
+  - name: pim__recipe_companies
+    description: ""
   
-  - name: sil_pim__recipes
+  - name: pim__recipe_metadata
     description: ""
-    config:
-      alias: pim__recipes
 
-  - name: sil_pim__recipe_companies
+  - name: pim__recipe_metadata_translations
     description: ""
-    config:
-      alias: pim__recipe_companies
+
+  - name: pim__recipe_difficulty_level_translations
+    description: ""
   
-  - name: sil_pim__recipe_metadata
+  - name: pim__recipe_main_ingredient_translations
     description: ""
-    config:
-      alias: pim__recipe_metadata
-
-  - name: sil_pim__recipe_metadata_translations
-    description: ""
-    config:
-      alias: pim__recipe_metadata_translations
-
-  - name: sil_pim__recipe_difficulty_level_translations
-    description: ""
-    config:
-      alias: pim__recipe_difficulty_level_translations
-  
-  - name: sil_pim__recipe_main_ingredient_translations
-    description: ""
-    config:
-      alias: pim__recipe_main_ingredient_translations
  
-  - name: sil_pim__recipe_main_ingredients
+  - name: pim__recipe_main_ingredients
     description: ""
-    config:
-      alias: pim__recipe_main_ingredients
   

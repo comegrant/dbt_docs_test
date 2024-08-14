@@ -3,10 +3,8 @@
 version: 2
 
 models:
-  - name: sil_cms__companies
+  - name: cms__companies
     description: Information about each company
-    config:
-      alias: cms__companies
 
     columns:
       - name: company_id
@@ -21,10 +19,8 @@ models:
         data_type: string
         description: "{{ doc('column__country_id') }}"
 
-  - name: sil_cms__countries
+  - name: cms__countries
     description: Table with countries
-    config:
-      alias: cms__countries
 
     columns:
       - name: country_id
@@ -35,15 +31,13 @@ models:
         data_type: string
         description: "{{ doc('column__country_name') }}"
 
-  - name: sil_cms__billing_agreement_orders
-    description: "{{ doc('table__cms_billing_agreement_orders') }}"
-    config:
-      alias: cms__orders
+  - name: cms__billing_agreement_orders
+    description: "{{ doc('table__cms__billing_agreement_orders') }}"
 
     columns:
-      - name: cms_order_id
+      - name: cms__order_id
         data_type: string
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__cms__order_id') }}"
 
       - name: ops_order_id
         data_type: bigint
@@ -77,19 +71,17 @@ models:
         data_type: date
         description: "{{ doc('column__delivery_week_monday_date') }}"
 
-  - name: sil_cms__billing_agreement_order_lines
-    description: "{{ doc('table__cms_billing_agreement_order_lines') }}"
-    config:
-      alias: cms__order_lines
+  - name: cms__billing_agreement_order_lines
+    description: "{{ doc('table__cms__billing_agreement_order_lines') }}"
 
     columns:
       - name: order_line_id
         data_type: string
         description: "{{ doc('column__order_line_id') }}"
 
-      - name: cms_order_id
+      - name: cms__order_id
         data_type: string
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__cms__order_id') }}"
 
       - name: product_variation_id
         data_type: string
@@ -123,10 +115,8 @@ models:
         data_type: decimal(38,9)
         description: "{{ doc('column__order_line_total_amount_inc_vat') }}"
 
-  - name: sil_cms__order_status
+  - name: cms__billing_agreement_order_status
     description: ""
-    config:
-      alias: cms__order_status
 
     columns:
       - name: order_status_id
@@ -141,10 +131,8 @@ models:
         data_type: boolean
         description: "{{ doc('column__order_status_can_be_cancelled') }}"
 
-  - name: sil_cms__order_types
+  - name: cms__order_types
     description: ""
-    config:
-      alias: cms__order_types
 
     columns:
       - name: order_type_id
@@ -167,27 +155,17 @@ models:
         data_type: boolean
         description: "{{ doc('column__order_type_is_direct_payment') }}"
 
-  - name: sil_cms__billing_agreements
+  - name: cms__billing_agreements
     description: ""
-    config:
-      alias: cms__billing_agreements
   
-  - name: sil_cms__billing_agreement_status
+  - name: cms__billing_agreement_status
     description: ""
-    config:
-      alias: cms__billing_agreement_status
   
-  - name: sil_cms__billing_agreement_addon_subscriptions
+  - name: cms__billing_agreement_addon_subscriptions
     description: ""
-    config:
-      alias: cms__billing_agreement_addon_subscriptions
   
-  - name: sil_cms__addon_subscriptions
+  - name: cms__addon_subscriptions
     description: ""
-    config:
-      alias: cms__addon_subscriptions
   
-  - name: sil_cms__loyalty_agreement_ledger
+  - name: cms__loyalty_agreement_ledger
     description: ""
-    config:
-      alias: cms__loyalty_agreement_ledger

@@ -5,7 +5,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: products
+      alias: dim_products
       contract:
         enforced: true
 
@@ -81,7 +81,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: recipes
+      alias: dim_recipes
 
     versions:
       - v: 1
@@ -90,7 +90,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: menus
+      alias: dim_menus
 
     versions:
       - v: 1

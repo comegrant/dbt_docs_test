@@ -1,10 +1,7 @@
 models:
-  - name: sil_product_layer__product_concepts
+  - name: product_layer__product_concepts
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_concepts
-    
+
     columns:
       - name: product_concept_id
         data_type: string
@@ -32,15 +29,9 @@ models:
       - name: updated_by
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
-
-    versions:
-      - v: 1
   
-  - name: sil_product_layer__product_types_concepts
+  - name: product_layer__product_types_concepts
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_types_concepts
 
     columns:
       - name: product_concept_id
@@ -66,15 +57,9 @@ models:
       - name: updated_by
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
-    
-    versions:
-      - v: 1
 
-  - name: sil_product_layer__product_types
+  - name: product_layer__product_types
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_types
 
     columns:
       - name: product_type_id
@@ -109,14 +94,8 @@ models:
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
 
-    versions:
-      - v: 1
-
-  - name: sil_product_layer__products
+  - name: product_layer__products
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__products
 
     columns:
       - name: id
@@ -155,14 +134,8 @@ models:
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
 
-    versions:
-      - v: 1
-
-  - name: sil_product_layer__product_status
+  - name: product_layer__product_status
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_status
 
     columns:
       - name: status_id
@@ -173,14 +146,8 @@ models:
         data_type: string
         description: "{{ doc('column__product_status_name') }}"
 
-    versions:
-      - v: 1
-  
-  - name: sil_product_layer__product_variations
+  - name: product_layer__product_variations
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_variations
 
     columns:
       - name: id
@@ -211,14 +178,8 @@ models:
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
 
-    versions:
-      - v: 1
-
-  - name: sil_product_layer__product_variations_companies
+  - name: product_layer__product_variations_companies
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_variations_companies
 
     columns:
       
@@ -254,24 +215,8 @@ models:
         data_type: string
         description: "{{ doc('column__coredb_updated_by') }}"
 
-    versions:
-      - v: 1
-
-  - name: sil_product_layer__product_variation_attribute_values
+  - name: product_layer__product_variation_attribute_values
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_variation_attribute_values
-    
-    versions:
-      - v: 1
 
-  - name: sil_product_layer__product_variation_attribute_templates
+  - name: product_layer__product_variation_attribute_templates
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_variation_attribute_templates
-    
-    versions:
-      - v: 1
-

@@ -5,41 +5,41 @@ sources:
     description: ""
     schema: bronze
     tables:
-      - name: pim_weekly_menus
+      - name: pim__weekly_menus
         description: "{{ doc('table__weekly_menus') }}"
 
-      - name: pim_menus
+      - name: pim__menus
         description: "{{ doc('table__menus') }}"
 
-      - name: pim_menu_variations
+      - name: pim__menu_variations
         description: "{{ doc('table__menu_variations') }}"
 
-      - name: pim_menu_recipes
+      - name: pim__menu_recipes
         description: "{{ doc('table__menu_recipes') }}"
       
-      - name: pim_recipes
+      - name: pim__recipes
         description: "{{ doc('table__recipes') }}"
       
-      - name: pim_recipe_companies
+      - name: pim__recipe_companies
         description: ""
 
-      - name: pim_recipe_portions
+      - name: pim__recipe_portions
         description: "{{ doc('table__recipe_portions') }}"
 
-      - name: pim_portions
+      - name: pim__portions
         description: "{{ doc('table__portions') }}"
       
-      - name: pim_recipes_metadata
+      - name: pim__recipes_metadata
         description: ""
       
-      - name: pim_recipe_metadata_translations
+      - name: pim__recipe_metadata_translations
         description: ""
       
-      - name: pim_recipe_difficulty_levels_translations
+      - name: pim__recipe_difficulty_levels_translations
         description: ""
       
-      - name: pim_recipe_main_ingredients
+      - name: pim__recipe_main_ingredients
         description: ""
       
-      - name: pim_recipe_main_ingredients_translations
+      - name: pim__recipe_main_ingredients_translations
         description: ""

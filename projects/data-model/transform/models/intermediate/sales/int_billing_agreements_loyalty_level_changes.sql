@@ -2,7 +2,7 @@ with
 
 loyalty_ledger as (
 
-    select * from {{ ref('sil_cms__loyalty_agreement_ledger')}}
+    select * from {{ ref('cms__loyalty_agreement_ledger')}}
     
 )
 

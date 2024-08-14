@@ -7,7 +7,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: companies
+      alias: dim_companies
       contract:
         enforced: true
 
@@ -56,7 +56,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: calendar
+      alias: dim_calendar
       contract:
         enforced: false
           

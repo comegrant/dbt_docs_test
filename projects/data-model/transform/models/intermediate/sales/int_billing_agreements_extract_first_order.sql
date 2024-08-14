@@ -2,7 +2,7 @@ with
 
 orders as (
 
-    select * from {{ ref('sil_cms__billing_agreement_orders')}}
+    select * from {{ ref('cms__billing_agreement_orders')}}
     
 )
 

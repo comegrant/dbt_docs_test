@@ -3,42 +3,42 @@
 ## Table-Level Descriptions
 
 ### Companies
-{% docs table__cms_companies %}
+{% docs table__cms__companies %}
 
 Table containing information about the companies of the business. Has all the four brands, but also the company used for procurment in Norway and companies related to currently stopped activites such as flex and lunch delivery.
 
 {% enddocs %}
 
 ### Countries
-{% docs table__cms_countries %}
+{% docs table__cms__countries %}
 
 Table containing information relevant for each country we operate in. 
 
 {% enddocs %}
 
 #### Billing Agreements
-{% docs table__cms_billing_agreements %}
+{% docs table__cms__billing_agreements %}
 
 All placed orders. Gets updated when a transaction is credited or cancelled.
 
 {% enddocs %}
 
 #### Billing Agreement Status
-{% docs table__cms_billing_agreement_status %}
+{% docs table__cms__billing_agreement_status %}
 
 Holds information about the status a billing agreement can have.
 
 {% enddocs %}
 
 #### Billing Agreement Orders
-{% docs table__cms_billing_agreement_orders %}
+{% docs table__cms__billing_agreement_orders %}
 
 All placed orders. Gets updated when a transaction is credited or cancelled.
 
 {% enddocs %}
 
 #### Billing Agreement Order Lines
-{% docs table__cms_billing_agreement_order_lines %}
+{% docs table__cms__billing_agreement_order_lines %}
 
 Order lines of all placed orders. Gets updated when a transaction is credited or cancelled.
 
@@ -86,7 +86,7 @@ The id of an billing agreement.
 {% enddocs %}
 
 #### Agreement Order Id
-{% docs column__cms_order_id %}
+{% docs column__cms__order_id %}
 
 This is the primary key in the CMS database for each placed order.
 

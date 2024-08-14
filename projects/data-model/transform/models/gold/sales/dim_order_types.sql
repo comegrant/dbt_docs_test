@@ -2,7 +2,7 @@ with
 
 order_types as (
 
-    select * from {{ ref('sil_cms__order_types') }}
+    select * from {{ ref('cms__order_types') }}
 
 ),
 

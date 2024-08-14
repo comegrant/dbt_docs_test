@@ -5,7 +5,7 @@ sources:
     description: "{{ doc('database__product_layer') }}"
     schema: bronze
     tables:
-      - name: product_layer_product_concept
+      - name: product_layer__product_concept
         description: "{{ doc('table__product_concepts') }}"
         columns:
           - name: product_concept_id
@@ -36,7 +36,7 @@ sources:
             data_type: string
             description: "{{ doc('column__coredb_updated_by') }}"
 
-      - name: product_layer_product_type_concept
+      - name: product_layer__product_type_concept
         description: "{{ doc('table__product_types_concepts') }}"
         columns:
           - name: product_concept_id
@@ -62,7 +62,7 @@ sources:
           - name: updated_by
             data_type: string
             description: "{{ doc('column__coredb_updated_by') }}"
-      - name: product_layer_product_type
+      - name: product_layer__product_type
         description: "{{ doc('table__product_types') }}"
         columns:
           - name: product_type_id
@@ -96,7 +96,7 @@ sources:
           - name: physical_product
             data_type: boolean
             description: "{{ doc('column__is_physical_product') }}"
-      - name: product_layer_product
+      - name: product_layer__product
         description: "{{ doc('table__products') }}"
         columns:
           - name: id
@@ -139,7 +139,7 @@ sources:
             data_type: string
             description: "{{ doc('column__product_group_id') }}"
 
-      - name: product_layer_product_status
+      - name: product_layer__product_status
         description: "{{ doc('table__product_status') }}"
         columns:
           - name: status_id
@@ -150,7 +150,7 @@ sources:
             data_type: string
             description: "{{ doc('column__product_status_name') }}"
 
-      - name: product_layer_product_variation
+      - name: product_layer__product_variation
         description: "{{ doc('table__product_variations') }}"
         columns:
           - name: id
@@ -185,7 +185,7 @@ sources:
             data_type: string
             description: "{{ doc('column__coredb_updated_by') }}"
 
-      - name: product_layer_product_variation_company
+      - name: product_layer__product_variation_company
         description: "{{ doc('table__product_variations_companies') }}"
         columns:
           
@@ -233,6 +233,6 @@ sources:
             data_type: boolean
             description: ""
       
-      - name: product_layer_product_variation_attribute_value
+      - name: product_layer__product_variation_attribute_value
 
-      - name: product_layer_product_variation_attribute_template
+      - name: product_layer__product_variation_attribute_template

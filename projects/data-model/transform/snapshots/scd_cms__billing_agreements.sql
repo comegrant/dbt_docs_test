@@ -11,6 +11,6 @@
     )
 }}
 
-select * from {{ source('cms', 'cms_billing_agreement') }}
+select * from {{ source('cms', 'cms__billing_agreement') }}
 
 {% endsnapshot %} 

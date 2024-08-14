@@ -1,1 +1,1 @@
-select * from silver.calendar
+select * from silver.silver_calendar

@@ -2,13 +2,13 @@ with
 
 companies as (
 
-    select * from {{ref("sil_cms__companies")}}
+    select * from {{ref("cms__companies")}}
   
 ),
 
 countries as (
 
-    select * from {{ref("sil_cms__countries")}}
+    select * from {{ref("cms__countries")}}
   
 ),
 

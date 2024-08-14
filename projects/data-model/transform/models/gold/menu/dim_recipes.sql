@@ -2,7 +2,7 @@ with
 
 recipes as (
 
-    select * from {{ ref('sil_pim__recipes') }}
+    select * from {{ ref('pim__recipes') }}
 
 ),
 

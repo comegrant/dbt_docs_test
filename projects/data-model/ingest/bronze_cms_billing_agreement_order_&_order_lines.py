@@ -36,21 +36,16 @@ load_coredb_query(database, source_orders_table, query_orders)
 
 # COMMAND ----------
 
-# Left join to find the order lines that belong to the orders
+# Inner join to find the order lines that belong to the orders
 query_order_lines = (
 f"""(
     SELECT order_lines.* 
     FROM {source_orders_table} as orders
-    LEFT JOIN {source_order_lines_table} as order_lines 
+    INNER JOIN {source_order_lines_table} as order_lines 
     ON orders.{source_orders_join_column} = order_lines.{source_order_lines_join_column} 
     WHERE orders.{source_orders_date_column} >= '{from_date}'
 )"""
 )
-
-
-# COMMAND ----------
-
-print(query_order_lines)
 
 # COMMAND ----------
 

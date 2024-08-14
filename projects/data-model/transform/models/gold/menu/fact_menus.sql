@@ -2,49 +2,49 @@ with
 
 weekly_menus as (
 
-    select * from {{ ref('sil_pim__weekly_menus') }}
+    select * from {{ ref('pim__weekly_menus') }}
 
 ),
 
 menus as (
 
-    select * from {{ ref('sil_pim__menus') }}
+    select * from {{ ref('pim__menus') }}
 
 ),
 
 menu_variations as (
 
-    select * from {{ ref('sil_pim__menu_variations') }}
+    select * from {{ ref('pim__menu_variations') }}
 
 ),
 
 menu_recipes as (
 
-    select * from {{ ref('sil_pim__menu_recipes') }}
+    select * from {{ ref('pim__menu_recipes') }}
 
 ),
 
 recipes as (
 
-    select * from {{ ref('sil_pim__recipes') }}
+    select * from {{ ref('pim__recipes') }}
 
 ),
 
 recipe_companies as (
 
-    select * from {{ ref('sil_pim__recipe_companies') }}
+    select * from {{ ref('pim__recipe_companies') }}
 
 ),
 
 recipe_portions as (
 
-    select * from {{ ref('sil_pim__recipe_portions') }}
+    select * from {{ ref('pim__recipe_portions') }}
 
 ),
 
 portions as (
 
-    select * from {{ ref('sil_pim__portions') }}
+    select * from {{ ref('pim__portions') }}
 
 ),
 

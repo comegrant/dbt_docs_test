@@ -5,18 +5,18 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: orders
+      alias: fact_orders
       contract:
         enforced: true
 
     columns:
       - name: pk_fact_order_line
         data_type: string
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__cms__order_id') }}"
 
-      - name: cms_order_id
+      - name: cms__order_id
         data_type: string
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__cms__order_id') }}"
 
       - name: ops_order_id
         data_type: bigint
@@ -117,7 +117,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: order_status
+      alias: dim_order_status
       contract:
         enforced: true
 
@@ -145,7 +145,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: order_types
+      alias: dim_order_types
       contract:
         enforced: true
 
@@ -181,7 +181,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: billing_agreements
+      alias: dim_billing_agreements
 
     versions:
       - v: 1

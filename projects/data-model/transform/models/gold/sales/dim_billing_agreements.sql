@@ -2,7 +2,7 @@ with
 
 billing_agreements as (
 
-    select * from {{ ref('sil_cms__billing_agreements') }}
+    select * from {{ ref('cms__billing_agreements') }}
 
 ),
 
@@ -27,7 +27,7 @@ scd_billing_agreements as (
 
 billing_agreement_status as (
 
-    select * from {{ ref('sil_cms__billing_agreement_status') }}
+    select * from {{ ref('cms__billing_agreement_status') }}
 
 ),
 

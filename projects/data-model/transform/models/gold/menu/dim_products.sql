@@ -2,61 +2,65 @@ with
 
 product_concepts as (
 
-    select * from {{ ref('sil_product_layer__product_concepts') }}
+    select * from {{ ref('product_layer__product_concepts') }}
 
 ),
 
 product_types_concepts as (
 
-    select * from {{ ref('sil_product_layer__product_types_concepts') }}
+    select * from {{ ref('product_layer__product_types_concepts') }}
 
 ),
 
 
 product_types as (
 
-    select * from {{ ref('sil_product_layer__product_types') }}
+    select * from {{ ref('product_layer__product_types') }}
 
 ),
 
 products as (
 
-    select * from {{ ref('sil_product_layer__products') }}
+    select * from {{ ref('product_layer__products') }}
 
 ),
 
 product_status as (
 
-    select * from {{ ref('sil_product_layer__product_status') }}
+    select * from {{ ref('product_layer__product_status') }}
 
 ),
 
 
 product_variations as (
 
-    select * from {{ ref('sil_product_layer__product_variations') }}
+    select * from {{ ref('product_layer__product_variations') }}
 
 ),
 
 product_variations_companies as (
 
-    select * from {{ ref('sil_product_layer__product_variations_companies') }}
+    select * from {{ ref('product_layer__product_variations_companies') }}
 
 ),
 
-attribute_templates as (
+meals_and_portions_default as (
 
-    select * from {{ ref('int_attribute_templates_pivoted') }}
-
-),
-
-attribute_values as (
-
-    select * from {{ ref('int_attribute_values_pivoted') }}
+    select * from {{ ref('int_product_variations_meal_and_portion_default_values_pivoted') }}
 
 ),
 
+meals_and_portions as (
 
+    select * from {{ ref('int_product_variations_meal_and_portion_values_pivoted') }}
+
+),
+
+corresponding_mealboxes as (
+
+    select * from {{ ref('int_product_variations_corresponding_mealbox_ids_pivoted') }}
+
+),
 
 product_tables_joined as (
 
@@ -80,9 +84,9 @@ product_tables_joined as (
         , product_status.product_status_name
         , product_variations_companies.product_variation_name
         , product_variations.sku
-        , coalesce(attribute_values.number_of_meals, attribute_templates.number_of_meals) as number_of_meals
-        , coalesce(attribute_values.number_of_portions, attribute_templates.number_of_portions) as number_of_portions
-        , attribute_values.preselected_mealbox_product_id
+        , coalesce(meals_and_portions.number_of_meals, meals_and_portions_default.number_of_meals) as number_of_meals
+        , coalesce(meals_and_portions.number_of_portions, meals_and_portions_default.number_of_portions) as number_of_portions
+        , corresponding_mealboxes.preselected_mealbox_product_id
     from product_variations_companies
     left join product_variations
     on product_variations_companies.product_variation_id = product_variations.product_variation_id
@@ -96,11 +100,14 @@ product_tables_joined as (
     on product_types.product_type_id = product_types_concepts.product_type_id
     left join product_concepts
     on product_types_concepts.product_concept_id = product_concepts.product_concept_id
-    left join attribute_values
-    on product_variations_companies.product_variation_id = attribute_values.product_variation_id
-    and product_variations_companies.company_id = attribute_values.company_id
-    left join attribute_templates
-    on product_types.product_type_id = attribute_templates.product_type_id
+    left join meals_and_portions
+    on product_variations_companies.product_variation_id = meals_and_portions.product_variation_id
+    and product_variations_companies.company_id = meals_and_portions.company_id
+    left join meals_and_portions_default
+    on product_types.product_type_id = meals_and_portions_default.product_type_id
+    left join corresponding_mealboxes
+    on product_variations_companies.product_variation_id = corresponding_mealboxes.product_variation_id
+    and product_variations_companies.company_id = corresponding_mealboxes.company_id
 )
 
 select * from product_tables_joined

@@ -6,7 +6,7 @@ sources:
   - name: cms
     schema: bronze
     tables:
-      - name: cms_company
+      - name: cms__company
         description: ""
         columns:
           - name: id
@@ -153,7 +153,7 @@ sources:
             data_type: string
             description: ""
 
-      - name: cms_country
+      - name: cms__country
         description: ""
         columns:
           - name: id
@@ -239,12 +239,12 @@ sources:
           - name: timezone
             data_type: string
             description: ""
-      - name: cms_billing_agreement_order
-        description: "{{ doc('table__cms_billing_agreement_orders') }}"
+      - name: cms__billing_agreement_order
+        description: "{{ doc('table__cms__billing_agreement_orders') }}"
         columns:
           - name: id
             data_type: string
-            description: "{{ doc('column__cms_order_id') }}"
+            description: "{{ doc('column__cms__order_id') }}"
             tests:
               - not_null
               - unique
@@ -377,8 +377,8 @@ sources:
           - name: has_recipe_leaflets
             data_type: boolean
             description: "{{ doc('column__order_has_recipe_leaflets') }}"
-      - name: cms_billing_agreement_order_line
-        description: "{{ doc('table__cms_billing_agreement_order_lines') }}"
+      - name: cms__billing_agreement_order_line
+        description: "{{ doc('table__cms__billing_agreement_order_lines') }}"
         columns:
           - name: id
             data_type: string
@@ -389,7 +389,7 @@ sources:
 
           - name: agreement_order_id
             data_type: string
-            description: "{{ doc('column__cms_order_id') }}"
+            description: "{{ doc('column__cms__order_id') }}"
             tests:
               - not_null
 
@@ -424,7 +424,7 @@ sources:
           - name: typeofline
             data_type: string
             description: "{{ doc('column__order_line_type_name') }}"
-      - name: cms_billing_agreement_order_status
+      - name: cms__billing_agreement_order_status
         description: ""
         columns:
           - name: id
@@ -439,7 +439,7 @@ sources:
             data_type: boolean
             description: "{{ doc('column__order_status_can_be_cancelled') }}"
 
-      - name: cms_order_type
+      - name: cms__order_type
         description: ""
         columns:
           - name: id
@@ -482,7 +482,7 @@ sources:
             data_type: string
             description: ""
 
-      - name: cms_billing_agreement
+      - name: cms__billing_agreement
         description: ""
         columns:
           - name: agreement_id
@@ -561,7 +561,7 @@ sources:
             data_type: string
             description: "{{ doc('column__coredb_updated_by') }}"
 
-      - name: cms_billing_agreement_status
+      - name: cms__billing_agreement_status
         description: ""
         columns:
           - name: status_id
@@ -588,7 +588,7 @@ sources:
             data_type: string
             description: "{{ doc('column__coredb_updated_by') }}"
 
-      - name: cms_billing_agreement_addon_subscriptions
+      - name: cms__billing_agreement_addon_subscriptions
         description: "{{ doc('table__billing_agreement_addon_subscriptions') }}"
         columns:
           - name: agreement_id
@@ -639,7 +639,7 @@ sources:
             data_type: timestamp
             description: ""
 
-      - name: cms_addon_subscriptions
+      - name: cms__addon_subscriptions
         description: "{{ doc('table__addon_subscriptions') }}"
         columns:
           - name: id
@@ -674,7 +674,7 @@ sources:
             data_type: string
             description: ""
 
-      - name: cms_loyalty_agreement_ledger
+      - name: cms__loyalty_agreement_ledger
         description: ""
         columns:
           - name: agreement_id
@@ -696,5 +696,5 @@ sources:
             data_type: string
             description: ""
       
-      - name: cms_loyalty_level
+      - name: cms__loyalty_level
         description: ""

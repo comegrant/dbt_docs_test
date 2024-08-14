@@ -2,13 +2,13 @@ with
 
 main_ingredients as (
 
-    select * from {{ ref('sil_pim__recipe_main_ingredients') }}
+    select * from {{ ref('pim__recipe_main_ingredients') }}
 
 ),
 
 main_ingredient_translations as (
 
-    select * from {{ ref('sil_pim__recipe_main_ingredient_translations') }}
+    select * from {{ ref('pim__recipe_main_ingredient_translations') }}
 
 ),
 

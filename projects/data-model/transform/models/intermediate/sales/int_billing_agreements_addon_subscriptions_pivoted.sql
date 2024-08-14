@@ -23,13 +23,13 @@ with
 
 addon_subscriptions as (
 
-    select * from {{ ref('sil_cms__billing_agreement_addon_subscriptions')}}
+    select * from {{ ref('cms__billing_agreement_addon_subscriptions')}}
     
 ),
 
 addon_names as (
 
-    select * from {{ ref('sil_cms__addon_subscriptions')}}
+    select * from {{ ref('cms__addon_subscriptions')}}
     
 ),
 

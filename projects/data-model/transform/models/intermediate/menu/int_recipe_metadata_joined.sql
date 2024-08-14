@@ -2,19 +2,19 @@ with
 
 metadata as (
 
-    select * from {{ ref('sil_pim__recipe_metadata') }}
+    select * from {{ ref('pim__recipe_metadata') }}
 
 ),
 
 metadata_translations as (
 
-    select * from {{ ref('sil_pim__recipe_metadata_translations') }}
+    select * from {{ ref('pim__recipe_metadata_translations') }}
 
 ),
 
 difficulty_levels_translations as (
 
-    select * from {{ ref('sil_pim__recipe_difficulty_level_translations') }}
+    select * from {{ ref('pim__recipe_difficulty_level_translations') }}
 
 ),
 
