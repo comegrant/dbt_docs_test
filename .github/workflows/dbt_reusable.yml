@@ -32,11 +32,16 @@ on:
         type: string
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
 jobs:
   dbt-ci:
     name: 'Deploy dbt models in ${{inputs.working-directory}}'
     runs-on: ubuntu-22.04
-    # TODO: Do not get this fully
     environment: ${{ inputs.target-env }}
     timeout-minutes: 30
 
@@ -70,10 +75,37 @@ jobs:
       - name: Install dbt dependencies
         run: poetry run dbt deps --project-dir ./transform
 
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get Secrets from Key Vault
+        uses: azure/cli@v2
+        with:  
+          azcliversion: latest
+          inlineScript: |
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+            
+            DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            DATABRICKS_WAREHOUSE_DBT_ID=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-warehouse-dbt-id-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            DATABRICKS_WORKSPACE_URL=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-workspace-url-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
+            
+            echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
+            echo "::add-mask::${DATABRICKS_WAREHOUSE_DBT_ID}"
+            echo "::add-mask::${DATABRICKS_WORKSPACE_URL}"
+            
+            echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
+            echo "DATABRICKS_WAREHOUSE_DBT_ID=${DATABRICKS_WAREHOUSE_DBT_ID}" >> $GITHUB_ENV
+            echo "DATABRICKS_WORKSPACE_URL=${DATABRICKS_WORKSPACE_URL}" >> $GITHUB_ENV
+
       - name: dbt build
-        # TODO: Should maybe not deploy automatically in prod?
         run: poetry run dbt build --target=${{ inputs.dbt-target }} --full-refresh --project-dir ./transform --profiles-dir ./transform/profiles
         env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
-          DATABRICKS_DBT_TOKEN: ${{ secrets.DATABRICKS_DBT_TOKEN }}
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}

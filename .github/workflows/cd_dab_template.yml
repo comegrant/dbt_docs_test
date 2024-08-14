@@ -42,11 +42,29 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+    - name: Get Secrets from Key Vault
+      uses: azure/cli@v2
+      with:  
+        azcliversion: latest
+        inlineScript: |
+          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+          DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
+          
+          echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
+          echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
+
     - name: Setup Databricks CLI
       uses: databricks/setup-cli@v0.224.1
 
     - name: Validate DABs
-      run: databricks bundle validate --target ${{ vars.ENVIRONMENT_VARIABLE }} ${{inputs.extra-args}}
+      run: databricks bundle validate ${{inputs.extra-args}}
+      env: 
+        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+        DATABRICKS_BUNDLE_ENV: ${{ vars.ENVIRONMENT_VARIABLE }}
 
     - name: Deploy DABs
-      run: databricks bundle deploy --target ${{ vars.ENVIRONMENT_VARIABLE }} ${{inputs.extra-args}}
+      run: databricks bundle deploy ${{inputs.extra-args}}
+      env: 
+        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+        DATABRICKS_BUNDLE_ENV: ${{ vars.ENVIRONMENT_VARIABLE }}

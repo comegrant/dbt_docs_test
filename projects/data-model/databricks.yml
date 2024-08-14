@@ -14,14 +14,9 @@ variables:
   client-id: 
     description: The ID of the service Service Principal
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
-  docker_image_url:
-    description: The url of the source code. in the form as a Docker image.
+  warehouse_id:
+    description: The id of the sql warehouse used for the dbt task
 
-run_as:    
-      service_principal_name: ${var.client-id}
-
-# Deployment targets.
-# The default schema, catalog, etc. for dbt are defined in dbt_profiles/profiles.yml
 targets:
   dev:
     default: true
@@ -31,12 +26,21 @@ targets:
     workspace:
       host: https://adb-4291784437205825.5.azuredatabricks.net
 
+    variables:
+      warehouse_id: 45100b61eb7ee2f5
+
   test:
     mode: production
     workspace:
       host: https://adb-3194696976104051.11.azuredatabricks.net
+    variables:
+      warehouse_id: 76c581aa18fb7b4f
       
   prod:
     mode: production
     workspace:
       host: https://adb-3181126873992963.3.azuredatabricks.net
+    variables:
+      warehouse_id: 1a2fc265706df5fb
+
+      

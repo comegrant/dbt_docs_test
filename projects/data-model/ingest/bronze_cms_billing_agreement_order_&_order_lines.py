@@ -1,7 +1,7 @@
 # Databricks notebook source
 from datetime import datetime
 
-from data_connector.coredb_connector import load_coredb_query
+from coredb_connector import load_coredb_query
 
 # COMMAND ----------
 
@@ -32,7 +32,7 @@ query_orders = f"(SELECT * FROM {source_orders_table} WHERE {source_orders_date_
 
 # COMMAND ----------
 
-load_coredb_query(database, source_orders_table, query_orders)
+load_coredb_query(dbutils, database, source_orders_table, query_orders)
 
 # COMMAND ----------
 
@@ -49,4 +49,4 @@ f"""(
 
 # COMMAND ----------
 
-load_coredb_query(database, source_order_lines_table, query_order_lines)
+load_coredb_query(dbutils, database, source_order_lines_table, query_order_lines)

@@ -1,6 +1,8 @@
+
 import os
 
 from pyspark.sql import SparkSession
+from pyspark.dbutils import DBUtils
 
 
 def create_or_replace_table_query(host: str, database: str, table: str, query: str, user: str, password: str) -> None:
@@ -32,7 +34,7 @@ def create_or_replace_table_query(host: str, database: str, table: str, query: s
 
     remote_table.write.mode("overwrite").saveAsTable(f"bronze.{database}__{table}")
 
-def load_coredb_full(database: str, table: str) -> None:
+def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     """
     Executes query that loads all rows from a table
 
@@ -42,9 +44,9 @@ def load_coredb_full(database: str, table: str) -> None:
     """
 
     query = f"(SELECT * FROM {table})"
-    load_coredb_query(database, table, query)
+    load_coredb_query(dbutils, database, table, query)
 
-def load_coredb_query(database: str, table: str, query: str, host: str = "brandhub-fog.database.windows.net") -> None:
+def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, host: str = "brandhub-fog.database.windows.net") -> None:
     """
     Executes custom query that loads selected data from a table in CoreDB
 
@@ -55,7 +57,7 @@ def load_coredb_query(database: str, table: str, query: str, host: str = "brandh
         query (str): Query to run towards datab
     """
 
-    username = os.getenv('COREDB_USERNAME')
-    password = os.getenv('COREDB_PASSWORD')
+    username = dbutils.secrets.get( scope="auth_common", key="coreDbUsername" )
+    password = dbutils.secrets.get( scope="auth_common", key="coreDbPassword" )
 
     create_or_replace_table_query(host, database, table, query, username, password)

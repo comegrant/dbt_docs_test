@@ -1,5 +1,5 @@
 # Databricks notebook source
-from data_connector.coredb_connector import load_coredb_full
+from coredb_connector import load_coredb_full
 
 # COMMAND ----------
 
@@ -15,11 +15,11 @@ tables = ["menus",
           "recipes_metadata",
           "recipe_metadata_translations",
           "recipe_portions",
-          "recipe_taxonomies",
+          "recipes_taxonomies",
           "portions",
           "taxonomies",
           "taxonomies_translations",
           "weekly_menus"
           ]
 for table in tables: 
-    load_coredb_full(database, table)
+    load_coredb_full(dbutils, database, table)

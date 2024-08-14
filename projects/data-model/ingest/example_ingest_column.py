@@ -1,7 +1,7 @@
 # Databricks notebook source
 from datetime import datetime
 
-from data_connector.coredb_connector import load_coredb_query
+from coredb_connector import load_coredb_query
 
 # COMMAND ----------
 
@@ -28,4 +28,4 @@ query = f"(SELECT * FROM {table} WHERE {date_column} BETWEEN '{from_date}' AND '
 
 # COMMAND ----------
 
-load_coredb_query(database, table, query)
+load_coredb_query(dbutils, database, table, query)

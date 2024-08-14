@@ -1,5 +1,5 @@
 # Databricks notebook source
-from data_connector.coredb_connector import load_coredb_full
+from coredb_connector import load_coredb_full
 
 # COMMAND ----------
 
@@ -16,4 +16,4 @@ tables = [
     "product_variation_attribute_value"
     ]
 for table in tables: 
-    load_coredb_full(database, table)
+    load_coredb_full(dbutils, database, table)

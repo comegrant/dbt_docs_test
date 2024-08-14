@@ -1,12 +1,11 @@
 # Databricks notebook source
 import sys
 
-packages = ["../", "../../../packages/time-machine/"]
-sys.path.extend(packages)
+
+from calendars import *
 
 # COMMAND ----------
 
-from time_machine.calendars import *
 
 dates = get_calendar_dataframe("2018-01-01", "2030-12-31")
 

@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  deploy-data-model:
+  deploy-dab:
     strategy:
       matrix:
         target: [Test, Production]

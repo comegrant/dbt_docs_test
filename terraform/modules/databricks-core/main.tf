@@ -38,11 +38,10 @@ provider "databricks" {
   azure_workspace_resource_id = azurerm_databricks_workspace.this.id
 }
 
-provider "databricks" {
-  alias      = "accounts"
-  host       = "https://accounts.azuredatabricks.net"
-  account_id = var.databricks_account_id
-}
+
+##########################################
+###     Workspace configuration        ###
+##########################################
 
 resource "azurerm_databricks_workspace" "this" {
   name                        = var.databricks_workspace_name
@@ -71,6 +70,11 @@ resource "databricks_workspace_conf" "this" {
   }
 }
 
+
+##########################################
+###   Schemas and external locations   ###
+##########################################
+
 resource "databricks_storage_credential" "this" {
   name = var.azure_databricks_access_connector_name
   azure_managed_identity {
@@ -78,7 +82,6 @@ resource "databricks_storage_credential" "this" {
   }
   comment = "Managed identy credential using the databricks access connector, managed by Terraform"
 }
-
 
 resource "databricks_external_location" "this" {
   for_each = toset(var.schemas)
@@ -93,38 +96,6 @@ resource "databricks_external_location" "this" {
   owner           = "location-owners"
 }
 
-resource "databricks_grants" "external_location" {
-  for_each          = toset(var.schemas)
-  external_location = databricks_external_location.this[each.key].id
-  grant {
-    principal  = var.azure_client_id
-    privileges = ["ALL_PRIVILEGES"]
-  }
-  # Only add this grant if environment is dev
-  dynamic "grant" {
-    for_each = terraform.workspace == "dev" ? [1] : []
-    content {
-      principal  = "data-scientists"
-      privileges = ["ALL_PRIVILEGES"]
-    }
-  }
-  dynamic "grant" {
-    for_each = terraform.workspace == "dev" ? [1] : []
-    content {
-      principal  = "data-engineers"
-      privileges = ["ALL_PRIVILEGES"]
-    }
-  }
-}
-
-resource "databricks_grants" "storage_credential" {
-  storage_credential = databricks_storage_credential.this.id
-  grant {
-    principal  = var.azure_client_id
-    privileges = ["ALL_PRIVILEGES"]
-  }
-}
-
 resource "databricks_schema" "this" {
   for_each     = toset(var.schemas)
   catalog_name = var.databricks_catalog_name
@@ -134,7 +105,13 @@ resource "databricks_schema" "this" {
 }
 
 
+
+##########################################
+###            Secret scope            ###
+##########################################
+
 data "azurerm_client_config" "current" {}
+
 resource "databricks_secret_scope" "auth_common" {
   name                     = "auth_common"
   initial_manage_principal = "users"
@@ -143,6 +120,11 @@ resource "databricks_secret_scope" "auth_common" {
     dns_name    = "https://${var.key_vault_common_name}.vault.azure.net/"
   }
 }
+
+
+##########################################
+###               Compute              ###
+##########################################
 
 resource "databricks_sql_endpoint" "db_wh_dbt" {
   name                      = "dbt SQL Warehouse"
@@ -198,82 +180,179 @@ resource "databricks_sql_endpoint" "db_wh_explore" {
   }
 }
 
-resource "time_rotating" "this" {
-  rotation_days = 30
-}
 
-resource "databricks_token" "pat" {
-  comment = "Terraform (created: ${time_rotating.this.rfc3339})"
-  # Token is valid for 60 days but is rotated after 30 days.
-  # Run `terraform apply` within 60 days to refresh before it expires.
-  lifetime_seconds = 60 * 24 * 60 * 60
-}
+##########################################
+###   Service Principal for bundles    ###
+##########################################
 
-data "azurerm_key_vault" "this" {
-  name                = var.key_vault_common_name
-  resource_group_name = var.resource_group_common_name
-}
-
-resource "azurerm_key_vault_secret" "databricks_token" {
-  name            = "databricksToken-${terraform.workspace}"
-  value           = databricks_token.pat.token_value
-  key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Terraform (created: ${time_rotating.this.rfc3339}). Run `terraform apply` within 60 days to refresh before it expires."
-  expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
-}
-
-resource "azurerm_key_vault_secret" "databricks_url" {
-  name            = "databricksUrl-${terraform.workspace}"
-  value           = azurerm_databricks_workspace.this.workspace_url
-  key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform"
-  expiration_date = "2050-01-01T00:00:00Z"
+data "databricks_service_principal" "resource-sp" {
+  application_id = var.azure_client_id
 }
 
 data "databricks_group" "admins" {
   display_name = "admins"
 }
 
-resource "databricks_service_principal" "dbt_sp" {
-  display_name = "dbt_sp_${terraform.workspace}"
+resource "databricks_service_principal" "bundle_sp" {
+  display_name = "bundle_sp_${terraform.workspace}"
 }
 
-resource "databricks_group_member" "this" {
+resource "databricks_group_member" "bundle_sp_is_ws_admin" {
   group_id  = data.databricks_group.admins.id
-  member_id = databricks_service_principal.dbt_sp.id
+  member_id = databricks_service_principal.bundle_sp.id
 }
 
-resource "databricks_service_principal_secret" "this" {
+provider "databricks" {
+  alias      = "accounts"
+  host       = "https://accounts.azuredatabricks.net"
+  account_id = var.databricks_account_id
+}
+
+resource "databricks_service_principal_secret" "bundle_sp" {
   provider             = databricks.accounts
-  service_principal_id = databricks_service_principal.dbt_sp.id
+  service_principal_id = databricks_service_principal.bundle_sp.id
 }
 
-data "databricks_service_principal" "admin-sp" {
-  application_id = var.azure_client_id
-}
-
-resource "databricks_access_control_rule_set" "automation_sp_rule_set" {
+resource "databricks_access_control_rule_set" "automation_sp_bundle_rule_set" {
   provider = databricks.accounts
-  name = "accounts/${var.databricks_account_id}/servicePrincipals/${databricks_service_principal.dbt_sp.application_id}/ruleSets/default"
+  name = "accounts/${var.databricks_account_id}/servicePrincipals/${databricks_service_principal.bundle_sp.application_id}/ruleSets/default"
 
   grant_rules {
-    principals = [data.databricks_service_principal.admin-sp.acl_principal_id]
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
     role       = "roles/servicePrincipal.user"
   }
 
   grant_rules {
-    principals = [data.databricks_service_principal.admin-sp.acl_principal_id]
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
     role       = "roles/servicePrincipal.manager"
   }
 }
 
-resource "azurerm_key_vault_secret" "dbt_sp_secret" {
-  name            = "dbt-sp-secret-${terraform.workspace}"
-  value           = databricks_service_principal_secret.this.secret
+provider "databricks" {
+  alias = "bundle-sp"
+  auth_type = "oauth-m2m"
+  host = azurerm_databricks_workspace.this.workspace_url
+  client_id = databricks_service_principal.bundle_sp.application_id
+  client_secret = databricks_service_principal_secret.bundle_sp.secret
+}
+
+resource "time_rotating" "this" {
+  rotation_days = 30
+}
+
+resource "databricks_token" "pat_bundle_sp" {
+  provider = databricks.bundle-sp
+  comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
+  # Token is valid for 60 days but is rotated after 30 days.
+  # Run `terraform apply` within 60 days to refresh before it expires.
+  lifetime_seconds = 60 * 24 * 60 * 60
+}
+
+##########################################
+###     Add secrets to key vault       ###
+##########################################
+
+data "azurerm_key_vault" "this" {
+  name                = var.key_vault_common_name
+  resource_group_name = var.resource_group_common_name
+}
+
+resource "azurerm_key_vault_secret" "databricks_url" {
+  name            = "databricks-workspace-url-${terraform.workspace}"
+  value           = azurerm_databricks_workspace.this.workspace_url
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform"
+  content_type    = "Managed by Terraform. Url for ${terraform.workspace} workspace in Databricks"
   expiration_date = "2050-01-01T00:00:00Z"
 }
+
+resource "azurerm_key_vault_secret" "bundle_sp_secret" {
+  name            = "databricks-sp-bundle-secret-${terraform.workspace}"
+  value           = databricks_service_principal_secret.bundle_sp.secret
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. OAuth secret for bundle service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
+resource "azurerm_key_vault_secret" "bundle_sp_pat" {
+  name            = "databricks-sp-bundle-pat-${terraform.workspace}"
+  value           = databricks_token.pat_bundle_sp.token_value
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. Personal access token for bundle service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
+}
+
+resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
+  name            = "databricks-warehouse-dbt-id-${terraform.workspace}"
+  value           = databricks_sql_endpoint.db_wh_dbt.id
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. Id of the SQL Warehouse in Databricks that is used for dbt jobs."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
+
+##########################################
+###               Grants               ###
+##########################################
+
+resource "databricks_grants" "catalog" {
+  catalog = terraform.workspace
+
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = databricks_service_principal.bundle_sp.application_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = "data-scientists"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+  }
+
+  grant {
+    principal = "data-engineers"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+  }
+}
+
+resource "databricks_grants" "external_location" {
+  for_each          = toset(var.schemas)
+  external_location = databricks_external_location.this[each.key].id
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+  # Only add this grant if environment is dev
+  dynamic "grant" {
+    for_each = terraform.workspace == "dev" ? [1] : []
+    content {
+      principal  = "data-scientists"
+      privileges = ["ALL_PRIVILEGES"]
+    }
+  }
+  dynamic "grant" {
+    for_each = terraform.workspace == "dev" ? [1] : []
+    content {
+      principal  = "data-engineers"
+      privileges = ["ALL_PRIVILEGES"]
+    }
+  }
+}
+
+resource "databricks_grants" "storage_credential" {
+  storage_credential = databricks_storage_credential.this.id
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+}
+
+##########################################
+###               Outputs              ###
+##########################################
 
 output "databricks_workspace_url" {
   value = azurerm_databricks_workspace.this.workspace_url
