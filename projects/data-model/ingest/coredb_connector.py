@@ -46,7 +46,7 @@ def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     query = f"(SELECT * FROM {table})"
     load_coredb_query(dbutils, database, table, query)
 
-def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, host: str = "brandhub-fog.database.windows.net") -> None:
+def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, host: str = "bh-replica.database.windows.net") -> None:
     """
     Executes custom query that loads selected data from a table in CoreDB
 
@@ -57,7 +57,7 @@ def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, h
         query (str): Query to run towards datab
     """
 
-    username = dbutils.secrets.get( scope="auth_common", key="coreDbUsername" )
-    password = dbutils.secrets.get( scope="auth_common", key="coreDbPassword" )
+    username = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-username" )
+    password = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-password" )
 
     create_or_replace_table_query(host, database, table, query, username, password)
