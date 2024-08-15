@@ -2,7 +2,7 @@
 
 {{
     config(
-      target_database='dev',
+      target_database=target.database,
       target_schema='snapshots_temp',
       unique_key='agreement_id',
 
