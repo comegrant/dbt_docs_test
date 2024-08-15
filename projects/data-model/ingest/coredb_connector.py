@@ -32,7 +32,7 @@ def create_or_replace_table_query(host: str, database: str, table: str, query: s
 
     database = database.lower()
 
-    remote_table.write.mode("overwrite").saveAsTable(f"bronze.{database}__{table}")
+    remote_table.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"bronze.{database}__{table}")
 
 def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     """
