@@ -51,7 +51,7 @@ You should copy the template below and fill in the following:
  transform:
   target: local_dev
   outputs:
-    dev:
+    local_dev:
       type: databricks
       catalog: dev
       schema: firstname_lastname

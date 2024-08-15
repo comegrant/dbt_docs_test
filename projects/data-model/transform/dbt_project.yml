@@ -33,6 +33,6 @@ models:
       +schema: silver
     intermediate:
       +schema: intermediate
-      +materalized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
+      +materialized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
     gold:
       +schema: gold
