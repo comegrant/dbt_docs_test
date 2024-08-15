@@ -15,10 +15,10 @@ renamed as (
         , recipe_metadata_id
         , main_recipe_id
         , status_code_id as recipe_status_code_id
-
-        {# not sure if these are nedded 
         , recipes_week
         , recipes_year
+
+        {# not sure if these are nedded 
         , status_code_id
         , photo_state
         , ingredients_state

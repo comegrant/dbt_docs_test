@@ -90,7 +90,7 @@ models:
     description: ""
     latest_version: 1
     config:
-      alias: dim_menus
+      alias: fact_menus
 
     versions:
       - v: 1
