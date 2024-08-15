@@ -26,5 +26,5 @@ jobs:
       working-directory: projects/data-model
       python-version: "3.11"
       target-env: Development
-      dbt-target: ci
+      dbt-target: dev
     secrets: inherit

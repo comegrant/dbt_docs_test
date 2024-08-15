@@ -13,35 +13,3 @@ transform:
       http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
       host: "{{ env_var('DATABRICKS_HOST') }}"
       token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
-    
-    # Used for the CI pipeline
-    ci:
-      type: databricks
-      method: http
-      catalog: dev
-      schema: ci
-
-      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
-      host: "{{ env_var('DATABRICKS_HOST') }}"
-      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
-
-    # The test target when deployed with the Databricks CLI
-    test:
-      type: databricks
-      method: http
-      catalog: test
-      schema: test
-      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
-      host: "{{ env_var('DATABRICKS_HOST') }}"
-      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
-
-
-    # The production target when deployed with the Databricks CLI
-    prod:
-      type: databricks
-      method: http
-      catalog: prod
-      schema: prod
-      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
-      host: "{{ env_var('DATABRICKS_HOST') }}"
-      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"

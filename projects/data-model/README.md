@@ -49,7 +49,7 @@ You should copy the template below and fill in the following:
 
 ```yml
  transform:
-  target: dev
+  target: local_dev
   outputs:
     dev:
       type: databricks
