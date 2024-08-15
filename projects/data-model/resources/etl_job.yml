@@ -3,10 +3,10 @@ resources:
     main_data_model_job:
       name: main-data-model-job
 
-      #schedule:
-      # Run every day at 9:27 AM
-      # quartz_cron_expression: 21 27 9 * * ?
-      # timezone_id: UTC
+      schedule:
+       #Run every day at 9:27 AM
+       quartz_cron_expression: 21 27 9 * * ?
+       timezone_id: UTC
 
       email_notifications:
         on_failure:
