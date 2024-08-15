@@ -325,21 +325,48 @@ resource "databricks_grants" "external_location" {
     principal  = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]
   }
-  # Only add this grant if environment is dev
-  dynamic "grant" {
-    for_each = terraform.workspace == "dev" ? [1] : []
-    content {
-      principal  = "data-scientists"
-      privileges = ["ALL_PRIVILEGES"]
-    }
+  # Only add this all privileges if environment is dev
+  grant {
+    principal = "data-scientists"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["READ_FILES"]
   }
-  dynamic "grant" {
-    for_each = terraform.workspace == "dev" ? [1] : []
-    content {
-      principal  = "data-engineers"
-      privileges = ["ALL_PRIVILEGES"]
-    }
+
+  grant {
+    principal = "data-engineers"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["READ_FILES"]
   }
+
+  grant {
+    principal = "data-analysts"
+    privileges = ["READ_FILES"]
+  }
+
+}
+
+
+resource "databricks_grants" "schemas" {
+  for_each          = toset(var.schemas)
+  schema            = databricks_schema.this[each.key].id
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+  # Only add this all privileges if environment is dev
+  grant {
+    principal = "data-scientists"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["USE_SCHEMA"]
+  }
+
+  grant {
+    principal = "data-engineers"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["USE_SCHEMA"]
+  }
+
+  grant {
+    principal = "data-analysts"
+    privileges = ["USE_SCHEMA"]
+  }
+
 }
 
 resource "databricks_grants" "storage_credential" {

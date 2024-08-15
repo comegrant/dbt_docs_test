@@ -3,7 +3,7 @@
 {{
     config(
       target_database=target.database,
-      target_schema='snapshots_temp',
+      target_schema='snapshots',
       unique_key='agreement_id',
 
       strategy='timestamp',
