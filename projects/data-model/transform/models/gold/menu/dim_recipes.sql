@@ -46,16 +46,22 @@ select
     , recipe_main_ingredients.recipe_main_ingredient_name
     --, recipe_main_ingredients.recipe_main_ingredient_description
 
-    , main_recipe_metadata.recipe_name as main_recipe_name
+    , coalesce(main_recipe_metadata.recipe_name, recipe_metadata.recipe_name) as main_recipe_name
     --, main_recipe_metadata.recipe_description as main_recipe_description
-    , case when main_recipe_id is null then true else false end as is_main_recipe
+    , case when recipes.main_recipe_id is null then true else false end as is_main_recipe
 
 
 from recipes
 left join recipe_metadata
+
 on recipes.recipe_metadata_id = recipe_metadata.recipe_metadata_id
+
+left join recipes main_recipes
+on recipes.main_recipe_id = main_recipes.recipe_id
+
 left join recipe_metadata as main_recipe_metadata
-on recipes.recipe_metadata_id = main_recipe_metadata.recipe_metadata_id
+on main_recipes.recipe_metadata_id = main_recipe_metadata.recipe_metadata_id
+
 left join recipe_main_ingredients
 on recipe_metadata.recipe_main_ingredient_id = recipe_main_ingredients.recipe_main_ingredient_id
 and recipe_metadata.language_id = recipe_main_ingredients.language_id
