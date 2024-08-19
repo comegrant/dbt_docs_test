@@ -31,7 +31,7 @@ source_tables_joined as (
         md5(order_lines.order_line_id) as pk_fact_order_line
 
         {# ids #}
-        , orders.cms__order_id
+        , orders.cms_order_id
         , orders.ops_order_id
         , orders.order_status_id
         , orders.order_type_id
@@ -75,9 +75,9 @@ source_tables_joined as (
 
     from order_lines
     left join orders
-        on order_lines.cms__order_id = orders.cms__order_id
+        on order_lines.cms_order_id = orders.cms_order_id
     left join has_delivery
-        on order_lines.cms__order_id = has_delivery.cms__order_id
+        on order_lines.cms_order_id = has_delivery.cms_order_id
     left join billing_agreements
         on orders.agreement_id = billing_agreements.agreement_id
 

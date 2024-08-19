@@ -19,7 +19,7 @@ renamed as (
     select
         {# ids #}
         id as order_line_id
-        , agreement_order_id as cms__order_id
+        , agreement_order_id as cms_order_id
         , variation_id as product_variation_id
      
         {# strings #}
@@ -39,7 +39,7 @@ calculated_columns as (
     select
         {# ids #}
         order_line_id
-        , cms__order_id
+        , cms_order_id
         , product_variation_id
      
         {# strings #}

@@ -12,11 +12,11 @@ models:
     columns:
       - name: pk_fact_order_line
         data_type: string
-        description: "{{ doc('column__cms__order_id') }}"
+        description: "{{ doc('column__cms_order_id') }}"
 
-      - name: cms__order_id
+      - name: cms_order_id
         data_type: string
-        description: "{{ doc('column__cms__order_id') }}"
+        description: "{{ doc('column__cms_order_id') }}"
 
       - name: ops_order_id
         data_type: bigint

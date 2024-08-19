@@ -244,7 +244,7 @@ sources:
         columns:
           - name: id
             data_type: string
-            description: "{{ doc('column__cms__order_id') }}"
+            description: "{{ doc('column__cms_order_id') }}"
             tests:
               - not_null
               - unique
@@ -389,7 +389,7 @@ sources:
 
           - name: agreement_order_id
             data_type: string
-            description: "{{ doc('column__cms__order_id') }}"
+            description: "{{ doc('column__cms_order_id') }}"
             tests:
               - not_null
 

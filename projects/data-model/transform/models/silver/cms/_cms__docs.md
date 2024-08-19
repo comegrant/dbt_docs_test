@@ -86,7 +86,7 @@ The id of an billing agreement.
 {% enddocs %}
 
 #### Agreement Order Id
-{% docs column__cms__order_id %}
+{% docs column__cms_order_id %}
 
 This is the primary key in the CMS database for each placed order.
 

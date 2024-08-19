@@ -18,7 +18,7 @@ renamed as (
 
     select
         {# ids #}
-        id as cms__order_id
+        id as cms_order_id
         , order_id as ops_order_id
         , order_type as order_type_id
         , order_status_id
