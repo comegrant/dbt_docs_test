@@ -19,7 +19,13 @@ tables = ["menus",
           "portions",
           "taxonomies",
           "taxonomies_translations",
-          "weekly_menus"
+          "weekly_menus",
+          "ingredients",
+          "order_ingredients",
+          "ingredient_categories_translations",
+          "chef_ingredients",
+          "chef_ingredient_sections",
+          "generic_ingredients_translations"
           ]
 for table in tables: 
     load_coredb_full(dbutils, database, table)
