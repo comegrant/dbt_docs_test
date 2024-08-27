@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class RunArgs(BaseModel):
-    company: str = Field("RN")
+    company: str = Field("RT")
 
     start_date: date | None = Field(None)
     end_date: date | None = Field(None)
@@ -36,6 +36,11 @@ class RunArgs(BaseModel):
 
 
 def run_with_args(args: RunArgs) -> None:
+    """Run training with arguments
+
+    Args:
+        args (RunArgs): _description_
+    """
     logger.info(f"Training model with args {args}")
     # Set up logging
     logging.basicConfig(level=logging.INFO)

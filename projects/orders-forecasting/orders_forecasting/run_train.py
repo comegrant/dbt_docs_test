@@ -2,7 +2,6 @@ import logging
 from typing import Literal
 
 from constants.companies import get_company_by_code
-from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel
 
 from orders_forecasting.models.company import get_company_config_for_company
@@ -26,8 +25,6 @@ class Args(BaseModel):
 
 
 def train_with_args(args: Args) -> None:
-    load_dotenv(find_dotenv())
-
     company = get_company_by_code(args.company)
     company_config = get_company_config_for_company(company=company)
     features_config = get_features_config(company=company)

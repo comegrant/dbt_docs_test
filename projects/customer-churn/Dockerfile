@@ -1,4 +1,6 @@
-FROM python:3.11-slim-buster
+FROM python:3.10-slim-buster
+
+RUN apt-get update -y && apt-get install -y gcc && apt-get install -y build-essential git libgomp1 libpq-dev python3-dev
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -22,15 +24,6 @@ RUN mkdir -p customer_churn && touch customer_churn/__init__.py
 RUN poetry config virtualenvs.create false
 RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
 
-# copy source code
-COPY projects/customer-churn .
-
-# store the git branch and commit hash as env variables
-ARG GIT_BRANCH
-ARG GIT_COMMIT_HASH
-ENV GIT_BRANCH=${GIT_BRANCH}
-ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
-
-# set starting command
-WORKDIR $SERVICE_HOME
-CMD python customer_churn/main.py
+COPY projects/customer-churn/configs configs
+COPY projects/customer-churn/tests tests
+COPY projects/customer-churn/customer_churn customer_churn

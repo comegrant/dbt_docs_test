@@ -108,7 +108,7 @@ def save_predictions(
                 model_id STRING,
                 model_name STRING,
                 run_timestamp TIMESTAMP
-            ) PARTITIONED BY (company_id, prediction_date)
+            ) PARTITIONED BY (company_id, prediction_date, week, year)
         """
     )
 

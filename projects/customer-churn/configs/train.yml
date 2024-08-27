@@ -15,7 +15,7 @@ ml_model_config:
   verbose: False
   html: False
   n_select: 3
-  model_list:
+  ml_model_list:
     - lr
     - lightgbm
     - et

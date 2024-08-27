@@ -41,9 +41,7 @@ def train_ensemble_model(
 
     max_yyyy_ww_train = (df_train["year"] * 100 + df_train["week"]).max()
     time_now_str = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-    run_name = (
-        f"{company.company_code}_{target_col}_train_{max_yyyy_ww_train}_{time_now_str}"
-    )
+    run_name = f"{company.company_code}_{target_col}_train_{max_yyyy_ww_train}_{time_now_str}"
 
     mlflow.set_tracking_uri(mlflow_config.mlflow_tracking_uri)
     mlflow.set_experiment(mlflow_config.experiment_tracking_dir)
@@ -69,7 +67,7 @@ def train_ensemble_model(
         logger.info(train_config)
         best_models = experiment_reg.compare_models(
             n_select=train_config.n_select,
-            include=train_config.model_list,
+            include=train_config.ml_model_list,
         )
         # To be logged
         df_train_info = experiment_reg.pull()
@@ -122,11 +120,9 @@ def save_model(
     finalized_model: object,
 ) -> None:
     fe = FeatureEngineeringClient()
-    model_container_name = mlflow_config.model_container_name
+    mlmodel_container_name = mlflow_config.mlmodel_container_name
     model_name = mlflow_config.registered_model_name
-    registered_model_name = (
-        f"{env}.{model_container_name}.{model_name}_{target_col}_{company}"
-    )
+    registered_model_name = f"{env}.{mlmodel_container_name}.{model_name}_{target_col}_{company}"
     fe.log_model(
         model=finalized_model,
         artifact_path=f"{mlflow_config.artifact_path}_{target_col}_{company}",
@@ -140,9 +136,7 @@ def save_model(
     mlflow.set_tag("company", company)
 
 
-def log_metrics(
-    experiment_reg: object, df_holdout: pd.DataFrame, model: object, target_col: str
-) -> None:
+def log_metrics(experiment_reg: object, df_holdout: pd.DataFrame, model: object, target_col: str) -> None:
     actual = df_holdout.pop(target_col)
     prediction = experiment_reg.predict_model(model)
 

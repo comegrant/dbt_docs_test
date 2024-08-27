@@ -29,7 +29,7 @@ env = env_registry.get("env", "dev")
 
 # COMMAND ----------
 
-from customer_churn.run_trainining import RunArgs, run_with_args  # noqa: E402
+from customer_churn.run_training import RunArgs, run_with_args  # noqa: E402
 
 # COMMAND ----------
 

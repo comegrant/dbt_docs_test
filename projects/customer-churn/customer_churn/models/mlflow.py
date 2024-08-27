@@ -8,7 +8,7 @@ class MlflowConfig(BaseModel):
     experiment_tracking_dir: str
     experiment_name: str
     artifact_path: str
-    model_container_name: str
+    mlmodel_container_name: str
     registered_model_name: str
     mlflow_tracking_uri: str
     experiment_id: int

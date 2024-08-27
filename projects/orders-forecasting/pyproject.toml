@@ -12,8 +12,9 @@ pycaret = {version = "^3.3.2", extras = ["models"]}
 pandera = "^0.19.3"
 pyspark = "3.4.1"
 mlflow-skinny = "2.9.2"
-databricks-feature-engineering = "0.2.0"
 kaleido = "0.2.1"
+setuptools = "^69.2.0"
+databricks-feature-engineering = "0.2.0"
 time-machine = {path = "../../packages/time-machine", develop = true}
 databricks-env = {path = "../../packages/databricks-env", develop = true}
 data-connector = {path = "../../packages/data-connector", develop = true}

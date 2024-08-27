@@ -12,6 +12,7 @@ from orders_forecasting.run_train import Args, train_with_args  # noqa: E402
 logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Retrieve arguments from workflow definition paramters, or local environment variables
 try:
     w = WorkspaceClient()
     env_registry = w.dbutils.widgets

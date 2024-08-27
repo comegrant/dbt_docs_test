@@ -13,9 +13,7 @@ class TrainingFeaturesConfig(BaseModel):
     @property
     def numeric_features(self) -> list:
         return (
-            self.order_estimation_history_retention_features
-            + self.order_estimation_features
-            + self.holidays_features
+            self.order_estimation_history_retention_features + self.order_estimation_features + self.holidays_features
         )
 
 
@@ -28,7 +26,7 @@ class MLTrainConfig(BaseModel):
 class TrainConfig(BaseModel):
     train_features: TrainingFeaturesConfig
     n_select: int
-    model_list: list
+    ml_model_list: list
     ml_config: MLTrainConfig
 
 
@@ -43,15 +41,13 @@ def get_train_config(env: str, target_col: str, company: Company) -> TrainConfig
             "order_estimation_history_retention_features"
         ][target_col],
         order_estimation_features=train_features_config["order_estimation_features"],
-        holidays_features=train_features_config[
-            f"holidays_features_{company.country.lower()}"
-        ],
+        holidays_features=train_features_config[f"holidays_features_{company.country.lower()}"],
         categorical_features=train_features_config["categorical_features"],
     )
 
     return TrainConfig(
         train_features=train_features_config,
         n_select=train_config["n_select"],
-        model_list=train_config["model_list"],
+        ml_model_list=train_config["ml_model_list"],
         ml_config=MLTrainConfig(**train_config["model_config"]),
     )

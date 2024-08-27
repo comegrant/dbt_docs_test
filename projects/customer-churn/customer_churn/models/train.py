@@ -14,7 +14,7 @@ class MLModelConfig(BaseModel):
     verbose: bool
     html: bool
     n_select: int
-    model_list: list[str]
+    ml_model_list: list[str]
 
 
 class TrainConfig(BaseModel):

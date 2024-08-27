@@ -3,19 +3,19 @@ services:
 
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
-  order-forecasting:
-    image: order-forecasting-order-forecasting
+  orders-forecasting:
+    image: orders-forecasting-orders-forecasting
     platform: linux/amd64
     build:
       context: ../../
-      dockerfile: projects/order-forecasting/Dockerfile
-    command: ["echo", "'Hello from order-forecasting'"]
+      dockerfile: projects/orders-forecasting/Dockerfile
+    command: ["bash"]
     volumes:
-      - ./:/opt/projects/order-forecasting
+      - ./:/opt/projects/orders-forecasting
       - ./../../packages:/opt/packages
 
-  order-forecasting-app:
-    image: order-forecasting-order-forecasting-app
+  orders-forecasting-app:
+    image: order-forecasting-app
     platform: linux/amd64
     build:
       context: ../../
@@ -27,12 +27,12 @@ services:
     ports:
       - 8501:8501
     depends_on:
-      - order-forecasting
+      - orders-forecasting
     env_file:
       - .env
 
-  order-forecasting-test:
-    image: order-forecasting-order-forecasting-test
+  orders-forecasting-test:
+    image: order-forecasting-test
     platform: linux/amd64
     build:
       context: ../../
@@ -42,5 +42,5 @@ services:
       - ./:/opt/projects/order-forecasting
       - ./../../packages:/opt/packages
     depends_on:
-      - order-forecasting
+      - orders-forecasting
     profiles: ["test"]

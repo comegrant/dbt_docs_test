@@ -91,7 +91,7 @@ dev:
       - num_holidays
 
   n_select: 2
-  model_list:
+  ml_model_list:
     - catboost
     - et
     - lightgbm

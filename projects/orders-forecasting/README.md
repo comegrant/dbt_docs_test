@@ -96,6 +96,16 @@ This project trains a machine learning model to predict the total order volume a
 
 <h2>🏃‍♀️How to run it locally?</h2>
 
-```
-cd path/to/repo/sous-chef/projects/orders-forecasting
-```
+This project is built for databricks and thus should be connected to a databricks workspace. This can be done in the VS Code extension databricks. The files in the folder `notebook` are databricks notebooks that can easily be run as databricks workflows.
+
+
+<h2>How to deploy workflows to databricks</h2>
+
+First change directory to the project
+`cd /path/to/sous-chef/projects/orders-forecasting/`
+
+Sign in to databricks in your local by following the terminal steps
+`databricks auth login`
+
+Deploy the workflow definitions to databricks
+`databricks bundle deploy --var docker_image_url=bhregistry.azurecr.io/orders-forecasting-databricks:dev-latest`

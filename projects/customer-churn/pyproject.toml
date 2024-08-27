@@ -9,9 +9,6 @@ package-mode = false
 python = ">=3.10,<3.11"
 pydantic-settings = "^2.1.0"
 pycaret = {version = "^3.3.2", extras = ["models"]}
-data-contracts = {path = "../../packages/data-contracts", develop = true}
-data-connector = {path = "../../packages/data-connector", develop = true}
-databricks-env = {path = "../../packages/databricks-env", develop = true}
 pyyaml = "^6.0.1"
 seaborn = "^0.13.2"
 scikit-learn = "^1.4.1.post1"
@@ -23,6 +20,9 @@ kaleido = "0.2.1"
 setuptools = "^69.2.0"
 databricks-feature-engineering = "0.2.0"
 constants = {path = "../../packages/constants", develop = true}
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+data-connector = {path = "../../packages/data-connector", develop = true}
+databricks-env = {path = "../../packages/databricks-env", develop = true}
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

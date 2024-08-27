@@ -55,14 +55,12 @@ def train_ensemble_model(
         logger.info(model_config)
         best_models = experiment_classification.compare_models(
             n_select=model_config.n_select,
-            include=model_config.model_list,
+            include=model_config.ml_model_list,
         )
         # To be logged
         df_train_info = experiment_classification.pull()
 
-        top_models_blend = experiment_classification.blend_models(
-            estimator_list=best_models
-        )
+        top_models_blend = experiment_classification.blend_models(estimator_list=best_models)
 
         final_model = experiment_classification.finalize_model(top_models_blend)
 
@@ -113,10 +111,10 @@ def save_model_databricks(
 ) -> None:
     fe = FeatureEngineeringClient()
 
-    model_container_name = mlflow_config.model_container_name
+    mlmodel_container_name = mlflow_config.mlmodel_container_name
     model_name = mlflow_config.registered_model_name
 
-    registered_model_name = f"{env}.{model_container_name}.{model_name}_{company_code}"
+    registered_model_name = f"{env}.{mlmodel_container_name}.{model_name}_{company_code}"
 
     fe.log_model(
         model=model,
@@ -130,9 +128,7 @@ def save_model_databricks(
     mlflow.set_tag("company", company_code)
 
 
-def log_metrics(
-    experiment_reg: object, df_holdout: pd.DataFrame, model: object, target_col: str
-) -> None:
+def log_metrics(experiment_reg: object, df_holdout: pd.DataFrame, model: object, target_col: str) -> None:
     actual = df_holdout.pop(target_col).to_list()
     prediction = experiment_reg.predict_model(model).pop("prediction_label").to_list()
 

@@ -74,9 +74,7 @@ def get_features(
     return df, df_order_history, df_estimations, df_holiday_calendar
 
 
-def get_retention_features(
-    df: pd.DataFrame, target_col: str = "num_total_orders"
-) -> pd.DataFrame:
+def get_retention_features(df: pd.DataFrame) -> pd.DataFrame:
     for target_col in [
         "num_total_orders",
         "num_mealbox_orders",
