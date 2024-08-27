@@ -7,7 +7,7 @@ from calendars import *
 # COMMAND ----------
 
 
-dates = get_calendar_dataframe("2018-01-01", "2030-12-31")
+dates = get_calendar_dataframe("2015-01-01", "2030-12-31")
 
 # COMMAND ----------
 
