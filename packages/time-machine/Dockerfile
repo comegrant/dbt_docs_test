@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster
+FROM python:3.10-slim-buster
 
 # install Poetry
 RUN pip install --no-cache-dir 'poetry==1.8.2'
@@ -33,3 +33,4 @@ ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 CMD python -m pytest tests
+
