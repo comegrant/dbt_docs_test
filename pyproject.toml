@@ -55,5 +55,6 @@ lint.ignore = [
 ]
 lint.pylint.max-args = 7
 line-length = 120
-target-version = "py311"
+lint.pyupgrade.keep-runtime-typing = true
+target-version = "py39"
 extend-exclude = ["**/notebooks/**"]
