@@ -19,7 +19,11 @@ variable "data_lake_containers" {
     "bronze",
     "silver",
     "gold",
+    "mlgold",
+    "mlfeatures",
+    "mloutputs",
     "mltesting",
+    "mlfeaturetesting",
     "snapshots"
   ]
   description = "Names of containers within the Data Lake resource."
