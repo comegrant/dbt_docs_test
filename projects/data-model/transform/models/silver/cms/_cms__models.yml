@@ -4,7 +4,7 @@ version: 2
 
 models:
   - name: cms__companies
-    description: Information about each company
+    description: "The companies and brands of Cheffelo."
 
     columns:
       - name: company_id
@@ -20,7 +20,7 @@ models:
         description: "{{ doc('column__country_id') }}"
 
   - name: cms__countries
-    description: Table with countries
+    description: "Information relevant for each country Cheffelo operates in."
 
     columns:
       - name: country_id
@@ -32,7 +32,7 @@ models:
         description: "{{ doc('column__country_name') }}"
 
   - name: cms__billing_agreement_orders
-    description: "{{ doc('table__cms__billing_agreement_orders') }}"
+    description: "All placed orders. Gets populated at order gen and updated if the order changes."
 
     columns:
       - name: cms_order_id
@@ -72,7 +72,7 @@ models:
         description: "{{ doc('column__delivery_week_monday_date') }}"
 
   - name: cms__billing_agreement_order_lines
-    description: "{{ doc('table__cms__billing_agreement_order_lines') }}"
+    description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."
 
     columns:
       - name: order_line_id
@@ -116,7 +116,7 @@ models:
         description: "{{ doc('column__order_line_total_amount_inc_vat') }}"
 
   - name: cms__billing_agreement_order_status
-    description: ""
+    description: "Holds information about the status an order can have."
 
     columns:
       - name: order_status_id
@@ -132,7 +132,7 @@ models:
         description: "{{ doc('column__order_status_can_be_cancelled') }}"
 
   - name: cms__order_types
-    description: ""
+    description: "Holds information about the type an order can have"
 
     columns:
       - name: order_type_id
@@ -156,16 +156,19 @@ models:
         description: "{{ doc('column__order_type_is_direct_payment') }}"
 
   - name: cms__billing_agreements
-    description: ""
+    description: "Information about an billing agreement. Use SCD2 when updated in the source system."
   
   - name: cms__billing_agreement_status
-    description: ""
+    description: "Information about the status an billing agreement can have"
   
   - name: cms__billing_agreement_addon_subscriptions
-    description: ""
+    description: "Information about the addon subscription a billing agreement has"
   
   - name: cms__addon_subscriptions
-    description: ""
-  
+    description: "Information about all the different addon subscriptions that exists"
+
   - name: cms__loyalty_agreement_ledger
-    description: ""
+    description: "Table tracking changes in accrued loyalty points for each billing agreements"
+    
+  - name: cms__loyalty_levels
+    description: "Informations about the different loyalty levels a customer can have. Use SCD2 when updated in the source system."
