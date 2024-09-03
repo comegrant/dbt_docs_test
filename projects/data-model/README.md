@@ -210,8 +210,24 @@ dbt --quiet run-operation generate_source --args '{
 ```
 
 ### 2. Add documentation
-Coming...
+Add documentation to the _[sourcesystem]__sources.yml and _[sourcesystem]_modeles.yml. For columns we reuse documentation across the layers so please check if the column is already documented before adding it.
 
+`Tables`: Table description should be added directly to the .yml-files. Not needed in _[sourcesystem]__sources.yml.
+`Columns`: Column descriptions should be added through the _[sourcesystem]__docs.md under the right grouping (id, string, numeric, booleans, time, source system fields) by using the [jinja doc function](https://docs.getdbt.com/reference/dbt-jinja-functions/doc) and refer to it in the .yml files.
+
+The name of the doc block for columns should be on the following format: column__[column_name_in_silver], e.g. column__billing_agreement_id or column__product_variation_name.
+
+When documenting column ensure to add the following if relevant:
+* When the table gets populated if its at a specific time (e.g. order gen)
+* Information about when the table if and how the table rows gets updated
+* sfdsf
+* sffdds
+* sffdsfs
+
+To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
+
+Notes:
+* source description
 
 ### 3. Create model
 
