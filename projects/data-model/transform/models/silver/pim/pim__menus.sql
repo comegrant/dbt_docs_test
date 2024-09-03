@@ -20,7 +20,7 @@ renamed as (
         , created_date as system_created_date
         , modified_by as system_modified_by
         , modified_date as system_modified_date
-     
+
     {# not sure if this is needed
         , status_code_id
         , menu_min_time

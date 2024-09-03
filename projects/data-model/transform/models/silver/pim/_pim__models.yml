@@ -41,4 +41,261 @@ models:
  
   - name: pim__recipe_main_ingredients
     description: ""
+
+  - name: pim__taxonomies_translations
+    description: ""
+
+    columns:
+      - name: taxonomy_id
+        data_type: int
+        description: ""
+      
+      - name: language_id
+        data_type: int
+        description: ""
+      
+      - name: taxonomy_name
+        data_type: string
+        description: ""
   
+  - name: pim__taxonomies
+    description: ""
+
+    columns:
+      - name: taxonomy_id
+        data_type: int
+        description: ""
+      
+      - name: status_code_id
+        data_type: int
+        description: ""
+      
+      - name: country_id
+        data_type: int
+        description: "{{ doc('column__country_id') }}"
+      
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_updated_at') }}"
+
+      - name: is_external
+        data_type: boolean
+        description: ""
+
+  - name: pim__recipes_taxonomies
+    description: ""
+
+    columns:
+      - name: recipe_id
+        data_type: int
+        description: ""
+      
+      - name: taxonomy_id
+        data_type: int
+        description: ""
+
+  - name: pim__generic_ingredients_translations
+    description: ""
+
+    columns:
+      - name: generic_ingredient_id
+        data_type: int
+        description: ""
+      
+      - name: language_id
+        data_type: int
+        description: ""
+      
+      - name: generic_ingredient_name
+        data_type: string
+        description: ""
+  
+  - name: pim__chef_ingredient_sections
+    description: ""
+
+    columns:
+      - name: chef_ingredient_section_id
+        data_type: int
+        description: ""
+      
+      - name: recipe_portion_id
+        data_type: int
+        description: ""
+
+  - name: pim__chef_ingredients
+    description: ""
+
+    columns:
+      - name: chef_ingredient_id
+        data_type: int
+        description: ""
+      
+      - name: chef_ingredient_section_id
+        data_type: int
+        description: ""
+      
+      - name: order_ingredient_id
+        data_type: int
+        description: ""
+      
+      - name: generic_ingredient_id
+        data_type: int
+        description: ""
+      
+      - name: ingredient_amount
+        data_type: string
+        description: ""
+  
+  - name: pim__ingredient_categories_translations
+    description: ""
+
+    columns:
+      - name: ingredient_category_id
+        data_type: int
+        description: ""
+      
+      - name: language_id
+        data_type: int
+        description: ""
+      
+      - name: ingredient_category_name
+        data_type: string
+        description: ""
+
+  - name: pim__ingredients
+    description: ""
+
+    columns:
+      - name: ingredient_id
+        data_type: int
+        description: ""
+
+      - name: supplier_id
+        data_type: int
+        description: ""
+
+      - name: ingredient_category_id
+        data_type: int
+        description: ""
+      
+      - name: ingredient_status_code_id
+        data_type: int
+        description: ""
+      
+      - name: ingredient_internal_reference
+        data_type: string
+        description: ""
+      
+      - name: ingredient_content
+        data_type: string
+        description: ""
+      
+      - name: ingredient_type
+        data_type: string
+        description: ""
+      
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_updated_at') }}"
+
+      - name: is_active
+        data_type: boolean
+        description: ""
+  
+  - name: pim__order_ingredients
+    description: ""
+
+    columns:
+      - name: order_ingredient_id
+        data_type: int
+        description: ""
+      
+      - name: ingredient_internal_reference
+        data_type: string
+        description: ""
+      
+      - name: is_main_protein
+        data_type: boolean
+        description: ""
+      
+      - name: is_main_carbohydrate
+        data_type: boolean
+        description: ""
+      
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_updated_at') }}"
+  
+  - name: pim__ingredient_categories
+    description: ""
+
+    columns: 
+    - name: ingredient_category_id
+      data_type: int
+      description: ""
+    
+    - name: status_code_id
+      data_type: int
+      description: ""
+    
+    - name: parent_category_id
+      data_type: int
+      description: ""
+    
+    - name: country_id
+      data_type: char(36)
+      description: "{{ doc('column__country_id') }}"
+
+    - name: source_created_by
+      data_type: string
+      description: "{{ doc('column__coredb_created_by') }}"
+
+    - name: source_created_at
+      data_type: timestamp
+      description: "{{ doc('column__coredb_created_at') }}"
+
+    - name: source_updated_by
+      data_type: string
+      description: "{{ doc('column__coredb_updated_by') }}"
+
+    - name: source_updated_at
+      data_type: timestamp
+      description: "{{ doc('column__coredb_updated_at') }}"
+
+
