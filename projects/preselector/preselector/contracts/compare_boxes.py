@@ -3,17 +3,10 @@ from typing import Annotated
 
 import pandas as pd
 import polars as pl
-from aligned import Int32, String, feature_view
+from aligned import ContractStore, Int32, String, feature_view
 from aligned.compiler.feature_factory import List
-from data_contracts.preselector.store import (
-    DefaultMealboxRecipes,
-)
-from data_contracts.recommendations.recipe import (
-    HistoricalRecipeOrders,
-    RecipeCost,
-    RecipeFeatures,
-    RecipeNutrition,
-)
+from aligned.request.retrival_request import RetrivalRequest
+from aligned.schemas.feature import FeatureType
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
 from preselector.data.models.customer import PreselectorCustomer
 
@@ -22,13 +15,38 @@ logger = logging.getLogger(__name__)
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
 
+def needed_features_for(request: RetrivalRequest) -> list[tuple[str, FeatureType]]:
+    needed_features: set[tuple[str, FeatureType]] = set()
+    for feature in request.derived_features:
+        for depend_on in feature.depending_on:
+            if depend_on.location != request.location:
+                needed_features.add((depend_on.name, depend_on.dtype))
+
+    for feature in request.aggregated_features:
+        for depend_on in feature.depending_on:
+            if depend_on.location != request.location:
+                needed_features.add((depend_on.name, depend_on.dtype))
+
+    return list(needed_features)
+
+
+async def compute_normalized_features(recipes: pl.DataFrame, store: ContractStore) -> pl.DataFrame:
+    # Fixes a bug in the data
+    recipes = recipes.unique("recipe_id")
+
+    return await store.feature_view("normalized_recipe_features").features_for(recipes).drop_invalid().to_polars()
+
+
 async def historical_preselector_vector(
     customer: PreselectorCustomer,
     year_weeks: list[tuple[int, int]],
-) -> pl.DataFrame:
+    store: ContractStore,
+) -> tuple[pl.DataFrame, pl.DataFrame, bool]:
     from preselector.main import BasketFeatures
 
-    df = await HistoricalRecipeOrders.query().all().to_lazy_polars()
+    df = await store.feature_view("historical_recipe_orders").all().to_lazy_polars()
+
+    needed_values_name = ["recipe_id", "agreement_id", "week", "year", "portion_size"]
 
     year_week_number = [year * 100 + week for year, week in year_weeks]
 
@@ -37,71 +55,66 @@ async def historical_preselector_vector(
         (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
     ).collect()
 
+    has_history = True
+
     if df.height == 0:
-        default = await DefaultMealboxRecipes.query().all().to_lazy_polars()
-        df = (
+        has_history = False
+
+    if df.height != len(year_week_number):
+        loaded = df.select(year_weeks=pl.col("year") * 100 + pl.col("week"))["year_weeks"].to_list()
+        default = await store.feature_view("default_mealbox_recipes").all().to_lazy_polars()
+
+        concept_df = (
             default.filter(
                 pl.col("variation_id") == customer.subscribed_product_variation_id,
                 (pl.col("menu_year") * 100 + pl.col("menu_week")).is_in(
-                    year_week_number,
+                    [year_week for year_week in year_week_number if year_week not in loaded],
                 ),
             )
             .explode("recipe_ids")
-            .rename({"recipe_ids": "recipe_id"})
+            .rename(
+                {
+                    "recipe_ids": "recipe_id",
+                    "menu_year": "year",
+                    "menu_week": "week",
+                }
+            )
             .collect()
             .with_columns(pl.lit(customer.agreement_id).alias("agreement_id"))
         )
-
-    nutrition = RecipeNutrition.query().features_for(df)
-    cost = RecipeCost.query().features_for(df)
-
-    vectors = (
-        await RecipeFeatures.query()
-        .features_for(df)
-        .job.join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
-        .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
-        .join(
-            cost,
-            method="inner",
-            left_on=["recipe_id", "portion_size"],
-            right_on=["recipe_id", "portion_size"],
+        df = pl.concat(
+            [df.select(needed_values_name), concept_df.select(needed_values_name)],
+            how="vertical_relaxed",
         )
-        .rename({"agreement_id": "basket_id"})
-        .aggregate(BasketFeatures.query().request)
-        .to_polars()
+
+    features = await compute_normalized_features(df, store)
+
+    basket_features = (
+        await BasketFeatures.process_input(
+            features.rename(
+                {
+                    "year_week": "basket_id",
+                }
+            )
+        ).to_polars()
+    ).select(pl.exclude("basket_id"))
+
+    feature_importance = 1 / basket_features.fill_nan(0).std().transpose().to_series().clip_min(0.2)
+    soft_max_importance = feature_importance.exp() / feature_importance.exp().sum()
+    target_vector = basket_features.fill_nan(0).mean().transpose().to_series()
+
+    def fill_column_name(col: str) -> str:
+        return basket_features.columns[int(col.split("_")[1])]
+
+    return (
+        target_vector.to_frame().transpose().rename(fill_column_name),
+        soft_max_importance.to_frame().transpose().rename(fill_column_name),
+        has_history,
     )
 
-    return vectors.select(pl.exclude("basket_id"))
 
 def preselector_target_vector_key(agreement_id: int) -> str:
     return f"preselector_target_vector_{agreement_id}"
-
-async def update_target(target: pl.DataFrame, selected_recipes: pl.DataFrame) -> pl.DataFrame:
-    from data_contracts.recommendations.store import recommendation_feature_contracts
-    from preselector.recipe_contracts import Preselector
-    from preselector.main import BasketFeatures
-
-    store = recommendation_feature_contracts()
-    store.add_model(Preselector)
-
-    features = await (store.model("preselector")
-        .features_for(selected_recipes)
-        .to_polars()
-    )
-
-    features = await BasketFeatures.process_input(
-        features.with_columns(
-            pl.lit(4).alias("basket_id"),
-        )
-    ).to_polars()
-
-    # Stacking target two times so 
-    # the recipes are not weighted equally
-    # This will simulate changes over time
-    return target.vstack(target).vstack(
-        features.select(target.columns),
-    ).mean()
-    
 
 
 @feature_view(
@@ -191,6 +204,8 @@ class CustomerInformation:
     concept_preference_id = String()
     taste_preference_ids = List(String())
 
+    taste_preference_names = String()
+
     portion_size = Int32()
     number_of_recipes = Int32()
 
@@ -206,9 +221,9 @@ async def customer_information(agreement_ids: list[int]) -> pd.DataFrame:
         return pd.DataFrame()
 
     customer_sql = f"""
+DECLARE @PRODUCT_TYPE_ID_MEALBOX uniqueidentifier = '{mealbox_product_type_id}';
 declare @concept_preference_type_id uniqueidentifier = '{concept_preference_type_id}';
 declare @taste_preference_type_id uniqueidentifier = '{taste_preference_type_id}';
-DECLARE @PRODUCT_TYPE_ID_MEALBOX uniqueidentifier = '{mealbox_product_type_id}';
 
 WITH concept_preferences AS (
     SELECT

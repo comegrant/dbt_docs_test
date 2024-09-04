@@ -9,11 +9,11 @@ import pandas as pd
 import polars as pl
 from aligned import FeatureLocation, FeatureStore
 from aligned.feature_store import ConvertableToRetrivalJob, RetrivalJob
-from data_contracts.recommendations.recipe import MealboxChangesAsRating, YearWeekMenu
+from data_contracts.menu import YearWeekMenu
+from data_contracts.orders import MealboxChangesAsRating
 from data_contracts.sql_server import SqlServerConfig
 
 from rec_engine.content_based import CBModel
-from rec_engine.display_recipe import display_recipe, recipe_information_for_ids
 from rec_engine.log_step import log_step
 from rec_engine.logger import Logger
 from rec_engine.model_registry import (
@@ -55,16 +55,12 @@ class CompanyDataset:
 
 
 def backup_recommendations(recommendations: pd.DataFrame) -> pd.DataFrame:
-    recs = (
-        recommendations[["recipe_id", "score"]]
-        .groupby("recipe_id", as_index=False)
-        .median()
-    )
+    recs = recommendations[["recipe_id", "score"]].groupby("recipe_id", as_index=False).median()
     recs["predicted_at"] = datetime.now(tz=timezone.utc)
     return recs
 
 
-async def run(  # noqa: PLR0913, PLR0915
+async def run(
     dataset: ManualDataset | CompanyDataset,
     store: FeatureStore,
     run_id: str | None = None,
@@ -73,6 +69,7 @@ async def run(  # noqa: PLR0913, PLR0915
     update_source_threshold: timedelta | None = None,
     ratings_update_source_threshold: timedelta | None = None,
     ratings_view: str = "historical_recipe_orders",
+    behavior_ratings_view: str = "mealbox_changes_as_rating",
     recipe_rating_contract: str = "user_recipe_likability",
     recipe_cluster_contract: str = "recipe_cluster",
     logger: Logger | None = None,
@@ -87,7 +84,7 @@ async def run(  # noqa: PLR0913, PLR0915
 
     if not dotenv.load_dotenv():
         logger.info(
-            "Unable to load .env file. This can break things as env vars are needed",
+            "Unable to load .env file. This can break things if you have not set secrets in another way",
         )
 
     if update_source_threshold:
@@ -103,7 +100,7 @@ async def run(  # noqa: PLR0913, PLR0915
 
     if ratings_update_source_threshold:
         with log_step("Updating ratings view", logger=logger):
-            views = [ratings_view]
+            views = [ratings_view, behavior_ratings_view]
             await update_view_from_source_if_older_than(
                 threshold=ratings_update_source_threshold,
                 views=views,
@@ -124,7 +121,8 @@ async def run(  # noqa: PLR0913, PLR0915
             recipe_entities,
             store,
             model_contract_name=recipe_rating_contract,
-            ratings_view=ratings_view,
+            explicit_rating_view=ratings_view,
+            behavioral_rating_view=behavior_ratings_view,
             model_version=model_id,
             logger=logger,
         )
@@ -132,7 +130,6 @@ async def run(  # noqa: PLR0913, PLR0915
 
     # Makes sure we load the features from the cache rather then ADB / Data Lake
     #     feature_cache_location,
-
     if write_to_path:
         with log_step(
             f"Setting sources to local file system {write_to_path}",
@@ -149,30 +146,22 @@ async def run(  # noqa: PLR0913, PLR0915
         logger=logger,
     ):
         logger.info(ratings_preds.head())
-        await store.insert_into(
+        await store.upsert_into(
             FeatureLocation.model(rating_model.model_contract_name),
             ratings_preds,
         )
 
-    with log_step("Predict backup recommendations", logger=logger):
-        backup_recs = backup_recommendations(ratings_preds)
-
-    with log_step(
-        f"Storing {backup_recs.shape[0]} backup recommendations",
-        logger=logger,
-    ):
-        logger.info(backup_recs.head())
-        await store.model("backup_recommendations").insert_predictions(backup_recs)
-
     with log_step("Predicting ranking for recipes", logger=logger):
         # Should in theory be the menu recipe ids x agreement ids
         agreement_ids = ratings_preds["agreement_id"].unique()
+
         menu_per_agreement = menus.loc[menus.index.repeat(agreement_ids.shape[0])]
 
         # Need to do to list, as this will repeat the list n times, and not the items n items
         menu_per_agreement["agreement_id"] = agreement_ids.tolist() * menus.shape[0]
 
         recipes_to_rank_entities = menu_per_agreement.reset_index(drop=True)
+
         rec_store = store.model("rec_engine")
         recipes_to_rank = (
             await rec_store.features_for(
@@ -181,29 +170,6 @@ async def run(  # noqa: PLR0913, PLR0915
         ).to_pandas()
         ranking = predict_rankings(recipes_to_rank, menus, logger=logger)
         ranking["company_id"] = company_id
-
-    if (
-        isinstance(dataset, CompanyDataset)
-        and dataset.only_for_agreement_ids
-        and len(dataset.year_weeks_to_predict_on) == 1
-    ):
-        import streamlit as st
-
-        st.write("Ranking weights")
-        st.write(rating_model.matrix.transpose())
-
-        infos = await recipe_information_for_ids(
-            ranking["recipe_id"].unique().tolist(),
-            year=dataset.year_weeks_to_predict_on[0] // 100,
-            week=dataset.year_weeks_to_predict_on[0] % 100,
-        )
-        infos = infos.merge(ranking, on="recipe_id").sort_values(
-            "order_of_relevance_cluster",
-        )
-
-        for _, row in infos.iterrows():
-            logger.info(row["order_of_relevance_cluster"])
-            display_recipe(row)
 
     with log_step(
         f"Writing {ranking.shape[0]} rankings for point in time storage",
@@ -217,7 +183,7 @@ def format_ranking_recommendations(
     rankings: pd.DataFrame,
     number_of_recommendations: int,
 ) -> pd.DataFrame:
-    column = "order_of_relevance_cluster"
+    column = "order_rank"
     year_week_products = (
         rankings[rankings[column] <= number_of_recommendations]
         .groupby(["agreement_id", "year", "week"])
@@ -247,10 +213,7 @@ def format_ranking_recommendations(
 async def select_entities(
     dataset: ManualDataset | CompanyDataset,
     logger: Logger | None = None,
-) -> tuple[
-    Annotated[pd.DataFrame, "entities to train over"],
-    Annotated[pd.DataFrame, "entities to predict over"],
-]:
+) -> tuple[Annotated[pd.DataFrame, "entities to train over"], Annotated[pd.DataFrame, "entities to predict over"]]:
     """
     Selects the entities to train and predict over.
     This can either be a manually set of recipe_ids, and the menus to predict over.
@@ -267,10 +230,14 @@ async def select_entities(
         )
 
         recipes = await YearWeekMenu.query().all().to_lazy_polars()
-        recipes = recipes.filter(
-            pl.col("company_id") == dataset.company_id,
-            pl.col("yearweek").is_in(dataset.year_weeks_to_predict_on),
-        ).collect()
+        recipes = (
+            recipes.filter(
+                pl.col("company_id") == dataset.company_id,
+                pl.col("yearweek").is_in(dataset.year_weeks_to_predict_on),
+            )
+            .unique(["company_id", "yearweek", "product_id"])
+            .collect()
+        )
 
         ratings_filter = []
         if dataset.year_weeks_to_train_on:

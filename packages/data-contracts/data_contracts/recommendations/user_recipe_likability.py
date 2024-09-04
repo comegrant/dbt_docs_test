@@ -1,11 +1,16 @@
 from aligned import EventTimestamp, Int32, String, model_contract
-from aligned.schemas.date_formatter import DateFormatter
-from data_contracts.recommendations.recipe import HistoricalRecipeOrders, RecipeIngredient, RecipeTaxonomies
+from data_contracts.orders import HistoricalRecipeOrders
+from data_contracts.recipe import (
+    RecipeFeatures,
+    RecipeIngredient,
+    RecipeTaxonomies,
+)
 from data_contracts.sources import recommendations_dir
 from project_owners.owner import Owner
 
 ingredient = RecipeIngredient()
 recipes_taxonomies = RecipeTaxonomies()
+recipe_features = RecipeFeatures()
 orders = HistoricalRecipeOrders()
 
 
@@ -17,11 +22,14 @@ orders = HistoricalRecipeOrders()
         Owner.jose().markdown(),
         Owner.matsmoll().markdown(),
     ],
-    input_features=[ingredient.all_ingredients, recipes_taxonomies.recipe_taxonomies],
-    output_source=recommendations_dir.delta_at(
-        "user_recipe_likability",
-        date_formatter=DateFormatter.unix_timestamp(),
-    ),
+    input_features=[
+        ingredient.all_ingredients,
+        recipes_taxonomies.recipe_taxonomies,
+        recipe_features.is_low_cooking_time,
+        recipe_features.is_medium_cooking_time,
+        recipe_features.is_high_cooking_time,
+    ],
+    output_source=recommendations_dir.parquet_at("user_recipe_likability.parquet"),
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()

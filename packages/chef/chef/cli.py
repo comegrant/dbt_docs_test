@@ -448,7 +448,8 @@ def push_image(
 
     path = projects_path() / project
     command = compose_command(path)
-    command.extend(["build", project])
+    command.extend(["build", project, "--build-arg", f"TAG={tag}"])
+
     subprocess.run(command, check=True)
 
     subprocess.run(["docker", "tag", image, url], check=False)
@@ -552,21 +553,15 @@ def set_git_config(key: str, value: str) -> None:
     subprocess.run(["git", "config", "--global", key, value], check=False)
 
 
-def git_config(key: str) -> str | None:
+def read_command(command: list[str]) -> str | None:
     try:
-        return (
-            subprocess.check_output(
-                [
-                    "git",
-                    "config",
-                    key,
-                ],
-            )
-            .decode("utf-8")
-            .strip()
-        )
+        return subprocess.check_output(command).decode("utf-8").strip()
     except subprocess.CalledProcessError:
         return None
+
+
+def git_config(key: str) -> str | None:
+    return read_command(["git", "config", key])
 
 
 @cli.command()

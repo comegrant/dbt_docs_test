@@ -1,4 +1,4 @@
-FROM matsmoll/aligned-catalog-free
+FROM matsmoll/aligned-catalog-free:experimental-latest
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -31,8 +31,7 @@ RUN mkdir -p data_catalog && touch data_catalog/__init__.py
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
-RUN pip install polars-lts-cpu
-RUN pip install "aligned==0.0.95"
+RUN pip install polars-lts-cpu==0.20.31
 
 # copy source code
 COPY projects/data-catalog .

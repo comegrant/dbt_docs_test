@@ -11,31 +11,45 @@ def recommendation_feature_contracts() -> FeatureStore:
     The above will not work when the `personalization` module is loaded in as a package.
     As the working dir is not in the personalization dir, and will not find the contracts.
     """
-    from data_contracts.recommendations.recipe import (
+    from data_contracts.mealkits import DefaultMealboxRecipes, OneSubMealkits
+    from data_contracts.menu import MenuWeekRecipeNormalization, YearWeekMenu, YearWeekMenuWithPortions
+    from data_contracts.orders import (
         BasketDeviation,
         DeselectedRecipes,
         HistoricalRecipeOrders,
         MealboxChanges,
         MealboxChangesAsRating,
+    )
+    from data_contracts.preselector.basket_features import (
+        ImportanceVector,
+        PredefinedVectors,
+        PreselectorVector,
+        TargetVectors,
+    )
+    from data_contracts.preselector.menu import PreselectorYearWeekMenu
+    from data_contracts.recipe import (
+        IngredientCategories,
+        MainIngredients,
+        NormalizedRecipeFeatures,
         RecipeCost,
         RecipeFeatures,
         RecipeIngredient,
+        RecipeMainIngredientCategory,
         RecipeNutrition,
         RecipeTaxonomies,
-        UserSubscription,
-        YearWeekMenu,
     )
     from data_contracts.recommendations.recommendations import (
-        BackupRecommendations,
+        PartitionedRecommendations,
         PresentedRecommendations,
         RecipeCluster,
         RecommendatedDish,
         UserRecipeLikability,
     )
-
-    store = FeatureStore.experimental()
+    from data_contracts.user import UserSubscription
 
     views: list[FeatureViewWrapper] = [
+        PreselectorYearWeekMenu,
+        NormalizedRecipeFeatures,
         RecipeTaxonomies,
         RecipeIngredient,
         HistoricalRecipeOrders,
@@ -45,18 +59,30 @@ def recommendation_feature_contracts() -> FeatureStore:
         RecipeCost,
         DeselectedRecipes,
         UserSubscription,
+        DefaultMealboxRecipes,
         MealboxChanges,
         MealboxChangesAsRating,
+        PreselectorVector,
+        YearWeekMenuWithPortions,
+        MenuWeekRecipeNormalization,
+        PredefinedVectors,
+        TargetVectors,
+        ImportanceVector,
+        PartitionedRecommendations,
+        OneSubMealkits,
+        IngredientCategories,
+        RecipeMainIngredientCategory,
+        MainIngredients,
         YearWeekMenu,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,
         RecipeCluster,
         UserRecipeLikability,
-        BackupRecommendations,
         PresentedRecommendations,
     ]
 
+    store = FeatureStore.empty()
     for view in views:
         store.add_compiled_view(view.compile())
 

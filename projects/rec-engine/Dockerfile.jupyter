@@ -1,0 +1,3 @@
+FROM rec-engine-databricks
+
+RUN pip install jupyter

@@ -8,20 +8,11 @@ include:
 variables:
   docker_image_url:
     description: The url of the source code. in the form as a Docker image.
-
-workspace:
-  host: https://adb-4291784437205825.5.azuredatabricks.net
+  mode:
+    description: The mode to deploy in
+    default: development
 
 targets:
-  # The 'dev' target, used for development purposes.
-  # Whenever a developer deploys using 'dev', they get their own copy.
-  dev:
-    # We use 'mode: development' to make sure everything deployed to this target gets a prefix
-    # like '[dev my_user_name]'. Setting this mode also disables any schedules and
-    # automatic triggers for jobs and enables the 'development' mode for Delta Live Tables pipelines.
-    mode: development
+  default:
     default: true
-
-  test:
-    workspace:
-      host: https://adb-3194696976104051.11.azuredatabricks.net
+    mode: "${var.mode}"

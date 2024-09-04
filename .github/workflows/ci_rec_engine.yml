@@ -20,7 +20,6 @@ jobs:
     secrets: inherit
 
   build-rec-engine-image:
-    needs: test-rec-engine
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/rec-engine

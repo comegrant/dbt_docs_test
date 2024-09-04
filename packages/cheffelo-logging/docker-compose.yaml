@@ -1,0 +1,12 @@
+version: '3'
+services:
+  cheffelo-logging-test:
+    image: cheffelo_logging-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/cheffelo-logging/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/cheffelo-logging
+    profiles: ["test"]

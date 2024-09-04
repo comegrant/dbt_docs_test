@@ -1,0 +1,18 @@
+---
+name: cheffelo_logging CI
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_cheffelo_logging.yml'
+      - 'packages/cheffelo-logging/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  ci-libs-cheffelo-logging:
+    uses:
+      ./.github/workflows/python_reusable.yml
+    with:
+      working-directory: packages/cheffelo-logging
+    secrets: inherit

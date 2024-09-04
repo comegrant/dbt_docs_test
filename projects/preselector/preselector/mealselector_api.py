@@ -129,11 +129,18 @@ async def run_mealselector(
         return ValueError("An error occurred when computing the default mealbox")
 
     if week_response.result == "DEFAULT":
-        default_mealbox = menu[menu["variation_id"] == product_variation_id]
-        default_mealbox = default_mealbox[
-            default_mealbox["menu_recipe_order"] <= customer.number_of_recipes
-        ]
-        recipes = default_mealbox["main_recipe_id"].tolist()
+        import polars as pl
+        from data_contracts.mealkits import DefaultMealboxRecipes
+
+        default = await DefaultMealboxRecipes.query().filter(
+            (pl.col("menu_week") == week)
+            & (pl.col("menu_year") == year)
+            & (pl.col("variation_id") == product_variation_id)
+            & (pl.col("number_of_recipes") == customer.number_of_recipes)
+            & (pl.col("company_id") == customer.company_id)
+        ).to_pandas()
+
+        recipes = list(default["main_recipe_ids"].tolist()[0])
     else:
         variation_ids = [x.variationId.lower() for x in week_response.products]
         selected_mealbox = menu[menu["variation_id"].str.lower().isin(variation_ids)]

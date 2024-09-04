@@ -34,18 +34,18 @@ def rank_recipes(
         by=[score_column],
         ascending=[False],
     )
-    sorted_recipes["order_of_relevance_cluster"] = range(1, sorted_recipes.shape[0] + 1)
+    sorted_recipes["order_rank"] = range(1, sorted_recipes.shape[0] + 1)
 
-    return sorted_recipes["order_of_relevance_cluster"]
+    return sorted_recipes["order_rank"]
 
 
 def predict_order_of_relevance(recipes: pd.DataFrame) -> pd.DataFrame:
     # Need to do the if, as the `level_1` will not exist if containing only one ID
     if len(recipes["agreement_id"].unique()) > 1:
         subset_ranking = recipes.groupby("agreement_id").apply(rank_recipes).reset_index().set_index("level_1")
-        return recipes.join(subset_ranking["order_of_relevance_cluster"])
+        return recipes.join(subset_ranking["order_rank"])
     else:
-        recipes["order_of_relevance_cluster"] = rank_recipes(recipes)
+        recipes["order_rank"] = rank_recipes(recipes)
         return recipes
 
 

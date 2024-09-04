@@ -53,9 +53,7 @@ class TestPredict(TestCase):
 
         # The best recipes will be first in the list
         user_one_recipe_order = (
-            preds[preds["agreement_id"] == 1]
-            .sort_values("score", ascending=False)["recipe_id"]
-            .tolist()
+            preds[preds["agreement_id"] == 1].sort_values("score", ascending=False)["recipe_id"].tolist()
         )
         assert user_one_recipe_order == [10, 13]
 
@@ -83,7 +81,7 @@ class TestPredict(TestCase):
             {
                 "agreement_id": [1, 1, 1, 2, 2, 2, 3],
                 "recipe_id": [1, 2, 3, 1, 2, 3, 1],
-                "order_of_relevance_cluster": [2, 3, 1, 3, 1, 2, 1],
+                "order_rank": [2, 3, 1, 3, 1, 2, 1],
             },
         )
         recipes = pd.DataFrame(
@@ -98,9 +96,7 @@ class TestPredict(TestCase):
         result = predict_order_of_relevance(recipe_subset)
         assert result.shape[0] == expected.shape[0]
         assert expected.equals(
-            result[
-                ["agreement_id", "recipe_id", "order_of_relevance_cluster"]
-            ].reset_index(drop=True),
+            result[["agreement_id", "recipe_id", "order_rank"]].reset_index(drop=True),
         )
 
 

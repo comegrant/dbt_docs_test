@@ -9,6 +9,8 @@ services:
     build:
       context: ../../
       dockerfile: projects/preselector/Dockerfile
+      args:
+        - DEP_GROUP=--without=dev
     command: ["echo", "'Hello from preselector'"]
     volumes:
       - ./:/opt/projects/preselector
@@ -17,16 +19,50 @@ services:
       - ../../.env
       - .env
 
-  preselector-app:
+  ab-app:
     platform: linux/amd64
+    image: preselector-preselector
     build:
       context: ../../
       dockerfile: projects/preselector/Dockerfile
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
-    # watcher leads to an OSError on startup in amd mode.
-    command: ["python", "-m", "streamlit", "run", "app.py", "--server.fileWatcherType", "poll"]
+    command: "python -m streamlit run app.py --server.fileWatcherType poll"
+    ports:
+      - 8505:8501
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+
+  cof-app:
+    platform: linux/amd64
+    image: preselector-preselector
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run cost_of_food_app.py --server.fileWatcherType poll"
+    ports:
+      - 8504:8501
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+
+  attribute-app:
+    platform: linux/amd64
+    image: preselector-preselector
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run concept_definition_app.py --server.fileWatcherType poll"
     ports:
       - 8500:8501
     depends_on:
@@ -34,14 +70,87 @@ services:
     env_file:
       - .env
 
-  preselector-test:
+  combination-app:
     platform: linux/amd64
+    image: preselector-preselector
     build:
       context: ../../
-      dockerfile: projects/preselector/Dockerfile.testing
+      dockerfile: projects/preselector/Dockerfile
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run combinations_app.py --server.fileWatcherType poll"
+    ports:
+      - 8506:8501
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+
+  preselector-test:
+    platform: linux/amd64
+    image: preselector-test
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
     command: ["python", "-m", "pytest", "-rav", "tests"]
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
     depends_on:
       - preselector
+
+  databricks:
+    platform: linux/amd64
+    image: preselector-databricks
+    build:
+      context: ../../
+      dockerfile: projects/preselector/docker/Dockerfile.databricks
+    command: "echo 'hello'"
+    volumes:
+      - ./:/opt/projects/rec-engine/
+      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+      - .env
+
+  process-stream:
+    platform: linux/amd64
+    image: preselector-worker
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+      args:
+        - DEP_GROUP=--with=worker
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "/usr/local/bin/python -m preselector.process_stream"
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+      - ../../.env
+    deploy:
+      resources:
+        limits:
+          # Max 14 GB of memory
+          memory: 7GB
+
+  test-deploy:
+    platform: linux/amd64
+    image: preselector-worker
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+      args:
+        - DEP_GROUP=--with=worker
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "/usr/local/bin/python -m deploy_to_azure"
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+      - ../../.env

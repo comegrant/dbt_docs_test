@@ -16,6 +16,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 120
 
+[tool.pyright]
+exclude = ["**/jobs/**"]
+
 [tool.ruff]
 lint.select = [
     "E",    # pycodestyle
@@ -46,15 +49,40 @@ lint.ignore = [
     "ANN204", # Missing type annotation for special method
     "UP017",
     "DTZ011", # Use of `datetime.now` without timezone
+    "ARG001", # Unused function argument
     "ARG002", # Unused argument
+    "ARG004", # Unused static argument
     "ARG005", # Unused lambda variable
     "SIM108", # Enforce turnary expression
     "SIM117", # Enforce multiple context managers on one line
+    "SIM110",
     "ERA001",
     "COM812",
+    "C408",
+    "PLR0912", # Too many branches
+    "PLR0913",
+    "PLR0915", # Too many statements
+    "PT023", # Use `@pytest.mark.asyncio` over `@pytest.mark.asyncio()`
+    "PT001", # Use `@pytest.fixture` over `@pytest.fixture()`
+    "RUF012"
 ]
 lint.pylint.max-args = 7
 line-length = 120
 lint.pyupgrade.keep-runtime-typing = true
 target-version = "py39"
 extend-exclude = ["**/notebooks/**"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/jobs/**.py" = [
+    # Modules at top
+    "E402",
+    # Attribute do not exist -> due to dbutils
+    "F821",
+    # Async functions in notebooks
+    "F704",
+    "PLE1142"
+]
+"**/tests/**.py" = [
+    # Magic numbers
+    "PLR2004"
+]

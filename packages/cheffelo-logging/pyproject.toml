@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "cheffelo_logging"
+version = "0.1.0"
+description = "A package to simplify logging for local and production environments"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "cheffelo_logging"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic-settings = "^2.1.0"
+datadog-api-client = "^2.13.0"
+python-json-logger = "^2.0.7"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

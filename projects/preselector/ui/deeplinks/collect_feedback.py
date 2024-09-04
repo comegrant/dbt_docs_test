@@ -10,14 +10,16 @@ from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
 
 
-def read_cache(key):
+def read_cache(key: Any) -> Any:  # noqa: ANN401
     if key in st.session_state:
         return st.session_state[key]
 
     return None
 
-def set_cache(key, value):
+
+def set_cache(key: Any, value: str) -> None:  # noqa: ANN401
     st.session_state[key] = value
+
 
 async def cache_awaitable(key: str, function: Awaitable) -> Any:  # noqa: ANN401
     if key in st.session_state:
@@ -33,6 +35,8 @@ class ExplainSelectionState(BaseModel):
     year: int
     week: int
 
+    has_order_history: bool
+
     selected_create: str
     selected_recipe_ids: list[int]
     other_recipe_ids: list[int]
@@ -47,8 +51,12 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
     st.title("Why did you choose this mealkit?")
 
     with st.spinner("Loading recipe information..."):
-        key_value_cache_key = f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
-        key_value_cache_key_other = f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
+        key_value_cache_key = (
+            f"cached_recipe_info{state.year}_{state.week}_{state.selected_recipe_ids}"
+        )
+        key_value_cache_key_other = (
+            f"cached_recipe_info{state.year}_{state.week}_{state.other_recipe_ids}"
+        )
 
         choosen_recipes = await cache_awaitable(
             key_value_cache_key,
@@ -113,7 +121,7 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
                 "agreement_id": [state.agreement_id],
                 "year": [state.year],
                 "week": [state.week],
-                "preselector_version": ["vector_search_v1"],
+                "preselector_version": ["vector_search_v5"],
                 "main_recipe_ids": [state.selected_recipe_ids],
                 "compared_main_recipe_ids": [state.other_recipe_ids],
                 "chosen_mealkit": [state.selected_create],
@@ -134,10 +142,11 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
                 "had_recipes_last_week": [similar_recipes_as_last_week],
                 "compared_number_of_recipes_to_change": [state.other_number_of_changes],
                 "number_of_recipes_to_change": [state.selected_number_of_changes],
+                "has_order_history": [state.has_order_history],
             },
         )
 
-    await update_target_vector(state.selected_recipe_ids, state.agreement_id)
+    # await update_target_vector(state.selected_recipe_ids, state.agreement_id)
 
     set_deeplink(
         CompareWeekState(
@@ -147,23 +156,30 @@ async def collect_feedback(state: ExplainSelectionState) -> None:
         ),
     )
 
-async def update_target_vector(recipe_ids: list[int], agreement_id: int):
-    from preselector.contracts.compare_boxes import preselector_target_vector_key, update_target
-    import polars as pl
 
-    with st.spinner("Updating target vector..."):
-        key = preselector_target_vector_key(agreement_id)
-        target = read_cache(key)
-        if target is None:
-            return
-
-        recipe_entities = pl.DataFrame({
-            "recipe_id": recipe_ids,
-            "portion_size": [4] * len(recipe_ids),
-        })
-
-        new_target = await update_target(
-            target=target, 
-            selected_recipes=recipe_entities,
-        )
-        set_cache(key, new_target)
+async def update_target_vector(recipe_ids: list[int], agreement_id: int) -> None:
+    pass
+    # import polars as pl
+    # from preselector.contracts.compare_boxes import (
+    #     preselector_target_vector_key,
+    #     update_target,
+    # )
+    #
+    # with st.spinner("Updating target vector..."):
+    #     key = preselector_target_vector_key(agreement_id)
+    #     target = read_cache(key)
+    #     if target is None:
+    #         return
+    #
+    #     recipe_entities = pl.DataFrame(
+    #         {
+    #             "recipe_id": recipe_ids,
+    #             "portion_size": [4] * len(recipe_ids),
+    #         }
+    #     )
+    #
+    #     new_target = await update_target(
+    #         target=target,
+    #         selected_recipes=recipe_entities,
+    #     )
+    #     set_cache(key, new_target)

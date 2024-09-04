@@ -85,11 +85,11 @@ import os
 
 os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
     scope="auth_common",
-    key="service-account-name-experimental",
+    key="azure-storageAccount-experimental-name",
 )
 os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
     scope="auth_common",
-    key="storage-account-key-experimental",
+    key="azure-storageAccount-experimental-key",
 )
 
 # COMMAND ----------
@@ -105,5 +105,7 @@ dataset = CompanyDataset(
 # COMMAND ----------
 
 await run(
-    dataset=dataset, store=store, write_to_path=None
+    dataset=dataset,
+    store=store,
+    write_to_path=None
 )  # None will write to prod source
