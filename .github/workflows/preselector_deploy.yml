@@ -36,12 +36,12 @@ jobs:
         target: [Test, Production]
       max-parallel: 1
       fail-fast: true
-    needs: build-preselector-image
+    needs: build-preselector-databricks-image
     uses: ./.github/workflows/cd_dab_template.yml
     with:
       working-directory: projects/preselector
       target-env: ${{matrix.target}}
 
       # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:${{ github.sha }}"'
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:${{ github.sha }}" --var="mode=production"'
     secrets: inherit

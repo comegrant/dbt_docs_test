@@ -33,5 +33,5 @@ jobs:
       target-env: ${{matrix.target}}
 
       # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/rec-engine-databricks:${{ github.sha }}"'
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/rec-engine-databricks:${{ github.sha }}" --var="mode=production"'
     secrets: inherit

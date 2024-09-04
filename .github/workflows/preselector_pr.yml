@@ -42,7 +42,7 @@ jobs:
     secrets: inherit
 
   deploy-to-dev:
-    needs: build-preselector-image
+    needs: test_preselector
     uses: ./.github/workflows/cd_dab_template.yml
     with:
       working-directory: projects/preselector
