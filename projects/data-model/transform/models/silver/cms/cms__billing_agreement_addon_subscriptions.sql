@@ -10,7 +10,7 @@ renamed as (
 
     select
         {# ids #}
-        agreement_id
+        agreement_id as billing_agreement_id
         , addon_subscriptions_id as addon_subscription_id
         , company_id
 

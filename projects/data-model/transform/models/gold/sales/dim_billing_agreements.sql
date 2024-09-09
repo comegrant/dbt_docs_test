@@ -16,7 +16,7 @@ most_recent_billing_agreements as (
 scd_billing_agreements as (
 
     select
-        agreement_id
+        billing_agreement_id
         , billing_agreement_status_id
         , sales_point_id
         , valid_from
@@ -46,14 +46,14 @@ scd_loyalty_level as (
 union_scd_timeline_valid_from (
 
     select
-        scd_billing_agreements.agreement_id,
+        scd_billing_agreements.billing_agreement_id,
         scd_billing_agreements.valid_from
     from scd_billing_agreements
 
     union
 
     select
-        scd_loyalty_level.agreement_id,
+        scd_loyalty_level.billing_agreement_id,
         scd_loyalty_level.valid_from
     from scd_loyalty_level
 
@@ -61,9 +61,9 @@ union_scd_timeline_valid_from (
 
 union_scd_timeline_add_valid_to as (
     select
-        agreement_id,
+        billing_agreement_id,
         valid_from,
-        coalesce(lead(valid_from, 1) over (partition by agreement_id order by valid_from), 
+        coalesce(lead(valid_from, 1) over (partition by billing_agreement_id order by valid_from), 
         cast('9999-01-01' as timestamp)
         ) as valid_to
     from union_scd_timeline_valid_from
@@ -72,13 +72,13 @@ union_scd_timeline_add_valid_to as (
 join_tables as (
 select 
     md5(concat(
-        cast(most_recent_billing_agreements.agreement_id as string),
+        cast(most_recent_billing_agreements.billing_agreement_id as string),
         cast(union_scd_timeline_add_valid_to.valid_from as string)
         )
     ) AS pk_dim_billing_agreements
     
     {# ids #}
-    , most_recent_billing_agreements.agreement_id
+    , most_recent_billing_agreements.billing_agreement_id
     , most_recent_billing_agreements.customer_id
     , most_recent_billing_agreements.company_id
     , scd_billing_agreements.sales_point_id
@@ -133,19 +133,19 @@ select
 
 from union_scd_timeline_add_valid_to
 left join most_recent_billing_agreements
-    on union_scd_timeline_add_valid_to.agreement_id = most_recent_billing_agreements.agreement_id
+    on union_scd_timeline_add_valid_to.billing_agreement_id = most_recent_billing_agreements.billing_agreement_id
 left join scd_billing_agreements
-    on union_scd_timeline_add_valid_to.agreement_id = scd_billing_agreements.agreement_id
+    on union_scd_timeline_add_valid_to.billing_agreement_id = scd_billing_agreements.billing_agreement_id
     and union_scd_timeline_add_valid_to.valid_from >= scd_billing_agreements.valid_from
     and union_scd_timeline_add_valid_to.valid_to < scd_billing_agreements.valid_to
 left join billing_agreement_status
     on scd_billing_agreements.billing_agreement_status_id = billing_agreement_status.billing_agreement_status_id
 left join scd_loyalty_level
-    on union_scd_timeline_add_valid_to.agreement_id = scd_loyalty_level.agreement_id
+    on union_scd_timeline_add_valid_to.billing_agreement_id = scd_loyalty_level.billing_agreement_id
     and union_scd_timeline_add_valid_to.valid_from >= scd_loyalty_level.valid_from
     and union_scd_timeline_add_valid_to.valid_to < scd_loyalty_level.valid_to
 left join first_order
-    on most_recent_billing_agreements.agreement_id = first_order.agreement_id
+    on most_recent_billing_agreements.billing_agreement_id = first_order.billing_agreement_id
 )
 
 select * from join_tables

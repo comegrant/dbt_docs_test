@@ -8,7 +8,7 @@ orders as (
 
 , first_orders as (
     select 
-        agreement_id
+        billing_agreement_id
         , first(delivery_week_monday_date) as first_delivery_week_monday_date
     from orders
     group by
@@ -17,7 +17,7 @@ orders as (
 
 , cohorts_first_orders as (
     select 
-        agreement_id
+        billing_agreement_id
         , first_delivery_week_monday_date
         , extract('WEEK', first_delivery_week_monday_date) as first_delivery_week_week
         , extract('MONTH', first_delivery_week_monday_date) as first_delivery_week_month

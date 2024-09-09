@@ -22,7 +22,7 @@ renamed as (
         , order_id as ops_order_id
         , order_type as order_type_id
         , order_status_id
-        , agreement_id
+        , agreement_id as billing_agreement_id
         {# not yet included columns
         --shipping_address_id
         --billing_address_id

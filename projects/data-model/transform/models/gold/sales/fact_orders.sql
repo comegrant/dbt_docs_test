@@ -36,7 +36,7 @@ source_tables_joined as (
         , orders.order_status_id
         , orders.order_type_id
         , order_lines.order_line_id
-        , orders.agreement_id
+        , orders.billing_agreement_id
         , order_lines.product_variation_id
 
         {# strings #}
@@ -79,7 +79,7 @@ source_tables_joined as (
     left join has_delivery
         on order_lines.cms_order_id = has_delivery.cms_order_id
     left join billing_agreements
-        on orders.agreement_id = billing_agreements.agreement_id
+        on orders.billing_agreement_id = billing_agreements.billing_agreement_id
 
 
 )

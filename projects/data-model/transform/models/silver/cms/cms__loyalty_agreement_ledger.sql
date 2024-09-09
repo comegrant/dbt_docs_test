@@ -12,7 +12,7 @@ renamed as (
         
         {# ids #}
         id as loyalty_agreement_ledger_id
-        , agreement_id
+        , agreement_id as billing_agreement_id
         , event_id as loyalty_event_id
         , current_level as loyalty_level_id
 

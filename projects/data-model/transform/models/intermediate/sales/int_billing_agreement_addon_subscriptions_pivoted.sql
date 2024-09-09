@@ -36,8 +36,8 @@ addon_names as (
 pivot_and_join_addon_subscriptions_and_addon_names as (
 
     select
-        addon_subscriptions.agreement_id
-
+        addon_subscriptions.billing_agreement_id
+        
         {% for key, value in addon_subscriptions_dict.items() -%}
 
             ,case

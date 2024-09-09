@@ -8,20 +8,20 @@ loyalty_ledger as (
 
 , group_loyalty_levels (
     select
-        agreement_id, 
+        billing_agreement_id, 
         loyalty_level_id,
         points_generated_at,
-        row_number() over (partition by agreement_id, loyalty_level_id order by points_generated_at) as level_group 
+        row_number() over (partition by billing_agreement_id, loyalty_level_id order by points_generated_at) as level_group 
     from loyalty_ledger
 )
 
 , extract_level_movement as (
     select 
-        agreement_id, 
+        billing_agreement_id, 
         loyalty_level_id,
         points_generated_at as valid_from,
         coalesce(
-            lead(points_generated_at, 1) over (partition by agreement_id order by points_generated_at)
+            lead(points_generated_at, 1) over (partition by billing_agreement_id order by points_generated_at)
             ,to_timestamp('2999-12-31')
         ) as valid_to
     from group_loyalty_levels

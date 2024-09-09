@@ -11,7 +11,7 @@ renamed as (
     select
         
         {# ids #}
-        agreement_id
+        agreement_id as billing_agreement_id
         , customer_id
         , company_id
         , status as billing_agreement_status_id
