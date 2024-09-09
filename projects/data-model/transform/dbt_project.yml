@@ -39,3 +39,5 @@ models:
       +materialized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
     gold:
       +schema: gold
+    mlgold:
+      +schema: mlgold

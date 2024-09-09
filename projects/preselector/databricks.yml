@@ -1,0 +1,20 @@
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: preselector
+
+include:
+  - "jobs/**.yml"
+  - "jobs/**.yaml"
+
+variables:
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+    default: bhregistry.azurecr.io/preselector-databricks:dev-latest
+  mode:
+    description: The mode to deploy in
+    default: development
+
+targets:
+  default:
+    default: true
+    mode: "${var.mode}"

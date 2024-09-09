@@ -1,6 +1,6 @@
 from aligned import EventTimestamp, Int32, String, model_contract
 from aligned.schemas.date_formatter import DateFormatter
-from data_contracts.recommendations.recipe import RecipeTaxonomies
+from data_contracts.recipe import RecipeTaxonomies
 from data_contracts.sources import recommendations_dir
 from project_owners.owner import Owner
 

@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body id="root">
+
+    <div class="">
+      <nav id="tabs" class="-mb-px flex" aria-label="Tabs">
+      </nav>
+    </div>
+
+    <script type="module">
+      // ----------------------------------------------------
+      // Just copy/paste these functions as-is:
+      var tabContainer = document.getElementById("tabs");
+      var activeId = null;
+      var theme = {
+        backgroundColor: "white",
+        textColor: "black",
+        primaryColor: "blue",
+        secondaryBackgroundColor: "gray"
+      }
+
+      function sendMessageToStreamlitClient(type, data) {
+        var outData = Object.assign({
+          isStreamlitMessage: true,
+          type: type,
+        }, data);
+        window.parent.postMessage(outData, "*");
+      }
+
+      function init() {
+        sendMessageToStreamlitClient("streamlit:componentReady", {apiVersion: 1});
+      }
+
+      function setFrameHeight(height) {
+        sendMessageToStreamlitClient("streamlit:setFrameHeight", {height: height});
+      }
+
+      // The `data` argument can be any JSON-serializable value.
+      function sendDataToPython(data) {
+        sendMessageToStreamlitClient("streamlit:setComponentValue", data);
+      }
+
+      function activeClasses() {
+        return [
+          `border-[${theme.primaryColor}]`, `text-[${theme.primaryColor}]`, `border-b-2`, `py-4`, `px-3`, `text-sm`, `font-medium`
+        ].join(" ");
+      }
+
+      function inactiveClasses() {
+        return [
+          'border-transparent', `text-[${theme.textColor}]/50`, `hover:border-[${theme.textColor}]/25`, `hover:text-[${theme.textColor}]/75`, `py-4`, `px-3`, `text-sm`, `font-medium`
+        ].join(" ");
+      }
+
+      function setTabs(tabs) {
+        tabContainer.innerHTML = "";
+        document.getElementById("root").classList = [
+          `border-[${theme.secondaryBackgroundColor}] border-b mb-2`
+        ]
+
+        let numberOfTabs = tabs.length;
+
+        tabs.forEach(tab => {
+
+          let index = tabs.indexOf(tab);
+
+          var tabDiv = document.createElement("a");
+
+          tabDiv.id = index;
+          tabDiv.innerHTML = tab;
+          tabDiv.href = "#";
+          if (index == activeId) {
+            tabDiv.classList = [
+              activeClasses()
+            ];
+          } else {
+            tabDiv.classList = [
+              inactiveClasses()
+            ];
+          }
+
+          tabContainer.appendChild(tabDiv);
+
+
+          tabDiv.addEventListener('click', () => {
+            // Remove the active state from all tabs
+            if (index == activeId) {
+              return;
+            }
+            document.getElementById(activeId).classList = [inactiveClasses()];
+            activeId = index;
+            document.getElementById(activeId).classList = [activeClasses()];
+
+            // Show the targeted panel and highlight the active tab
+            sendDataToPython({value: index, dataType: "json"});
+
+            window.setTimeout(function() {
+              setFrameHeight(document.documentElement.clientHeight)
+            }, 0);
+          });
+        });
+
+        window.setTimeout(function() {
+          setFrameHeight(document.documentElement.clientHeight)
+        }, 0);
+      }
+
+      // ----------------------------------------------------
+      // Now modify this part of the code to fit your needs:
+
+
+      // data is any JSON-serializable value you sent from Python,
+      // and it's already deserialized for you.
+      async function onDataFromPython(event) {
+
+        document.getElementById("root").style.background += event.data.theme.backgroundColor;
+
+        if (event.data.type !== "streamlit:render") return;
+
+        let tabs = event.data.args.tabs;
+        if (activeId === null) {
+          activeId = event.data.args.active_index;
+        }
+
+        theme = event.data.theme;
+        setTabs(event.data.args.tabs);  // Access values sent from Python here!
+      }
+
+      // Hook things up!
+      window.addEventListener("message", onDataFromPython);
+      init();
+
+      // Hack to autoset the iframe height.
+      window.addEventListener("load", function() {
+        window.setTimeout(function() {
+          setFrameHeight(document.documentElement.clientHeight)
+        }, 0);
+      });
+
+    </script>
+
+  </body>
+</html>

@@ -1,6 +1,5 @@
-from aligned import EventTimestamp, Float, Int32, Json, String, model_contract
-from aligned.schemas.date_formatter import DateFormatter
-from data_contracts.recommendations.recipe import HistoricalRecipeOrders
+from aligned import EventTimestamp, Int32, Json, String, model_contract
+from data_contracts.orders import HistoricalRecipeOrders, MealboxChangesAsRating
 from data_contracts.recommendations.recipe_clustering import RecipeCluster
 from data_contracts.recommendations.user_recipe_likability import (
     UserRecipeLikability,
@@ -24,16 +23,15 @@ rec_contacts = [
 
 
 delivered_recipes = HistoricalRecipeOrders()
-
+behavioral_ratings = MealboxChangesAsRating()
 
 @model_contract(
     name="rec_engine",
     contacts=rec_contacts,
     description="The ranking of recipes per user, within a given week menu.",
     input_features=[likability.score],
-    output_source=recommendations_dir.delta_at(
-        "recommended_recipe_rank",
-        date_formatter=DateFormatter.unix_timestamp(),
+    output_source=recommendations_dir.partitioned_parquet_at(
+        "partitioned_recommendations", partition_keys=["company_id", "year", "week"]
     ),
     application_source=adb_ml_output.table(
         "latest_recommendations",
@@ -56,25 +54,22 @@ class RecommendatedDish:
     predicted_at = EventTimestamp()
     company_id = String()
 
-    order_of_relevance_cluster = (
-        Int32().lower_bound(1)
+    order_rank = (
+        Int32()
+        .lower_bound(1)
+        .description("The rank of the recipe in the recommendation. 1 is the best.")
         # .as_recommendation_target()
-        # .estemating_rank(delivered_recipes.rating)
+        # .estemating_rank(behavioral_ratings.rating)
     )
 
 
-@model_contract(
-    name="backup_recommendations",
-    contacts=rec_contacts,
-    description="The recommendation used when we have no data on the user.",
-    input_features=[likability.score],
-    output_source=recommendations_dir.delta_at("backup_recommendations"),
+PartitionedRecommendations = RecommendatedDish.as_view_wrapper().with_schema(
+    name="partitioned_recommendations",
+    source=RecommendatedDish.as_source(),
+    materialized_source=recommendations_dir.partitioned_parquet_at(
+        "partitioned_recommended_recipes", partition_keys=["company_id", "year", "week"]
+    ),
 )
-class BackupRecommendations:
-    recipe_id = String().as_entity()
-    predicted_at = EventTimestamp()
-    score = Float()
-
 
 rec_engine = RecommendatedDish()
 
@@ -87,7 +82,7 @@ rec_engine = RecommendatedDish()
         rec_engine.year,
         rec_engine.week,
         rec_engine.product_id,
-        rec_engine.order_of_relevance_cluster,
+        rec_engine.order_rank,
     ],
     output_source=adb_ml.with_schema("personas").table("recommendations"),
     application_source=segment_personas_db.table("recommendations"),

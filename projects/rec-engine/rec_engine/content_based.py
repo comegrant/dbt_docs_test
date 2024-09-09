@@ -23,6 +23,7 @@ def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     features = pd.DataFrame({
         "recipe_taxonomies": ["rask,laktose", "laktose", "barnevenlig"],
         "all_ingredients": ["fisk", "kjøtt,paprika", "gulrot,laks"],
+        "other_values": [1, 1, 0],
     })
     processed = preprocessing(features)
     >>> print(processed)
@@ -39,24 +40,28 @@ def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     ```
     """
     data_tax = data["recipe_taxonomies"].str.lower().str.replace(" ", "").str.get_dummies(sep=",")
-    data_ing = (data["all_ingredients"]
+    data_ing = (
+        data["all_ingredients"]
         .str.lower()
         .str.replace(" ", "")
         .str.replace("[", "")
         .str.replace("]", "")
-        .str.replace("\"", "")
-        .str.replace("\d+pk", "", regex=True)
-        .str.replace("\d+", "", regex=True)
+        .str.replace('"', "")
+        .str.replace(r"\d+pk", "", regex=True)
+        .str.replace(r"\d+", "", regex=True)
         .str.get_dummies(sep=",")
     )
 
+    other_columns = list(data.columns)
+    other_columns.remove("recipe_taxonomies")
+    other_columns.remove("all_ingredients")
 
     processed = pd.concat(
         [data_tax.add_prefix(prefix="tax_"), data_ing.add_prefix("ing_")],
         axis=1,
     )
     processed.columns = processed.columns.str.replace(" ", "")
-    return processed
+    return pd.concat([data[other_columns], processed], axis=1)
 
 
 @dataclass
@@ -81,6 +86,7 @@ class CBModel:
         Returns:
             [DF]: DF contains scores of dishes for each customer
         """
+
         logger = logger or file_logger
         if recipes.shape[0] == 0:
             return pd.DataFrame({"agreement_id": [], "recipe_id": [], "score": []})
@@ -91,17 +97,18 @@ class CBModel:
         recipe_data = processed_recipe.drop(
             processed_recipe.columns.difference(list(self.matrix)),
             axis=1,
+            inplace=False,
         )
+        logger.info("Selecting interesection of features and preds")
         user_data = self.matrix[list(recipe_data)]
-        logger.info("Selected interesection of features and preds")
 
         # Getting agreement-recipe matrix with total correlation value
+        logger.info("Computing dot product predictions")
         data_pred = user_data.dot(recipe_data.T)
-        logger.info("Completed dot product predictions")
 
         # Normalization of agreement-recipe total value (using to number of taxonomies and ingredients)
 
-        logger.info("Normalized. Will melt and return predictions")
+        logger.info("Will melt and return predictions")
         return pd.melt(
             data_pred.reset_index(),
             id_vars="agreement_id",
@@ -127,7 +134,7 @@ class CBModel:
 
         entities = menu[needed_entities].drop_duplicates()
 
-        recipe_features = await model_store.features_for(entities).to_pandas()
+        recipe_features = await model_store.features_for(entities).drop_invalid().to_pandas()
 
         logger.info(
             f"Predicting recommendation ratings for {recipe_features.shape[0]} recipes",
@@ -158,9 +165,8 @@ class CBModel:
         if "delivered_at" in ratings.columns:
             ratings = ratings.drop(columns=["delivered_at"])
 
-        processed = preprocessing(recipes[["recipe_taxonomies", "all_ingredients"]])
+        processed = preprocessing(recipes)
 
-        processed["recipe_id"] = recipes["recipe_id"].astype("int32")
         ratings["recipe_id"] = ratings["recipe_id"].astype("int32")
 
         logger.info("Preprocessing done")
@@ -181,10 +187,8 @@ class CBModel:
             axis=0,
         )
 
-        def inverse_frequency(x: pd.Series): 
-            inv_feq_smooth = np.log(
-                x.shape[0] / (1 + x[x > 0].count())
-            ) + 1
+        def inverse_frequency(x: pd.Series) -> pd.Series:
+            inv_feq_smooth = np.log(x.shape[0] / (1 + x[x > 0].count())) + 1
             return x * inv_feq_smooth
 
         weighted = weighted.apply(inverse_frequency, axis=0)
@@ -207,12 +211,11 @@ class CBModel:
         entities: RetrivalJob | ConvertableToRetrivalJob,
         store: FeatureStore,
         model_contract_name: str,
-        ratings_view: str,
+        explicit_rating_view: str,
+        behavioral_rating_view: str,
         model_version: str | None = None,
         logger: Logger | None = None,
     ) -> "CBModel":
-        from aligned.validation.pandera import PanderaValidator
-
         origin_value = 3
         if logger is None:
             logger = file_logger
@@ -225,46 +228,31 @@ class CBModel:
         else:
             recipe_entities = entities
 
-        recipes = await (
-            store.model(model_contract_name)
-            .features_for(recipe_entities)
-            .drop_invalid(PanderaValidator())
-            .to_pandas()
-        )
+        recipes = await store.model(model_contract_name).features_for(recipe_entities).drop_invalid().to_pandas()
         logger.info(f"Loaded {recipes.shape[0]} recipes")
         ratings = (
-            await store.feature_view(ratings_view)
+            await store.feature_view(explicit_rating_view)
             .select({"rating"})
             .features_for(entities)
-            .drop_invalid(PanderaValidator())
+            .drop_invalid()
             .to_pandas()
         )
         ratings["rating"] = (ratings["rating"] - origin_value) * 2
         logger.info(f"Loaded {ratings.shape[0]} ratings")
 
         logger.info("Loading behavioral rating")
-        behavioral_rating_pl = (
-            await store.feature_view("mealbox_changes_as_rating")
-            .all()
-            .to_lazy_polars()
-        )
+        behavioral_rating_pl = await store.feature_view("mealbox_changes_as_rating").all().to_lazy_polars()
         behavioral_rating_pl = behavioral_rating_pl.filter(
             pl.col("agreement_id").is_in(entities["agreement_id"].unique()),
-        ).with_columns(
-            (pl.col("rating") + 2) - origin_value
-        )
+        ).with_columns((pl.col("rating") + 2) - origin_value)
         behavioral_rating = behavioral_rating_pl.collect().to_pandas()
 
         logger.info(f"Loaded {behavioral_rating.shape[0]} behavioral ratings")
 
-
         ratings = pd.concat([ratings, behavioral_rating], axis=0)
 
         logger.info("Filling in missing ratings")
-        ratings["rating"] = (
-            ratings["rating"]
-            .astype("float")
-        )
+        ratings["rating"] = ratings["rating"].astype("float")
 
         ratings = ratings[~ratings["rating"].isnull()]
 

@@ -68,7 +68,7 @@ async def update_from_source(
             continue
 
         logger.info(
-            f"Updating {view.name} batch source using staging source {view.source}",
+            f"Updating {view.name} batch source using staging source {type(view.source)}",
         )
         if not (
             isinstance(
@@ -134,7 +134,12 @@ async def update_view_from_source_if_older_than(
     logger = logger or file_logger
 
     for view in views:
-        freshness = await store.feature_view(view).freshness()
+
+        logger.info(f"Checking freshness for {view}")
+        try:
+            freshness = await store.feature_view(view).freshness()
+        except Exception as e:
+            freshness = None
 
         if not freshness:
             views_to_update.add(view)

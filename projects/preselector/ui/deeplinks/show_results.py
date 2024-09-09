@@ -33,6 +33,9 @@ async def show_choices(state: ShowChoicesState) -> None:
     preselector_count = counts.get("pre-selector", 0)
     menu_team_count = counts.get("chef-selection", 0)
 
+    assert isinstance(preselector_count, int)
+    assert isinstance(menu_team_count, int)
+
     if preselector_count > menu_team_count:
         st.title("**You have chosen the** _Pre-selector_ 🍽️ **most often**")
     else:
@@ -54,7 +57,6 @@ async def show_choices(state: ShowChoicesState) -> None:
     ].sum()
     why_stats.sort_values(ascending=False, inplace=True)
 
-    #
 
     columns = st.columns(2)
     columns[0].metric(

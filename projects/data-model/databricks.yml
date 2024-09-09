@@ -11,7 +11,7 @@ include:
 - resources/*.yml
 
 variables:
-  client-id: 
+  client-id:
     description: The ID of the service Service Principal
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
   warehouse_id:
@@ -23,24 +23,15 @@ targets:
     # We use 'mode: development' to indicate this is a personal development copy.
     # Any job schedules and triggers are paused by default.
     mode: development
-    workspace:
-      host: https://adb-4291784437205825.5.azuredatabricks.net
-
     variables:
       warehouse_id: 45100b61eb7ee2f5
 
   test:
     mode: production
-    workspace:
-      host: https://adb-3194696976104051.11.azuredatabricks.net
     variables:
       warehouse_id: 76c581aa18fb7b4f
-      
+
   prod:
     mode: production
-    workspace:
-      host: https://adb-3181126873992963.3.azuredatabricks.net
     variables:
       warehouse_id: 1a2fc265706df5fb
-
-      

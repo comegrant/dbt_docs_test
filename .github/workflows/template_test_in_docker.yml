@@ -1,0 +1,66 @@
+name: Reusable Docker library CI
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile:
+        required: true
+        type: string
+        description: "The path of the dockerfile"
+      extra-args:
+        required: false
+        type: string
+        default: ""
+        description: "Additional build-args for the dockerfile"
+
+      working-directory:
+        required: true
+        type: string
+        description: "From which folder this pipeline executes"
+      # To avoid being billed 360 minutes if a step does not terminate
+      # (we've seen the setup-python step below do so!)
+      ci-timeout:
+        description: "The timeout of the ci job. Default is 25min"
+        default: 25
+        type: number
+
+env:
+  TEST_TAG: user/app:test
+
+jobs:
+  test-ci:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ inputs.working-directory }}-${{inputs.dockerfile}}-test
+
+      - name: Build image
+        if: ${{ inputs.push-latest == false }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ inputs.working-directory }}:test
+          file: ${{ inputs.working-directory }}/${{ inputs.dockerfile }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Run Linting
+        run: docker run ${{ inputs.working-directory }}:test ruff check
+
+      - name: Run Test
+        run: docker run ${{ inputs.working-directory }}:test python -m pytest -rav tests

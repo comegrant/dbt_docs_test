@@ -20,13 +20,13 @@ logger = logging.getLogger(__name__)
 
 
 class RunArgs(BaseModel):
-    company_id: str = Field("6A2D0B60-84D6-4830-9945-58D518D27AC2")
+    company_id: str = Field("09ECD4F0-AE58-4539-8E8F-9275B1859A19")
 
     log_file_dir: str | None = Field(None)
     cache_location: str | None = Field(None)
 
     year_weeks: list[int] = Field([date.today().strftime("%Y%W")])
-    only_for_agreement_ids: list[int] | None = Field(None)
+    only_for_agreement_ids: list[int] | None = Field([1312655])
 
     update_source_threshold: timedelta | None = Field(None)
     ratings_update_threshold: timedelta | None = Field(None)
@@ -101,8 +101,7 @@ async def run_with_args(args: RunArgs, logger: Logger | None = None) -> None:
         write_to_path=args.write_to,
         update_source_threshold=args.update_source_threshold,
         ratings_update_source_threshold=args.ratings_update_threshold,
-        logger=logger,
-        should_write_to_application_source=args.should_write_to_application_source,
+        logger=logger
     )
 
 

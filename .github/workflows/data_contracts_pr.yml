@@ -1,0 +1,19 @@
+---
+name: CI projects/data-contracts
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_data_contracts.yml'
+      - 'packages/data-contracts/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-data-contracts:
+    uses:
+      ./.github/workflows/template_test_in_docker.yml
+    with:
+      working-directory: packages/data-contracts
+      dockerfile: Dockerfile
+    secrets: inherit

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import pandas as pd
 import polars as pl
-from aligned.data_source.batch_data_source import BatchDataSource, ColumnFeatureMappable
+from aligned.data_source.batch_data_source import CodableBatchDataSource, ColumnFeatureMappable
 from aligned.feature_source import WritableFeatureSource
 from aligned.request.retrival_request import RetrivalRequest
 from aligned.retrival_job import RequestResult, RetrivalJob
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class SqlServerJob(RetrivalJob, BatchDataSource):
+class SqlServerJob(RetrivalJob, CodableBatchDataSource):
     config: SqlServerConfig
     query: str
     requests: list[RetrivalRequest] = field(default_factory=list)
@@ -75,11 +75,11 @@ Query:
             )
 
         return JoinJobs(
-            method=method,
+            method=method, # type: ignore
             left_job=self,
             right_job=job,
-            left_on=left_on,
-            right_on=right_on,
+            left_on=[left_on],
+            right_on=[right_on],
         )
 
     async def to_lazy_polars(self) -> pl.LazyFrame:
@@ -97,6 +97,8 @@ Query:
         start_date: datetime,
         end_date: datetime,
     ) -> RetrivalJob:
+        import sqlglot
+
         if not request.event_timestamp:
             raise ValueError(
                 f"Unable to filter '{request.name}' features on datetimes without an event timestamp.",
@@ -104,9 +106,13 @@ Query:
 
         event_column = request.event_timestamp.name
 
-        query = (
-            f"SELECT * FROM ({self.query}) sub WHERE {start_date} <= {event_column} AND {event_column} <= {end_date}"
+        parsed = sqlglot.parse_one(self.query)
+
+        parsed = parsed.where(f"CONVERT(DATETIME, '{start_date}', 121) <= {event_column}", dialect="tsql").where(
+            f"{event_column} <= CONVERT(DATETIME, '{end_date}', 121)", dialect="tsql"
         )
+        query = parsed.sql(dialect="tsql")
+
         return SqlServerJob(self.config, query=query, requests=[request])
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
@@ -238,6 +244,7 @@ def build_full_select_query_mssql(
     Generates the SQL query needed to select all features related to a psql data source
     """
     all_features = request.feature_names + list(request.entity_names)
+
     if request.event_timestamp:
         all_features.append(request.event_timestamp.name)
 
@@ -279,6 +286,7 @@ def insert_mssql_queries(
         data_splits = [data]
 
     for partition in data_splits:
+        assert isinstance(partition, pd.DataFrame)
         str_data = partition[colnames].to_csv(
             header=False,
             index=False,
@@ -413,6 +421,7 @@ def upsert_mssql_queries(
         data_splits = [data]
 
     for partition in data_splits:
+        assert isinstance(partition, pd.DataFrame)
         str_data = partition[column_names].to_csv(
             header=False,
             index=False,
@@ -451,7 +460,7 @@ WHEN NOT MATCHED BY TARGET THEN
 
 @dataclass
 class SqlServerDataSource(
-    BatchDataSource,
+    CodableBatchDataSource,
     ColumnFeatureMappable,
     WritableFeatureSource,
 ):
@@ -500,7 +509,7 @@ Column Mappings: *{self.mapping_keys}*"""
                 )
 
             agg_over, aggregations = next(iter(group_bys))
-            agg_sql = build_aggregation_over(agg_over, aggregations, self)
+            agg_sql = build_aggregation_over(agg_over, list(aggregations), self)
 
             # Removes the "core features" from the aggregation response
             request.features = set()
@@ -520,7 +529,7 @@ Column Mappings: *{self.mapping_keys}*"""
 
         return SqlServerJob(
             config=self.config,
-            query=build_date_range_query_psql(self, request, start_date, end_date),
+            query=build_date_range_query_psql(self, request, start_date, end_date), # type: ignore
             requests=[request],
         )
 

@@ -1,4 +1,4 @@
-name: Deploy data-model
+name: Data Model Deploy
 
 on:
   push:
@@ -20,4 +20,5 @@ jobs:
     with:
       working-directory: projects/data-model
       target-env: ${{matrix.target}}
+      should-change-target: true
     secrets: inherit

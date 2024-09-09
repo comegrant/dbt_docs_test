@@ -2,7 +2,7 @@ FROM databricksruntime/python:14.3-LTS
 
 SHELL ["/bin/bash", "-c"]
 
-RUN /databricks/python3/bin/pip install poetry
+RUN /databricks/python3/bin/pip install poetry==1.8.2
 
 # set the home directory
 ENV APP_HOME /opt
@@ -24,8 +24,6 @@ RUN source /databricks/python3/bin/activate \
 	&& poetry config virtualenvs.create false \
 	&& poetry install --without=dev
 
-
-RUN /databricks/python3/bin/pip install polars-lts-cpu
 
 ENV PYTHONPATH /databricks/python3/bin
 ENV PATH /databricks/python3/bin:$PATH

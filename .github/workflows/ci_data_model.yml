@@ -1,5 +1,4 @@
----
-name: CI projects/data-model
+name: Data Model PR
 
 on:
   pull_request:

@@ -1,12 +1,13 @@
 FROM python:3.11-slim-buster
 
+ARG TAG
+
 # install Poetry
-RUN pip install --no-cache-dir poetry
+RUN pip install --no-cache-dir poetry=='1.8.2'
 
 # set the home directory
 ENV APP_HOME /opt
 ENV SERVICE_HOME $APP_HOME/projects/preselector
-
 
 # Installing utils deps
 RUN apt-get update && \
@@ -23,6 +24,9 @@ RUN apt-get install -y apt-transport-https && \
 WORKDIR $APP_HOME
 COPY packages packages
 
+# Global linting config purposes
+COPY pyproject.toml .
+
 WORKDIR $SERVICE_HOME
 RUN mkdir -p preselector && touch preselector/__init__.py
 
@@ -30,9 +34,9 @@ COPY projects/preselector/pyproject.toml .
 COPY projects/preselector/poetry.lock .
 
 # install requirements
+ARG DEP_GROUP
 RUN poetry config virtualenvs.create false
-RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
-RUN pip install polars-lts-cpu
+RUN poetry install ${DEP_GROUP} -n && rm -rf ~/.cache/pypoetry/cache
 
 # copy source code
 COPY projects/preselector .
@@ -46,3 +50,5 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 # set starting command
 WORKDIR $SERVICE_HOME
 CMD python preselector/main.py
+
+ENV TAG=$TAG

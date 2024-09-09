@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
+
+from preselector.schemas.batch_request import GenerateMealkitRequest
 
 from .order import DeliveredOrder, PlannedOrder
 from .product import ProductVariation
@@ -49,10 +53,39 @@ class PreselectorCustomer(BaseModel):
     subscribed_product_variation_id: str | None = Field(default=None)
 
 
-class PreselectorResult(BaseModel):
-    agreement_id: int
+class PreselectorYearWeekResponse(BaseModel):
+    year: int
+    week: int
+    portion_size: int
+    variation_ids: list[str]
     main_recipe_ids: list[int]
-    debug_summary: dict
+
+
+class PreselectorSuccessfulResponse(BaseModel):
+    agreement_id: int
+
+    year_weeks: list[PreselectorYearWeekResponse]
+
+    override_deviation: bool
+    "Echoing the value from the request. Is useful for CMS."
+
+    model_version: str | None
+    generated_at: datetime
+
+    version: int = Field(default=1)
+    "The schema version"
+
+class PreselectorFailedResponse(BaseModel):
+    error_message: str
+    error_code: int
+    request: GenerateMealkitRequest
+
+
+class PreselectorFailure(BaseModel):
+    error_message: str
+    error_code: int
+    year: int
+    week: int
 
 
 class RunConfig(BaseModel):

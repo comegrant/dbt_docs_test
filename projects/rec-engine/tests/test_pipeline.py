@@ -34,6 +34,9 @@ async def model_contracts() -> FeatureStore:
         FeatureLocation.feature_view("recipe_ingredients"): test_folder.csv_at(
             "recipe_ingredients.csv",
         ),
+        FeatureLocation.feature_view("recipe_features"): test_folder.csv_at(
+            "recipe_features.csv",
+        ),
     }
 
     for view_name in store.feature_views:
@@ -125,7 +128,7 @@ def test_json_formatting() -> None:
     input_df = pd.DataFrame(
         {
             "product_id": ["1", "2", "3", "4", "1", "2", "3", "4"] * 2,
-            "order_of_relevance_cluster": [1, 2, 3, 4, 4, 3, 2, 1] * 2,
+            "order_rank": [1, 2, 3, 4, 4, 3, 2, 1] * 2,
             "year": [2023] * 8 * 2,
             "week": [44, 44, 44, 44, 43, 43, 43, 43] * 2,
             "agreement_id": [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2],

@@ -14,6 +14,7 @@ services:
 
   rec-engine-app:
     platform: linux/amd64
+    image: rec-engine-rec-engine
     build:
       context: ../../
       dockerfile: projects/rec-engine/Dockerfile
@@ -21,15 +22,44 @@ services:
       - ./:/opt/projects/rec-engine/
       - ./../../packages:/opt/packages
     command: ["python", "-m", "streamlit", "run", "app_ui.py", "--server.fileWatcherType", "poll"]
-
     depends_on:
       - rec-engine
-      - mssql-db
     ports:
       - 8501:8501
     env_file:
       - ../../.env
       - .env
+
+  local-run:
+    platform: linux/amd64
+    image: rec-engine-databricks
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile.databricks
+    command: "python -m rec_engine.main"
+    volumes:
+      - ./:/opt/projects/rec-engine/
+      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+      - .env
+
+  jupyter:
+    platform: linux/amd64
+    image: rec-engine-jupyter
+    build:
+      context: ../../
+      dockerfile: projects/rec-engine/Dockerfile.jupyter
+    command: "jupyter notebook --allow-root --ip=0.0.0.0 --port=8888"
+    ports:
+      - 8888:8888
+    volumes:
+      - ./:/opt/projects/rec-engine/
+      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+      - .env
+
 
   rec-engine-test:
     platform: linux/amd64
@@ -42,14 +72,3 @@ services:
       - ./../../packages:/opt/packages
     depends_on:
       - rec-engine
-
-
-  mssql-db:
-    image: "mcr.microsoft.com/mssql/server:2022-latest"
-    environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "yourStrong(!)Passwor!"
-    ports:
-      - 1432:1433
-    volumes:
-      - "./mssql-data:/var/opt/mssql"

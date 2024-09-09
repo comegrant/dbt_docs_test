@@ -11,6 +11,11 @@ on:
         required: true
         type: string
         description: "Target environment in Github Actions"
+      should-change-target:
+        required: false
+        type: boolean
+        default: false
+        description: "If the job should change the target in the databricks.yaml file"
       extra-args:
         type: string
         default: ""
@@ -42,15 +47,19 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+    - name: Setting target
+      if: ${{ inputs.should-change-target }}
+      run: echo "DATABRICKS_TARGET=${{ vars.ENVIRONMENT_VARIABLE }}" >> $GITHUB_ENV
+
     - name: Get Secrets from Key Vault
       uses: azure/cli@v2
-      with:  
+      with:
         azcliversion: latest
         inlineScript: |
           az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
           DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
           az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
-          
+
           echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
           echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
 
@@ -59,12 +68,14 @@ jobs:
 
     - name: Validate DABs
       run: databricks bundle validate ${{inputs.extra-args}}
-      env: 
+      env:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
-        DATABRICKS_BUNDLE_ENV: ${{ vars.ENVIRONMENT_VARIABLE }}
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
 
     - name: Deploy DABs
       run: databricks bundle deploy ${{inputs.extra-args}}
-      env: 
+      env:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
-        DATABRICKS_BUNDLE_ENV: ${{ vars.ENVIRONMENT_VARIABLE }}
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}

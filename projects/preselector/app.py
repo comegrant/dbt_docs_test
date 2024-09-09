@@ -183,7 +183,14 @@ async def load_agreement_id(email: str, db_config: SqlServerConfig) -> list[int]
     },
 )
 async def test_preselector() -> None:
+    import os
+
     st.set_page_config(page_title="Preselector A/B Test", page_icon="🍽️", layout="wide")
+
+    version = os.getenv("TAG")
+    if version:
+        with st.expander("Version"):
+            st.write(version)
 
     st.title("Preselector A/B Test")
 
@@ -228,4 +235,6 @@ async def test_preselector() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(test_preselector.run())
+
+    from combinations_app import main
+    asyncio.run(main())

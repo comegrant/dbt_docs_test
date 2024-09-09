@@ -1,0 +1,47 @@
+name: Deploy Preselector
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/preselector_deploy.yml'
+      - 'projects/preselector/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-preselector-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/preselector
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: preselector
+      dockerfile: Dockerfile
+      push-latest: true
+    secrets: inherit
+
+  build-preselector-databricks-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/preselector
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: preselector-databricks
+      dockerfile: docker/Dockerfile.databricks
+      push-latest: true
+    secrets: inherit
+
+  deploy-preselector:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-preselector-databricks-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/preselector
+      target-env: ${{matrix.target}}
+
+      # Setting the docker image which is needed for python projects
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:${{ github.sha }}" --var="mode=production"'
+    secrets: inherit

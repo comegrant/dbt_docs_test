@@ -165,9 +165,7 @@ async def setup_ddl() -> None:
 
     for feature in request.features.union(pred_view.entities):
         dtype = mssql_dtype_map.get(feature.dtype.name, "text").upper()
-        is_optional = (
-            feature.constraints is not None and Optional() in feature.constraints
-        )
+        is_optional = feature.constraints is not None and Optional() in feature.constraints
         if not is_optional:
             dtype = f"{dtype} NOT NULL"
         column_name = inverse_map.get(feature.name, feature.name)
@@ -228,11 +226,11 @@ async def main() -> None:
         except Exception as e:
             st.write(e)
 
-    with ddl:
-        try:
-            await setup_ddl()
-        except Exception as e:
-            st.write(e)
+    # with ddl:
+    #     try:
+    #         await setup_ddl()
+    #     except Exception as e:
+    #         st.write(e)
 
     with predict:
         st.write("This will run the whole recommendation engine pipeline.")

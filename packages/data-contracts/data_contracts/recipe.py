@@ -1,26 +1,739 @@
-from aligned import Bool, Float, Int32, String, feature_view
-from aligned.compiler.feature_factory import List
+from datetime import timedelta
 
-from data_contracts.blob_storage import AzureBlobConfig
-
-azure_dl_creds = AzureBlobConfig(
-    account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",
-    account_id_env="DATALAKE_STORAGE_ACCOUNT_KEY",
-    tenent_id_env="AZURE_TENANT_ID",
-    client_id_env="DATALAKE_SERVICE_PRINCIPAL_CLIENT_ID",
-    client_secret_env="DATALAKE_SERVICE_PRINCIPAL_CLIENT_SECRET",
+import polars as pl
+from aligned import (
+    Bool,
+    CustomMethodDataSource,
+    EventTimestamp,
+    Float,
+    Int32,
+    List,
+    String,
+    feature_view,
 )
-embedding_dir = azure_dl_creds.directory("data-science/recipe_text_embedding/latest")
+from aligned.schemas.feature_view import RetrivalRequest
+from project_owners.owner import Owner
+
+from data_contracts.sources import adb, adb_ml, materialized_data
+
+contacts = [Owner.matsmoll().markdown(), Owner.niladri().markdown()]
+
+taxonomies_sql = """
+SELECT recipe_id, recipe_taxonomies, GETDATE() as loaded_at
+FROM (SELECT r.recipe_id,
+           tt.language_id,
+           STRING_AGG(lower(trim(tt.TAXONOMIES_NAME)), ',') as recipe_taxonomies,
+           MAX(COALESCE(t.modified_date, t.created_date))   as updated_at
+    FROM pim.recipes_taxonomies rt
+             INNER JOIN pim.TAXONOMIES t ON t.taxonomies_id = rt.taxonomies_id
+             INNER JOIN pim.taxonomies_translations tt ON tt.taxonomies_id = rt.taxonomies_id
+             INNER JOIN pim.recipes r ON r.recipe_id = rt.RECIPE_ID
+    WHERE t.status_code_id = 1           -- Active
+      AND t.taxonomy_type IN (1, 11, 12) -- Recipe
+      AND r.main_recipe_id IS NOT NULL
+    GROUP BY r.recipe_id, tt.language_id
+) tax
+"""
+
+recipe_ingredients_sql = """
+SELECT
+    recipe_id,
+    CONCAT('["', STRING_AGG(REPLACE(ingredient_name, '"', ''), '","'), '"]') as all_ingredients,
+    MAX(created_at) as loaded_at
+FROM (
+    SELECT rp.RECIPE_ID as recipe_id, it.INGREDIENT_NAME as ingredient_name, i.created_date as created_at
+    FROM pim.RECIPE_PORTIONS rp
+    INNER JOIN pim.PORTIONS p on p.PORTION_ID = rp.PORTION_ID
+    INNER JOIN pim.CHEF_INGREDIENT_SECTIONS cis ON cis.recipe_portion_id = rp.recipe_portion_id
+    INNER JOIN pim.chef_ingredients ci ON ci.chef_ingredient_section_id = cis.chef_ingredient_section_id
+    INNER JOIN pim.order_ingredients oi ON oi.order_ingredient_id = ci.order_ingredient_id
+    INNER JOIN pim.ingredients i on i.ingredient_internal_reference = oi.INGREDIENT_INTERNAL_REFERENCE
+    INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+    INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
+    WHERE rp.CREATED_DATE > '2023-01-01' AND s.supplier_name != 'Basis'
+) as ingredients
+GROUP BY recipe_id
+"""
+
+recipe_features_sql = """WITH taxonomies AS (
+    SELECT
+        rt.RECIPE_ID as recipe_id,
+        CONCAT('["', STRING_AGG(tt.TAXONOMIES_NAME, '", "'), '"]') as taxonomies,
+        CONCAT('["', STRING_AGG(tt.TAXONOMIES_ID, '", "'), '"]') as taxonomy_ids
+    FROM pim.TAXONOMIES_TRANSLATIONS tt
+    INNER JOIN pim.RECIPES_TAXONOMIES rt on rt.TAXONOMIES_ID = tt.TAXONOMIES_ID
+    INNER JOIN pim.taxonomies t ON t.taxonomies_id = tt.TAXONOMIES_ID
+    WHERE t.taxonomy_type IN ('1', '11', '12')
+    GROUP BY rt.RECIPE_ID
+)
+
+SELECT *
+FROM (SELECT rec.recipe_id,
+             COALESCE(rec.main_recipe_id, rec.recipe_id) as main_recipe_id,
+             rec.recipes_year as year,
+             rec.recipes_week as week,
+             rc.company_id,
+             rra.number_of_ratings,
+             rra.average_rating,
+             rm.RECIPE_MAIN_INGREDIENT_ID as main_ingredient_id,
+             rm.RECIPE_PHOTO as recipe_photo,
+             rm.COOKING_TIME_FROM as cooking_time_from,
+             rm.COOKING_TIME_TO as cooking_time_to,
+             rmt.recipe_name,
+             tx.taxonomies,
+             tx.taxonomy_ids,
+             GETDATE() as loaded_at,
+             ROW_NUMBER() over (PARTITION BY rec.recipe_id ORDER BY rmt.language_id) as nr
+      FROM pim.recipes rec
+        LEFT JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
+	INNER JOIN pim.RECIPE_COMPANIES rc ON rc.RECIPE_ID = rec.recipe_id
+        INNER JOIN pim.recipes_metadata rm ON rec.recipe_metadata_id = rm.RECIPE_METADATA_ID
+        INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
+        INNER JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
+        WHERE rec.is_active = 1
+) as recipes
+WHERE recipes.nr = 1"""
+
+
+main_ingredients_in_recipe = """SELECT *
+FROM (
+        SELECT
+	rm.recipe_id as recipe_id,
+	COALESCE(r.main_recipe_id, r.recipe_id) as main_recipe_id,
+	it.INGREDIENT_ID as ingredient_id,
+	it.INGREDIENT_NAME as ingredient_name,
+	ic.INGREDIENT_CATEGORY_ID as ingredient_category_id,
+	oi.IS_MAIN_CARBOHYDRATE as is_main_carbohydrate,
+	oi.IS_MAIN_PROTEIN as is_main_protein,
+	i.created_date as created_at,
+	ROW_NUMBER() over (PARTITION BY rm.recipe_id, oi.IS_MAIN_PROTEIN ORDER BY rp.PORTION_ID) as nr
+	FROM pim.RECIPE_PORTIONS rp
+	INNER JOIN pim.recipes r on rp.RECIPE_ID = r.recipe_id AND r.main_recipe_id IS NULL
+	INNER JOIN pim.recipes rm on r.recipe_id = COALESCE(rm.main_recipe_id, rm.recipe_id)
+	INNER JOIN pim.PORTIONS p on p.PORTION_ID = rp.PORTION_ID
+	INNER JOIN pim.CHEF_INGREDIENT_SECTIONS cis ON cis.recipe_portion_id = rp.recipe_portion_id
+	INNER JOIN pim.chef_ingredients ci ON ci.chef_ingredient_section_id = cis.chef_ingredient_section_id
+	INNER JOIN pim.order_ingredients oi ON oi.order_ingredient_id = ci.order_ingredient_id
+	INNER JOIN pim.ingredients i on i.ingredient_internal_reference = oi.INGREDIENT_INTERNAL_REFERENCE
+	INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+	INNER JOIN pim.INGREDIENT_CATEGORIES ic ON i.ingredient_category_id = ic.INGREDIENT_CATEGORY_ID
+	INNER JOIN pim.INGREDIENT_CATEGORIES_TRANSLATIONS ict ON ict.INGREDIENT_CATEGORY_ID = ic.INGREDIENT_CATEGORY_ID
+	WHERE (oi.IS_MAIN_CARBOHYDRATE = '1' OR oi.IS_MAIN_PROTEIN = '1')
+) as recipe
+WHERE nr = 1
+ORDER BY RECIPE_ID DESC"""
+
+ingredient_categories = """SELECT *
+FROM (
+    select
+        ic.INGREDIENT_CATEGORY_ID as ingredient_category_id,
+        ic.PARENT_CATEGORY_ID as parent_category_id,
+        ict.INGREDIENT_CATEGORY_NAME as ingredient_category_name,
+        ict.INGREDIENT_CATEGORY_DESCRIPTION as category_description,
+        ROW_NUMBER() over (PARTITION BY ic.INGREDIENT_CATEGORY_ID ORDER BY ict.LANGUAGE_ID) as nr
+    FROM pim.INGREDIENT_CATEGORIES ic
+    INNER JOIN pim.INGREDIENT_CATEGORIES_TRANSLATIONS ict ON ic.INGREDIENT_CATEGORY_ID = ict.INGREDIENT_CATEGORY_ID
+    WHERE STATUS_CODE_ID = 1
+) as cat
+WHERE nr = 1
+"""
+
+def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
+
+    parent_cat_col = "parent_category_id"
+    ingred_cat_col = "ingredient_category_id"
+    inter_col = "inter_col"
+    cat_name_col = "ingredient_category_name"
+    root_cat_name_col = "root_category_name"
+    cat_desc = "category_description"
+
+    root_col = "root_category_id"
+
+    target_group = 'CATEGORY GROUP'
+
+    all_categories = df.collect().with_columns(
+        pl.col(parent_cat_col).cast(pl.Int64)
+    ).with_columns(
+        pl.when(
+            pl.col(cat_desc) != target_group
+        ).then(
+            pl.col(parent_cat_col)
+        ).otherwise(
+            pl.lit(None)
+        ).alias(parent_cat_col)
+    )
+    root_categories = all_categories.filter(
+        pl.col(parent_cat_col).is_null()
+    ).select(
+        pl.col(ingred_cat_col),
+        pl.col(cat_name_col),
+        pl.col(cat_desc),
+        pl.col(cat_name_col).alias(root_cat_name_col),
+        pl.col(ingred_cat_col).alias(root_col),
+    )
+
+    join_parents = all_categories.filter(pl.col(parent_cat_col).is_not_null())
+
+    # Join as long as there exist a parent id
+    while not join_parents.is_empty():
+        with_parent = join_parents.join(
+            all_categories,
+            left_on=parent_cat_col,
+            right_on=ingred_cat_col,
+            suffix="_right",
+            how="left",
+        ).select(
+            pl.col(ingred_cat_col),
+            pl.col(cat_name_col),
+            pl.col(parent_cat_col).alias(inter_col),
+            pl.col(f"{parent_cat_col}_right").alias(parent_cat_col),
+            pl.col(f"{cat_name_col}_right").alias(root_cat_name_col),
+            pl.col(f"{cat_desc}_right").alias(cat_desc)
+        )
+
+        roots = with_parent.filter(
+            pl.col(parent_cat_col).is_null()
+        ).with_columns(
+            pl.col(inter_col).alias(root_col)
+        )
+        root_categories = root_categories.vstack(roots.select(root_categories.columns))
+
+        join_parents = with_parent.filter(
+            pl.col(parent_cat_col).is_not_null()
+        ).select(
+            pl.col(ingred_cat_col),
+            pl.col(cat_name_col),
+            pl.col(parent_cat_col),
+            pl.col(cat_desc)
+        )
+
+    return root_categories.filter(pl.col(cat_desc) == target_group).lazy()
+
+@feature_view(
+    name="ingredient_category_groups",
+    source=adb.fetch(ingredient_categories).transform_with_polars(join_root_ingredient_category),
+    materialized_source=materialized_data.parquet_at("ingredient_category_group.parquet")
+)
+class IngredientCategories:
+    ingredient_category_id = Int32().as_entity()
+    ingredient_category_name = String()
+
+    root_category_id = Int32()
+    root_category_name = String()
+    category_description = String()
 
 
 @feature_view(
-    name="recipe_embedding",
-    source=embedding_dir.parquet_at("recipe_text_GL.parquet"),
+    name="main_ingredient_in_recipe",
+    source=adb.fetch(main_ingredients_in_recipe),
+    materialized_source=materialized_data.parquet_at("main_ingredient_in_recipe.parquet")
 )
-class RecipeEmbedding:
+class MainIngredients:
+    recipe_id = Int32().as_entity()
+    main_recipe_id = Int32()
+
+    ingredient_name = String()
+    ingredient_id = Int32()
+    ingredient_category_id = Int32()
+
+    is_main_protein = Bool()
+    is_main_carbohydrate = Bool()
+
+
+async def recipe_main_ingredient_category(request: RetrivalRequest) -> pl.LazyFrame:
+    df = await MainIngredients.query().all().join(
+        IngredientCategories.query().all(),
+        method="inner",
+        left_on="ingredient_category_id",
+        right_on="ingredient_category_id"
+    ).to_lazy_polars()
+
+
+    recipes = df.select("recipe_id").unique()
+
+    recipes = recipes.join(
+        df.filter(pl.col("is_main_protein")).select([
+            pl.col("recipe_id"),
+            pl.col("root_category_id").alias("main_protein_category_id"),
+            pl.col("root_category_name").alias("main_protein_name"),
+        ]),
+        on="recipe_id",
+        how="left"
+    )
+    recipes = recipes.join(
+        df.filter(pl.col("is_main_carbohydrate")).select([
+            pl.col("recipe_id"),
+            pl.col("root_category_id").alias("main_carbohydrate_category_id"),
+            pl.col("root_category_name").alias("main_carboydrate_name"),
+        ]),
+        on="recipe_id",
+        how="left"
+    )
+
+    return recipes
+
+
+def is_non_of(features: list[str]) -> pl.Expr:
+    expr = pl.lit(False)
+
+    for feature in features:
+        expr = expr | pl.col(feature)
+
+    return expr.is_not()
+
+
+@feature_view(
+    name="recipe_main_ingredient_category",
+    source=CustomMethodDataSource.from_load(
+        recipe_main_ingredient_category,
+        depends_on=MainIngredients.as_source().location_id().union(
+            IngredientCategories.as_source().location_id()
+        )
+    ),
+    materialized_source=materialized_data.parquet_at("recipe_main_ingredient_category.parquet")
+)
+class RecipeMainIngredientCategory:
     recipe_id = Int32().as_entity()
 
+    main_protein_category_id = Int32().is_optional()
+    main_carbohydrate_category_id = Int32().is_optional()
+    main_carboydrate_name = String().is_optional()
+    main_protein_name = String().is_optional()
+
+
+    is_salmon = main_protein_category_id == 1216  # noqa: PLR2004
+    is_cod = main_protein_category_id == 1236  # noqa: PLR2004
+    is_pork = main_protein_category_id == 1070  # noqa: PLR2004
+    is_chicken = main_protein_category_id == 1503  # noqa: PLR2004
+    is_beef = main_protein_category_id == 1128  # noqa: PLR2004
+    is_lamb = main_protein_category_id == 1099  # noqa: PLR2004
+    is_shrimp = main_protein_category_id == 1445  # noqa: PLR2004
+    is_mixed_meat = main_protein_category_id == 1186  # noqa: PLR2004
+    is_tuna = main_protein_category_id == 1388  # noqa: PLR2004
+
+    all_proteins = [is_salmon, is_cod, is_pork, is_chicken, is_beef, is_lamb, is_shrimp, is_mixed_meat, is_tuna]
+    is_other_protein = Bool().transformed_using_features_polars(
+        using_features=all_proteins, # type: ignore
+        transformation=is_non_of([
+            "is_salmon",
+            "is_cod",
+            "is_pork",
+            "is_chicken",
+            "is_beef",
+            "is_lamb",
+            "is_shrimp",
+            "is_mixed_meat",
+            "is_tuna"
+        ]) # type: ignore
+    )
+
+    is_grain = main_carbohydrate_category_id == 1047  # noqa: PLR2004
+    is_soft_bread = main_carbohydrate_category_id == 1699  # noqa: PLR2004
+    is_vegetables = main_carbohydrate_category_id == 940  # noqa: PLR2004
+    is_pasta = main_carbohydrate_category_id == 2182  # noqa: PLR2004
+
+    all_carbos = [is_grain, is_soft_bread, is_vegetables, is_pasta]
+    is_other_carbo = Bool().transformed_using_features_polars(
+        using_features=all_carbos, # type: ignore
+        transformation=is_non_of([
+            "is_grain", "is_soft_bread", "is_vegetables", "is_pasta"
+        ]) # type: ignore
+    )
+
+
+
+main_ingredient_ids = {
+    "fish": 1,
+    "meat": 2,
+    "vegetarian": 3,
+    "shellfish": 4,
+    "poultry": 5,
+    "pork": 7,
+    "beef": 8,
+    "lactose": 11,
+    "vegan": 12,
+}
+
+
+@feature_view(
+    name="recipe_features",
+    source=adb.fetch(recipe_features_sql),
+    materialized_source=materialized_data.parquet_at("recipe_features.parquet"),
+    acceptable_freshness=timedelta(days=4),
+)
+class RecipeFeatures:
+    recipe_id = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    main_recipe_id = Int32()
+    main_ingredient_id = Int32()
     company_id = String()
-    is_active = Bool()
+
+    year = Int32()
+    week = Int32()
+
     recipe_name = String()
-    text_embedding = List(Float())
+    average_rating = Float().is_optional()
+    number_of_ratings = Int32().is_optional()
+
+    number_of_ratings_log = (
+        number_of_ratings.log1p()
+        .is_optional()
+        .description("Taking the log in order to get it closer to a normal distribution.")
+    )
+
+    cooking_time_from = Int32()
+    cooking_time_to = Int32()
+
+    is_low_cooking_time = cooking_time_from <= 15  # noqa: PLR2004
+    is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25)  # noqa: PLR2004
+    is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
+
+    taxonomies = List(String())
+    taxonomy_ids = List(Int32())
+
+    is_family_friendly = (
+        taxonomies.contains("Familiefavoritter")
+        .logical_or(taxonomies.contains("Familjefavoriter"))
+        .logical_or(taxonomies.contains("Familjefavorit"))
+    )
+
+    is_kids_friendly = (
+        taxonomies.contains("Børnevenlig")
+        .logical_or(taxonomies.contains("Barnevennlig"))
+        .description("Not ideal solution, but works for now")
+    )
+
+    is_lactose = (
+        taxonomies.contains("Laktosefri")
+        .logical_or(taxonomies.contains("Laktosfri"))
+        .description("Not ideal solution, but works for now")
+    )
+
+    is_spicy = taxonomies.contains("Stark/Spicy").logical_or(taxonomies.contains("Stærk/krydret"))
+    is_gluten_free = taxonomies.contains("Glutenfri")
+
+    (
+        is_vegetarian_ingredient,
+        is_vegan,
+    ) = main_ingredient_id.one_hot_encode(
+        [  # type: ignore
+            main_ingredient_ids["vegetarian"],
+            main_ingredient_ids["vegan"],
+        ]
+    )
+    is_vegetarian = is_vegetarian_ingredient.logical_or(is_vegan)
+
+
+@feature_view(
+    name="recipe_taxonomies",
+    description="The taxonomies associated with a recipe.",
+    materialized_source=materialized_data.parquet_at("recipe_taxonomies.parquet"),
+    source=adb_ml.fetch(taxonomies_sql),
+    acceptable_freshness=timedelta(days=6),
+    contacts=contacts,
+)
+class RecipeTaxonomies:
+    recipe_id = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    recipe_taxonomies = String().description(
+        "All the taxonomies seperated by a ',' char.",
+    )
+
+
+@feature_view(
+    name="recipe_ingredients",
+    source=adb_ml.fetch(recipe_ingredients_sql),
+    materialized_source=materialized_data.parquet_at("recipe_ingredients.parquet"),
+    description="All non base ingredients that a recipe contains.",
+    acceptable_freshness=timedelta(days=6),
+    contacts=contacts,
+)
+class RecipeIngredient:
+    recipe_id = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    all_ingredients = String().description(
+        "All the ingredients seperated by a ',' char.",
+    )
+
+    contains_salmon = all_ingredients.contains("laks")
+    contains_chicken = all_ingredients.contains("kylling")
+    contains_meat = all_ingredients.contains("kjøtt")
+
+
+@feature_view(
+    name="recipe_nutrition",
+    source=adb.with_schema("pim").table("RECIPE_NUTRITION_FACTS").with_loaded_at(),
+    materialized_source=materialized_data.parquet_at("recipe_nutrition.parquet"),
+    acceptable_freshness=timedelta(days=4),
+)
+class RecipeNutrition:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    energy_kcal_100g = Float().lower_bound(0).is_optional()
+    carbs_100g = Float().lower_bound(0).is_optional()
+    fat_100g = Float().lower_bound(0).is_optional()
+    fat_saturated_100g = Float().lower_bound(0).is_optional()
+    protein_100g = Float().lower_bound(0).is_optional()
+    fruit_veg_fresh_100g = Float().lower_bound(0).is_optional()
+
+
+@feature_view(
+    name="recipe_cost",
+    source=adb.with_schema("mb")
+    .table(
+        "recipe_costs_pim",
+        mapping_keys={
+            "PORTION_SIZE": "portion_size",
+            "PORTION_ID": "portion_id",
+            "recipe_cost_whole_units_pim": "recipe_cost_whole_units",
+            "recipes_year": "menu_year",
+            "recipes_week": "menu_week",
+        },
+    )
+    .with_loaded_at(),
+    materialized_source=materialized_data.parquet_at("recipe_cost"),
+    acceptable_freshness=timedelta(days=6),
+)
+class RecipeCost:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    menu_year = Int32()
+    menu_week = Int32()
+
+    loaded_at = EventTimestamp()
+
+    country = String()
+    company_name = String()
+
+    main_recipe_id = Int32()
+    recipe_name = String()
+    portions = String().description(
+        "Needs to be a string because we have instances of '2+' in Danmark.",
+    )
+    portion_id = Int32()
+
+    recipe_cost_whole_units = Float().description(
+        "Also known as the Cost of Food. The planed summed ingredient cost"
+    )
+
+    price_category_max_price = Int32()
+    price_category_level = Int32()
+
+    is_premium = price_category_level >= 4  # noqa: PLR2004
+    is_cheep = price_category_level <= -1
+
+    suggested_selling_price_incl_vat = Float()
+
+
+async def compute_recipe_features() -> pl.LazyFrame:
+    nutrition = RecipeNutrition.query().all()
+    cost = RecipeCost.query().select_columns(["recipe_cost_whole_units"])
+
+    return (
+        await RecipeFeatures.query()
+        .all()
+        .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
+        .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
+        .join(
+            cost,
+            method="inner",
+            left_on=["recipe_id", "portion_size"],
+            right_on=["recipe_id", "portion_size"],
+        )
+        .to_polars()
+    ).rename(
+        {"recipe_cost_whole_units": "cost_of_food"}
+    ).lazy()
+
+
+async def compute_normalized_features(request: RetrivalRequest, limit: int | None) -> pl.LazyFrame:
+    menu_recipe_features = (await compute_recipe_features()).collect()
+
+    needed_features = [(feature.name, feature.dtype) for feature in request.returned_features.union(request.entities)]
+
+    min_max_scaled_features = [name for name, dtype in needed_features if "float" in dtype.name and dtype.is_numeric]
+    other_features = [name for name, _ in needed_features if name not in min_max_scaled_features]
+
+    menu_recipe_features = menu_recipe_features.with_columns(year_week=pl.col("year") * 100 + pl.col("week"))
+
+    results: pl.DataFrame | None = None
+    for yearweek, portion_size, company_id in (
+        menu_recipe_features[["year_week", "portion_size", "company_id"]].unique().iter_rows()
+    ):
+        features = menu_recipe_features.filter(
+            (pl.col("year_week") == yearweek)
+            & (pl.col("portion_size") == portion_size)
+            & (pl.col("company_id") == company_id)
+        )
+
+        max_value = features.select(min_max_scaled_features).fill_null(0).fill_nan(0).max().transpose().to_series()
+        min_value = (
+            features.select(min_max_scaled_features).fill_null(10000).fill_nan(10000).min().transpose().to_series()
+        )
+
+        normalized = (features.select(min_max_scaled_features).transpose() - min_value) / (max_value - min_value)
+        normalized = normalized.transpose().rename(
+            lambda x: min_max_scaled_features[int(x.split("_")[1])],
+        )
+        normalized = pl.concat(
+            [
+                normalized,
+                features.select(other_features),
+            ],
+            how="horizontal",
+        )
+        normalized = normalized.fill_null(0).fill_nan(0)
+
+        if results is None:
+            results = normalized
+        else:
+            results = results.vstack(normalized.select(results.columns))
+
+    assert results is not None
+    return results.lazy()
+
+
+@feature_view(
+    name="normalized_recipe_features",
+    description="Contains normalized features based on the year week menu.",
+    source=CustomMethodDataSource.from_methods(
+        all_data=compute_normalized_features,
+        depends_on_sources=RecipeFeatures.as_source()
+        .location_id()
+        .union(RecipeNutrition.as_source().location_id())
+        .union(RecipeMainIngredientCategory.as_source().location_id())
+        .union(RecipeCost.as_source().location_id()),
+    ).with_loaded_at(),
+    materialized_source=materialized_data.partitioned_parquet_at(
+        "normalized_recipe_features", partition_keys=["year", "week"]
+    ),
+    acceptable_freshness=timedelta(days=4),
+)
+class NormalizedRecipeFeatures:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    normalized_at = EventTimestamp()
+
+    main_recipe_id = Int32()
+
+    taxonomy_ids = List(Int32())
+
+    year = Int32()
+    week = Int32()
+
+    average_rating = Float().is_optional()
+    cost_of_food = Float()
+
+    number_of_ratings_log = Float().description("Taking the log in order to get it closer to a normal distribution.")
+
+    cooking_time_from = Float()
+
+    is_low_cooking_time = Bool()
+    is_medium_cooking_time = Bool()
+    is_high_cooking_time = Bool()
+
+    is_family_friendly = Bool()
+    is_kids_friendly = Bool()
+    is_lactose = Bool()
+    is_spicy = Bool()
+    is_gluten_free = Bool()
+
+    is_vegan = Bool()
+    is_vegetarian = Bool()
+
+    energy_kcal_100g = Float()
+    carbs_100g = Float()
+    fat_100g = Float()
+    fat_saturated_100g = Float()
+    protein_100g = Float()
+    fruit_veg_fresh_100g = Float()
+
+recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
+    SELECT DISTINCT
+        rp.PORTION_ID,
+        pt.PORTION_SIZE as portion_size,
+        r.recipe_id,
+        r.main_recipe_id,
+        rmt.recipe_name,
+        p.preference_id,
+        p.name,
+        menu_year,
+        menu_week
+    FROM pim.weekly_menus wm
+    INNER JOIN pim.menus m ON m.weekly_menus_id = wm.weekly_menus_id
+        AND m.product_type_id in (
+            'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1',
+            '2F163D69-8AC1-6E0C-8793-FF0000804EB3'
+        ) --Velg&Vrak dishes
+    INNER JOIN pim.menu_variations mv ON mv.menu_id = m.menu_id
+    INNER JOIN pim.menu_recipes mr ON mr.MENU_ID = m.menu_id
+        AND mr.MENU_RECIPE_ORDER <= mv.MENU_NUMBER_DAYS
+    INNER JOIN pim.recipes r ON r.recipe_id = mr.RECIPE_ID
+    INNER JOIN cms.company c ON c.id = wm.company_id
+    INNER JOIN cms.country cont ON cont.id = c.country_id
+    INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = r.recipe_metadata_id
+        AND rmt.language_id = cont.default_language_id
+    INNER JOIN pim.recipe_portions rp ON rp.RECIPE_ID = r.recipe_id AND rp.portion_id = mv.PORTION_ID
+    INNER JOIN pim.portions pt ON pt.PORTION_ID = rp.PORTION_ID
+    INNER JOIN pim.chef_ingredient_sections cis ON cis.RECIPE_PORTION_ID = rp.recipe_portion_id
+    INNER JOIN pim.chef_ingredients ci ON ci.CHEF_INGREDIENT_SECTION_ID = cis.CHEF_INGREDIENT_SECTION_ID
+    INNER JOIN pim.order_ingredients oi ON oi.ORDER_INGREDIENT_ID = ci.ORDER_INGREDIENT_ID
+    INNER JOIN pim.ingredients i ON i.ingredient_internal_reference = oi.INGREDIENT_INTERNAL_REFERENCE
+    INNER JOIN pim.find_ingredient_categories_parents icc ON icc.ingredient_id = i.ingredient_id
+    INNER JOIN pim.ingredient_category_preference icp ON icp.ingredient_category_id = icc.parent_category_id
+    INNER JOIN cms.preference p ON p.preference_id = icp.preference_id
+        AND p.preference_type_id = '4C679266-7DC0-4A8E-B72D-E9BB8DADC7EB'
+    INNER JOIN cms.preference_company pc ON pc.company_id = wm.company_id
+        AND pc.preference_id = p.preference_id AND (pc.is_active = '1' OR pc.created_at > '2024-01-01')
+    WHERE m.RECIPE_STATE = 1
+)
+
+SELECT
+    PORTION_ID as portion_id,
+    portion_size,
+    menu_year,
+    menu_week,
+    recipe_id,
+    main_recipe_id,
+    COALESCE(
+        CONCAT('["', CONCAT(STRING_AGG(convert(nvarchar(36), preference_id), '", "'), '"]')),
+        '["870C7CEA-9D06-4F3E-9C9B-C2C395F5E4F5"]'
+    ) as preference_ids,
+    CONCAT('["', CONCAT(STRING_AGG(name, '", "'), '"]')) as preferences
+    FROM distinct_recipe_preferences
+    GROUP BY PORTION_ID, portion_size, menu_year, menu_week, recipe_id, main_recipe_id
+"""
+
+
+@feature_view(
+    name="recipe_preferences",
+    source=adb.fetch(recipe_preferences_sql).with_loaded_at(),
+    materialized_source=materialized_data.parquet_at("recipe_preferences.parquet"),
+    acceptable_freshness=timedelta(days=5),
+)
+class RecipePreferences:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    portion_id = String()
+
+    menu_year = Int32()
+    menu_week = Int32()
+
+    main_recipe_id = Int32()
+
+    preference_ids = List(String())
+    preferences = List(String())

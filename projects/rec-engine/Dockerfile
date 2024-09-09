@@ -1,7 +1,7 @@
 FROM python:3.10-slim-buster
 
 # install Poetry
-RUN pip install --no-cache-dir poetry
+RUN pip install --no-cache-dir poetry==1.8.2
 
 # set the home directory
 ENV APP_HOME /opt
@@ -32,7 +32,6 @@ RUN mkdir -p rec_engine && touch rec_engine/__init__.py
 # install requirements
 RUN poetry config virtualenvs.create false
 RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
-RUN pip install polars-lts-cpu
 
 # copy source code
 COPY projects/rec-engine .

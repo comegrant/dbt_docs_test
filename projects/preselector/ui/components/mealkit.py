@@ -1,3 +1,4 @@
+from types import ModuleType
 from typing import Annotated
 
 import pandas as pd
@@ -5,15 +6,13 @@ from streamlit.delta_generator import DeltaGenerator
 
 
 def badge(text: str, color: str = "#D67067", text_color: str = "white") -> str:
-    return f'<span style="display: inline-block; padding: 4px 8px; background-color: {color}; color: {text_color}; border-radius: 10px; font-size: 14px; margin-bottom: 4px; border-color: gray; border-style: solid; border-width: thin;">{text}</span>'
+    return f'<span style="display: inline-block; padding: 4px 8px; background-color: {color}; color: {text_color}; border-radius: 10px; font-size: 14px; margin-bottom: 4px; border-color: gray; border-style: solid; border-width: thin;">{text}</span>'  # noqa: E501
 
 
-def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: DeltaGenerator) -> None:
+def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: DeltaGenerator | ModuleType) -> None:
     number_of_recipes = recipe_information.shape[0]
     cols = (
-        container.columns(3)
-        if number_of_recipes == 5  # noqa: PLR2004
-        else container.columns(number_of_recipes)
+        container.columns(number_of_recipes)
     )
 
     taxonomies_to_show = [
@@ -27,8 +26,10 @@ def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: Delt
     ]
 
     for index, row in recipe_information.iterrows():
-        col = cols[int(index) % len(cols)]
-        col.image(row["photo_url"])
+        assert isinstance(index, int)
+
+        col = cols[int(index)]
+        col.image(row["photo_url"]) # type: ignore
 
         tags = " ".join(
             [badge(tag) for tag in row["taxonomies"] if tag in taxonomies_to_show],
@@ -36,7 +37,7 @@ def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: Delt
         col.markdown(tags, unsafe_allow_html=True)
 
         col.markdown(
-            f"<span style='color: rgba(255, 255, 255, 0.5)'>Cooking time:</span> {row['cooking_time_from']} - {row['cooking_time_to']} min",
+            f"<span style='color: rgba(255, 255, 255, 0.5)'>Cooking time:</span> {row['cooking_time_from']} - {row['cooking_time_to']} min", # noqa: E501
             unsafe_allow_html=True,
         )
 
