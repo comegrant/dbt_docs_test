@@ -43,12 +43,12 @@ models:
     description: ""
 
   - name: pim__taxonomies_translations
-    description: ""
+    description: "Table mapping taxonomy ids to their names in different languages"
 
     columns:
       - name: taxonomy_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__taxonomy_id') }}"
       
       - name: language_id
         data_type: int
@@ -56,19 +56,19 @@ models:
       
       - name: taxonomy_name
         data_type: string
-        description: ""
+        description: "{{ doc('column__taxonomy_name') }}"
   
   - name: pim__taxonomies
-    description: ""
+    description: "Table with taxonomy information"
 
     columns:
       - name: taxonomy_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__taxonomy_id') }}"
       
       - name: status_code_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__status_code_id') }}"
       
       - name: country_id
         data_type: int
@@ -90,29 +90,29 @@ models:
         data_type: timestamp
         description: "{{ doc('column__coredb_updated_at') }}"
 
-      - name: is_external
+      - name: is_external_taxonomy
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_external_taxonomy') }}"
 
   - name: pim__recipes_taxonomies
-    description: ""
+    description: "Table mapping a recipe id to its taxonomy ids"
 
     columns:
       - name: recipe_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__recipe_id') }}"
       
       - name: taxonomy_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__taxonomy_id') }}"
 
   - name: pim__generic_ingredients_translations
-    description: ""
+    description: "Table mapping generic ingredient ids to their names in different languages" 
 
     columns:
       - name: generic_ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__generic_ingredient_id') }}"
       
       - name: language_id
         data_type: int
@@ -120,7 +120,7 @@ models:
       
       - name: generic_ingredient_name
         data_type: string
-        description: ""
+        description: "{{ doc('column__generic_ingredient_name') }}"
   
   - name: pim__chef_ingredient_sections
     description: ""
@@ -128,11 +128,11 @@ models:
     columns:
       - name: chef_ingredient_section_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__chef_ingredient_section_id') }}"
       
       - name: recipe_portion_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__recipe_portion_id') }}"
 
   - name: pim__chef_ingredients
     description: ""
@@ -140,31 +140,31 @@ models:
     columns:
       - name: chef_ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__chef_ingredient_id') }}"
       
       - name: chef_ingredient_section_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__chef_ingredient_section_id') }}"
       
       - name: order_ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__order_ingredient_id') }}"
       
       - name: generic_ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__generic_ingredient_id') }}"
       
       - name: ingredient_amount
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_amount') }}"
   
   - name: pim__ingredient_categories_translations
-    description: ""
+    description: "Table mapping ingredient category ids to their names in different languages"
 
     columns:
       - name: ingredient_category_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__ingredient_category_id') }}"
       
       - name: language_id
         data_type: int
@@ -172,39 +172,39 @@ models:
       
       - name: ingredient_category_name
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_category_name') }}"
 
   - name: pim__ingredients
-    description: ""
+    description: "Table with ingredient information"
 
     columns:
       - name: ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__ingredient_id') }}"
 
       - name: supplier_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__supplier_id') }}"
 
       - name: ingredient_category_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__ingredient_category_id') }}"
       
       - name: ingredient_status_code_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__ingredient_status_code_id') }}"
       
       - name: ingredient_internal_reference
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_internal_reference') }}"
       
       - name: ingredient_content
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_content') }}"
       
       - name: ingredient_type
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_type') }}"
       
       - name: source_created_by
         data_type: string
@@ -227,24 +227,24 @@ models:
         description: ""
   
   - name: pim__order_ingredients
-    description: ""
+    description: "Table connecting ingredient to a specific recipe variation"
 
     columns:
       - name: order_ingredient_id
         data_type: int
-        description: ""
+        description: "{{ doc('column__order_ingredient_id') }}"
       
       - name: ingredient_internal_reference
         data_type: string
-        description: ""
+        description: "{{ doc('column__ingredient_internal_reference') }}"
       
       - name: is_main_protein
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_main_protein') }}"
       
       - name: is_main_carbohydrate
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_main_carbohydrate') }}"
       
       - name: source_created_by
         data_type: string
@@ -263,20 +263,20 @@ models:
         description: "{{ doc('column__coredb_updated_at') }}"
   
   - name: pim__ingredient_categories
-    description: ""
+    description: "Table with ingredient category information"
 
     columns: 
     - name: ingredient_category_id
       data_type: int
-      description: ""
+      description:  "{{ doc('column__ingredient_category_id') }}"
     
     - name: status_code_id
       data_type: int
-      description: ""
+      description: "{{ doc('column__status_code_id') }}"
     
     - name: parent_category_id
       data_type: int
-      description: ""
+      description: "{{ doc('column__parent_category_id') }}"
     
     - name: country_id
       data_type: char(36)

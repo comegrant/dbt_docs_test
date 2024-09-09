@@ -24,7 +24,7 @@ renamed as (
         , modified_date as source_updated_at
         
         {# booleans #} 
-        , is_external
+        , is_external as is_external_taxonomy
         --, frontend_grouping
 
     from source
