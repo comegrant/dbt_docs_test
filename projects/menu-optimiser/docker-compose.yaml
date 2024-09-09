@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  base:
+    image: menu-optimiser-base
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/menu-optimiser/docker/Dockerfile
+    command: ["echo", "'Hello from menu-optimiser'"]
+    volumes:
+      - ./:/opt/projects/menu-optimiser
+      - ./../../packages:/opt/packages
+
+  test:
+    image: menu-optimiser-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/menu-optimiser/docker/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/menu-optimiser
+      - ./../../packages:/opt/packages
+    depends_on:
+      - base
+    profiles: ["test"]
