@@ -9,14 +9,82 @@ models:
   - name: pim__menu_variations
     description: ""
 
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
+
   - name: pim__menus
     description: ""
+
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
 
   - name: pim__portions
     description: ""
 
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
+
   - name: pim__recipe_portions
     description: ""
+
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
 
   - name: pim__weekly_menus
     description: ""
@@ -26,21 +94,55 @@ models:
 
   - name: pim__recipe_companies
     description: ""
-  
+
   - name: pim__recipe_metadata
     description: ""
+
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
 
   - name: pim__recipe_metadata_translations
     description: ""
 
   - name: pim__recipe_difficulty_level_translations
     description: ""
-  
+
   - name: pim__recipe_main_ingredient_translations
     description: ""
- 
+
   - name: pim__recipe_main_ingredients
     description: ""
+
+    columns:
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
+
+      - name: source_created_at
+        data_type: string
+        description: "{{ doc('column__coredb_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__coredb_updated_at') }}"
 
   - name: pim__taxonomies_translations
     description: "Table mapping taxonomy ids to their names in different languages"
@@ -49,15 +151,15 @@ models:
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
-      
+
       - name: language_id
         data_type: int
         description: ""
-      
+
       - name: taxonomy_name
         data_type: string
         description: "{{ doc('column__taxonomy_name') }}"
-  
+
   - name: pim__taxonomies
     description: "Table with taxonomy information"
 
@@ -65,15 +167,15 @@ models:
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
-      
+
       - name: status_code_id
         data_type: int
         description: "{{ doc('column__status_code_id') }}"
-      
+
       - name: country_id
         data_type: int
         description: "{{ doc('column__country_id') }}"
-      
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__coredb_created_by') }}"
@@ -101,27 +203,27 @@ models:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-      
+
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
 
   - name: pim__generic_ingredients_translations
-    description: "Table mapping generic ingredient ids to their names in different languages" 
+    description: "Table mapping generic ingredient ids to their names in different languages"
 
     columns:
       - name: generic_ingredient_id
         data_type: int
         description: "{{ doc('column__generic_ingredient_id') }}"
-      
+
       - name: language_id
         data_type: int
         description: ""
-      
+
       - name: generic_ingredient_name
         data_type: string
         description: "{{ doc('column__generic_ingredient_name') }}"
-  
+
   - name: pim__chef_ingredient_sections
     description: ""
 
@@ -129,7 +231,7 @@ models:
       - name: chef_ingredient_section_id
         data_type: int
         description: "{{ doc('column__chef_ingredient_section_id') }}"
-      
+
       - name: recipe_portion_id
         data_type: int
         description: "{{ doc('column__recipe_portion_id') }}"
@@ -141,23 +243,23 @@ models:
       - name: chef_ingredient_id
         data_type: int
         description: "{{ doc('column__chef_ingredient_id') }}"
-      
+
       - name: chef_ingredient_section_id
         data_type: int
         description: "{{ doc('column__chef_ingredient_section_id') }}"
-      
+
       - name: order_ingredient_id
         data_type: int
         description: "{{ doc('column__order_ingredient_id') }}"
-      
+
       - name: generic_ingredient_id
         data_type: int
         description: "{{ doc('column__generic_ingredient_id') }}"
-      
+
       - name: ingredient_amount
         data_type: string
         description: "{{ doc('column__ingredient_amount') }}"
-  
+
   - name: pim__ingredient_categories_translations
     description: "Table mapping ingredient category ids to their names in different languages"
 
@@ -165,11 +267,11 @@ models:
       - name: ingredient_category_id
         data_type: int
         description: "{{ doc('column__ingredient_category_id') }}"
-      
+
       - name: language_id
         data_type: int
         description: ""
-      
+
       - name: ingredient_category_name
         data_type: string
         description: "{{ doc('column__ingredient_category_name') }}"
@@ -189,23 +291,23 @@ models:
       - name: ingredient_category_id
         data_type: int
         description: "{{ doc('column__ingredient_category_id') }}"
-      
+
       - name: ingredient_status_code_id
         data_type: int
         description: "{{ doc('column__ingredient_status_code_id') }}"
-      
+
       - name: ingredient_internal_reference
         data_type: string
         description: "{{ doc('column__ingredient_internal_reference') }}"
-      
+
       - name: ingredient_content
         data_type: string
         description: "{{ doc('column__ingredient_content') }}"
-      
+
       - name: ingredient_type
         data_type: string
         description: "{{ doc('column__ingredient_type') }}"
-      
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__coredb_created_by') }}"
@@ -225,7 +327,7 @@ models:
       - name: is_active
         data_type: boolean
         description: ""
-  
+
   - name: pim__order_ingredients
     description: "Table connecting ingredient to a specific recipe variation"
 
@@ -233,19 +335,19 @@ models:
       - name: order_ingredient_id
         data_type: int
         description: "{{ doc('column__order_ingredient_id') }}"
-      
+
       - name: ingredient_internal_reference
         data_type: string
         description: "{{ doc('column__ingredient_internal_reference') }}"
-      
+
       - name: is_main_protein
         data_type: boolean
         description: "{{ doc('column__is_main_protein') }}"
-      
+
       - name: is_main_carbohydrate
         data_type: boolean
         description: "{{ doc('column__is_main_carbohydrate') }}"
-      
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__coredb_created_by') }}"
@@ -261,41 +363,39 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__coredb_updated_at') }}"
-  
+
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"
 
-    columns: 
-    - name: ingredient_category_id
-      data_type: int
-      description:  "{{ doc('column__ingredient_category_id') }}"
-    
-    - name: status_code_id
-      data_type: int
-      description: "{{ doc('column__status_code_id') }}"
-    
-    - name: parent_category_id
-      data_type: int
-      description: "{{ doc('column__parent_category_id') }}"
-    
-    - name: country_id
-      data_type: char(36)
-      description: "{{ doc('column__country_id') }}"
+    columns:
+      - name: ingredient_category_id
+        data_type: int
+        description: "{{ doc('column__ingredient_category_id') }}"
 
-    - name: source_created_by
-      data_type: string
-      description: "{{ doc('column__coredb_created_by') }}"
+      - name: status_code_id
+        data_type: int
+        description: "{{ doc('column__status_code_id') }}"
 
-    - name: source_created_at
-      data_type: timestamp
-      description: "{{ doc('column__coredb_created_at') }}"
+      - name: parent_category_id
+        data_type: int
+        description: "{{ doc('column__parent_category_id') }}"
 
-    - name: source_updated_by
-      data_type: string
-      description: "{{ doc('column__coredb_updated_by') }}"
+      - name: country_id
+        data_type: char(36)
+        description: "{{ doc('column__country_id') }}"
 
-    - name: source_updated_at
-      data_type: timestamp
-      description: "{{ doc('column__coredb_updated_at') }}"
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__coredb_created_by') }}"
 
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_created_at') }}"
 
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__coredb_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__coredb_updated_at') }}"

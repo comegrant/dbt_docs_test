@@ -16,10 +16,10 @@ renamed as (
         , portion_id
 
         {# system #}
-        , created_by as system_created_by
-        , created_date as system_created_date
-        , modified_by as system_modified_by
-        , modified_date as system_modified_date
+        , created_by as source_created_by
+        , created_date as source_created_at
+        , modified_by as source_updated_by
+        , modified_date as source_updated_at
 
         {# not sure if these are needed
         , recipe_portion_cost
