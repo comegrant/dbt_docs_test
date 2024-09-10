@@ -2,7 +2,7 @@ with
 
 order_statuses as (
 
-    select * from {{ ref('cms__billing_agreement_order_status') }}
+    select * from {{ ref('cms__billing_agreement_order_statuses') }}
 
 ),
 
