@@ -42,8 +42,8 @@ We use this repo to perform transformations that are not conveniently performed 
     df = get_data_from_catalog(
         spark=spark,
         env="dev",
-        table_name=table_config["dbt_model_name"],
-        schema=table_config["dbt_model_schema"],
+        table_name=table_config.dbt_model_name,
+        schema=table_config.dbt_model_schema,
         is_convert_to_pandas=True
     )
     ```
