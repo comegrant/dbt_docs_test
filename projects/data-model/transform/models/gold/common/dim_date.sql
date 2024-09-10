@@ -1,0 +1,1 @@
+select * from silver.silver_calendar
