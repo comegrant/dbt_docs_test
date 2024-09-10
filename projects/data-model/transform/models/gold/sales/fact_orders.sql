@@ -61,7 +61,7 @@ source_tables_joined as (
         , orders.order_created_at
 
         {# foregin keys #}
-        , md5(orders.order_status_id) AS fk_dim_order_status
+        , md5(orders.order_status_id) AS fk_dim_order_statuses
         , md5(orders.order_type_id) AS fk_dim_order_types
         , md5(billing_agreements.company_id) AS fk_dim_companies
         , billing_agreements.pk_dim_billing_agreements AS fk_dim_billing_agreements
