@@ -12,7 +12,7 @@ renamed as (
         
         {# ids #}
         agreement_id as billing_agreement_id
-        , customer_id
+        --, customer_id
         , company_id
         , status as billing_agreement_status_id
         , sales_point_id
@@ -21,8 +21,8 @@ renamed as (
         --, trigger_registration_process as trigger_registration_process_id
         
         {# strings #}
-        , initcap(method_code) as payment_method
-        , initcap(source) as signup_source
+        , upper(trim(method_code)) as payment_method
+        , upper(trim(source)) as signup_source
         , upper(sales_person) as signup_salesperson
 
         {# booleans #}

@@ -23,7 +23,7 @@ renamed as (
         , variation_id as product_variation_id
      
         {# strings #}
-        , initcap(typeOfLine) as order_line_type_name
+        , upper(trim(typeOfLine)) as order_line_type_name
  
         {# numerics #}
         , price as unit_price_ex_vat
