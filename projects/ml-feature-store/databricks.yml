@@ -1,0 +1,31 @@
+# This is a Databricks asset bundle definition for ml-feature-store.
+# The Databricks extension requires databricks.yml configuration file.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
+bundle:
+  name: ml-feature-store
+
+include:
+  - "jobs/**.yml"
+  - "jobs/**.yaml"
+
+variables:
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+    default: bhregistry.azurecr.io/ml-feature-store-databricks:dev-latest
+  mode:
+    description: The mode to deploy in
+    default: development
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-4291784437205825.5.azuredatabricks.net
+
+  ## Optionally, there could be 'staging' or 'prod' targets here.
+  #
+  # prod:
+  #   workspace:
+  #     host: https://adb-4291784437205825.5.azuredatabricks.net

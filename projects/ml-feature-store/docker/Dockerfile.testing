@@ -1,0 +1,3 @@
+FROM ml-feature-store-base:latest
+
+RUN poetry install
