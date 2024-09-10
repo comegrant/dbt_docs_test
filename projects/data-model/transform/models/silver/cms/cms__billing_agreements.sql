@@ -49,7 +49,6 @@ renamed as (
 
         {# timestamp #}
         , created_at as signup_at
-        , start_date as start_at
 
         {# scd #}
         , dbt_valid_from as valid_from
