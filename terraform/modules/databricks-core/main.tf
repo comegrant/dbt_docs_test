@@ -480,6 +480,11 @@ resource "databricks_grants" "catalog" {
     principal = "data-engineers"
     privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
   }
+
+  grant {
+    principal = "data-analysts"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+  }
 }
 
 resource "databricks_grants" "catalog_segment" {
