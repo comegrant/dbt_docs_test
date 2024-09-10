@@ -97,53 +97,60 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
     default_max_records: int = field(default=50)
     max_wait_time: int = field(default=5)
 
+    _connection: ServiceBusReceiver | None = field(default=None)
+
     def receiver(self) -> ServiceBusReceiver:
-        return self.client.get_subscription_receiver(
-            topic_name=self.topic_name,
-            subscription_name=self.subscription_name,
-            sub_queue=self.sub_queue,
-            max_wait_time=self.max_wait_time,
-        )
+        if self._connection is None:
+            rec = self.client.get_subscription_receiver(
+                topic_name=self.topic_name,
+                subscription_name=self.subscription_name,
+                sub_queue=self.sub_queue,
+                max_wait_time=self.max_wait_time,
+            )
+            self._connection = rec.__enter__()
+
+        return self._connection
 
     async def read(
         self, number_of_records: int | None = None
     ) -> list[StreamMessage[T]]:
-        with self.receiver() as receiver:
-            raw_messages = receiver.receive_messages(
-                max_message_count=number_of_records or self.default_max_records,
-                max_wait_time=self.max_wait_time,
+        receiver = self.receiver()
+        raw_messages = receiver.receive_messages(
+            max_message_count=number_of_records or self.default_max_records,
+            max_wait_time=self.max_wait_time,
+        )
+
+        messages: list[StreamMessage[T]] = []
+        for msg in raw_messages:
+            body = list(msg.body)
+            assert (
+                len(body) == 1
+            ), f"Expected only one message in the body, got {len(body)}"
+
+            messages.append(
+                StreamMessage(
+                    body=self.payload.model_validate_json(body[0]), raw_message=msg
+                )
             )
 
-            messages: list[StreamMessage[T]] = []
-            for msg in raw_messages:
-                body = list(msg.body)
-                assert (
-                    len(body) == 1
-                ), f"Expected only one message in the body, got {len(body)}"
-
-                messages.append(
-                    StreamMessage(
-                        body=self.payload.model_validate_json(body[0]), raw_message=msg
-                    )
-                )
-
-            return messages
+        return messages
 
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         if not messages:
             return
 
-        logger.info(f"Marking {len(messages)} as completed for {self.topic_name} and {self.subscription_name}")
-        with self.receiver() as receiver:
-            for message in messages:
-                if not isinstance(message.raw_message, ServiceBusReceivedMessage):
-                    message_type = type(message.raw_message)
-                    logger.error(
-                        f"Message is not of type ServiceBusReceivedMessage - got {message_type}"
-                    )
-                    continue
+        receiver = self.receiver()
 
+        logger.info(f"Marking {len(messages)} as completed for {self.topic_name} and {self.subscription_name}")
+
+        for message in messages:
+            if isinstance(message.raw_message, ServiceBusReceivedMessage):
                 receiver.complete_message(message.raw_message)
+            else:
+                message_type = type(message.raw_message)
+                logger.error(
+                    f"Message is not of type ServiceBusReceivedMessage - got {message_type}"
+                )
 
 
 @dataclass

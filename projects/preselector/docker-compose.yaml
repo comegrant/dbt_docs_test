@@ -100,6 +100,24 @@ services:
     depends_on:
       - preselector
 
+
+  preview-server:
+    platform: linux/amd64
+    image: preselector-test
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    command: "fastapi dev preselector/preview_server.py --host 0.0.0.0"
+    ports:
+      - 8001:8000
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+
   databricks:
     platform: linux/amd64
     image: preselector-databricks
@@ -136,21 +154,3 @@ services:
         limits:
           # Max 14 GB of memory
           memory: 7GB
-
-  test-deploy:
-    platform: linux/amd64
-    image: preselector-worker
-    build:
-      context: ../../
-      dockerfile: projects/preselector/Dockerfile
-      args:
-        - DEP_GROUP=--with=worker
-    volumes:
-      - ./:/opt/projects/preselector
-      - ./../../packages:/opt/packages
-    command: "/usr/local/bin/python -m deploy_to_azure"
-    depends_on:
-      - preselector
-    env_file:
-      - .env
-      - ../../.env

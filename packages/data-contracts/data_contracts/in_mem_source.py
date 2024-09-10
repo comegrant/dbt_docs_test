@@ -38,6 +38,9 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
         self.data = await job.to_polars()
 
+    async def write_polars(self, df: pl.LazyFrame) -> None:
+        self.data = df.collect()
+
     @classmethod
     def multi_source_features_for(
         cls: type['InMemorySource'], facts: RetrivalJob, requests: list[tuple['InMemorySource', RetrivalRequest]]
@@ -63,3 +66,7 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
     @staticmethod
     def from_values(values: dict[str, object]) -> 'InMemorySource':
         return InMemorySource(pl.DataFrame(values))
+
+    @staticmethod
+    def empty() -> 'InMemorySource':
+        return InMemorySource.from_values({})

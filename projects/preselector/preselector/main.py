@@ -489,7 +489,7 @@ def duration(log: str) -> Generator[None, None, None]:
     start = time.monotonic()
     yield
     end = time.monotonic()
-    logger.debug(f"{log} took {end - start} seconds")
+    logger.info(f"{log} took {end - start} seconds")
     # if tracemalloc.is_tracing():
     #     now, max_memory = tracemalloc.get_traced_memory()
     #     megabytes = 2**20
@@ -837,6 +837,7 @@ async def run_preselector(
                 year=pl.lit(year),
                 week=pl.lit(week),
                 portion_size=customer.portion_size,
+                company_id=pl.lit(customer.company_id)
             ),
             store=store,
         )

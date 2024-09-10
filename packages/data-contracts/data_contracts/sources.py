@@ -2,6 +2,7 @@ from aligned import PostgreSQLConfig
 from aligned.sources.azure_blob_storage import AzureBlobConfig
 
 from data_contracts.sql_server import SqlServerConfig
+from data_contracts.unity_catalog import DatabricksConnectionConfig, UnityCatalog, UnityCatalogSchema
 
 azure_dl_creds = AzureBlobConfig(
     account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",
@@ -27,3 +28,17 @@ adb_ml = adb.with_schema("ml")
 adb_ml_output = adb.with_schema("ml_output")
 
 segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
+
+def databricks_catalog(catalog: str | None = None) -> UnityCatalog:
+    import os
+
+    if catalog is None:
+        catalog = os.getenv("UC_ENV", "dev")
+
+    return DatabricksConnectionConfig.on_databricks_only().catalog(catalog)
+
+def ml_features(catalog: str | None = None) -> UnityCatalogSchema:
+    return databricks_catalog(catalog).schema("mlfeatures")
+
+def dbt_gold(catalog: str | None = None) -> UnityCatalogSchema:
+    return databricks_catalog(catalog).schema("gold")

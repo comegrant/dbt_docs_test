@@ -215,7 +215,8 @@ async def historical_preselector_vector(
         "recipe_id",
         "portion_size",
         "year",
-        "week"
+        "week",
+        "company_id"
     ]).filter(
         (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
     ).to_polars()

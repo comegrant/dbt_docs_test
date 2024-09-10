@@ -5,6 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 
+import polars as pl
 from aligned import ContractStore
 from aligned.data_source.batch_data_source import BatchDataSource
 from aligned.feature_source import (
@@ -78,7 +79,7 @@ async def connect_to_streams(settings: ProcessStreamSettings) -> PreselectorStre
         client=client,
         topic_name=settings.service_bus_request_topic_name,
         subscription_name=settings.service_bus_subscription_name,
-        sub_queue=ServiceBusSubQueue(settings.service_bus_sub_queue),
+        sub_queue=ServiceBusSubQueue(settings.service_bus_sub_queue) if settings.service_bus_sub_queue else None,
     )
 
     return PreselectorStreams(
@@ -99,15 +100,52 @@ async def connect_to_streams(settings: ProcessStreamSettings) -> PreselectorStre
         else None,
     )
 
+async def load_cache_for(
+    store: ContractStore,
+    loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]]
+) -> ContractStore:
+    from aligned.request.retrival_request import RequestResult
+    from data_contracts.in_mem_source import InMemorySource
+
+    for location, source, pl_filter in loads:
+        if isinstance(source, InMemorySource) and not source.data.is_empty():
+            try:
+                # Checking if the data exists locally already
+                _ = await source.all(
+                    RequestResult(set(), set(), None), limit=10
+                ).to_polars()
+                store = store.update_source_for(location, source) # type: ignore
+                logger.info(f"Found data for {location}, will therefore skip")
+                continue
+            except Exception:
+                pass
+
+        logger.info(f"Loading {location} to cache")
+        if location.location_type == "feature_view":
+            job = store.feature_view(location.name).all()
+        else:
+            job = store.model(location.name).all_predictions()
+
+
+        if pl_filter is not None:
+            def filter_df(df: pl.LazyFrame) -> pl.LazyFrame:
+                assert pl_filter is not None # noqa: B023
+                return df.filter(pl_filter) # noqa: B023
+
+            job = job.polars_method(filter_df)
+
+
+        await job.write_to_source(source)  # type: ignore
+        store = store.update_source_for(location, source) # type: ignore
+        logger.info(f"Loaded {location.name} from cache")
+
+    return store
 
 async def load_cache(
     store: ContractStore,
     company_id: str,
     exclude_views: set[FeatureLocation] | None = None
 ) -> ContractStore:
-    import polars as pl
-    from aligned.request.retrival_request import RequestResult
-
     from preselector.recipe_contracts import cache_dir
 
     if exclude_views is None:
@@ -117,6 +155,8 @@ async def load_cache(
     this_week = today.isocalendar().week
 
     depends_on = store.feature_view("preselector_output").view.source.depends_on()
+
+    partition_recs = cache_dir.parquet_at(f"{company_id}/recommendations.parquet")
 
     cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
         (
@@ -135,11 +175,11 @@ async def load_cache(
                 "normalized_recipe_features",
                 partition_keys=["year", "week"],
             ),
-            (pl.col("year") >= today.year) & (this_week < pl.col("week")),
+            (pl.col("year") >= today.year) & (pl.col("company_id") == company_id),
         ),
         (
-            FeatureLocation.model("rec_engine"),
-            cache_dir.parquet_at(f"{company_id}/recommendations.parquet"),
+            FeatureLocation.feature_view("partitioned_recommendations"),
+            partition_recs,
             (pl.col("company_id") == company_id)
             & (pl.col("year") >= today.year)
             & (this_week < pl.col("week")),
@@ -154,38 +194,16 @@ async def load_cache(
 
         cache_sources.append((dep, cache_dir.parquet_at(f"{dep.name}.parquet"), None))
 
-    for location, source, pl_filter in cache_sources:
-        if location in exclude_views:
-            continue
-
-        try:
-            # Checking if the data exists locally already
-            _ = await source.all(
-                RequestResult(set(), set(), None), limit=10
-            ).to_polars()
-            store = store.update_source_for(location, source) # type: ignore
-            logger.info(f"Found data for {location}, will therefore skip")
-            continue
-        except Exception:
-            pass
-
-        logger.info(f"Loading {location} to cache")
-        if location.location_type == "feature_view":
-            job = store.feature_view(location.name).all()
-        else:
-            job = store.model(location.name).all_predictions()
+    load_for = [
+        (loc, source, pl_filter)
+        for loc, source, pl_filter
+        in cache_sources
+        if loc not in exclude_views
+    ]
 
 
-        if pl_filter is not None:
-            def filter_df(df: pl.LazyFrame) -> pl.LazyFrame:
-                assert pl_filter is not None # noqa: B023
-                return df.filter(pl_filter) # noqa: B023
-
-            job = job.polars_method(filter_df)
-
-        await job.write_to_source(source)  # type: ignore
-        store = store.update_source_for(location, source) # type: ignore
-        logger.info(f"Loaded {location.name} from cache")
+    store = await load_cache_for(store, load_for)
+    store = store.update_source_for(FeatureLocation.model("rec_engine"), partition_recs)
 
     return store
 
@@ -434,15 +452,16 @@ async def process_stream(
         }
         assert settings.service_bus_subscription_name is not None
         company_id = company_map[settings.service_bus_subscription_name]
-        store = await load_cache(store, company_id)
-
         streams = await connect_to_streams(settings)
+
+        store = await load_cache(store, company_id)
     except Exception as error:
         logger.exception(error)
         logger.error("Exited worker before we could start processing.")
         return
 
     try:
+        logger.info(f"'{settings.service_bus_subscription_name}' ready for some cooking!")
         while True:
             batch_start = time.monotonic()
             await process_stream_batch(

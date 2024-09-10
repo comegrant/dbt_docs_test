@@ -1,0 +1,172 @@
+import logging
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager, suppress
+from datetime import date
+from typing import Annotated
+
+import polars as pl
+from aligned import ContractStore, FeatureLocation
+from aligned.data_source.batch_data_source import BatchDataSource
+from cheffelo_logging import setup_datadog
+from cheffelo_logging.logging import DataDogConfig
+from data_contracts.in_mem_source import InMemorySource
+from data_contracts.preselector.store import Preselector as PreselectorOutput
+from data_contracts.preselector.store import RecipePreferences
+from data_contracts.recommendations.store import recommendation_feature_contracts
+from fastapi import Depends, FastAPI
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ValidationError
+
+from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
+from preselector.process_stream import load_cache_for
+from preselector.recipe_contracts import Preselector
+from preselector.schemas.batch_request import YearWeek
+
+logger = logging.getLogger(__name__)
+
+
+class GeneratePreview(BaseModel):
+
+    taste_preference_ids: list[str]
+    attribute_ids: list[str]
+
+    year: int
+    week: int
+    company_id: str
+
+    portion_size: int
+
+    def request(self) -> GenerateMealkitRequest:
+        return GenerateMealkitRequest(
+            agreement_id=0,
+            company_id=self.company_id,
+            compute_for=[YearWeek(week=self.week, year=self.year)],
+            concept_preference_ids=self.attribute_ids,
+            taste_preference_ids=self.taste_preference_ids,
+            portion_size=self.portion_size,
+            number_of_recipes=5,
+            override_deviation=False,
+            has_data_processing_consent=False
+        )
+
+class Mealkit(BaseModel):
+    main_recipe_ids: list[int]
+    model_version: str
+
+
+store: ContractStore | None = None
+
+async def load_store() -> ContractStore:
+    global store # noqa: PLW0603
+    if store is not None:
+        return store
+
+    store = recommendation_feature_contracts()
+
+    store.add_feature_view(RecipePreferences)
+    store.add_feature_view(PreselectorOutput)
+    store.add_model(Preselector)
+
+    today = date.today()
+    this_week = today.isocalendar().week
+
+    cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
+        (
+            FeatureLocation.feature_view("recipe_cost"),
+            InMemorySource.empty(),
+            (pl.col("menu_year") >= today.year) & (pl.col("menu_week") > this_week),
+        ),
+        (
+            FeatureLocation.feature_view("preselector_year_week_menu"),
+            InMemorySource.empty(),
+            (pl.col("menu_year") >= today.year)
+        ),
+        (
+            FeatureLocation.feature_view("normalized_recipe_features"),
+            InMemorySource.empty(),
+            (pl.col("year") >= today.year)
+        ),
+    ]
+
+    custom_cache = {loc for loc, _, _ in cache_sources}
+
+    depends_on = store.feature_view(PreselectorOutput).view.source.depends_on()
+
+    for dep in depends_on:
+        if dep in custom_cache:
+            continue
+
+        if dep.location_type == "feature_view":
+            entity_names = store.feature_view(dep.name).view.entitiy_names
+            if "agreement_id" in entity_names:
+                # Do not want any user spesific data
+                continue
+
+        cache_sources.append((dep, InMemorySource.empty(), None))
+
+
+    logger.info(f"Loading data for {len(cache_sources)}")
+    store = await load_cache_for(store, cache_sources)
+    logger.info("Cache is hot")
+    return store
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    import os
+
+    logging.basicConfig(level=logging.INFO)
+
+    with suppress(ValidationError):
+        setup_datadog(
+            logging.getLogger(""),
+            config=DataDogConfig(
+                datadog_service_name="pre-selector-api",
+                datadog_source="python",
+                datadog_tags=f"env:{os.getenv('ENV', 'Unknown')}",
+            ) # type: ignore[reportGeneralTypeIssues]
+        )
+
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+@app.get("/")
+def index() -> str:
+    return "What's cooking?"
+
+
+@app.post("/pre-selector/preview")
+async def generate_preview(
+    body: GeneratePreview,
+    store: Annotated[ContractStore, Depends(load_store)]
+) -> JSONResponse:
+    """
+    An endpoint used to preview the output of the pre-selector.
+    """
+    req = body.request()
+    with duration("Generate"):
+        response = await run_preselector_for_request(
+            req,
+            store
+        )
+
+    success = response.success_response()
+    if success:
+        response = Mealkit(
+            main_recipe_ids=success.year_weeks[0].main_recipe_ids,
+            model_version=response.model_version
+        ).model_dump()
+    elif response.failures:
+        response = response.failures[0].model_dump()
+    else:
+        raise ValueError("Found no successful or failure response. This should never happen.")
+
+    cache_in_seconds = 60 * 5
+
+    return JSONResponse(
+        response,
+        headers={
+            "Cache-Control": f"max-age={cache_in_seconds}"
+        }
+    )

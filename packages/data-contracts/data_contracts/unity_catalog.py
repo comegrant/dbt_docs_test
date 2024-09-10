@@ -1,19 +1,24 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-import pandas as pd
 import polars as pl
 from aligned.data_source.batch_data_source import (
     BatchDataSource,
     EventTimestamp,
     FeatureType,
-    RetrivalJob,
-    RetrivalRequest,
 )
+from aligned.feature_source import WritableFeatureSource
+from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.sources.local import FileFactualJob
-from databricks.connect import DatabricksSession
-from pyspark.sql import SparkSession
 
+if TYPE_CHECKING:
+    from pyspark.sql import SparkSession
+
+
+def is_running_on_databricks() -> bool:
+    import os
+    return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
 @dataclass
 class DatabricksConnectionConfig:
@@ -22,7 +27,20 @@ class DatabricksConnectionConfig:
     host: str
     cluster_id: str
 
-    def connection(self) -> SparkSession:
+    @staticmethod
+    def on_databricks_only() -> 'DatabricksConnectionConfig':
+        return DatabricksConnectionConfig("", "", "")
+
+    def catalog(self, catalog: str) -> 'UnityCatalog':
+        return UnityCatalog(self, catalog)
+
+    def connection(self) -> 'SparkSession':
+        if is_running_on_databricks() or self.token == "":
+            from databricks.sdk.runtime import spark
+
+            return spark
+
+        from databricks.connect import DatabricksSession
         return DatabricksSession.builder.host(self.host).token(self.token).clusterId(self.cluster_id).getOrCreate()
 
 
@@ -67,7 +85,7 @@ class UnityCatalogTableConfig:
 
 
 @dataclass
-class UCFeatureTableSource(BatchDataSource):
+class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
@@ -76,11 +94,12 @@ class UCFeatureTableSource(BatchDataSource):
         return "uc_feature_table"
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+        from databricks.feature_engineering import FeatureEngineeringClient
+
+        client = FeatureEngineeringClient()
 
         async def load() -> pl.LazyFrame:
-            con = self.config.connection()
-            con.conf.set("spark.sql.execution.arrow.enabled", "true")
-            spark_df = con.read.table(self.table.identifier())
+            spark_df = client.read_table(name=self.table.identifier())
 
             if limit:
                 spark_df = spark_df.limit(limit)
@@ -177,12 +196,30 @@ class UCFeatureTableSource(BatchDataSource):
         )
         """
         spark = self.config.connection()
-        result = spark.sql(
+        return spark.sql(
             f"SELECT MAX({event_timestamp.name}) as {event_timestamp.name} FROM {self.table.identifier()}"
-        ).toPandas()[event_timestamp.name]
-        assert isinstance(result, pd.Series)
-        return result.to_list()[0]
+        ).toPandas()[event_timestamp.name].to_list()[0]
 
+
+    async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        raise NotImplementedError(type(self))
+
+    async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        raise NotImplementedError(type(self))
+
+    async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        from databricks.feature_engineering import FeatureEngineeringClient
+
+        client = FeatureEngineeringClient()
+
+        conn = self.config.connection()
+        df = conn.createDataFrame(await job.to_pandas())
+
+        client.create_table(
+            name=self.table.identifier(),
+            primary_keys=list(request.entity_names),
+            df=df
+        )
 
 
 @dataclass
@@ -197,8 +234,7 @@ class UCTableSource(BatchDataSource):
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
 
         async def load() -> pl.LazyFrame:
-            con = self.config.connection
-            con.conf.set("spark.sql.execution.arrow.enabled", "true")
+            con = self.config.connection()
             spark_df = con.read.table(self.table.identifier())
 
             if limit:
@@ -219,7 +255,7 @@ class UCTableSource(BatchDataSource):
 
     @classmethod
     def multi_source_features_for(
-        cls, facts: RetrivalJob, requests: list[tuple['UCTableSource', RetrivalRequest]]  # noqa: ANN102
+        cls, facts: RetrivalJob, requests: list[tuple['UCTableSource', RetrivalRequest]] # noqa: ANN102
     ) -> RetrivalJob:
         from aligned.sources.local import DateFormatter
 
@@ -232,7 +268,6 @@ class UCTableSource(BatchDataSource):
         spark = source.config.connection()
 
         async def load() -> pl.LazyFrame:
-            spark.conf.set("spark.sql.execution.arrow.enabled", "true")
             df = spark.read.table(source.table.identifier())
             return pl.from_pandas(df.toPandas()).lazy()
 
@@ -269,8 +304,6 @@ class UCTableSource(BatchDataSource):
         )
         """
         spark = self.config.connection()
-        result = spark.sql(
+        return spark.sql(
             f"SELECT MAX({event_timestamp.name}) as {event_timestamp.name} FROM {self.table.identifier()}"
-        ).toPandas()[event_timestamp.name]
-        assert isinstance(result, pd.Series)
-        return result.to_list()[0]
+        ).toPandas()[event_timestamp.name].to_list()[0]

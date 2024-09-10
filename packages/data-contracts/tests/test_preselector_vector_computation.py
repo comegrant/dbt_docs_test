@@ -33,6 +33,7 @@ async def test_importance_and_target_vector_computation() -> None:
         InMemorySource.from_values({
             "agreement_id": [1, 1, 1, 1, 2, 2, 2, 2],
             "recipe_id": [1, 2, 1, 1, 1, 3, 3, 2],
+            "company_id": ["a"] * 8,
             "week": [1, 1, 2, 2] * 2,
             "year": [2024] * 8,
             "portion_size": [2] * 8,
@@ -43,6 +44,7 @@ async def test_importance_and_target_vector_computation() -> None:
         InMemorySource.from_values({
             "recipe_id": [1, 2, 3],
             "portion_size": [2, 2, 2],
+            "company_id": ["a", "a", "a"],
             "normalized_at": [datetime.now(tz=timezone.utc)] * 3,
             "main_recipe_id": [1, 2, 3],
             "year": [1, 1, 1],

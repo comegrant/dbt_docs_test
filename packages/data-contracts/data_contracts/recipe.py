@@ -393,6 +393,8 @@ class RecipeFeatures:
     taxonomies = List(String())
     taxonomy_ids = List(Int32())
 
+    is_addon_kit = taxonomy_ids.contains(2164)
+
     is_family_friendly = (
         taxonomies.contains("Familiefavoritter")
         .logical_or(taxonomies.contains("Familjefavoriter"))
@@ -507,6 +509,8 @@ class RecipeCost:
     recipe_id = Int32().as_entity()
     portion_size = Int32().as_entity()
 
+    portion_id = Int32()
+
     menu_year = Int32()
     menu_week = Int32()
 
@@ -520,7 +524,7 @@ class RecipeCost:
     portions = String().description(
         "Needs to be a string because we have instances of '2+' in Danmark.",
     )
-    portion_id = Int32()
+    is_plus_portion = portions.contains("\\+")
 
     recipe_cost_whole_units = Float().description(
         "Also known as the Cost of Food. The planed summed ingredient cost"
@@ -537,11 +541,14 @@ class RecipeCost:
 
 async def compute_recipe_features() -> pl.LazyFrame:
     nutrition = RecipeNutrition.query().all()
-    cost = RecipeCost.query().select_columns(["recipe_cost_whole_units"])
+    cost = RecipeCost.query().select_columns([
+        "recipe_cost_whole_units", "is_plus_portion"
+    ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").is_not()))
 
     return (
         await RecipeFeatures.query()
         .all()
+        .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").is_not()))
         .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
         .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
         .join(
@@ -615,13 +622,14 @@ async def compute_normalized_features(request: RetrivalRequest, limit: int | Non
         .union(RecipeCost.as_source().location_id()),
     ).with_loaded_at(),
     materialized_source=materialized_data.partitioned_parquet_at(
-        "normalized_recipe_features", partition_keys=["year", "week"]
+        "normalized_recipe_features_per_company", partition_keys=["company_id", "year"]
     ),
     acceptable_freshness=timedelta(days=4),
 )
 class NormalizedRecipeFeatures:
     recipe_id = Int32().as_entity()
     portion_size = Int32().as_entity()
+    company_id = String().as_entity()
 
     normalized_at = EventTimestamp()
 

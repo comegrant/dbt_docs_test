@@ -30,8 +30,8 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
     key="azure-storageAccount-experimental-key",
 )
 
-dbutils.widgets.text("should_force_update", "0")
-should_force_update = bool(dbutils.widgets.get("should_force_update"))
+dbutils.widgets.text("should_force_update", "false")
+should_force_update = dbutils.widgets.get("should_force_update").lower() == "true"
 
 
 logging.basicConfig(level=logging.INFO)
@@ -43,4 +43,4 @@ store.add_feature_view(RecipePreferences)
 
 locations = list(Preselector.query().view.source.depends_on())
 
-await materialize_data(store, locations, do_freshness_check=not should_force_update)
+await materialize_data(store, locations, should_force_update=should_force_update)
