@@ -25,9 +25,9 @@ scd_billing_agreements as (
 
 ),
 
-billing_agreement_status as (
+billing_agreement_statuses as (
 
-    select * from {{ ref('cms__billing_agreement_status') }}
+    select * from {{ ref('cms__billing_agreement_statuses') }}
 
 ),
 
@@ -99,7 +99,7 @@ select
     , most_recent_billing_agreements.payment_method
     , most_recent_billing_agreements.signup_source
     , most_recent_billing_agreements.signup_salesperson
-    , billing_agreement_status.billing_agreement_status_name
+    , billing_agreement_statuses.billing_agreement_status_name
     {# TODO: must be changed with the actual level name #}
     , scd_loyalty_level.loyalty_level_id
 
@@ -138,8 +138,8 @@ left join scd_billing_agreements
     on union_scd_timeline_add_valid_to.billing_agreement_id = scd_billing_agreements.billing_agreement_id
     and union_scd_timeline_add_valid_to.valid_from >= scd_billing_agreements.valid_from
     and union_scd_timeline_add_valid_to.valid_to < scd_billing_agreements.valid_to
-left join billing_agreement_status
-    on scd_billing_agreements.billing_agreement_status_id = billing_agreement_status.billing_agreement_status_id
+left join billing_agreement_statuses
+    on scd_billing_agreements.billing_agreement_status_id = billing_agreement_statuses.billing_agreement_status_id
 left join scd_loyalty_level
     on union_scd_timeline_add_valid_to.billing_agreement_id = scd_loyalty_level.billing_agreement_id
     and union_scd_timeline_add_valid_to.valid_from >= scd_loyalty_level.valid_from
