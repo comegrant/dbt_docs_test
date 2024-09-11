@@ -82,11 +82,12 @@ taxonomies_list as (
         recipes_taxonomies.recipe_id,
         concat_ws(', ', collect_list(taxonomies_translations.taxonomy_name))
             as taxonomy_list
-    from taxonomies
-    left join recipes_taxonomies
-        on taxonomies.taxonomy_id = recipes_taxonomies.taxonomy_id
+    from recipes_taxonomies
+    left join taxonomies
+        on recipes_taxonomies.taxonomy_id = taxonomies.taxonomy_id
     left join taxonomies_translations
         on recipes_taxonomies.taxonomy_id = taxonomies_translations.taxonomy_id
+    where taxonomies_translations.language_id <> 4 -- exclude English
     group by 1
 ),
 
@@ -104,6 +105,12 @@ chef_ingredients_list as (
             = ingredients.chef_ingredient_section_id
     where ingredients.chef_ingredient_id is not null
     group by 1
+),
+
+excluded_recipes as (
+    select recipe_id
+    from recipes_taxonomies
+    where taxonomy_id = 1572 -- Specialvarer
 ),
 
 distinct_recipes as (
@@ -145,6 +152,9 @@ distinct_recipes as (
             '8A613C15-35E4-471F-91CC-972F933331D7', -- Adams Matkasse
             '09ECD4F0-AE58-4539-8E8F-9275B1859A19', -- Godtlevert
             '6A2D0B60-84D6-4830-9945-58D518D27AC2' -- Linas Matkasse
+        )
+        and dim_recipes.recipe_id not in (
+            select recipe_id from excluded_recipes
         )
 )
 
