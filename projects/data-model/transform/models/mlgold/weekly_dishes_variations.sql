@@ -65,6 +65,14 @@ menu_recipes as (
     from {{ ref('pim__menu_recipes') }}
 ),
 
+recipe_portions as (
+    select
+        recipe_portion_id,
+        recipe_id,
+        portion_id
+    from {{ ref("pim__recipe_portions") }}
+),
+
 menu_variations as (
     select
         menu_id,
@@ -115,6 +123,7 @@ joined as (
         weekly_menus_joined.*,
         menu_recipe_order,
         menu_variations.product_variation_id,
+        recipe_portions.recipe_portion_id,
         menu_variations.menu_number_days,
         product_type_id,
         product_variation_name
@@ -128,6 +137,11 @@ joined as (
         on
             weekly_menus_joined.menu_id = menu_variations.menu_id
             and weekly_menus_joined.portion_id = menu_variations.portion_id
+    left join
+        recipe_portions
+        on
+            weekly_menus_joined.recipe_id = recipe_portions.recipe_id
+            and weekly_menus_joined.portion_id = recipe_portions.portion_id
     left join variation_name
         on
             menu_variations.product_variation_id
