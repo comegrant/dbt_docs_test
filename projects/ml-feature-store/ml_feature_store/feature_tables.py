@@ -11,6 +11,6 @@ class FeatureTable(BaseModel):
 
 ft_weekly_dishes_variations_configs = FeatureTable(
     feature_table_name='ft_weekly_dishes_variations',
-    primary_keys=['year', 'week', 'company_id', 'product_variation_id'],
+    primary_keys=['delivery_year', 'delivery_week', 'company_id', 'product_variation_id'],
     dbt_model_name='weekly_dishes_variations'
 )
