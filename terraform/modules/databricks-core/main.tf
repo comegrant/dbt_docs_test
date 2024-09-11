@@ -502,7 +502,7 @@ resource "databricks_grants" "catalog_segment" {
 
   grant {
     principal = "data-engineers"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+    privileges = ["ALL_PRIVILEGES"]
   }
 }
 
