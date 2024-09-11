@@ -1,0 +1,76 @@
+relationship 493d0deb-05ae-4def-8d62-4d82086726f7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.Date
+	toColumn: LocalDateTable_bebe3792-50e5-42fa-97fb-046107769d97.Date
+
+relationship dcd30575-0293-4c7c-85da-8aac8d173550
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Order Measures'.delivery_week_monday_date
+	toColumn: LocalDateTable_20903e7e-c150-4dec-9751-1b987018c94d.Date
+
+relationship 171c2137-a01f-4390-a89d-492a37e62d06
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Order Measures'.order_created_at
+	toColumn: LocalDateTable_788da4b2-62fb-4f34-96ce-6a72bf4ace3b.Date
+
+relationship AutoDetected_e2743f17-0d8e-46ce-9ecc-8b3a5fa86665
+	fromColumn: 'Order Measures'.fk_dim_date
+	toColumn: Calendar.pk_dim_date
+
+relationship AutoDetected_1c6f7075-9408-4ef1-a6d6-1fcb469d6fd6
+	fromColumn: 'Order Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship AutoDetected_639e001b-4438-4a77-89e7-f452e3f581ab
+	fromColumn: 'Order Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
+	fromColumn: 'Menu Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship a9413c54-cd34-406e-a341-cfb5e7fd8cca
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Billing Agreements'.valid_from
+	toColumn: LocalDateTable_df8e38d4-fac7-47f2-9112-ee5a4e598663.Date
+
+relationship 57262afb-2af4-49aa-8f50-720302d7d539
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Billing Agreements'.valid_to
+	toColumn: LocalDateTable_3300470d-13d3-4662-98a3-a041edaecf3f.Date
+
+relationship c47ce2b0-0b70-46c7-b78d-216abdcc18ef
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Billing Agreements'.'Signup Date'
+	toColumn: LocalDateTable_343353ea-87d8-4fb8-b0c4-10e3c8e08d69.Date
+
+relationship 27ac451d-950e-411e-8fb0-bfd079fe5d69
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Billing Agreements'.'Start Date'
+	toColumn: LocalDateTable_b600e171-ce82-410c-9df3-2ab1b9a92ac1.Date
+
+relationship 2657d6e2-7d90-4a21-8c2b-0fdf8cf6e865
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Billing Agreements'.'First Delivery Date'
+	toColumn: LocalDateTable_40cc4e9f-ed34-448f-b205-be34eeeff16b.Date
+
+relationship AutoDetected_bb7a349e-8746-426e-866e-67d5a2719c56
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8
+	fromColumn: 'Order Measures'.fk_dim_order_types
+	toColumn: 'Order Types'.pk_dim_order_types
+
+relationship ed33b84c-da25-7f47-9f42-f14ff1db2507
+	fromColumn: 'Order Measures'.fk_dim_order_status
+	toColumn: 'Order Status'.pk_dim_order_status
+
+relationship d648b7a6-f119-c136-ba54-ac54c3f14b5f
+	fromColumn: 'Menu Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship a1002545-30a8-ce0e-a17d-0837e2a4454c
+	fromColumn: 'Menu Measures'.fk_dim_date
+	toColumn: Calendar.pk_dim_date
+

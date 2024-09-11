@@ -1,0 +1,133 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 15.696371097968445
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 748.51051978077749,
+            "y": 667.2420072021655
+          },
+          "nodeIndex": "Billing Agreements",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 440.19936005378554,
+            "y": 659.51962570813066
+          },
+          "nodeIndex": "Calendar",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1129.2986607733692,
+            "y": 566.17918754288735
+          },
+          "nodeIndex": "Companies",
+          "nodeLineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10,
+            "y": 427.56556341421583
+          },
+          "nodeIndex": "Order Status",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 203.15686195043304,
+            "y": 21.782050205463406
+          },
+          "nodeIndex": "Order Types",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 718.41769049611889,
+            "y": -10
+          },
+          "nodeIndex": "Products",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1246.6204307146502,
+            "y": 0
+          },
+          "nodeIndex": "Recipes",
+          "nodeLineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 393.47221153458469,
+            "y": 302.288655150865
+          },
+          "nodeIndex": "Order Measures",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1534.7630379466568,
+            "y": 334.75981285406533
+          },
+          "nodeIndex": "Menu Measures",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 89.192590520569411,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

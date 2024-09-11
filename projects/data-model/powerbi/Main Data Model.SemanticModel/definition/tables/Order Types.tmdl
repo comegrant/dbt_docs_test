@@ -1,0 +1,76 @@
+table 'Order Types'
+	lineageTag: 6fa76248-580e-4a45-882f-c64c0358e75c
+
+	column pk_dim_order_types
+		dataType: string
+		isHidden
+		lineageTag: fe2fe62f-47e0-46e7-9948-998f0fed36e0
+		summarizeBy: none
+		sourceColumn: pk_dim_order_types
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_type_id
+		dataType: string
+		isHidden
+		lineageTag: f84c93c7-4102-4dbd-837b-c0f42d01badf
+		summarizeBy: none
+		sourceColumn: order_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Order Type Name'
+		dataType: string
+		lineageTag: c23c6a4b-5a82-4b49-84e7-d0b162ee2788
+		summarizeBy: none
+		sourceColumn: Order Type Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Direct Order'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 83b39e9a-fd75-49a3-8f4e-1bb7764cd4d2
+		summarizeBy: none
+		sourceColumn: Is Direct Order
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Allows Anonymous'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c6c22b43-9385-430d-b937-b2fa8041338a
+		summarizeBy: none
+		sourceColumn: Allows Anonymous
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Direct Payment'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8e169daf-e5e7-42ec-97dd-8545c241ef15
+		summarizeBy: none
+		sourceColumn: Is Direct Payment
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Order Types' = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name="gold",Kind="Schema"]}[Data],
+				    dim_order_types_Table = gold_Schema{[Name="dim_order_types",Kind="Table"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(dim_order_types_Table,{{"order_type_name", "Order Type Name"}, {"is_direct_order", "Is Direct Order"}, {"allows_anonymous", "Allows Anonymous"}, {"is_direct_payment", "Is Direct Payment"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
