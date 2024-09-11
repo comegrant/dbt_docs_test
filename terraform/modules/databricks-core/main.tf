@@ -123,6 +123,7 @@ resource "databricks_catalog" "segment" {
     purpose = "Segment Ingest"
   }
   storage_root = databricks_external_location.segment.url
+  isolation_mode = "ISOLATED"
 }
 
 
