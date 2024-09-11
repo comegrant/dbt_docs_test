@@ -1,5 +1,5 @@
 <h1 align="center">
-Sous-chef 🧑‍🍳
+🧑‍🍳 Sous-chef 🧑‍🍳
 </h1>
 
 <p align="center">
