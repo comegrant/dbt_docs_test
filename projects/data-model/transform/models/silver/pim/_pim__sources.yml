@@ -67,6 +67,9 @@ sources:
       
       - name: pim__ingredients
         description: ""
+
+      - name: pim__order_ingredients	
+        description: ""
       
       - name: pim__ingredient_categories
         description: ""
