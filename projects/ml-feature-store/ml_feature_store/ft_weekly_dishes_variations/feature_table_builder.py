@@ -14,7 +14,7 @@ class Args(BaseModel):
     env: Literal["dev", "test", "prod"]
 
 
-def build_features(args: Args, spark: SparkSession) -> None:
+def build_feature_table(args: Args, spark: SparkSession) -> None:
     table_config = ft_weekly_dishes_variations_configs
     df = get_data_from_catalog(
         spark=spark,
