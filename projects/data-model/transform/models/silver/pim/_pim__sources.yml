@@ -76,19 +76,19 @@ sources:
 
           - name: created_by
             data_type: string
-            description: "{{ doc('column__coredb_created_by') }}"
+            description: "{{ doc('column__source_created_by') }}"
 
           - name: created_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_created_at') }}"
+            description: "{{ doc('column__source_created_at') }}"
 
           - name: modified_by
             data_type: string
-            description: "{{ doc('column__coredb_updated_by') }}"
+            description: "{{ doc('column__source_updated_by') }}"
 
           - name: modified_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_updated_at') }}"
+            description: "{{ doc('column__source_updated_at') }}"
 
           - name: is_external
             data_type: boolean
@@ -294,19 +294,19 @@ sources:
 
           - name: created_by
             data_type: string
-            description: "{{ doc('column__coredb_created_by') }}"
+            description: "{{ doc('column__source_created_by') }}"
 
           - name: created_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_created_at') }}"
+            description: "{{ doc('column__source_created_at') }}"
 
           - name: modified_by
             data_type: string
-            description: "{{ doc('column__coredb_updated_by') }}"
+            description: "{{ doc('column__source_updated_by') }}"
 
           - name: modified_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_updated_at') }}"
+            description: "{{ doc('column__source_updated_at') }}"
 
           - name: ingredient_hover_photo
             data_type: string
@@ -473,19 +473,19 @@ sources:
 
           - name: created_by
             data_type: string
-            description: "{{ doc('column__coredb_created_by') }}"
+            description: "{{ doc('column__source_created_by') }}"
 
           - name: created_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_created_at') }}"
+            description: "{{ doc('column__source_created_at') }}"
 
           - name: modified_by
             data_type: string
-            description: "{{ doc('column__coredb_updated_by') }}"
+            description: "{{ doc('column__source_updated_by') }}"
 
           - name: modified_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_updated_at') }}"
+            description: "{{ doc('column__source_updated_at') }}"
 
           - name: ingredient_name_extra_info_flag
             data_type: boolean
@@ -521,16 +521,16 @@ sources:
             description: ""
           - name: created_by
             data_type: string
-            description: "{{ doc('column__coredb_created_by') }}"
+            description: "{{ doc('column__source_created_by') }}"
           - name: created_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_created_at') }}"
+            description: "{{ doc('column__source_created_at') }}"
           - name: modified_by
             data_type: string
-            description: "{{ doc('column__coredb_updated_by') }}"
+            description: "{{ doc('column__source_updated_by') }}"
           - name: modified_date
             data_type: timestamp
-            description: "{{ doc('column__coredb_updated_at') }}"
+            description: "{{ doc('column__source_updated_at') }}"
           - name: country_id
             data_type: char(36)
             description: "{{ doc('column__country_id') }}"

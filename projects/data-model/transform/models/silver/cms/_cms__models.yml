@@ -4,171 +4,738 @@ version: 2
 
 models:
   - name: cms__companies
-    description: "The companies and brands of Cheffelo."
-
+    description: "The companies of Cheffelo."
     columns:
       - name: company_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country_id
+        data_type: varchar(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
 
       - name: company_name
         data_type: string
         description: "{{ doc('column__company_name') }}"
-
-      - name: country_id
-        data_type: string
-        description: "{{ doc('column__country_id') }}"
-
+        data_tests:
+          - unique
+          - not_null
+  
   - name: cms__countries
     description: "Information relevant for each country Cheffelo operates in."
-
     columns:
       - name: country_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
 
       - name: country_name
         data_type: string
         description: "{{ doc('column__country_name') }}"
+        data_tests:
+          - not_null
+
+      - name: country_currency
+        data_type: string
+        description: "{{ doc('column__country_currency') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
 
   - name: cms__billing_agreement_orders
     description: "All placed orders. Gets populated at order gen and updated if the order changes."
-
     columns:
       - name: cms_order_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__cms_order_id') }}"
+        data_tests:
+          - unique
+          - not_null
 
       - name: ops_order_id
         data_type: bigint
         description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - unique
 
       - name: order_type_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__order_type_id') }}"
+        data_tests:
+          - not_null
 
       - name: order_status_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__order_status_id') }}"
+        data_tests:
+          - not_null
 
-      - name: agreement_id
+      - name: billing_agreement_id
         data_type: int
-        description: "{{ doc('column__agreement_id') }}"
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
 
       - name: delivery_year
         data_type: int
         description: "{{ doc('column__delivery_year') }}"
+        data_tests:
+          - not_null
 
       - name: delivery_week
         data_type: int
         description: "{{ doc('column__delivery_week') }}"
+        data_tests:
+          - not_null
 
       - name: has_recipe_leaflets
         data_type: boolean
-        description: "{{ doc('column__order_has_recipe_leaflets') }}"
+        description: "{{ doc('column__has_recipe_leaflets') }}"
+        data_tests:
+          - not_null
 
       - name: delivery_week_monday_date
         data_type: date
         description: "{{ doc('column__delivery_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: order_created_at
+        data_type: timestamp
+        description: "{{ doc('column__order_created_at') }}"
+        data_tests:
+          - not_null
 
   - name: cms__billing_agreement_order_lines
     description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."
-
     columns:
       - name: order_line_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__order_line_id') }}"
+        data_tests:
+          - unique
+          - not_null
 
       - name: cms_order_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__cms_order_id') }}"
+        data_tests:
+          - not_null
 
       - name: product_variation_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
 
       - name: order_line_type_name
         data_type: string
         description: "{{ doc('column__order_line_type_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'CREDIT', 
+                  'PRP', 
+                  'P4P', 
+                  'DISCOUNT', 
+                  'DISCOUNT_GIFT', 
+                  'INVOICE', 
+                  'DEBIT', 
+                  'TRANSPORT', 
+                  'LOYALTY_CREDIT', 
+                  'DEBIT_GIFT'
+              ]
+              config:
+                severity: warn
 
       - name: variation_qty
         data_type: int
         description: "{{ doc('column__variation_qty') }}"
+        data_tests:
+          - not_null
 
       - name: vat
         data_type: decimal(10,8)
-        description: "{{ doc('column__order_line_vat') }}"
+        description: "{{ doc('column__vat') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
       - name: unit_price_ex_vat
         data_type: decimal(20,6)
-        description: "{{ doc('column__order_line_unit_price_ex_vat') }}"
+        description: "{{ doc('column__unit_price_ex_vat') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
       - name: unit_price_inc_vat
         data_type: decimal(32,14)
-        description: "{{ doc('column__order_line_unit_price_inc_vat') }}"
+        description: "{{ doc('column__unit_price_inc_vat') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: total_amount_ex_vat
         data_type: decimal(31,6)
-        description: "{{ doc('column__order_line_total_amount_ex_vat') }}"
-
+        description: "{{ doc('column__total_amount_ex_vat') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
       - name: total_amount_inc_vat
         data_type: decimal(38,9)
-        description: "{{ doc('column__order_line_total_amount_inc_vat') }}"
+        description: "{{ doc('column__total_amount_inc_vat') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
-  - name: cms__billing_agreement_order_status
-    description: "Holds information about the status an order can have."
-
+  - name: cms__billing_agreement_order_statuses
+    description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."
     columns:
       - name: order_status_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__order_status_id') }}"
+        data_tests:
+          - unique
+          - not_null
 
       - name: order_status_name
         data_type: string
         description: "{{ doc('column__order_status_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Created',
+                'Processing',
+                'Hold',
+                'Waiting',
+                'Cancelled',
+                'Finished'
+              ]
 
       - name: can_be_cancelled
         data_type: boolean
-        description: "{{ doc('column__order_status_can_be_cancelled') }}"
+        description: "{{ doc('column__can_be_cancelled') }}"
+        data_tests:
+          - not_null
 
   - name: cms__order_types
-    description: "Holds information about the type an order can have"
-
+    description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."
     columns:
       - name: order_type_id
-        data_type: string
+        data_type: varchar(36)
         description: "{{ doc('column__order_type_id') }}"
+        data_tests:
+          - unique
+          - not_null
 
       - name: order_type_name
         data_type: string
         description: "{{ doc('column__order_type_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Order After Registration',
+                'Daily Direct Order',
+                'Service Purchase',
+                'Loyalty',
+                'Sales Order Estimates',
+                'Sales Order Extras',
+                'Recurring',
+                'Campaign',
+                'Gift Card',
+                'Orders After Cutoff'
+              ]
 
       - name: is_direct_order
         data_type: boolean
-        description: "{{ doc('column__order_type_is_direct_order') }}"
+        description: "{{ doc('column__is_direct_order') }}"
+        data_tests:
+          - not_null
 
-      - name: allow_anonymous
+      - name: allows_anonymous
         data_type: boolean
-        description: "{{ doc('column__order_type_allow_anonymous') }}"
+        description: "{{ doc('column__allows_anonymous') }}"
+        data_tests:
+          - not_null
 
       - name: is_direct_payment
         data_type: boolean
-        description: "{{ doc('column__order_type_is_direct_payment') }}"
+        description: "{{ doc('column__is_direct_payment') }}"
+        data_tests:
+          - not_null
 
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+              
   - name: cms__billing_agreements
     description: "Information about an billing agreement. Use SCD2 when updated in the source system."
-  
-  - name: cms__billing_agreement_status
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_status_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: sales_point_id
+        data_type: int
+        description: "{{ doc('column__sales_point_id') }}"
+
+      - name: payment_method
+        data_type: string
+        description: "{{ doc('column__payment_method') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'INVOICE',                         
+                'CC',                              
+                'ADYEN',
+                'COLLECTOR',
+                'FLEX',
+                'MANUAL'
+              ]
+
+      - name: signup_source
+        data_type: string
+        description: "{{ doc('column__signup_source') }}"
+        data_tests:
+          - accepted_values:
+              values: [
+                  'SALES',
+                  'WEB',
+                  'FLEX'
+              ]
+
+      - name: signup_salesperson
+        data_type: string
+        description: "{{ doc('column__signup_salesperson') }}"
+
+      - name: signup_date
+        data_type: date
+        description: "{{ doc('column__signup_date') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_year_day
+        data_type: int
+        description: "{{ doc('column__signup_year_day') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_month_day
+        data_type: int
+        description: "{{ doc('column__signup_month_day') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_week_day
+        data_type: int
+        description: "{{ doc('column__signup_week_day') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_week
+        data_type: int
+        description: "{{ doc('column__signup_week') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_month
+        data_type: int
+        description: "{{ doc('column__signup_month') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_quarter
+        data_type: int
+        description: "{{ doc('column__signup_quarter') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_year
+        data_type: int
+        description: "{{ doc('column__signup_year') }}"
+        data_tests:
+          - not_null
+
+      - name: start_date
+        data_type: date
+        description: "{{ doc('column__start_date') }}"
+        data_tests:
+          - not_null
+
+      - name: start_year_day
+        data_type: int
+        description: "{{ doc('column__start_year_day') }}"
+        data_tests:
+          - not_null
+
+      - name: start_month_day
+        data_type: int
+        description: "{{ doc('column__start_month_day') }}"
+        data_tests:
+          - not_null
+
+      - name: start_week_day
+        data_type: int
+        description: "{{ doc('column__start_week_day') }}"
+        data_tests:
+          - not_null
+
+      - name: start_week
+        data_type: int
+        description: "{{ doc('column__start_week') }}"
+        data_tests:
+          - not_null
+
+      - name: start_month
+        data_type: int
+        description: "{{ doc('column__start_month') }}"
+        data_tests:
+          - not_null
+
+      - name: start_quarter
+        data_type: int
+        description: "{{ doc('column__start_quarter') }}"
+        data_tests:
+          - not_null
+
+      - name: start_year
+        data_type: int
+        description: "{{ doc('column__start_year') }}"
+        data_tests:
+          - not_null
+
+      - name: signup_at
+        data_type: timestamp
+        description: "{{ doc('column__signup_at') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: cms__billing_agreement_statuses
     description: "Information about the status an billing agreement can have"
+    columns:
+      - name: billing_agreement_status_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_status_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_status_name
+        data_type: string
+        description: "{{ doc('column__billing_agreement_status_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+                values: [
+                    'Pending',
+                    'Missing Key',
+                    'Postal Area Geo Restricted',
+                    'Active',
+                    'Deleted',
+                    'Freezed',
+                    'Fraud',
+                    'Locked',
+                    'Leads',
+                    'Bad Player (avida)',
+                    'Postal Area Closed'
+                ]
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
   
   - name: cms__billing_agreement_addon_subscriptions
-    description: "Information about the addon subscription a billing agreement has"
+    description: "Link addon subscriptions to billing agreements. Only have rows for billing agreements that have or have had the addon subscription."
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: addon_subscription_id
+        data_type: varchar(36)
+        description: "{{ doc('column__addon_subscription_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_addon_subscription') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
   
   - name: cms__addon_subscriptions
     description: "Information about all the different addon subscriptions that exists"
+    columns:
+      - name: addon_subscription_id
+        data_type: varchar(36)
+        description: "{{ doc('column__addon_subscription_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: addon_subscription_name
+        data_type: string
+        description: "{{ doc('column__addon_subscription_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
 
   - name: cms__loyalty_agreement_ledger
-    description: "Table tracking changes in accrued loyalty points for each billing agreements"
+    description: "Table tracking accrued loyalty points for each billing agreements when ever an event that changes the obtained points is happening."
+    columns:
+      - name: loyalty_agreement_ledger_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_agreement_ledger_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: loyalty_event_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_event_id') }}"
+        data_tests:
+          - not_null
+
+      - name: loyalty_level_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_level_id') }}"
+        data_tests:
+          - not_null
+
+      - name: accrued_points
+        data_type: int
+        description: "{{ doc('column__accrued_points') }}"
+        data_tests:
+          - not_null
+
+      - name: points_generated_at
+        data_type: timestamp
+        description: "{{ doc('column__points_generated_at') }}"
+        data_tests:
+          - not_null
     
   - name: cms__loyalty_levels
-    description: "Informations about the different loyalty levels a customer can have. Use SCD2 when updated in the source system."
+    description: "..."
+    columns:
+      - name: loyalty_level_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_level_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_level_number
+        data_type: int
+        description: "{{ doc('column__loyalty_level_number') }}"
+        data_tests:
+          - not_null

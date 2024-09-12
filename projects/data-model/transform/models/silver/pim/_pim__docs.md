@@ -1,4 +1,81 @@
-# PIM
+# Weekly Menus
+{% docs column__weekly_menu_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__weekly_menu_status_code_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_week %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_year %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_week_monday_date %}
+
+...
+
+{% enddocs %}
+
+# Menus
+
+{% docs column__menu_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_status_code_id %}
+
+...
+
+{% enddocs %}
+
+# Menu Variations
+
+{% docs column__menu_variation_margin_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__portion_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_number_days %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_price %}
+
+...
+
+{% enddocs %}
+
+{% docs column__menu_cost %}
+
+...
+
+{% enddocs %}
+
+# PIM Old Docs
 
 ## Tables
 

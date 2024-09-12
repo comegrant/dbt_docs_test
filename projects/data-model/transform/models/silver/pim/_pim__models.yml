@@ -12,19 +12,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__menus
     description: ""
@@ -32,19 +32,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__portions
     description: ""
@@ -52,19 +52,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__recipe_portions
     description: ""
@@ -72,19 +72,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__weekly_menus
     description: ""
@@ -101,19 +101,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__recipe_metadata_translations
     description: ""
@@ -130,19 +130,19 @@ models:
     columns:
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: string
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: string
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__taxonomies_translations
     description: "Table mapping taxonomy ids to their names in different languages"
@@ -178,19 +178,19 @@ models:
 
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
       - name: is_external_taxonomy
         data_type: boolean
@@ -310,19 +310,19 @@ models:
 
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
       - name: is_active
         data_type: boolean
@@ -350,19 +350,19 @@ models:
 
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"
@@ -386,16 +386,16 @@ models:
 
       - name: source_created_by
         data_type: string
-        description: "{{ doc('column__coredb_created_by') }}"
+        description: "{{ doc('column__source_created_by') }}"
 
       - name: source_created_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_created_at') }}"
+        description: "{{ doc('column__source_created_at') }}"
 
       - name: source_updated_by
         data_type: string
-        description: "{{ doc('column__coredb_updated_by') }}"
+        description: "{{ doc('column__source_updated_by') }}"
 
       - name: source_updated_at
         data_type: timestamp
-        description: "{{ doc('column__coredb_updated_at') }}"
+        description: "{{ doc('column__source_updated_at') }}"
