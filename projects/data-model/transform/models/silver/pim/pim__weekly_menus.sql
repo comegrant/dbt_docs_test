@@ -20,7 +20,7 @@ renamed as (
         , menu_year
 
         {# dates #}
-        , {{ get_iso_week_start_date('menu_year', 'menu_week') }} as delivery_week_monday_date
+        , {{ get_iso_week_start_date('menu_year', 'menu_week') }} as menu_week_monday_date
 
         {# not sure if these are needed:
         , ordering_date
