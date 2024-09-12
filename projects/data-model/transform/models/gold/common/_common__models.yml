@@ -52,11 +52,11 @@ models:
     versions:
       - v: 1
 
-  - name: dim_calendar
+  - name: dim_date
     description: ""
     latest_version: 1
     config:
-      alias: dim_calendar
+      alias: dim_date
       contract:
         enforced: false
           
