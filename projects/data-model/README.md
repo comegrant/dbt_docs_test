@@ -194,42 +194,9 @@ This section contains information and best practices related to data modelling i
 The silver layer consist of models that are cleansed and standardized. The models are based on tables from the bronze layer in the database. No joins should be done in this layer unless there are very special cases which is explained further under [base models](#7).
 
 ### 1. Add model to `_<sourcesystem>_source.yml`
-When adding new tables to the silver layer you first have to add the table to the `_<sourcesystem>_source.yml` file. To easily generate the code for this you can use the script below. Fill in the name of the tables in bronze that you want to add. This will output the code in the terminal for you to copypaste inton `_<sourcesystem>_source.yml`. Make sure to only copy the part below `tables` in the output.
+When adding new tables to the silver layer you first have to add the table name in bronze to the `_<sourcesystem>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
-```shell
-dbt --quiet run-operation generate_source --args '{
-  "schema_name": "bronze",
-  "table_names": [
-    "table_name_1",
-    "table_name_2"
-    ],
-  "generate_columns": "true",
-  "include_descriptions": "true",
-  "name": cms
-  }'
-```
-
-### 2. Add documentation
-Add documentation to the _[sourcesystem]__sources.yml and _[sourcesystem]_modeles.yml. For columns we reuse documentation across the layers so please check if the column is already documented before adding it.
-
-`Tables`: Table description should be added directly to the .yml-files. Not needed in _[sourcesystem]__sources.yml.
-`Columns`: Column descriptions should be added through the _[sourcesystem]__docs.md under the right grouping (id, string, numeric, booleans, time, source system fields) by using the [jinja doc function](https://docs.getdbt.com/reference/dbt-jinja-functions/doc) and refer to it in the .yml files.
-
-The name of the doc block for columns should be on the following format: column__[column_name_in_silver], e.g. column__billing_agreement_id or column__product_variation_name.
-
-When documenting column ensure to add the following if relevant:
-* When the table gets populated if its at a specific time (e.g. order gen)
-* Information about when the table if and how the table rows gets updated
-* sfdsf
-* sffdds
-* sffdsfs
-
-To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
-
-Notes:
-* source description
-
-### 3. Create model
+### 2. Create model
 
 #### 1. Find the correct folder
 Each source has its own subdirectory in the silver folder where the models are placed. In addtion there is a base folder which is used for models that are joined or unioned with another main model. This should only be done if absolutly needed. For instance if having tables containing historic data.
@@ -345,46 +312,62 @@ E.g, `cms__billing_agreement_order_lines` not `cms__billing_agreement_order_line
 In some situations one need to do joins or unioning too make a source table complete. This could be if there is a separate delete tables that holds information about which customers that are deleted (joining) or if there are history table holding historical records (unioning). In these cases the source tables should be placed in the the base folder and then create a final table by joining/unioning which is stored with the other final models.
 
 ### 3. Add model to models.yml
-After creating the model you need to add it to the _<sourcesystem>__models.yml. The simplest way of doing this is to use the template below and copy all the columns from the `<sourcesystem>_source.yml`. Remember that you need to change the column names of columns that have been renamed and remove the columns that have not been added to silver. You also have to insert the table name under alias as well. This is to make it possible to work on different verisons of a table.
+After creating the model you need to add it to the `_<sourcesystem>__models.yml`. Follow the format below and generate the code for the columns by using the [generate_model_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro.
 
 ```yml
 
- - name: product_layer__product_types
+ - name: model_name
     description: ""
-    latest_version: 1
-    config:
-      alias: product_layer__product_types
 
     columns:
     
-    # INSERT CODE FROM <sourcesystem>_source.yml
-    # RENAME COLUMNS THAT HAVE BEEN RENAMED
-    # REMOVE COLUMNS THAT HAVE BEEN REMOVED
-    # ADD COLUMNS THAT HAVE BEEN ADDED
-    # CHANGE DATA TYPES THAT HAVE BEEN CHANGED
-
-    versions:
-      - v: 1
+    # Insert generated fields
 
 ```
 
-### 5. Add tests
-Coming...
+#### Add tests
+Test are automatically added if you use. However these are just made based on assumptions and must be updated for each column to be the correct type of test. Furthermore one need to create custom test as well if reasonable. 
+
+
+### 4. Add documentation
+Add documentation to the created models and used source. For columns we reuse documentation across the layers so check if the column is already documented before adding it.
+
+#### Source
+Source description should be added directly under description in _[sourcesystem]__source.yml.
+
+#### Tables 
+Table description should be added directly under description _[sourcesystem]__models.yml.
+
+#### Columns
+Column descriptions should be added to the _[sourcesystem]__docs.md and refered to in the _[sourcesystem]_models.yml files. You should add a heading with the table name and then add the doc blocks.
+
+The name of the doc block for columns should be on the following format: column__[column_name]. E.g. `column__billing_agreement_id` or `column__product_variation_name`.
+
+Use the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro to get generate doc blocks for all the columns of a model.
+
+This script output doc blocks for all columns in the model, however you should only include descriptions of columns that originates from that table, meaning that for instance ids that originates from another table should be described under that table heading. Field that are common across several source systems and does not have a clear source origin should be added to _common_docs.md. In other words you might need to more or remove some of the created doc blocks.
+
+When documenting columns ensure to add the following if relevant:
+* When the table gets populated if its at a specific time (e.g. order gen)
+* Information about when and how the table rows gets updated
+
+#### Viewing documentation
+To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
 
 ### 6. Deploy
 Deploy the model added by running `dbt build -s model_filename` in the terminal.
 
 ## Modelling in the Gold layer
-The gold layer consist of models that are optimized for reporting. Before create the model in Gold you need to deploy the relevant models in Silver if you have not done this yet.
+The gold layer consist of models that are optimized for reporting. Before create the model in Gold you should deploy the relevant models in Silver if you have not done this yet.
 
-### 1. Intermediate transformation steps
-Transformation logic should be as modular as possible. Hence, we have the intermediate folder which is meant for putting parts of the transformation logic.
+### 1. Create intermediate models if necessary
+To make transformation logic as modular as possible we make use of intermediate models. If you need to do major transformations to a table before joining it with other tables in the gold layer it should have an intermediate model. The intermediate models are created in the intermediate folder. They will be populated as CTEs in test and prod, but as tables in dev to make it easier to debug.
 
 #### 1. Find correct folders
-Subdirectories are based on business groupings.
+Both the intermediate and gold and subdirectories are based on business groupings.
 
 #### 2. Create model file
-The model file name should describe the transformation output: `int_[source_model]_[verb]s.sql`. E.g, `int_billing_agreement_addon_subscriptions_pivoted`, or `int_billing_agreements_extract_first_order`)
+For the intermediate models the file name should describe the transformation output: `int_[source_model]_[verb]s.sql`. E.g, `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
 
 #### 3. Organize code in CTEs
 Each step of the transformation should be organized in CTEs with names that are describing the transformation being done. This makes it easier to debug the code and make changes to seperate parts of the code. See example below.
