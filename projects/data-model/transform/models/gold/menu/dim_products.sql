@@ -25,9 +25,9 @@ products as (
 
 ),
 
-product_status as (
+product_statuses as (
 
-    select * from {{ ref('product_layer__product_status') }}
+    select * from {{ ref('product_layer__product_statuses') }}
 
 ),
 
@@ -75,13 +75,13 @@ product_tables_joined as (
         , product_concepts.product_concept_id
         , product_types.product_type_id
         , products.product_id
-        , product_status.product_status_id
+        , product_statuses.product_status_id
         , product_variations_companies.product_variation_id
         , product_variations_companies.company_id
         , product_concepts.product_concept_name
         , product_types.product_type_name
         , products.product_name
-        , product_status.product_status_name
+        , product_statuses.product_status_name
         , product_variations_companies.product_variation_name
         , product_variations.sku
         , coalesce(meals_and_portions.number_of_meals, meals_and_portions_default.number_of_meals) as number_of_meals
@@ -92,8 +92,8 @@ product_tables_joined as (
     on product_variations_companies.product_variation_id = product_variations.product_variation_id
     left join products
     on product_variations.product_id = products.product_id
-    left join product_status
-    on products.product_status_id = product_status.product_status_id
+    left join product_statuses
+    on products.product_status_id = product_statuses.product_status_id
     left join product_types
     on products.product_type_id = product_types.product_type_id
     left join product_types_concepts
