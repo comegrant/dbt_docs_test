@@ -145,7 +145,7 @@ Coming...
 Changes to ingestion can be done from the Databricks UI. Each source system has a notebook for ingest under the ingest folder. 
 1. Go into sous chef from Databricks
 2. Pull changes and create a new branch
-3. Open the relevant ingest notebook (bronze_<source>_full)
+3. Open the relevant ingest notebook (`bronze_[source]_full`)
 4. Add the tables you want to include in the tables list 
 5. Commit and push changes from Databricks and create a PR and assign Marie or Anna to review
 
