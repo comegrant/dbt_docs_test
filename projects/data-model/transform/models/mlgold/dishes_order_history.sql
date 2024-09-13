@@ -12,12 +12,12 @@ with fact_orders as (
     from {{ ref('fact_orders') }}
 ),
 
-dim_order_status as (
+dim_order_statuses as (
     select
         pk_dim_order_status,
         order_status_id
     from
-        {{ ref('dim_order_status') }}
+        {{ ref('dim_order_statuses') }}
 ),
 
 dim_companies as (
@@ -52,13 +52,13 @@ finished_standalone_dishes_orders as (
         dim_products
         on dim_products.pk_dim_products = fact_orders.fk_dim_products
     left join
-        dim_order_status
-        on dim_order_status.pk_dim_order_status = fact_orders.fk_dim_order_status
+        dim_order_statuses
+        on dim_order_statuses.pk_dim_order_status = fact_orders.fk_dim_order_status
     left join
         dim_companies
         on dim_companies.pk_dim_companies = fact_orders.fk_dim_companies
     where dim_products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- Velg&vrak, or standalone dishes
-        and dim_order_status.order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- Finished
+        and dim_order_statuses.order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- Finished
 ),
 
 per_variation_aggregated as (
