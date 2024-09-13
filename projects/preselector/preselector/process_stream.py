@@ -13,15 +13,17 @@ from aligned.feature_source import (
 )
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
+from data_contracts.in_mem_source import InMemorySource
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
 from preselector.data.models.customer import (
     PreselectorFailedResponse,
+    PreselectorSuccessfulResponse,
 )
 from preselector.main import run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
-from preselector.schemas.batch_request import GenerateMealkitRequest
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.stream import (
     ReadableStream,
     ServiceBusStream,
@@ -105,10 +107,13 @@ async def load_cache_for(
     loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]]
 ) -> ContractStore:
     from aligned.request.retrival_request import RequestResult
-    from data_contracts.in_mem_source import InMemorySource
 
     for location, source, pl_filter in loads:
-        if isinstance(source, InMemorySource) and not source.data.is_empty():
+        if (
+            isinstance(source, InMemorySource) and not source.data.is_empty()
+        ) or (
+            not isinstance(source, InMemorySource)
+        ):
             try:
                 # Checking if the data exists locally already
                 _ = await source.all(
@@ -172,7 +177,7 @@ async def load_cache(
         (
             FeatureLocation.feature_view("normalized_recipe_features"),
             cache_dir.partitioned_parquet_at(
-                "normalized_recipe_features",
+                f"{company_id}/normalized_recipe_features",
                 partition_keys=["year", "week"],
             ),
             (pl.col("year") >= today.year) & (pl.col("company_id") == company_id),
@@ -200,7 +205,6 @@ async def load_cache(
         in cache_sources
         if loc not in exclude_views
     ]
-
 
     store = await load_cache_for(store, load_for)
     store = store.update_source_for(FeatureLocation.model("rec_engine"), partition_recs)
@@ -314,7 +318,7 @@ def convert_concepts_to_attributes(
         ]
     }
 
-    all_taste_preference = set(request.taste_preference_ids)
+    all_taste_preference = set(request.taste_preferences)
     all_attribute_ids = set()
     potential_attribute_ids = set()
 
@@ -322,9 +326,14 @@ def convert_concepts_to_attributes(
         potential_attribute_ids.update(ids)
 
     for concept_id in request.concept_preference_ids:
-        all_taste_preference.update(
-            taste_preferences.get(concept_id, set())
-        )
+        all_taste_preference.update([
+            NegativePreference(
+                preference_id=pref,
+                is_allergy=True
+            )
+            for pref in taste_preferences.get(concept_id, set())
+
+        ])
         all_attribute_ids.update(
             mappings.get(concept_id, set())
         )
@@ -337,7 +346,7 @@ def convert_concepts_to_attributes(
 
     assert all_attribute_ids, f"Found no attribute ids for {request.concept_preference_ids}"
 
-    request.taste_preference_ids = list(all_taste_preference)
+    request.taste_preferences = list(all_taste_preference)
     request.concept_preference_ids = list(all_attribute_ids)
     return request
 
@@ -353,7 +362,7 @@ async def process_stream_batch(
     messages = await stream.read()
     number_of_messages = len(messages)
 
-    successful_responses = []
+    successful_responses: list[PreselectorSuccessfulResponse] = []
     completed_requests: list[StreamMessage] = []
     failed_requests: list[PreselectorFailedResponse] = []
 

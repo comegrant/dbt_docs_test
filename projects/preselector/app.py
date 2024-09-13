@@ -51,7 +51,7 @@ async def load_recipe_information(
             infos.append(value)
 
     if not missing_ids:
-        job = RecipeInformation.process_input(infos)
+        job = RecipeInformation.process_input(infos) # type: ignore
         return await job.to_pandas()
 
     recipe_sql = f"""
@@ -92,7 +92,7 @@ WHERE recipes.nr = 1"""
         cache[value["recipe_id"]] = value
 
     set_cache(key, cache)
-    job = RecipeInformation.process_input(infos)
+    job = RecipeInformation.process_input(infos) # type: ignore
     return await job.to_pandas()
 
 

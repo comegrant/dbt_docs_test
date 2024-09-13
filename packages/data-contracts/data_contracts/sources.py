@@ -1,3 +1,5 @@
+from os import getenv
+
 from aligned import PostgreSQLConfig
 from aligned.sources.azure_blob_storage import AzureBlobConfig
 
@@ -13,7 +15,9 @@ azure_dl_creds = AzureBlobConfig(
 )
 
 # Azure DL Container
-data_science_data_lake = azure_dl_creds.directory("data-science")
+data_science_data_lake = azure_dl_creds.directory("data-science").directory(
+    getenv("DATALAKE_ENV", "dev").lower() # I hate this solution, but it will have to do for now
+)
 
 # Data Lake Directories
 materialized_data = data_science_data_lake.directory("materialized_data")

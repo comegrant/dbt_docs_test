@@ -17,10 +17,10 @@ from data_contracts.preselector.store import Preselector as PreselectorOutput
 from data_contracts.recommendations.store import recommendation_feature_contracts
 from data_contracts.sources import adb
 from preselector.data.models.customer import PreselectorYearWeekResponse
-from preselector.main import GenerateMealkitRequest, run_preselector_for_request
+from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
 from preselector.recipe_contracts import Preselector
-from preselector.schemas.batch_request import YearWeek
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from streamlit.delta_generator import DeltaGenerator
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
@@ -176,8 +176,12 @@ async def main() -> None:
                 concept_preference_ids=[
                     attr.id for attr in atters
                 ],
-                taste_preference_ids=[
-                    pref.preference_id for pref in prefs
+                taste_preferences=[
+                    NegativePreference(
+                        preference_id=pref.preference_id,
+                        is_allergy=True
+                    )
+                    for pref in prefs
                 ],
                 number_of_recipes=int(number_of_recipes),
                 portion_size=int(portion_size),

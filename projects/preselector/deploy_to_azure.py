@@ -25,6 +25,7 @@ class DeploySettings(BaseSettings):
 
     user_assigned_identity_resource_id: str
     subscription_id: str
+    datalake_env: str
 
 
 
@@ -33,17 +34,17 @@ def deploy_preselector(
     name: str,
     company: str,
     service_bus_namespace: str,
+    env: str,
     image: str,
     resource_group: str
 ) -> None:
-
     from dotenv import load_dotenv
-
     load_dotenv(".env")
 
     deploy_settings = DeploySettings(
         docker_registry_server="bhregistry.azurecr.io",
-        docker_registry_username="bhregistry"
+        docker_registry_username="bhregistry",
+        datalake_env=env
     ) # type: ignore[reportGeneralTypeIssues]
 
     client = ContainerInstanceManagementClient(
@@ -152,11 +153,12 @@ def deploy_all(tag: str, env: str) -> None:
         deploy_preselector(
             name=name,
             company=company,
-            service_bus_namespace="gg-deviation-service-bicep-qa.servicebus.windows.net",
+            service_bus_namespace="gg-deviation-service-qa.servicebus.windows.net",
+            env=env,
             image=f"bhregistry.azurecr.io/preselector:{tag}",
-            resource_group="rg-chefdp-prod",
+            resource_group=f"rg-chefdp-{env}",
         )
 
 
 if __name__ == "__main__":
-    deploy_all(tag="0d27c15ab550c74a8ad8f315af594f367213de4e", env="prod")
+    deploy_all(tag="dev-latest", env="test")

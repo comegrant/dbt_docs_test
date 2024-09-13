@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import IntEnum
 
 from pydantic import BaseModel, Field
 
@@ -53,17 +54,25 @@ class PreselectorCustomer(BaseModel):
     subscribed_product_variation_id: str | None = Field(default=None)
 
 
+class PreselectorPreferenceCompliancy(IntEnum):
+    non_preference_complient = 1
+    allergies_only_complient = 2
+    all_complient = 3
+
+
 class PreselectorYearWeekResponse(BaseModel):
     year: int
     week: int
     portion_size: int
     variation_ids: list[str]
     main_recipe_ids: list[int]
+    compliancy: PreselectorPreferenceCompliancy
 
 
 class PreselectorSuccessfulResponse(BaseModel):
     agreement_id: int
 
+    correlation_id: str
     year_weeks: list[PreselectorYearWeekResponse]
 
     override_deviation: bool

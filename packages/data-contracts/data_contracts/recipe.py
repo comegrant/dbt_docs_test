@@ -63,7 +63,7 @@ recipe_features_sql = """WITH taxonomies AS (
     FROM pim.TAXONOMIES_TRANSLATIONS tt
     INNER JOIN pim.RECIPES_TAXONOMIES rt on rt.TAXONOMIES_ID = tt.TAXONOMIES_ID
     INNER JOIN pim.taxonomies t ON t.taxonomies_id = tt.TAXONOMIES_ID
-    WHERE t.taxonomy_type IN ('1', '11', '12')
+    WHERE t.taxonomy_type IN ('1', '11', '12', '19')
     GROUP BY rt.RECIPE_ID
 )
 
@@ -386,19 +386,42 @@ class RecipeFeatures:
     cooking_time_from = Int32()
     cooking_time_to = Int32()
 
-    is_low_cooking_time = cooking_time_from <= 15  # noqa: PLR2004
-    is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25)  # noqa: PLR2004
-    is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
+    is_low_cooking_time = cooking_time_from <= 15 # noqa: PLR2004
+    is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25) # noqa: PLR2004
+    is_high_cooking_time = cooking_time_from >= 30 # noqa: PLR2004
 
     taxonomies = List(String())
     taxonomy_ids = List(Int32())
 
     is_addon_kit = taxonomy_ids.contains(2164)
+    is_adams_signature = taxonomy_ids.contains(2146)
+    is_weight_watchers = taxonomy_ids.contains(1878)
 
-    is_family_friendly = (
-        taxonomies.contains("Familiefavoritter")
-        .logical_or(taxonomies.contains("Familjefavoriter"))
-        .logical_or(taxonomies.contains("Familjefavorit"))
+    is_roede = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2015)
+        | pl.col("taxonomy_ids").list.contains(2096),
+        as_dtype=Bool()
+    )
+
+    is_chefs_choice = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2011)
+        | pl.col("taxonomy_ids").list.contains(2147)
+        | pl.col("taxonomy_ids").list.contains(2152),
+        as_dtype=Bool()
+    )
+
+    is_family_friendly = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2148)
+        | pl.col("taxonomy_ids").list.contains(2014)
+        | pl.col("taxonomy_ids").list.contains(2153),
+        as_dtype=Bool()
+    )
+
+    is_low_calorie = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2156)
+        | pl.col("taxonomy_ids").list.contains(2013)
+        | pl.col("taxonomy_ids").list.contains(2151),
+        as_dtype=Bool()
     )
 
     is_kids_friendly = (
@@ -419,10 +442,12 @@ class RecipeFeatures:
     (
         is_vegetarian_ingredient,
         is_vegan,
+        is_fish
     ) = main_ingredient_id.one_hot_encode(
         [  # type: ignore
             main_ingredient_ids["vegetarian"],
             main_ingredient_ids["vegan"],
+            main_ingredient_ids["fish"],
         ]
     )
     is_vegetarian = is_vegetarian_ingredient.logical_or(is_vegan)
@@ -480,12 +505,12 @@ class RecipeNutrition:
 
     loaded_at = EventTimestamp()
 
-    energy_kcal_100g = Float().lower_bound(0).is_optional()
-    carbs_100g = Float().lower_bound(0).is_optional()
-    fat_100g = Float().lower_bound(0).is_optional()
-    fat_saturated_100g = Float().lower_bound(0).is_optional()
-    protein_100g = Float().lower_bound(0).is_optional()
-    fruit_veg_fresh_100g = Float().lower_bound(0).is_optional()
+    energy_kcal_per_portion = Float().lower_bound(0).is_optional()
+    carbs_pct = Float().lower_bound(0).is_optional()
+    fat_pct = Float().lower_bound(0).is_optional()
+    fat_saturated_pct = Float().lower_bound(0).is_optional()
+    protein_pct = Float().lower_bound(0).is_optional()
+    fruit_veg_fresh_p = Float().lower_bound(0).is_optional()
 
 
 @feature_view(
@@ -659,13 +684,19 @@ class NormalizedRecipeFeatures:
 
     is_vegan = Bool()
     is_vegetarian = Bool()
+    is_fish = Bool()
 
-    energy_kcal_100g = Float()
-    carbs_100g = Float()
-    fat_100g = Float()
-    fat_saturated_100g = Float()
-    protein_100g = Float()
-    fruit_veg_fresh_100g = Float()
+    is_weight_watchers = Bool()
+    is_roede = Bool()
+    is_chefs_choice = Bool()
+    is_low_calorie = Bool()
+
+    energy_kcal_per_portion = Float()
+    carbs_pct = Float()
+    fat_pct = Float()
+    fat_saturated_pct = Float()
+    protein_pct = Float()
+    fruit_veg_fresh_p = Float()
 
 recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
     SELECT DISTINCT

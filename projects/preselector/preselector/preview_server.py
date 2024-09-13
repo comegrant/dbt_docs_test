@@ -20,14 +20,14 @@ from pydantic import BaseModel, ValidationError
 from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
 from preselector.process_stream import load_cache_for
 from preselector.recipe_contracts import Preselector
-from preselector.schemas.batch_request import YearWeek
+from preselector.schemas.batch_request import NegativePreference, YearWeek
 
 logger = logging.getLogger(__name__)
 
 
 class GeneratePreview(BaseModel):
 
-    taste_preference_ids: list[str]
+    taste_preferences: list[NegativePreference] | None
     attribute_ids: list[str]
 
     year: int
@@ -42,7 +42,7 @@ class GeneratePreview(BaseModel):
             company_id=self.company_id,
             compute_for=[YearWeek(week=self.week, year=self.year)],
             concept_preference_ids=self.attribute_ids,
-            taste_preference_ids=self.taste_preference_ids,
+            taste_preferences=self.taste_preferences or [],
             portion_size=self.portion_size,
             number_of_recipes=5,
             override_deviation=False,

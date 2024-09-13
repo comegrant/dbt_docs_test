@@ -44,7 +44,6 @@ jobs:
     with:
       working-directory: projects/preselector
       target-env: Development
-
-      # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:dev-latest"'
+      docker-image-name: preselector-databricks
+      docker-image-tag: dev-latest
     secrets: inherit

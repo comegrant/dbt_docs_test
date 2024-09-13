@@ -22,6 +22,7 @@ from preselector.contracts.compare_boxes import compute_normalized_features
 from preselector.data.models.customer import (
     PreselectorFailedResponse,
     PreselectorFailure,
+    PreselectorPreferenceCompliancy,
     PreselectorSuccessfulResponse,
     PreselectorYearWeekResponse,
 )
@@ -391,7 +392,11 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
     if not tags:
         return importance, target
 
-    total_sum = 1 / len(tags)
+    # These total sum 0.5 will lead to
+    # Attributes = 2/3
+    # Variation = 1/3
+    # Since they should be summed to 1
+    total_sum = 0.5 / len(tags)
 
 
     for tag, value in tags.items():
@@ -565,7 +570,8 @@ class PreselectorResult:
             year_weeks=self.success,
             override_deviation=self.request.override_deviation,
             model_version=self.model_version,
-            generated_at=self.generated_at
+            generated_at=self.generated_at,
+            correlation_id=self.request.correlation_id
         )
 
 
@@ -712,6 +718,7 @@ async def run_preselector_for_request(
             portion_size=request.portion_size,
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
+            compliancy=PreselectorPreferenceCompliancy.all_complient
         )
         if not contains_history:
             set_cache(
@@ -877,9 +884,9 @@ async def run_preselector(
 
     if customer.concept_preference_ids != static_mealkits and customer.portion_size != 1:
         recipe_features = all_recipe_features.filter(
-            pl.col("is_premium").is_not() & pl.col("is_cheep").is_not(),
+            pl.col("is_cheep").is_not(),
         ).select(
-            pl.exclude(["is_premium", "is_cheep"]),
+            pl.exclude(["is_cheep"]),
         )
         logger.info(f"Filtered out cheep and premium recipes: {recipe_features.height}")
     else:
@@ -939,6 +946,8 @@ async def run_preselector(
     recipes_to_choose_from = normalized_recipe_features.filter(
         pl.col("recipe_id").is_in(recipe_features["recipe_id"])
     )
+
+    assert not normalized_recipe_features.is_empty()
 
     with duration("Running the preselector"):
         best_recipe_ids, error_metric = await find_best_combination(

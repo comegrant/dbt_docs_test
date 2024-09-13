@@ -41,7 +41,8 @@ jobs:
     with:
       working-directory: projects/preselector
       target-env: ${{matrix.target}}
-
+      docker-image-name: preselector-databricks
+      docker-image-tag: ${{ github.sha }}
       # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:${{ github.sha }}" --var="mode=production"'
+      extra-args: '--var="mode=production"'
     secrets: inherit

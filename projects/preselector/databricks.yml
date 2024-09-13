@@ -7,9 +7,10 @@ include:
   - "jobs/**.yaml"
 
 variables:
+  environment:
+    description: The environment that the code is running in
   docker_image_url:
     description: The url of the source code. in the form as a Docker image.
-    default: bhregistry.azurecr.io/preselector-databricks:dev-latest
   mode:
     description: The mode to deploy in
     default: development

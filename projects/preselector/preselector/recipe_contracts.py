@@ -12,7 +12,6 @@ cache_dir = FileSource.directory("data")
 @model_contract(
     name="preselector",
     input_features=[
-        recipe_cost.is_premium,
         recipe_cost.is_cheep,
     ],
     contacts=[Owner.matsmoll().markdown()],

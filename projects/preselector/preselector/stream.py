@@ -11,7 +11,7 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.message import PrimitiveTypes
 from data_contracts.sql_server import SqlServerConfig
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from preselector.data.models.customer import PreselectorSuccessfulResponse
 
@@ -127,11 +127,16 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
                 len(body) == 1
             ), f"Expected only one message in the body, got {len(body)}"
 
-            messages.append(
-                StreamMessage(
-                    body=self.payload.model_validate_json(body[0]), raw_message=msg
+            try:
+                decoded = self.payload.model_validate_json(body[0])
+                messages.append(
+                    StreamMessage(
+                        body=decoded, raw_message=msg
+                    )
                 )
-            )
+            except ValidationError as error:
+                logger.error(f"Unable to decode {body} - {error}")
+                receiver.abandon_message(msg)
 
         return messages
 
