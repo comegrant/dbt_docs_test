@@ -229,60 +229,6 @@ resource "databricks_sql_endpoint" "db_wh_powerbi" {
   }
 }
 
-resource "databricks_sql_endpoint" "db_wh_tableau" {
-  name                      = "Tableau SQL Warehouse"
-  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
-  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
-  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
-  auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
-  enable_serverless_compute = true
-  tags {
-    custom_tags {
-      key   = "user"
-      value = "Tableau users"
-    }
-    custom_tags {
-      key   = "tool"
-      value = "Tableau"
-    }
-    custom_tags {
-      key   = "env"
-      value = terraform.workspace
-    }
-    custom_tags {
-      key   = "managed_by"
-      value = "terraform"
-    }
-  }
-}
-
-resource "databricks_sql_endpoint" "db_wh_omni" {
-  name                      = "Omni SQL Warehouse"
-  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
-  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
-  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
-  auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
-  enable_serverless_compute = true
-  tags {
-    custom_tags {
-      key   = "user"
-      value = "Omni users"
-    }
-    custom_tags {
-      key   = "tool"
-      value = "Omni"
-    }
-    custom_tags {
-      key   = "env"
-      value = terraform.workspace
-    }
-    custom_tags {
-      key   = "managed_by"
-      value = "terraform"
-    }
-  }
-}
-
 resource "databricks_sql_endpoint" "db_wh_segment" {
   name                      = "Segment SQL Warehouse"
   cluster_size              = "Small"
