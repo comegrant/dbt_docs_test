@@ -16,10 +16,10 @@ sources:
 
       - name: pim__menu_recipes
         description: "{{ doc('table__menu_recipes') }}"
-      
+
       - name: pim__recipes
         description: "{{ doc('table__recipes') }}"
-      
+
       - name: pim__recipe_companies
         description: ""
 
@@ -28,25 +28,30 @@ sources:
 
       - name: pim__portions
         description: "{{ doc('table__portions') }}"
-      
+
+      - name: pim__recipe_steps
+        description: ""
+
+      - name: pim__recipe_step_sections
+        description: ""
       - name: pim__recipes_metadata
         description: ""
-      
+
       - name: pim__recipe_metadata_translations
         description: ""
-      
+
       - name: pim__recipe_difficulty_levels_translations
         description: ""
-      
+
       - name: pim__recipe_main_ingredients
         description: ""
-      
+
       - name: pim__recipe_main_ingredients_translations
         description: ""
 
       - name: pim__taxonomies_translations
         description: ""
-      
+
       - name: pim__taxonomies
         description: ""
 
@@ -58,20 +63,21 @@ sources:
       
       - name: pim__chef_ingredient_sections
         description: ""
-      
+     
       - name: pim__chef_ingredients
         description: ""
 
       - name: pim__ingredient_categories_translations
         description: ""
-      
+
       - name: pim__ingredients
         description: ""
 
       - name: pim__order_ingredients	
         description: ""
-      
+
       - name: pim__ingredient_categories
         description: ""
-      
-      
+
+      - name: pim__ingredient_categories
+        description: ""
