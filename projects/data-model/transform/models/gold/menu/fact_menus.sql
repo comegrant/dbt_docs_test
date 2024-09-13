@@ -82,7 +82,7 @@ weekly_menu_tables_joined as (
 
         {# FKS #}
         , md5(cast(concat(recipes.recipe_id, companies.language_id) as string)) as fk_dim_recipes
-        , cast(date_format(delivery_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(weekly_menus.company_id) as fk_dim_companies
        -- , md5(concat(
        --         menu_variations.product_variation_id,

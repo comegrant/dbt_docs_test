@@ -79,7 +79,6 @@ select
     
     {# ids #}
     , most_recent_billing_agreements.billing_agreement_id
-    , most_recent_billing_agreements.customer_id
     , most_recent_billing_agreements.company_id
     , scd_billing_agreements.sales_point_id
     --, most_recent_billing_agreements.payment_partner_id

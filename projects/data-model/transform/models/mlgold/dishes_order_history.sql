@@ -5,7 +5,7 @@ with fact_orders as (
         extract(week from delivery_week_monday_date) as delivery_week,
         product_variation_id,
         variation_qty,
-        fk_dim_order_status,
+        fk_dim_order_statuses,
         fk_dim_companies,
         fk_dim_billing_agreements,
         fk_dim_products
@@ -14,7 +14,7 @@ with fact_orders as (
 
 dim_order_statuses as (
     select
-        pk_dim_order_status,
+        pk_dim_order_statuses,
         order_status_id
     from
         {{ ref('dim_order_statuses') }}
@@ -53,7 +53,7 @@ finished_standalone_dishes_orders as (
         on dim_products.pk_dim_products = fact_orders.fk_dim_products
     left join
         dim_order_statuses
-        on dim_order_statuses.pk_dim_order_status = fact_orders.fk_dim_order_status
+        on dim_order_statuses.pk_dim_order_statuses = fact_orders.fk_dim_order_statuses
     left join
         dim_companies
         on dim_companies.pk_dim_companies = fact_orders.fk_dim_companies
