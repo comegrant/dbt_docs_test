@@ -25,7 +25,7 @@ When developing in dbt you need to specify which compute to use when deploying y
 To create a SQL Warehouse you need to go to [Compute > SQL warehouse > Create SQL warehouse](https://adb-4291784437205825.5.azuredatabricks.net/compute/sql-warehouses?o=4291784437205825&page=1&page_size=20).
 
 Settings for the SQL warehouses should be the following:
-* `Name`: <Name>'s dbt SQL Warehouse
+* `Name`: First_name's dbt SQL Warehouse
 * `Cluster size`: 2X-Small
 * `Auto stop`: After 10 minutes
 * `Scaling`: Min: 1 Max: 2
@@ -67,7 +67,7 @@ You should copy the template below and fill in the following:
       catalog: dev
       schema: firstname_lastname # Need to be configured by you
       host: xyz.azuredatabricks.net # Need to be configured by you
-      http_path: /SQL/YOUR/HTTP/PATH # Need to be configured configured by you
+      http_path: /SQL/YOUR/HTTP/PATH # Need to be configured by you
       token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you
       threads: 4
 ```
@@ -132,10 +132,7 @@ Run `dbt debug` in the terminal, the output should look something like this if t
 ### 6. Start developing 🥳
 Hurray! Now you can start developing in dbt. 
 
-Please ensure to follow the Git Guidelines (coming) and the guidelines in the [Data Model Deveopment](#data-model-development) section.
-
-## 5. Create pull request
-When you are finished developing on the branch you can merge you changes into main. This is done through creating a pull request. You can do that from the [GitHub UI](https://github.com/cheffelo/sous-chef).
+Please ensure to follow the Git Guidelines (coming) and the guidelines in the [Data Model Development](#data-model-development) section.
 
 # Workflow Development
 
@@ -158,29 +155,26 @@ This section contains information on how to develop in our dbt project. *Models*
 ## Project layers, Subdirectories and Model Names
 
 ### Silver 🥈
-Contains raw tables which have been cleansed and standarized.
-
-📁 Subdirectories: Models are divided into folders using the source name as folder name (e.g. cms, pim, product_layer, ops, segment++)
-📄 Model names: [sourcesystem]__[source_table_name](s).sql
-* All tables that ends with the entity of the table should be end in plural, e.g billing_agreement_order_line contains several order lines, hence the appropriate name is billing_agreement_order_lines
-* If the table is a bridge table it should be plural for both entites that are being linked, otherwise only the last word in the table should be plural.
-* There are some edge cases where the table name should not be plural, this is for instance if the table name is something else than the entity of the table. E.g. tables that end with ledgend shoyld not be plural as it does not contains several legend but is a legend for some type of item.
+⭐️ **Purpose:** Contains raw tables which have been cleansed and standarized.
+📁 **Subdirectories:** Models are divided into folders using the source name as folder name (e.g. cms, pim, product_layer, ops, segment++)
+📃 **Model names:** [sourcesystem]__[source_table_name](s).sql
+- All tables that ends with the entity of the table should be end in plural, e.g billing_agreement_order_line contains several order lines, hence the appropriate name is billing_agreement_order_lines
+- If the table is a bridge table it should be plural for both entites that are being linked, otherwise only the last word in the table should be plural.
+- There are some edge cases where the table name should not be plural, this is for instance if the table name is something else than the entity of the table. E.g. tables that end with ledgend shoyld not be plural as it does not contains several legend but is a legend for some type of item.
 
 ### Intermediate 🏄🏻
-Performs need transformations to silver tables need before entering the gold layer.
-
-📁 Subdirectories: Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
-📄 Model names: `int_[source_model]_[verb]s.sql`
-* The file name should describe the table being transformed and the transformation being done
-* Example: `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
+⭐️ **Purpose:** Performs need transformations to silver tables need before entering the gold layer.
+📁 **Subdirectories:** Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
+📃 **Model names:** `int_[source_model]_[verb]s.sql`
+- The file name should describe the table being transformed and the transformation being done
+- Example: `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
 
 ### Gold 🥇
-Join together models from silver and intermediate to create a data model which follow the principles of dimensional data modelling.
-
-📁 Subdirectories: Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
-📄 Model names: `int_[source_model]_[verb]s.sql`, e.g, `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
-* The model file should start with fact or dim based on the type of table followed by a logic business related name in plain english
-* One should NOT create models with the same concept for several teams. I.e., there should not be a table for `finance_orders` and `marketing_orders`.
+⭐️ **Purpose:** Join together models from silver and intermediate to create a data model which follow the principles of dimensional data modelling.
+📁 **Subdirectories:** Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
+📃 **Model names:** `int_[source_model]_[verb]s.sql`, e.g, `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
+- The model file should start with fact or dim based on the type of table followed by a logic business related name in plain english
+- One should NOT create models with the same concept for several teams. I.e., there should not be a table for `finance_orders` and `marketing_orders`.
 
 ## Best Practice
 
@@ -200,9 +194,10 @@ Join together models from silver and intermediate to create a data model which f
 - Use trailing commas
 - Do not use abbreviation in aliase and CTEs, i.e, use `order_lines` rather than `baol`
 - Joins should always be done using left join and a where clause if filtering is needed instead of an inner join
+- Grouping (and ordering) should be done implisitt by either using `group by 1, 2 ,3 etc` or `group by all`. See this [doc](https://www.getdbt.com/blog/write-better-sql-a-defense-of-group-by-1) for reference on why.
 
 #### Code structure
-Each model should start with a CTE which does select * from the source/model of interest. In silver you would typically call this CTE `source` since you only extract form one table, while in intermediate and gold whereby you join several models you typically give the CTEs names which referes to the model it reads from. After this there should be one CTE for each bigger transformation step which describes the actitivy of the CTE. Lastly one end the script by doing a `select * from` the last created CTE. See the pseudo code below or look into already created models to checkout the structure.
+Each model should start with a CTE which does `select * from` the source/model of interest. In silver you would typically call this CTE `source` since you only extract from one table, while in intermediate and gold whereby you join several models you typically give the CTEs names which referes to the model it reads from. After this there should be one CTE for each bigger transformation step which describes the activity of the CTE. Lastly, the script should end by doing a `select * from` the last created CTE. See the pseudo code below or look into already created models to checkout the structure.
 
 ```
 with 
@@ -231,23 +226,7 @@ select * from main_activity_2
 #### Why dbt recommend using CTEs
 The reason for using CTEs is to make the code more modular which in turn makes it easier to debug and reuse elements across the project.
 
-For more information about why dbt suggest to use CTEs, read [this glossary entry](https://docs.getdbt.com/terms/cte).
-
-## Deployment of models
-After finishing a model in your local development enviroment yoou should deploy it to the Databricks Dev Workspace and check that the result is as expected. If the changes are as expected you can create a pull request.
-
-### Deploy changes from local environment
-To assess that changes made has the expected output you need to deploy your changes to Databricks. To do this you can wrtie the following in your terminal.
-1. Install dbt packages: `dbt deps`
-2. Deploy changes to Databricks Dev Workspace: `dbt build -s +model_filename` 
-
-The deployed changes will end up under your own silver and gold schemas in Databricks which is indentified by having your firstname and lastname as prefix.
-
-> [!TIP]
-> Run `dbt` in the terminal to see all the other available commands. Or read more about the commands [in dbts docs](https://docs.getdbt.com/reference/dbt-commands).
-
-### Create pull request
-If the changes are as expected and you are happy with your work please create a pull request for Anna and/or Marie to review.
+For more information about why dbt suggest to use CTEs, read [this](https://docs.getdbt.com/terms/cte).
 
 ## Modelling in Silver
 
@@ -255,11 +234,9 @@ If the changes are as expected and you are happy with your work please create a 
 When adding new tables to the silver layer you first have to add the table name in bronze to the `_<sourcesystem>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
 ### 2. Create model
-Create the model file in the right folder and start to clean the data.
-
-A few notes to start with:
-* We only want to include columns from the source data which is relevat for the data model. I.e., do not add all columns from the source to the silver model. 
-* Columns should be organized based on their data type
+Create the model file in the right folder and start to clean the data. A few notes to start with:
+* We only want to include columns from the source data which is relevat for the data model. I.e., do not add all columns from the source to the silver model unless its needed.
+* Columns should be organized based on their data type.
 * Look at previous made silver models for reference on how to organize yoour code. 
 
 The most standard transformations steps in the silver layer:
@@ -279,10 +256,8 @@ In some situations one need to do joins or unioning too make a source table comp
 After creating the model you need to add the code below to the `_<sourcesystem>__models.yml`.
 
 ```yml
-
  - name: model_name
     description: ""
-    
 ```
 
 ### 4. Add documentation to silver models
@@ -292,34 +267,34 @@ Add documentation to the created models and used source.
 Source description should be added directly under description in `_[sourcesystem]__source.yml`.
 
 #### Tables 
-Table description should be added directly under description `_[sourcesystem]__models.yml`. 
+Table description should be added directly under description in `_[sourcesystem]__models.yml`. 
 
 #### Columns
 Descriptions of columns should be added to the `_[sourcesystem]__docs.md`.
 1. Add a heading with the table name to `_[sourcesystem]__docs.md`
-2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal (see command below)
+2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal:
+```
+dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'
+```
 3. Copy the output to `_[sourcesystem]__docs.md` under the table name heading
 4. Remove columns that does not originate from the table: The script output doc blocks for all columns in the model, however you should only include descriptions of columns that originates from that table, meaning that for instance ids that originates from another table should be described under that table heading. Fields that are common across several source systems and does not have a clear source origin should be added to `_common_docs.md`.
 5. Write documentation for the fields and ensure to include the following:
-* When the table gets populated if its at a specific time (e.g. order gen)
-* Information about when and how the table rows gets updated
-
-**Command for generating column docs using macro**
-`dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'`
+  * When the table gets populated if its at a specific time (e.g. order gen).
+  * Information about when and how the table rows gets updated.
 
 #### Viewing documentation
 To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
 
 ### 5. Add columns to `_<sourcesystem>__models.yml`
 After creating the documentation of the columns you need to refer to it to `_<sourcesystem>__models.yml` as well. 
-1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal (see command below)
+1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal:
+```
+dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'
+```
 2. Copy output and add it after description in `_<sourcesystem>__models.yml`
 
-**Command for generating column yaml using macro**
-`dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'`
-
 ### 6. Add tests to silver models
-The [generate_model_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro adds some default tests automatically to the columns. However these are just made based on assumptions and must be updated for each column to be the correct type of test. Furthermore one need to create other tests as well if reasonable. Follow the steps below.
+The [generate_model_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro adds some default tests automatically to the columns. However these are just made based on assumptions and must be updated for each column to be the correct type of test. Furthermore one need to create other tests as well if reasonable. Follow the steps below:
 1. Remove automatics generated test that are not relevant
 2. Fill in accepted values for fields where it's relevant
 3. Add more data tests if relevant, read more about [data tests](https://docs.getdbt.com/docs/build/data-tests) in dbt here.
@@ -335,6 +310,8 @@ The gold layer consist of models that are optimized for reporting. Before creati
 
 ### 1. Create intermediate models if necessary
 To make transformation logic as modular as possible we make use of intermediate models. If you need to do major transformations to a table before joining it with other tables in the gold layer it should have an intermediate model. Antoher reason for using intermediate models is if there are several gold models that need to reuse the same logic. The intermediate models should be place in the intermediate folder under the correct business concept. They will be populated as [ephemeral](https://docs.getdbt.com/docs/build/materializations#ephemeral) in test and prod, but as tables in dev to make it easier to debug.
+* Do the transformations needed to get the wanted result
+* Use CTEs for each transformation step to make the code modular just like in silver
 
 ### 2. Create gold models
 The models in the gold layer can be put together by combining models from silver and intermediate. 
@@ -347,7 +324,6 @@ The models in the gold layer can be put together by combining models from silver
 After creating the gold model you need to add the code below to the `_<business_concept>__models.yml`.
 
 ```yml
-
   - name: dim_date
     description: ""
     latest_version: 1
@@ -356,7 +332,6 @@ After creating the gold model you need to add the code below to the `_<business_
           
     versions:
       - v: 1
-    
 ```
 
 ### 5. Add documentation of gold models
@@ -367,28 +342,41 @@ Table description should be added directly under description `_<business_concept
 #### Columns
 All columns coming from the silver layer should already be documented there and the documentation hence do not need tobe added. All new columns that have been created should be added to `_<business_concept>_docs.md` following the steps below:
 1. Add a heading with the table name to `_<business_concept>__docs.md`
-2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal (see command below)
+2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal.
+```dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'```
 3. Copy the output to `_<business_concept>__docs.md` under the table name heading
 4. Remove all columns that are not created the intermediate or gold layer.
-5. Write documentation for the fields and ensure to include the following:
-* ????
-
-**Command for generating column docs using macro**
-`dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'`
+5. Write documentation for the fields
 
 ### 6. Add columns to model.yml
 After creating the documentation of the columns you need to refer to it to `_<business_concept>__models.yml` as well. 
 1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal (see command below)
+```
+dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'
+```
 2. Copy output and add it between `config:` and `v:` in `_<business_concept>__models.yml`
 
-**Command for generating column yaml using macro**
-`dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'`
-
 ### 7. Add tests to gold models
-Follow the same steps as in () to add tests to the gold models.
+Follow the same steps as in (###6.-add-tests-to-silver-models) to add tests to the gold models.
 
 ### 8. Deploy intermediate and gold models
 [Deploy](#deployment-of-models) the model and check if the result is as expected in Databricks under your own intermediate and gold schema.
+
+## Deployment of models
+After finishing a model in your local development enviroment you should deploy it to the Databricks Dev Workspace and check that the result is as expected. If the changes are as expected you can create a pull request.
+
+### 1. Deploy changes from local environment
+To assess that changes made has the expected output you need to deploy your changes to Databricks. To do this you can wrtie the following in your terminal.
+1. Install dbt packages: `dbt deps`
+2. Deploy changes to Databricks Dev Workspace: `dbt build -s +model_filename` 
+
+The deployed changes will end up under your own silver and gold schemas in Databricks which is indentified by having your firstname and lastname as prefix.
+
+> [!TIP]
+> Run `dbt` in the terminal to see all the other available commands. Or read more about the commands [in dbts docs](https://docs.getdbt.com/reference/dbt-commands).
+
+### 2. Create pull request
+If the changes are as expected and you are happy with your work please create a pull request for Anna and/or Marie to review.
 
 ## Debugging
 
@@ -397,8 +385,4 @@ The code you create will be translated to the right syntax for Databricks. The c
 
 You can run `dbt compile` in the terminal to just compile the code with out deploying to Databricks to look at how it will turn out. 
 
-The target folder will keep scripts from models you have deleted. To clean this up you can simply just delete the folder as it will be regenerated next time you run `dbt compile` or `dbt build`, or you can run `dbt clean` which will also delete the folder until next time `compile`or `build` is run. 
-
-
-# DBT packages and macros
-Coming ...
+The target folder will keep scripts from models you have deleted. To clean this up you can simply just delete the folder as it will be regenerated next time you run `dbt compile` or `dbt build`, or you can run `dbt clean` which will also delete the folder until next time `compile`or `build` is run.
