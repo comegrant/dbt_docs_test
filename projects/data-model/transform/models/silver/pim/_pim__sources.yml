@@ -78,6 +78,3 @@ sources:
 
       - name: pim__ingredient_categories
         description: ""
-
-      - name: pim__ingredient_categories
-        description: ""
