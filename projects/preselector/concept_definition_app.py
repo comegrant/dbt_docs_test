@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import time
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -18,7 +17,6 @@ from data_contracts.recommendations.store import recommendation_feature_contract
 from preselector.main import load_menu_for, normalize_cost, run_preselector
 from preselector.recipe_contracts import Preselector
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
-from preselector.stream import PreselectorResultWriter
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
 
@@ -348,7 +346,7 @@ async def view_mealkit(
         company_id=company_id,
         compute_for=[],
         concept_preference_ids=[],
-        taste_preference_ids=[],
+        taste_preferences=[],
         portion_size=portion_size,
         number_of_recipes=number_of_recipes,
         override_deviation=False,
@@ -448,129 +446,114 @@ def plot_importance_graph(data: pl.DataFrame) -> None:
     st.pyplot(fig=fig)
 
 
-async def generate_mealkit_dataset(store: ContractStore) -> None:
-    import json
+async def missing_attributes() -> pl.DataFrame:
+    companies = {
+        "AMK": "8A613C15-35E4-471F-91CC-972F933331D7",
+        "GL": "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
+        "LMK": "6A2D0B60-84D6-4830-9945-58D518D27AC2",
+        "RT": "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
+    }
 
-    from data_contracts.sources import adb
-    from preselector.process_stream import load_cache, process_stream_batch
-    from preselector.stream import (
-        SqlServerStream,
-        StreamlitWriter,
-    )
+    default_values = {
+        # Quick and easy
+        "C28F210B-427E-45FA-9150-D6344CAE669B": {
+            "cooking_time_mean": FeatureImportance(target=0.0, importance=1.0),
+            "cooking_time_std": FeatureImportance(target=0.0, importance=1.0),
+        },
+        # Chef favorite
+        "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {
+            "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=1.0),
+            "mean_number_of_ratings": FeatureImportance(target=0.75, importance=0.3),
+            "mean_ratings": FeatureImportance(target=0.8, importance=0.6),
+        },
+        # Family
+        "B172864F-D58E-4395-B182-26C6A1F1C746": {
+            "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Vegetarion
+        "6A494593-2931-4269-80EE-470D38F04796": {
+            "is_vegetarian_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Low Cal
+        "FD661CAD-7F45-4D02-A36E-12720D5C16CA": {
+            "is_low_calorie": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Roede
+        "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA": {
+            "is_roede_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        "37CE056F-4779-4593-949A-42478734F747": {}
+    }
 
-    with st.form(key="my_form"):
-        company_name = st.selectbox("Company", ["godtlevert", "adams", "linas", "retnemt"], index=None)
+    vector_types = ["importance", "target"]
+    preferences = {
+        "GL": {
+            "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Single mealkit": "37CE056F-4779-4593-949A-42478734F747",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Roede mealkit": "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA",
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+        },
+        "AMK": {
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+        },
+        "LMK": {
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+        },
+        "RT": {
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+        },
+    }
 
-        st.form_submit_button(label="Generate")
+    features = potential_features()
 
-    if not company_name:
-        return
+    data_points: list[dict] = []
 
-    if company_name != "godtlevert":
-        raise ValueError("Only Godtlevert is supported right now.")
+    for company_name, comp_id in companies.items():
+        for vector_type in vector_types:
+            for concept_name, concept_id in preferences[company_name].items():
 
-    company_id = "09ECD4F0-AE58-4539-8E8F-9275B1859A19"
+                default_concept_values = default_values[concept_id]
 
-    year_weeks = [
-        YearWeek(week=34, year=2024),
-        YearWeek(week=35, year=2024),
-        YearWeek(week=36, year=2024),
-    ]
+                row: dict = {
+                    # Select either importance or target
+                    # From the defaults, either set it to 0.0
+                    feature.name: getattr(
+                        default_concept_values.get(feature.name, FeatureImportance(0.0, 0.0)),
+                        vector_type
+                    )
+                    for feature in features
+                }
+                row["concept_id"] = concept_id
+                row["concept_name"] = concept_name
+                row["vector_type"] = vector_type
+                row["company_id"] = comp_id
+                data_points.append(row)
 
-    def init_request(*args, **kwargs) -> GenerateMealkitRequest:  # noqa: ANN002, ANN003
-        return GenerateMealkitRequest(
-            agreement_id=kwargs["agreement_id"],
-            concept_preference_ids=json.loads(kwargs["concept_preference_ids"]),
-            taste_preference_ids=json.loads(kwargs["taste_preference_ids"]) if kwargs["taste_preference_ids"] else [],
-            portion_size=kwargs["portion_size"],
-            number_of_recipes=kwargs["number_of_recipes"],
-            compute_for=year_weeks,
-            company_id=company_id,
-            override_deviation=False,
-            has_data_processing_consent=True
+    df = pl.DataFrame(data_points)
+    try:
+        existing = (
+            await PredefinedVectors.query().select_columns(["company_id", "concept_id", "vector_type"]).to_polars()
         )
-
-    read_stream = SqlServerStream(
-        payload=init_request,
-        config=adb,
-        sql="""declare @concept_preference_type_id uniqueidentifier = '009cf63e-6e84-446c-9ce4-afdbb6bb9687';
-declare @taste_preference_type_id uniqueidentifier = '4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb';
-
-WITH concept_preferences AS (
-    SELECT
-        bap.agreement_id,
-        CONCAT(
-            CONCAT(
-                '["',
-                STRING_AGG(
-                    convert(
-                        nvarchar(36),
-                        bap.preference_id
-                    ),
-                    '", "'
-                )
-            ),
-            '"]'
-        ) as preference_ids
-    FROM cms.billing_agreement_preference bap
-    JOIN cms.preference pref on pref.preference_id = bap.preference_id
-    WHERE pref.preference_type_id = @concept_preference_type_id
-    GROUP BY bap.agreement_id
-),
-
-taste_preferences AS (
-    SELECT
-        bap.agreement_id,
-        CONCAT(
-            CONCAT(
-                '["',
-                STRING_AGG(
-                    convert(
-                        nvarchar(36),
-                        bap.preference_id
-                    ),
-                    '", "'
-                )
-            ),
-            '"]'
-        ) as preference_ids
-    FROM cms.billing_agreement_preference bap
-    JOIN cms.preference pref on pref.preference_id = bap.preference_id
-    WHERE pref.preference_type_id = @taste_preference_type_id
-    GROUP BY bap.agreement_id
-)
-
-SELECT TOP 1000
-    at.agreement_id,
-    at.variation_meals as number_of_recipes,
-    at.variation_portions as portion_size,
-    cp.preference_ids as concept_preference_ids,
-    tp.preference_ids as taste_preference_ids
-FROM personas.agreement_traits at
-INNER JOIN concept_preferences cp on cp.agreement_id = at.agreement_id
-LEFT JOIN taste_preferences tp on tp.agreement_id = at.agreement_id
-WHERE company='Godtlevert'""",
-    )
-
-    with st.spinner("Loading cache"):
-        store = await load_cache(store, company_id=company_id)
-
-    with st.spinner("Processing stream"):
-        start = time.monotonic()
-        container = st.empty()
-        container.write("Completed 0.0%")
-
-        await process_stream_batch(
-            store=store,
-            stream=read_stream,
-            successful_output_stream=PreselectorResultWriter(company_id),
-            failed_output_stream=StreamlitWriter(),
-            progress_callback=lambda current, size: container.write(f"Completed {(current / size) * 100:3.2f}%"),
+        return df.join(existing, how="left", on=["company_id", "concept_id"]).filter(
+            pl.col("vector_type_right").is_null()
         )
-        used_time = time.monotonic() - start
-
-    st.info(f"Ran in {used_time} seconds")
-
+    except: # noqa: E722
+        return df
 
 async def main() -> None:
     from aligned import FeatureLocation
@@ -591,82 +574,31 @@ async def main() -> None:
     async def _generate() -> None:
         await genreate_mealkit(store)
 
-    async def _generate_dataset() -> None:
-        await generate_mealkit_dataset(store)
 
     async def _fill_concepts() -> None:
-        companies = {
-            "AMK": "8A613C15-35E4-471F-91CC-972F933331D7",
-            "GL": "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
-            "LMK": "6A2D0B60-84D6-4830-9945-58D518D27AC2",
-            "RT": "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
-        }
 
-        vector_types = ["importance", "target"]
-        preferences = {
-            "GL": {
-                "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
-                "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
-                "Single mealkit": "37CE056F-4779-4593-949A-42478734F747",
-                "Roede mealkit": "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA",
-                "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
-            },
-            "AMK": {
-                "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
-                "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
-                "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
-                "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
-            },
-            "LMK": {
-                "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
-                "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
-                "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
-                "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
-            },
-            "RT": {
-                "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
-                "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
-                "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
-            },
-        }
-
-        features = potential_features()
-
-        data_points: list[dict] = []
-
-        for company_name, comp_id in companies.items():
-            for vector_type in vector_types:
-                for concept_name, concept_id in preferences[company_name].items():
-                    row: dict = {feature.name: 0.0 for feature in features}
-                    row["concept_id"] = concept_id
-                    row["concept_name"] = concept_name
-                    row["vector_type"] = vector_type
-                    row["company_id"] = comp_id
-                    data_points.append(row)
-
-        df = pl.DataFrame(data_points)
-        existing = (
-            await PredefinedVectors.query().select_columns(["company_id", "concept_id", "vector_type"]).to_polars()
-        )
-        missing = df.join(existing, how="left", on=["company_id", "concept_id"]).filter(
-            pl.col("vector_type_right").is_null()
-        )
+        missing = await missing_attributes()
         st.write(missing.to_pandas())
 
         if st.button("Insert"):
             await PredefinedVectors.query().insert(missing.select(pl.exclude("vector_type_right")))
 
     async def _update_data() -> None:
+        from data_contracts.preselector.store import Preselector
+
+        locations = Preselector.query().view.source.depends_on()
+
+        # Not updated yet
+        ignore = FeatureLocation.feature_view("partitioned_recommendations")
+        if ignore in locations:
+            locations = locations - {ignore}
+
         with st.spinner("Materializing data"):
             await materialize_data(
                 store,
-                [
-                    FeatureLocation.feature_view("importance_vector"),
-                    FeatureLocation.feature_view("target_vector"),
-                    FeatureLocation.feature_view("preselector_year_week_menu"),
-                    FeatureLocation.feature_view("recipe_preferences"),
-                ],
+                list(locations),
                 logger=st.write,
+                should_force_update=False
             )
             st.success("Updated all data")
 
@@ -683,10 +615,9 @@ async def main() -> None:
         [
             ("Edit Concept Definition", _edit),
             ("Generate Mealkit", _generate),
-            ("Generate Dataset", _generate_dataset),
-            # ("Migrate", _migrate_to_new_features),
-            # ("Materialize", _update_data),
-            # ("Fill Concepts", _fill_concepts),
+            ("Migrate", _migrate_to_new_features),
+            ("Materialize", _update_data),
+            ("Fill Concepts", _fill_concepts),
         ]
     )
 

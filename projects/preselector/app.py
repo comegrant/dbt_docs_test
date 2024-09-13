@@ -6,6 +6,7 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
+from preselector.contracts.compare_boxes import RecipeInformation
 from preselector.data.models.customer import PreselectorCustomer
 from streamlit_pages import deeplinks, set_deeplink
 from ui.deeplinks.collect_feedback import ExplainSelectionState, collect_feedback
@@ -32,10 +33,26 @@ async def load_recipe_information(
     week: int,
     db_config: SqlServerConfig,
 ) -> pd.DataFrame:
-    key_value_cache_key = f"load_recipe_information{main_recipe_id}_{year}_{week}"
-    cache_value = read_cache(key_value_cache_key)
-    if cache_value is not None:
-        return cache_value
+
+    key = f"recipe_info_{year}_{week}"
+    cache = read_cache(key) or dict()
+
+    if cache is not None:
+        assert isinstance(cache, dict)
+
+    missing_ids = []
+    infos = []
+
+    for recipe_id in main_recipe_id:
+        value = cache.get(recipe_id)
+        if not value:
+            missing_ids.append(recipe_id)
+        else:
+            infos.append(value)
+
+    if not missing_ids:
+        job = RecipeInformation.process_input(infos) # type: ignore
+        return await job.to_pandas()
 
     recipe_sql = f"""
 WITH taxonomies AS (
@@ -63,13 +80,20 @@ FROM (SELECT rec.recipe_id,
         INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
         INNER JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
       WHERE
-        rec.main_recipe_id IN ({', '.join([str(x) for x in main_recipe_id])})
+        rec.main_recipe_id IN ({', '.join([str(x) for x in missing_ids])})
         AND rec.recipes_year = {year}
         AND rec.recipes_week= {week}) as recipes
 WHERE recipes.nr = 1"""
-    data = await db_config.fetch(recipe_sql).to_pandas()
-    set_cache(key_value_cache_key, data)
-    return data
+
+    data = await db_config.fetch(recipe_sql).to_polars()
+
+    for value in data.to_dicts():
+        infos.append(value)
+        cache[value["recipe_id"]] = value
+
+    set_cache(key, cache)
+    job = RecipeInformation.process_input(infos) # type: ignore
+    return await job.to_pandas()
 
 
 async def load_customer_information(

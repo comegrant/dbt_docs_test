@@ -1,0 +1,99 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: weekly_dishes_variations
+    description: ""
+
+    columns:
+      - name: year
+        data_type: int
+
+      - name: week
+        data_type: int
+        
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+
+      - name: weekly_menu_id
+        data_type: int
+
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+
+      - name: portion_id
+        data_type: int
+
+      - name: recipe_portion_size
+        data_type: int
+
+      - name: menu_recipe_order
+        data_type: int
+
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: menu_number_days
+        data_type: int
+
+      - name: product_type_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: product_variation_name
+        description: "{{ doc('column__product_variation_name') }}"
+        data_type: string    
+    
+  - name: ml_recipes
+    description: "Serve table containing recipe information with concatenated lists of taxonomies and ingredients ids"
+
+    columns:
+      - name: fk_dim_companies
+        data_type: string
+
+      - name: fk_dim_recipes
+        data_type: string
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_name
+        data_type: string
+
+      - name: cooking_time_from
+        data_type: int
+
+      - name: cooking_time_to
+        data_type: int
+
+      - name: recipe_difficulty_level_id
+        data_type: int
+
+      - name: recipe_difficulty_name
+        data_type: string
+
+      - name: recipe_main_ingredient_id
+        data_type: int
+
+      - name: recipe_main_ingredient_name
+        data_type: string
+
+      - name: taxonomy_list
+        data_type: string
+
+      - name: chef_ingredient_id_list
+        data_type: string

@@ -1,5 +1,6 @@
 import asyncio
 from dataclasses import dataclass
+from datetime import date
 from functools import partial
 
 import matplotlib.pyplot as plt
@@ -17,16 +18,27 @@ async def main() -> None:
     st.set_page_config("Cost of Food")
     st.title("Cost of Food")
 
+    today = date.today()
+
     new_recipe_chost = RecipeCost.with_schema(
         name="Test",
         source=RecipeCost.metadata.materialized_source, # type: ignore
         entities=dict(main_recipe_id=Int32(), portion_size=Int32(), menu_year=Int32(), menu_week=Int32()),
     )
-
+    company_map = {
+        "09ECD4F0-AE58-4539-8E8F-9275B1859A19": "godtlevert",
+        "8A613C15-35E4-471F-91CC-972F933331D7": "adams",
+        "6A2D0B60-84D6-4830-9945-58D518D27AC2": "linas",
+        "5E65A955-7B1A-446C-B24F-CFE576BF52D7": "retnemt",
+    }
     with st.form("Select company"):
-        company_id = st.selectbox("Company", options=["09ECD4F0-AE58-4539-8E8F-9275B1859A19"])
-        year = st.number_input("Year", value=2024)
-        week = st.number_input("Week", value=33, min_value=1, max_value=52)
+        company_id = st.selectbox(
+            "Company",
+            options=company_map.keys(),
+            format_func=lambda key: company_map[key]
+        )
+        year = st.number_input("Year", value=today.year)
+        week = st.number_input("Week", value=today.isocalendar().week + 5, min_value=1, max_value=52)
 
         st.form_submit_button("Compute")
 
@@ -39,6 +51,7 @@ async def main() -> None:
             await Preselector.query()
             .all()
             .filter((pl.col("company_id") == company_id) & (pl.col("year") == year) & (pl.col("week") == week))
+            .unique_on(["agreement_id"], sort_key="generated_at")
             .to_polars()
         )
 
@@ -58,25 +71,45 @@ async def main() -> None:
     )
 
     with st.spinner("Loading cost"):
-        cost = await new_recipe_chost.query().features_for(all_recipes).with_subfeatures().to_polars()
+        view_store = new_recipe_chost.query()
+        cost = (
+            await view_store.select({
+                feature.name for feature in
+                view_store.view.full_schema
+                if feature.name != "is_plus_portion"
+            }).features_for(all_recipes).with_subfeatures().to_polars()
+        ).with_columns(number_of_portions=pl.col("portion_size")).cast({
+            "number_of_recipes": pl.UInt8,
+            "number_of_portions": pl.UInt8
+        })
 
     cost_of_food_per_mealkit = (
-        cost.group_by(["agreement_id", "number_of_recipes", "portion_size", "company_id"])
+        cost.group_by(["agreement_id", "number_of_recipes", "number_of_portions", "company_id"])
         .agg(
             delivered_cost_of_food=pl.col("recipe_cost_whole_units").sum(),
         )
-        .with_columns(number_of_portions=pl.col("portion_size"))
     )
 
+    mealkit_targets = (await OneSubMealkits.query().all().to_polars()).cast({
+        "number_of_recipes": pl.UInt8,
+        "number_of_portions": pl.UInt8
+    })
+
+    mealkit_join_keys = ["company_id", "number_of_recipes", "number_of_portions"]
+
     mealkits_with_price = (
-        await OneSubMealkits.query().features_for(cost_of_food_per_mealkit).with_subfeatures().to_polars()
+        cost_of_food_per_mealkit.join(
+            mealkit_targets,
+            left_on=mealkit_join_keys,
+            right_on=mealkit_join_keys,
+        )
     ).with_columns(deliverd_cof_perc=pl.col("delivered_cost_of_food") / pl.col("price"))
 
-    group_by_keys = ["number_of_recipes", "portion_size"]
+    group_by_keys = ["number_of_recipes", "number_of_portions"]
 
     overview = (
         mealkits_with_price.select(
-            cost_of_food_percent=pl.col("delivered_cost_of_food").sum() / pl.col("price").sum(),
+            cost_of_food_percent=pl.col("delivered_cost_of_food").sum() * 100 / pl.col("price").sum(),
             estimated_cost_of_food=pl.col("delivered_cost_of_food").sum().round().cast(pl.Int32),
             target_cost_of_food=pl.col("cost_of_food").sum().round().cast(pl.Int32),
         )
@@ -100,13 +133,8 @@ async def main() -> None:
     percentage.metric("Percentage Differance", f'{overview["perc_diff"]:.2f}%')
     cof_percent.metric("CoF%", f'{overview["cost_of_food_percent"]:.2f}%')
 
-    # pricy_recipes = cost.group_by("price_category_level").agg(
-    #     pl.count()
-    # )
-    # st.write(pricy_recipes.to_pandas())
-
     async def absolute_cost_of_food(n_portions: int) -> None:
-        raw_subset = mealkits_with_price.filter(pl.col("portion_size") == n_portions)
+        raw_subset = mealkits_with_price.filter(pl.col("number_of_portions") == n_portions)
         agg_cost = raw_subset.group_by(group_by_keys).agg(
             selling_price=pl.col("price").sum().round().cast(pl.Int32),
             target_cost_of_food=pl.col("cost_of_food").sum().round().cast(pl.Int32),
@@ -116,7 +144,8 @@ async def main() -> None:
             mean_target_cost_of_food=pl.col("cost_of_food").mean().round().cast(pl.Int32),
             number_of_mealkits=pl.count(),
         )
-        subset = agg_cost.sort("number_of_recipes").select(pl.exclude(["portion_size"]))
+
+        subset = agg_cost.sort("number_of_recipes").select(pl.exclude(["number_of_portions"]))
 
         metrics = [CostOfFoodMetric(**row) for row in subset.to_dicts()]
 
@@ -133,7 +162,7 @@ async def main() -> None:
             st.pyplot(plt.gcf())
             plt.close()
 
-    portion_sizes = mealkits_with_price.select(pl.col("portion_size").unique()).to_series().to_list()
+    portion_sizes = mealkits_with_price.select(pl.col("number_of_portions").unique()).to_series().to_list()
 
     await run_active_tab(
         [
@@ -169,7 +198,7 @@ def portion_metrics(metrics: CostOfFoodMetric, col: DeltaGenerator) -> None:
         delta=metrics.estimated_cost_of_food - metrics.target_cost_of_food,
         delta_color="inverse",
     )
-    col.metric("CoF%", f'{metrics.estimated_cost_of_food / metrics.selling_price:.2f}%')
+    col.metric("CoF%", f'{metrics.estimated_cost_of_food * 100 / metrics.selling_price:.2f}%')
     col.metric("Average CoF", metrics.mean_cost_of_food)
     col.metric("Target CoF per mealkit", metrics.mean_target_cost_of_food)
     # col.metric("Average CoF per recipe", metrics.mean_cost_of_food / metrics.number_of_recipes)

@@ -105,6 +105,28 @@ resource "azurerm_resource_group_template_deployment" "container" {
   ]
 }
 
+resource "azurerm_resource_group_template_deployment" "segment" {
+  // This is a workaround since it is not possible to use the normal approach when deploying containers if firewall is enabled.
+  deployment_mode     = "Incremental"
+  name                = "segment"
+  resource_group_name = azurerm_storage_account.this.resource_group_name
+  parameters_content = jsonencode(
+    {
+      "storageAccountName" = {
+        value = azurerm_storage_account.this.name
+      },
+      "containerName" = {
+        value = "segment"
+      }
+    }
+  )
+  template_content = file("${path.module}/arm-container.json")
+
+  depends_on = [
+    azurerm_storage_account.this
+  ]
+}
+
 resource "azurerm_private_endpoint" "this" {
   name                          = var.private_endpoint_name
   location                      = azurerm_storage_account.this.location

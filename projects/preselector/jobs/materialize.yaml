@@ -30,6 +30,8 @@ resources:
           job_cluster_key: preselector
           notebook_task:
             notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"
 
         - task_key: batch-predict-gl
           job_cluster_key: preselector
@@ -37,6 +39,7 @@ resources:
             notebook_path: batch_predict.py
             base_parameters:
               company_id: "09ECD4F0-AE58-4539-8E8F-9275B1859A19"
+              environment: "${var.environment}"
           depends_on:
             - task_key: materialization
 
@@ -46,6 +49,7 @@ resources:
             notebook_path: batch_predict.py
             base_parameters:
               company_id: "8A613C15-35E4-471F-91CC-972F933331D7"
+              environment: "${var.environment}"
           depends_on:
             - task_key: batch-predict-gl
 
@@ -79,6 +83,8 @@ resources:
           job_cluster_key: preselector
           notebook_task:
             notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"
 
         - task_key: batch-predict-lmk
           job_cluster_key: preselector
@@ -86,6 +92,7 @@ resources:
             notebook_path: batch_predict.py
             base_parameters:
               company_id: "6A2D0B60-84D6-4830-9945-58D518D27AC2"
+              environment: "${var.environment}"
           depends_on:
             - task_key: materialization
 
@@ -95,5 +102,6 @@ resources:
             notebook_path: batch_predict.py
             base_parameters:
               company_id: "5E65A955-7B1A-446C-B24F-CFE576BF52D7"
+              environment: "${var.environment}"
           depends_on:
             - task_key: batch-predict-lmk

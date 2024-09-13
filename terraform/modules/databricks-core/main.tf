@@ -71,9 +71,9 @@ resource "databricks_workspace_conf" "this" {
 }
 
 
-##########################################
-###   Schemas and external locations   ###
-##########################################
+####################################################
+###   Catalogs, Schemas and external locations   ###
+####################################################
 
 resource "databricks_storage_credential" "this" {
   name = var.azure_databricks_access_connector_name
@@ -96,12 +96,34 @@ resource "databricks_external_location" "this" {
   owner           = "location-owners"
 }
 
+resource "databricks_external_location" "segment" {
+  name     = "delta_lake_${terraform.workspace}_segment"
+  url = format("abfss://%s@%s.dfs.core.windows.net/",
+    "segment",
+    var.data_lake_name
+  )
+  credential_name = databricks_storage_credential.this.id
+  comment         = "Managed by Terraform"
+  skip_validation = true
+  owner           = "location-owners"
+}
+
 resource "databricks_schema" "this" {
   for_each     = toset(var.schemas)
   catalog_name = var.databricks_catalog_name
   name         = each.key
   comment      = "Managed by Terraform"
   storage_root = databricks_external_location.this[each.key].url
+}
+
+resource "databricks_catalog" "segment" {
+  name = "segment_${terraform.workspace}"
+  comment = "Managed by Terraform. This catalog is used for ingestion from Segment"
+  properties = {
+    purpose = "Segment Ingest"
+  }
+  storage_root = databricks_external_location.segment.url
+  isolation_mode = "ISOLATED"
 }
 
 
@@ -207,48 +229,21 @@ resource "databricks_sql_endpoint" "db_wh_powerbi" {
   }
 }
 
-resource "databricks_sql_endpoint" "db_wh_tableau" {
-  name                      = "Tableau SQL Warehouse"
-  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
-  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
-  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
+resource "databricks_sql_endpoint" "db_wh_segment" {
+  name                      = "Segment SQL Warehouse"
+  cluster_size              = "Small"
+  min_num_clusters          = 2
+  max_num_clusters          = 6
   auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
   enable_serverless_compute = true
   tags {
     custom_tags {
       key   = "user"
-      value = "Tableau users"
+      value = "Segment ingestion"
     }
     custom_tags {
       key   = "tool"
-      value = "Tableau"
-    }
-    custom_tags {
-      key   = "env"
-      value = terraform.workspace
-    }
-    custom_tags {
-      key   = "managed_by"
-      value = "terraform"
-    }
-  }
-}
-
-resource "databricks_sql_endpoint" "db_wh_omni" {
-  name                      = "Omni SQL Warehouse"
-  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
-  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
-  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
-  auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
-  enable_serverless_compute = true
-  tags {
-    custom_tags {
-      key   = "user"
-      value = "Omni users"
-    }
-    custom_tags {
-      key   = "tool"
-      value = "Omni"
+      value = "Segment"
     }
     custom_tags {
       key   = "env"
@@ -262,7 +257,7 @@ resource "databricks_sql_endpoint" "db_wh_omni" {
 }
 
 ##########################################
-###   Service Principal for bundles    ###
+### Preperation for Service Principals ###
 ##########################################
 
 data "databricks_service_principal" "resource-sp" {
@@ -273,6 +268,35 @@ data "databricks_group" "admins" {
   display_name = "admins"
 }
 
+provider "databricks" {
+  alias      = "accounts"
+  host       = "https://accounts.azuredatabricks.net"
+  account_id = var.databricks_account_id
+}
+
+#####################################
+### Service Principal for Segment ###
+#####################################
+
+resource "databricks_service_principal" "segment_sp" {
+  display_name = "segment_sp_${terraform.workspace}"
+}
+
+resource "databricks_service_principal_secret" "segment_sp" {
+  provider             = databricks.accounts
+  service_principal_id = databricks_service_principal.segment_sp.id
+}
+
+resource "databricks_group_member" "segment_sp_is_ws_admin" {
+  group_id  = data.databricks_group.admins.id
+  member_id = databricks_service_principal.segment_sp.id
+}
+
+
+#####################################
+### Service Principal for Bundles ###
+#####################################
+
 resource "databricks_service_principal" "bundle_sp" {
   display_name = "bundle_sp_${terraform.workspace}"
 }
@@ -280,12 +304,6 @@ resource "databricks_service_principal" "bundle_sp" {
 resource "databricks_group_member" "bundle_sp_is_ws_admin" {
   group_id  = data.databricks_group.admins.id
   member_id = databricks_service_principal.bundle_sp.id
-}
-
-provider "databricks" {
-  alias      = "accounts"
-  host       = "https://accounts.azuredatabricks.net"
-  account_id = var.databricks_account_id
 }
 
 resource "databricks_service_principal_secret" "bundle_sp" {
@@ -369,6 +387,14 @@ resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
   expiration_date = "2050-01-01T00:00:00Z"
 }
 
+resource "azurerm_key_vault_secret" "segment_sp_OAuthSecret" {
+  name            = "databricks-sp-segment-oauthSecret-${terraform.workspace}"
+  value           = databricks_service_principal_secret.segment_sp.secret
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. OAuth secret of the Databricks Service Principal used in the Segment Connection."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
 
 ##########################################
 ###               Grants               ###
@@ -388,6 +414,11 @@ resource "databricks_grants" "catalog" {
   }
 
   grant {
+    principal = databricks_service_principal.segment_sp.application_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
     principal = "data-scientists"
     privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
   }
@@ -395,6 +426,30 @@ resource "databricks_grants" "catalog" {
   grant {
     principal = "data-engineers"
     privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+  }
+
+  grant {
+    principal = "data-analysts"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+  }
+}
+
+resource "databricks_grants" "catalog_segment" {
+  catalog = databricks_catalog.segment.name
+
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = databricks_service_principal.segment_sp.application_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = "data-engineers"
+    privileges = ["ALL_PRIVILEGES"]
   }
 }
 
@@ -419,6 +474,22 @@ resource "databricks_grants" "external_location" {
   grant {
     principal = "data-analysts"
     privileges = ["READ_FILES"]
+  }
+
+}
+
+
+resource "databricks_grants" "external_location_segment" {
+  external_location = databricks_external_location.segment.id
+  grant {
+    principal  = var.azure_client_id
+    privileges = ["ALL_PRIVILEGES"]
+  }
+  # Only add this all privileges if environment is dev
+
+  grant {
+    principal = "data-engineers"
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["READ_FILES"]
   }
 
 }

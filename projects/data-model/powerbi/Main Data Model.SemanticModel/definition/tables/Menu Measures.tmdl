@@ -1,0 +1,133 @@
+table 'Menu Measures'
+	lineageTag: 007c46b4-40eb-4dda-b8d8-38aff56cc4ff
+
+	measure 'Number of Recipes' = DISTINCTCOUNTNOBLANK('Menu Measures'[recipe_id])
+		formatString: 0
+		lineageTag: aa718a65-cb1e-4b91-8c98-f185b10bf852
+
+	measure 'Number of Menus' = DISTINCTCOUNTNOBLANK('Menu Measures'[menu_id])
+		formatString: 0
+		lineageTag: 1f670f36-e0c8-4565-acf8-ba11a315573d
+
+	column pk_fact_menu
+		dataType: string
+		isHidden
+		lineageTag: 4c185d00-b787-4989-b7c4-25d349c19aef
+		summarizeBy: none
+		sourceColumn: pk_fact_menu
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column weekly_menu_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 87bba871-32d9-402a-9600-49f3bcdeb8f4
+		summarizeBy: sum
+		sourceColumn: weekly_menu_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 49f2a2a1-76cf-4d75-a746-76a243bef515
+		summarizeBy: sum
+		sourceColumn: menu_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column recipe_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bd5730d4-82e2-43a2-94df-67d3e0bdda45
+		summarizeBy: sum
+		sourceColumn: recipe_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column portion_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7cfd0814-ebf2-4ab4-b49b-b298e8ecdad4
+		summarizeBy: sum
+		sourceColumn: portion_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column recipe_portion_size
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bd336b8a-e970-4983-9843-81cefd77bdb3
+		summarizeBy: sum
+		sourceColumn: recipe_portion_size
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_recipes
+		dataType: string
+		isHidden
+		lineageTag: 6b67936c-2eb6-4a73-8cae-d1d3d15320df
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3a2fe65b-2943-4dbc-bf84-f0292bd6183a
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		lineageTag: 1b4be08f-b320-4b37-b560-5cb387b73139
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Menu Measures' = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name="gold",Kind="Schema"]}[Data],
+				    fact_menus_Table = gold_Schema{[Name="fact_menus",Kind="Table"]}[Data]
+				in
+				    fact_menus_Table
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,5 +1,5 @@
 <h1 align="center">
-Sous-chef 🧑‍🍳
+🧑‍🍳 Sous-chef 🧑‍🍳
 </h1>
 
 <p align="center">
@@ -56,7 +56,7 @@ For more information about the `chef` cli, view [packages/`chef`/README.md](pack
 
 **Library** name is a human readable name. *E.g: Analytics API*
 
-**Package** name is a name without spaces and upper letters for workflows and folders. *E.g: analytics-api*
+**Project** name is a name without spaces and upper letters for workflows and folders. *E.g: analytics-api*
 
 **Module** name is the python package name which needs underscores. *E.g: analytics_api*
 

@@ -11,6 +11,15 @@ on:
         required: true
         type: string
         description: "Target environment in Github Actions"
+      docker-image-name:
+        required: false
+        default: ""
+        type: string
+        description: "The docker image name to use"
+      docker-image-tag:
+        required: false
+        type: string
+        description: "The docker image tag to use. The default will be {env}-latest"
       should-change-target:
         required: false
         type: boolean
@@ -46,7 +55,7 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
+    
     - name: Setting target
       if: ${{ inputs.should-change-target }}
       run: echo "DATABRICKS_TARGET=${{ vars.ENVIRONMENT_VARIABLE }}" >> $GITHUB_ENV
@@ -72,6 +81,10 @@ jobs:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
         DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
         DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
+          #
+        # Sets some default variables for dab input vars
+        BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{  inputs.docker-image-tag }}
+        BUNDLE_VAR_environment: ${{ env.DATABRICKS_TARGET }} # Can be used to swap runtime variables like catalog etc
 
     - name: Deploy DABs
       run: databricks bundle deploy ${{inputs.extra-args}}
@@ -79,3 +92,7 @@ jobs:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
         DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
         DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
+          #
+        # Sets some default variables for dab input vars
+        BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
+        BUNDLE_VAR_environment: ${{ env.DATABRICKS_TARGET }} # Can be used to swap runtime variables like catalog etc

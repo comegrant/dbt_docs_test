@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "ml-feature-store"
+version = "0.1.0"
+description = "A central depository for feature tables used for ml projects"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "ml_feature_store"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+databricks-feature-engineering = "^0.7.0"
+pyspark = "^3.5.2"
+ipykernel = "^6.29.5"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+ruff = "^0.6.3"
+pytest = "^8.3.2"
+databricks-connect = "^15.4.1"
+databricks-sdk = "^0.32.0"
+mlflow = "^2.16.0"
+constants = {path = "../../packages/constants", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

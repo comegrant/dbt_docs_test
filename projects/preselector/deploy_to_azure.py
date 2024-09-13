@@ -3,12 +3,14 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from azure.mgmt.containerinstance.models import (
     Container,
     ContainerGroup,
+    ContainerGroupIdentity,
     ContainerGroupRestartPolicy,
     EnvironmentVariable,
     ImageRegistryCredential,
     OperatingSystemTypes,
     ResourceRequests,
     ResourceRequirements,
+    UserAssignedIdentities,
 )
 from cheffelo_logging.logging import DataDogConfig
 from preselector.process_stream_settings import ProcessStreamSettings
@@ -21,24 +23,34 @@ class DeploySettings(BaseSettings):
     docker_registry_username: str
     docker_registry_password: SecretStr
 
+    user_assigned_identity_resource_id: str
+    subscription_id: str
+    datalake_env: str
+
+
 
 
 def deploy_preselector(
+    name: str,
     company: str,
     service_bus_namespace: str,
-    image: str
+    env: str,
+    image: str,
+    resource_group: str
 ) -> None:
-
     from dotenv import load_dotenv
-
     load_dotenv(".env")
+
+    deploy_settings = DeploySettings(
+        docker_registry_server="bhregistry.azurecr.io",
+        docker_registry_username="bhregistry",
+        datalake_env=env
+    ) # type: ignore[reportGeneralTypeIssues]
 
     client = ContainerInstanceManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="7c54c7c3-c54c-44bd-969c-440ecef1d917"
+        subscription_id=deploy_settings.subscription_id
     )
-
-    docker_settings = DeploySettings() # type: ignore[reportGeneralTypeIssues]
 
     environment_variables: list[EnvironmentVariable] = []
 
@@ -51,7 +63,7 @@ def deploy_preselector(
         ),
         DataDogConfig( # type: ignore[reportGeneralTypeIssues]
             datadog_service_name="preselector",
-            datadog_tags=f"env:qa,subscription:{company}",
+            datadog_tags=f"subscription:{company}",
         )
     ]
 
@@ -76,8 +88,10 @@ def deploy_preselector(
                 )
 
 
+
+
     worker = Container(
-        name=f"preselector-{company}-worker",
+        name=name,
         image=image,
         environment_variables=environment_variables,
         ports=[],
@@ -96,26 +110,55 @@ def deploy_preselector(
         containers=[worker],
         os_type=OperatingSystemTypes.LINUX,
         restart_policy=ContainerGroupRestartPolicy.ON_FAILURE,
+        identity=ContainerGroupIdentity(
+            type="UserAssigned",
+            user_assigned_identities={
+                deploy_settings.user_assigned_identity_resource_id: UserAssignedIdentities()
+            }
+        ),
         image_registry_credentials=[
             ImageRegistryCredential(
-                server=docker_settings.docker_registry_server,
-                password=docker_settings.docker_registry_password.get_secret_value(),
-                username=docker_settings.docker_registry_username
+                server=deploy_settings.docker_registry_server,
+                password=deploy_settings.docker_registry_password.get_secret_value(),
+                username=deploy_settings.docker_registry_username
             )
         ],
         location="northeurope"
     )
 
     client.container_groups.begin_create_or_update(
-        resource_group_name="gg-analytics-backend-qa",
+        resource_group_name=resource_group,
         container_group_name=worker.name,
         container_group=group
     )
 
+def deploy_all(tag: str, env: str) -> None:
+    company_names = [
+        "godtlevert",
+        "retnemt",
+        "adams",
+        "linas"
+    ]
+
+    for company in company_names:
+
+        print(company) # noqa
+        name = f"preselector-{company}-worker"
+        if company == "godtlevert":
+            name = "preselector-gl-worker"
+
+        name += f"-{env}"
+        print(name) # noqa
+
+        deploy_preselector(
+            name=name,
+            company=company,
+            service_bus_namespace="gg-deviation-service-qa.servicebus.windows.net",
+            env=env,
+            image=f"bhregistry.azurecr.io/preselector:{tag}",
+            resource_group=f"rg-chefdp-{env}",
+        )
+
 
 if __name__ == "__main__":
-    deploy_preselector(
-        company="linas",
-        service_bus_namespace="gg-deviation-service-bicep-qa.servicebus.windows.net",
-        image="bhregistry.azurecr.io/preselector:dev-latest",
-    )
+    deploy_all(tag="dev-latest", env="test")

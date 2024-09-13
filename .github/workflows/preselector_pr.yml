@@ -4,8 +4,8 @@ name: Preselector PR Pipeline
 on:
   pull_request:
     paths:
-      - '.github/workflows/test_in_docker.yml'
-      - '.github/workflows/ci_preselector.yml'
+      - '.github/workflows/template_test_in_docker.yml'
+      - '.github/workflows/preselector_pr.yml'
       - 'projects/preselector/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
@@ -20,7 +20,6 @@ jobs:
     secrets: inherit
 
   build-preselector-image:
-    needs: test-preselector
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/preselector
@@ -31,7 +30,6 @@ jobs:
     secrets: inherit
 
   build-preselector-databricks-image:
-    needs: test-preselector
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/preselector
@@ -42,12 +40,10 @@ jobs:
     secrets: inherit
 
   deploy-to-dev:
-    needs: test_preselector
     uses: ./.github/workflows/cd_dab_template.yml
     with:
       working-directory: projects/preselector
       target-env: Development
-
-      # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/preselector-databricks:dev-latest"'
+      docker-image-name: preselector-databricks
+      docker-image-tag: dev-latest
     secrets: inherit

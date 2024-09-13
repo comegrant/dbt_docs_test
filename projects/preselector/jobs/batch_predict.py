@@ -11,15 +11,25 @@ import logging
 import os
 from datetime import date, timedelta
 
-from data_contracts.preselector.store import (
-    Preselector as PreselectorOutput,
-)
-from data_contracts.recipe import RecipePreferences
-from data_contracts.recommendations.store import recommendation_feature_contracts
+dbutils.widgets.text("number_of_weeks", "8")
+dbutils.widgets.text("from_date_iso_format", "")
+dbutils.widgets.text("should_force_update", "false")
+
+should_force_update = dbutils.widgets.get("should_force_update").lower() == "true"
+environment = dbutils.widgets.get("environment")
+
+assert isinstance(environment, str)
+assert environment
+
+# Need to set this before importing any contracts due to env vars being accessed
+# I know this is is a shit design, but it will do for now
+os.environ["DATALAKE_ENV"] = environment
+
+
 from data_contracts.sources import adb
 from preselector.process_stream import load_cache, process_stream_batch
-from preselector.recipe_contracts import Preselector
-from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
+from preselector.store import preselector_store
 from preselector.stream import LoggerWriter, PreselectorResultWriter, SqlServerStream
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
@@ -39,8 +49,6 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
 company_id = dbutils.widgets.get("company_id")
 assert company_id, "Need a company id to run"
 
-dbutils.widgets.text("number_of_weeks", "8")
-dbutils.widgets.text("from_date_iso_format", "")
 
 number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
 from_date = dbutils.widgets.get("from_date_iso_format")
@@ -58,10 +66,7 @@ logging.getLogger("azure").setLevel(
 
 
 async def run() -> None:
-    store = recommendation_feature_contracts()
-    store.add_model(Preselector)
-    store.add_feature_view(PreselectorOutput)
-    store.add_feature_view(RecipePreferences)
+    store = preselector_store()
 
     year_week_dates = [
         from_date + timedelta(weeks=week_dif) for week_dif in range(number_of_weeks)
@@ -72,17 +77,21 @@ async def run() -> None:
     ]
 
     def init_request(*args, **kwargs) -> GenerateMealkitRequest:  # noqa: ANN002, ANN003
+        taste_ids = json.loads(kwargs["taste_preference_ids"]) if kwargs["taste_preference_ids"] else []
+
         return GenerateMealkitRequest(
             agreement_id=kwargs["agreement_id"],
             concept_preference_ids=json.loads(kwargs["concept_preference_ids"]),
-            taste_preference_ids=json.loads(kwargs["taste_preference_ids"])
-            if kwargs["taste_preference_ids"]
-            else [],
+            taste_preferences=[
+                NegativePreference(preference_id=taste_id, is_allergy=True)
+                for taste_id in taste_ids
+            ],
             portion_size=int(kwargs["portion_size"] or 4),
             number_of_recipes=int(kwargs["number_of_recipes"] or 4),
             compute_for=year_weeks,
             company_id=company_id,
             override_deviation=False,
+            has_data_processing_consent=True
         )
 
     read_stream = SqlServerStream(

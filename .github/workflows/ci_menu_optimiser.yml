@@ -1,0 +1,29 @@
+name: CI menu-optimiser
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_menu_optimiser.yml'
+      - 'projects/menu-optimiser/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-menu-optimiser:
+    uses:
+      ./.github/workflows/test_in_docker.yml
+    with:
+      base-service: base
+      test-service: test
+      working-directory: projects/menu-optimiser
+    secrets: inherit
+
+  build-menu-optimiser-image:
+    needs: test-menu-optimiser
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/menu-optimiser
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: menu-optimiser
+      dockerfile: docker/Dockerfile.databricks
+      tag: dev-latest
+    secrets: inherit

@@ -70,7 +70,7 @@ lint.pylint.max-args = 7
 line-length = 120
 lint.pyupgrade.keep-runtime-typing = true
 target-version = "py39"
-extend-exclude = ["**/notebooks/**"]
+extend-exclude = ["**/*.ipynb"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/jobs/**.py" = [

@@ -1,0 +1,53 @@
+---
+    name: ML Feature Store PR Pipeline
+
+    on:
+      pull_request:
+        paths:
+          - '.github/workflows/test_in_docker.yml'
+          - '.github/workflows/ml_feature_store_pr.yml'
+          - 'projects/ml-feature-store/**'
+      workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+    jobs:
+      test-ml-feature-store:
+        uses:
+          ./.github/workflows/template_test_in_docker.yml
+        with:
+          dockerfile: Dockerfile
+          extra-args: "--build-arg DEP_GROUP=--with=dev"
+          working-directory: projects/ml-feature-store
+        secrets: inherit
+
+      build-ml-feature-store-image:
+        needs: test-ml-feature-store
+        uses: ./.github/workflows/cd_docker_image_template.yml
+        with:
+          working-directory: projects/ml-feature-store
+          registry: ${{ vars.CONTAINER_REGISTRY }}
+          image-name: ml-feature-store
+          dockerfile: Dockerfile
+          tag: dev-latest
+        secrets: inherit
+
+      build-ml-feature-store-databricks-image:
+        needs: test-ml-feature-store
+        uses: ./.github/workflows/cd_docker_image_template.yml
+        with:
+          working-directory: projects/ml-feature-store
+          registry: ${{ vars.CONTAINER_REGISTRY }}
+          image-name: ml-feature-store-databricks
+          dockerfile: docker/Dockerfile.databricks
+          tag: dev-latest
+        secrets: inherit
+
+      deploy-to-dev:
+        needs: test-ml-feature-store
+        uses: ./.github/workflows/cd_dab_template.yml
+        with:
+          working-directory: projects/ml-feature-store
+          target-env: Development
+
+          # Setting the docker image which is needed for python projects
+          extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/ml-feature-store-databricks:dev-latest"'
+        secrets: inherit

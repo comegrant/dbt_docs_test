@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "menu-optimiser"
+version = "0.1.0"
+description = "Algorithm to generate automatically a list of recipes for a given week, year, company satisfying specific business criteria"
+authors = ["Niladri Banerjee,PhD <niladri.banerjee@cheffelo.com>"]
+packages = [{include = "menu_optimiser"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+pandas = "2.2.2"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+numpy = "1.26.4"
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

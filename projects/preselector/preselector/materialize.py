@@ -2,6 +2,7 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 
+import polars as pl
 from aligned import ContractStore, FeatureLocation
 
 file_logger = logging.getLogger(__name__)
@@ -27,11 +28,48 @@ def dependency_level(
     deps[location] = 0
     return deps
 
+async def check_source_health(
+    store: ContractStore,
+    locations: list[FeatureLocation],
+    logger: Callable[[object], None] | None = None,
+) -> list[FeatureLocation]:
+
+    if logger is None:
+        logger = file_logger.info
+
+    issues: list[FeatureLocation] = []
+
+    for location in locations:
+        if location.location_type != "feature_view":
+            continue
+
+        view_store = store.feature_view(location.name)
+        view = view_store.view
+
+        logger(f"Checking {location.name}")
+
+        entity_names = view.entitiy_names
+        try:
+            entity_values = await view_store.select(entity_names).all().to_lazy_polars()
+        except Exception:
+            issues.append(location)
+            continue
+
+        duplicates = entity_values.group_by(entity_names).agg(
+            pl.count().alias("duplicates")
+        ).filter(pl.col("duplicates") > 1).collect()
+
+        if not duplicates.is_empty():
+            issues.append(location)
+
+    return issues
+
+
 
 async def materialize_data(
     store: ContractStore,
     locations: list[FeatureLocation],
-    do_freshness_check: bool = True,
+    should_force_update: bool,
     logger: Callable[[object], None] | None = None,
 ) -> list[tuple[FeatureLocation, int]]:
     if logger is None:
@@ -63,10 +101,11 @@ async def materialize_data(
             logger(f"Skipping: {location.identifier}")
             continue
 
-        if do_freshness_check and view.event_timestamp and view.acceptable_freshness:
+        if not should_force_update and view.event_timestamp and view.acceptable_freshness:
             try:
                 freshness = await store.feature_view(location.name).freshness()
-            except:  # noqa: E722
+            except Exception as e:
+                logger(f"Got error when loading freshness: {e}")
                 freshness = None
             logger(freshness)
 
@@ -83,6 +122,13 @@ async def materialize_data(
                         .between_dates(start_date=freshness, end_date=now)
                     )
                     continue
+        else:
+            logger(
+                "Did not check freshness since one of the following was evaluated to false"
+                f"Force Upadate: {should_force_update}\n"
+                f"Event Timestamp: {view.event_timestamp}\n"
+                f"Freshness: {view.acceptable_freshness}"
+            )
 
         await store.overwrite(
             location, store.feature_view(location.name).using_source(view.source).all()

@@ -33,11 +33,11 @@ recipe_nutrition = NormalizedRecipeFeatures()
 recipe_cost = NormalizedRecipeFeatures()
 recipe_main_ingredient = RecipeMainIngredientCategory()
 
-fat_agg = recipe_nutrition.fat_100g.aggregate()
-protein_agg = recipe_nutrition.protein_100g.aggregate()
-veg_fruit_agg = recipe_nutrition.fruit_veg_fresh_100g.aggregate()
-fat_saturated_agg = recipe_nutrition.fat_saturated_100g.aggregate()
-energy_kcal_agg = recipe_nutrition.energy_kcal_100g.aggregate()
+fat_agg = recipe_nutrition.fat_pct.aggregate()
+protein_agg = recipe_nutrition.protein_pct.aggregate()
+veg_fruit_agg = recipe_nutrition.fruit_veg_fresh_p.aggregate()
+fat_saturated_agg = recipe_nutrition.fat_saturated_pct.aggregate()
+energy_kcal_agg = recipe_nutrition.energy_kcal_per_portion.aggregate()
 
 number_of_ratings_agg = recipe_features.number_of_ratings_log.aggregate()
 ratings_agg = recipe_features.average_rating.aggregate()
@@ -92,23 +92,28 @@ class BasketFeatures:
     cooking_time_mean = recipe_features.cooking_time_from.aggregate().mean().with_tag(VariationTags.time)
     cooking_time_std = recipe_features.cooking_time_from.aggregate().std()
 
+    is_low_calorie = mean_of_bool(recipe_features.is_low_calorie)
+    is_chef_choice_percentage = mean_of_bool(recipe_features.is_chefs_choice)
     is_family_friendly_percentage = mean_of_bool(recipe_features.is_family_friendly)
     is_lactose_percentage = mean_of_bool(recipe_features.is_lactose)
     is_gluten_free_percentage = mean_of_bool(recipe_features.is_gluten_free)
     is_spicy_percentage = mean_of_bool(recipe_features.is_spicy)
+
+    is_ww_percentage = mean_of_bool(recipe_features.is_weight_watchers).description("Makes only sense in Linas")
+    is_roede_percentage = mean_of_bool(recipe_features.is_roede).description("Makes only sense in GL")
 
     # Main Proteins
     # Setting default value to migrate the changes more easily
 
     is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
     is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
+    is_fish_percentage = mean_of_bool(recipe_features.is_fish).with_tag(VariationTags.protein)
 
     for protein in recipe_main_ingredient.all_proteins:
         locals()[f"{protein.name}_percentage"] = (mean_of_bool(protein)
             .default_value(0)
             .with_tag(VariationTags.protein)
         )
-
     # Need to clean-up the hack as the local loop value is added to the class
     del locals()["protein"]
 
@@ -123,7 +128,6 @@ class BasketFeatures:
             .default_value(0)
             .with_tag(VariationTags.carbohydrate)
         )
-
     # Need to clean-up the hack as the local loop value is added to the class
     del locals()["carbo"]
 
@@ -140,7 +144,7 @@ class BasketFeatures:
             recipe_features.taxonomy_ids,
             recipe_features.recipe_id
         ]
-    ).default_value(0).with_tag(VariationTags.equal_dishes)
+    ).with_tag(VariationTags.equal_dishes)
 
 
     # basket_size = Int32().polars_aggregation_using_features(
@@ -215,7 +219,8 @@ async def historical_preselector_vector(
         "recipe_id",
         "portion_size",
         "year",
-        "week"
+        "week",
+        "company_id"
     ]).filter(
         (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
     ).to_polars()

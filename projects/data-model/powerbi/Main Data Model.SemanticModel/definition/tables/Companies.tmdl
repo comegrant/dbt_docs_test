@@ -1,0 +1,77 @@
+table Companies
+	lineageTag: 3b7baf1d-beaf-4be6-98c8-8c0e917f79f1
+
+	column pk_dim_companies
+		dataType: string
+		isHidden
+		lineageTag: af6de796-f2ae-410e-a699-c057ffe72246
+		summarizeBy: none
+		sourceColumn: pk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Id'
+		dataType: string
+		isHidden
+		lineageTag: 2f5a893e-1f08-4b4a-bcec-9dcd7fd5eab0
+		summarizeBy: none
+		sourceColumn: Company Id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Language Id'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 329275a0-5720-466d-9645-4d0c85fc281a
+		summarizeBy: sum
+		sourceColumn: Language Id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Name'
+		dataType: string
+		lineageTag: 10650cc4-9738-4853-ac78-25e87facc476
+		summarizeBy: none
+		sourceColumn: Company Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Country Name'
+		dataType: string
+		lineageTag: f4673059-815e-4434-8dca-5319e86ea0ad
+		summarizeBy: none
+		sourceColumn: Country Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Country Currency'
+		dataType: string
+		lineageTag: 6575a8f8-985e-46ac-8cb2-f1ba94453368
+		summarizeBy: none
+		sourceColumn: Country Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Companies = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name="gold",Kind="Schema"]}[Data],
+				    dim_companies_Table = gold_Schema{[Name="dim_companies",Kind="Table"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(dim_companies_Table,{{"company_id", "Company Id"}, {"language_id", "Language Id"}, {"company_name", "Company Name"}, {"country_name", "Country Name"}, {"country_currency", "Country Currency"}})
+				in
+				    #"Renamed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

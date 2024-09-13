@@ -1,2 +1,5 @@
 **/transform/logs/**
 **/transform/dbt_packages/**
+
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

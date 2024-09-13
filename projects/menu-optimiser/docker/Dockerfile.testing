@@ -1,0 +1,3 @@
+FROM menu-optimiser-base:latest
+
+RUN poetry install
