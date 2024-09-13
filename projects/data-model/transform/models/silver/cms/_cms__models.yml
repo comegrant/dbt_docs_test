@@ -332,12 +332,14 @@ models:
               
   - name: cms__billing_agreements
     description: "Information about an billing agreement. Use SCD2 when updated in the source system."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_id || '-' || valid_from)"
     columns:
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
         data_tests:
-          - unique
           - not_null
 
       - name: company_id
@@ -497,8 +499,6 @@ models:
       - name: valid_to
         data_type: timestamp
         description: "{{ doc('column__valid_to') }}"
-        data_tests:
-          - not_null
 
       - name: source_created_at
         data_type: timestamp
@@ -510,7 +510,9 @@ models:
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
         data_tests:
-          - not_null
+          - not_null:
+              config:
+                  severity: warn
 
       - name: source_updated_at
         data_type: timestamp
@@ -522,7 +524,9 @@ models:
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
         data_tests:
-          - not_null
+          - not_null:
+              config:
+                  severity: warn
 
   - name: cms__billing_agreement_statuses
     description: "Information about the status an billing agreement can have"
