@@ -17,6 +17,7 @@ pytest = "^8.3.2"
 databricks-connect = "^15.4.1"
 databricks-sdk = "^0.32.0"
 mlflow = "^2.16.0"
+constants = {path = "../../packages/constants", develop = true}
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
