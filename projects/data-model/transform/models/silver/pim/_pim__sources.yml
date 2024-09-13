@@ -16,10 +16,10 @@ sources:
 
       - name: pim__menu_recipes
         description: "{{ doc('table__menu_recipes') }}"
-      
+
       - name: pim__recipes
         description: "{{ doc('table__recipes') }}"
-      
+
       - name: pim__recipe_companies
         description: ""
 
@@ -28,19 +28,24 @@ sources:
 
       - name: pim__portions
         description: "{{ doc('table__portions') }}"
-      
+
+      - name: pim__recipe_steps
+        description: ""
+
+      - name: pim__recipe_step_sections
+        description: ""
       - name: pim__recipes_metadata
         description: ""
-      
+
       - name: pim__recipe_metadata_translations
         description: ""
-      
+
       - name: pim__recipe_difficulty_levels_translations
         description: ""
-      
+
       - name: pim__recipe_main_ingredients
         description: ""
-      
+
       - name: pim__recipe_main_ingredients_translations
         description: ""
 
@@ -62,7 +67,7 @@ sources:
           - name: taxonomies_description
             data_type: varchar(100)
             description: ""
-      
+
       - name: pim__taxonomies
         description: ""
         columns:
@@ -124,7 +129,7 @@ sources:
           - name: taxonomies_id
             data_type: int
             description: ""
-      
+
       - name: pim__generic_ingredients_translations
         description: ""
         columns:
@@ -147,7 +152,7 @@ sources:
           - name: plural_generic_ingredient_name
             data_type: string
             description: ""
-      
+
       - name: pim__chef_ingredient_sections
         description: ""
         columns:
@@ -162,7 +167,7 @@ sources:
           - name: section_order
             data_type: int
             description: ""
-      
+
       - name: pim__chef_ingredients
         description: ""
         columns:
@@ -212,7 +217,7 @@ sources:
           - name: frontend_display_name
             data_type: string
             description: ""
-      
+
       - name: pim__ingredients
         description: ""
         columns:
@@ -506,7 +511,7 @@ sources:
           - name: is_main_carbohydrate
             data_type: boolean
             description: ""
-      
+
       - name: pim__ingredient_categories
         description: ""
         columns:
@@ -534,5 +539,3 @@ sources:
           - name: country_id
             data_type: char(36)
             description: "{{ doc('column__country_id') }}"
-      
-      
