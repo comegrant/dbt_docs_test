@@ -1,6 +1,6 @@
 [sqlfluff]
-dialect = duckdb
-templater = jinja
+dialect = databricks
+templater = dbt
 runaway_limit = 10
 max_line_length = 80
 indent_unit = space
@@ -9,8 +9,8 @@ indent_unit = space
 tab_space_size = 4
 
 [sqlfluff:layout:type:comma]
-spacing_before = touch
-line_position = trailing
+spacing_after = 1
+line_position = leading
 
 [sqlfluff:rules:capitalisation.keywords] 
 capitalisation_policy = lower
