@@ -86,6 +86,8 @@ recipes_generic_ingredient_names_categories_joined as (
             = order_ingredients_categories_linking.order_ingredient_id
     where recipes_generic_ingredient_names_joined.generic_ingredient_id is not null
         and recipes_generic_ingredient_names_joined.generic_ingredient_name is not null
+        and recipes_generic_ingredient_names_joined.order_ingredient_id is not null
+        and order_ingredients_categories_linking.ingredient_id is not null
 )
 
 select * from recipes_generic_ingredient_names_categories_joined
