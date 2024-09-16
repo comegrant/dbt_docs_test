@@ -1,7 +1,7 @@
 with weekly_menu as (
     select
-        menu_year as delivery_year,
-        menu_week as delivery_week,
+        menu_year,
+        menu_week,
         company_id,
         weekly_menu_id
     from
@@ -23,7 +23,8 @@ fact_menus as (
 dim_companies as (
     select
         pk_dim_companies,
-        company_id
+        company_id,
+        language_id
     from
         {{ ref('dim_companies') }}
 ),
@@ -31,7 +32,8 @@ dim_companies as (
 fact_menus_with_company as (
     select
         fact_menus.*,
-        dim_companies.company_id
+        dim_companies.company_id,
+        dim_companies.language_id
     from
         fact_menus
     left join
@@ -43,6 +45,7 @@ fact_menus_with_company as (
 weekly_menus_joined as (
     select
         weekly_menu.*,
+        fact_menus_with_company.language_id,
         fact_menus_with_company.menu_id,
         fact_menus_with_company.recipe_id,
         fact_menus_with_company.portion_id,
@@ -152,7 +155,7 @@ joined as (
             menu_variations.product_variation_id
             = variations_product_type.product_variation_id
     where product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- dishes
-    order by delivery_year, delivery_week, product_variation_name
+    order by menu_year, menu_week, product_variation_name
 )
 
 select * from joined
