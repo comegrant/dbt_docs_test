@@ -399,3 +399,104 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+  - name: pim__recipe_ratings
+    description: "Reported ratings (1-5) by the customer on purchased recipes"
+    columns:
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_rating
+        data_type: int
+        description: "{{ doc('column__recipe_rating') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: varchar(100)
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: varchar(100)
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+  - name: pim__recipe_comments
+    description: "Free text comments by the customer on purchased recipes"
+    columns:
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_comment
+        data_type: string
+        description: "{{ doc('column__recipe_comment') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: varchar(100)
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: varchar(100)
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn

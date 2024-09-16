@@ -75,6 +75,21 @@
 
 {% enddocs %}
 
+# Recipe Ratings
+{% docs column__recipe_rating %}
+
+Rating (1-5) of the recipe given by the customer. If rating is 0 it means that the customer marked the recipe as not cooked.
+
+{% enddocs %}
+
+# Recipe Comments
+{% docs column__recipe_comment %}
+
+Free text comment made by a customer when rating the recipe.
+
+{% enddocs %}
+
+
 # PIM Old Docs
 
 ## Tables
@@ -174,6 +189,7 @@ Identifier for the status of a certain object.
 {% docs column__ingredient_id %} Identifier for an ingredient (connected to a supplier) {% enddocs %}
 
 {% docs column__ingredient_internal_reference %} Used to join ingredient ids across different databases {% enddocs %}
+
 
 ## Undocumented fields
 
