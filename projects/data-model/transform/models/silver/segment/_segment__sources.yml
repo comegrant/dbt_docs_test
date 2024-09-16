@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+
+  - name: segment_net_backend_linas
+    catalog: segment_dev
+    schema: net_backend_linas
+    tables:
+      - name: ce_deviation_ordered
+
+  - name: segment_net_backend_retnemt
+    catalog: segment_dev
+    schema: net_backend_retnemt
+    tables: 
+      - name: ce_deviation_ordered
+
+  - name: segment_net_backend_adams
+    catalog: segment_dev
+    schema: net_backend_adams
+    tables:
+      - name: ce_deviation_ordered
+
+  - name: segment_net_backend_godtlevert
+    catalog: segment_dev
+    schema: net_backend
+    tables:
+      - name: ce_deviation_ordered
+
+  - name: postgres
+    schema: bronze
+    tables: 
+      - name: postgres_net_backend_linas__ce_deviation_ordered
+      - name: postgres_net_backend_adams__ce_deviation_ordered
+      - name: postgres_net_backend_retnemt__ce_deviation_ordered
+      - name: postgres_net_backend__ce_deviation_ordered

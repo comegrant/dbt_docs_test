@@ -420,17 +420,17 @@ resource "databricks_grants" "catalog" {
 
   grant {
     principal = "data-scientists"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 
   grant {
     principal = "data-engineers"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 
   grant {
     principal = "data-analysts"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT"]
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 }
 
@@ -449,7 +449,12 @@ resource "databricks_grants" "catalog_segment" {
 
   grant {
     principal = "data-engineers"
-    privileges = ["ALL_PRIVILEGES"]
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+  }
+
+  grant {
+    principal = databricks_service_principal.bundle_sp.application_id
+    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 }
 

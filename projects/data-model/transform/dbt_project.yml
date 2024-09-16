@@ -32,12 +32,20 @@ models:
     columns: true
   transform:
     +materialized: table
+
     silver:
       +schema: silver
+
+      segment: 
+        base: 
+          +materialized: ephemeral
+
     intermediate:
       +schema: intermediate
       +materialized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
+
     gold:
       +schema: gold
+
     mlgold:
       +schema: mlgold
