@@ -11,8 +11,8 @@
         {% set tests = 
             "          - not_null\n" ~
             "          - accepted_values:\n" ~
-            "              values: []" 
-            "              config:" 
+            "              values: []\n" 
+            "              config:\n" 
             "                severity: warn" 
         %}
         

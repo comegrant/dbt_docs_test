@@ -142,7 +142,7 @@ Coming...
 Changes to ingestion can be done from the Databricks UI. Each source system has a notebook for ingest under the ingest folder. 
 1. Go into sous chef from Databricks
 2. Pull changes and create a new branch
-3. Open the relevant ingest notebook (`bronze_[source]_full`)
+3. Open the relevant ingest notebook (`bronze_<source_system>_full`)
 4. Add the tables you want to include in the tables list 
 5. Commit and push changes from Databricks and create a PR and assign Marie or Anna to review
 
@@ -157,7 +157,7 @@ This section contains information on how to develop in our dbt project. *Models*
 ### Silver 🥈
 ⭐️ **Purpose:** Contains raw tables which have been cleansed and standarized.
 📁 **Subdirectories:** Models are divided into folders using the source name as folder name (e.g. cms, pim, product_layer, ops, segment++)
-📃 **Model names:** [sourcesystem]__[source_table_name](s).sql
+📃 **Model names:** `<source_system>__<source_table_name>(s).sql`
 - All tables that ends with the entity of the table should be end in plural, e.g billing_agreement_order_line contains several order lines, hence the appropriate name is billing_agreement_order_lines
 - If the table is a bridge table it should be plural for both entites that are being linked, otherwise only the last word in the table should be plural.
 - There are some edge cases where the table name should not be plural, this is for instance if the table name is something else than the entity of the table. E.g. tables that end with ledgend shoyld not be plural as it does not contains several legend but is a legend for some type of item.
@@ -165,14 +165,14 @@ This section contains information on how to develop in our dbt project. *Models*
 ### Intermediate 🏄🏻
 ⭐️ **Purpose:** Performs need transformations to silver tables need before entering the gold layer.
 📁 **Subdirectories:** Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
-📃 **Model names:** `int_[source_model]_[verb]s.sql`
+📃 **Model names:** `int_<silver_model>_<verb>s.sql`
 - The file name should describe the table being transformed and the transformation being done
 - Example: `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
 
 ### Gold 🥇
 ⭐️ **Purpose:** Join together models from silver and intermediate to create a data model which follow the principles of dimensional data modelling.
 📁 **Subdirectories:** Models are divided using business groupings as folder names (e.g. common, sales, menu, marketing, operations ++)
-📃 **Model names:** `int_[source_model]_[verb]s.sql`, e.g, `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
+📃 **Model names:** `int_<silver_model>_<verb>s.sql`, e.g, `int_billing_agreement_addon_subscriptions_pivoted` or `int_billing_agreements_extract_first_order`.
 - The model file should start with fact or dim based on the type of table followed by a logic business related name in plain english
 - One should NOT create models with the same concept for several teams. I.e., there should not be a table for `finance_orders` and `marketing_orders`.
 
@@ -186,7 +186,7 @@ This section contains information on how to develop in our dbt project. *Models*
 - ⏱️ Timestamp should be names as `<event>_at`, e.g. `created_at`
 - 🔙 Events dates and times should be past tense — created, updated, or deleted.
 - 🎚️ Booleans should be prefixed with `is_` or `has_` etc., e.g., `is_active_customer` and `has_admin_access`
-- 🔑 Id columns that are used as primary keys in the source system should always be called `[table_name]_id` e.g `billing_agreement_id`
+- 🔑 Id columns that are used as primary keys in the source system should always be called `<table_name>_id` e.g `billing_agreement_id`
 - 💪 Consistency is key! Use the same field names across models where possible. For example, an id to the `billing_agreement` table should be named `billing_agreement_id` everwhere rather than alternating with `customer_id`
 
 ### General rules SQL
@@ -204,7 +204,7 @@ with
 
 source/model_name as (
 
-    select * from [source/model]
+    select * from source/model
 
 ),
 
@@ -230,15 +230,24 @@ For more information about why dbt suggest to use CTEs, read [this](https://docs
 
 ## Modelling in Silver
 
-### 1. Add model to `_<sourcesystem>_source.yml`
-When adding new tables to the silver layer you first have to add the table name in bronze to the `_<sourcesystem>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
+### 1. Add model to `_<source_system>_source.yml`
+When adding new tables to the silver layer you first have to add the table name in bronze to the `_<source_system>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
 ### 2. Create model
-Create the model file in the right folder and start to clean the data. A few notes to start with:
-* We only want to include columns from the source data which is relevat for the data model. I.e., do not add all columns from the source to the silver model unless its needed.
-* Columns should be organized based on their data type.
-* Look at previous made silver models for reference on how to organize yoour code. 
+Create the model file in the right folder and start to clean the data. 
 
+To get a head start you can use the [generate_silver_model_sql](projects/data-model/transform/macros/code-generation/generate_silver_model_sql.sql) to output a file with all the source columns by running the following command in your terminal:
+
+```
+dbt run-operation --quiet generate_silver_model_sql --args '{"source_name": "<source_system>", "source_table_name": "<source_table_name>"}' > models/silver/<source_system>/<model_name>.sql
+```
+
+A few notes to start with:
+1. Remove columns from the file which is not relevant for the model. We do not want to include columns from the source that will never be in use. 
+2. Place the columns under the right data type grouping
+3. Perform relevant transformations (see instruction below)
+
+#### Transformations in the silver layer
 The most standard transformations steps in the silver layer:
 - ✅ Renaming
 - ✅ Type casting
@@ -249,11 +258,11 @@ One should *not* do:
 - ❌ Joins — the goal of staging models is to clean and prepare individual source-conformed concepts for downstream usage. We're creating the most useful version of a source system table, which we can use as a new modular component for our project. In our experience, joins are almost always a bad idea here — they create immediate duplicated computation and confusing relationships that ripple downstream — there are occasionally exceptions though.
 - ❌ Aggregations — aggregations entail grouping, and we're not doing that at this stage. Remember - staging models are your place to create the building blocks you’ll use all throughout the rest of your project — if we start changing the grain of our tables by grouping in this layer, we’ll lose access to source data that we’ll likely need at some point. We just want to get our individual concepts cleaned and ready for use, and will handle aggregating values downstream.
 
-#### Base models
+#### Base models in the silver layer
 In some situations one need to do joins or unioning too make a source table complete. This could be if there is a separate delete tables that holds information about which customers that are deleted (joining) or if there are history table holding historical records (unioning). In these cases the source tables should be placed in the the base folder and then create a final table by joining/unioning which is stored with the other final models.
 
-### 3. Add model to `_<sourcesystem>__models.yml`
-After creating the model you need to add the code below to the `_<sourcesystem>__models.yml`.
+### 3. Add model to `_<source_system>__models.yml`
+After creating the model you need to add the code below to the `_<source_system>__models.yml`.
 
 ```yml
  - name: model_name
@@ -264,19 +273,19 @@ After creating the model you need to add the code below to the `_<sourcesystem>_
 Add documentation to the created models and used source.
 
 #### Source
-Source description should be added directly under description in `_[sourcesystem]__source.yml`.
+Source description should be added directly under description in `_<source_system>__source.yml`.
 
 #### Tables 
-Table description should be added directly under description in `_[sourcesystem]__models.yml`. 
+Table description should be added directly under description in `_<source_system>__models.yml`. 
 
 #### Columns
-Descriptions of columns should be added to the `_[sourcesystem]__docs.md`.
-1. Add a heading with the table name to `_[sourcesystem]__docs.md`
+Descriptions of columns should be added to the `_<source_system>__docs.md`.
+1. Add a heading with the table name to `_<source_system>__docs.md`
 2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal:
 ```
 dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'
 ```
-3. Copy the output to `_[sourcesystem]__docs.md` under the table name heading
+3. Copy the output to `_<source_system>__docs.md` under the table name heading
 4. Remove columns that does not originate from the table: The script output doc blocks for all columns in the model, however you should only include descriptions of columns that originates from that table, meaning that for instance ids that originates from another table should be described under that table heading. Fields that are common across several source systems and does not have a clear source origin should be added to `_common_docs.md`.
 5. Write documentation for the fields and ensure to include the following:
   * When the table gets populated if its at a specific time (e.g. order gen).
@@ -285,13 +294,13 @@ dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'
 #### Viewing documentation
 To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
 
-### 5. Add columns to `_<sourcesystem>__models.yml`
-After creating the documentation of the columns you need to refer to it to `_<sourcesystem>__models.yml` as well. 
+### 5. Add columns to `_<source_system>__models.yml`
+After creating the documentation of the columns you need to refer to it to `_<source_system>__models.yml` as well. 
 1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal:
 ```
 dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'
 ```
-2. Copy output and add it after description in `_<sourcesystem>__models.yml`
+2. Copy output and add it after description in `_<source_system>__models.yml`
 
 ### 6. Add tests to silver models
 The [generate_model_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro adds some default tests automatically to the columns. However these are just made based on assumptions and must be updated for each column to be the correct type of test. Furthermore one need to create other tests as well if reasonable. Follow the steps below:
