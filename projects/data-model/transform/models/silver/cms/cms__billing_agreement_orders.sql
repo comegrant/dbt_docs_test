@@ -66,7 +66,7 @@ renamed as (
         #}
 
         {# timestamps #}
-        , created_date as order_created_at
+        , created_date as source_created_at
         {# not yet included columns
         --transaction_date as transaction_at
         --invoice_data_create as invoice_data_created_at

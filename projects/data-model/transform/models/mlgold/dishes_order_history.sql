@@ -4,7 +4,7 @@ with fact_orders as (
         extract(year from delivery_week_monday_date) as delivery_year,
         extract(week from delivery_week_monday_date) as delivery_week,
         product_variation_id,
-        variation_qty,
+        product_variation_quantity,
         fk_dim_order_statuses,
         fk_dim_companies,
         fk_dim_billing_agreements,
@@ -43,7 +43,7 @@ finished_standalone_dishes_orders as (
         fact_orders.delivery_week,
         fact_orders.delivery_week_monday_date,
         fact_orders.product_variation_id,
-        fact_orders.variation_qty,
+        fact_orders.product_variation_quantity,
         dim_companies.company_id,
         dim_companies.company_name
     from
@@ -69,7 +69,7 @@ per_variation_aggregated as (
         delivery_week,
         delivery_week_monday_date,
         product_variation_id,
-        sum(variation_qty) as variation_qty
+        sum(product_variation_quantity) as product_variation_quantity
     from
         finished_standalone_dishes_orders
     group by
@@ -86,7 +86,7 @@ per_company_aggregated as (
         company_id,
         delivery_year,
         delivery_week,
-        sum(variation_qty) as total_weekly_qty
+        sum(product_variation_quantity) as total_weekly_qty
     from
         finished_standalone_dishes_orders
     group by
@@ -99,7 +99,7 @@ per_variation_and_company_aggregated_joined as (
     select
         per_variation_aggregated.*,
         per_company_aggregated.total_weekly_qty,
-        per_variation_aggregated.variation_qty / per_company_aggregated.total_weekly_qty as variation_ratio
+        per_variation_aggregated.product_variation_quantity / per_company_aggregated.total_weekly_qty as variation_ratio
     from
         per_variation_aggregated
     left join

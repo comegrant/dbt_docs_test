@@ -28,7 +28,7 @@ renamed as (
         {# numerics #}
         , price as unit_price_ex_vat
         , (CAST(VAT as decimal (6, 4)) / 100) as vat
-        , variation_qty
+        , variation_qty as product_variation_quantity
 
     from source
 
@@ -46,12 +46,12 @@ calculated_columns as (
         , order_line_type_name
  
         {# numerics #}
-        , variation_qty
+        , product_variation_quantity
         , vat
         , unit_price_ex_vat
         , unit_price_ex_vat * (1+vat) as unit_price_inc_vat
-        , unit_price_ex_vat * variation_qty as total_amount_ex_vat
-        , unit_price_ex_vat * (1+vat) * variation_qty as total_amount_inc_vat
+        , unit_price_ex_vat * product_variation_quantity as total_amount_ex_vat
+        , unit_price_ex_vat * (1+vat) * product_variation_quantity as total_amount_inc_vat
 
     from renamed
 

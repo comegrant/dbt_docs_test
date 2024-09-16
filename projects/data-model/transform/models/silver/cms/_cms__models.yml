@@ -136,9 +136,9 @@ models:
         data_tests:
           - not_null
 
-      - name: order_created_at
+      - name: source_created_at
         data_type: timestamp
-        description: "{{ doc('column__order_created_at') }}"
+        description: "{{ doc('column__source_created_at_orders') }}"
         data_tests:
           - not_null
 
@@ -183,9 +183,9 @@ models:
                   'DEBIT_GIFT'
               ]
               
-      - name: variation_qty
+      - name: product_variation_quantity
         data_type: int
-        description: "{{ doc('column__variation_qty') }}"
+        description: "{{ doc('column__product_variation_quantity') }}"
         data_tests:
           - not_null
 
@@ -738,5 +738,379 @@ models:
       - name: loyalty_level_number
         data_type: int
         description: "{{ doc('column__loyalty_level_number') }}"
+        data_tests:
+          - not_null
+  - name: cms__billing_agreement_basket_deviations
+    description: "All baskets that have a change for a particular menu week made by either the recommendation engine, customers or customer service"
+    columns:
+      - name: billing_agreement_basket_deviation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_basket_deviation_origin_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_year
+        data_type: int
+        description: "{{ doc('column__delivery_year') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week
+        data_type: int
+        description: "{{ doc('column__delivery_week') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_basket_deviation') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week_monday_date
+        data_type: date
+        description: "{{ doc('column__delivery_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: varchar(255)
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+  - name: cms__billing_agreement_basket_deviation_products
+    description: "Holds information about the products in a billing agreements basket deviation. Links to `cms__billing_agreement_basket_deviations`."
+    columns:
+      - name: billing_agreement_basket_deviation_product_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_product_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_basket_deviation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: is_extra
+        data_type: boolean
+        description: "{{ doc('column__is_extra_basket_product') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+      - name: source_updated_at
+        data_type: string
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+
+      - name: source_updated_by
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+  - name: cms__billing_agreement_baskets
+    description: "The basket related to a billing agreement. Each billing agreement can only have one basket."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_basket_id || '-' || valid_from)"
+          column_name: "(billing_agreement_id || '-' || valid_from)"
+    columns:
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: shipping_address_id
+        data_type: varchar(36)
+        description: "{{ doc('column__shipping_address_id_basket') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id_basket') }}"
+        data_tests:
+          - not_null
+
+      - name: is_default
+        data_type: boolean
+        description: "{{ doc('column__is_default_basket') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_basket') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+  - name: cms__billing_agreement_basket_products
+    description: "Holds information about the products in a billing agreements basket before any deviations has been made. Links to `cms__billing_agreement_baskets`."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_basket_product_id || '-' || valid_from)"
+    columns:
+      - name: billing_agreement_basket_product_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_product_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: is_extra
+        data_type: boolean
+        description: "{{ doc('column__is_extra_basket_product') }}"
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+                
+  - name: cms__billing_agreement_basket_deviation_origins
+    description: "The different types of origin a basket deviation can have."
+    columns:
+      - name: billing_agreement_basket_deviation_origin_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: basket_deviation_origin_name
+        data_type: string
+        description: "{{ doc('column__basket_deviation_origin_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Normal', 
+                'Recommendations', 
+                'OneSub - Recommendations'
+                ]
+              config:
+                severity: warn
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: cms__delivery_week_types
+    description: "The delivery intervals a subscription can have."
+    columns:
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: delivery_week_type_name
+        data_type: varchar(50)
+        description: "{{ doc('column__delivery_week_type_name') }}"
         data_tests:
           - not_null

@@ -19,3 +19,9 @@ sources:
       - name: cms__addon_subscriptions
       - name: cms__loyalty_agreement_ledger
       - name: cms__loyalty_level
+      - name: cms__billing_agreement_basket_deviation
+      - name: cms__billing_agreement_basket_deviation_origin
+      - name: cms__billing_agreement_basket_deviation_product
+      - name: cms__billing_agreement_basket
+      - name: cms__billing_agreement_basket_product
+      - name: cms__delivery_week_type

@@ -43,7 +43,7 @@ source_tables_joined as (
         , order_lines.order_line_type_name
 
         {# numerics #}
-        , order_lines.variation_qty
+        , order_lines.product_variation_quantity
         , order_lines.vat
         , order_lines.unit_price_ex_vat
         , order_lines.unit_price_inc_vat
@@ -58,7 +58,7 @@ source_tables_joined as (
         , orders.delivery_week_monday_date
 
         {# timestamp #}
-        , orders.order_created_at
+        , orders.source_created_at
 
         {# foregin keys #}
         , md5(orders.order_status_id) AS fk_dim_order_statuses
