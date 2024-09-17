@@ -27,12 +27,22 @@ resources:
           - mats.mollestad@cheffelo.com
 
       tasks:
+        - task_key: MaterializeData
+          job_cluster_key: rec-engine
+          notebook_task:
+            notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"
+
         - task_key: RecEngineTrainAndPredict-GL
           job_cluster_key: rec-engine
           notebook_task:
             notebook_path: train_and_predict.py
             base_parameters:
               company_id: "09ECD4F0-AE58-4539-8E8F-9275B1859A19"
+              environment: "${var.environment}"
+          depends_on:
+            - task_key: MaterializeData
 
         - task_key: RecEngineTrainAndPredict-LMK
           job_cluster_key: rec-engine
@@ -40,6 +50,7 @@ resources:
             notebook_path: train_and_predict.py
             base_parameters:
               company_id: "6A2D0B60-84D6-4830-9945-58D518D27AC2"
+              environment: "${var.environment}"
           depends_on:
             - task_key: RecEngineTrainAndPredict-GL
 
@@ -49,6 +60,7 @@ resources:
             notebook_path: train_and_predict.py
             base_parameters:
               company_id: "8A613C15-35E4-471F-91CC-972F933331D7"
+              environment: "${var.environment}"
           depends_on:
             - task_key: RecEngineTrainAndPredict-LMK
 
@@ -58,5 +70,6 @@ resources:
             notebook_path: train_and_predict.py
             base_parameters:
               company_id: "5E65A955-7B1A-446C-B24F-CFE576BF52D7"
+              environment: "${var.environment}"
           depends_on:
             - task_key: RecEngineTrainAndPredict-Adam

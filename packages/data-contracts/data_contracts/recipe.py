@@ -362,7 +362,7 @@ main_ingredient_ids = {
     acceptable_freshness=timedelta(days=4),
 )
 class RecipeFeatures:
-    recipe_id = Int32().as_entity()
+    recipe_id = Int32().lower_bound(1).upper_bound(10_000_000).as_entity()
 
     loaded_at = EventTimestamp()
 
@@ -661,6 +661,14 @@ class NormalizedRecipeFeatures:
     main_recipe_id = Int32()
 
     taxonomy_ids = List(Int32())
+    taxonomy_of_interest = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.unique().list.set_difference(
+            pl.lit([
+                971, 1837, 985, 1838, 1178, 1212, 986, 1064, 1213, 1839, 991, 184, 247, 2096, 226, 217, 1177, 1067
+            ])
+        ),
+        as_dtype=List(Int32())
+    )
 
     year = Int32()
     week = Int32()

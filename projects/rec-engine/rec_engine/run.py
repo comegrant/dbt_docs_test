@@ -28,7 +28,7 @@ from rec_engine.update_source import (
     update_view_from_source_if_older_than,
 )
 
-file_logger: Logger = logging.getLogger(__name__)
+file_logger: logging.Logger = logging.getLogger(__name__)
 
 
 @dataclass

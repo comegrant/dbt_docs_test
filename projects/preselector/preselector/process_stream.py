@@ -13,7 +13,9 @@ from aligned.feature_source import (
 )
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
+from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
 from data_contracts.in_mem_source import InMemorySource
+from data_contracts.preselector.basket_features import PredefinedVectors
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -21,7 +23,7 @@ from preselector.data.models.customer import (
     PreselectorFailedResponse,
     PreselectorSuccessfulResponse,
 )
-from preselector.main import run_preselector_for_request
+from preselector.main import duration, run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.stream import (
@@ -176,10 +178,7 @@ async def load_cache(
         ),
         (
             FeatureLocation.feature_view("normalized_recipe_features"),
-            cache_dir.partitioned_parquet_at(
-                f"{company_id}/normalized_recipe_features",
-                partition_keys=["year", "week"],
-            ),
+            cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
             (pl.col("year") >= today.year) & (pl.col("company_id") == company_id),
         ),
         (
@@ -189,6 +188,11 @@ async def load_cache(
             & (pl.col("year") >= today.year)
             & (this_week < pl.col("week")),
         ),
+        (
+            PredefinedVectors.location,
+            InMemorySource.empty(),
+            pl.col("company_id") == company_id
+        )
     ]
 
     custom_cache = {loc for loc, _, _ in cache_sources}
@@ -362,59 +366,65 @@ async def process_stream_batch(
     messages = await stream.read()
     number_of_messages = len(messages)
 
+    if number_of_messages == 0:
+        return
+
     successful_responses: list[PreselectorSuccessfulResponse] = []
     completed_requests: list[StreamMessage] = []
     failed_requests: list[PreselectorFailedResponse] = []
 
-    for index, message in enumerate(messages):
-        raw_request = message.body
+    with duration(f"Running Preselector Batch on {number_of_messages} requests", should_log=True):
+        for index, message in enumerate(messages):
+            raw_request = message.body
 
-        try:
-            request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
-            result = await run_preselector_for_request(request, store)
+            try:
+                request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
+                result = await run_preselector_for_request(request, store)
 
-            success_response = result.success_response()
-            if success_response:
-                successful_responses.append(success_response)
+                success_response = result.success_response()
+                if success_response:
+                    successful_responses.append(success_response)
 
-            failed_requests.extend(result.failed_responses())
-        except Exception as e:
-            logger.exception(f"Error processing request {raw_request}")
-            logger.exception(e)
+                failed_requests.extend(result.failed_responses())
+            except Exception as e:
+                logger.exception(f"Error processing request {raw_request}")
+                logger.exception(e)
 
-            failed_requests.append(
-                PreselectorFailedResponse(
-                    error_message=str(e), error_code=500, request=raw_request
+                failed_requests.append(
+                    PreselectorFailedResponse(
+                        error_message=str(e), error_code=500, request=raw_request
+                    )
                 )
-            )
 
-        completed_requests.append(message)
+            completed_requests.append(message)
 
-        if progress_callback and index % progress_callback_interval == 0:
-            progress_callback(index + 1, number_of_messages)
+            if progress_callback and index % progress_callback_interval == 0:
+                progress_callback(index + 1, number_of_messages)
 
-        if index % write_batch_interval == 0 and index != 0:
-            if successful_output_stream:
-                await successful_output_stream.batch_write(successful_responses)
-                successful_responses = []
+            if index % write_batch_interval == 0 and index != 0:
+                await stream.mark_as_complete(completed_requests)
 
-            if failed_output_stream:
-                await failed_output_stream.batch_write(failed_requests)
-                failed_requests = []
+                if successful_output_stream:
+                    await successful_output_stream.batch_write(successful_responses)
+                    successful_responses = []
 
-            await stream.mark_as_complete(completed_requests)
-            completed_requests = []
+                if failed_output_stream:
+                    await failed_output_stream.batch_write(failed_requests)
+                    failed_requests = []
 
-    if successful_output_stream:
-        await successful_output_stream.batch_write(successful_responses)
+                completed_requests = []
 
-    if failed_output_stream:
-        await failed_output_stream.batch_write(failed_requests)
+        await stream.mark_as_complete(completed_requests)
 
-    await stream.mark_as_complete(completed_requests)
+        if successful_output_stream:
+            await successful_output_stream.batch_write(successful_responses)
 
-    if progress_callback:
-        progress_callback(number_of_messages, number_of_messages)
+        if failed_output_stream:
+            await failed_output_stream.batch_write(failed_requests)
+
+
+        if progress_callback:
+            progress_callback(number_of_messages, number_of_messages)
 
 
 async def process_stream(
@@ -487,6 +497,9 @@ async def process_stream(
                 f"Done a batch of work {batch_duration:.3f}, sleeping for {sleep_time:.3f} seconds"
             )
             await asyncio.sleep(sleep_time)
+    except (SessionLockLostError, MessageAlreadySettled) as error:
+        logger.error("Error when settling bus message")
+        logger.exception(error)
     except Exception as error:
         logger.error("Error while processing pre-selector requests")
         logger.exception(error)

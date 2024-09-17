@@ -1,8 +1,18 @@
 FROM databricksruntime/python:14.3-LTS
 
+# Defaulting to utf-8 to fixe a few charset bugs
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
 SHELL ["/bin/bash", "-c"]
 
 RUN /databricks/python3/bin/pip install poetry==1.8.2
+
+# Install Microsoft ODBC driver for SQL Server
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 # set the home directory
 ENV APP_HOME /opt

@@ -124,7 +124,8 @@ class CBModel:
     ) -> pd.DataFrame:
         logger = logger or file_logger
         model_store = store.model(self.model_contract_name)
-        needed_entities = [entity.name for entity in model_store.needed_entities()]
+        # Removing dups
+        needed_entities = list({entity.name for entity in model_store.needed_entities()})
 
         for column in needed_entities:
             if column not in menu.columns:

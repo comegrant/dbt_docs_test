@@ -14,7 +14,14 @@ from aligned import (
     String,
     feature_view,
 )
-from data_contracts.preselector.basket_features import BasketFeatures, VariationTags
+from aligned.retrival_job import RetrivalJob
+from data_contracts.mealkits import OneSubMealkits
+from data_contracts.preselector.basket_features import (
+    BasketFeatures,
+    ImportanceVector,
+    TargetVectors,
+    VariationTags,
+)
 from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.recommendations.recommendations import RecommendatedDish
 
@@ -159,11 +166,18 @@ async def find_best_combination(
 
     recipes_to_choose_from = available_recipes
 
+    basket_aggregation = BasketFeatures.query()
+    basket_computations = basket_aggregation.request
+
+    async def compute_basket(df: pl.DataFrame) -> pl.DataFrame:
+        job = RetrivalJob.from_polars_df(df, [basket_computations])
+        return await job.aggregate(basket_computations).to_polars()
+
     # Sorting in order to get deterministic results
     recipe_nudge = (
-        await BasketFeatures.process_input(
+        await compute_basket(
             recipes_to_choose_from.with_columns(basket_id=pl.col("recipe_id")),
-        ).to_polars()
+        )
     ).sort("basket_id", descending=False)
 
     mean_target_vector = target_combination_values.select(columns).transpose().to_series()
@@ -203,7 +217,7 @@ async def find_best_combination(
             )
 
         # Sorting in order to get deterministic results
-        recipe_nudge = (await BasketFeatures.process_input(raw_recipe_nudge).to_polars()).sort(
+        recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort(
             "basket_id",
             descending=False,
         )
@@ -324,13 +338,13 @@ async def normalize_cost(
     min_cof = cost_of_food_normalization["min_cost_of_food"].to_list()[0]
     max_cof = cost_of_food_normalization["max_cost_of_food"].to_list()[0]
 
-    logger.info(f"Min CoF {min_cof} max: {max_cof}")
+    logger.debug(f"Min CoF {min_cof} max: {max_cof}")
 
     assert min_cof, "Missing min cof. Therefore, can not normalize the cof target"
     assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
     cost_of_food_value = (mealkit_target_cost_of_food - min_cof) / (max_cof - min_cof)
 
-    logger.info(f"Normalized value from {mealkit_target_cost_of_food} to {cost_of_food_value}")
+    logger.debug(f"Normalized value from {mealkit_target_cost_of_food} to {cost_of_food_value}")
 
     return vector.with_columns(mean_cost_of_food=pl.lit(cost_of_food_value))
 
@@ -421,11 +435,14 @@ async def historical_preselector_vector(
     store: ContractStore,
 ) -> tuple[pl.DataFrame, pl.DataFrame, bool]:
 
+    vector_features = [
+        feat.name for feat in store.feature_view(TargetVectors).request.features if "float" in feat.dtype.name
+    ]
 
     if request.has_data_processing_consent:
         with duration("Loading importance vector"):
             importance = (
-                await store.feature_view("importance_vector")
+                await store.feature_view(ImportanceVector)
                 .features_for(
                     {
                         "agreement_id": [agreement_id],
@@ -439,32 +456,28 @@ async def historical_preselector_vector(
         should_load_static_concept = True
         importance = pl.DataFrame()
 
-    company_id = request.company_id
-    features = BasketFeatures.query().request.request_result.feature_columns
-
     if should_load_static_concept:
-        logger.info(f"No history found, using default values {request.concept_preference_ids}")
+        logger.debug(f"No history found, using default values {request.concept_preference_ids}")
 
+        company_id = request.company_id
         concept_ids = [concept_id.upper() for concept_id in request.concept_preference_ids]
 
         with duration("Loading concept definition"):
             importance, target = await importance_vector_for_concept(concept_ids, store, company_id)
 
-        importance = importance.with_columns(pl.col(feat) / pl.sum_horizontal(features) for feat in features)
-
+        importance = importance.with_columns(
+            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+        )
         importance, target = potentially_add_variation(importance, target)
-
-        importance = importance.with_columns(pl.col(feat) / pl.sum_horizontal(features) for feat in features)
+        importance = importance.with_columns(
+            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+        )
         importance = importance.with_columns(mean_cost_of_food=pl.lit(0.25))
         return target, importance, False
 
-    vector_features = [
-        feat.name for feat in store.feature_view("target_vector").request.features if "float" in feat.dtype.name
-    ]
-
     with duration("Loading target vector"):
         target = (
-            await store.feature_view("target_vector")
+            await store.feature_view(TargetVectors)
             .features_for(
                 {
                     "agreement_id": [agreement_id],
@@ -473,7 +486,7 @@ async def historical_preselector_vector(
             .drop_invalid()
             .to_polars()
         )
-    importance = importance.with_columns(mean_cost_of_food=pl.lit(1))
+    importance = importance.with_columns(mean_cost_of_food=pl.lit(0.25))
 
     return (
         target.select(vector_features),
@@ -483,7 +496,7 @@ async def historical_preselector_vector(
 
 
 @contextmanager
-def duration(log: str) -> Generator[None, None, None]:
+def duration(log: str, should_log: bool = False) -> Generator[None, None, None]:
     # if tracemalloc.is_tracing():
     #     now, max_memory = tracemalloc.get_traced_memory()
     #     megabytes = 2**20
@@ -491,10 +504,13 @@ def duration(log: str) -> Generator[None, None, None]:
     #         f"Starting with (current, max) bytes ({now / megabytes} MB, {max_memory / megabytes} MB)",
     #     )
 
-    start = time.monotonic()
-    yield
-    end = time.monotonic()
-    logger.info(f"{log} took {end - start} seconds")
+    if should_log:
+        start = time.monotonic()
+        yield
+        end = time.monotonic()
+        logger.info(f"{log} took {end - start} seconds")
+    else:
+        yield
     # if tracemalloc.is_tracing():
     #     now, max_memory = tracemalloc.get_traced_memory()
     #     megabytes = 2**20
@@ -580,11 +596,11 @@ async def run_preselector_for_request(
 ) -> PreselectorResult:
     results: list[PreselectorYearWeekResponse] = []
 
-    all_selected_main_recipe_ids = request.quarentine_main_recipe_ids
+    all_selected_main_recipe_ids = request.quarentine_main_recipe_ids.copy()
 
     with duration("Loading mealkit CoF target"):
         cost_of_food = await (
-            store.feature_view("one_sub_mealkits")
+            store.feature_view(OneSubMealkits)
             .select({"cost_of_food_target_per_recipe"})
             .features_for(
                 {
@@ -622,7 +638,7 @@ async def run_preselector_for_request(
         year = yearweek.year
         week = yearweek.week
 
-        logger.info(f"Running for {year} {week}")
+        logger.debug(f"Running for {year} {week}")
 
 
         if not contains_history:
@@ -646,10 +662,10 @@ async def run_preselector_for_request(
             store=store,
         )
 
-        logger.info("Loading menu")
+        logger.debug("Loading menu")
         with duration("Loading menu"):
             menu = await load_menu_for(request.company_id, year, week, store=store)
-        logger.info(f"Number of recipes {menu.height}")
+        logger.debug(f"Number of recipes {menu.height}")
 
         if menu.is_empty():
             failed_weeks.append(
@@ -665,10 +681,10 @@ async def run_preselector_for_request(
             continue
 
         menu = menu.filter(~pl.col("main_recipe_id").is_in(all_selected_main_recipe_ids))
-        logger.info(f"Removed quarantined recipes. Left with {menu.height} recipes.")
+        logger.debug(f"Removed quarantined recipes. Left with {menu.height} recipes.")
 
         if request.has_data_processing_consent:
-            logger.info("Loading recommendations")
+            logger.debug("Loading recommendations")
             with duration("Loading recommendations"):
                 recommendations = await load_recommendations(
                     agreement_id=request.agreement_id, year=year, week=week, store=store
@@ -676,8 +692,8 @@ async def run_preselector_for_request(
         else:
             recommendations = pl.DataFrame()
 
-        logger.info("Running preselector")
-        with duration("Running preselector"):
+        logger.debug("Running preselector")
+        with duration("Running preselector", should_log=True):
             selected_recipe_ids, _ = await run_preselector(
                 request,
                 menu,
@@ -771,7 +787,7 @@ async def filter_out_recipes_based_on_preference(
             {preference.upper() for preference in taste_preference_ids},
         )
 
-        logger.info(f"Filtering based on taste preferences: {recipes.height}")
+        logger.debug(f"Filtering based on taste preferences: {recipes.height}")
         acceptable_recipe_ids = (
             preferences.lazy()
             .select(["recipe_id", "preference_ids"])
@@ -818,11 +834,14 @@ async def run_preselector(
 
     recipes = available_recipes
 
-    logger.info(f"Filtering based on portion size: {recipes.height}")
+    logger.debug(f"Filtering based on portion size: {recipes.height}")
     recipes = recipes.filter(
         pl.col("variation_portions").cast(pl.Int32) == customer.portion_size,
     )
-    logger.info(f"Filtering based on portion size done: {recipes.height}")
+    logger.debug(f"Filtering based on portion size done: {recipes.height}")
+
+    if recipes.is_empty():
+        return ([], {})
 
     if customer.taste_preference_ids:
         recipes = await filter_out_recipes_based_on_preference(
@@ -831,9 +850,9 @@ async def run_preselector(
             taste_preference_ids=customer.taste_preference_ids,
             store=store
         )
-        logger.info(f"Filtering based on taste preferences done: {recipes.height}")
+        logger.debug(f"Filtering based on taste preferences done: {recipes.height}")
 
-    logger.info(f"Loading preselector recipe features: {recipes.height}")
+    logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
     year = recipes["menu_year"].max()
     week = recipes["menu_week"].max()
@@ -878,7 +897,7 @@ async def run_preselector(
             .to_polars()
         )
 
-    logger.info(f"Filtering out cheep and premium recipes: {all_recipe_features.height}")
+    logger.debug(f"Filtering out cheep and premium recipes: {all_recipe_features.height}")
 
     static_mealkits = ["37CE056F-4779-4593-949A-42478734F747"]
 
@@ -888,7 +907,7 @@ async def run_preselector(
         ).select(
             pl.exclude(["is_cheep"]),
         )
-        logger.info(f"Filtered out cheep and premium recipes: {recipe_features.height}")
+        logger.debug(f"Filtered out cheep and premium recipes: {recipe_features.height}")
     else:
         recipe_features = all_recipe_features
 
@@ -911,45 +930,47 @@ async def run_preselector(
         raise ValueError("No recipes to select from. Please let the data team know about this so we can fix it.")
 
     if recommendations.height > select_top_n:
-        logger.info(
-            f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}",
-        )
-        product_ids = recipes["product_id"].to_list()
+        with duration("Filtering on recs"):
+            logger.debug(
+                f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}",
+            )
+            product_ids = recipes["product_id"].to_list()
 
-        top_n_recipes = (
-            recommendations.filter(pl.col("product_id").is_in(product_ids))
-            .sort("order_rank", descending=False)
-            .limit(select_top_n)
-        )
+            top_n_recipes = (
+                recommendations.filter(pl.col("product_id").is_in(product_ids))
+                .sort("order_rank", descending=False)
+                .limit(select_top_n)
+            )
 
-        recipes = recipes.filter(
-            pl.col("product_id").is_in(top_n_recipes["product_id"]),
-        )
-        recipe_features = recipe_features.filter(
-            pl.col("recipe_id").is_in(recipes["recipe_id"]),
-        )
-        logger.info(
-            f"Filtering based on recommendations done: {recipe_features.height}",
-        )
+            recipes = recipes.filter(
+                pl.col("product_id").is_in(top_n_recipes["product_id"]),
+            )
+            recipe_features = recipe_features.filter(
+                pl.col("recipe_id").is_in(recipes["recipe_id"]),
+            )
+            logger.debug(
+                f"Filtering based on recommendations done: {recipe_features.height}",
+            )
 
-    logger.info(
+    logger.debug(
         f"Selecting the best combination based on {recipe_features.height} recipes.",
     )
 
     if recipe_features.height <= customer.number_of_recipes:
-        logger.info(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
+        logger.debug(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
         return (
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
             dict(),
         )
 
-    recipes_to_choose_from = normalized_recipe_features.filter(
-        pl.col("recipe_id").is_in(recipe_features["recipe_id"])
-    )
+    with duration("Filtering based on available recipes"):
+        recipes_to_choose_from = normalized_recipe_features.filter(
+            pl.col("recipe_id").is_in(recipe_features["recipe_id"])
+        )
 
     assert not normalized_recipe_features.is_empty()
 
-    with duration("Running the preselector"):
+    with duration("Finding best combination"):
         best_recipe_ids, error_metric = await find_best_combination(
             target_vector,
             importance_vector,

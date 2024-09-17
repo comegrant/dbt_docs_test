@@ -10,7 +10,7 @@ ENV LC_ALL C.UTF-8
 ENV APP_HOME /opt
 ENV SERVICE_HOME $APP_HOME/projects/preselector
 
-RUN /databricks/python3/bin/pip install poetry
+RUN /databricks/python3/bin/pip install poetry==1.8.2
 
 # Install Microsoft ODBC driver for SQL Server
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \

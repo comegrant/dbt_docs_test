@@ -101,10 +101,6 @@ async def main() -> None:
     attributes = await load_attributes(company_id)
     taste_prefs = await load_taste_preferences(company_id)
 
-    # List attributes
-    # Select the attributes to view
-    # Select the year week to view
-
     today = date.today()
 
     with st.form("Attributes"):
@@ -171,6 +167,8 @@ async def main() -> None:
             request = GenerateMealkitRequest(
                 # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
                 agreement_id=1,
+                has_data_processing_consent=False,
+
                 company_id=company_id,
                 compute_for=[YearWeek(year=int(year), week=int(week))],
                 concept_preference_ids=[
@@ -185,7 +183,6 @@ async def main() -> None:
                 ],
                 number_of_recipes=int(number_of_recipes),
                 portion_size=int(portion_size),
-                has_data_processing_consent=False,
                 override_deviation=False
             )
 

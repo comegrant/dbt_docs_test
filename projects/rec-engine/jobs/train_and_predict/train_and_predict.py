@@ -1,6 +1,12 @@
 # Databricks notebook source
 # COMMAND ----------
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from databricks.sdk.dbutils import RemoteDbUtils
+    dbutils: RemoteDbUtils = "" # type: ignore
+
 from databricks_env import auto_setup_env
 
 auto_setup_env()
@@ -8,7 +14,18 @@ auto_setup_env()
 # COMMAND ----------
 
 import logging
+import os
 from datetime import date, timedelta
+
+dbutils.widgets.text("environment", defaultValue="")
+environment = dbutils.widgets.get("environment")
+
+assert isinstance(environment, str)
+assert environment
+
+# Need to set this before importing any contracts due to env vars being accessed
+# I know this is is a shit design, but it will do for now
+os.environ["DATALAKE_ENV"] = environment
 
 from data_contracts.recommendations.store import recommendation_feature_contracts
 

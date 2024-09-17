@@ -27,7 +27,7 @@ INNER JOIN cms.billing_agreement_basket_product babp ON bab.id = babp.billing_ag
 @feature_view(
     name="user_subscription",
     source=adb.fetch(user_subscription),
-    materialized_source=materialized_data.delta_at("user_subscription"),
+    materialized_source=materialized_data.parquet_at("user_subscription.parquet"),
 )
 class UserSubscription:
     agreement_id = Int32().as_entity()

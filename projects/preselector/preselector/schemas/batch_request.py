@@ -11,6 +11,9 @@ class NegativePreference(BaseModel):
     preference_id: str
     is_allergy: bool
 
+    def __hash__(self) -> int:
+        return hash(self.preference_id)
+
 class GenerateMealkitRequest(BaseModel):
     agreement_id: int
     company_id: str

@@ -69,3 +69,23 @@ async def test_remove_recipes_with_taste_preferences_uppercase(model_contracts: 
     )
 
     assert filtered.height == 5
+
+
+def test_convert_concept() -> None:
+    from preselector.process_stream import GenerateMealkitRequest, convert_concepts_to_attributes
+
+    original_request = GenerateMealkitRequest(
+        agreement_id=1,
+        company_id="..",
+        compute_for=[],
+        concept_preference_ids=["4A3E19DF-9524-4308-B927-BD20522628B0"],
+        taste_preferences=[],
+        portion_size=4,
+        number_of_recipes=4,
+        override_deviation=False,
+        has_data_processing_consent=False
+    )
+
+    new_request = convert_concepts_to_attributes(original_request)
+    assert len(new_request.concept_preference_ids) == 2
+    assert len(new_request.taste_preference_ids) == 3

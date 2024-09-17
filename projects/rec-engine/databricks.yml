@@ -6,6 +6,8 @@ include:
   - "jobs/**/*.yml"
 
 variables:
+  environment:
+    description: The environment that the code is running in
   docker_image_url:
     description: The url of the source code. in the form as a Docker image.
   mode:

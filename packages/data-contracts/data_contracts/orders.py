@@ -13,7 +13,9 @@ from aligned import (
 )
 from project_owners.owner import Owner
 
+from data_contracts.mealkits import DefaultMealboxRecipes
 from data_contracts.sources import adb, adb_ml, materialized_data
+from data_contracts.user import UserSubscription
 
 flex_dish_id = "CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1"
 mealbox_id = "2F163D69-8AC1-6E0C-8793-FF0000804EB3"
@@ -229,8 +231,16 @@ async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
     name="mealbox_changes",
     source=CustomMethodDataSource.from_methods(
         all_data=transform_deviations,
+        depends_on_sources={
+            UserSubscription.location,
+            DefaultMealboxRecipes.location,
+            HistoricalRecipeOrders.location
+        }
     ),
-    materialized_source=materialized_data.delta_at("mealbox_changes"),
+    materialized_source=materialized_data.partitioned_parquet_at(
+        "mealbox_changes",
+        partition_keys=["company_id", "year"]
+    ),
 )
 class MealboxChanges:
     agreement_id = Int32().as_entity()

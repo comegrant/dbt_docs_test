@@ -138,47 +138,13 @@ class BasketFeatures:
 
     repeated_taxonomies = Float().polars_aggregation_using_features(
         aggregation=(
-            pl.col("taxonomy_ids").list.explode().unique_counts().quantile(0.9) / pl.count("recipe_id")
+            pl.col("taxonomy_of_interest").list.explode().unique_counts().max() / pl.count("recipe_id")
         ),
         using_features=[
-            recipe_features.taxonomy_ids,
+            recipe_features.taxonomy_of_interest,
             recipe_features.recipe_id
         ]
     ).with_tag(VariationTags.equal_dishes)
-
-
-    # basket_size = Int32().polars_aggregation_using_features(
-    #     using_features=[recipe_features.recipe_id],
-    #     aggregation=pl.count("recipe_id")
-    # )
-    # # Derived Features
-    # repeated_taxonomy_mean = repeated_taxonomy_counts.transform_polars(
-    #     pl.col("repeated_taxonomy_counts").list.mean(),
-    #     as_dtype=Int32()
-    # )
-    # repeated_taxonomy_max = repeated_taxonomy_counts.transform_polars(
-    #     pl.col("repeated_taxonomy_counts").list.max(),
-    #     as_dtype=Int32()
-    # )
-    #
-    # repeated_taxonomy_90_p = repeated_taxonomy_counts.transform_polars(
-    #     pl.col("repeated_taxonomy_counts").map_elements(lambda x: np.percentile(x.to_numpy(), 90)),
-    #     as_dtype=Int32()
-    # )
-    #
-    # repeated_taxonomy_75_p = repeated_taxonomy_counts.transform_polars(
-    #     pl.col("repeated_taxonomy_counts").map_elements(lambda x: np.percentile(x.to_numpy(), 75)),
-    #     as_dtype=Int32()
-    # )
-    #
-    # repeated_taxonomy_median = repeated_taxonomy_counts.transform_polars(
-    #     pl.col("repeated_taxonomy_counts").map_elements(lambda x: np.percentile(x.to_numpy(), 50)),
-    #     as_dtype=Int32()
-    # )
-    #
-    # normalised_taxonomy_count = repeated_taxonomy_max / basket_size
-    # normalised_percentile = repeated_taxonomy_75_p / basket_size
-    # normalised_median = repeated_taxonomy_median / basket_size
 
 
 async def historical_preselector_vector(
@@ -303,10 +269,11 @@ PreselectorVector = with_freshness(
         name="preselector_vector",
         source=CustomMethodDataSource.from_methods(
             all_data=historical_preselector_vector,
-            depends_on_sources=NormalizedRecipeFeatures.as_source()
-            .location_id()
-            .union(HistoricalRecipeOrders.as_source().location_id())
-            .union(RecipeMainIngredientCategory.as_source().location_id()),
+            depends_on_sources={
+                NormalizedRecipeFeatures.location,
+                HistoricalRecipeOrders.location,
+                RecipeMainIngredientCategory.location
+            },
         ),
         materialized_source=materialized_data.parquet_at("preselector_vector.parquet"),
         entities=dict(agreement_id=Int32()),

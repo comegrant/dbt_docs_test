@@ -10,6 +10,7 @@ from azure.servicebus import (
     ServiceBusSubQueue,
 )
 from azure.servicebus._common.message import PrimitiveTypes
+from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
 from data_contracts.sql_server import SqlServerConfig
 from pydantic import BaseModel, ValidationError
 
@@ -149,13 +150,17 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
         logger.info(f"Marking {len(messages)} as completed for {self.topic_name} and {self.subscription_name}")
 
         for message in messages:
-            if isinstance(message.raw_message, ServiceBusReceivedMessage):
-                receiver.complete_message(message.raw_message)
-            else:
-                message_type = type(message.raw_message)
-                logger.error(
-                    f"Message is not of type ServiceBusReceivedMessage - got {message_type}"
-                )
+            try:
+                if isinstance(message.raw_message, ServiceBusReceivedMessage):
+                    receiver.complete_message(message.raw_message)
+                else:
+                    message_type = type(message.raw_message)
+                    logger.error(
+                        f"Message is not of type ServiceBusReceivedMessage - got {message_type}"
+                    )
+            except (SessionLockLostError, MessageAlreadySettled) as error:
+                logger.error(f"Error when marking message. Will try to abandon {error}")
+                receiver.abandon_message(message.raw_message)
 
 
 @dataclass

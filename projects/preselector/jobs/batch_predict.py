@@ -1,6 +1,12 @@
 # Databricks notebook source
 # COMMAND ----------
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from databricks.sdk.dbutils import RemoteDbUtils
+    dbutils: RemoteDbUtils = "" # type: ignore
+
 from databricks_env import auto_setup_env
 
 auto_setup_env()
@@ -14,12 +20,13 @@ from datetime import date, timedelta
 dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("should_force_update", "false")
+dbutils.widgets.text("environment", defaultValue="")
 
 should_force_update = dbutils.widgets.get("should_force_update").lower() == "true"
 environment = dbutils.widgets.get("environment")
 
 assert isinstance(environment, str)
-assert environment
+assert environment != ""
 
 # Need to set this before importing any contracts due to env vars being accessed
 # I know this is is a shit design, but it will do for now

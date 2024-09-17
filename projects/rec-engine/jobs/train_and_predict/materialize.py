@@ -29,9 +29,10 @@ assert environment != ""
 os.environ["DATALAKE_ENV"] = environment
 
 
-from data_contracts.preselector.store import Preselector
-from preselector.materialize import materialize_data
-from preselector.store import preselector_store
+from data_contracts.materialize import materialize_data
+from data_contracts.orders import MealboxChangesAsRating
+from data_contracts.recommendations.recommendations import RecommendatedDish
+from data_contracts.recommendations.store import recommendation_feature_contracts
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     scope="auth_common",
@@ -50,8 +51,8 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("azure").setLevel(logging.ERROR)
 
-store = preselector_store()
+store = recommendation_feature_contracts()
 
-locations = list(Preselector.query().view.source.depends_on())
+locations = [RecommendatedDish.location, MealboxChangesAsRating.location]
 
 await materialize_data(store, locations, should_force_update=should_force_update)
