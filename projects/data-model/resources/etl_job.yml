@@ -36,6 +36,10 @@ resources:
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_billing_agreement_order_&_order_lines.py
 
+        - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+
         - task_key: dbt
           dbt_task:
             project_directory: ../transform/
@@ -49,7 +53,8 @@ resources:
             {task_key: bronze_cms_full},
             {task_key: bronze_pim_full},
             {task_key: bronze_psl_full},
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines}
+            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products}
           ]          
 
 
