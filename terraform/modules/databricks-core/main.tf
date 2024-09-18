@@ -202,6 +202,24 @@ resource "databricks_sql_endpoint" "db_wh_explore" {
   }
 }
 
+resource "databricks_permissions" "db_wh_explore" {
+  sql_endpoint_id = databricks_sql_endpoint.db_wh_explore.id
+  access_control {
+    group_name = "data-analysts"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-engineers"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-scientists"
+    permission_level = "CAN_USE"
+  }
+}
+
 resource "databricks_sql_endpoint" "db_wh_powerbi" {
   name                      = "Power BI SQL Warehouse"
   cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
