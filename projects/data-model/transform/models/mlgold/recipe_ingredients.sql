@@ -43,7 +43,9 @@ recipes_generic_ingredient_names_joined as (
 order_ingredients as (
     select
         order_ingredient_id,
-        ingredient_internal_reference
+        ingredient_internal_reference,
+        is_main_carbohydrate,
+        is_main_protein
     from {{ ref("pim__order_ingredients") }}
 ),
 
@@ -60,6 +62,8 @@ ingredient_categories as (
 order_ingredients_categories_linking as (
     select
         order_ingredients.order_ingredient_id,
+        order_ingredients.is_main_carbohydrate,
+        order_ingredients.is_main_protein,
         ingredient_categories.ingredient_id,
         ingredient_categories.ingredient_category_id
     from
@@ -76,7 +80,9 @@ recipes_generic_ingredient_names_categories_joined as (
     select
         recipes_generic_ingredient_names_joined.*,
         order_ingredients_categories_linking.ingredient_id,
-        order_ingredients_categories_linking.ingredient_category_id
+        order_ingredients_categories_linking.ingredient_category_id,
+        order_ingredients_categories_linking.is_main_carbohydrate,
+        order_ingredients_categories_linking.is_main_protein
     from
         recipes_generic_ingredient_names_joined
     left join
@@ -86,7 +92,6 @@ recipes_generic_ingredient_names_categories_joined as (
             = order_ingredients_categories_linking.order_ingredient_id
     where recipes_generic_ingredient_names_joined.generic_ingredient_id is not null
         and recipes_generic_ingredient_names_joined.generic_ingredient_name is not null
-        and recipes_generic_ingredient_names_joined.order_ingredient_id is not null
         and order_ingredients_categories_linking.ingredient_id is not null
 )
 
