@@ -191,8 +191,8 @@ This section contains information on how to develop in our dbt project. *Models*
 
 ### General rules SQL
 - Use lower case for all code
-- Use trailing commas
-- Do not use abbreviation in aliase and CTEs, i.e, use `order_lines` rather than `baol`
+- Use leading commas
+- Do not use abbreviation in aliases and CTEs, i.e, use `order_lines` rather than `baol`
 - Joins should always be done using left join and a where clause if filtering is needed instead of an inner join
 - Grouping (and ordering) should be done implisitt by either using `group by 1, 2 ,3 etc` or `group by all`. See this [doc](https://www.getdbt.com/blog/write-better-sql-a-defense-of-group-by-1) for reference on why.
 
