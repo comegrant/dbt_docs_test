@@ -543,6 +543,38 @@ resource "databricks_grants" "schemas" {
 
 }
 
+data "databricks_group" "analysts" {
+  display_name = "data-analysts"
+}
+
+data "databricks_group" "engineers" {
+  display_name = "data-engineers"
+}
+
+data "databricks_group" "scientists" {
+  display_name = "data-scientists"
+}
+
+resource "databricks_group_member" "analysts_admin_dev" {
+  count     = terraform.workspace == "dev" ? 1 : 0
+  group_id  = data.databricks_group.admins.id
+  member_id = data.databricks_group.analysts.id 
+}
+
+
+resource "databricks_group_member" "scientists_admin_dev" {
+  count     = terraform.workspace == "dev" ? 1 : 0
+  group_id  = data.databricks_group.admins.id
+  member_id = data.databricks_group.scientists.id 
+}
+
+resource "databricks_group_member" "engineers_admin" {
+  count     = terraform.workspace == "dev" ? 1 : 0
+  group_id  = data.databricks_group.admins.id
+  member_id = data.databricks_group.engineers.id 
+}
+
+
 resource "databricks_grants" "storage_credential" {
   storage_credential = databricks_storage_credential.this.id
   grant {
