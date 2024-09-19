@@ -18,6 +18,7 @@ tables = [
         "delivery_week_type",
         "loyalty_agreement_ledger",
         "loyalty_level",
+        "onesub_beta_agreements",
         "order_type"
         ]
 for table in tables:
