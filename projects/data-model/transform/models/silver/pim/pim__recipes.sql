@@ -15,11 +15,14 @@ renamed as (
         , recipe_metadata_id
         , main_recipe_id
         , status_code_id as recipe_status_code_id
-        , recipes_week
-        , recipes_year
 
-        {# not sure if these are nedded 
-        , status_code_id
+        {# system #}
+        , created_by as source_created_by
+        , created_at as source_created_at
+        , updated_by as source_updated_by
+        , updated_at as source_updated_at
+
+        {# not sure if these are needed
         , photo_state
         , ingredients_state
         , edited_state
@@ -29,10 +32,6 @@ renamed as (
         , dislike_counter
         , rating_average
         , text_editor
-        , created_by
-        , updated_by
-        , updated_at
-        , created_at
         , tested_state
         , extra_photo_state
         , duplicated_by

@@ -124,11 +124,11 @@ select
     , most_recent_billing_agreements.start_quarter
     , most_recent_billing_agreements.start_year
 
-    , first_order.first_delivery_week_monday_date
-    , first_order.first_delivery_week_week
-    , first_order.first_delivery_week_month
-    , first_order.first_delivery_week_quarter
-    , first_order.first_delivery_week_year
+    , first_order.first_menu_week_monday_date
+    , first_order.first_menu_week_week
+    , first_order.first_menu_week_month
+    , first_order.first_menu_week_quarter
+    , first_order.first_menu_week_year
 
 from union_scd_timeline_add_valid_to
 left join most_recent_billing_agreements

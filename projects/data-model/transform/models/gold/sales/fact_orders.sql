@@ -31,6 +31,7 @@ source_tables_joined as (
         md5(order_lines.order_line_id) as pk_fact_order_line
 
         {# ids #}
+        , billing_agreements.company_id
         , orders.cms_order_id
         , orders.ops_order_id
         , orders.order_status_id
@@ -55,7 +56,7 @@ source_tables_joined as (
         , coalesce(has_delivery.has_delivery, false) as has_delivery
 
         {# dates #}
-        , orders.delivery_week_monday_date
+        , orders.menu_week_monday_date
 
         {# timestamp #}
         , orders.source_created_at
@@ -71,7 +72,7 @@ source_tables_joined as (
                 billing_agreements.company_id)
             )
         as fk_dim_products
-        , cast(date_format(delivery_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
 
     from order_lines
     left join orders

@@ -11,7 +11,7 @@ renamed as (
     select
         {# ids #}
         ingredient_category_id
-        , status_code_id
+        , status_code_id as ingredient_category_status_code_id
         , parent_category_id
         , country_id
 

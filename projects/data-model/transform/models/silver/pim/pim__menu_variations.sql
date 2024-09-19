@@ -11,15 +11,17 @@ renamed as (
     select
         {# ids #}
         menu_variation_id
-        , menu_variation_margin_id
+        -- Not sure what this is
+        --, menu_variation_margin_id
         , menu_id
         , portion_id
         , menu_variation_ext_id as product_variation_id
 
         {# ints #}
         , menu_number_days
-        , menu_price
-        , menu_cost
+        -- Should maybe be generated from ingredients
+        --, menu_price
+        --, menu_cost
         
         {# system #}
         , created_by as source_created_by

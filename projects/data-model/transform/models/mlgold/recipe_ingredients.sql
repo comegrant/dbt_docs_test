@@ -20,7 +20,7 @@ generic_ingredient_names as (
         generic_ingredient_id,
         language_id,
         generic_ingredient_name
-    from {{ ref("pim__generic_ingredients_translations") }}
+    from {{ ref("pim__generic_ingredient_translations") }}
 ),
 
 {# joining all 3 CTEs above #}

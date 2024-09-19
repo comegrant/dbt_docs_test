@@ -12,6 +12,7 @@ renamed as (
        {# ids #}
         portion_id
         , main_portion_id
+        , status_code_id as portion_status_code_id
         
         {# ints #}
         , portion_size
@@ -23,7 +24,6 @@ renamed as (
         , modified_date as source_updated_at
 
         {# not sure if this is needed
-        , status_code_id
         , is_default
         , portion_size
         #}

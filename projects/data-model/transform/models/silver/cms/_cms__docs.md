@@ -157,35 +157,11 @@ The date the order was created. Not meaning when the order was initially placed,
 
 {% enddocs %}
 
-{% docs column__delivery_year %}
-
-The delivery year of the placed order.
-
-{% enddocs %}
-
-{% docs column__delivery_week %}
-
-The delivery week of the placed order.
-
-{% enddocs %}
-
 {% docs column__has_recipe_leaflets %}
 
 Flag to indiacte if order has printed recipes.
 
 Business context: From February 2024 customers got the option to opt out of printed recipes. 
-
-{% enddocs %}
-
-{% docs column__delivery_week_monday_date %}
-
-The first date in the delivery week (starts on a Monday).
-
-{% enddocs %}
-
-{% docs column__first_delivery_week_monday_date %}
-
-The first date in the delivery week (starts on a Monday) of the first all time delivery of the customer. 
 
 {% enddocs %}
 

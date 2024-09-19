@@ -4,93 +4,326 @@ version: 2
 
 models:
   - name: pim__menu_recipes
-    description: ""
+    description: "Bridge table to link menus and recipes"
+    columns:
+      - name: menu_recipe_id
+        data_type: int
+        description: "{{ doc('column__menu_recipe_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: menu_id
+        data_type: int
+        description: "{{ doc('column__menu_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_recipe_order
+        data_type: smallint
+        description: "{{ doc('column__menu_recipe_order') }}"
+        data_tests:
+          - not_null
 
   - name: pim__menu_variations
-    description: ""
-
+    description: "This table links menus to variations. Hence there is one row per menu_id and product_variation_id."
     columns:
+      - name: menu_variation_id
+        data_type: int
+        description: "{{ doc('column__menu_variation_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: menu_id
+        data_type: int
+        description: "{{ doc('column__menu_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: char(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_number_days
+        data_type: smallint
+        description: "{{ doc('column__menu_number_days') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_created_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
   - name: pim__menus
-    description: ""
-
+    description: "All menus per weekly menu. Each menu realtes to a product."
     columns:
+      - name: menu_id
+        data_type: int
+        description: "{{ doc('column__menu_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: weekly_menu_id
+        data_type: int
+        description: "{{ doc('column__weekly_menu_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_id
+        data_type: char(36)
+        description: "{{ doc('column__product_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_created_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
   - name: pim__portions
     description: ""
 
-    columns:
-      - name: source_created_by
-        data_type: string
-        description: "{{ doc('column__source_created_by') }}"
-
-      - name: source_created_at
-        data_type: string
-        description: "{{ doc('column__source_created_at') }}"
-
-      - name: source_updated_by
-        data_type: string
-        description: "{{ doc('column__source_updated_by') }}"
-
-      - name: source_updated_at
-        data_type: string
-        description: "{{ doc('column__source_updated_at') }}"
-
   - name: pim__recipe_portions
-    description: ""
-
+    description: "Links recipes to the possible portion variations"
     columns:
+      - name: recipe_portion_id
+        data_type: int
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_created_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
 
       - name: source_updated_at
-        data_type: string
+        data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
   - name: pim__weekly_menus
-    description: ""
+    description: "This table holds information about each menu week (delivery week). There is one row per company per week of the year."
+    columns:
+      - name: weekly_menu_id
+        data_type: int
+        description: "{{ doc('column__weekly_menu_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: weekly_menu_status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: smallint
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: smallint
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
 
   - name: pim__recipes
     description: ""
+    columns:
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_metadata_id
+        data_type: int
+        description: "{{ doc('column__recipe_metadata_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: main_recipe_id
+        data_type: int
+        description: "{{ doc('column__main_recipe_id') }}"
+
+      - name: recipe_status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: varchar(50)
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+
+      - name: source_updated_by
+        data_type: varchar(50)
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
   - name: pim__recipe_companies
     description: ""
@@ -144,7 +377,7 @@ models:
         data_type: string
         description: "{{ doc('column__source_updated_at') }}"
 
-  - name: pim__taxonomies_translations
+  - name: pim__taxonomy_translations
     description: "Table mapping taxonomy ids to their names in different languages"
 
     columns:
@@ -168,9 +401,9 @@ models:
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
 
-      - name: status_code_id
+      - name: taxonomy_status_code_id
         data_type: int
-        description: "{{ doc('column__status_code_id') }}"
+        description: "{{ doc('column__pim_status_code_id') }}"
 
       - name: country_id
         data_type: int
@@ -196,7 +429,7 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_external_taxonomy') }}"
 
-  - name: pim__recipes_taxonomies
+  - name: pim__recipe_taxonomies
     description: "Table mapping a recipe id to its taxonomy ids"
 
     columns:
@@ -208,7 +441,7 @@ models:
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
 
-  - name: pim__generic_ingredients_translations
+  - name: pim__generic_ingredient_translations
     description: "Table mapping generic ingredient ids to their names in different languages"
 
     columns:
@@ -260,7 +493,7 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_amount') }}"
 
-  - name: pim__ingredient_categories_translations
+  - name: pim__ingredient_category_translations
     description: "Table mapping ingredient category ids to their names in different languages"
 
     columns:
@@ -294,7 +527,7 @@ models:
 
       - name: ingredient_status_code_id
         data_type: int
-        description: "{{ doc('column__ingredient_status_code_id') }}"
+        description: "{{ doc('column__pim_status_code_id') }}"
 
       - name: ingredient_internal_reference
         data_type: string
@@ -372,9 +605,9 @@ models:
         data_type: int
         description: "{{ doc('column__ingredient_category_id') }}"
 
-      - name: status_code_id
+      - name: ingredient_category_status_code_id
         data_type: int
-        description: "{{ doc('column__status_code_id') }}"
+        description: "{{ doc('column__pim_status_code_id') }}"
 
       - name: parent_category_id
         data_type: int

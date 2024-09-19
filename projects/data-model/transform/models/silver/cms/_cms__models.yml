@@ -112,15 +112,15 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_year
+      - name: menu_year
         data_type: int
-        description: "{{ doc('column__delivery_year') }}"
+        description: "{{ doc('column__menu_year') }}"
         data_tests:
           - not_null
 
-      - name: delivery_week
+      - name: menu_week
         data_type: int
-        description: "{{ doc('column__delivery_week') }}"
+        description: "{{ doc('column__menu_week') }}"
         data_tests:
           - not_null
 
@@ -130,9 +130,9 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_week_monday_date
+      - name: menu_week_monday_date
         data_type: date
-        description: "{{ doc('column__delivery_week_monday_date') }}"
+        description: "{{ doc('column__menu_week_monday_date') }}"
         data_tests:
           - not_null
 
@@ -768,15 +768,15 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_year
+      - name: menu_year
         data_type: int
-        description: "{{ doc('column__delivery_year') }}"
+        description: "{{ doc('column__menu_year') }}"
         data_tests:
           - not_null
 
-      - name: delivery_week
+      - name: menu_week
         data_type: int
-        description: "{{ doc('column__delivery_week') }}"
+        description: "{{ doc('column__menu_week') }}"
         data_tests:
           - not_null
 
@@ -786,9 +786,9 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_week_monday_date
+      - name: menu_week_monday_date
         data_type: date
-        description: "{{ doc('column__delivery_week_monday_date') }}"
+        description: "{{ doc('column__menu_week_monday_date') }}"
         data_tests:
           - not_null
 

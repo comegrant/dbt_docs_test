@@ -9,7 +9,7 @@ orders as (
 , first_orders as (
     select 
         billing_agreement_id
-        , first(delivery_week_monday_date) as first_delivery_week_monday_date
+        , first(menu_week_monday_date) as first_menu_week_monday_date
     from orders
     group by
         1
@@ -18,11 +18,11 @@ orders as (
 , cohorts_first_orders as (
     select 
         billing_agreement_id
-        , first_delivery_week_monday_date
-        , extract('WEEK', first_delivery_week_monday_date) as first_delivery_week_week
-        , extract('MONTH', first_delivery_week_monday_date) as first_delivery_week_month
-        , extract('QUARTER', first_delivery_week_monday_date) as first_delivery_week_quarter
-        , extract('YEAROFWEEK', first_delivery_week_monday_date) as first_delivery_week_year
+        , first_menu_week_monday_date
+        , extract('WEEK', first_menu_week_monday_date) as first_menu_week_week
+        , extract('MONTH', first_menu_week_monday_date) as first_menu_week_month
+        , extract('QUARTER', first_menu_week_monday_date) as first_menu_week_quarter
+        , extract('YEAROFWEEK', first_menu_week_monday_date) as first_menu_week_year
     from first_orders
 
 )

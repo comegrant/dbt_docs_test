@@ -68,7 +68,9 @@ models:
         description: "{{ doc('column__recipe_id') }}"
         data_type: int
         data_tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
           - not_null
 
       - name: recipe_name

@@ -1,8 +1,8 @@
 with fact_orders as (
     select
-        delivery_week_monday_date,
-        extract(year from delivery_week_monday_date) as delivery_year,
-        extract(week from delivery_week_monday_date) as delivery_week,
+        menu_week_monday_date,
+        extract(year from menu_week_monday_date) as menu_year,
+        extract(week from menu_week_monday_date) as menu_week,
         product_variation_id,
         product_variation_quantity,
         fk_dim_order_statuses,
@@ -39,9 +39,9 @@ dim_products as (
 
 finished_standalone_dishes_orders as (
     select
-        fact_orders.delivery_year,
-        fact_orders.delivery_week,
-        fact_orders.delivery_week_monday_date,
+        fact_orders.menu_year,
+        fact_orders.menu_week,
+        fact_orders.menu_week_monday_date,
         fact_orders.product_variation_id,
         fact_orders.product_variation_quantity,
         dim_companies.company_id,
@@ -65,9 +65,9 @@ per_variation_aggregated as (
     select
         company_id,
         company_name,
-        delivery_year,
-        delivery_week,
-        delivery_week_monday_date,
+        menu_year,
+        menu_week,
+        menu_week_monday_date,
         product_variation_id,
         sum(product_variation_quantity) as product_variation_quantity
     from
@@ -75,24 +75,24 @@ per_variation_aggregated as (
     group by
         company_id,
         company_name,
-        delivery_year,
-        delivery_week,
-        delivery_week_monday_date,
+        menu_year,
+        menu_week,
+        menu_week_monday_date,
         product_variation_id
 ),
 
 per_company_aggregated as (
     select
         company_id,
-        delivery_year,
-        delivery_week,
+        menu_year,
+        menu_week,
         sum(product_variation_quantity) as total_weekly_qty
     from
         finished_standalone_dishes_orders
     group by
         company_id,
-        delivery_year,
-        delivery_week
+        menu_year,
+        menu_week
 ),
 
 per_variation_and_company_aggregated_joined as (
@@ -106,9 +106,9 @@ per_variation_and_company_aggregated_joined as (
         per_company_aggregated
     on
         per_company_aggregated.company_id = per_variation_aggregated.company_id
-        and per_company_aggregated.delivery_year = per_variation_aggregated.delivery_year
-        and per_company_aggregated.delivery_week = per_variation_aggregated.delivery_week
-    order by per_variation_aggregated.delivery_year, per_variation_aggregated.delivery_week
+        and per_company_aggregated.menu_year = per_variation_aggregated.menu_year
+        and per_company_aggregated.menu_week = per_variation_aggregated.menu_week
+    order by per_variation_aggregated.menu_year, per_variation_aggregated.menu_week
 )
 
 select

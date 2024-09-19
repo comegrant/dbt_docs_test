@@ -147,11 +147,11 @@ renamed as (
         end as company_id
 
         --numerics
-        , year as delivery_year
-        , week as delivery_week
+        , year as menu_year
+        , week as menu_week
 
         --dates
-        , {{ get_iso_week_start_date('year', 'week') }} as delivery_week_monday_date
+        , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date
 
         --strings
         , event_text

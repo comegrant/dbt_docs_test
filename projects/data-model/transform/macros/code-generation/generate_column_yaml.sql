@@ -12,7 +12,6 @@
             "\n        description: \"{{ doc('column__" ~ column.name ~ "') }}\"" 
             %}
         {% do output.append(column_info) %}
-        {% do output.append('        data_tests:') %}
         {% set data_tests = generate_data_test_yaml(column.name, column.dtype) %}
         {% do output.append(data_tests) %}
         {% do output.append('') %}

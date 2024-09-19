@@ -1,5 +1,5 @@
 with fact_menu as (
-    select
+    select distinct
         fk_dim_companies,
         fk_dim_recipes,
         menu_id,
@@ -43,17 +43,17 @@ products as (
 ),
 
 recipes_taxonomies as (
-    select * from {{ ref('pim__recipes_taxonomies') }}
+    select * from {{ ref('pim__recipe_taxonomies') }}
 ),
 
 taxonomies as (
     select taxonomy_id
     from {{ ref('pim__taxonomies') }}
-    where status_code_id = 1 --active
+    where taxonomy_status_code_id = 1 --active
 ),
 
 taxonomies_translations as (
-    select * from {{ ref('pim__taxonomies_translations') }}
+    select * from {{ ref('pim__taxonomy_translations') }}
 ),
 
 recipe_portions as (

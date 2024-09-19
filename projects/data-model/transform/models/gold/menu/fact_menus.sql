@@ -1,38 +1,8 @@
 with 
 
-weekly_menus as (
+menu_weeks as (
 
-    select * from {{ ref('pim__weekly_menus') }}
-
-),
-
-menus as (
-
-    select * from {{ ref('pim__menus') }}
-
-),
-
-/*menu_variations as (
-
-    select * from {{ ref('pim__menu_variations') }}
-
-),*/
-
-menu_recipes as (
-
-    select * from {{ ref('pim__menu_recipes') }}
-
-),
-
-recipes as (
-
-    select * from {{ ref('pim__recipes') }}
-
-),
-
-recipe_portions as (
-
-    select * from {{ ref('pim__recipe_portions') }}
+    select * from {{ ref('int_weekly_menus_variations_recipes_joined') }}
 
 ),
 
@@ -49,66 +19,58 @@ companies as (
 
 ),
 
-weekly_menu_tables_joined as (
+all_tables_joined as (
     select
-        md5(concat(weekly_menus.weekly_menu_id, menus.menu_id, menu_recipes.recipe_id, recipe_portions.portion_id)) as pk_fact_menu
-        , weekly_menus.weekly_menu_id
-    --    , weekly_menus.delivery_week_monday_date
-        , menus.menu_id
-    --  , menu_variations.product_variation_id
-        , menu_recipes.recipe_id
-    --    , recipes.recipe_metadata_id
-        , recipe_portions.portion_id
-    --    , companies.language_id
+        md5(concat_ws(
+            menu_weeks.weekly_menu_id,
+            menu_weeks.menu_id,
+            menu_weeks.product_variation_id,
+            menu_weeks.recipe_id,
+            menu_weeks.portion_id_variations,
+            menu_weeks.menu_number_days,
+            menu_weeks.menu_recipe_order
+        )) as pk_fact_menus
+        , menu_weeks.weekly_menu_id
+        , menu_weeks.company_id
+        , menu_weeks.menu_id
+        , menu_weeks.product_variation_id
+        , menu_weeks.menu_recipe_id
+        , menu_weeks.recipe_id
+        , menu_weeks.recipe_portion_id
+        , menu_weeks.portion_id_variations
+        , menu_weeks.portion_id_recipes
+
+        , menu_weeks.menu_year
+        , menu_weeks.menu_week
+        , menu_weeks.menu_week_monday_date
+
+        , menu_weeks.menu_number_days
+        , menu_weeks.menu_recipe_order
+
+        -- added temporariliy for debugging purposes
+        , portion_variations.portion_size as variation_portion_size
+        , portion_recipes.portion_size as recipe_portion_size
+
+        , menu_weeks.weekly_menu_status_code_id
+        , menu_weeks.menu_status_code_id
+        , menu_weeks.recipe_status_code_id
+        , portion_variations.portion_status_code_id as variation_portion_status_code_id
+        , portion_recipes.portion_status_code_id as recipe_portion_status_code_id
         
-    --  , weekly_menus.menu_year
-    --  , weekly_menus.menu_week
-    --  , recipes.recipes_year
-    --  , recipes.recipes_week
-
-    --  , menu_variations.menu_number_days
-    --  , variation_portions.portion_size as variation_portion_size
-    --  , menu_variations.menu_price
-    --  , menu_variations.menu_cost
-
-    --    , menu_recipes.menu_recipe_order
-    -- TODO: Should maybe be a dim
-        , portions.portion_size as recipe_portion_size
-
-        {# Status #}
-    --    , weekly_menus.weekly_menu_status_code_id
-    --    , menus.menu_status_code_id
-    --    , recipes.recipe_status_code_id
-
         {# FKS #}
-        , md5(cast(concat(recipes.recipe_id, companies.language_id) as string)) as fk_dim_recipes
-        , cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
-        , md5(weekly_menus.company_id) as fk_dim_companies
-       -- , md5(concat(
-       --         menu_variations.product_variation_id,
-       --         weekly_menus.company_id)
-       --     ) as fk_dim_products
+        , md5(cast(concat(menu_weeks.recipe_id, companies.language_id) as string)) as fk_dim_recipes
+        , md5(concat(menu_weeks.product_variation_id, companies.company_id)) as fk_dim_products
+        , cast(date_format(menu_weeks.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , md5(menu_weeks.company_id) as fk_dim_companies
 
-    from weekly_menus
-    left join menus 
-        on weekly_menus.weekly_menu_id = menus.weekly_menu_id
-    /*left join menu_variations 
-        on menus.menu_id = menu_variations.menu_id
-    left join portions as variation_portions
-        on menu_variations.portion_id = variation_portions.portion_id*/
-    left join menu_recipes
-        on menus.menu_id = menu_recipes.menu_id
-    left join recipes
-        on menu_recipes.recipe_id = recipes.recipe_id
-    left join recipe_portions
-        on recipes.recipe_id = recipe_portions.recipe_id
-    left join portions
-        on portions.portion_id = recipe_portions.portion_id
+    from menu_weeks
     left join companies
-        on weekly_menus.company_id = companies.company_id
-    -- only include published menus
-    where weekly_menus.weekly_menu_status_code_id = 3
-
+        on menu_weeks.company_id = companies.company_id
+    -- added temporariliy for debugging purposes
+    left join portions as portion_variations
+        on menu_weeks.portion_id_variations = portion_variations.portion_id
+    left join portions as portion_recipes
+        on menu_weeks.portion_id_recipes = portion_recipes.portion_id
 )
 
-select * from weekly_menu_tables_joined
+select * from all_tables_joined

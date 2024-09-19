@@ -9,7 +9,7 @@ renamed as (
     select
         {# ids #} 
         taxonomies_id as taxonomy_id
-        , status_code_id
+        , status_code_id as taxonomy_status_code_id
         , country_id
         --, preference_id
 

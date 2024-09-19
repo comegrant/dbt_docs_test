@@ -21,8 +21,7 @@ renamed as (
         , modified_by as source_updated_by
         , modified_date as source_updated_at
 
-    {# not sure if this is needed
-        , status_code_id
+    {# other columns that are not added yet
         , menu_min_time
         , menu_max_time
         , recipe_state

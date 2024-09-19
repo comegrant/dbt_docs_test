@@ -42,8 +42,8 @@ renamed as (
         #}
 
         {# numerics #}
-        , year as delivery_year
-        , week as delivery_week
+        , year as menu_year
+        , week as menu_week
         {# not yet included columns
         --totalamount as total_amount
         --sumoforderlinesprice as sum_of_order_lines_price
@@ -58,7 +58,7 @@ renamed as (
         #}
 
         {# dates #}
-        , {{ get_iso_week_start_date('year', 'week') }} as delivery_week_monday_date
+        , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date
         {# not yet included columns
         --cutoff_date
         --delivery_date

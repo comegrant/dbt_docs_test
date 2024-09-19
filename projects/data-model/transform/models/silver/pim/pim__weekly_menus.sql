@@ -1,15 +1,15 @@
-with 
+with
 
 source as (
 
     select * from {{ source('pim', 'pim__weekly_menus') }}
 
-),
+)
 
-renamed as (
+, renamed as (
 
     select
-        
+
         {# ids #}
         weekly_menus_id as weekly_menu_id
         , company_id
@@ -21,11 +21,6 @@ renamed as (
 
         {# dates #}
         , {{ get_iso_week_start_date('menu_year', 'menu_week') }} as menu_week_monday_date
-
-        {# not sure if these are needed:
-        , ordering_date
-        , default_delivery_date
-        #}
 
     from source
 
