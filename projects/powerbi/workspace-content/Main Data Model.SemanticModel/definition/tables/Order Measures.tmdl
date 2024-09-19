@@ -1,0 +1,391 @@
+table 'Order Measures'
+	lineageTag: 6c298811-8ad5-482b-b89a-827db89210a3
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: year
+		rollingWindowPeriods: 6
+		incrementalGranularity: month
+		incrementalPeriods: 1
+		sourceExpression =
+			let
+			    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+			    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+			    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+			    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
+			    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+			in
+			    #"Filtered Rows"
+
+	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
+		lineageTag: 9514c3b0-8d1c-49a4-a547-99ac13fa089d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Total Amount Inc Vat' = SUM('Order Measures'[total_amount_inc_vat])
+		lineageTag: 5cba6729-7b7c-48ce-9c67-e695bff2c63a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Orders' = DISTINCTCOUNTNOBLANK('Order Measures'[cms_order_id])
+		formatString: #,0
+		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
+
+	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
+		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Total Amount Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Number of Orders],BLANK())
+		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
+		formatString: 0
+		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
+
+	measure 'Sum Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
+		formatString: 0
+		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
+
+	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Variation Quantity])
+		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Unit Price Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Sum Variation Quantity])
+		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pk_fact_order_line
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 43c6d97d-3a61-4988-8dff-61961db660f6
+		summarizeBy: none
+		sourceColumn: pk_fact_order_line
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ops_order_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 1f406b18-f485-49a4-afc6-a0b176b86f77
+		summarizeBy: sum
+		sourceColumn: ops_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_status_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 97d4bcb3-e53a-4277-af57-57a94757ec39
+		summarizeBy: none
+		sourceColumn: order_status_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_type_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 094f462a-d367-48ec-9a45-4eeba1a9b353
+		summarizeBy: none
+		sourceColumn: order_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_line_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0319b8db-e0ea-4266-98d5-4460f2f2825a
+		summarizeBy: none
+		sourceColumn: order_line_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 64dfca24-3043-4e81-a204-f255f0399874
+		summarizeBy: none
+		sourceColumn: product_variation_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_line_type_name
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6093c33b-13e6-4718-84fa-0caeafa121df
+		summarizeBy: none
+		sourceColumn: order_line_type_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4521f41d-a9a8-484a-9159-d4046240c6ea
+		summarizeBy: sum
+		sourceColumn: vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unit_price_ex_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7f9d2ac1-3639-4135-b1dd-80415012e217
+		summarizeBy: sum
+		sourceColumn: unit_price_ex_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unit_price_inc_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 97dc1a98-b450-4c70-b648-52f8b8697a06
+		summarizeBy: sum
+		sourceColumn: unit_price_inc_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_amount_ex_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 08f563d8-4a6b-42f1-a6a2-defc5b017a7f
+		summarizeBy: sum
+		sourceColumn: total_amount_ex_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_amount_inc_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7d29bced-8264-4b7b-ad97-48e24fed616a
+		summarizeBy: sum
+		sourceColumn: total_amount_inc_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column has_delivery
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 61ef0da3-7497-4720-a9b7-cc7bffba031a
+		summarizeBy: none
+		sourceColumn: has_delivery
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_recipe_leaflets
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: ae54f7b9-96c6-45c6-8350-728a3cb4e046
+		summarizeBy: none
+		sourceColumn: has_recipe_leaflets
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column delivery_week_monday_date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		isAvailableInMdx: false
+		lineageTag: 62dff093-e3e8-4176-8b77-39772f786b2f
+		summarizeBy: none
+		sourceColumn: delivery_week_monday_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column fk_dim_order_types
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5433926e-8415-406d-bcf6-50d345c90dc2
+		summarizeBy: none
+		sourceColumn: fk_dim_order_types
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 272a1795-5763-4cfd-9ac3-330f7a344bf8
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0becfd8d-060a-46cc-8f99-831e7bb3c105
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 791ace8d-5c19-4331-ae91-56c97085cfc2
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 3f4a1497-0525-4d8c-8938-ad437ac4ef2c
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column cms_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70d325d5-6b5b-4424-b033-e2139b7ba9d6
+		summarizeBy: none
+		sourceColumn: cms_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 84439a3d-2be2-48be-964d-7db562b16e3e
+		summarizeBy: sum
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_quantity
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: b613ba0a-475c-451f-bff3-3cfd47ff7e11
+		summarizeBy: sum
+		sourceColumn: product_variation_quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_created_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: e99eabef-0f79-4460-9922-2e36345a8b12
+		summarizeBy: none
+		sourceColumn: source_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_order_statuses
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 60b9f4ea-5ffd-47de-8d2a-ea17152d4334
+		summarizeBy: none
+		sourceColumn: fk_dim_order_statuses
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Order Measures' = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_IsMQueryFoldable = True
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

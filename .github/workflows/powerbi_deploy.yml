@@ -1,0 +1,23 @@
+name: Power BI Deploy
+
+on: 
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/powerbi_deploy.yml'
+      - 'projects/powerbi**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  publish_semantic_model:
+    name: Publish and refresh semantic model in Cheffelo [dev]
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    uses: ./.github/workflows/powerbi_template.yml
+    with:
+      target-env: ${{matrix.target}}
+    secrets: inherit

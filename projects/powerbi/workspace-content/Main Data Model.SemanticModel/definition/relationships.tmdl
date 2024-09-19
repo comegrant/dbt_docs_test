@@ -1,0 +1,36 @@
+relationship AutoDetected_e2743f17-0d8e-46ce-9ecc-8b3a5fa86665
+	fromColumn: 'Order Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_1c6f7075-9408-4ef1-a6d6-1fcb469d6fd6
+	fromColumn: 'Order Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship AutoDetected_639e001b-4438-4a77-89e7-f452e3f581ab
+	fromColumn: 'Order Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
+	fromColumn: 'Menu Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship AutoDetected_bb7a349e-8746-426e-866e-67d5a2719c56
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8
+	fromColumn: 'Order Measures'.fk_dim_order_types
+	toColumn: 'Order Types'.pk_dim_order_types
+
+relationship d648b7a6-f119-c136-ba54-ac54c3f14b5f
+	fromColumn: 'Menu Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship a1002545-30a8-ce0e-a17d-0837e2a4454c
+	fromColumn: 'Menu Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_709c4193-69a1-47d4-a268-669e1fbc9d79
+	fromColumn: 'Order Measures'.fk_dim_order_statuses
+	toColumn: 'Order Statuses'.pk_dim_order_statuses
+

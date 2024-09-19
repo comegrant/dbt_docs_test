@@ -200,17 +200,16 @@ This is the primary key of the order line in CMS.
 {% docs column__order_line_type_name %}
 
 The type of the order line.
-
-* `Credit`: Credited amounts that is due to a case for a previous order. 
-* `Debit`: Purchased products.
-* `Debit_Gift`: Purchased marketing gifts.
-* `Discount`: Discounts on the order.
-* `Discount_Gift`: The discount given to a marketing gift.
-* `Invoice`: Invoice fee.
-* `Loyalty_Credit`: Credits which can be purchased in the loyalty points store.
-* `P4P`: Plate for plate (Swedish charity program).
-* `PRP`: Credited amounts that is related to a case for the current order.
-* `Transport`: Transport fee (a.k.a Delivery Fee, Freight Free).
+* `Credit` 
+* `Debit`
+* `Debit_Gift`
+* `Discount`
+* `Discount_Gift`
+* `Invoice`
+* `Loyalty_Credit`
+* `P4P`
+* `PRP`
+* `Transport`
 
 {% enddocs %}
 
@@ -262,12 +261,12 @@ The primary key of the order status in CMS.
 Need to figure this out
 
 The status of the order:
-* `Created`: Order is generated in CMS. Happens at cut-off, order later maybe? Can be cancelled.
+* `Created`: Order is generated in CMS. Can be cancelled.
 * `Processing`: Order is moved to logistics. Payment reduction (PRP) can be added and order can be cancelled.
 * `Hold`: ?? Can be cancelled ??
 * `Waiting`: ??
-* `Cancelled`: Order is cancelled. More about this here. Examples on Why, when, what. 
-* `Finished`: Order is locked. When does this happen? XX days after delivery?. If being credited that will happen together with the next order gen.
+* `Cancelled`: Order is cancelled. ...
+* `Finished`: Order is locked. 
 
 {% enddocs %}
 
@@ -287,13 +286,13 @@ This is the primary key of the order type in CMS.
 {% docs column__order_type_name %}
 
 The name of the order type:
-* `Order After Registration`: Orders of new customers that registered after cut-off. Currently only available for Godtlevert. Have not been in use since 2022.
-* `Daily Direct Order`: Orders with next day delivery. This belongs to Godtlevert Flex a discontinued service that found place in 2019 and 2020.
-* `Loyalty`: Has never been used.
-* `Recurring`: Regular weekly subscription. I.e., orders that follows cut-off and our fixed delivery slots.
-* `Campaign`: Special mealboxes such as easter and christmas mealboxes. Order is direct and does not follow the regular cut-off and delivery slots. 
-* `Gift Card`: Gift Card purchases. Can be done without being a registered customer. Order is direct and does not follow the regular cut-off and delivery slots.
-* `Orders after cutoff`: Orders that are createdby customer service after cut-off. Have not been in use since 2022.
+* `Order After Registration`
+* `Daily Direct Order`
+* `Loyalty`
+* `Recurring`
+* `Campaign`
+* `Gift Card`
+* `Orders after cutoff`
 
 {% enddocs %}
 
@@ -462,16 +461,7 @@ This is the primary key of the billing agreement status in CMS.
 
 {% docs column__billing_agreement_status_name %}
 
-The name of the status of the billing agreement:
-* `Active`: Customer will take a delivery in the week following cut-off.
-* `Freezed`: Customer will not take a delivery in the week following cut-off.
-* `Pending`: Customer has signed up but is yet to take a delivery. 
-* `Bad Player (avida)`: Customer has a poor payment history.
-* `Postal Area Closed`: Postal area of the customer is closed.
-* `Fraud`: Fraudulent customer.
-* `Locked`: Customer's account is locked.
-* `Deleted`: Customer's account is deleted.
-* `Leads`: Legacy, used previously in LMK?
+The name of the status of the billing agreement
 
 {% enddocs %}
 
