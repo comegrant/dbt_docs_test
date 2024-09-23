@@ -186,6 +186,15 @@ async def main() -> None:
     # Reset the rating when Generate is clicked
     if submit_button:
         st.session_state["rating"] = None
+        st.session_state["comment"] = None
+
+    # Add a text input for storing comments
+    if "comment" not in st.session_state:
+        st.session_state["comment"] = None
+
+    st.session_state["comment"] = st.text_input(
+        "Write any feedback and press Enter to register it. Do rate also!", st.session_state["comment"]
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -214,10 +223,12 @@ async def main() -> None:
                 "taste_preferences": [[pref.name for pref in prefs]],
                 "number_of_recipes": [number_of_recipes],
                 "portion_size": [portion_size],
+                "comment": [st.session_state.get("comment")],
             }
         )
 
         await CombinationsAppOutput.query().insert(output_df)
+
 
 async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGenerator | ModuleType) -> None:
 

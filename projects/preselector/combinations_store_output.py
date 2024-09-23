@@ -24,3 +24,4 @@ class CombinationsAppOutput:
     taste_preferences = List(sub_type=String())
     number_of_recipes = Int32()
     portion_size = Int32()
+    comment = String().is_optional()
