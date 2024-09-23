@@ -106,3 +106,12 @@ Run a linter in the project.
 Runs a formatter on the codebase
 
 `chef format`
+
+### Doctor
+Checks the project for common issues.
+
+`chef doctor`
+
+You can also pass a `--project` argument to check a specific project. For example `chef doctor --project data-model`
+
+Note: when testing the `data-model` project, you can't be in a directory lower than the root `data-model` directory.
