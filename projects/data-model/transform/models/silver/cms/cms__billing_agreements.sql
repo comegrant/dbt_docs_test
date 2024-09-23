@@ -51,13 +51,19 @@ renamed as (
         , created_at as signup_at
 
         {# scd #}
-        , dbt_valid_from as valid_from
+        , case when dbt_valid_from < created_at
+            then timestampadd(hour, 2, dbt_valid_from)
+            else dbt_valid_from 
+            end as valid_from
         , dbt_valid_to as valid_to
 
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by
-        , updated_at as source_updated_at
+        , case when updated_at < created_at
+            then timestampadd(hour, 2, updated_at)
+            else updated_at 
+            end as source_updated_at
         , updated_by as source_updated_by
 
 

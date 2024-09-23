@@ -83,8 +83,8 @@ orders as (
         on order_lines.cms_order_id = has_delivery.cms_order_id
     left join billing_agreements
         on orders.billing_agreement_id = billing_agreements.billing_agreement_id
-        and orders.menu_week_monday_date >= billing_agreements.valid_from
-        and orders.menu_week_monday_date < billing_agreements.valid_to
+        and orders.source_created_at >= billing_agreements.valid_from
+        and orders.source_created_at < billing_agreements.valid_to
     left join companies
         on billing_agreements.company_id = companies.company_id
 )

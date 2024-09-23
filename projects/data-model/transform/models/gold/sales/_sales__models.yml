@@ -6,6 +6,232 @@ models:
     latest_version: 1
     config:
       alias: fact_orders
+      contract:
+        enforced: True
+
+    columns:
+      - name: pk_fact_orders
+        data_type: string
+        description: "{{ doc('column__pk_fact_orders') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: vat
+        data_type: decimal(10,8)
+        description: "{{ doc('column__vat') }}"
+
+      - name: unit_price_ex_vat
+        data_type: decimal(20,6)
+        description: "{{ doc('column__unit_price_ex_vat') }}"
+
+      - name: unit_price_inc_vat
+        data_type: decimal(32,14)
+        description: "{{ doc('column__unit_price_inc_vat') }}"
+
+      - name: total_amount_ex_vat
+        data_type: decimal(31,6)
+        description: "{{ doc('column__total_amount_ex_vat') }}"
+
+      - name: total_amount_inc_vat
+        data_type: decimal(38,9)
+        description: "{{ doc('column__total_amount_inc_vat') }}"
+
+      - name: order_line_type_name
+        data_type: string
+        description: "{{ doc('column__order_line_type_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_recipe_leaflets
+        data_type: boolean
+        description: "{{ doc('column__has_recipe_leaflets') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_delivery
+        data_type: boolean
+        description: "{{ doc('column__has_delivery') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: cms_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__cms_order_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+
+      - name: order_status_id
+        data_type: varchar(36)
+        description: "{{ doc('column__order_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_type_id
+        data_type: varchar(36)
+        description: "{{ doc('column__order_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__order_line_id') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_date
+        data_type: int
+        description: "{{ doc('column__pk_dim_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: pk_dim_date
+
+      - name: fk_dim_order_statuses
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_statuses') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_order_statuses')
+              field: pk_dim_order_statuses
+
+      - name: fk_dim_order_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_types') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_order_types')
+              field: pk_dim_order_types
+
+      - name: fk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+    #    constraints:
+    #      - type: not_null
+    #    data_tests:
+    #      - not_null
+    #      - relationships:
+    #          to: ref('dim_products')
+    #          field: pk_dim_products
 
     versions:
       - v: 1
@@ -33,6 +259,178 @@ models:
     latest_version: 1
     config:
       alias: dim_billing_agreements
+      contract:
+        enforced: True
+
+    columns:
+      - name: pk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: sales_point_id
+        data_type: int
+        description: "{{ doc('column__sales_point_id') }}"
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_current
+        data_type: boolean
+        description: "{{ doc('column__is_current') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: payment_method
+        data_type: string
+        description: "{{ doc('column__payment_method') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_source
+        data_type: string
+        description: "{{ doc('column__signup_source') }}"
+
+      - name: signup_salesperson
+        data_type: string
+        description: "{{ doc('column__signup_salesperson') }}"
+      
+      - name: billing_agreement_status_name
+        data_type: string
+        description: "{{ doc('column__billing_agreement_status_name') }}"
+      # This can be null until we have added history
+      #  constraints:
+      #    - type: not_null
+      #  data_tests:
+      #    - not_null
+
+      # Has bugs. Not needed to fix before Onesub launch.
+      #- name: loyalty_level_id
+      #  data_type: char(36)
+      #  description: "{{ doc('column__loyalty_level_id') }}"
+
+      - name: signup_date
+        data_type: date
+        description: "{{ doc('column__signup_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_year_day
+        data_type: int
+        description: "{{ doc('column__signup_year_day') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_month_day
+        data_type: int
+        description: "{{ doc('column__signup_month_day') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_week_day
+        data_type: int
+        description: "{{ doc('column__signup_week_day') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_week
+        data_type: int
+        description: "{{ doc('column__signup_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_month
+        data_type: int
+        description: "{{ doc('column__signup_month') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_quarter
+        data_type: int
+        description: "{{ doc('column__signup_quarter') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: signup_year
+        data_type: int
+        description: "{{ doc('column__signup_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: first_menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__first_menu_week_monday_date') }}"
+
+      - name: first_menu_week_week
+        data_type: int
+        description: "{{ doc('column__first_menu_week_week') }}"
+
+      - name: first_menu_week_month
+        data_type: int
+        description: "{{ doc('column__first_menu_week_month') }}"
+
+      - name: first_menu_week_quarter
+        data_type: int
+        description: "{{ doc('column__first_menu_week_quarter') }}"
+
+      - name: first_menu_week_year
+        data_type: int
+        description: "{{ doc('column__first_menu_week_year') }}"
 
     versions:
       - v: 1

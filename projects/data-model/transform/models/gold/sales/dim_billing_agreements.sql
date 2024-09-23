@@ -4,147 +4,167 @@ billing_agreements as (
 
     select * from {{ ref('cms__billing_agreements') }}
 
-),
+)
 
-most_recent_billing_agreements as (
+, first_orders as (
 
-    select * from billing_agreements
+    select * 
+    from {{ ref('int_billing_agreements_extract_first_order') }}
+
+)
+
+, status_names as (
+
+    select * from {{ ref('cms__billing_agreement_statuses') }}
+
+)
+
+/*, scd_loyalty_level as (
+
+    select * from {{ ref('int_billing_agreements_loyalty_levels_scd') }}
+
+) */
+
+, fixed_columns as (
+
+    select 
+
+    billing_agreements.billing_agreement_id
+    , billing_agreements.company_id
+
+    , billing_agreements.payment_method
+    , billing_agreements.signup_source
+    , billing_agreements.signup_salesperson
+
+    , billing_agreements.signup_date
+    , billing_agreements.signup_year_day
+    , billing_agreements.signup_month_day
+    , billing_agreements.signup_week_day
+    , billing_agreements.signup_week
+    , billing_agreements.signup_month
+    , billing_agreements.signup_quarter
+    , billing_agreements.signup_year
+
+    , first_orders.first_menu_week_monday_date
+    , first_orders.first_menu_week_week
+    , first_orders.first_menu_week_month
+    , first_orders.first_menu_week_quarter
+    , first_orders.first_menu_week_year
+
+    , case 
+        when first_orders.source_created_at < billing_agreements.signup_at
+        then first_orders.source_created_at
+        else billing_agreements.signup_at 
+        end as valid_from
+    , {{ get_scd_valid_to() }} as valid_to
+
+    from billing_agreements
+    left join first_orders
+    on billing_agreements.billing_agreement_id = first_orders.billing_agreement_id
     where valid_to is null
 
-),
+)
 
-scd_billing_agreements as (
+, scd_billing_agreements as (
 
     select
         billing_agreement_id
         , billing_agreement_status_id
         , sales_point_id
         , valid_from
-        , coalesce(valid_to, cast('9999-01-01' as timestamp)) as valid_to
+        , {{ get_scd_valid_to('valid_to') }} as valid_to
     from billing_agreements
+)
 
-),
+, scd_timeline_unified (
 
-billing_agreement_statuses as (
+    select
+        fixed_columns.billing_agreement_id,
+        fixed_columns.valid_from
+    from fixed_columns
+    left join first_orders
 
-    select * from {{ ref('cms__billing_agreement_statuses') }}
-
-),
-
-first_order as (
-
-    select * from {{ ref('int_billing_agreements_extract_first_order') }}
-
-),
-
-scd_loyalty_level as (
-
-    select * from {{ ref('int_billing_agreements_loyalty_levels_scd') }}
-
-),
-
-union_scd_timeline_valid_from (
-
+    union
+    
     select
         scd_billing_agreements.billing_agreement_id,
         scd_billing_agreements.valid_from
     from scd_billing_agreements
 
-    union
+    /*union
 
     select
         scd_loyalty_level.billing_agreement_id,
         scd_loyalty_level.valid_from
-    from scd_loyalty_level
+    from scd_loyalty_level*/
 
-),
+)
 
-union_scd_timeline_add_valid_to as (
+, scd_timeline_valid_to_recalculated as (
     select
-        billing_agreement_id,
-        valid_from,
-        coalesce(lead(valid_from, 1) over (partition by billing_agreement_id order by valid_from), 
-        cast('9999-01-01' as timestamp)
-        ) as valid_to
-    from union_scd_timeline_valid_from
-),
+       billing_agreement_id
+       , valid_from
+       , {{ get_scd_valid_to('valid_from', 'billing_agreement_id') }} as valid_to
+    from scd_timeline_unified
+)
 
-join_tables as (
+, tables_joined as (
 select 
     md5(concat(
-        cast(most_recent_billing_agreements.billing_agreement_id as string),
-        cast(union_scd_timeline_add_valid_to.valid_from as string)
+        cast(fixed_columns.billing_agreement_id as string),
+        cast(scd_timeline_valid_to_recalculated.valid_from as string)
         )
     ) AS pk_dim_billing_agreements
     
-    {# ids #}
-    , most_recent_billing_agreements.billing_agreement_id
-    , most_recent_billing_agreements.company_id
+    , fixed_columns.billing_agreement_id
+    , fixed_columns.company_id
     , scd_billing_agreements.sales_point_id
-    --, most_recent_billing_agreements.payment_partner_id
-    --, most_recent_billing_agreements.applicant_id
-    --, most_recent_billing_agreements.trigger_registration_process as trigger_registration_process_id
     
-    {# scd validity #}
-    , union_scd_timeline_add_valid_to.valid_from
-    , union_scd_timeline_add_valid_to.valid_to
+    , scd_timeline_valid_to_recalculated.valid_from
+    , scd_timeline_valid_to_recalculated.valid_to
     , case 
-        when union_scd_timeline_add_valid_to.valid_to = '9999-01-01'
+        when scd_timeline_valid_to_recalculated.valid_to = '9999-01-01'
         then true 
         else false 
     end as is_current
 
-    {# strings #}
-    , most_recent_billing_agreements.payment_method
-    , most_recent_billing_agreements.signup_source
-    , most_recent_billing_agreements.signup_salesperson
-    , billing_agreement_statuses.billing_agreement_status_name
-    {# TODO: must be changed with the actual level name #}
-    , scd_loyalty_level.loyalty_level_id
+    , fixed_columns.payment_method
+    , fixed_columns.signup_source
+    , fixed_columns.signup_salesperson
+    , status_names.billing_agreement_status_name
+    {# TODO: must be swaped with the actual level name #}
+    --, scd_loyalty_level.loyalty_level_id
 
-    {# booleans #}
-    --, most_recent_billing_agreements.addresses_copied
+    , fixed_columns.signup_date
+    , fixed_columns.signup_year_day
+    , fixed_columns.signup_month_day
+    , fixed_columns.signup_week_day
+    , fixed_columns.signup_week
+    , fixed_columns.signup_month
+    , fixed_columns.signup_quarter
+    , fixed_columns.signup_year
 
-    {# date #}
-    , most_recent_billing_agreements.signup_date
-    , most_recent_billing_agreements.signup_year_day
-    , most_recent_billing_agreements.signup_month_day
-    , most_recent_billing_agreements.signup_week_day
-    , most_recent_billing_agreements.signup_week
-    , most_recent_billing_agreements.signup_month
-    , most_recent_billing_agreements.signup_quarter
-    , most_recent_billing_agreements.signup_year
+    , fixed_columns.first_menu_week_monday_date
+    , fixed_columns.first_menu_week_week
+    , fixed_columns.first_menu_week_month
+    , fixed_columns.first_menu_week_quarter
+    , fixed_columns.first_menu_week_year
 
-    , most_recent_billing_agreements.start_date
-    , most_recent_billing_agreements.start_year_day
-    , most_recent_billing_agreements.start_month_day
-    , most_recent_billing_agreements.start_week_day
-    , most_recent_billing_agreements.start_week
-    , most_recent_billing_agreements.start_month
-    , most_recent_billing_agreements.start_quarter
-    , most_recent_billing_agreements.start_year
-
-    , first_order.first_menu_week_monday_date
-    , first_order.first_menu_week_week
-    , first_order.first_menu_week_month
-    , first_order.first_menu_week_quarter
-    , first_order.first_menu_week_year
-
-from union_scd_timeline_add_valid_to
-left join most_recent_billing_agreements
-    on union_scd_timeline_add_valid_to.billing_agreement_id = most_recent_billing_agreements.billing_agreement_id
+from scd_timeline_valid_to_recalculated
+left join fixed_columns
+    on scd_timeline_valid_to_recalculated.billing_agreement_id = fixed_columns.billing_agreement_id
+    and scd_timeline_valid_to_recalculated.valid_from >= fixed_columns.valid_from
+    and scd_timeline_valid_to_recalculated.valid_to <= fixed_columns.valid_to
 left join scd_billing_agreements
-    on union_scd_timeline_add_valid_to.billing_agreement_id = scd_billing_agreements.billing_agreement_id
-    and union_scd_timeline_add_valid_to.valid_from >= scd_billing_agreements.valid_from
-    and union_scd_timeline_add_valid_to.valid_to < scd_billing_agreements.valid_to
-left join billing_agreement_statuses
-    on scd_billing_agreements.billing_agreement_status_id = billing_agreement_statuses.billing_agreement_status_id
-left join scd_loyalty_level
-    on union_scd_timeline_add_valid_to.billing_agreement_id = scd_loyalty_level.billing_agreement_id
-    and union_scd_timeline_add_valid_to.valid_from >= scd_loyalty_level.valid_from
-    and union_scd_timeline_add_valid_to.valid_to < scd_loyalty_level.valid_to
-left join first_order
-    on most_recent_billing_agreements.billing_agreement_id = first_order.billing_agreement_id
+    on scd_timeline_valid_to_recalculated.billing_agreement_id = scd_billing_agreements.billing_agreement_id
+    and scd_timeline_valid_to_recalculated.valid_from >= scd_billing_agreements.valid_from
+    and scd_timeline_valid_to_recalculated.valid_to <= scd_billing_agreements.valid_to
+/*left join scd_loyalty_level
+    on scd_timeline_valid_to_recalculated.billing_agreement_id = scd_loyalty_level.billing_agreement_id
+    and scd_timeline_valid_to_recalculated.valid_from >= scd_loyalty_level.valid_from
+    and scd_timeline_valid_to_recalculated.valid_to <= scd_loyalty_level.valid_to*/
+left join status_names
+    on scd_billing_agreements.billing_agreement_status_id = status_names.billing_agreement_status_id
 )
 
-select * from join_tables
+select * from tables_joined

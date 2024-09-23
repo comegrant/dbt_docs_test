@@ -9,15 +9,17 @@ orders as (
 , first_orders as (
     select 
         billing_agreement_id
-        , first(menu_week_monday_date) as first_menu_week_monday_date
+        , min(source_created_at) as source_created_at
+        , min(menu_week_monday_date) as first_menu_week_monday_date
     from orders
     group by
-        1
+        1 
 )
 
 , cohorts_first_orders as (
     select 
         billing_agreement_id
+        , source_created_at
         , first_menu_week_monday_date
         , extract('WEEK', first_menu_week_monday_date) as first_menu_week_week
         , extract('MONTH', first_menu_week_monday_date) as first_menu_week_month

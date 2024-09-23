@@ -40,10 +40,7 @@ loyalty_ledger as (
         loyalty_level_id,
         loyalty_level_number,
         points_generated_at as valid_from,
-        coalesce(
-            lead(points_generated_at, 1) over (partition by billing_agreement_id order by points_generated_at),
-            cast('9999-01-01' as timestamp)
-        ) as valid_to
+        {{ get_scd_valid_to('points_generated_at', 'billing_agreement_id') }} as valid_to
     from group_loyalty_ledger_levels
     where level_group = 1
 )

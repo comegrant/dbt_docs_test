@@ -31,6 +31,12 @@ The week of the year for the menu
 
 {% enddocs %}
 
+{% docs column__is_current %}
+
+...
+
+{% enddocs %}
+
 # System Fields
 
 {% docs column__source_created_at %}
