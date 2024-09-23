@@ -47,7 +47,7 @@ resources:
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
-              - 'dbt build'
+              - 'dbt build --exclude drafts.*'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_cms_full},
