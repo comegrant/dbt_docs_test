@@ -10,7 +10,7 @@ annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.134.7447.1 (Main)
+annotation PBIDesktopVersion = 2.135.7627.0 (24.08)
 
 annotation PBI_ProTooling = ["DevMode"]
 

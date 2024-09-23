@@ -27,8 +27,12 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Number of Orders' = DISTINCTCOUNTNOBLANK('Order Measures'[cms_order_id])
-		formatString: #,0
+	measure 'Number of Orders' =
+			CALCULATE(
+				DISTINCTCOUNTNOBLANK('Order Measures'[cms_order_id]),
+			    'Order Types'[Order Type Name] <> "Gift Card"
+			)
+		formatString: 0
 		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
 
 	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
@@ -58,18 +62,6 @@ table 'Order Measures'
 		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column pk_fact_order_line
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 43c6d97d-3a61-4988-8dff-61961db660f6
-		summarizeBy: none
-		sourceColumn: pk_fact_order_line
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
 
 	column ops_order_id
 		dataType: int64
@@ -240,14 +232,14 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column delivery_week_monday_date
+	column menu_week_monday_date
 		dataType: dateTime
 		isHidden
 		formatString: Long Date
 		isAvailableInMdx: false
 		lineageTag: 62dff093-e3e8-4176-8b77-39772f786b2f
 		summarizeBy: none
-		sourceColumn: delivery_week_monday_date
+		sourceColumn: menu_week_monday_date
 
 		changedProperty = IsHidden
 
@@ -368,6 +360,48 @@ table 'Order Measures'
 		lineageTag: 60b9f4ea-5ffd-47de-8d2a-ea17152d4334
 		summarizeBy: none
 		sourceColumn: fk_dim_order_statuses
+
+		annotation SummarizationSetBy = Automatic
+
+	column pk_fact_orders
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: c6046602-8856-4929-b847-3477e9f6da80
+		summarizeBy: none
+		sourceColumn: pk_fact_orders
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_year
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		lineageTag: c9673c50-5e6f-469e-8554-fbde45b0c193
+		summarizeBy: sum
+		sourceColumn: menu_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_week
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		lineageTag: 97307c94-3a2d-46bf-ba58-454db4d19551
+		summarizeBy: sum
+		sourceColumn: menu_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 2338558b-3049-4416-af88-185958bdc6e8
+		summarizeBy: none
+		sourceColumn: company_id
 
 		annotation SummarizationSetBy = Automatic
 

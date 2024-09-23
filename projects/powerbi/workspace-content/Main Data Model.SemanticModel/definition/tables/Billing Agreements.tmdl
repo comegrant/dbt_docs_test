@@ -116,18 +116,6 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column loyalty_level_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 7d67afc2-4b72-47e6-a046-3cedc2c487db
-		summarizeBy: none
-		sourceColumn: loyalty_level_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Signup Date'
 		dataType: dateTime
 		isHidden
@@ -218,103 +206,13 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Start Date'
-		dataType: dateTime
-		isHidden
-		formatString: Long Date
-		isAvailableInMdx: false
-		lineageTag: 302626bb-8eef-49ba-9387-d53094543fad
-		summarizeBy: none
-		sourceColumn: Start Date
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column start_year_day
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 8c64a99f-b6e9-403b-b0dc-f4a76e0b893e
-		summarizeBy: sum
-		sourceColumn: start_year_day
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column start_month_day
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 4266f56c-51ce-4e79-aa8f-f3697d756866
-		summarizeBy: sum
-		sourceColumn: start_month_day
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column start_week_day
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 0cf3dc7b-ec6e-4295-918c-85076c5fe2fc
-		summarizeBy: sum
-		sourceColumn: start_week_day
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Start Week'
-		dataType: int64
-		formatString: 0
-		lineageTag: c7d860de-c37f-4f01-b7ad-200b7f0a1c30
-		summarizeBy: sum
-		sourceColumn: Start Week
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Start Month'
-		dataType: int64
-		formatString: 0
-		lineageTag: a2c72d16-9d4d-4be2-8c46-7b9d296f2cfc
-		summarizeBy: sum
-		sourceColumn: Start Month
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Start Quarter'
-		dataType: int64
-		formatString: 0
-		lineageTag: e3ce9a64-476c-4411-bafc-7242287779f7
-		summarizeBy: sum
-		sourceColumn: Start Quarter
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Start Year'
-		dataType: int64
-		formatString: 0
-		lineageTag: 932bffbe-f319-4b02-bc2b-3910ed931184
-		summarizeBy: sum
-		sourceColumn: Start Year
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'First Delivery Date'
+	column 'First Menu Date'
 		dataType: dateTime
 		isHidden
 		formatString: Long Date
 		lineageTag: d67151df-ae12-48b5-beb5-cf563a456e54
 		summarizeBy: none
-		sourceColumn: First Delivery Date
+		sourceColumn: First Menu Date
 
 		changedProperty = IsHidden
 
@@ -322,39 +220,39 @@ table 'Billing Agreements'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column 'First Delivery Week'
+	column 'First Menu Week'
 		dataType: int64
 		formatString: 0
 		lineageTag: bbce92b8-d9b0-4148-afb6-e430f1b8fcad
 		summarizeBy: sum
-		sourceColumn: First Delivery Week
+		sourceColumn: First Menu Week
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'First Delivery Month'
+	column 'First Menu Month'
 		dataType: int64
 		formatString: 0
 		lineageTag: a4b5b32d-c78f-45da-9e80-5e97f3bf0d87
 		summarizeBy: sum
-		sourceColumn: First Delivery Month
+		sourceColumn: First Menu Month
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'First Delivery Quarter'
+	column 'First Menu Quarter'
 		dataType: int64
 		formatString: 0
 		lineageTag: 8f0a19c5-6c68-40f7-bbdb-87ba3e6377fe
 		summarizeBy: sum
-		sourceColumn: First Delivery Quarter
+		sourceColumn: First Menu Quarter
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'First Delivery Year'
+	column 'First Menu Year'
 		dataType: int64
 		formatString: 0
 		lineageTag: b33e20b9-81e5-406e-abee-b76e87cc1c89
 		summarizeBy: sum
-		sourceColumn: First Delivery Year
+		sourceColumn: First Menu Year
 
 		annotation SummarizationSetBy = Automatic
 
@@ -366,7 +264,7 @@ table 'Billing Agreements'
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{{"billing_agreement_id", "Agreement Id"}, {"payment_method", "Payment Method"}, {"signup_source", "Signup Source"}, {"signup_salesperson", "Signup Sales Person"}, {"billing_agreement_status_name", "Billing Agreement Status"}, {"signup_date", "Signup Date"}, {"signup_week", "Signup Week"}, {"signup_month", "Signup Month"}, {"signup_quarter", "Signup Quarter"}, {"signup_year", "Signup Year"}, {"start_date", "Start Date"}, {"start_week", "Start Week"}, {"start_month", "Start Month"}, {"start_quarter", "Start Quarter"}, {"start_year", "Start Year"}, {"first_delivery_week_monday_date", "First Delivery Date"}, {"first_delivery_week_week", "First Delivery Week"}, {"first_delivery_week_month", "First Delivery Month"}, {"first_delivery_week_quarter", "First Delivery Quarter"}, {"first_delivery_week_year", "First Delivery Year"}, {"sales_point_id", "Sales Point Id"}})
+				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{{"billing_agreement_id", "Agreement Id"}, {"payment_method", "Payment Method"}, {"signup_source", "Signup Source"}, {"signup_salesperson", "Signup Sales Person"}, {"billing_agreement_status_name", "Billing Agreement Status"}, {"signup_date", "Signup Date"}, {"signup_week", "Signup Week"}, {"signup_month", "Signup Month"}, {"signup_quarter", "Signup Quarter"}, {"signup_year", "Signup Year"}, {"first_menu_week_monday_date", "First Menu Date"}, {"first_menu_week_week", "First Menu Week"}, {"first_menu_week_month", "First Menu Month"}, {"first_menu_week_quarter", "First Menu Quarter"}, {"first_menu_week_year", "First Menu Year"}, {"sales_point_id", "Sales Point Id"}})
 				in
 				    #"Renamed Columns"
 

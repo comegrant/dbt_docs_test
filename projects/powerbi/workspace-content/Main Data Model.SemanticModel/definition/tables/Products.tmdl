@@ -178,7 +178,5 @@ table Products
 				in
 				    #"Renamed Columns"
 
-	changedProperty = Name
-
 	annotation PBI_ResultType = Table
 

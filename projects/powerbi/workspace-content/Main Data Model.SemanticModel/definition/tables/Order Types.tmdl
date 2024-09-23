@@ -72,7 +72,5 @@ table 'Order Types'
 				in
 				    #"Renamed Columns"
 
-	changedProperty = Name
-
 	annotation PBI_ResultType = Table
 
