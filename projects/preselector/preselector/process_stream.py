@@ -26,6 +26,7 @@ from preselector.data.models.customer import (
 from preselector.main import duration, run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
+from preselector.store import preselector_store
 from preselector.stream import (
     ReadableStream,
     ServiceBusStream,
@@ -252,6 +253,8 @@ def convert_concepts_to_attributes(
         "E8629185-5EC2-47FC-8EA9-4ED2DCF6CCF8": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
         # Laktosefri
         "2DEACFA4-FDC7-406A-BFC0-EBE472FCC9A0": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
+        # Vegetar
+        "C5E32939-0650-4666-B386-772FA1A7BDBA": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
 
         # RT:
         # Flexitari
@@ -434,11 +437,6 @@ async def process_stream(
     import os
 
     from cheffelo_logging import DataDogConfig, setup_datadog
-    from data_contracts.preselector.store import Preselector as PreselectorOutput
-    from data_contracts.preselector.store import RecipePreferences
-    from data_contracts.recommendations.store import recommendation_feature_contracts
-
-    from preselector.recipe_contracts import Preselector
 
     logging.basicConfig(level=logging.INFO)
 
@@ -457,11 +455,7 @@ async def process_stream(
 
     try:
         logger.info(settings)
-        store = recommendation_feature_contracts()
-
-        store.add_feature_view(RecipePreferences)
-        store.add_feature_view(PreselectorOutput)
-        store.add_model(Preselector)
+        store = preselector_store()
 
         company_map = {
             "godtlevert": "09ECD4F0-AE58-4539-8E8F-9275B1859A19",

@@ -6,7 +6,6 @@ from typing import Any
 import pandas as pd
 import polars as pl
 import streamlit as st
-from aligned import FeatureLocation
 from data_contracts.preselector.menu import PreselectorYearWeekMenu
 from preselector.contracts.compare_boxes import (
     SqlServerConfig,
@@ -18,7 +17,8 @@ from preselector.data.models.customer import PreselectorCustomer
 from preselector.main import run_preselector_for_request
 from preselector.mealselector_api import run_mealselector
 from preselector.process_stream import convert_concepts_to_attributes, load_cache
-from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
+from preselector.store import preselector_store
 from pydantic import BaseModel
 from streamlit_pages import set_deeplink
 from ui.components.mealkit import mealkit
@@ -286,6 +286,7 @@ async def compare_week(state: CompareWeekState) -> None:
         return year_weeks
 
     def view_results() -> None:
+        return
         year_weeks = answered_year_weeks()
         st.info("Showing results.")
 
@@ -301,31 +302,11 @@ async def compare_week(state: CompareWeekState) -> None:
         view_results()
 
     with st.spinner("Loading needed data"):
-        from data_contracts.preselector.store import (
-            ImportanceVector,
-            PartitionedRecommendations,
-            RecipePreferences,
-            TargetVectors,
-        )
-        from data_contracts.preselector.store import Preselector as PreselectorOutput
-        from data_contracts.recommendations.store import recommendation_feature_contracts
-        from preselector.recipe_contracts import Preselector
-
-        store = recommendation_feature_contracts()
-
-        store.add_feature_view(RecipePreferences)
-        store.add_feature_view(PreselectorOutput)
-        store.add_model(Preselector)
+        store = preselector_store()
 
         store = await load_cache(
             store,
             company_id=customer.company_id,
-            exclude_views={
-                FeatureLocation.model("rec_engine"),
-                PartitionedRecommendations.location,
-                TargetVectors.location,
-                ImportanceVector.location
-            }
         )
 
     selected_recipe_ids = set()
@@ -340,13 +321,19 @@ async def compare_week(state: CompareWeekState) -> None:
         compute_for=[
             YearWeek(week=week, year=year)
         ],
-        taste_preference_ids=customer.taste_preference_ids or [],
+        taste_preferences=[
+            NegativePreference(
+                preference_id=pref_id,
+                is_allergy=False
+            )
+            for pref_id in customer.taste_preference_ids
+        ] if customer.taste_preference_ids else [],
         concept_preference_ids=[customer.concept_preference_id],
         portion_size=customer.portion_size,
         number_of_recipes=customer.number_of_recipes,
         quarentine_main_recipe_ids=list(selected_recipe_ids),
         override_deviation=False,
-        has_data_processing_consent=False
+        has_data_processing_consent=True
     )
 
 
@@ -370,7 +357,7 @@ async def compare_week(state: CompareWeekState) -> None:
         to_next_week()
         return
 
-    menu = await store.feature_view(PreselectorYearWeekMenu.location.name).filter(
+    menu = await store.feature_view(PreselectorYearWeekMenu).filter(
         (pl.col("company_id") == customer.company_id) & (
             pl.col("menu_year") == year
         ) & (
@@ -448,10 +435,12 @@ async def compare_week(state: CompareWeekState) -> None:
     left = left.container(border=True)
     left.header("Mealkit A")
     mealkit(infos[0][1], left)
+    left.write(infos[0][0])
 
     right = right.container(border=True)
     right.header("Mealkit B")
     mealkit(infos[1][1], right)
+    right.write(infos[1][0])
 
     left.markdown("---")
     right.markdown("---")
@@ -470,14 +459,14 @@ async def compare_week(state: CompareWeekState) -> None:
     # if change_a is None or change_b is None:
 
     # if change_a == change_b:
-    if left.button("I choose mealkit A"):
-        set_deeplink(
-            CompareWeekState(
-                agreement_id=state.agreement_id,
-                year=state.year,
-                week=state.week + 1,
-            ),
-        )
+    # if left.button("I choose mealkit A"):
+    #     set_deeplink(
+    #         CompareWeekState(
+    #             agreement_id=state.agreement_id,
+    #             year=state.year,
+    #             week=state.week + 1,
+    #         ),
+    #     )
         # set_deeplink(
         #     ExplainSelectionState(
         #         agreement_id=customer.agreement_id,
@@ -492,14 +481,14 @@ async def compare_week(state: CompareWeekState) -> None:
         #     ),
         # )
 
-    if right.button("I choose mealkit B"):
-        set_deeplink(
-            CompareWeekState(
-                agreement_id=state.agreement_id,
-                year=state.year,
-                week=state.week + 1,
-            ),
-        )
+    # if right.button("I choose mealkit B"):
+    #     set_deeplink(
+    #         CompareWeekState(
+    #             agreement_id=state.agreement_id,
+    #             year=state.year,
+    #             week=state.week + 1,
+    #         ),
+    #     )
         # set_deeplink(
         #     ExplainSelectionState(
         #         agreement_id=customer.agreement_id,

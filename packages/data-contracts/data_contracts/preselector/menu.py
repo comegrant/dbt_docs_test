@@ -9,7 +9,7 @@ from aligned import (
     String,
     feature_view,
 )
-from data_contracts.sources import adb, materialized_data
+from data_contracts.sources import adb, azure_dl_creds, materialized_data
 
 preselector_menu_sql = """WITH menu (
   menu_week,
@@ -174,3 +174,19 @@ class MenuWeekRecipeNormalization:
     max_cost_of_food = Float()
     mean_cost_of_food = Float()
     median_cost_of_food = Float()
+
+
+@feature_view(
+    source=azure_dl_creds.directory("data-science/pre-selector").parquet_at("cost_of_food_per_menu_week.parquet"),
+)
+class CostOfFoodPerMenuWeek:
+    year = Int32().as_entity()
+    week = Int32().as_entity()
+    company_id = String().as_entity()
+
+    number_of_portions = Int32().as_entity()
+    number_of_recipes = Int32().as_entity()
+
+    target_cost_of_food = Float()
+
+    cost_of_food_target_per_recipe = target_cost_of_food / number_of_recipes

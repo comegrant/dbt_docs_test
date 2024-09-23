@@ -34,7 +34,7 @@ databricks-env = {path = "../../packages/databricks-env", develop = true}
 databricks-feature-engineering = "^0.7.0"
 
 [tool.poetry.group.app.dependencies]
-streamlit = "1.34.0"
+streamlit = "^1.37.0"
 pydantic-form = {path = "../../packages/pydantic-form", develop = true}
 
 [tool.poetry.group.cli.dependencies]

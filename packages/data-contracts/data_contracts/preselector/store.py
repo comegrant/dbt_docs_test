@@ -17,7 +17,7 @@ from data_contracts.preselector.basket_features import (
     PredefinedVectors,
     TargetVectors,
 )
-from data_contracts.preselector.menu import MenuWeekRecipeNormalization, PreselectorYearWeekMenu
+from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, MenuWeekRecipeNormalization, PreselectorYearWeekMenu
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost, RecipeMainIngredientCategory, RecipePreferences
 from data_contracts.recommendations.recommendations import PartitionedRecommendations
 from data_contracts.sources import data_science_data_lake
@@ -71,6 +71,7 @@ class PreselectorTestChoice:
         depends_on_sources={
             OneSubMealkits.location,
             RecipePreferences.location,
+            CostOfFoodPerMenuWeek.location,
             RecipeMainIngredientCategory.location,
             MenuWeekRecipeNormalization.location,
             PartitionedRecommendations.location,

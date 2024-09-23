@@ -279,7 +279,7 @@ def is_non_of(features: list[str]) -> pl.Expr:
     for feature in features:
         expr = expr | pl.col(feature)
 
-    return expr.is_not()
+    return expr.not_()
 
 
 @feature_view(
@@ -531,20 +531,20 @@ class RecipeNutrition:
     acceptable_freshness=timedelta(days=6),
 )
 class RecipeCost:
-    recipe_id = Int32().as_entity()
-    portion_size = Int32().as_entity()
+    recipe_id = Int32().lower_bound(1).as_entity()
+    portion_size = Int32().lower_bound(1).upper_bound(6).as_entity()
 
-    portion_id = Int32()
+    portion_id = Int32().lower_bound(1)
 
-    menu_year = Int32()
-    menu_week = Int32()
+    menu_year = Int32().lower_bound(2023).upper_bound(2050)
+    menu_week = Int32().lower_bound(1).upper_bound(53)
 
     loaded_at = EventTimestamp()
 
     country = String()
     company_name = String()
 
-    main_recipe_id = Int32()
+    main_recipe_id = Int32().lower_bound(1)
     recipe_name = String()
     portions = String().description(
         "Needs to be a string because we have instances of '2+' in Danmark.",
@@ -661,14 +661,16 @@ class NormalizedRecipeFeatures:
     main_recipe_id = Int32()
 
     taxonomy_ids = List(Int32())
-    taxonomy_of_interest = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.unique().list.set_difference(
-            pl.lit([
-                971, 1837, 985, 1838, 1178, 1212, 986, 1064, 1213, 1839, 991, 184, 247, 2096, 226, 217, 1177, 1067
-            ])
-        ),
-        as_dtype=List(Int32())
-    )
+
+    # PoC. Should rather only use a subset of the taxonomy types
+    # taxonomy_of_interest = taxonomy_ids.transform_polars(
+    #     pl.col("taxonomy_ids").list.unique().list.set_difference(
+    #         pl.lit([
+    #             971, 1837, 985, 1838, 1178, 1212, 986, 1064, 1213, 1839, 991, 184, 247, 2096, 226, 217, 1177, 1067
+    #         ])
+    #     ),
+    #     as_dtype=List(Int32())
+    # )
 
     year = Int32()
     week = Int32()

@@ -1,4 +1,5 @@
 from aligned import ContractStore
+from data_contracts.preselector.menu import CostOfFoodPerMenuWeek
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from data_contracts.preselector.store import RecipePreferences
 from data_contracts.recommendations.store import recommendation_feature_contracts
@@ -15,6 +16,7 @@ def preselector_store() -> ContractStore:
 
     store.add_feature_view(RecipePreferences)
     store.add_feature_view(PreselectorOutput)
+    store.add_feature_view(CostOfFoodPerMenuWeek)
     store.add_model(Preselector)
 
     return store

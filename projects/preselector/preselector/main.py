@@ -22,6 +22,7 @@ from data_contracts.preselector.basket_features import (
     TargetVectors,
     VariationTags,
 )
+from data_contracts.preselector.menu import CostOfFoodPerMenuWeek
 from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.recommendations.recommendations import RecommendatedDish
 
@@ -315,7 +316,7 @@ async def importance_vector_for_concept(
 
 async def normalize_cost(
     year_week: YearWeek,
-    mealkit_target_cost_of_food: float,
+    target_cost_of_food: float,
     request: GenerateMealkitRequest,
     vector: pl.DataFrame,
     store: ContractStore,
@@ -340,11 +341,12 @@ async def normalize_cost(
 
     logger.debug(f"Min CoF {min_cof} max: {max_cof}")
 
+
     assert min_cof, "Missing min cof. Therefore, can not normalize the cof target"
     assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
-    cost_of_food_value = (mealkit_target_cost_of_food - min_cof) / (max_cof - min_cof)
+    cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
-    logger.debug(f"Normalized value from {mealkit_target_cost_of_food} to {cost_of_food_value}")
+    logger.debug(f"Normalized value from {target_cost_of_food} to {cost_of_food_value}")
 
     return vector.with_columns(mean_cost_of_food=pl.lit(cost_of_food_value))
 
@@ -388,7 +390,7 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
         VariationTags.protein: 0.2,
         VariationTags.carbohydrate: 0.2,
         VariationTags.quality: 0.8,
-        VariationTags.equal_dishes: 0.1
+        VariationTags.equal_dishes: 0.0
     }
 
     tags = dict()
@@ -410,7 +412,7 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
     # Attributes = 2/3
     # Variation = 1/3
     # Since they should be summed to 1
-    total_sum = 0.5 / len(tags)
+    total_sum = 0.25 / len(tags)
 
 
     for tag, value in tags.items():
@@ -433,15 +435,32 @@ async def historical_preselector_vector(
     agreement_id: int,
     request: GenerateMealkitRequest,
     store: ContractStore,
-) -> tuple[pl.DataFrame, pl.DataFrame, bool]:
+) -> tuple[pl.DataFrame, pl.DataFrame, Annotated[bool, "If the vectors is based on historical data"]]:
 
     vector_features = [
         feat.name for feat in store.feature_view(TargetVectors).request.features if "float" in feat.dtype.name
     ]
 
+    logger.debug(f"No history found, using default values {request.concept_preference_ids}")
+
+    company_id = request.company_id
+    concept_ids = [concept_id.upper() for concept_id in request.concept_preference_ids]
+
+    with duration("Loading concept definition"):
+        default_importance, default_target = await importance_vector_for_concept(concept_ids, store, company_id)
+
+    default_importance = default_importance.with_columns(
+        pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+    )
+    default_importance, default_target = potentially_add_variation(default_importance, default_target)
+    default_importance = default_importance.with_columns(
+        pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+    )
+    default_importance = default_importance.with_columns(mean_cost_of_food=pl.lit(0.25))
+
     if request.has_data_processing_consent:
         with duration("Loading importance vector"):
-            importance = (
+            user_importance = (
                 await store.feature_view(ImportanceVector)
                 .features_for(
                     {
@@ -451,32 +470,14 @@ async def historical_preselector_vector(
                 .drop_invalid()
                 .to_polars()
             )
-        should_load_static_concept = importance.is_empty()
     else:
-        should_load_static_concept = True
-        importance = pl.DataFrame()
+        user_importance = pl.DataFrame()
 
-    if should_load_static_concept:
-        logger.debug(f"No history found, using default values {request.concept_preference_ids}")
-
-        company_id = request.company_id
-        concept_ids = [concept_id.upper() for concept_id in request.concept_preference_ids]
-
-        with duration("Loading concept definition"):
-            importance, target = await importance_vector_for_concept(concept_ids, store, company_id)
-
-        importance = importance.with_columns(
-            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
-        )
-        importance, target = potentially_add_variation(importance, target)
-        importance = importance.with_columns(
-            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
-        )
-        importance = importance.with_columns(mean_cost_of_food=pl.lit(0.25))
-        return target, importance, False
+    if user_importance.is_empty():
+        return default_target, default_importance, False
 
     with duration("Loading target vector"):
-        target = (
+        user_target = (
             await store.feature_view(TargetVectors)
             .features_for(
                 {
@@ -486,11 +487,22 @@ async def historical_preselector_vector(
             .drop_invalid()
             .to_polars()
         )
-    importance = importance.with_columns(mean_cost_of_food=pl.lit(0.25))
+
+    # Stacking the user vector two times to weight that 2 / 3
+    combined_importance = default_importance.select(vector_features).vstack(
+        user_importance.vstack(user_importance).select(vector_features)
+    ).mean().with_columns(
+        mean_cost_of_food=pl.lit(0.25)
+    )
+    combined_target = default_target.select(vector_features).vstack(
+        user_target.vstack(user_target).select(vector_features)
+    ).mean()
+
+    user_importance = combined_importance
 
     return (
-        target.select(vector_features),
-        importance.select(vector_features),
+        combined_target.select(vector_features),
+        combined_importance.select(vector_features),
         True,
     )
 
@@ -587,19 +599,37 @@ class PreselectorResult:
             override_deviation=self.request.override_deviation,
             model_version=self.model_version,
             generated_at=self.generated_at,
-            correlation_id=self.request.correlation_id
+            correlation_id=self.request.correlation_id,
+            concept_preference_ids=self.request.concept_preference_ids,
+            taste_preferences=self.request.taste_preferences
         )
 
-
-async def run_preselector_for_request(
-    request: GenerateMealkitRequest, store: ContractStore
-) -> PreselectorResult:
-    results: list[PreselectorYearWeekResponse] = []
-
-    all_selected_main_recipe_ids = request.quarentine_main_recipe_ids.copy()
+async def cost_of_food_target_for(
+    request: GenerateMealkitRequest,
+    store: ContractStore
+) -> Annotated[pl.DataFrame, CostOfFoodPerMenuWeek]:
 
     with duration("Loading mealkit CoF target"):
-        cost_of_food = await (
+        cof_entities = {
+            "company_id": [request.company_id] * len(request.compute_for),
+            "number_of_recipes": [request.number_of_recipes] * len(request.compute_for),
+            "number_of_portions": [request.portion_size] * len(request.compute_for),
+            "year": [ over.year for over in request.compute_for ],
+            "week": [ over.week for over in request.compute_for ]
+        }
+
+        cost_of_food = await (store.feature_view(CostOfFoodPerMenuWeek)
+            .select({"cost_of_food_target_per_recipe"})
+            .features_for(cof_entities)
+            .to_polars()
+        )
+
+        missing = cost_of_food.filter(pl.col("cost_of_food_target_per_recipe").is_null())
+
+        if missing.is_empty():
+            return cost_of_food
+
+        default_cof = await (
             store.feature_view(OneSubMealkits)
             .select({"cost_of_food_target_per_recipe"})
             .features_for(
@@ -612,10 +642,33 @@ async def run_preselector_for_request(
             .to_polars()
         )
 
-    raw_cost_of_food_value = cost_of_food["cost_of_food_target_per_recipe"].to_list()[0]
-    assert raw_cost_of_food_value, (
-        f"Missing cost_of_food target for {request.company_id},"
-        f" n recipes: {request.number_of_recipes}, n portions: {request.portion_size}"
+        defaults = missing.join(
+            default_cof,
+            on=["company_id", "number_of_recipes", "number_of_portions"],
+            suffix="_right"
+        )
+        assert defaults.height == missing.height, "Filling inn default values did not go as expected"
+
+        cost_of_food = cost_of_food.vstack(
+            defaults.with_columns(
+                pl.col("cost_of_food_target_per_recipe").fill_null(pl.col("cost_of_food_target_per_recipe_right"))
+            ).select(cost_of_food.columns)
+        ).filter(pl.col("cost_of_food_target_per_recipe").is_not_null())
+
+    return cost_of_food
+
+
+async def run_preselector_for_request(
+    request: GenerateMealkitRequest, store: ContractStore
+) -> PreselectorResult:
+    results: list[PreselectorYearWeekResponse] = []
+
+    all_selected_main_recipe_ids = request.quarentine_main_recipe_ids.copy()
+
+    cost_of_food = await cost_of_food_target_for(request, store)
+
+    assert cost_of_food.height == len(request.compute_for), (
+        f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
     )
 
     with duration("Computing preselector vector"):
@@ -640,7 +693,6 @@ async def run_preselector_for_request(
 
         logger.debug(f"Running for {year} {week}")
 
-
         if not contains_history:
             cached_value = cached_output(
                 subscription_variation,
@@ -654,9 +706,18 @@ async def run_preselector_for_request(
                 results.append(cached_value)
                 continue
 
+        cof_target = cost_of_food.filter(
+            pl.col("year") == year, pl.col("week") == week
+        )
+        assert cof_target.height == 1, (
+            f"Expected only one cof target for a week got {cof_target.height} for year week {yearweek}"
+        )
+
+        cof_target_value = cof_target["cost_of_food_target_per_recipe"].to_list()[0]
+
         target_vector = await normalize_cost(
             year_week=yearweek,
-            mealkit_target_cost_of_food=raw_cost_of_food_value,
+            target_cost_of_food=cof_target_value,
             request=request,
             vector=target_vector,
             store=store,
@@ -734,7 +795,8 @@ async def run_preselector_for_request(
             portion_size=request.portion_size,
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
-            compliancy=PreselectorPreferenceCompliancy.all_complient
+            compliancy=PreselectorPreferenceCompliancy.all_complient,
+            target_cost_of_food_per_recipe=cof_target_value
         )
         if not contains_history:
             set_cache(

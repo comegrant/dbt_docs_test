@@ -30,6 +30,7 @@ os.environ["DATALAKE_ENV"] = environment
 
 
 from data_contracts.materialize import materialize_data
+from data_contracts.menu import YearWeekMenu
 from data_contracts.orders import MealboxChangesAsRating
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.recommendations.store import recommendation_feature_contracts
@@ -53,6 +54,6 @@ logging.getLogger("azure").setLevel(logging.ERROR)
 
 store = recommendation_feature_contracts()
 
-locations = [RecommendatedDish.location, MealboxChangesAsRating.location]
+locations = [RecommendatedDish.location, MealboxChangesAsRating.location, YearWeekMenu.location]
 
 await materialize_data(store, locations, should_force_update=should_force_update)

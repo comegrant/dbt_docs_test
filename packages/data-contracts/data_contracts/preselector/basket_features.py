@@ -77,20 +77,20 @@ class BasketFeatures:
         pl.col("average_rating").fill_nan(0).mean(), as_type=Float()
     ).with_tag(VariationTags.quality)
 
-    std_fat = fat_agg.std()
-    std_protein = protein_agg.std()
-    std_veg_fruit = veg_fruit_agg.std()
-    std_fat_saturated = fat_saturated_agg.std()
+    # std_fat = fat_agg.std()
+    # std_protein = protein_agg.std()
+    # std_veg_fruit = veg_fruit_agg.std()
+    # std_fat_saturated = fat_saturated_agg.std()
     # std_price_category_level = price_category_level_agg.std()
     # std_recipe_cost_whole_units = recipe_cost_whole_units_agg.std()
-    std_energy = energy_kcal_agg.std()
-    std_number_of_ratings = number_of_ratings_agg.std()
-    std_ratings = recipe_features.average_rating.polars_aggregation(
-        pl.col("average_rating").fill_nan(0).std(), as_type=Float()
-    )
+    # std_energy = energy_kcal_agg.std()
+    # std_number_of_ratings = number_of_ratings_agg.std()
+    # std_ratings = recipe_features.average_rating.polars_aggregation(
+    #     pl.col("average_rating").fill_nan(0).std(), as_type=Float()
+    # )
 
     cooking_time_mean = recipe_features.cooking_time_from.aggregate().mean().with_tag(VariationTags.time)
-    cooking_time_std = recipe_features.cooking_time_from.aggregate().std()
+    # cooking_time_std = recipe_features.cooking_time_from.aggregate().std()
 
     is_low_calorie = mean_of_bool(recipe_features.is_low_calorie)
     is_chef_choice_percentage = mean_of_bool(recipe_features.is_chefs_choice)
@@ -138,10 +138,10 @@ class BasketFeatures:
 
     repeated_taxonomies = Float().polars_aggregation_using_features(
         aggregation=(
-            pl.col("taxonomy_of_interest").list.explode().unique_counts().max() / pl.count("recipe_id")
+            pl.col("taxonomy_ids").list.explode().unique_counts().max() / pl.count("recipe_id")
         ),
         using_features=[
-            recipe_features.taxonomy_of_interest,
+            recipe_features.taxonomy_ids,
             recipe_features.recipe_id
         ]
     ).with_tag(VariationTags.equal_dishes)
@@ -230,6 +230,8 @@ async def historical_preselector_vector(
         .with_columns(vector_type=pl.lit("target"))
     )
 
+    manually_set_columns = ["mean_cost_of_food"]
+
     importance = (
         basket_features.filter((pl.count("basket_id") > 1).over("agreement_id"))
         .group_by("agreement_id")
@@ -237,17 +239,23 @@ async def historical_preselector_vector(
             [
                 (
                     1 / pl.col(feat).fill_nan(0).top_k(
-                        number_of_historical_orders // 2
+                        # Adding top k as noise reduction
+                        (pl.len() * 0.75).ceil()
                     ).bottom_k(
-                        number_of_historical_orders // 2
+                        # using 51 perc so we alwasy have at least 2 rows
+                        (pl.len() * 0.51).ceil()
                     ).std()
-                    .clip_min(0.1)
+                    .clip(lower_bound=0.1)
                 ).exp().sub(
                     pl.lit(0.5).exp()
                 ).alias(feat)
                 for feat in feature_columns
             ]
         )
+        .with_columns([
+            # No need to let cost of food effect the importance, so we set this to 0
+            pl.lit(0).alias(feat) for feat in manually_set_columns
+        ])
         .with_columns([pl.col(feat) / pl.sum_horizontal(feature_columns) for feat in feature_columns])
         .with_columns(vector_type=pl.lit("importance"))
     )

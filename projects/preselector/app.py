@@ -259,6 +259,4 @@ async def test_preselector() -> None:
 
 
 if __name__ == "__main__":
-
-    from combinations_app import main
-    asyncio.run(main())
+    asyncio.run(test_preselector.run())

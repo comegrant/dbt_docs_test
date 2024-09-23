@@ -60,7 +60,7 @@ WHERE pv.product_id = 'd699150e-d2de-4bc1-a75c-8b70c9b28ae3'"""
 )
 class OneSubMealkits:
     company_id = String().as_entity()
-    number_of_recipes = Int32().lower_bound(1).as_entity()
+    number_of_recipes = Int32().lower_bound(2).as_entity()
     number_of_portions = Int32().lower_bound(1).as_entity()
 
     name = String()

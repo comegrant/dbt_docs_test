@@ -3,7 +3,7 @@ from enum import IntEnum
 
 from pydantic import BaseModel, Field
 
-from preselector.schemas.batch_request import GenerateMealkitRequest
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 
 from .order import DeliveredOrder, PlannedOrder
 from .product import ProductVariation
@@ -67,6 +67,7 @@ class PreselectorYearWeekResponse(BaseModel):
     variation_ids: list[str]
     main_recipe_ids: list[int]
     compliancy: PreselectorPreferenceCompliancy
+    target_cost_of_food_per_recipe: float
 
 
 class PreselectorSuccessfulResponse(BaseModel):
@@ -74,6 +75,9 @@ class PreselectorSuccessfulResponse(BaseModel):
 
     correlation_id: str
     year_weeks: list[PreselectorYearWeekResponse]
+
+    concept_preference_ids: list[str]
+    taste_preferences: list[NegativePreference]
 
     override_deviation: bool
     "Echoing the value from the request. Is useful for CMS."

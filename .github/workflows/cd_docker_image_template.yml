@@ -58,6 +58,8 @@ jobs:
         push: true
         tags: ${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.tag }}
         file: ${{ inputs.working-directory }}/${{ inputs.dockerfile }}
+        build-args: |
+          GIT_COMMIT_HASH=${{ github.sha }}
 
 
     - name: Build and Push to ACR
@@ -68,3 +70,5 @@ jobs:
         push: true
         tags: ${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.tag }}, ${{ inputs.registry }}/${{ inputs.image-name }}:latest
         file: ${{ inputs.working-directory }}/${{ inputs.dockerfile }}
+        build-args: |
+          GIT_COMMIT_HASH=${{ github.sha }}

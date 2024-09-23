@@ -10,17 +10,14 @@ from concept_definition_app import load_attributes
 from data_contracts.preselector.store import (
     ImportanceVector,
     PartitionedRecommendations,
-    RecipePreferences,
     TargetVectors,
 )
-from data_contracts.preselector.store import Preselector as PreselectorOutput
-from data_contracts.recommendations.store import recommendation_feature_contracts
 from data_contracts.sources import adb
 from preselector.data.models.customer import PreselectorYearWeekResponse
 from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
-from preselector.recipe_contracts import Preselector
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
+from preselector.store import preselector_store
 from streamlit.delta_generator import DeltaGenerator
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
@@ -76,11 +73,7 @@ def all_combinations(ids: list[T], include_empty_set: bool) -> list[list[T]]:
 async def main() -> None:
     st.title("Default Pre-selector Combinations")
 
-    store = recommendation_feature_contracts()
-
-    store.add_feature_view(RecipePreferences)
-    store.add_feature_view(PreselectorOutput)
-    store.add_model(Preselector)
+    store = preselector_store()
 
     companies = {
         "8A613C15-35E4-471F-91CC-972F933331D7": "Adams",
