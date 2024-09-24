@@ -1,28 +1,36 @@
 [sqlfluff]
 dialect = databricks
-templater = dbt
+templater = jinja
 runaway_limit = 10
-max_line_length = 80
+max_line_length = 110
 indent_unit = space
+sql_file_exts = .sql
+ignore_templated_areas = True
+
+[sqlfluff:templater]
+unwrap_wrapped_queries = True
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = True
+load_macros_from_path = macros
 
 [sqlfluff:indentation]
 tab_space_size = 4
+indent_unit = space
+indented_ctes = false
 
 [sqlfluff:layout:type:comma]
-spacing_after = 1
+spacing_before = touch
+spacing_after = single
 line_position = leading
+
+[sqlfluff:layout:type:alias_expression]
+spacing_before = align
+align_within = select_clause
+align_scope = file
 
 [sqlfluff:rules:capitalisation.keywords] 
 capitalisation_policy = lower
-
-[sqlfluff:rules:aliasing.table]
-aliasing = explicit
-
-[sqlfluff:rules:aliasing.column]
-aliasing = explicit
-
-[sqlfluff:rules:aliasing.expression]
-allow_scalar = False
 
 [sqlfluff:rules:capitalisation.identifiers]
 extended_capitalisation_policy = lower
@@ -32,6 +40,21 @@ capitalisation_policy = lower
 
 [sqlfluff:rules:capitalisation.literals]
 capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.types]
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.column]
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.length]
+min_alias_length = 4
+
+[sqlfluff:rules:aliasing.expression]
+allow_scalar = False
 
 [sqlfluff:rules:ambiguous.column_references]  # Number in group by
 group_by_and_order_by_style = implicit

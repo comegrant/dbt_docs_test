@@ -1,25 +1,25 @@
-with 
+with
 
 source as (
 
     select * from {{ source('pim', 'pim__menus') }}
 
-),
+)
 
-renamed as (
+, renamed as (
 
     select
-        {# ids #}
+        {# ids #} -- noqa: LT02
         menu_id
-        , weekly_menus_id as weekly_menu_id
+        , weekly_menus_id  as weekly_menu_id
         , menu_external_id as product_id
-        , status_code_id as menu_status_code_id
-    
+        , status_code_id   as menu_status_code_id
+
         {# system #}
-        , created_by as source_created_by
-        , created_date as source_created_at
-        , modified_by as source_updated_by
-        , modified_date as source_updated_at
+        , created_by       as source_created_by
+        , created_date     as source_created_at
+        , modified_by      as source_updated_by
+        , modified_date    as source_updated_at
 
     {# other columns that are not added yet
         , menu_min_time
