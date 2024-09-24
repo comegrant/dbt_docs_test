@@ -1,3 +1,5 @@
+from time import sleep
+
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 from azure.mgmt.containerinstance.models import (
@@ -126,6 +128,15 @@ def deploy_preselector(
         location="northeurope"
     )
 
+    # I am fine with using print here
+    print("deleting resource") # noqa: T201
+    poller = client.container_groups.begin_delete(resource_group_name=resource_group, container_group_name=worker.name)
+
+    while not poller.done():
+        print("Waiting for delete") # noqa: T201
+        sleep(1)
+
+    print("creating resource") # noqa: T201
     client.container_groups.begin_create_or_update(
         resource_group_name=resource_group,
         container_group_name=worker.name,

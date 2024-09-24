@@ -18,7 +18,13 @@ from data_contracts.preselector.basket_features import (
     TargetVectors,
 )
 from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, MenuWeekRecipeNormalization, PreselectorYearWeekMenu
-from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost, RecipeMainIngredientCategory, RecipePreferences
+from data_contracts.recipe import (
+    NormalizedRecipeFeatures,
+    RecipeCost,
+    RecipeMainIngredientCategory,
+    RecipeNegativePreferences,
+    RecipePreferences,
+)
 from data_contracts.recommendations.recommendations import PartitionedRecommendations
 from data_contracts.sources import data_science_data_lake
 
@@ -70,8 +76,8 @@ class PreselectorTestChoice:
     source=CustomMethodDataSource.from_methods(
         depends_on_sources={
             OneSubMealkits.location,
-            RecipePreferences.location,
             CostOfFoodPerMenuWeek.location,
+            RecipeNegativePreferences.location,
             RecipeMainIngredientCategory.location,
             MenuWeekRecipeNormalization.location,
             PartitionedRecommendations.location,

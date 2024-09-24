@@ -1,6 +1,6 @@
 import polars as pl
 import pytest
-from aligned import ContractStore, FeatureLocation
+from aligned import ContractStore
 from data_contracts.in_mem_source import InMemorySource
 from preselector.main import filter_out_recipes_based_on_preference
 
@@ -8,13 +8,13 @@ from preselector.main import filter_out_recipes_based_on_preference
 @pytest.fixture()
 def model_contracts() -> ContractStore:
     from aligned.feature_source import BatchFeatureSource
-    from data_contracts.preselector.store import RecipePreferences
+    from data_contracts.preselector.store import RecipeNegativePreferences
 
     store = ContractStore.empty()
-    store.add_view(RecipePreferences)
+    store.add_view(RecipeNegativePreferences)
 
     locations = {
-        FeatureLocation.feature_view("recipe_preferences"): InMemorySource.from_values({
+        RecipeNegativePreferences.location: InMemorySource.from_values({
             "recipe_id":    [1, 2, 3, 4, 5, 6, 7],
             "portion_size": [2, 2, 2, 2, 2, 2, 2],
             "preference_ids": [["a", "b"], [], [], [], ["b"], ["a"], ["c"]],

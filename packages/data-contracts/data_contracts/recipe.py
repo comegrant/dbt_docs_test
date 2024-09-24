@@ -14,7 +14,7 @@ from aligned import (
 from aligned.schemas.feature_view import RetrivalRequest
 from project_owners.owner import Owner
 
-from data_contracts.sources import adb, adb_ml, materialized_data
+from data_contracts.sources import adb, adb_ml, materialized_data, pim_core
 
 contacts = [Owner.matsmoll().markdown(), Owner.niladri().markdown()]
 
@@ -708,6 +708,90 @@ class NormalizedRecipeFeatures:
     protein_pct = Float()
     fruit_veg_fresh_p = Float()
 
+
+ingredient_allergy_preferences_sql = """
+SELECT *
+FROM (
+    SELECT
+        atr.allergy_name,
+        atr.allergy_id,
+        ia.has_trace_of,
+        ap.preference_id,
+        i.ingredient_id,
+        ROW_NUMBER() over (
+            PARTITION BY atr.allergy_id, i.ingredient_id, ap.preference_id ORDER BY atr.LANGUAGE_ID
+        ) as nr
+    FROM
+        ingredients i
+    INNER JOIN
+        ingredient_allergies ia ON ia.ingredient_id = i.ingredient_id
+    INNER JOIN
+        allergies_translations atr ON atr.allergy_id = ia.allergy_id
+    LEFT JOIN
+        allergies_preference ap ON ap.allergy_id = atr.allergy_id
+) as allergies
+WHERE allergies.nr = 1
+        """
+
+@feature_view(
+    name="ingredient_allergy_preferences",
+    source=pim_core.fetch(ingredient_allergy_preferences_sql),
+    materialized_source=materialized_data.parquet_at("ingredient_allergy_preferences.parquet")
+)
+class IngredientAllergiesPreferences:
+    ingredient_id = Int32().as_entity()
+    allergy_id = Int32().as_entity()
+
+    has_trace_of = Bool().description("If the ingredient only have traces of the allergy")
+
+    preference_id = String().is_optional()
+    allergy_name = String()
+
+
+all_recipe_ingredients_sql = """
+SELECT *
+FROM (
+    SELECT
+        rp.RECIPE_ID as recipe_id,
+        it.INGREDIENT_NAME as ingredient_name,
+        i.created_date as created_at,
+        p.PORTION_SIZE as portion_size,
+        p.PORTION_ID as portion_id,
+        s.supplier_name,
+        i.ingredient_id,
+        ROW_NUMBER() over (PARTITION BY rp.recipe_id, i.ingredient_id, rp.PORTION_ID ORDER BY it.LANGUAGE_ID) as nr
+    FROM pim.RECIPE_PORTIONS rp
+    INNER JOIN pim.PORTIONS p on p.PORTION_ID = rp.PORTION_ID
+    INNER JOIN pim.CHEF_INGREDIENT_SECTIONS cis ON cis.recipe_portion_id = rp.recipe_portion_id
+    INNER JOIN pim.chef_ingredients ci ON ci.chef_ingredient_section_id = cis.chef_ingredient_section_id
+    INNER JOIN pim.order_ingredients oi ON oi.order_ingredient_id = ci.order_ingredient_id
+    INNER JOIN pim.ingredients i on i.ingredient_internal_reference = oi.INGREDIENT_INTERNAL_REFERENCE
+    INNER JOIN pim.INGREDIENTS_TRANSLATIONS it ON it.INGREDIENT_ID = i.ingredient_id
+    INNER JOIN pim.suppliers s ON s.supplier_id = i.supplier_id
+) as ingredients
+WHERE ingredients.nr = 1
+"""
+
+@feature_view(
+    name="all_recipe_ingredients",
+    source=adb.fetch(all_recipe_ingredients_sql),
+    materialized_source=materialized_data.parquet_at("all_recipe_ingredients.parquet")
+)
+class AllRecipeIngredients:
+    recipe_id = Int32().as_entity()
+    ingredient_id = Int32().as_entity()
+    portion_id = Int32().as_entity()
+
+    created_at = EventTimestamp()
+
+    portion_size = Int32()
+
+    ingredient_name = String()
+    supplier_name = String()
+
+    is_house_hold_ingredient = supplier_name != "Basis"
+
+
 recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
     SELECT DISTINCT
         rp.PORTION_ID,
@@ -744,7 +828,7 @@ recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
     INNER JOIN cms.preference p ON p.preference_id = icp.preference_id
         AND p.preference_type_id = '4C679266-7DC0-4A8E-B72D-E9BB8DADC7EB'
     INNER JOIN cms.preference_company pc ON pc.company_id = wm.company_id
-        AND pc.preference_id = p.preference_id AND (pc.is_active = '1' OR pc.created_at > '2024-01-01')
+        AND pc.preference_id = p.preference_id AND pc.is_active = '1'
     WHERE m.RECIPE_STATE = 1
 )
 
@@ -755,13 +839,10 @@ SELECT
     menu_week,
     recipe_id,
     main_recipe_id,
-    COALESCE(
-        CONCAT('["', CONCAT(STRING_AGG(convert(nvarchar(36), preference_id), '", "'), '"]')),
-        '["870C7CEA-9D06-4F3E-9C9B-C2C395F5E4F5"]'
-    ) as preference_ids,
+    CONCAT('["', CONCAT(STRING_AGG(convert(nvarchar(36), preference_id), '", "'), '"]')) as preference_ids,
     CONCAT('["', CONCAT(STRING_AGG(name, '", "'), '"]')) as preferences
-    FROM distinct_recipe_preferences
-    GROUP BY PORTION_ID, portion_size, menu_year, menu_week, recipe_id, main_recipe_id
+FROM distinct_recipe_preferences
+GROUP BY PORTION_ID, portion_size, menu_year, menu_week, recipe_id, main_recipe_id
 """
 
 
@@ -777,7 +858,7 @@ class RecipePreferences:
 
     loaded_at = EventTimestamp()
 
-    portion_id = String()
+    portion_id = Int32()
 
     menu_year = Int32()
     menu_week = Int32()
@@ -786,3 +867,54 @@ class RecipePreferences:
 
     preference_ids = List(String())
     preferences = List(String())
+
+
+async def join_recipe_and_allergies(request: RetrivalRequest) -> pl.LazyFrame:
+    allergy_preferences = await IngredientAllergiesPreferences.query().filter(
+        pl.col("preference_id").is_not_null()
+    ).to_polars()
+
+    recipes_with_allergies = await AllRecipeIngredients.query().filter(
+        pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"])
+    ).to_lazy_polars()
+
+    recipe_with_preferences = recipes_with_allergies.join(
+        allergy_preferences.lazy(),
+        on="ingredient_id"
+    ).group_by(["recipe_id", "portion_id", "portion_size"]).agg(
+        allergy_preference_ids=pl.col("preference_id")
+    )
+    recipe_preferences = await RecipePreferences.query().all().to_lazy_polars()
+
+    all_preferences = recipe_with_preferences.cast({"portion_id": pl.Int32}).join(
+        recipe_preferences.cast({"portion_id": pl.Int32}),
+        on=["recipe_id", "portion_id"],
+        how="full"
+    ).with_columns(
+        preference_ids=pl.col("preference_ids").fill_null([]).list.concat(pl.col("allergy_preference_ids")).list.unique()
+    )
+    return all_preferences
+
+
+@feature_view(
+    name="recipe_negative_preferances",
+    source=CustomMethodDataSource.from_load(
+        join_recipe_and_allergies,
+        depends_on={
+            RecipePreferences.location,
+            IngredientAllergiesPreferences.location,
+            AllRecipeIngredients.location,
+        }
+    ),
+    materialized_source=materialized_data.parquet_at("recipe_negative_preferences.parquet"),
+    acceptable_freshness=timedelta(days=5)
+)
+class RecipeNegativePreferences:
+    recipe_id = Int32().as_entity()
+    portion_size = Int32().as_entity()
+
+    loaded_at = EventTimestamp()
+
+    portion_id = String()
+
+    preference_ids = List(String())

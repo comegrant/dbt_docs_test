@@ -23,7 +23,7 @@ from data_contracts.preselector.basket_features import (
     VariationTags,
 )
 from data_contracts.preselector.menu import CostOfFoodPerMenuWeek
-from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory
+from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory, RecipeNegativePreferences
 from data_contracts.recommendations.recommendations import RecommendatedDish
 
 from preselector.contracts.compare_boxes import compute_normalized_features
@@ -834,7 +834,7 @@ async def filter_out_recipes_based_on_preference(
     """
     with duration("Loading recipe preferences"):
         preferences = (
-            await store.feature_view("recipe_preferences")
+            await store.feature_view(RecipeNegativePreferences)
             .select({"recipe_id", "preference_ids"})
             .features_for(recipes.with_columns(pl.lit(portion_size).alias("portion_size")))
             .to_polars()
@@ -932,7 +932,7 @@ async def run_preselector(
 
     with duration("Loading main ingredient category"):
         normalized_recipe_features = await store.feature_view(
-            RecipeMainIngredientCategory.metadata.name
+            RecipeMainIngredientCategory
         ).features_for(
             normalized_recipe_features
         ).filter(

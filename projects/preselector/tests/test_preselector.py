@@ -3,12 +3,13 @@ from random import seed
 
 import polars as pl
 import pytest
-from aligned import ContractStore
+from aligned import ContractStore, FeatureLocation
 from aligned.data_source.batch_data_source import DummyDataSource, data_for_request
 from aligned.feature_source import BatchFeatureSource
 from concept_definition_app import potential_features
 from data_contracts.in_mem_source import InMemorySource
 from data_contracts.preselector.basket_features import ImportanceVector, PredefinedVectors, TargetVectors
+from data_contracts.preselector.store import Preselector
 from numpy.random import seed as np_seed
 from preselector.main import run_preselector, run_preselector_for_request
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
@@ -26,7 +27,6 @@ def dummy_store() -> ContractStore:
         store.feature_source.sources[source_name] = DummyDataSource()
 
     return store
-
 
 @pytest.mark.asyncio()
 async def test_preselector_run(dummy_store: ContractStore) -> None:
@@ -99,6 +99,25 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     concept_id = "my-concept-id".upper()
     company_id = "some-company_id".upper()
 
+
+    # Removing the sources that the pre-selector source have not defined
+    # Would be nice for something with better support for this.
+    source = dummy_store.feature_source
+    preselector_deps = Preselector.metadata.source.depends_on().union({
+        FeatureLocation.model("rec_engine")
+    })
+
+    assert isinstance(source, BatchFeatureSource)
+    assert isinstance(source.sources, dict)
+
+    new_sources = source.sources.copy()
+
+    for source_identifier in source.sources:
+        loc = FeatureLocation.from_string(source_identifier)
+        if loc not in preselector_deps:
+            del new_sources[source_identifier]
+
+    source.sources = new_sources
 
     request = GenerateMealkitRequest(
         agreement_id=agreement_id,

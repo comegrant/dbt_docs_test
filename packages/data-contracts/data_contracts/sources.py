@@ -27,6 +27,7 @@ recommendations_dir = data_science_data_lake.directory("recommendations")
 local_mssql = SqlServerConfig("LOCAL_SQL", schema="dbo")
 
 adb = SqlServerConfig("ADB_CONNECTION")
+pim_core = SqlServerConfig("CORE_PIM_CONNECTION")
 
 adb_ml = adb.with_schema("ml")
 adb_ml_output = adb.with_schema("ml_output")

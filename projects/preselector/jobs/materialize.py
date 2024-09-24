@@ -38,6 +38,16 @@ os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     key="analyticsDb-connectionString",
 ).replace("ODBC Driver 17", "ODBC Driver 18")
 
+os.environ["CORE_PIM_CONNECTION"] = "DRIVER=ODBC Driver 18 for SQL Server;DATABASE=PIM;UID={username};SERVER=bh-replica.database.windows.net;PORT=1433;PWD={password}".format( # noqa: E501
+    username=dbutils.secrets.get(
+        scope="auth_common",
+        key="coreDb-replica-username",
+    ),
+    password=dbutils.secrets.get(
+        scope="auth_common",
+        key="coreDb-replica-password",
+    ),
+)
 os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
     scope="auth_common",
     key="azure-storageAccount-experimental-name",

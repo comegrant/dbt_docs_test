@@ -1,6 +1,7 @@
 from aligned import FeatureStore
 from aligned.compiler.model import ModelContractWrapper
 from aligned.feature_view.feature_view import FeatureViewWrapper
+from data_contracts.recipe import AllRecipeIngredients, IngredientAllergiesPreferences, RecipeNegativePreferences
 
 
 def recommendation_feature_contracts() -> FeatureStore:
@@ -48,6 +49,9 @@ def recommendation_feature_contracts() -> FeatureStore:
     from data_contracts.user import UserSubscription
 
     views: list[FeatureViewWrapper] = [
+        RecipeNegativePreferences,
+        IngredientAllergiesPreferences,
+        AllRecipeIngredients,
         PreselectorYearWeekMenu,
         NormalizedRecipeFeatures,
         RecipeTaxonomies,

@@ -10,13 +10,9 @@ import streamlit as st
 from aligned import ContractStore, FeatureLocation, FileSource
 from aligned.schemas.feature import Feature
 from data_contracts.preselector.basket_features import BasketFeatures, PredefinedVectors
-from data_contracts.preselector.store import (
-    RecipePreferences,
-)
-from data_contracts.recommendations.store import recommendation_feature_contracts
 from preselector.main import load_menu_for, normalize_cost, run_preselector
-from preselector.recipe_contracts import Preselector
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
+from preselector.store import preselector_store
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
 
@@ -557,16 +553,12 @@ async def missing_attributes() -> pl.DataFrame:
 
 async def main() -> None:
     from aligned import FeatureLocation
-    from data_contracts.preselector.store import Preselector as PreselectorOutput
     from preselector.materialize import materialize_data
     from tabs.tabs import run_active_tab
 
     logging.basicConfig(level=logging.INFO)
 
-    store = recommendation_feature_contracts()
-    store.add_model(Preselector)
-    store.add_feature_view(PreselectorOutput)
-    store.add_feature_view(RecipePreferences)
+    store = preselector_store()
 
     async def _edit() -> None:
         await edit_concept(store)

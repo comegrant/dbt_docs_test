@@ -11,16 +11,14 @@ from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
 from data_contracts.in_mem_source import InMemorySource
 from data_contracts.preselector.store import Preselector as PreselectorOutput
-from data_contracts.preselector.store import RecipePreferences
-from data_contracts.recommendations.store import recommendation_feature_contracts
 from fastapi import Depends, FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 
 from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
 from preselector.process_stream import load_cache_for
-from preselector.recipe_contracts import Preselector
 from preselector.schemas.batch_request import NegativePreference, YearWeek
+from preselector.store import preselector_store
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +59,7 @@ async def load_store() -> ContractStore:
     if store is not None:
         return store
 
-    store = recommendation_feature_contracts()
-
-    store.add_feature_view(RecipePreferences)
-    store.add_feature_view(PreselectorOutput)
-    store.add_model(Preselector)
+    store = preselector_store()
 
     today = date.today()
     this_week = today.isocalendar().week
