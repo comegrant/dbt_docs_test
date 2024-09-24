@@ -99,3 +99,6 @@ models:
 
       - name: chef_ingredient_id_list
         data_type: string
+
+  - name: estimations_log
+    description: Showing what would have been ordered for the next 14 weeks if the cutoff was today

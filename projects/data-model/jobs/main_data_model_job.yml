@@ -11,6 +11,7 @@ resources:
       email_notifications:
         on_failure:
           - marie.borg@cheffelo.com
+          - anna.broyn@cheffelo.com
 
       environments:
         - environment_key: dbt-default
@@ -56,32 +57,4 @@ resources:
             {task_key: bronze_cms_billing_agreement_order_and_order_lines},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products}
           ]          
-
-
-    dbt_only_with_parameter:
-      name: dbt_only_with_parameter   
-
-      environments:
-        - environment_key: dbt-default
-          spec:
-            client: "1"
-            dependencies:
-              - dbt-databricks>=1.0.0,<2.0.0
-
-      tasks: 
-        - task_key: dbt
-          dbt_task:
-            project_directory: ../transform/
-            warehouse_id: ${var.warehouse_id}
-            catalog: ${bundle.target}
-            commands:
-              - 'dbt deps'
-              - 'dbt build {{job.parameters.dbt_extra_command}}'
-          environment_key: dbt-default 
-      parameters:
-        - name: dbt_extra_command
-          default:  -s +dim_recipes
-      
-      edit_mode: EDITABLE
-
       

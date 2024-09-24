@@ -8,7 +8,7 @@ bundle:
   name: data-model
 
 include:
-- resources/*.yml
+- jobs/*.yml
 
 variables:
   client-id:

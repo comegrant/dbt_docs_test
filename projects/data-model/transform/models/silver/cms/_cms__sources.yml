@@ -24,4 +24,5 @@ sources:
       - name: cms__billing_agreement_basket_deviation_product
       - name: cms__billing_agreement_basket
       - name: cms__billing_agreement_basket_product
+      - name: cms__billing_agreement_basket_scheduler
       - name: cms__delivery_week_type

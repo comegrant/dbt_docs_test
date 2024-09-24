@@ -1,0 +1,57 @@
+resources:
+  jobs:
+    estimations_log:
+      name: estimations_log
+
+      schedule:
+       #Run every day every second hour between 8 and 22. (8:30, 10:30, 12:30 etc.) and midnight 00:30. 
+       quartz_cron_expression: 0 30 8-22/2,0 ? * * *
+       timezone_id: UTC
+
+      email_notifications:
+        on_failure:
+          - marie.borg@cheffelo.com
+          - anna.broyn@cheffelo.com
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: bronze_cms_full
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_full.py
+
+        - task_key: bronze_psl_full
+          notebook_task: 
+            notebook_path: ../ingest/bronze_psl_full.py
+
+        - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+
+        - task_key: bronze_cms_billing_agreement_basket_scheduler
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_scheduler.py
+
+        - task_key: dbt
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt build -s +estimations_log'
+          environment_key: dbt-default
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products}
+          ]          
+
+
+
+      
