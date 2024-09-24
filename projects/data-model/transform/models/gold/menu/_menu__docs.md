@@ -5,6 +5,30 @@
 
 {% enddocs %}
 
+{% docs column__has_menu_recipes %}
+
+...
+
+{% enddocs %}
+
+{% docs column__has_recipe_portions %}
+
+...
+
+{% enddocs %}
+
+{% docs column__is_dish %}
+
+...
+
+{% enddocs %}
+
+{% docs column__is_artificial_week %}
+
+...
+
+{% enddocs %}
+
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 

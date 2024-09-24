@@ -36,7 +36,12 @@ models:
           - type: unique
           - type: not_null
         data_tests:
-      #    - unique
+      # Is not unique due to problems with menu_id = 36 in source
+          - unique:
+              config:
+                severity: error
+                error_if: ">203"
+                warn_if: "<203"
           - not_null
 
       - name: weekly_menu_id
@@ -66,6 +71,7 @@ models:
       - name: product_variation_id
         data_type: char(36)
         description: "{{ doc('column__product_variation_id') }}"
+        # some old data is missing product variation ids
         data_tests:
           - not_null:
               config:
@@ -97,7 +103,7 @@ models:
               config:
                   severity: warn
 
-      - name: portion_id_variations
+      - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
         data_tests:
@@ -106,14 +112,6 @@ models:
                 severity: error
                 error_if: ">44"
                 warn_if: "<44"
-
-      - name: portion_id_recipes
-        data_type: int
-        description: "{{ doc('column__portion_id') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
 
       - name: menu_year
         data_type: smallint
@@ -157,7 +155,7 @@ models:
               config:
                   severity: warn
 
-      - name: variation_portion_size
+      - name: portion_size
         data_type: int
         description: "{{ doc('column__portion_size') }}"
         data_tests:
@@ -166,14 +164,6 @@ models:
                 severity: error
                 error_if: ">44"
                 warn_if: "<44"
-
-      - name: recipe_portion_size
-        data_type: int
-        description: "{{ doc('column__portion_size') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
 
       - name: weekly_menu_status_code_id
         data_type: int
@@ -194,32 +184,47 @@ models:
       - name: recipe_status_code_id
         data_type: int
         description: "{{ doc('column__pim_status_code_id') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
+        # has missing recipe_ids
+        #constraints:
+        #  - type: not_null
+        #data_tests:
+        #  - not_null:
+        #      config:
+        #          severity: warn
 
-      - name: variation_portion_status_code_id
+      - name: portion_status_code_id
         data_type: int
         description: "{{ doc('column__pim_status_code_id') }}"
-        data_tests:
-          - not_null:
-              config:
-                severity: error
-                error_if: ">44"
-                warn_if: "<44"
+        # has missing portion_ids
+        #constraints:
+        #  - type: not_null
+        #data_tests:
+        #  - not_null:
+        #      config:
+        #        severity: error
+        #        error_if: ">44"
+        #       warn_if: "<44"
+        
+      - name: is_artificial_week
+        data_type: boolean
+        description: "{{ doc('column__is_artificial_week') }}"
 
-      - name: recipe_portion_status_code_id
-        data_type: int
-        description: "{{ doc('column__pim_status_code_id') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
+      - name: has_menu_recipes
+        data_type: boolean
+        description: "{{ doc('column__has_menu_recipes') }}"
+
+      - name: has_recipe_portions
+        data_type: boolean
+        description: "{{ doc('column__has_recipe_portions') }}"
 
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
+        # has missing recipe ids
         #constraints:
         #  - type: not_null
         #data_tests:
@@ -231,6 +236,7 @@ models:
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
+        # has missing product variations due to some old data
         #constraints:
         #  - type: not_null
         #data_tests:

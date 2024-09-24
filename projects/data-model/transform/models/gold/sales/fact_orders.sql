@@ -20,7 +20,7 @@ orders as (
 
 , recipes as (
 
-    select * from {{ ref('int_weekly_menus_variations_recipes_joined') }}
+    select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
 
 )
 

@@ -48,27 +48,27 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column portion_id_recipes
+	column portion_id
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 7cfd0814-ebf2-4ab4-b49b-b298e8ecdad4
 		summarizeBy: sum
-		sourceColumn: portion_id_recipes
+		sourceColumn: portion_id
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
-	column recipe_portion_size
+	column portion_size
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: bd336b8a-e970-4983-9843-81cefd77bdb3
 		summarizeBy: sum
-		sourceColumn: recipe_portion_size
+		sourceColumn: portion_size
 
 		changedProperty = IsHidden
 
@@ -163,17 +163,6 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column portion_id_variations
-		dataType: int64
-		isHidden
-		isAvailableInMdx: false
-		formatString: 0
-		lineageTag: 132c236b-b76c-441f-bb9d-2dfd963153a7
-		summarizeBy: sum
-		sourceColumn: portion_id_variations
-
-		annotation SummarizationSetBy = Automatic
-
 	column menu_year
 		dataType: int64
 		isHidden
@@ -231,17 +220,6 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column variation_portion_size
-		dataType: int64
-		isHidden
-		isAvailableInMdx: false
-		formatString: 0
-		lineageTag: 75db06ad-3949-4c8f-9be6-7797a450a4c4
-		summarizeBy: sum
-		sourceColumn: variation_portion_size
-
-		annotation SummarizationSetBy = Automatic
-
 	column weekly_menu_status_code_id
 		dataType: int64
 		isHidden
@@ -275,25 +253,14 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column variation_portion_status_code_id
+	column portion_status_code_id
 		dataType: int64
 		isHidden
 		isAvailableInMdx: false
 		formatString: 0
 		lineageTag: 95448337-9047-49ea-8fb5-d306faeb4fa7
 		summarizeBy: sum
-		sourceColumn: variation_portion_status_code_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column recipe_portion_status_code_id
-		dataType: int64
-		isHidden
-		isAvailableInMdx: false
-		formatString: 0
-		lineageTag: 99ce367e-c0b5-49eb-be7d-75261eaf28c3
-		summarizeBy: sum
-		sourceColumn: recipe_portion_status_code_id
+		sourceColumn: portion_status_code_id
 
 		annotation SummarizationSetBy = Automatic
 
@@ -306,6 +273,55 @@ table 'Menu Measures'
 		sourceColumn: fk_dim_products
 
 		annotation SummarizationSetBy = Automatic
+	
+	column is_current
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_dish
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_menu_recipes
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_recipe_portions
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 
 	partition 'Menu Measures' = m
 		mode: import

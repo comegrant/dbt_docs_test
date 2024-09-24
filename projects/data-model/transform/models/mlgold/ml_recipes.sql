@@ -1,10 +1,13 @@
 with fact_menu as (
-    select distinct
+    select
         fk_dim_companies,
         fk_dim_recipes,
         menu_id,
-        recipe_portion_size
+        portion_size
     from {{ ref('fact_menus') }}
+    -- only include menu variations with recipe_id and portion_id
+    where has_menu_recipes is true
+    and has_recipe_portions is true
 ),
 
 dim_companies as (
@@ -146,7 +149,7 @@ distinct_recipes as (
             'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1', -- single dishes
             '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealboxes
         )
-        and fact_menu.recipe_portion_size = 4
+        and fact_menu.portion_size = 4
         and dim_companies.company_id in (
             '5E65A955-7B1A-446C-B24F-CFE576BF52D7', -- Retnemt
             '8A613C15-35E4-471F-91CC-972F933331D7', -- Adams Matkasse

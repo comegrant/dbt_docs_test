@@ -11,13 +11,15 @@ fact_menus as (
         menu_recipe_id,
         recipe_id,
         recipe_portion_id,
-        portion_id_recipes, -- portion id from the recipe portions
-        portion_id_variations, --portion id from menu variations
-        recipe_portion_size,
+        portion_id,
+        portion_size,
         menu_recipe_order,
         menu_number_days
     from
         {{ ref('fact_menus') }}
+    -- only include menu variations with recipe_id and portion_id
+    where has_menu_recipes is true
+    and has_recipe_portions is true
 )
 
 , dim_products as (
