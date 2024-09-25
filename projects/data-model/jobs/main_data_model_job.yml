@@ -4,8 +4,8 @@ resources:
       name: main-data-model-job
 
       schedule:
-       #Run every day at 9:27 AM
-       quartz_cron_expression: 21 27 9 * * ?
+       #Run every day at 5 AM
+       quartz_cron_expression: 0 0 5 * * ?
        timezone_id: UTC
 
       email_notifications:
@@ -58,3 +58,9 @@ resources:
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products}
           ]          
       
+        - task_key: refresh-powerbi
+          notebook_task: 
+            notebook_path: ../powerbi-refresh/powerbi-refresh.py
+          depends_on: [
+            {task_key: dbt}
+          ]
