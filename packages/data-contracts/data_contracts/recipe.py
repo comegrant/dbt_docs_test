@@ -3,6 +3,7 @@ from datetime import timedelta
 import polars as pl
 from aligned import (
     Bool,
+    ContractStore,
     CustomMethodDataSource,
     EventTimestamp,
     Float,
@@ -11,6 +12,8 @@ from aligned import (
     String,
     feature_view,
 )
+from aligned.feature_store import FeatureViewStore
+from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrivalRequest
 from project_owners.owner import Owner
 
@@ -567,7 +570,7 @@ class RecipeCost:
 async def compute_recipe_features() -> pl.LazyFrame:
     nutrition = RecipeNutrition.query().all()
     cost = RecipeCost.query().select_columns([
-        "recipe_cost_whole_units", "is_plus_portion"
+        "recipe_cost_whole_units", "is_plus_portion", "is_cheep"
     ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").is_not()))
 
     return (
@@ -701,6 +704,9 @@ class NormalizedRecipeFeatures:
     is_chefs_choice = Bool()
     is_low_calorie = Bool()
 
+    is_adams_signature = Bool()
+    is_cheep = Bool()
+
     energy_kcal_per_portion = Float()
     carbs_pct = Float()
     fat_pct = Float()
@@ -789,7 +795,7 @@ class AllRecipeIngredients:
     ingredient_name = String()
     supplier_name = String()
 
-    is_house_hold_ingredient = supplier_name != "Basis"
+    is_house_hold_ingredient = supplier_name == "Basis"
 
 
 recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
@@ -869,12 +875,25 @@ class RecipePreferences:
     preferences = List(String())
 
 
-async def join_recipe_and_allergies(request: RetrivalRequest) -> pl.LazyFrame:
-    allergy_preferences = await IngredientAllergiesPreferences.query().filter(
+async def join_recipe_and_allergies(
+    request: RetrivalRequest, store: ContractStore | None = None
+) -> pl.LazyFrame:
+
+    def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
+        """
+        Makes it easier to swap between prod, and manually defined data for testing.
+        """
+        if store:
+            return store.feature_view(view_wrapper)
+        else:
+            return view_wrapper.query()
+
+
+    allergy_preferences = await query(IngredientAllergiesPreferences).filter(
         pl.col("preference_id").is_not_null()
     ).to_polars()
 
-    recipes_with_allergies = await AllRecipeIngredients.query().filter(
+    recipes_with_allergies = await query(AllRecipeIngredients).filter(
         pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"])
     ).to_lazy_polars()
 
@@ -884,14 +903,19 @@ async def join_recipe_and_allergies(request: RetrivalRequest) -> pl.LazyFrame:
     ).group_by(["recipe_id", "portion_id", "portion_size"]).agg(
         allergy_preference_ids=pl.col("preference_id")
     )
-    recipe_preferences = await RecipePreferences.query().all().to_lazy_polars()
+    recipe_preferences = await query(RecipePreferences).all().to_lazy_polars()
 
     all_preferences = recipe_with_preferences.cast({"portion_id": pl.Int32}).join(
         recipe_preferences.cast({"portion_id": pl.Int32}),
         on=["recipe_id", "portion_id"],
         how="full"
     ).with_columns(
-        preference_ids=pl.col("preference_ids").fill_null([]).list.concat(pl.col("allergy_preference_ids")).list.unique()
+        preference_ids=pl.col("preference_ids").fill_null([]).list.concat(
+            pl.col("allergy_preference_ids").fill_null([])
+        ).list.unique(),
+        recipe_id=pl.col("recipe_id").fill_null(pl.col("recipe_id_right")),
+        portion_size=pl.col("recipe_id").fill_null(pl.col("portion_size_right")),
+        portion_id=pl.col("recipe_id").fill_null(pl.col("portion_id_right"))
     )
     return all_preferences
 

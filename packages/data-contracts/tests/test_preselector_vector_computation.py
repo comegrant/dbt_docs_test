@@ -60,6 +60,8 @@ async def test_importance_and_target_vector_computation() -> None:
             "is_kids_friendly": [0, 0, 1],
             "is_lactose": [1, 1, 0],
             "is_spicy": [0, 0, 0],
+            "is_cheep": [0, 0, 0],
+            "is_adams_signature": [0, 0, 0],
             "is_gluten_free": [0, 1, 0],
             "is_vegan": [0, 0, 0],
             "is_vegetarian": [0, 0, 0],

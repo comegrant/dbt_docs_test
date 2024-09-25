@@ -498,6 +498,19 @@ async def historical_preselector_vector(
         user_target.vstack(user_target).select(vector_features)
     ).mean()
 
+    # Roede
+    if "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA" in concept_ids:
+        # Roede can choose negative preferences, so we will not select a pre-defined mealkit
+        # But rather find the most optimal selection
+        # As a result will we weight the roede features above everything else.
+        # But if there are no left, then they will start to get other types of dishes
+        combined_target = combined_target.with_columns(
+            is_roede_percentage=pl.lit(1)
+        )
+        combined_importance = combined_importance.with_columns(
+            is_roede_percentage=pl.lit(1)
+        )
+
     user_importance = combined_importance
 
     return (
@@ -905,6 +918,10 @@ async def run_preselector(
     if recipes.is_empty():
         return ([], {})
 
+    # Singlekassen
+    if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
+        return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), {})
+
     if customer.taste_preference_ids:
         recipes = await filter_out_recipes_based_on_preference(
             recipes,
@@ -919,6 +936,9 @@ async def run_preselector(
     year = recipes["menu_year"].max()
     week = recipes["menu_week"].max()
 
+    assert year is not None
+    assert week is not None
+
     with duration("Loading normalized recipe features"):
         normalized_recipe_features = await compute_normalized_features(
             recipes.with_columns(
@@ -929,6 +949,28 @@ async def run_preselector(
             ),
             store=store,
         )
+
+
+    if (
+        customer.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
+    ) and (
+        customer.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2"
+    ) and (
+        year * 100 + week # type: ignore
+    ) <= 202451: # noqa: PLR2004
+        # Only return weight watchers recipes up to week 51 in Linas
+        return (normalized_recipe_features.filter(
+            pl.col("is_low_calorie")
+        )["main_recipe_id"].sample(customer.number_of_recipes).to_list(), {})
+
+
+    normalized_recipe_features = normalized_recipe_features.filter(
+        pl.col("is_adams_signature").is_not(),
+        pl.col("is_cheep").is_not()
+    ).select(
+        pl.exclude(["is_adams_signature", "is_cheep"]),
+    )
+
 
     with duration("Loading main ingredient category"):
         normalized_recipe_features = await store.feature_view(
@@ -950,34 +992,13 @@ async def run_preselector(
             .to_polars()
         )
 
-    with duration("Loading recipe features"):
-        all_recipe_features = await (
-            store.model("preselector")
-            .features_for(
-                recipes.with_columns(pl.lit(customer.portion_size).alias("portion_size")),
-            )
-            .to_polars()
-        )
-
-    logger.debug(f"Filtering out cheep and premium recipes: {all_recipe_features.height}")
-
-    static_mealkits = ["37CE056F-4779-4593-949A-42478734F747"]
-
-    if customer.concept_preference_ids != static_mealkits and customer.portion_size != 1:
-        recipe_features = all_recipe_features.filter(
-            pl.col("is_cheep").is_not(),
-        ).select(
-            pl.exclude(["is_cheep"]),
-        )
-        logger.debug(f"Filtered out cheep and premium recipes: {recipe_features.height}")
-    else:
-        recipe_features = all_recipe_features
+    recipe_features = normalized_recipe_features
 
     if recipe_features.is_empty():
         raise ValueError(
             "Found no recipes to select from. "
             "Please let the data team know about this so we can fix it. "
-            f"Had initially {recipes.height} recipes, and {all_recipe_features.height} recipes with features"
+            f"Had initially {recipes.height} recipes, and {recipe_features.height} recipes with features"
         )
 
     select_top_n = min(
@@ -1025,18 +1046,13 @@ async def run_preselector(
             dict(),
         )
 
-    with duration("Filtering based on available recipes"):
-        recipes_to_choose_from = normalized_recipe_features.filter(
-            pl.col("recipe_id").is_in(recipe_features["recipe_id"])
-        )
-
     assert not normalized_recipe_features.is_empty()
 
     with duration("Finding best combination"):
         best_recipe_ids, error_metric = await find_best_combination(
             target_vector,
             importance_vector,
-            recipes_to_choose_from,
+            recipe_features,
             customer.number_of_recipes,
         )
 

@@ -42,6 +42,8 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
     year = 2024
     portion_size = 4
 
+    recipe_pool = 100
+
     features = potential_features()
 
     main_recipe_ids, _ = await run_preselector(
@@ -57,13 +59,13 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
             has_data_processing_consent=False
         ),
         available_recipes=pl.DataFrame({
-            "recipe_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            "menu_week": [week] * 10,
-            "menu_year": [year] * 10,
-            "main_recipe_id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            "variation_id": ["a"] * 10,
-            "product_id": ["a"] * 10,
-            "variation_portions": [4] * 10
+            "recipe_id": list(range(recipe_pool)),
+            "menu_week": [week] * recipe_pool,
+            "menu_year": [year] * recipe_pool,
+            "main_recipe_id": list(range(recipe_pool)),
+            "variation_id": ["a"] * recipe_pool,
+            "product_id": ["a"] * recipe_pool,
+            "variation_portions": [4] * recipe_pool
         }),
         target_vector=pl.DataFrame({
             feat.name: 0.5
@@ -98,6 +100,7 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     agreement_id = 100
     concept_id = "my-concept-id".upper()
     company_id = "some-company_id".upper()
+    recipe_pool = 100
 
 
     # Removing the sources that the pre-selector source have not defined
@@ -158,17 +161,17 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     store = dummy_store.update_source_for(
         PreselectorYearWeekMenu.location,
         InMemorySource.from_values({
-            "recipe_id": [1, 2, 3],
-            "portion_id": [1, 2, 3],
-            "loaded_at": [iso_now] * 3,
-            "menu_week": [week] * 3,
-            "menu_year": [year] * 3,
-            "menu_recipe_order": [1, 2, 3],
-            "main_recipe_id": [1, 2, 3],
-            "variation_id": ["some-id"] * 3,
-            "product_id": ["some_id"] * 3,
-            "variation_portions": [portion_size] * 3,
-            "company_id": [company_id] * 3,
+            "recipe_id": list(range(recipe_pool)),
+            "portion_id": [1] * recipe_pool,
+            "loaded_at": [iso_now] * recipe_pool,
+            "menu_week": [week] * recipe_pool,
+            "menu_year": [year] * recipe_pool,
+            "menu_recipe_order": list(range(recipe_pool)),
+            "main_recipe_id": list(range(recipe_pool)),
+            "variation_id": ["some-id"] * recipe_pool,
+            "product_id": ["some_id"] * recipe_pool,
+            "variation_portions": [portion_size] * recipe_pool,
+            "company_id": [company_id] * recipe_pool,
         })
     ).update_source_for(
         TargetVectors.location,

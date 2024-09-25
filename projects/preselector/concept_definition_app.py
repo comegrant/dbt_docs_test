@@ -478,7 +478,8 @@ async def missing_attributes() -> pl.DataFrame:
         "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA": {
             "is_roede_percentage": FeatureImportance(target=1.0, importance=1.0),
         },
-        "37CE056F-4779-4593-949A-42478734F747": {}
+        # Singel
+        "37CE056F-4779-4593-949A-42478734F747": {},
     }
 
     vector_types = ["importance", "target"]
