@@ -273,18 +273,6 @@ table 'Menu Measures'
 		sourceColumn: fk_dim_products
 
 		annotation SummarizationSetBy = Automatic
-	
-	column is_current
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		summarizeBy: none
-		sourceColumn: is_current
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
 
 	column is_dish
 		dataType: boolean
@@ -292,7 +280,7 @@ table 'Menu Measures'
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: is_current
+		sourceColumn: is_dish
 
 		changedProperty = IsHidden
 
@@ -304,7 +292,8 @@ table 'Menu Measures'
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: is_current
+		sourceColumn: has_menu_recipes
+
 
 		changedProperty = IsHidden
 
@@ -316,7 +305,7 @@ table 'Menu Measures'
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: is_current
+		sourceColumn: has_recipe_portions
 
 		changedProperty = IsHidden
 
