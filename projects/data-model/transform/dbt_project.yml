@@ -36,9 +36,10 @@ models:
     silver:
       +schema: silver
 
-      segment: 
-        base: 
-          +materialized: ephemeral
+    drafts:
+      +schema: draft
+      +materialized: ephemeral
+      +enabled: false
 
     intermediate:
       +schema: intermediate
