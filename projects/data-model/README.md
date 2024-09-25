@@ -130,7 +130,7 @@ Run `dbt debug` in the terminal, the output should look something like this if t
 > If you have errors during the debug, then restarting your machine may do the trick or creating a new access token
 
 ### 6. Start developing 🥳
-Hurray! Now you can start developing in dbt. 
+Hurray! Now you can start developing in dbt.
 
 Please ensure to follow the Git Guidelines (coming) and the guidelines in the [Data Model Development](#data-model-development) section.
 
@@ -139,11 +139,11 @@ Please ensure to follow the Git Guidelines (coming) and the guidelines in the [D
 Coming...
 
 # Data Model Development: Ingest
-Changes to ingestion can be done from the Databricks UI. Each source system has a notebook for ingest under the ingest folder. 
+Changes to ingestion can be done from the Databricks UI. Each source system has a notebook for ingest under the ingest folder.
 1. Go into sous chef from Databricks
 2. Pull changes and create a new branch
 3. Open the relevant ingest notebook (`bronze_<source_system>_full`)
-4. Add the tables you want to include in the tables list 
+4. Add the tables you want to include in the tables list
 5. Commit and push changes from Databricks and create a PR and assign Marie or Anna to review
 
 To ingest the data immediatly to bronze you can run the notebook only for the tables that you have added by either commenting out the other tables or copy the cell and remove the tables that already exist. You can also run the whole notebook, it will not take that much time yet.
@@ -200,7 +200,7 @@ This section contains information on how to develop in our dbt project. *Models*
 Each model should start with a CTE which does `select * from` the source/model of interest. In silver you would typically call this CTE `source` since you only extract from one table, while in intermediate and gold whereby you join several models you typically give the CTEs names which referes to the model it reads from. After this there should be one CTE for each bigger transformation step which describes the activity of the CTE. Lastly, the script should end by doing a `select * from` the last created CTE. See the pseudo code below or look into already created models to checkout the structure.
 
 ```
-with 
+with
 
 source/model_name as (
 
@@ -234,16 +234,21 @@ For more information about why dbt suggest to use CTEs, read [this](https://docs
 When adding new tables to the silver layer you first have to add the table name in bronze to the `_<source_system>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
 ### 2. Create model
-Create the model file in the right folder and start to clean the data. 
+Create the model file in the right folder and start to clean the data.
 
-To get a head start you can use the [generate_silver_model_sql](projects/data-model/transform/macros/code-generation/generate_silver_model_sql.sql) to output a file with all the source columns by running the following command in your terminal:
+To get a head start you can use `generate-silver-model` from our own [dbt-chef](packages/dbt-chef/README.md) package to output a file with all the source columns by running the following command in your terminal:
 
+```bash
+dbt-chef generate-silver-model --source-system <source_system> --source-table-name <source_table_name> --model-name <model_name>
 ```
-dbt run-operation --quiet generate_silver_model_sql --args '{"source_name": "<source_system>", "source_table_name": "<source_table_name>"}' > models/silver/<source_system>/<model_name>.sql
+
+For example:
+```bash
+dbt-chef generate-silver-model --source-system cms --source-table-name cms__company --model-name cms__companies
 ```
 
 A few notes to start with:
-1. Remove columns from the file which is not relevant for the model. We do not want to include columns from the source that will never be in use. 
+1. Remove columns from the file which is not relevant for the model. We do not want to include columns from the source that will never be in use.
 2. Place the columns under the right data type grouping
 3. Perform relevant transformations (see instruction below)
 
@@ -275,16 +280,22 @@ Add documentation to the created models and used source.
 #### Source
 Source description should be added directly under description in `_<source_system>__source.yml`.
 
-#### Tables 
-Table description should be added directly under description in `_<source_system>__models.yml`. 
+#### Tables
+Table description should be added directly under description in `_<source_system>__models.yml`.
 
 #### Columns
 Descriptions of columns should be added to the `_<source_system>__docs.md`.
 1. Add a heading with the table name to `_<source_system>__docs.md`
-2. Run the [generate_column_docs](transform/macros/code-generation/generate_column_docs.sql) macro in the terminal:
+2. Run the `generate-docs` command from [dbt-chef](packages/dbt-chef/README.md) in the terminal:
 ```
-dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'
+dbt-chef generate-docs --model-name <model_name>
 ```
+
+For example:
+```
+dbt-chef generate-docs --model-name cms__companies
+```
+
 3. Copy the output to `_<source_system>__docs.md` under the table name heading
 4. Remove columns that does not originate from the table: The script output doc blocks for all columns in the model, however you should only include descriptions of columns that originates from that table, meaning that for instance ids that originates from another table should be described under that table heading. Fields that are common across several source systems and does not have a clear source origin should be added to `_common_docs.md`.
 5. Write documentation for the fields and ensure to include the following:
@@ -295,11 +306,17 @@ dbt run-operation generate_column_docs --args '{"model_name": "<model_name>"}'
 To view the documentation you can run `dbt docs generate` followed by `dbt docs serve` in the terminal.
 
 ### 5. Add columns to `_<source_system>__models.yml`
-After creating the documentation of the columns you need to refer to it to `_<source_system>__models.yml` as well. 
-1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal:
+After creating the documentation of the columns you need to refer to it to `_<source_system>__models.yml` as well.
+1. Run the generate-yaml from [dbt-chef](packages/dbt-chef/README.md) command in the terminal:
 ```
-dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'
+dbt-chef generate-yaml --model-name <model_name>
 ```
+
+For example:
+```
+dbt-chef generate-yaml --model-name cms__companies
+```
+
 2. Copy output and add it after description in `_<source_system>__models.yml`
 
 ### 6. Add tests to silver models
@@ -323,11 +340,11 @@ To make transformation logic as modular as possible we make use of intermediate 
 * Use CTEs for each transformation step to make the code modular just like in silver
 
 ### 2. Create gold models
-The models in the gold layer can be put together by combining models from silver and intermediate. 
+The models in the gold layer can be put together by combining models from silver and intermediate.
 * Do the transformations needed to get the wanted result
-* Use CTEs for each transformation step to make the code modular just like in silver and intermediate. 
+* Use CTEs for each transformation step to make the code modular just like in silver and intermediate.
 * Add primary keys to the table called `pk_<dim>_<tablename>`. This should be created by creating an hash by concatenating the columns needed for it to be unique by using the md5() function and concatenate. None of the columns used for the pk should contain null values.
-* Add foreign keys if creating a fact table in the same way as the primary keys are created. 
+* Add foreign keys if creating a fact table in the same way as the primary keys are created.
 
 ### 3. Add gold models to `_<business_concept>__models.yml`
 After creating the gold model you need to add the code below to the `_<business_concept>__models.yml`.
@@ -338,15 +355,15 @@ After creating the gold model you need to add the code below to the `_<business_
     latest_version: 1
     config:
       alias: dim_date
-          
+
     versions:
       - v: 1
 ```
 
 ### 5. Add documentation of gold models
 
-#### Tables 
-Table description should be added directly under description `_<business_concept>__models.yml`. 
+#### Tables
+Table description should be added directly under description `_<business_concept>__models.yml`.
 
 #### Columns
 All columns coming from the silver layer should already be documented there and the documentation hence do not need tobe added. All new columns that have been created should be added to `_<business_concept>_docs.md` following the steps below:
@@ -358,7 +375,7 @@ All columns coming from the silver layer should already be documented there and 
 5. Write documentation for the fields
 
 ### 6. Add columns to model.yml
-After creating the documentation of the columns you need to refer to it to `_<business_concept>__models.yml` as well. 
+After creating the documentation of the columns you need to refer to it to `_<business_concept>__models.yml` as well.
 1. Run the [generate_column_yaml](transform/macros/code-generation/generate_model_yaml.sql) macro in the terminal (see command below)
 ```
 dbt run-operation generate_column_yaml --args '{"model_name": "<model_name>"}'
@@ -377,7 +394,7 @@ After finishing a model in your local development enviroment you should deploy i
 ### 1. Deploy changes from local environment
 To assess that changes made has the expected output you need to deploy your changes to Databricks. To do this you can wrtie the following in your terminal.
 1. Install dbt packages: `dbt deps`
-2. Deploy changes to Databricks Dev Workspace: `dbt build -s +model_filename` 
+2. Deploy changes to Databricks Dev Workspace: `dbt build -s +model_filename`
 
 The deployed changes will end up under your own silver and gold schemas in Databricks which is indentified by having your firstname and lastname as prefix.
 
@@ -390,8 +407,8 @@ If the changes are as expected and you are happy with your work please create a 
 ## Debugging
 
 ### Target folder
-The code you create will be translated to the right syntax for Databricks. The compiled code can be found in the target folder under `compiled` and the code that is run in Databricks can be found under `run`. This can be useful to look at if you experience some troubles with your code. 
+The code you create will be translated to the right syntax for Databricks. The compiled code can be found in the target folder under `compiled` and the code that is run in Databricks can be found under `run`. This can be useful to look at if you experience some troubles with your code.
 
-You can run `dbt compile` in the terminal to just compile the code with out deploying to Databricks to look at how it will turn out. 
+You can run `dbt compile` in the terminal to just compile the code with out deploying to Databricks to look at how it will turn out.
 
 The target folder will keep scripts from models you have deleted. To clean this up you can simply just delete the folder as it will be regenerated next time you run `dbt compile` or `dbt build`, or you can run `dbt clean` which will also delete the folder until next time `compile`or `build` is run.
