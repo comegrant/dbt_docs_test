@@ -1,0 +1,12 @@
+version: '3'
+services:
+  dbt-chef-test:
+    image: dbt-chef-dbt-chef-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/dbt-chef/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/dbt-chef
+    profiles: ["test"]

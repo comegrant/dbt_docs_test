@@ -9,6 +9,7 @@ package-mode = false
 python = ">=3.10,<3.12"
 pydantic-settings = "^2.1.0"
 dbt-databricks = ">=1.0.0,<2.0.0"
+dbt-chef = {path = "../../packages/dbt-chef", develop = true}
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
@@ -28,3 +29,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 chef = 'chef.cli:cli'
+dbt-chef = 'dbt_chef.cli:cli'

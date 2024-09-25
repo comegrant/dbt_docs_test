@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "dbt_chef"
+version = "0.1.0"
+description = "A package that helps working with dbt"
+authors = ["Stephen ALlwright <stephen.allwright@cheffelo.com>"]
+packages = [{include = "dbt_chef"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+dbt-chef = 'dbt_chef.cli:cli'
