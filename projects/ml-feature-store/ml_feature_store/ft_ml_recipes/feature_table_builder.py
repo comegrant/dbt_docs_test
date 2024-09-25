@@ -8,10 +8,7 @@ from ml_feature_store.common.data import get_data_from_catalog, save_df_as_featu
 from ml_feature_store.feature_tables import ft_ml_recipes_configs
 from ml_feature_store.ft_ml_recipes.feature_generator import (
     generate_boolean_taxonomy_attributes,
-    generate_encoding_main_ingredient,
-    generate_normalized_mean_cooking_time,
-    generate_number_of_ingredients,
-    generate_number_of_taxonomies,
+    generate_mean_cooking_time,
 )
 
 
@@ -21,6 +18,7 @@ class Args(BaseModel):
 
 def build_feature_table(args: Args, spark: SparkSession) -> None:
     table_config = ft_ml_recipes_configs
+
     df = get_data_from_catalog(
         spark=spark,
         env=args.env,
@@ -29,10 +27,7 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
         is_convert_to_pandas=True,
     )
 
-    df = generate_number_of_ingredients(df)
-    df = generate_number_of_taxonomies(df)
-    df = generate_encoding_main_ingredient(df)
-    df = generate_normalized_mean_cooking_time(df)
+    df = generate_mean_cooking_time(df)
     df = generate_boolean_taxonomy_attributes(df)
 
     fe = FeatureEngineeringClient()
