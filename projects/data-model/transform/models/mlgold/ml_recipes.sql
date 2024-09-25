@@ -101,8 +101,8 @@ with fact_menu as (
 , taxonomies_list as (
     select
         recipes_taxonomies.recipe_id
-        , concat_ws(', ', collect_list(taxonomies_translations.taxonomy_name))
-        as taxonomy_list
+        , concat_ws(', ', collect_list(taxonomies_translations.taxonomy_name)) as taxonomy_list
+        , size(collect_set(taxonomies_translations.taxonomy_name))             as number_of_taxonomies
     from recipes_taxonomies
     left join taxonomies
         on recipes_taxonomies.taxonomy_id = taxonomies.taxonomy_id
@@ -115,8 +115,8 @@ with fact_menu as (
 , generic_ingredients_list as (
     select
         portions.recipe_id
-        , concat_ws(', ', collect_set(ingredients.generic_ingredient_id))
-        as generic_ingredient_id_list
+        , concat_ws(', ', collect_set(ingredients.generic_ingredient_id)) as generic_ingredient_id_list
+        , size(collect_set(ingredients.generic_ingredient_id))            as number_of_ingredients
     from recipe_portions as portions
     left join chef_ingredient_sections as sections
         on portions.recipe_portion_id = sections.recipe_portion_id
@@ -131,8 +131,8 @@ with fact_menu as (
 , recipe_steps_list as (
     select
         step_sections.recipe_portion_id
-        , concat_ws(', ', collect_list(steps.recipe_step_id))
-        as recipe_step_id_list
+        , concat_ws(', ', collect_list(steps.recipe_step_id)) as recipe_step_id_list
+        , size(collect_set(steps.recipe_step_id))             as number_of_recipe_steps
     from recipe_step_sections as step_sections
     left join recipe_steps as steps
         on step_sections.recipe_step_section_id = steps.recipe_step_section_id
@@ -152,6 +152,7 @@ with fact_menu as (
         , fact_menu.fk_dim_recipes
         , dim_companies.company_id
         , dim_recipes.recipe_id
+        , fact_menu.recipe_portion_id
         , dim_recipes.recipe_name
         , dim_recipes.cooking_time_from
         , dim_recipes.cooking_time_to
@@ -160,8 +161,11 @@ with fact_menu as (
         , dim_recipes.recipe_main_ingredient_id
         , dim_recipes.recipe_main_ingredient_name
         , taxonomies_list.taxonomy_list
+        , taxonomies_list.number_of_taxonomies
         , generic_ingredients_list.generic_ingredient_id_list
+        , generic_ingredients_list.number_of_ingredients
         , recipe_steps_list.recipe_step_id_list
+        , recipe_steps_list.number_of_recipe_steps
     from fact_menu
     left join dim_companies
         on fact_menu.fk_dim_companies = dim_companies.pk_dim_companies
