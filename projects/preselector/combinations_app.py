@@ -76,6 +76,14 @@ def all_combinations(ids: list[T], include_empty_set: bool) -> list[list[T]]:
 
 async def main() -> None:
     load_dotenv(".env")
+
+    # Initialize the cookie manager
+    cookies = EncryptedCookieManager(prefix="preselector_combinations_app", password="my-password")
+
+    # Load the cookie
+    if not cookies.ready():
+        st.stop()
+
     st.title("Default Pre-selector Combinations")
 
     store = preselector_store()
@@ -162,12 +170,6 @@ async def main() -> None:
         st.error(response.failures[0].error_message)
         recipes = []
 
-    # Initialize the cookie manager
-    cookies = EncryptedCookieManager(prefix="preselector_combinations_app", password="my-password")
-
-    # Load the cookie
-    if not cookies.ready():
-        st.stop()
 
     # Check if session_id is in the cookie
     if "session_id" not in cookies:

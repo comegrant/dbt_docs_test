@@ -910,12 +910,12 @@ async def join_recipe_and_allergies(
         on=["recipe_id", "portion_id"],
         how="full"
     ).with_columns(
-        preference_ids=pl.col("preference_ids").fill_null([]).list.concat(
+        preference_ids=pl.col("preference_ids").fill_null(["870C7CEA-9D06-4F3E-9C9B-C2C395F5E4F5"]).list.concat(
             pl.col("allergy_preference_ids").fill_null([])
         ).list.unique(),
         recipe_id=pl.col("recipe_id").fill_null(pl.col("recipe_id_right")),
-        portion_size=pl.col("recipe_id").fill_null(pl.col("portion_size_right")),
-        portion_id=pl.col("recipe_id").fill_null(pl.col("portion_id_right"))
+        portion_size=pl.col("portion_size").fill_null(pl.col("portion_size_right")),
+        portion_id=pl.col("portion_id").fill_null(pl.col("portion_id_right"))
     )
     return all_preferences
 

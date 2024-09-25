@@ -27,7 +27,13 @@ class DeploySettings(BaseSettings):
 
     user_assigned_identity_resource_id: str
     subscription_id: str
+
+
+class RuntimeEnvs(BaseSettings):
     datalake_env: str
+
+    # Used for datadog logging tag
+    env: str
 
 
 
@@ -45,9 +51,10 @@ def deploy_preselector(
 
     deploy_settings = DeploySettings(
         docker_registry_server="bhregistry.azurecr.io",
-        docker_registry_username="bhregistry",
-        datalake_env=env
+        docker_registry_username="bhregistry"
     ) # type: ignore[reportGeneralTypeIssues]
+
+    assert env in deploy_settings.user_assigned_identity_resource_id
 
     client = ContainerInstanceManagementClient(
         credential=DefaultAzureCredential(),
@@ -66,6 +73,10 @@ def deploy_preselector(
         DataDogConfig( # type: ignore[reportGeneralTypeIssues]
             datadog_service_name="preselector",
             datadog_tags=f"subscription:{company}",
+        ),
+        RuntimeEnvs(
+            datalake_env=env,
+            env=env
         )
     ]
 
@@ -132,6 +143,7 @@ def deploy_preselector(
     print("deleting resource") # noqa: T201
     poller = client.container_groups.begin_delete(resource_group_name=resource_group, container_group_name=worker.name)
 
+    poller.wait()
     while not poller.done():
         print("Waiting for delete") # noqa: T201
         sleep(1)
@@ -151,6 +163,11 @@ def deploy_all(tag: str, env: str) -> None:
         "linas"
     ]
 
+    bus_namespace = {
+        "test": "gg-deviation-service-qa.servicebus.windows.net",
+        "prod": "gg-deviation-service-prod.servicebus.windows.net"
+    }
+
     for company in company_names:
 
         print(company) # noqa
@@ -164,7 +181,7 @@ def deploy_all(tag: str, env: str) -> None:
         deploy_preselector(
             name=name,
             company=company,
-            service_bus_namespace="gg-deviation-service-qa.servicebus.windows.net",
+            service_bus_namespace=bus_namespace[env],
             env=env,
             image=f"bhregistry.azurecr.io/preselector:{tag}",
             resource_group=f"rg-chefdp-{env}",
@@ -172,4 +189,4 @@ def deploy_all(tag: str, env: str) -> None:
 
 
 if __name__ == "__main__":
-    deploy_all(tag="dev-latest", env="test")
+    deploy_all(tag="132be6f2cb82854f884955a9b997a717041cfeb8", env="prod")

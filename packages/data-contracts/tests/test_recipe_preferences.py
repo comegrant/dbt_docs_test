@@ -75,4 +75,6 @@ async def test_join_allergies_and_recipe_preferences() -> None:
     assert recipes.unique("recipe_id").height == 3
     assert recipes.filter(pl.col("recipe_id") == 1).explode("preference_ids").height == 4
     assert recipes.filter(pl.col("recipe_id") == 2).explode("preference_ids").height == 1
-    assert recipes.filter(pl.col("recipe_id") == 3).explode("preference_ids").height == 2
+
+    # Recipe 3 should contain the is-vegan preference as it has no prefs in the RecipePrefs
+    assert recipes.filter(pl.col("recipe_id") == 3).explode("preference_ids").height == 3
