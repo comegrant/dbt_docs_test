@@ -82,6 +82,15 @@ This should be based on `main` and be placed in a folder with the developers nam
 There is a bug/limitation in Power BI that limits how many branches that show in PowerBI, so that and only those in the beginning of the alphabet will show. The GitHub connection is in preview so hopefully this will be fixed later.
 Suggested branch name is therefore `0_<developer_name>/<feature_name>`. E.g. `0_anna/testing_git_for_powerbi`.
 
+To create create the branch and checkout the branch you can run the following commands in a terminal:
+```bash
+git checkout main
+git pull
+git checkout -b 0_<developer_name>/<feature_name>
+```
+
+Then publish the branch to GitHub from VSCode.
+
 ### Create a workspace in Power BI
 This will be used as a personal area to checkout feature branches. It should not be the "My Workspace" but a new workspace. Make sure to have the following settings:
 - _Workspace Name_: "[<Users first name>] Features", e.g. `[Anna] Features`
