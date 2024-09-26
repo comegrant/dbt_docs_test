@@ -292,6 +292,10 @@ provider "databricks" {
   account_id = var.databricks_account_id
 }
 
+resource "time_rotating" "this" {
+  rotation_days = 30
+}
+
 #####################################
 ### Service Principal for Segment ###
 #####################################
@@ -309,6 +313,36 @@ resource "databricks_group_member" "segment_sp_is_ws_admin" {
   group_id  = data.databricks_group.admins.id
   member_id = databricks_service_principal.segment_sp.id
 }
+
+###############################################
+### Service Principal for Databricks Reader ###
+###############################################
+
+resource "databricks_service_principal" "databricks_reader_sp" {
+  display_name = "databricks_reader_sp_${terraform.workspace}"
+}
+
+resource "databricks_service_principal_secret" "databricks_reader_sp" {
+  provider             = databricks.accounts
+  service_principal_id = databricks_service_principal.databricks_reader_sp.id
+}
+
+provider "databricks" {
+  alias = "databricks_reader-sp"
+  auth_type = "oauth-m2m"
+  host = azurerm_databricks_workspace.this.workspace_url
+  client_id = databricks_service_principal.databricks_reader_sp.application_id
+  client_secret = databricks_service_principal_secret.databricks_reader_sp.secret
+}
+
+resource "databricks_token" "pat_databricks_reader_sp" {
+  provider = databricks.databricks_reader-sp
+  comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
+  # Token is valid for 60 days but is rotated after 30 days.
+  # Run `terraform apply` within 60 days to refresh before it expires.
+  lifetime_seconds = 60 * 24 * 60 * 60
+}
+
 
 
 #####################################
@@ -352,10 +386,6 @@ provider "databricks" {
   client_secret = databricks_service_principal_secret.bundle_sp.secret
 }
 
-resource "time_rotating" "this" {
-  rotation_days = 30
-}
-
 resource "databricks_token" "pat_bundle_sp" {
   provider = databricks.bundle-sp
   comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
@@ -397,6 +427,22 @@ resource "azurerm_key_vault_secret" "bundle_sp_pat" {
   expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
 }
 
+resource "azurerm_key_vault_secret" "databricks_reader_sp_secret" {
+  name            = "databricks-sp-databricksReader-secret-${terraform.workspace}"
+  value           = databricks_service_principal_secret.databricks_reader_sp.secret
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. OAuth secret for databricks reader service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
+resource "azurerm_key_vault_secret" "databricks_reader_sp_pat" {
+  name            = "databricks-sp-databricksReader-pat-${terraform.workspace}"
+  value           = databricks_token.pat_databricks_reader_sp.token_value
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. Personal access token for databricks reader service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
+}
+
 resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
   name            = "databricks-warehouse-dbt-id-${terraform.workspace}"
   value           = databricks_sql_endpoint.db_wh_dbt.id
@@ -434,6 +480,11 @@ resource "databricks_grants" "catalog" {
   grant {
     principal = databricks_service_principal.segment_sp.application_id
     privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = databricks_service_principal.databricks_reader_sp.application_id
+    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 
   grant {
