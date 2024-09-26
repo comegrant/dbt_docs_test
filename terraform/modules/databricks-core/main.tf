@@ -247,6 +247,41 @@ resource "databricks_sql_endpoint" "db_wh_powerbi" {
   }
 }
 
+resource "databricks_sql_endpoint" "db_wh_external_read" {
+  name                      = "External Read SQL Warehouse"
+  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
+  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
+  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
+  auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
+  enable_serverless_compute = true
+  tags {
+    custom_tags {
+      key   = "user"
+      value = "Forecasting"
+    }
+    custom_tags {
+      key   = "tool"
+      value = "Forecasting"
+    }
+    custom_tags {
+      key   = "env"
+      value = terraform.workspace
+    }
+    custom_tags {
+      key   = "managed_by"
+      value = "terraform"
+    }
+  }
+}
+
+resource "databricks_permissions" "db_wh_external_read" {
+  sql_endpoint_id = databricks_sql_endpoint.db_wh_external_read.id
+  access_control {
+    group_name = "external-readers"
+    permission_level = "CAN_USE"
+  }
+}
+
 resource "databricks_sql_endpoint" "db_wh_segment" {
   name                      = "Segment SQL Warehouse"
   cluster_size              = "Small"
@@ -287,15 +322,11 @@ data "databricks_group" "admins" {
 }
 
 resource "databricks_group" "service-principals" {
-  display_name = "Service Principals"
+  display_name = "service-principals"
 }
 
-resource "databricks_permissions" "token_usage" {
-  authorization = "tokens"
-  access_control {
-    group_name = databricks_group.service-principals.display_name
-    permission_level = "CAN_USE"
-  }
+resource "databricks_group" "external-readers" {
+  display_name = "external-readers"
 }
 
 provider "databricks" {
@@ -347,6 +378,11 @@ resource "databricks_service_principal_secret" "databricks_reader_sp" {
 
 resource "databricks_group_member" "databricks_reader_service_principal" {
   group_id = databricks_group.service-principals.id
+  member_id = databricks_service_principal.databricks_reader_sp.id  
+}
+
+resource "databricks_group_member" "databricks_reader_external_readers" {
+  group_id = databricks_group.external-readers.id
   member_id = databricks_service_principal.databricks_reader_sp.id  
 }
 
