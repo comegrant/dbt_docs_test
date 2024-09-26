@@ -350,8 +350,24 @@ resource "databricks_group_member" "databricks_reader_service_principal" {
   member_id = databricks_service_principal.databricks_reader_sp.id  
 }
 
+resource "databricks_access_control_rule_set" "automation_sp_databricks_reader_rule_set" {
+  provider = databricks.accounts
+  name = "accounts/${var.databricks_account_id}/servicePrincipals/${databricks_service_principal.databricks_reader_sp.application_id}/ruleSets/default"
+
+  grant_rules {
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.user"
+  }
+
+  grant_rules {
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.manager"
+  }
+}
+
+
 provider "databricks" {
-  alias = "databricks_reader-sp"
+  alias = "databricks-reader-sp"
   auth_type = "oauth-m2m"
   host = azurerm_databricks_workspace.this.workspace_url
   client_id = databricks_service_principal.databricks_reader_sp.application_id
@@ -359,7 +375,7 @@ provider "databricks" {
 }
 
 resource "databricks_token" "pat_databricks_reader_sp" {
-  provider = databricks.databricks_reader-sp
+  provider = databricks.databricks-reader-sp
   comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
   # Token is valid for 60 days but is rotated after 30 days.
   # Run `terraform apply` within 60 days to refresh before it expires.
