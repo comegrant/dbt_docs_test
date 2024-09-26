@@ -286,6 +286,18 @@ data "databricks_group" "admins" {
   display_name = "admins"
 }
 
+resource "databricks_group" "service-principals" {
+  display_name = "Service Principals"
+}
+
+resource "databricks_permissions" "token_usage" {
+  authorization = "tokens"
+  access_control {
+    group_name = databricks_group.service-principals.display_name
+    permission_level = "CAN_USE"
+  }
+}
+
 provider "databricks" {
   alias      = "accounts"
   host       = "https://accounts.azuredatabricks.net"
@@ -314,6 +326,12 @@ resource "databricks_group_member" "segment_sp_is_ws_admin" {
   member_id = databricks_service_principal.segment_sp.id
 }
 
+resource "databricks_group_member" "segment_service_principal" {
+  group_id = databricks_group.service-principals.id
+  member_id = databricks_service_principal.segment_sp.id  
+}
+
+
 ###############################################
 ### Service Principal for Databricks Reader ###
 ###############################################
@@ -325,6 +343,11 @@ resource "databricks_service_principal" "databricks_reader_sp" {
 resource "databricks_service_principal_secret" "databricks_reader_sp" {
   provider             = databricks.accounts
   service_principal_id = databricks_service_principal.databricks_reader_sp.id
+}
+
+resource "databricks_group_member" "databricks_reader_service_principal" {
+  group_id = databricks_group.service-principals.id
+  member_id = databricks_service_principal.databricks_reader_sp.id  
 }
 
 provider "databricks" {
@@ -356,6 +379,11 @@ resource "databricks_service_principal" "bundle_sp" {
 resource "databricks_group_member" "bundle_sp_is_ws_admin" {
   group_id  = data.databricks_group.admins.id
   member_id = databricks_service_principal.bundle_sp.id
+}
+
+resource "databricks_group_member" "bundle_service_principal" {
+  group_id = databricks_group.service-principals.id
+  member_id = databricks_service_principal.bundle_sp.id  
 }
 
 resource "databricks_service_principal_secret" "bundle_sp" {
