@@ -14,10 +14,16 @@ ipykernel = "^6.29.5"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
 ruff = "^0.6.3"
 pytest = "^8.3.2"
-databricks-connect = "^15.4.1"
+databricks-connect = "14.3"
 databricks-sdk = "^0.32.0"
 mlflow = "^2.16.0"
 constants = {path = "../../packages/constants", develop = true}
+setuptools = "^75.1.0"
+spacy = "^3.7.6"
+nb-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/nb_core_news_sm-3.7.0/nb_core_news_sm-3.7.0.tar.gz"}
+da-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/da_core_news_sm-3.7.0/da_core_news_sm-3.7.0.tar.gz"}
+sv-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/sv_core_news_sm-3.7.0/sv_core_news_sm-3.7.0.tar.gz"}
+en-core-web-sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"}
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

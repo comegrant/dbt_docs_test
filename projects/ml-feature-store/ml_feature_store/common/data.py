@@ -1,6 +1,9 @@
+from datetime import datetime
+from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
+import pytz
 from databricks.feature_engineering import FeatureEngineeringClient
 from pyspark.sql import DataFrame, SparkSession
 
@@ -49,6 +52,20 @@ def get_data_from_catalog(
     return df
 
 
+def run_custom_sql(
+    spark: SparkSession,
+    sql_path: str,
+    is_convert_to_pandas: Optional[bool] = False,
+    **kwargs: Optional[dict],
+) -> Union[DataFrame, pd.DataFrame]:
+    with Path(sql_path).open() as f:
+        custom_query = f.read().format(**kwargs)
+    df = spark.sql(custom_query)
+    if is_convert_to_pandas:
+        df = df.toPandas()
+    return df
+
+
 def save_df_as_feature_table(
     df: Union[pd.DataFrame, DataFrame],
     fe: FeatureEngineeringClient,
@@ -57,6 +74,7 @@ def save_df_as_feature_table(
     feature_table_schema: str,
     feature_table_name: str,
     primary_keys: list[str],
+    is_drop_existing: Optional[bool] = False
 ) -> None:
     """Create or update a feature table
 
@@ -76,11 +94,30 @@ def save_df_as_feature_table(
     duplicates = df.groupBy(primary_keys).count().where("count > 1")
     if duplicates.count() > 0:
         df = df.dropDuplicates()
+    if is_drop_existing:
+        spark.sql(
+            f"""
+                DROP TABLE IF EXISTS {feature_table_name_full}
+            """
+        )
     if not spark.catalog.tableExists(feature_table_name_full):
         fe.create_table(
             name=feature_table_name_full,
             primary_keys=primary_keys,
-            df=df,
             schema=df.schema
         )
     fe.write_table(name=feature_table_name_full, df=df, mode="merge")
+
+
+def add_updated_at(
+    df: pd.DataFrame,
+    timezone: Optional[str] = "CET"
+) -> pd.DataFrame:
+    cet_tz = pytz.timezone(timezone)
+    if "updated_at" not in df.columns:
+        # Add a column
+        df = df.assign(updated_at=datetime.now(tz=cet_tz))
+    else:
+        # Update the column with the current time stamp
+        df.loc[:, "updated_at"] = datetime.now(tz=cet_tz)
+    return df

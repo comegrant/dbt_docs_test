@@ -1,12 +1,10 @@
-from datetime import datetime
 from typing import Literal
 
-import pytz
 from databricks.feature_engineering import FeatureEngineeringClient
 from pydantic import BaseModel
 from pyspark.sql import SparkSession
 
-from ml_feature_store.common.data import get_data_from_catalog, save_df_as_feature_table
+from ml_feature_store.common.data import add_updated_at, get_data_from_catalog, save_df_as_feature_table
 from ml_feature_store.feature_tables import ft_weekly_dishes_variations_configs
 
 
@@ -23,15 +21,13 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
         schema=table_config.dbt_model_schema,
         is_convert_to_pandas=True
     )
-    cet_tz = pytz.timezone("CET")
-    if "updated_at" not in df.columns:
-        # Add a column
-        df = df.assign(updated_at=datetime.now(tz=cet_tz))
-    else:
-        # Update the column with the current time stamp
-        df.loc[:, "updated_at"] = datetime.now(tz=cet_tz)
-    fe = FeatureEngineeringClient()
 
+    df = df.drop_duplicates(subset=table_config.primary_keys)
+
+    # Add current timestamp
+    df = add_updated_at(df=df)
+
+    fe = FeatureEngineeringClient()
     save_df_as_feature_table(
         spark=spark,
         df=df,
