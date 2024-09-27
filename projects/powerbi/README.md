@@ -92,7 +92,12 @@ git checkout -b 0_<developer_name>/<feature_name>
 Then publish the branch to GitHub from VSCode.
 
 ### Create a workspace in Power BI
-This will be used as a personal area to checkout feature branches. It should not be the "My Workspace" but a new workspace. Make sure to have the following settings:
+This will be used as a personal area to checkout feature branches and develop new content.
+
+1. Go to [app.powerbi.com](https://app.powerbi.com)
+2. Click on _Workspaces_
+3. Click on _Create workspace_
+4. Add the following settings:
 - _Workspace Name_: "[<Users first name>] Features", e.g. `[Anna] Features`
 - _License Configuration_: Premium per-user
 - _Semantic model storage format_: Large semantic model storage format
@@ -143,8 +148,11 @@ In the following we walk through the different ways of working with the semantic
 ### Edit or view your models and reports in Power BI Desktop
 1. Check out and pull any changes from git like described above
 2. Open the `.pbip` file that exist in `projects/powerbi/workspace-content` in Power BI Desktop
-3. If you did changes in visual studio you should see these changes in Power BI Desktop
-4. Do changes in Power BI Desktop and make sure to save.
+3. The first time you open the file you will be asked to connect to a databricks workspace.
+    - Authentication method: Key
+    - Key: This can be found in [key vault](https://portal.azure.com/#@godtlevertno.onmicrosoft.com/resource/subscriptions/5a07602a-a1a5-43ee-9770-2cf18d1fdaf1/resourceGroups/rg-chefdp-common/providers/Microsoft.KeyVault/vaults/kv-chefdp-common/secrets) and is called `databricks_sp_bundle_pat_<env>` where `<env>` is the environment you are connecting to (usually `dev`). If you don't have access to the key vault, ask for it in Slack.
+4. If you did changes in visual studio you should see these changes in Power BI Desktop
+5. Do changes in Power BI Desktop and make sure to save.
 5. Open Visual Studio Code again and run `git status`
 6. Notice that your changes are reflected in the `.SemanticModel` files or `.Report` files.
 7. Add, commit and push your changes to the remote GitHub
@@ -181,3 +189,6 @@ When you are finished with your development work you should create a PR and merg
 8. The content will automatically be deployed to the workspace called "Cheffelo [test]", you may follow the deployment in Actions in GitHub.
 9. View the result in "Cheffelo [test]". The data will now come from the `gold` schema in the `test` catalog in databricks. This will be "prod-like" data and thus a last test before we deploy everything to prod.
 10. If you are happy you may go into Actions in Github again and complete the deployment to production. The content is deployed to the workspace called "Cheffelo" with data connected to the `gold` schema in the `prod` catalog in Databricks
+
+## Where to go if you need help
+If you need help, you can ask in the #data_powerbi_support Slack channel.

@@ -47,16 +47,15 @@ See example of set up here:
 </p>
 
 ### 2. [First time only] Set up local dbt profile
-To connect dbt to Databricks you need to save credentials in a yml-file for the following path on your computer: `[USERPATH]/.dbt/profiles.yml`.
+To connect dbt to Databricks you need to save credentials in a yml-file for the following path on your computer: `[USERPATH]/.dbt/profiles.yml`. This file should absolutely not be committed to the repository.
 
-You should copy the template below and fill in the following:
+Create the file by cd'ing into your user directory, and then running the following command in your terminal:
 
-* `schema`: The schema should be your firstname and lastname in the following format firstname_lastname.
-* `host`: Copy serverhost name under connection details of your SQL Warehouse.
-* `http_path`: Copy HTTP path under connection details of your SQL Warehouse.
-* `token`: Follow [these instructions](https://docs.databricks.com/en/dev-tools/auth/pat.html#databricks-personal-access-tokens-for-workspace-users) to generate a personal access token.
+```bash
+code .dbt/profiles.yml
+```
 
-**NB!** You never should store the token another place than in the .dbt/profiles.yml.
+This will then open the file in VSCode, where you can copy the template below.
 
 ```yml
  transform:
@@ -71,16 +70,19 @@ You should copy the template below and fill in the following:
       token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you
       threads: 4
 ```
+Replace with the following:
+* `schema`: The schema should be your firstname and lastname in the following format firstname_lastname.
+* `host`: Copy serverhost name under connection details of your SQL Warehouse.
+* `http_path`: Copy HTTP path under connection details of your SQL Warehouse.
+* `token`: Follow [these instructions](https://docs.databricks.com/en/dev-tools/auth/pat.html#databricks-personal-access-tokens-for-workspace-users) to generate a personal access token.
+
+**NB!** You never should store the token another place than in the .dbt/profiles.yml.
+
+Now save the file and open up your favourite code editor.
 
 ### 3. Activate virtual environment
 When working in dbt you use a virtual environment this will ensure that you are using the right python version and package versions when developing. All the commands written in the instruction below should be run from your terminal.
 
-#### Windows
-* Install docker: https://docs.docker.com/desktop/install/windows-install/
-* Enter the project folder in sous chef: `cd projects/data-model`
-* Spin up: `docker-compose run -it dev bash`
-
-#### Mac
 * Enter the project folder in sous chef: `cd projects/data-model`
 * Activate the virtual environment: `poetry shell`
 * Install dependencies: `poetry install`
@@ -90,7 +92,12 @@ If you see the error:
 The Poetry configuration is invalid:
   - Additional properties are not allowed ('package-mode' was unexpected)
 ```
-Then you may need to update your local Poetry version, do this by running `poetry self update`
+Then you may need to update your local Poetry version, do this by running: `poetry self update`
+
+_If you are using Windows, you may need to run the following command to install Poetry if the above command fails:_
+```powershell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
 
 ### 4. Enter the dbt project
 Enter the dbt project by writng this in your terminal: `cd transform`
@@ -130,9 +137,28 @@ Run `dbt debug` in the terminal, the output should look something like this if t
 > If you have errors during the debug, then restarting your machine may do the trick or creating a new access token
 
 ### 6. Start developing 🥳
-Hurray! Now you can start developing in dbt.
+Hurray! Now you can start developing in dbt. So let's get some data into your schema that you defined earlier in your dbt profile.
+
+1. Our orders fact table is a good candidate to start with. Let's run it and all its upstream models:
+```bash
+dbt run -s +fact_orders
+```
+2. Once this has completed, go to [Databricks](https://adb-4291784437205825.5.azuredatabricks.net/?o=4291784437205825) and see the result under your personal gold schema in the dev catalog.
+
+Now you're all good to go and start developing your models.
+
+Start by playing around and getting familiar with dbt by adding some changes to the existing models and creating new ones. Once you're ready to add a change to the main data model, just create a new branch, make your changes, create a PR and assign someone to review it.
 
 Please ensure to follow the Git Guidelines (coming) and the guidelines in the [Data Model Development](#data-model-development) section.
+
+#### Helpful commands
+
+Here are some commands that you may find useful:
+- `dbt run -s model_name` to run a specific model
+- `dbt run -s +model_name` to run a specific model and all its upstream models
+- `dbt run -s model_name+` to run a specific model and all its downstream models
+- `dbt build -s model_name` to compile, run and test a specific model
+- `dbt test -s model_name` to test a specific model
 
 # Workflow Development
 

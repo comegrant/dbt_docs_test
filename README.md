@@ -12,14 +12,14 @@ Sous chef is the Python monorepo for the data team.
 
 ## Table of Contents
 
-- [Setting Up Your Machine](#setting-up-your-machine)
-- [Creating a new project or package](#creating-a-new-project-or-package)
+- [Setting Up Your Machine](#setting-up-your-machine) 🛠️
+- [Creating a new project or package](#creating-a-new-project-or-package) 🆕
   - [What is the difference between \<library name\>, \<package name\> and \<module name\>?](#what-is-the-difference-between-library-name-package-name-and-module-name)
-  - [Use Cases](#use-cases)
+  - [Use Cases](#use-cases) 💡
     - [Python Project](#python-project)
     - [Data Science](#data-science)
 
-## Setting Up Your Machine
+## Setting Up Your Machine 🛠️
 This guide will help you set up your machine with the necessary tools to start developing with `sous-chef`. It will go through the following steps:
 
 - Python and `pyenv` installation
@@ -27,8 +27,6 @@ This guide will help you set up your machine with the necessary tools to start d
 - Git installation
 - `sous-chef` cloning
 - `sous-chef` CLI installation
-
-A lot of the setup steps will need to be run in powershell or terminal. If you use VSCode, we recommend opening a new terminal in VSCode by selecting Terminal > New Terminal. Otherwise, you can open a new terminal by pressing `cmd + shift + p` and selecting `View > Terminal`.
 
 ### 1. Setting up GitHub
 Start by making sure your GitHub account is set up correctly.
@@ -38,34 +36,82 @@ Start by making sure your GitHub account is set up correctly.
 2. If your GitHub account isn't set up with your `cheffelo.com` email address, then you need to add it in your [profile settings](https://github.com/settings/emails).
 
 ### 2. Installing VSCode and relevant extensions
-You need a code editor to work on the code. We recommend using VSCode.
+You need a code editor to work on the code. We recommend using either VSCode or Cursor (which is an AI powered code editor built on VSCode).
+
+<details>
+<summary>Cursor</summary>
+
+The benefit of cursor is that it is very good at understanding our code base, offers great autocomplete, and you can ask it questions about the code base.
+
+1. Go to https://www.cursor.com and install the version for your machine.
+2. Follow the on-screen prompts to complete the installation
+  - If you are currently using VSCode, it will ask you if you want to import your VSCode settings, click yes if you want Cursor to act like your current VSCode setup
+  - Enable privacy mode when asked
+  - Connect your GitHub account
+3. We will now install a few extensions to help with development. Open up a terminal in Cursor and run the following:
+  ```bash
+  code --install-extension innoverio.vscode-dbt-power-user && \
+  code --install-extension databricks.databricks && \
+  code --install-extension analysis-services.TMDL && \
+  code --install-extension GerhardBrueckl.powerbi-vscode && \
+  code --install-extension jianfajun.dax-language && \
+  code --install-extension ms-python.python && \
+  code --install-extension samuelcolvin.jinjahtml && \
+  code --install-extension redhat.vscode-yaml && \
+  code --install-extension sdras.night-owl
+  ```
+4. We installed some theme options, to change theme options, press `Ctrl (or cmd) + Shift + P` and select `Preferences: Color Theme` and choose your theme.
+
+</details>
+
+<details>
+<summary>VSCode</summary>
 
 1. Go to https://code.visualstudio.com/download and install the version for your machine.
-2. Install the following extensions in VSCode:
-  - [Power user for dbt](https://marketplace.visualstudio.com/items?itemName=innoverio.vscode-dbt-power-user)
-  - [Databricks](https://marketplace.visualstudio.com/items?itemName=databricks.databricks)
-  - [TMDL](https://marketplace.visualstudio.com/items?itemName=analysis-services.TMDL)
-  - [PowerBI Studio](https://marketplace.visualstudio.com/items?itemName=GerhardBrueckl.powerbi-vscode)
-  - [DAX for PowerBI](https://marketplace.visualstudio.com/items?itemName=jianfajun.dax-language)
+2. We will now install a few extensions to help with development. Open up a termianl in VSCode and run the following:
+  ```bash
+  code --install-extension innoverio.vscode-dbt-power-user && \
+  code --install-extension databricks.databricks && \
+  code --install-extension analysis-services.TMDL && \
+  code --install-extension GerhardBrueckl.powerbi-vscode && \
+  code --install-extension jianfajun.dax-language && \
+  code --install-extension ms-python.python && \
+  code --install-extension samuelcolvin.jinjahtml && \
+  code --install-extension redhat.vscode-yaml && \
+  code --install-extension sdras.night-owl
+  ```
+3. We installed some theme options, to change theme options, press `Ctrl (or cmd) + Shift + P` and select `Preferences: Color Theme` and choose your theme.
+
+</details>
 
 ### 3. Install Python
+_A lot of the steps from here onwards will require copying commands into your terminal, so we recommend opening up your code editor on one half of your screen, and this readme on the other half._
+
 Python is the back-bone of `sous-chef`, so we need to install this first. But each project can have different Python versions. Therefore, we will also install `pyenv` to manage different Python versions on your local machine.
 
-#### On Windows:
-1. Install pyenv-win in PowerShell.
+<details>
+<summary>Windows</summary>
 
+1. Open your code editor and the built-in terminal with Powershell.
+2. Install pyenv-win.
 ```powershell
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 ```
 
-2. Reopen PowerShell
+If you get a "Running scripts is disabled on this system" error, you can enable it by running the following:
 
-3. Check if the installation was successful.
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+```
+
+3. Close and reopen your code editor
+
+4. Check if the installation was successful.
 ```
 pyenv --version
 ```
 
-4. Add pyenv to your path
+5. Add pyenv to your path
 
 Adding new environment variables.
 ```powershell
@@ -81,39 +127,49 @@ Adding the environment variables to the path.
 [System.Environment]::SetEnvironmentVariable('path', $env:USERPROFILE + "\.pyenv\pyenv-win\bin;" + $env:USERPROFILE + "\.pyenv\pyenv-win\shims;" + [System.Environment]::GetEnvironmentVariable('path', "User"),"User")
 ```
 
-5. Check a list of Python versions supported by `pyenv-win`
+6. Check a list of Python versions supported by `pyenv-win`
 ```
 pyenv install -l
 ```
 
-6. Install python 3.11
+7. Install python 3.11
 ```
 pyenv install 3.11.5
 ```
 
-7. Set a Python version as the global version
+8. Install python 3.10
+```
+pyenv install 3.10.11
+```
+
+9. Set a Python version as the global version
 
 ```
 pyenv global 3.11.5
 ```
 
-8. Check which Python version you are using and its path
+10. Check which Python version you are using and its path
 
 ```
 pyenv version
 ```
 Output: `<version> (set by \path\to\.pyenv\pyenv-win\.python-version)`
 
-9. Check that Python is working
+11. Check that Python is working
 
 ```
 python -c "import sys; print(sys.executable)"
 ```
 Output: `\path\to\.pyenv\pyenv-win\versions\<version>\python.exe`
 
-#### On macOS:
+</details>
+
+<details>
+<summary>macOS</summary>
+
 We will install `pyenv` and Python using Homebrew.
 
+1. Open your code editor and the built-in terminal.
 1. Install Homebrew if you haven't already
   ```bash
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -181,6 +237,8 @@ pyenv global 3.11.5
 pyenv versions
 ```
 
+</details>
+
 #### Check Python installation
 To check that you have set up Python correctly, run the following command:
 ```bash
@@ -192,7 +250,8 @@ It should return something like `Python 3.11.X`
 ### 4. Install Poetry
 Poetry is a tool for dependency management in Python projects. It helps manage project dependencies, virtual environments, and package publishing.
 
-#### On Windows:
+<details>
+<summary>Windows</summary>
 
 1. Install Poetry using the official installer in PowerShell
 ```powershell
@@ -200,16 +259,15 @@ Poetry is a tool for dependency management in Python projects. It helps manage p
 ```
 
 2. Add Poetry to your PATH
-Search for `Environment Variables` in your start menu, and select `Edit the system environment variables`.
-
-Click on `Environment Variables`, and select `Path` and click `Edit`.
-
-Click `New` and add the following path:
+```powershell
+[System.Environment]::SetEnvironmentVariable(
+    "path",
+    ";%APPDATA%\Python\Scripts",
+    "User"
+)
 ```
-%APPDATA%\Python\Scripts
-```
 
-Restart your PowerShell.
+Restart your code editor
 
 3. Check that you have set up Poetry correctly
 ```bash
@@ -217,6 +275,14 @@ poetry --version
 ```
 
 _It should return something like `Poetry version 1.8.X`_
+
+If you get an access denied error, then you may need to add `%APPDATA%\Python\Scripts` to the excemptions:
+- Go to Settings > Security > Virus & threat protection
+- Under Virus & threat protection settings select Manage settings
+- Under Exclusions select Add or remove exclusions
+- Select Add an exclusion
+- Choose Folder
+- Locate and add your Python/Scripts folder (e.g. `C:\Users\<your-username>\AppData\Local\Programs\Python\Scripts`)
 
 4. Set poetry to prefer the currently active Python version
 
@@ -227,10 +293,13 @@ poetry config virtualenvs.in-project true
 
 Note: running `poetry self update`on Windows may be problematic. If so, run a re-install of Poetry by running the following:
 ```powershell
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
-#### On macOS:
+</details>
+
+<details>
+<summary>macOS</summary>
 
 1. Install Poetry using the official installer
 ```bash
@@ -256,16 +325,21 @@ poetry config virtualenvs.prefer-active-python true
 poetry config virtualenvs.in-project true
 ```
 
+</details>
+
 ### 5. Install Git
 Git is a version control system that allows you to track changes to your code. It is essential for managing and collaborating on projects.
 
-#### On Windows:
+<details>
+<summary>Windows</summary>
+
 1. Visit https://git-scm.com/download/win
 2. Download and run the Git installer for Windows.
 3. There will be a lot of prompts to choose between. Choose the default options apart from the follows:
 - Default branch name suffix: `main`
-- Default editor: `VSCode`
-4. Open command prompt and check that Git is installed correctly by running:
+- Default editor: your code editor
+4. Repoen your code editor
+5. Open command prompt and check that Git is installed correctly by running:
 ```
 git --version
 ```
@@ -277,7 +351,11 @@ winget install --id github.cli
 ```
 _Accept the source agreements when prompted_
 
-#### On macOS:
+</details>
+
+<details>
+<summary>macOS</summary>
+
 1. Install Git
 ```
 brew install git
@@ -286,6 +364,8 @@ brew install git
 ```
 brew install gh
 ```
+
+</details>
 
 #### Confugring git
 Once git is installed, we should provide git with our full name and email address.
@@ -335,10 +415,27 @@ Now let's get the sous-chef repo cloned to your local machine.
 
 We recommend creating a directory within your home directory named `cheffelo` and place all of Cheffelo's source code repositories in there.
 
+1. Navigate to your home/user directory
+
+`cd %USERPROFILE%` (Windows) `cd ~` (macOS)
+
+2. Create a cheffelo directory
 ```
-mkdir ~/cheffelo
-cd ~/cheffelo
+mkdir cheffelo
+```
+
+2. CD into the cheffelo directory
+```
+cd cheffelo
+```
+
+3. Clone the sous-chef repo
+```
 git clone https://github.com/cheffelo/sous-chef sous-chef
+```
+
+4. CD into the sous-chef directory
+```
 cd sous-chef
 ```
 
@@ -355,7 +452,9 @@ There is an issue on Windows where "Windows Defender" blocks the access to the s
 ### 7. Installing pre-commit hooks
 We use pre-commit hooks to ensure code quality and consistency across the monorepo.
 
-#### On Windows:
+<details>
+<summary>Windows</summary>
+
 1. Install pre-commit
 ```
 pipx install pre-commit
@@ -366,7 +465,11 @@ cd cheffelo/sous-chef
 pre-commit install
 ```
 
-#### On macOS:
+</details>
+
+<details>
+<summary>macOS</summary>
+
 1. Install pre-commit
 ```
 brew install pre-commit
@@ -376,6 +479,7 @@ brew install pre-commit
 cd cheffelo/sous-chef
 pre-commit install
 ```
+</details>
 
 ### 8. Activate the `chef` cli
 Now we have the sous-chef report cloned. Let's install the dependencies and activate the `chef` cli.
@@ -401,11 +505,41 @@ chef --help
 _It should return a list of commands that you can use._
 
 ### 9. Setting up a project specific environment
-We us pyenv to manage different Python versions, and Poetry to create virtualevns with the correct dependencies for each project.
+We use pyenv to manage different Python versions, and Poetry to create virtualenvs with the correct dependencies for each project.
 
 Let's test creating a new Python environment for a project.
 
-#### On macOS:
+<details>
+<summary>Windows</summary>
+
+1. cd into a project
+```bash
+cd cheffelo/sous-chef/projects/data-model
+```
+
+2. Create a new virtualenv
+```bash
+poetry shell
+```
+
+3. Install the project dependencies
+```bash
+poetry install
+```
+
+4. Check that you are in a virtualenv
+```
+which python
+```
+Should output something like:
+```
+/Users/<your-username>/cheffelo/sous-chef/projects/data-model/.venv/bin/python
+```
+
+</details>
+
+<details>
+<summary>macOS</summary>
 
 1. cd into a project
 ```bash
@@ -436,38 +570,15 @@ Should output something like:
 /Users/<your-username>/cheffelo/sous-chef/projects/data-model/.venv/bin/python
 ```
 
-#### On Windows:
-1. cd into a project
-```bash
-cd cheffelo/sous-chef/projects/data-model
-```
-
-2. Create a new virtualenv
-```bash
-poetry shell
-```
-
-3. Install the project dependencies
-```bash
-poetry install
-```
-
-4. Check that you are in a virtualenv
-```
-which python
-```
-Should output something like:
-```
-/Users/<your-username>/cheffelo/sous-chef/projects/data-model/.venv/bin/python
-```
+</details>
 
 ### 10. Connecting to Databricks locally (NOT COMPLETE YET)
-If you want to run local code in Databricks, you need to first connect to Databricks using the Databricks extension in VSCode.
+If you want to run local code in Databricks, you need to first connect to Databricks using the Databricks extension in your code editor.
 
-1. Click on the Databricks logo in the left-hand side of VSCode.
+1. Click on the Databricks logo in the left-hand side of your code editor.
 2. Click on ´Migrate existing project to Databricks´
 
-## Creating a new project or package
+## Creating a new project or package 🆕
 Now we have sous-chef setup, we can start creating new projects and packages using the `chef` cli.
 
 To create a new project, run the new-service target from the command line and provide a name for your service:
@@ -491,7 +602,7 @@ For more information about the `chef` cli, view [packages/`chef`/README.md](pack
 
 **Module** name is the python package name which needs underscores. *E.g: analytics_api*
 
-## Use Cases
+## Use Cases 💡
 In this secion will you find a few use-cases to describe how to develop different projects.
 
 ### Python Project
