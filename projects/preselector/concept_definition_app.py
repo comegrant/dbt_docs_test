@@ -397,8 +397,6 @@ async def view_mealkit(
             target_vector=target_vector,
             importance_vector=normalized_importance,
             store=cache_store,
-            select_top_n=100,
-            top_n_percent=1,
         )
 
     with st.spinner("Loading recipe info"):
@@ -454,7 +452,6 @@ async def missing_attributes() -> pl.DataFrame:
         # Quick and easy
         "C28F210B-427E-45FA-9150-D6344CAE669B": {
             "cooking_time_mean": FeatureImportance(target=0.0, importance=1.0),
-            "cooking_time_std": FeatureImportance(target=0.0, importance=1.0),
         },
         # Chef favorite
         "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {

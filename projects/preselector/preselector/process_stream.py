@@ -28,6 +28,8 @@ from preselector.process_stream_settings import ProcessStreamSettings
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.store import preselector_store
 from preselector.stream import (
+    MultipleWriter,
+    PreselectorResultStreamWriter,
     ReadableStream,
     ServiceBusStream,
     ServiceBusStreamWriter,
@@ -56,7 +58,8 @@ class PreselectorStreams:
     failed_output_stream: WritableStream | None
 
 
-async def connect_to_streams(settings: ProcessStreamSettings) -> PreselectorStreams:
+async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -> PreselectorStreams:
+    redis_writer = await PreselectorResultStreamWriter.for_company(company_id)
 
     if settings.service_bus_connection_string:
         client = ServiceBusClient.from_connection_string(
@@ -79,6 +82,7 @@ async def connect_to_streams(settings: ProcessStreamSettings) -> PreselectorStre
         settings.service_bus_subscription_name is not None
     ), "Subscription name is required when a connection string is set"
 
+
     request_stream = ServiceBusStream(
         payload=GenerateMealkitRequest,
         client=client,
@@ -87,20 +91,29 @@ async def connect_to_streams(settings: ProcessStreamSettings) -> PreselectorStre
         sub_queue=ServiceBusSubQueue(settings.service_bus_sub_queue) if settings.service_bus_sub_queue else None,
     )
 
-    return PreselectorStreams(
-        request_stream=request_stream,
-        successful_output_stream=ServiceBusStreamWriter(
-            client,
-            topic_name=settings.service_bus_success_topic_name,
-            application_properties={"company": settings.service_bus_subscription_name},
-        )
-        if settings.service_bus_should_write
-        else None,
-        failed_output_stream=ServiceBusStreamWriter(
+    error_writer = MultipleWriter([
+        ServiceBusStreamWriter(
             client,
             topic_name=settings.service_bus_failed_topic_name,
             application_properties={"company": settings.service_bus_subscription_name},
-        )
+        ),
+        redis_writer
+    ])
+    success_writer = MultipleWriter([
+        ServiceBusStreamWriter(
+            client,
+            topic_name=settings.service_bus_success_topic_name,
+            application_properties={"company": settings.service_bus_subscription_name},
+        ),
+        redis_writer
+    ])
+
+    return PreselectorStreams(
+        request_stream=request_stream,
+        successful_output_stream=success_writer
+        if settings.service_bus_should_write
+        else None,
+        failed_output_stream=error_writer
         if settings.service_bus_should_write
         else None,
     )
@@ -220,6 +233,10 @@ async def load_cache(
 def convert_concepts_to_attributes(
     request: GenerateMealkitRequest,
 ) -> GenerateMealkitRequest:
+
+    if not request.concept_preference_ids:
+        request.concept_preference_ids = [ "C94BCC7E-C023-40CE-81E0-C34DA3D79545" ]
+        return request
 
     mappings = {
         # GL
@@ -406,6 +423,7 @@ async def process_stream_batch(
 
             if index % write_batch_interval == 0 and index != 0:
                 await stream.mark_as_complete(completed_requests)
+                completed_requests = []
 
                 if successful_output_stream:
                     await successful_output_stream.batch_write(successful_responses)
@@ -415,7 +433,6 @@ async def process_stream_batch(
                     await failed_output_stream.batch_write(failed_requests)
                     failed_requests = []
 
-                completed_requests = []
 
         await stream.mark_as_complete(completed_requests)
 
@@ -465,7 +482,7 @@ async def process_stream(
         }
         assert settings.service_bus_subscription_name is not None
         company_id = company_map[settings.service_bus_subscription_name]
-        streams = await connect_to_streams(settings)
+        streams = await connect_to_streams(settings, company_id)
 
         store = await load_cache(store, company_id)
     except Exception as error:

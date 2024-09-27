@@ -1,4 +1,3 @@
-from time import sleep
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
@@ -140,13 +139,14 @@ def deploy_preselector(
     )
 
     # I am fine with using print here
-    print("deleting resource") # noqa: T201
-    poller = client.container_groups.begin_delete(resource_group_name=resource_group, container_group_name=worker.name)
-
-    poller.wait()
-    while not poller.done():
-        print("Waiting for delete") # noqa: T201
-        sleep(1)
+    # print("deleting resource")
+    # poller = client.container_groups.begin_delete(
+    #    resource_group_name=resource_group, container_group_name=worker.name)
+    #
+    # poller.wait()
+    # while not poller.done():
+    #     print("Waiting for delete")
+    #     sleep(1)
 
     print("creating resource") # noqa: T201
     client.container_groups.begin_create_or_update(
@@ -158,9 +158,9 @@ def deploy_preselector(
 def deploy_all(tag: str, env: str) -> None:
     company_names = [
         "godtlevert",
-        "retnemt",
-        "adams",
-        "linas"
+        # "retnemt",
+        # "adams",
+        # "linas"
     ]
 
     bus_namespace = {
@@ -189,4 +189,4 @@ def deploy_all(tag: str, env: str) -> None:
 
 
 if __name__ == "__main__":
-    deploy_all(tag="132be6f2cb82854f884955a9b997a717041cfeb8", env="prod")
+    deploy_all(tag="dev-latest", env="test")

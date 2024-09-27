@@ -26,7 +26,7 @@ from data_contracts.recipe import (
     RecipePreferences,
 )
 from data_contracts.recommendations.recommendations import PartitionedRecommendations
-from data_contracts.sources import data_science_data_lake
+from data_contracts.sources import data_science_data_lake, redis_cluster
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
@@ -96,6 +96,7 @@ class PreselectorTestChoice:
         partition_keys=["company_id", "year", "week"],
         date_formatter=DateFormatter.unix_timestamp(time_unit="us", time_zone="UTC"),
     ),
+    stream_source=redis_cluster.stream("preselector-output")
 )
 class Preselector:
     agreement_id = Int32().lower_bound(1).as_entity()

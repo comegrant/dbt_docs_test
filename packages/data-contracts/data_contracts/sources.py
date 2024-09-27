@@ -1,6 +1,6 @@
 from os import getenv
 
-from aligned import PostgreSQLConfig
+from aligned import PostgreSQLConfig, RedisConfig
 from aligned.sources.azure_blob_storage import AzureBlobConfig
 
 from data_contracts.sql_server import SqlServerConfig
@@ -31,6 +31,8 @@ pim_core = SqlServerConfig("CORE_PIM_CONNECTION")
 
 adb_ml = adb.with_schema("ml")
 adb_ml_output = adb.with_schema("ml_output")
+
+redis_cluster = RedisConfig("REDIS_URL")
 
 segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
 

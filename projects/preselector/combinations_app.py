@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import uuid
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
@@ -7,14 +8,8 @@ from typing import TypeVar
 
 import pandas as pd
 import streamlit as st
-from aligned import FeatureLocation
 from combinations_store_output import CombinationsAppOutput
 from concept_definition_app import load_attributes
-from data_contracts.preselector.store import (
-    ImportanceVector,
-    PartitionedRecommendations,
-    TargetVectors,
-)
 from data_contracts.sources import adb
 from dotenv import load_dotenv
 from preselector.data.models.customer import PreselectorYearWeekResponse
@@ -27,6 +22,7 @@ from streamlit_cookies_manager import EncryptedCookieManager
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class TastePref:
@@ -113,20 +109,22 @@ async def main() -> None:
         week = st.number_input("Week", min_value=1, max_value=52, value=today.isocalendar().week + 2)
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
+        agreement_id = st.number_input("Agreement ID", min_value=1, value=None)
         submit_button = st.form_submit_button("Generate")
 
     if not selected_attributes:
         return
 
     with st.spinner("Loading Data"):
+
         cached_store = await load_cache(
             store,
             company_id=company_id,
             exclude_views={
-                FeatureLocation.model("rec_engine"),
-                PartitionedRecommendations.location,
-                TargetVectors.location,
-                ImportanceVector.location,
+                # FeatureLocation.model("rec_engine"),
+                # PartitionedRecommendations.location,
+                # TargetVectors.location,
+                # ImportanceVector.location,
             },
         )
 
@@ -149,14 +147,14 @@ async def main() -> None:
 
     request = GenerateMealkitRequest(
         # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
-        agreement_id=1,
+        agreement_id=agreement_id or 1,
         company_id=company_id,
         compute_for=[YearWeek(year=int(year), week=int(week))],
         concept_preference_ids=[attr.id for attr in atters],
         taste_preferences=[NegativePreference(preference_id=pref.preference_id, is_allergy=True) for pref in prefs],
         number_of_recipes=int(number_of_recipes),
         portion_size=int(portion_size),
-        has_data_processing_consent=False,
+        has_data_processing_consent=agreement_id is not None,
         override_deviation=False,
     )
 

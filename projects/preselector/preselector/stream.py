@@ -3,6 +3,8 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, TypeVar
 
+from aligned.streams.interface import SinakableStream
+from aligned.streams.redis import RedisStream
 from azure.servicebus import (
     ServiceBusClient,
     ServiceBusReceivedMessage,
@@ -95,7 +97,7 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
     topic_name: str
     subscription_name: str
     sub_queue: ServiceBusSubQueue | None = field(default=None)
-    default_max_records: int = field(default=50)
+    default_max_records: int = field(default=5)
     max_wait_time: int = field(default=5)
 
     _connection: ServiceBusReceiver | None = field(default=None)
@@ -282,3 +284,59 @@ class PreselectorResultWriter(WritableStream):
         await Preselector.query().store.insert_into(
             next(iter(Preselector.as_source().location_id())), df
         )
+
+@dataclass
+class PreselectorResultStreamWriter(WritableStream):
+
+    company_id: str
+    timestamp_columns: list[str]
+    stream: SinakableStream
+
+    async def write(self, data: BaseModel) -> None:
+        await self.batch_write([data])
+
+    async def batch_write(self, data: Sequence[BaseModel]) -> None:
+        if not data:
+            return
+
+        await self.stream.sink([
+            { "json_data": row.model_dump_json() }
+            for row in data
+        ])
+
+    @staticmethod
+    async def for_company(company_id: str) -> 'PreselectorResultStreamWriter':
+        from data_contracts.preselector.store import Preselector
+
+        view = Preselector.query().view
+        assert view.stream_data_source is not None
+        source = view.stream_data_source.consumer()
+        assert isinstance(source, RedisStream)
+
+        await source.client.ping()
+
+        assert isinstance(source, SinakableStream)
+
+        result = view.request_all.request_result
+
+        timestamps = []
+        if result.event_timestamp:
+            timestamps = [result.event_timestamp]
+
+        return PreselectorResultStreamWriter(
+            company_id=company_id,
+            timestamp_columns=timestamps,
+            stream=source
+        )
+
+@dataclass
+class MultipleWriter(WritableStream):
+
+    sources: list[WritableStream]
+
+    async def write(self, data: BaseModel) -> None:
+        await self.batch_write([data])
+
+    async def batch_write(self, data: Sequence[BaseModel]) -> None:
+        for source in self.sources:
+            await source.batch_write(data)

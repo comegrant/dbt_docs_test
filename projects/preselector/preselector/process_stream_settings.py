@@ -6,6 +6,8 @@ class ProcessStreamSettings(BaseSettings):
     datalake_service_account_name: str
     datalake_storage_account_key: SecretStr
 
+    redis_url: SecretStr
+
     service_bus_connection_string: SecretStr | None = None
     service_bus_namespace: str | None = None
 

@@ -7,6 +7,7 @@ from aligned import ContractStore, Int32, String, feature_view
 from aligned.compiler.feature_factory import List
 from aligned.request.retrival_request import RetrivalRequest
 from aligned.schemas.feature import FeatureType
+from data_contracts.recipe import NormalizedRecipeFeatures
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
 from preselector.data.models.customer import PreselectorCustomer
 
@@ -34,7 +35,13 @@ async def compute_normalized_features(recipes: pl.DataFrame, store: ContractStor
     # Fixes a bug in the data
     recipes = recipes.unique("recipe_id")
 
-    return await store.feature_view("normalized_recipe_features").features_for(recipes).drop_invalid().to_polars()
+    return (await store.feature_view(NormalizedRecipeFeatures)
+        .features_for(recipes)
+        .drop_invalid()
+        .to_polars()
+    ).with_columns(
+        order_rank=pl.lit(0)
+    )
 
 
 async def historical_preselector_vector(

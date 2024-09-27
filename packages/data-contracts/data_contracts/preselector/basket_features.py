@@ -18,6 +18,7 @@ from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrivalRequest
 from data_contracts.orders import HistoricalRecipeOrders
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeMainIngredientCategory
+from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import materialized_data
 
 T = TypeVar("T")
@@ -32,6 +33,7 @@ recipe_features = NormalizedRecipeFeatures()
 recipe_nutrition = NormalizedRecipeFeatures()
 recipe_cost = NormalizedRecipeFeatures()
 recipe_main_ingredient = RecipeMainIngredientCategory()
+recommandations = RecommendatedDish()
 
 fat_agg = recipe_nutrition.fat_pct.aggregate()
 protein_agg = recipe_nutrition.protein_pct.aggregate()
@@ -41,6 +43,8 @@ energy_kcal_agg = recipe_nutrition.energy_kcal_per_portion.aggregate()
 
 number_of_ratings_agg = recipe_features.number_of_ratings_log.aggregate()
 ratings_agg = recipe_features.average_rating.aggregate()
+
+order_rank_agg = recommandations.order_rank.aggregate()
 
 recipe_cost_whole_units_agg = recipe_cost.cost_of_food.aggregate()
 
@@ -77,6 +81,7 @@ class BasketFeatures:
         pl.col("average_rating").fill_nan(0).mean(), as_type=Float()
     ).with_tag(VariationTags.quality)
 
+    mean_rank = order_rank_agg.mean().default_value(0)
     # std_fat = fat_agg.std()
     # std_protein = protein_agg.std()
     # std_veg_fruit = veg_fruit_agg.std()
@@ -138,10 +143,10 @@ class BasketFeatures:
 
     repeated_taxonomies = Float().polars_aggregation_using_features(
         aggregation=(
-            pl.col("taxonomy_ids").list.explode().unique_counts().max() / pl.count("recipe_id")
+            pl.col("taxonomy_of_interest").list.explode().unique_counts().max() / pl.count("recipe_id")
         ),
         using_features=[
-            recipe_features.taxonomy_ids,
+            recipe_features.taxonomy_of_interest,
             recipe_features.recipe_id
         ]
     ).with_tag(VariationTags.equal_dishes)
@@ -203,6 +208,8 @@ async def historical_preselector_vector(
         .features_for(norm_features)
         .with_subfeatures()
         .to_lazy_polars()
+    ).with_columns(
+        order_rank=pl.lit(1)
     )
 
     basket_features = (
@@ -222,7 +229,14 @@ async def historical_preselector_vector(
     assert not basket_features.is_empty(), "Found no basket features"
 
     exclude_columns = ["basket_id", "agreement_id"]
-    feature_columns = [feat for feat in basket_features.columns if feat not in exclude_columns]
+    manually_set_columns = ["mean_cost_of_food", "mean_rank"]
+
+    feature_columns = [
+        feat
+        for feat
+        in basket_features.columns
+        if feat not in exclude_columns
+    ]
 
     target = (
         basket_features.group_by("agreement_id")
@@ -230,7 +244,6 @@ async def historical_preselector_vector(
         .with_columns(vector_type=pl.lit("target"))
     )
 
-    manually_set_columns = ["mean_cost_of_food"]
 
     importance = (
         basket_features.filter((pl.count("basket_id") > 1).over("agreement_id"))

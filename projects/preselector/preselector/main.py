@@ -452,11 +452,6 @@ async def historical_preselector_vector(
     default_importance = default_importance.with_columns(
         pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
     )
-    default_importance, default_target = potentially_add_variation(default_importance, default_target)
-    default_importance = default_importance.with_columns(
-        pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
-    )
-    default_importance = default_importance.with_columns(mean_cost_of_food=pl.lit(0.25))
 
     if request.has_data_processing_consent:
         with duration("Loading importance vector"):
@@ -474,6 +469,12 @@ async def historical_preselector_vector(
         user_importance = pl.DataFrame()
 
     if user_importance.is_empty():
+        default_importance, default_target = potentially_add_variation(default_importance, default_target)
+        default_importance = default_importance.with_columns(
+            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+        )
+        default_importance = default_importance.with_columns(mean_cost_of_food=pl.lit(0.25))
+
         return default_target, default_importance, False
 
     with duration("Loading target vector"):
@@ -489,14 +490,20 @@ async def historical_preselector_vector(
         )
 
     # Stacking the user vector two times to weight that 2 / 3
-    combined_importance = default_importance.select(vector_features).vstack(
-        user_importance.vstack(user_importance).select(vector_features)
-    ).mean().with_columns(
+    user_vector_weight = 2
+    attribute_vector_weight = 1
+    vector_sum = user_vector_weight + attribute_vector_weight
+
+    combined_importance = (
+        default_importance.select(pl.col(vector_features) * attribute_vector_weight).vstack(
+            user_importance.select(pl.col(vector_features) * user_vector_weight)
+        ).sum().select(pl.all() / vector_sum)
+    ).with_columns(
         mean_cost_of_food=pl.lit(0.25)
     )
-    combined_target = default_target.select(vector_features).vstack(
-        user_target.vstack(user_target).select(vector_features)
-    ).mean()
+    combined_target = default_target.select(pl.col(vector_features) * attribute_vector_weight).vstack(
+        user_target.select(pl.col(vector_features) * user_vector_weight)
+    ).sum().select(pl.all() / vector_sum)
 
     # Roede
     if "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA" in concept_ids:
@@ -695,6 +702,11 @@ async def run_preselector_for_request(
             store=store,
         )
 
+    import streamlit as st
+
+    st.write(target_vector)
+    st.write(importance_vector)
+
     subscription_variation = sorted(request.concept_preference_ids)
     sorted_taste_pref = sorted(request.taste_preference_ids)
 
@@ -887,8 +899,6 @@ async def run_preselector(
     target_vector: pl.DataFrame,
     importance_vector: pl.DataFrame,
     store: ContractStore,
-    select_top_n: int = 20,
-    top_n_percent: float = 0.3,
 ) -> tuple[list[int], dict]:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
@@ -959,9 +969,13 @@ async def run_preselector(
         year * 100 + week # type: ignore
     ) <= 202451: # noqa: PLR2004
         # Only return weight watchers recipes up to week 51 in Linas
-        return (normalized_recipe_features.filter(
-            pl.col("is_low_calorie")
-        )["main_recipe_id"].sample(customer.number_of_recipes).to_list(), {})
+        filtered = normalized_recipe_features.filter(
+            pl.col("is_weight_watchers")
+        )
+        if filtered.height >= customer.number_of_recipes:
+            return (filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), {})
+        else:
+            logger.error("Should have returned a mealkit for WW, but it did not.")
 
 
     normalized_recipe_features = normalized_recipe_features.filter(
@@ -970,7 +984,6 @@ async def run_preselector(
     ).select(
         pl.exclude(["is_adams_signature", "is_cheep"]),
     )
-
 
     with duration("Loading main ingredient category"):
         normalized_recipe_features = await store.feature_view(
@@ -1001,35 +1014,25 @@ async def run_preselector(
             f"Had initially {recipes.height} recipes, and {recipe_features.height} recipes with features"
         )
 
-    select_top_n = min(
-        max(
-            customer.number_of_recipes * 4,
-            int(recipe_features.height * top_n_percent),
-        ),
-        recipe_features.height,
-    )
-
-    if select_top_n < 1:
-        raise ValueError("No recipes to select from. Please let the data team know about this so we can fix it.")
-
-    if recommendations.height > select_top_n:
+    if not recommendations.is_empty():
         with duration("Filtering on recs"):
-            logger.debug(
-                f"Selecting top {select_top_n} based on recommendations: {recipe_features.height}",
+            with_rank = recipes.cast({
+                "recipe_id": pl.Int32
+            }).join(
+                recommendations.select(["product_id", "order_rank"]),
+                on="product_id"
             )
-            product_ids = recipes["product_id"].to_list()
-
-            top_n_recipes = (
-                recommendations.filter(pl.col("product_id").is_in(product_ids))
-                .sort("order_rank", descending=False)
-                .limit(select_top_n)
+            recipe_features = recipe_features.select(pl.exclude("order_rank")).join(
+                with_rank.select(["recipe_id", "order_rank"]),
+                on="recipe_id"
+            ).with_columns(
+                order_rank=pl.col("order_rank").log() / pl.col("order_rank").log().max().clip(lower_bound=1)
             )
-
-            recipes = recipes.filter(
-                pl.col("product_id").is_in(top_n_recipes["product_id"]),
+            importance_vector = importance_vector.with_columns(
+                mean_rank=pl.lit(0.02)
             )
-            recipe_features = recipe_features.filter(
-                pl.col("recipe_id").is_in(recipes["recipe_id"]),
+            target_vector = target_vector.with_columns(
+                mean_rank=pl.lit(0.0)
             )
             logger.debug(
                 f"Filtering based on recommendations done: {recipe_features.height}",
