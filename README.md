@@ -45,9 +45,15 @@ The benefit of cursor is that it is very good at understanding our code base, of
 
 1. Go to https://www.cursor.com and install the version for your machine.
 2. Follow the on-screen prompts to complete the installation
+  - Keyboard: Default
+  - Language: Up to you
+  - Codebase-wide: Enable
+  - Add terminal command: Install cursor
   - If you are currently using VSCode, it will ask you if you want to import your VSCode settings, click yes if you want Cursor to act like your current VSCode setup
-  - Enable privacy mode when asked
-  - Connect your GitHub account
+  - Automplete preference: Contiunue with default
+  - Data preferences: Privacy mode
+  - Sign up and login using GitHub
+
 3. We will now install a few extensions to help with development. Open up a terminal in Cursor and run the following:
   ```bash
   code --install-extension innoverio.vscode-dbt-power-user && \
