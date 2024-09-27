@@ -1,8 +1,8 @@
 with fact_orders as (
     select
+        menu_year,
+        menu_week,
         menu_week_monday_date,
-        extract(year from menu_week_monday_date) as menu_year,
-        extract(week from menu_week_monday_date) as menu_week,
         product_variation_id,
         product_variation_quantity,
         fk_dim_order_statuses,
