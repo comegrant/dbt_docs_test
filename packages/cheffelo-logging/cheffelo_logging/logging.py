@@ -97,3 +97,42 @@ def setup_datadog(logger: Logger, config: DataDogConfig, formatter: Optional[For
         )
     )
     logger.addHandler(handler)
+
+
+class StreamlitLogger(StreamHandler):
+    "DataDog Handler used to push logs"
+
+    def emit(self, record: LogRecord) -> None:
+        import streamlit as st
+
+        msg = self.format(record)
+
+
+        if record.levelno <= logging.WARNING:
+            st.warning(msg)
+        elif record.levelno <= logging.INFO:
+            st.info(msg)
+        else:
+            st.error(msg)
+
+
+def setup_streamlit(logger: Logger, formatter: Optional[Formatter] = None) -> None:
+    """
+    Setting up the datadog logger, given a config.
+
+    ```python
+    logger = logging.getLogger(__name__)
+
+    config = StreamlitLogger()
+    setup_streamlit(logger)
+
+    logger.info("Hello Streamlit!")
+    ```
+    """
+    handler = StreamlitLogger()
+    handler.setFormatter(
+        formatter or jsonlogger.JsonFormatter(
+            "%(timestamp)s %(level)s %(name)s %(filename)s %(lineno)d %(message)s"
+        )
+    )
+    logger.addHandler(handler)

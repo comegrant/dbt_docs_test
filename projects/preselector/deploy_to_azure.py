@@ -1,3 +1,5 @@
+import logging
+from time import sleep
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
@@ -17,6 +19,8 @@ from cheffelo_logging.logging import DataDogConfig
 from preselector.process_stream_settings import ProcessStreamSettings
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
+
+logger = logging.getLogger(__name__)
 
 
 class DeploySettings(BaseSettings):
@@ -138,17 +142,18 @@ def deploy_preselector(
         location="northeurope"
     )
 
-    # I am fine with using print here
-    # print("deleting resource")
-    # poller = client.container_groups.begin_delete(
-    #    resource_group_name=resource_group, container_group_name=worker.name)
-    #
-    # poller.wait()
-    # while not poller.done():
-    #     print("Waiting for delete")
-    #     sleep(1)
+    logger.info("deleting resource")
+    poller = client.container_groups.begin_delete(
+       resource_group_name=resource_group, container_group_name=worker.name)
 
-    print("creating resource") # noqa: T201
+    poller.wait()
+    logger.info("Waiting for 10 secs")
+    sleep(10)
+
+    while not poller.done():
+        logger.info("Waiting for delete")
+
+    logger.info("creating resource")
     client.container_groups.begin_create_or_update(
         resource_group_name=resource_group,
         container_group_name=worker.name,
@@ -158,9 +163,9 @@ def deploy_preselector(
 def deploy_all(tag: str, env: str) -> None:
     company_names = [
         "godtlevert",
-        # "retnemt",
-        # "adams",
-        # "linas"
+        "retnemt",
+        "adams",
+        "linas"
     ]
 
     bus_namespace = {
@@ -170,13 +175,13 @@ def deploy_all(tag: str, env: str) -> None:
 
     for company in company_names:
 
-        print(company) # noqa
+        logger.info(company)
         name = f"preselector-{company}-worker"
         if company == "godtlevert":
             name = "preselector-gl-worker"
 
         name += f"-{env}"
-        print(name) # noqa
+        logger.info(name)
 
         deploy_preselector(
             name=name,
@@ -187,6 +192,6 @@ def deploy_all(tag: str, env: str) -> None:
             resource_group=f"rg-chefdp-{env}",
         )
 
-
 if __name__ == "__main__":
-    deploy_all(tag="dev-latest", env="test")
+    logging.basicConfig(level=logging.DEBUG)
+    deploy_all(tag="754539814b5b5081cb20160eb3f776e2f4afbae8", env="prod")

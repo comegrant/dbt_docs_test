@@ -127,6 +127,23 @@ services:
     env_file:
       - .env
 
+  debug:
+    platform: linux/amd64
+    image: preselector-preselector
+    build:
+      context: ../../
+      dockerfile: projects/preselector/Dockerfile
+    volumes:
+      - ./:/opt/projects/preselector
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run debug_app.py --server.fileWatcherType poll"
+    ports:
+      - 8507:8501
+    depends_on:
+      - preselector
+    env_file:
+      - .env
+
   databricks:
     platform: linux/amd64
     image: preselector-databricks

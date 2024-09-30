@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Annotated
 
+import numpy as np
 import polars as pl
 from aligned import (
     ContractStore,
@@ -161,6 +162,7 @@ async def find_best_combination(
     available_recipes: Annotated[pl.DataFrame, RecipeFeatures],
     number_of_recipes: int,
 ) -> tuple[list[int], Annotated[dict, "Soft preference error"]]:
+
     final_combination = pl.DataFrame()
 
     columns = target_combination_values.columns
@@ -208,14 +210,16 @@ async def find_best_combination(
             pl.col("recipe_id").alias("basket_id"),
         )
 
-        for recipe_id in raw_recipe_nudge["recipe_id"].to_list():
-            raw_recipe_nudge = pl.concat(
-                [
-                    raw_recipe_nudge,
-                    final_combination.with_columns(pl.lit(recipe_id).alias("basket_id")),
-                ],
-                how="vertical_relaxed",
-            )
+        # Using numpy in order to vectorize the code and imporve the performance
+        repeated_recipes = np.repeat(raw_recipe_nudge["recipe_id"].to_numpy(), final_combination.height)
+        raw_recipe_nudge = pl.concat(
+            [final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height,
+            how="vertical"
+        ).hstack(
+            [pl.Series(values=repeated_recipes, name="basket_id")]
+        ).vstack(
+            raw_recipe_nudge,
+        ).sort(["basket_id", "recipe_id"])
 
         # Sorting in order to get deterministic results
         recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort(
@@ -702,11 +706,6 @@ async def run_preselector_for_request(
             store=store,
         )
 
-    import streamlit as st
-
-    st.write(target_vector)
-    st.write(importance_vector)
-
     subscription_variation = sorted(request.concept_preference_ids)
     sorted_taste_pref = sorted(request.taste_preference_ids)
 
@@ -946,7 +945,7 @@ async def run_preselector(
     year = recipes["menu_year"].max()
     week = recipes["menu_week"].max()
 
-    assert year is not None
+    assert year is not None, f"Found no recipes for year {year} and week {week}"
     assert week is not None
 
     with duration("Loading normalized recipe features"):
