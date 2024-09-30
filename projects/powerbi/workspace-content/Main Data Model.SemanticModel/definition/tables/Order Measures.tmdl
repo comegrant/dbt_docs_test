@@ -63,6 +63,15 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Number of Gift Cards' =
+			
+			CALCULATE(
+			    DISTINCTCOUNTNOBLANK('Order Measures'[cms_order_id]),
+			    'Order Types'[Order Type Name] = "Gift Card"
+			)
+		formatString: 0
+		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
+
 	column ops_order_id
 		dataType: int64
 		isHidden
@@ -376,8 +385,8 @@ table 'Order Measures'
 	column menu_year
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: c9673c50-5e6f-469e-8554-fbde45b0c193
 		summarizeBy: sum
 		sourceColumn: menu_year
@@ -387,8 +396,8 @@ table 'Order Measures'
 	column menu_week
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 97307c94-3a2d-46bf-ba58-454db4d19551
 		summarizeBy: sum
 		sourceColumn: menu_week

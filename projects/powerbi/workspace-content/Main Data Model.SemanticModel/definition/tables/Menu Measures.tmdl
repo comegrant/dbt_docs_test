@@ -144,8 +144,8 @@ table 'Menu Measures'
 	column menu_recipe_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 5974aec6-df70-407c-8ae2-1efbbd68884c
 		summarizeBy: sum
 		sourceColumn: menu_recipe_id
@@ -155,8 +155,8 @@ table 'Menu Measures'
 	column recipe_portion_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: bcc28c3d-0fc4-4a3f-9e51-e79a20d0ea9e
 		summarizeBy: sum
 		sourceColumn: recipe_portion_id
@@ -166,8 +166,8 @@ table 'Menu Measures'
 	column menu_year
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: f6705598-0c5e-4dff-a29c-42e91f495981
 		summarizeBy: sum
 		sourceColumn: menu_year
@@ -177,8 +177,8 @@ table 'Menu Measures'
 	column menu_week
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 8f39ea6f-011c-4fa3-b76e-e86f89d9571b
 		summarizeBy: sum
 		sourceColumn: menu_week
@@ -188,8 +188,8 @@ table 'Menu Measures'
 	column menu_week_monday_date
 		dataType: dateTime
 		isHidden
-		isAvailableInMdx: false
 		formatString: Long Date
+		isAvailableInMdx: false
 		lineageTag: b8629559-5ffc-4f8e-81a8-68b8824d7ce0
 		summarizeBy: none
 		sourceColumn: menu_week_monday_date
@@ -201,8 +201,8 @@ table 'Menu Measures'
 	column menu_number_days
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: dccf110d-d008-40db-a269-749d43cc33da
 		summarizeBy: sum
 		sourceColumn: menu_number_days
@@ -212,8 +212,8 @@ table 'Menu Measures'
 	column menu_recipe_order
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 36b478e8-619b-40b8-9a37-ff72e8d2defa
 		summarizeBy: sum
 		sourceColumn: menu_recipe_order
@@ -223,8 +223,8 @@ table 'Menu Measures'
 	column weekly_menu_status_code_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 28e90300-073f-4c7e-a245-be552f315ef9
 		summarizeBy: sum
 		sourceColumn: weekly_menu_status_code_id
@@ -234,8 +234,8 @@ table 'Menu Measures'
 	column menu_status_code_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: d9a48ed0-cfe0-4945-a6b0-f9357a7e8bcc
 		summarizeBy: sum
 		sourceColumn: menu_status_code_id
@@ -245,8 +245,8 @@ table 'Menu Measures'
 	column recipe_status_code_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 64f8c8c2-d042-40c6-95b1-ac6c40028e16
 		summarizeBy: sum
 		sourceColumn: recipe_status_code_id
@@ -256,8 +256,8 @@ table 'Menu Measures'
 	column portion_status_code_id
 		dataType: int64
 		isHidden
-		isAvailableInMdx: false
 		formatString: 0
+		isAvailableInMdx: false
 		lineageTag: 95448337-9047-49ea-8fb5-d306faeb4fa7
 		summarizeBy: sum
 		sourceColumn: portion_status_code_id
@@ -279,6 +279,7 @@ table 'Menu Measures'
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
+		lineageTag: 715a6e6f-0a07-45b7-9e19-4d3664060e7e
 		summarizeBy: none
 		sourceColumn: is_dish
 
@@ -291,9 +292,9 @@ table 'Menu Measures'
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
+		lineageTag: b8611432-9d98-4047-9746-7e14ff0aba77
 		summarizeBy: none
 		sourceColumn: has_menu_recipes
-
 
 		changedProperty = IsHidden
 
@@ -304,13 +305,13 @@ table 'Menu Measures'
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
+		lineageTag: d648721a-64d1-4cb9-b7db-2b29b37aa872
 		summarizeBy: none
 		sourceColumn: has_recipe_portions
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-
 
 	partition 'Menu Measures' = m
 		mode: import
