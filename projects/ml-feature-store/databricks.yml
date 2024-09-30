@@ -23,12 +23,6 @@ variables:
     default: dev
 
 targets:
-  dev:
-    # The default target uses 'mode: development' to create a development copy.
-    # - Deployed resources get prefixed with '[dev my_user_name]'
-    # - Any job schedules and triggers are paused by default.
-    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
-    mode: development
+  default:
     default: true
-    workspace:
-      host: https://adb-4291784437205825.5.azuredatabricks.net
+    mode: "${var.mode}"
