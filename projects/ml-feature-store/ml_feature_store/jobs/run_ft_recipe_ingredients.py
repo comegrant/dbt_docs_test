@@ -15,5 +15,6 @@ logger.setLevel(logging.INFO)
 
 # COMMAND ----------
 spark = create_spark_context()
+env = dbutils.widgets.get("env")
 args = Args(env="dev")
 build_feature_table(args=args, spark=spark)

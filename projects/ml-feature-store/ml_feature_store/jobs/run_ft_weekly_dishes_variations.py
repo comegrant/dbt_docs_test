@@ -13,6 +13,9 @@ from ml_feature_store.ft_weekly_dishes_variations.feature_table_builder import A
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
+# COMMAND ----------
+env = dbutils.widgets.get("env")
 spark = create_spark_context()
-args = Args(env="dev")
+args = Args(env=env)
 build_feature_table(args=args, spark=spark)

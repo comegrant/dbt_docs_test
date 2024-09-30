@@ -10,16 +10,6 @@ on:
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-  build-ml-feature-store-image:
-    uses: ./.github/workflows/cd_docker_image_template.yml
-    with:
-      working-directory: projects/ml-feature-store
-      registry: ${{ vars.CONTAINER_REGISTRY }}
-      image-name: ml-feature-store
-      dockerfile: Dockerfile
-      push-latest: true
-    secrets: inherit
-
   build-ml-feature-store-databricks-image:
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:

@@ -19,19 +19,7 @@
           working-directory: projects/ml-feature-store
         secrets: inherit
 
-      build-ml-feature-store-image:
-        needs: test-ml-feature-store
-        uses: ./.github/workflows/cd_docker_image_template.yml
-        with:
-          working-directory: projects/ml-feature-store
-          registry: ${{ vars.CONTAINER_REGISTRY }}
-          image-name: ml-feature-store
-          dockerfile: Dockerfile
-          tag: dev-latest
-        secrets: inherit
-
       build-ml-feature-store-databricks-image:
-        needs: test-ml-feature-store
         uses: ./.github/workflows/cd_docker_image_template.yml
         with:
           working-directory: projects/ml-feature-store
@@ -42,7 +30,6 @@
         secrets: inherit
 
       deploy-to-dev:
-        needs: test-ml-feature-store
         uses: ./.github/workflows/cd_dab_template.yml
         with:
           working-directory: projects/ml-feature-store

@@ -8,6 +8,8 @@ bundle:
 include:
   - "jobs/**.yml"
   - "jobs/**.yaml"
+  - "ml_feature_store/jobs/**.yaml"
+  - "ml_feature_store/jobs/**.yml"
 
 variables:
   docker_image_url:
@@ -16,6 +18,9 @@ variables:
   mode:
     description: The mode to deploy in
     default: development
+  environment:
+    description: The environment to deploy to
+    default: dev
 
 targets:
   dev:
