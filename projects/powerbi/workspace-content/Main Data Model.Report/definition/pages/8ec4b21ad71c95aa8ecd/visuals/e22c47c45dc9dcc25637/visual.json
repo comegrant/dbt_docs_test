@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.2.0/schema.json",
+  "name": "e22c47c45dc9dcc25637",
+  "position": {
+    "x": 176.67117726657645,
+    "y": 258.07848443843028,
+    "z": 0,
+    "height": 301.3802435723951,
+    "width": 616.617050067659
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Types"
+                    }
+                  },
+                  "Property": "Order Type Name"
+                }
+              },
+              "queryRef": "Order Types.Order Type Name",
+              "nativeQueryRef": "Order Type Name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Order Measures"
+                        }
+                      },
+                      "Property": "cms_order_id"
+                    }
+                  },
+                  "Function": 2
+                }
+              },
+              "queryRef": "Order Measures.cms_order_id",
+              "nativeQueryRef": "Count of cms_order_id"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Order Measures"
+                  }
+                },
+                "Property": "Number of Orders"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

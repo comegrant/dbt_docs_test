@@ -30,7 +30,7 @@ table 'Order Measures'
 	measure 'Number of Orders' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[cms_order_id]),
-			    'Order Types'[Order Type Name] <> "Gift Card"
+			    FILTER('Order Types', 'Order Types'[Order Type Name] <> "Gift Card")
 			)
 		formatString: 0
 		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
