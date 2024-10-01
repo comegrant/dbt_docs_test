@@ -4,6 +4,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from math import log2
 from typing import Annotated
 
 import numpy as np
@@ -20,6 +21,7 @@ from data_contracts.mealkits import OneSubMealkits
 from data_contracts.preselector.basket_features import (
     BasketFeatures,
     ImportanceVector,
+    PreselectorTags,
     TargetVectors,
     VariationTags,
 )
@@ -47,6 +49,7 @@ def select_next_vector(
     columns: list[str],
     exclude_column: str = "basket_id",
     rename_column: str = "recipe_id",
+    explain_based_on_current: pl.DataFrame | None = None
 ) -> pl.DataFrame:
     """
     Selects the vector that is closest to the target vector
@@ -104,27 +107,57 @@ def select_next_vector(
         .transpose()
     )
 
+    if explain_based_on_current is not None:
+        import streamlit as st
 
-    # import streamlit as st
-    # st.write(
-    #     potential_vectors.select(pl.exclude(exclude_column))
-    #     .select(columns)
-    #     .transpose()
-    #     .lazy()
-    #     .select(
-    #         ((pl.all() - target_vector) * importance_vector * 10)
-    #         # Need to fill with 0 to avoid a nan sum
-    #         # Which would lead to picking the first recipe in the list
-    #         .fill_null(0)
-    #         .fill_nan(0)
-    #         .pow(2)
-    #         # Using sum, as it is faster than mean and lead to the same result
-    #     )
-    #     .collect()
-    #     .transpose()
-    #     .rename(lambda col: columns[int(col.split("_")[1])])
-    #     .to_pandas()
-    # )
+        top_vectors = (
+            potential_vectors.select(pl.exclude(exclude_column))
+            .select(columns)
+            .transpose()
+            .lazy()
+            .select(
+                ((pl.all() - target_vector) * importance_vector * 10)
+                # Need to fill with 0 to avoid a nan sum
+                # Which would lead to picking the first recipe in the list
+                .fill_null(0)
+                .fill_nan(0)
+                .pow(2)
+            )
+            .collect()
+            .transpose()
+            .rename(lambda col: columns[int(col.split("_")[1])])
+            .with_columns(
+                total_error=pl.sum_horizontal(columns),
+                recipe_id=potential_vectors[exclude_column]
+            )
+            .sort("total_error", descending=False)
+            .head()
+        )
+
+        explaination = (
+            top_vectors.select(columns)
+            .transpose()
+            .select(
+                pl.all() -
+                (
+                    (
+                        explain_based_on_current.select(columns).transpose().to_series() - target_vector
+                    ) * importance_vector * 10
+                )
+                # Need to fill with 0 to avoid a nan sum
+                # Which would lead to picking the first recipe in the list
+                .fill_null(0)
+                .fill_nan(0)
+                .pow(2)
+            )
+            .transpose()
+            .rename(lambda col: columns[int(col.split("_")[1])])
+            .with_columns(
+                change_in_error=pl.sum_horizontal(columns),
+                recipe_id=top_vectors["recipe_id"]
+            )
+        )
+        st.write(explaination)
 
 
     distance = potential_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
@@ -161,6 +194,8 @@ async def find_best_combination(
     importance_vector: pl.DataFrame,
     available_recipes: Annotated[pl.DataFrame, RecipeFeatures],
     number_of_recipes: int,
+    preselected_recipe_ids: list[int] | None = None,
+    should_explain: bool = True
 ) -> tuple[list[int], Annotated[dict, "Soft preference error"]]:
 
     final_combination = pl.DataFrame()
@@ -176,28 +211,83 @@ async def find_best_combination(
         job = RetrivalJob.from_polars_df(df, [basket_computations])
         return await job.aggregate(basket_computations).to_polars()
 
+    def update_nudge_with_recipes(
+        final_combination: pl.DataFrame,
+        raw_recipe_nudge: pl.DataFrame
+    ) -> pl.DataFrame:
+        # Using numpy in order to vectorize the code and imporve the performance
+        repeated_recipes = np.repeat(raw_recipe_nudge["recipe_id"].to_numpy(), final_combination.height)
+        return pl.concat(
+            [final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height,
+            how="vertical"
+        ).hstack(
+            [pl.Series(values=repeated_recipes, name="basket_id")]
+        ).vstack(
+            raw_recipe_nudge,
+        ).sort(["basket_id", "recipe_id"])
+
+
+    current_vector: pl.DataFrame | None = None
+
     # Sorting in order to get deterministic results
-    recipe_nudge = (
-        await compute_basket(
-            recipes_to_choose_from.with_columns(basket_id=pl.col("recipe_id")),
-        )
-    ).sort("basket_id", descending=False)
+    if preselected_recipe_ids is not None:
+        final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
+
+        if should_explain:
+            current_vector = await compute_basket(final_combination)
+
+        raw_recipe_nudge = recipes_to_choose_from.filter(
+            pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
+        ).with_columns(basket_id=pl.col("recipe_id"))
+
+        raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
+        recipe_nudge = (
+            await compute_basket(raw_recipe_nudge)
+        ).sort("basket_id", descending=False)
+        n_recipes_to_add = number_of_recipes - len(preselected_recipe_ids)
+    else:
+        n_recipes_to_add = number_of_recipes
+        recipe_nudge = (
+            await compute_basket(
+                recipes_to_choose_from.with_columns(basket_id=pl.col("recipe_id")),
+            )
+        ).sort("basket_id", descending=False)
+
 
     mean_target_vector = target_combination_values.select(columns).transpose().to_series()
-    feature_importance = importance_vector.select(columns).transpose().to_series()
+    feature_importance = importance_vector.select(columns)
 
-    for _ in range(number_of_recipes):
+    binary_features = [
+        feat.name
+        for feat in basket_computations.all_features
+        if feat.tags and PreselectorTags.binary_metric in feat.tags
+    ]
+
+    for _ in range(n_recipes_to_add):
+
+        # For a five recipe selection on the first run
+        # log(1.2) => 0.26
+
+        binary_weight = log2(1 + (final_combination.height + 1) / number_of_recipes)
+
         if recipe_nudge.is_empty():
             return (final_combination["recipe_id"].to_list(), dict())
 
         next_vector = select_next_vector(
             mean_target_vector,
             recipe_nudge,
-            feature_importance,
+            feature_importance.with_columns([
+                pl.col(feat) * binary_weight
+                for feat in binary_features
+            ]).transpose().to_series(),
             columns,
+            explain_based_on_current=current_vector
         )
 
         selected_recipe_id = next_vector[0, "recipe_id"]
+        if should_explain:
+            current_vector = next_vector
+
         final_combination = final_combination.vstack(
             recipes_to_choose_from.filter(pl.col("recipe_id") == selected_recipe_id),
         )
@@ -210,16 +300,7 @@ async def find_best_combination(
             pl.col("recipe_id").alias("basket_id"),
         )
 
-        # Using numpy in order to vectorize the code and imporve the performance
-        repeated_recipes = np.repeat(raw_recipe_nudge["recipe_id"].to_numpy(), final_combination.height)
-        raw_recipe_nudge = pl.concat(
-            [final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height,
-            how="vertical"
-        ).hstack(
-            [pl.Series(values=repeated_recipes, name="basket_id")]
-        ).vstack(
-            raw_recipe_nudge,
-        ).sort(["basket_id", "recipe_id"])
+        raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
 
         # Sorting in order to get deterministic results
         recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort(
@@ -683,7 +764,7 @@ async def cost_of_food_target_for(
 
 
 async def run_preselector_for_request(
-    request: GenerateMealkitRequest, store: ContractStore
+    request: GenerateMealkitRequest, store: ContractStore, should_explain: bool = False
 ) -> PreselectorResult:
     results: list[PreselectorYearWeekResponse] = []
 
@@ -779,13 +860,14 @@ async def run_preselector_for_request(
 
         logger.debug("Running preselector")
         with duration("Running preselector", should_log=True):
-            selected_recipe_ids, _ = await run_preselector(
+            selected_recipe_ids, compliance = await run_preselector(
                 request,
                 menu,
                 recommendations,
                 target_vector=target_vector,
                 importance_vector=importance_vector,
                 store=store,
+                should_explain=should_explain
             )
 
         if len(selected_recipe_ids) != request.number_of_recipes:
@@ -819,7 +901,7 @@ async def run_preselector_for_request(
             portion_size=request.portion_size,
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
-            compliancy=PreselectorPreferenceCompliancy.all_complient,
+            compliancy=compliance,
             target_cost_of_food_per_recipe=cof_target_value
         )
         if not contains_history:
@@ -889,7 +971,41 @@ async def filter_out_recipes_based_on_preference(
             pl.col("recipe_id").is_in(acceptable_recipe_ids["recipe_id"]),
         )
 
+async def filter_on_preferences(
+    customer: GenerateMealkitRequest, recipes: pl.DataFrame, store: ContractStore
+) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, list[int] | None]:
 
+    if not customer.taste_preferences:
+        return recipes, PreselectorPreferenceCompliancy.all_complient, None
+
+    recipes_to_use = await filter_out_recipes_based_on_preference(
+        recipes,
+        portion_size=customer.portion_size,
+        taste_preference_ids=customer.taste_preference_ids,
+        store=store
+    )
+
+    if recipes_to_use.height >= customer.number_of_recipes:
+        return recipes_to_use, PreselectorPreferenceCompliancy.all_complient, None
+
+    preselected_recipes = recipes_to_use["recipe_id"].to_list()
+
+    recipes_to_use = await filter_out_recipes_based_on_preference(
+        recipes,
+        portion_size=customer.portion_size,
+        taste_preference_ids=[
+            pref.preference_id
+            for pref in customer.taste_preferences
+            if pref.is_allergy
+        ],
+        store=store
+    )
+
+    if recipes_to_use.height >= customer.number_of_recipes:
+        return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_complient, preselected_recipes
+
+    preselected_recipes = recipes_to_use["recipe_id"].to_list()
+    return recipes, PreselectorPreferenceCompliancy.non_preference_complient, preselected_recipes
 
 async def run_preselector(
     customer: GenerateMealkitRequest,
@@ -898,7 +1014,8 @@ async def run_preselector(
     target_vector: pl.DataFrame,
     importance_vector: pl.DataFrame,
     store: ContractStore,
-) -> tuple[list[int], dict]:
+    should_explain: bool = False
+) -> tuple[list[int], PreselectorPreferenceCompliancy]:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
 
@@ -916,6 +1033,8 @@ async def run_preselector(
     assert not target_vector.is_empty(), "No target vector to compare with"
     assert target_vector.height == importance_vector.height, "Target and importance vector must have the same length"
 
+    compliance = PreselectorPreferenceCompliancy.all_complient
+
     recipes = available_recipes
 
     logger.debug(f"Filtering based on portion size: {recipes.height}")
@@ -925,21 +1044,16 @@ async def run_preselector(
     logger.debug(f"Filtering based on portion size done: {recipes.height}")
 
     if recipes.is_empty():
-        return ([], {})
+        return ([], compliance)
 
     # Singlekassen
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
-        return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), {})
+        return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance)
 
-    if customer.taste_preference_ids:
-        recipes = await filter_out_recipes_based_on_preference(
-            recipes,
-            portion_size=customer.portion_size,
-            taste_preference_ids=customer.taste_preference_ids,
-            store=store
-        )
-        logger.debug(f"Filtering based on taste preferences done: {recipes.height}")
 
+    recipes, compliance, preselected_recipes = await filter_on_preferences(
+        customer, recipes, store
+    )
     logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
     year = recipes["menu_year"].max()
@@ -972,17 +1086,18 @@ async def run_preselector(
             pl.col("is_weight_watchers")
         )
         if filtered.height >= customer.number_of_recipes:
-            return (filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), {})
+            return (filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance)
         else:
             logger.error("Should have returned a mealkit for WW, but it did not.")
 
-
-    normalized_recipe_features = normalized_recipe_features.filter(
+    filtered = normalized_recipe_features.filter(
         pl.col("is_adams_signature").is_not(),
         pl.col("is_cheep").is_not()
     ).select(
         pl.exclude(["is_adams_signature", "is_cheep"]),
     )
+    if filtered.height >= customer.number_of_recipes:
+        normalized_recipe_features = filtered
 
     with duration("Loading main ingredient category"):
         normalized_recipe_features = await store.feature_view(
@@ -1045,20 +1160,22 @@ async def run_preselector(
         logger.debug(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
         return (
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
-            dict(),
+            compliance
         )
 
     assert not normalized_recipe_features.is_empty()
 
     with duration("Finding best combination"):
-        best_recipe_ids, error_metric = await find_best_combination(
+        best_recipe_ids, _ = await find_best_combination(
             target_vector,
             importance_vector,
             recipe_features,
             customer.number_of_recipes,
+            preselected_recipe_ids=preselected_recipes,
+            should_explain=should_explain
         )
 
     return (
         recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))["main_recipe_id"].to_list(),
-        error_metric,
+        compliance,
     )

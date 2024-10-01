@@ -411,7 +411,7 @@ class RecipeFeatures:
         | pl.col("taxonomy_ids").list.contains(2147)
         | pl.col("taxonomy_ids").list.contains(2152),
         as_dtype=Bool()
-    )
+    ).description("Also known as inspirational in some places")
 
     is_family_friendly = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2148)

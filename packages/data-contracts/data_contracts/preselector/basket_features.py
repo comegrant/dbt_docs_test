@@ -49,19 +49,22 @@ order_rank_agg = recommandations.order_rank.aggregate()
 recipe_cost_whole_units_agg = recipe_cost.cost_of_food.aggregate()
 
 
-def mean_of_bool(feature: Bool) -> Float:
-    return feature.polars_aggregation(
-        pl.col(feature.name).fill_null(False).mean(),
-        as_type=Float()
-    )
-
-
 class VariationTags:
     protein = "protein_variation"
     carbohydrate = "carbo_variation"
     quality = "quality"
     time = "time"
     equal_dishes = "equal_dishes"
+
+class PreselectorTags:
+    binary_metric = "binary_metric"
+
+def mean_of_bool(feature: Bool) -> Float:
+    return feature.polars_aggregation(
+        pl.col(feature.name).fill_null(False).mean(),
+        as_type=Float()
+    ).with_tag(PreselectorTags.binary_metric)
+
 
 @feature_view(name="basket_features", source=DummyDataSource())
 class BasketFeatures:

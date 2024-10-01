@@ -193,5 +193,6 @@ def deploy_all(tag: str, env: str) -> None:
         )
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    deploy_all(tag="754539814b5b5081cb20160eb3f776e2f4afbae8", env="prod")
+    logging.basicConfig(level=logging.ERROR)
+    logging.getLogger(__name__).setLevel(logging.DEBUG)
+    deploy_all(tag="6f74c7bbb993c6ad04d28b53a09d3689430422b8", env="prod")

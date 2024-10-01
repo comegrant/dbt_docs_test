@@ -7,6 +7,7 @@ from types import ModuleType
 from typing import TypeVar
 
 import pandas as pd
+import polars as pl
 import streamlit as st
 from combinations_store_output import CombinationsAppOutput
 from concept_definition_app import load_attributes
@@ -158,7 +159,7 @@ async def main() -> None:
         override_deviation=False,
     )
 
-    response = await run_preselector_for_request(request, cached_store)
+    response = await run_preselector_for_request(request, cached_store, should_explain=False)
 
     if response.success:
         await display_recipes(response.success[0], st)
@@ -232,12 +233,22 @@ async def main() -> None:
 
 async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGenerator | ModuleType) -> None:
 
+    st.write(response.compliancy)
+
     with st.spinner("Loading recipe information..."):
         pre_selector_recipe_info = await cached_recipe_info(
             main_recipe_ids=response.main_recipe_ids,
             year=response.year,
             week=response.week,
         )
+        rank = pl.DataFrame({
+            "main_recipe_id": response.main_recipe_ids,
+            "rank": range(len(response.main_recipe_ids))
+        }).to_pandas()
+
+        pre_selector_recipe_info = pre_selector_recipe_info.merge(
+            rank, on="main_recipe_id"
+        ).sort_values("rank", ascending=True, ignore_index=True)
 
     with st.spinner("Displaying mealkit"):
         mealkit(pre_selector_recipe_info, col)
