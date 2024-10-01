@@ -14,6 +14,7 @@ from aligned import (
 )
 from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
+from aligned.retrival_job import RetrivalJob
 from aligned.schemas.feature_view import RetrivalRequest
 from project_owners.owner import Owner
 
@@ -503,8 +504,8 @@ class RecipeIngredient:
     acceptable_freshness=timedelta(days=4),
 )
 class RecipeNutrition:
-    recipe_id = Int32().as_entity()
-    portion_size = Int32().as_entity()
+    recipe_id = Int32().lower_bound(1).as_entity()
+    portion_size = Int32().lower_bound(1).upper_bound(6).as_entity()
 
     loaded_at = EventTimestamp()
 
@@ -537,7 +538,7 @@ class RecipeCost:
     recipe_id = Int32().lower_bound(1).as_entity()
     portion_size = Int32().lower_bound(1).upper_bound(6).as_entity()
 
-    portion_id = Int32().lower_bound(1)
+    portion_id = Int32().lower_bound(1).upper_bound(30)
 
     menu_year = Int32().lower_bound(2023).upper_bound(2050)
     menu_week = Int32().lower_bound(1).upper_bound(53)
@@ -567,16 +568,25 @@ class RecipeCost:
     suggested_selling_price_incl_vat = Float()
 
 
-async def compute_recipe_features() -> pl.LazyFrame:
-    nutrition = RecipeNutrition.query().all()
-    cost = RecipeCost.query().select_columns([
+def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
+
+    def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
+        """
+        Makes it easier to swap between prod, and manually defined data for testing.
+        """
+        if store:
+            return store.feature_view(view_wrapper)
+        else:
+            return view_wrapper.query()
+
+    nutrition = query(RecipeNutrition).all()
+    cost = query(RecipeCost).select_columns([
         "recipe_cost_whole_units", "is_plus_portion", "is_cheep"
-    ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").is_not()))
+    ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").not_()))
 
     return (
-        await RecipeFeatures.query()
-        .all()
-        .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").is_not()))
+        query(RecipeFeatures).all()
+        .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").not_()))
         .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
         .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
         .join(
@@ -585,14 +595,15 @@ async def compute_recipe_features() -> pl.LazyFrame:
             left_on=["recipe_id", "portion_size"],
             right_on=["recipe_id", "portion_size"],
         )
-        .to_polars()
-    ).rename(
-        {"recipe_cost_whole_units": "cost_of_food"}
-    ).lazy()
+        .rename({"recipe_cost_whole_units": "cost_of_food"})
+    )
 
 
-async def compute_normalized_features(request: RetrivalRequest, limit: int | None) -> pl.LazyFrame:
-    menu_recipe_features = (await compute_recipe_features()).collect()
+async def compute_normalized_features(
+    request: RetrivalRequest, limit: int | None, store: ContractStore | None = None
+) -> pl.LazyFrame:
+
+    menu_recipe_features = await compute_recipe_features(store).derive_features([request]).to_polars()
 
     needed_features = [(feature.name, feature.dtype) for feature in request.returned_features.union(request.entities)]
 
@@ -643,11 +654,12 @@ async def compute_normalized_features(request: RetrivalRequest, limit: int | Non
     description="Contains normalized features based on the year week menu.",
     source=CustomMethodDataSource.from_methods(
         all_data=compute_normalized_features,
-        depends_on_sources=RecipeFeatures.as_source()
-        .location_id()
-        .union(RecipeNutrition.as_source().location_id())
-        .union(RecipeMainIngredientCategory.as_source().location_id())
-        .union(RecipeCost.as_source().location_id()),
+        depends_on_sources={
+            RecipeFeatures.location,
+            RecipeNutrition.location,
+            RecipeMainIngredientCategory.location,
+            RecipeCost.location
+        },
     ).with_loaded_at(),
     materialized_source=materialized_data.partitioned_parquet_at(
         "normalized_recipe_features_per_company", partition_keys=["company_id", "year"]
