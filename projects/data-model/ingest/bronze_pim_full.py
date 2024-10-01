@@ -4,9 +4,17 @@ from coredb_connector import load_coredb_full
 # COMMAND ----------
 
 database = "PIM"
-tables = ["menus", 
+tables = ["chef_ingredients",
+          "chef_ingredient_sections",
+          "generic_ingredients_translations",
+          "ingredients",
+          "ingredient_categories",
+          "ingredient_categories_translations",
+          "menus", 
           "menu_recipes",
           "menu_variations",
+          "order_ingredients",
+          "portions",
           "recipes",
           "recipes_comments",
           "recipe_companies",
@@ -20,17 +28,10 @@ tables = ["menus",
           "recipe_steps",
           "recipe_step_sections",
           "recipes_taxonomies",
-          "portions",
           "taxonomies",
           "taxonomies_translations",
-          "weekly_menus",
-          "ingredients",
-          "ingredient_categories",
-          "order_ingredients",
-          "ingredient_categories_translations",
-          "chef_ingredients",
-          "chef_ingredient_sections",
-          "generic_ingredients_translations"
+          "taxonomy_types",
+          "weekly_menus"
           ]
 for table in tables: 
     load_coredb_full(dbutils, database, table)
