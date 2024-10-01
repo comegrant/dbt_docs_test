@@ -7,11 +7,14 @@
       unique_key='id',
 
       strategy='timestamp',
-      updated_at='created_at',
+      updated_at='updated_at_not_null',
       invalidate_hard_deletes=True,
     )
 }}
 
-select * from {{ source('cms', 'cms__billing_agreement_basket_product') }}
+select 
+*
+,coalesce(updated_at, created_at) as updated_at_not_null
+from {{ source('cms', 'cms__billing_agreement_basket_product') }}
 
 {% endsnapshot %} 
