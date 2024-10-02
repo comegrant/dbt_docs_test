@@ -19,7 +19,7 @@ TAXONOMY_ONESUB_MAPPING = TaxonomyOneSubMapping(
     chefs_favorite={
         AMK: ["inspirasjon", "chefs choice", "inspirerende"],
         GL: ["favoritter", "chefs choice", "inspirerende"],
-        LMK: ["kockens val", "klassiskt och inspirerande", "chefs choice"],
+        LMK: ["kockens val", "klassiskt och inspirerande", "chefs choice", "inspirerande"],
         RT: ["chefs choice", "inspirerende"],
     },
     family_friendly={
