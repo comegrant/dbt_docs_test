@@ -370,8 +370,12 @@ models:
                 'ADYEN',
                 'COLLECTOR',
                 'FLEX',
-                'MANUAL'
+                'MANUAL',
+                'VIPPS'
               ]
+              config:
+                severity: warn
+
 
       - name: signup_source
         data_type: string
