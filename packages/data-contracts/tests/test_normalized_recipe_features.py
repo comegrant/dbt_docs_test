@@ -1,12 +1,17 @@
-from random import seed
 
 import pytest
 from aligned import ContractStore
 from aligned.data_source.batch_data_source import DummyDataSource
 from aligned.feature_source import BatchFeatureSource
-from data_contracts.recipe import NormalizedRecipeFeatures, compute_normalized_features
+from data_contracts.in_mem_source import InMemorySource
+from data_contracts.recipe import (
+    NormalizedRecipeFeatures,
+    RecipeCost,
+    RecipeFeatures,
+    RecipeNutrition,
+    compute_normalized_features,
+)
 from data_contracts.recommendations.store import recommendation_feature_contracts
-from numpy.random import seed as np_seed
 
 
 @pytest.fixture()
@@ -24,12 +29,31 @@ def dummy_store() -> ContractStore:
 @pytest.mark.asyncio
 async def test_normalize_features_logic(dummy_store: ContractStore) -> None:
 
-    seed_nr = 1
-    seed(seed_nr)
-    np_seed(seed_nr)
+    store = dummy_store.update_source_for(
+        RecipeNutrition.location,
+        InMemorySource.from_values({
+            "recipe_id": [1, 1, 2, 2, 3, 3],
+            "portion_size": [2, 4] * 3
+        })
+    ).update_source_for(
+        RecipeCost.location,
+        InMemorySource.from_values({
+            "recipe_id": [1, 1, 2, 2, 3, 3],
+            "portion_size": [2, 4] * 3
+        })
+    ).update_source_for(
+        RecipeFeatures.location,
+        InMemorySource.from_values({
+            "main_recipe_id": [1, 2, 3],
+            "recipe_id": [1, 2, 3],
+            "year": [2024] * 3,
+            "week": [1] * 3,
+            "company_id": ["test"] * 3
+        })
+    )
 
     request = NormalizedRecipeFeatures.query().request
-    test = (await compute_normalized_features(request, None, dummy_store)).collect()
+    test = (await compute_normalized_features(request, None, store)).collect()
 
     expected_features = request.all_returned_columns
     if request.event_timestamp:

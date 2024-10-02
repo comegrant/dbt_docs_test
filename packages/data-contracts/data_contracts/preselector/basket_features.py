@@ -115,7 +115,10 @@ class BasketFeatures:
 
     is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
     is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
-    is_fish_percentage = mean_of_bool(recipe_features.is_fish).with_tag(VariationTags.protein)
+
+    is_seefood_percentage = mean_of_bool(
+        recipe_main_ingredient.is_seefood
+    ).with_tag(VariationTags.protein).default_value(0)
 
     for protein in recipe_main_ingredient.all_proteins:
         locals()[f"{protein.name}_percentage"] = (mean_of_bool(protein)
@@ -146,7 +149,7 @@ class BasketFeatures:
 
     repeated_taxonomies = Float().polars_aggregation_using_features(
         aggregation=(
-            pl.col("taxonomy_of_interest").list.explode().unique_counts().max() / pl.count("recipe_id")
+            pl.col("taxonomy_of_interest").list.explode().unique_counts().quantile(0.9) / pl.count("recipe_id")
         ),
         using_features=[
             recipe_features.taxonomy_of_interest,
@@ -155,13 +158,14 @@ class BasketFeatures:
     ).with_tag(VariationTags.equal_dishes)
 
 
-async def historical_preselector_vector(
+
+async def historical_customer_mealkit_features(
     request: RetrivalRequest,
-    limit: int | None,
     from_date: date | None = None,
     store: ContractStore | None = None
 ) -> pl.LazyFrame:
-    from datetime import datetime, timedelta, timezone
+
+    from datetime import timedelta
 
     number_of_historical_orders = 20
     year_weeks = []
@@ -227,9 +231,50 @@ async def historical_preselector_vector(
         ).to_polars()
     ).with_columns(
         agreement_id=(pl.col("basket_id") / 1_000_000).floor().cast(pl.UInt64),
+        year=((pl.col("basket_id") % 1_000_000) / 100).floor().cast(pl.UInt64),
+        week=(pl.col("basket_id") % 100)
     )
 
     assert not basket_features.is_empty(), "Found no basket features"
+    return basket_features.lazy()
+
+
+
+HistoricalCustomerMealkitFeatures = BasketFeatures.with_schema(
+    name="historical_customer_mealkit_features",
+    source=CustomMethodDataSource.from_load(
+        method=historical_customer_mealkit_features,
+        depends_on={
+            NormalizedRecipeFeatures.location,
+            HistoricalRecipeOrders.location,
+            RecipeMainIngredientCategory.location
+        }
+    ),
+    entities=dict(
+        agreement_id=Int32(),
+        year=Int32(),
+        week=Int32()
+    ),
+    materialized_source=materialized_data.parquet_at("historical_customer_mealkit_features.parquet")
+)
+
+async def historical_preselector_vector(
+    request: RetrivalRequest,
+    limit: int | None,
+    store: ContractStore | None = None
+) -> pl.LazyFrame:
+    from datetime import datetime, timezone
+
+    def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
+        """
+        Makes it easier to swap between prod, and manually defined data for testing.
+        """
+        if store:
+            return store.feature_view(view_wrapper.metadata.name)
+        else:
+            return view_wrapper.query()
+
+    basket_features = await query(HistoricalCustomerMealkitFeatures).all().to_polars()
 
     exclude_columns = ["basket_id", "agreement_id"]
     manually_set_columns = ["mean_cost_of_food", "mean_rank"]
@@ -247,9 +292,8 @@ async def historical_preselector_vector(
         .with_columns(vector_type=pl.lit("target"))
     )
 
-
     importance = (
-        basket_features.filter((pl.count("basket_id") > 1).over("agreement_id"))
+        basket_features.filter((pl.len() > 1).over("agreement_id"))
         .group_by("agreement_id")
         .agg(
             [
@@ -293,11 +337,7 @@ PreselectorVector = with_freshness(
         name="preselector_vector",
         source=CustomMethodDataSource.from_methods(
             all_data=historical_preselector_vector,
-            depends_on_sources={
-                NormalizedRecipeFeatures.location,
-                HistoricalRecipeOrders.location,
-                RecipeMainIngredientCategory.location
-            },
+            depends_on_sources={HistoricalCustomerMealkitFeatures.location},
         ),
         materialized_source=materialized_data.parquet_at("preselector_vector.parquet"),
         entities=dict(agreement_id=Int32()),

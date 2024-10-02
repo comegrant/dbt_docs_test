@@ -2,7 +2,7 @@ import uuid
 
 import polars as pl
 from aligned.data_file import DataFileReference, upsert_on_column
-from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.data_source.batch_data_source import BatchDataSource, CustomMethodDataSource, data_for_request
 from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
 
@@ -41,10 +41,27 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
     async def write_polars(self, df: pl.LazyFrame) -> None:
         self.data = df.collect()
 
+    def all_data(self, request: RetrivalRequest, limit: int | None = None) -> RetrivalJob:
+        from aligned import CustomMethodDataSource
+
+        async def all_data(request: RetrivalRequest, limit: int | None = None) -> pl.LazyFrame:
+
+            full_df = self.data
+            if limit:
+                full_df = self.data.head(limit)
+
+            random_df = (await data_for_request(request, full_df.height)).lazy()
+            join_columns = set(request.all_returned_columns) - set(full_df.columns)
+            return full_df.hstack(random_df.select(pl.col(join_columns)).collect()).lazy()
+
+
+        return CustomMethodDataSource.from_methods(all_data=all_data).all_data(request, limit)
+
     @classmethod
     def multi_source_features_for(
         cls: type['InMemorySource'], facts: RetrivalJob, requests: list[tuple['InMemorySource', RetrivalRequest]]
     ) -> RetrivalJob:
+        from aligned.local.job import FileFactualJob
 
         sources = {
             source.job_group_key() for source, _ in requests if isinstance(source, BatchDataSource)
@@ -55,13 +72,21 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
             )
 
         source, _ = requests[0]
-        if isinstance(source, DataFileReference):
-            from aligned.local.job import FileFactualJob
 
-            return FileFactualJob(source, [request for _, request in requests], facts)
-        else:
-            raise NotImplementedError(f'Type: {cls} have not implemented how to load fact data')
+        async def random_features_for(facts: RetrivalJob, request: RetrivalRequest) -> pl.LazyFrame:
+            random = (await data_for_request(request, source.data.height)).lazy()
+            join_columns = set(request.all_returned_columns) - set(source.data.columns)
+            return source.data.hstack(random.select(pl.col(join_columns)).collect()).lazy()
 
+        request = RetrivalRequest.unsafe_combine([request for _, request in requests])
+
+        return FileFactualJob(
+            CustomMethodDataSource.from_methods(
+                features_for=random_features_for,
+            ).features_for(facts, request),
+            [request for _, request in requests],
+            facts
+        )
 
     @staticmethod
     def from_values(values: dict[str, object]) -> 'InMemorySource':

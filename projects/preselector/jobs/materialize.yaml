@@ -3,6 +3,10 @@ resources:
     preselector-simulation-wednesday:
       name: preselector-simulation-wednesday-${bundle.target}
 
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
       job_clusters:
         - job_cluster_key: preselector
           new_cluster:
@@ -55,6 +59,10 @@ resources:
 
     preselector-simulation-thursday:
       name: preselector-simulation-thursday-${bundle.target}
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
 
       job_clusters:
         - job_cluster_key: preselector

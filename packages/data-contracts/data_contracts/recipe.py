@@ -290,9 +290,10 @@ def is_non_of(features: list[str]) -> pl.Expr:
     name="recipe_main_ingredient_category",
     source=CustomMethodDataSource.from_load(
         recipe_main_ingredient_category,
-        depends_on=MainIngredients.as_source().location_id().union(
-            IngredientCategories.as_source().location_id()
-        )
+        depends_on={
+            MainIngredients.location,
+            IngredientCategories.location
+        }
     ),
     materialized_source=materialized_data.parquet_at("recipe_main_ingredient_category.parquet")
 )
@@ -314,6 +315,11 @@ class RecipeMainIngredientCategory:
     is_shrimp = main_protein_category_id == 1445  # noqa: PLR2004
     is_mixed_meat = main_protein_category_id == 1186  # noqa: PLR2004
     is_tuna = main_protein_category_id == 1388  # noqa: PLR2004
+
+    is_seefood = Bool().transformed_using_features_polars(
+        [is_salmon, is_cod, is_tuna, is_shrimp],
+        pl.col("is_salmon") | pl.col("is_cod") | pl.col("is_tuna") | pl.col("is_shrimp") # type: ignore
+    )
 
     all_proteins = [is_salmon, is_cod, is_pork, is_chicken, is_beef, is_lamb, is_shrimp, is_mixed_meat, is_tuna]
     is_other_protein = Bool().transformed_using_features_polars(

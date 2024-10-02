@@ -5,11 +5,12 @@ import streamlit as st
 from cheffelo_logging.logging import setup_streamlit
 from combinations_app import display_recipes
 from data_contracts.preselector.store import Preselector
-from preselector.data.models.customer import PreselectorSuccessfulResponse
+from preselector.data.models.customer import PreselectorFailedResponse, PreselectorSuccessfulResponse
 from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
 from preselector.store import preselector_store
+from pydantic import ValidationError
 
 
 async def responses_form() -> list[PreselectorSuccessfulResponse]:
@@ -22,6 +23,8 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
         agreement_id = st.number_input("Agreement ID", min_value=0)
         reload = st.form_submit_button("Reload")
 
+    if agreement_id <= 0:
+        return []
 
     if not reload and str(agreement_id) in st.session_state:
         return st.session_state[str(agreement_id)]
@@ -29,10 +32,13 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     reader = stream.consumer("0-0")
     records = await reader.read()
 
-    decoded_records = [
-        PreselectorSuccessfulResponse.model_validate_json(record["json_data"], strict=True)
-        for record in records
-    ]
+    decoded_records = []
+    error_records = []
+    for record in records:
+        try:
+            decoded_records.append(PreselectorSuccessfulResponse.model_validate_json(record["json_data"], strict=True))
+        except ValidationError:
+            error_records.append(PreselectorFailedResponse.model_validate_json(record["json_data"]))
 
     agreement_records = [
         record
@@ -44,9 +50,21 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
 def select(responses: list[PreselectorSuccessfulResponse]) -> GenerateMealkitRequest | None:
 
+    companies = {
+        "8A613C15-35E4-471F-91CC-972F933331D7": "Adams",
+        "09ECD4F0-AE58-4539-8E8F-9275B1859A19": "Godt Levert",
+        "6A2D0B60-84D6-4830-9945-58D518D27AC2": "Linas",
+        "5E65A955-7B1A-446C-B24F-CFE576BF52D7": "RT",
+    }
     with st.form("Select Response"):
 
-        company_id = st.text_input("Company ID")
+        company_id = st.selectbox(
+            "Company",
+            options=companies.keys(),
+            format_func=lambda company_id: companies[company_id],
+            index=None
+        )
+
         response = st.selectbox("Response", options=responses, format_func=lambda res: res.generated_at)
 
         st.form_submit_button()
@@ -81,6 +99,9 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> GenerateMealkitReq
 
     st.write("Concept Preferences")
     st.write(response.concept_preference_ids)
+
+    st.write("Compliance Value")
+    st.write(year_week.compliancy)
 
     return GenerateMealkitRequest(
         agreement_id=response.agreement_id,
@@ -118,7 +139,7 @@ async def debug_app() -> None:
     )
 
     run_response = await run_preselector_for_request(
-        request=request, store=cache_store
+        request=request, store=cache_store, should_explain=True
     )
 
     if not run_response.success:

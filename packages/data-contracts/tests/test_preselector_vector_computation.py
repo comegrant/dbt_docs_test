@@ -6,7 +6,11 @@ from aligned import ContractStore
 from aligned.request.retrival_request import RetrivalRequest
 from data_contracts.in_mem_source import InMemorySource
 from data_contracts.orders import HistoricalRecipeOrders
-from data_contracts.preselector.basket_features import historical_preselector_vector
+from data_contracts.preselector.basket_features import (
+    HistoricalCustomerMealkitFeatures,
+    historical_customer_mealkit_features,
+    historical_preselector_vector,
+)
 from data_contracts.recipe import (
     NormalizedRecipeFeatures,
     RecipeMainIngredientCategory,
@@ -27,6 +31,7 @@ async def test_importance_and_target_vector_computation() -> None:
     store.add_feature_view(HistoricalRecipeOrders)
     store.add_feature_view(NormalizedRecipeFeatures)
     store.add_feature_view(RecipeMainIngredientCategory)
+    store.add_feature_view(HistoricalCustomerMealkitFeatures)
 
     store = store.update_source_for(
         HistoricalRecipeOrders.location,
@@ -92,14 +97,26 @@ async def test_importance_and_target_vector_computation() -> None:
 
     dummy_request = RetrivalRequest("", RecipeMainIngredientCategory.location, set(), set(), set())
 
-    lazy_vectors = await historical_preselector_vector(
+    lazy_vectors = await historical_customer_mealkit_features(
         dummy_request,
-        limit=None,
         from_date=date(year=2024, month=1, day=7 * 3 + 1),
         store=store
     )
     vectors = lazy_vectors.collect()
-    assert vectors.height == 4
+
+    assert vectors.unique(["agreement_id", "year", "week"]).height == 4
+
+    store = store.update_source_for(
+        HistoricalCustomerMealkitFeatures.location,
+        InMemorySource(vectors)
+    )
+
+    lazy_vectors = await historical_preselector_vector(
+        dummy_request, limit=None, store=store
+    )
+
+    vectors = lazy_vectors.collect()
+    assert vectors.unique(["agreement_id", "vector_type"]).height == 4
 
     first_agreement_target = vectors.filter(
         (pl.col("agreement_id") == 1) & (pl.col("vector_type") == "target")

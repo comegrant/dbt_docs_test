@@ -787,6 +787,15 @@ async def run_preselector_for_request(
             store=store,
         )
 
+    if should_explain:
+        import streamlit as st
+
+        st.write("Importance vector")
+        st.write(importance_vector)
+
+        st.write("Target vector")
+        st.write(target_vector)
+
     subscription_variation = sorted(request.concept_preference_ids)
     sorted_taste_pref = sorted(request.taste_preference_ids)
 

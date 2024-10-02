@@ -1,6 +1,7 @@
 from aligned import FeatureStore
 from aligned.compiler.model import ModelContractWrapper
 from aligned.feature_view.feature_view import FeatureViewWrapper
+from data_contracts.preselector.basket_features import HistoricalCustomerMealkitFeatures
 from data_contracts.recipe import AllRecipeIngredients, IngredientAllergiesPreferences, RecipeNegativePreferences
 
 
@@ -70,6 +71,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         YearWeekMenuWithPortions,
         MenuWeekRecipeNormalization,
         PredefinedVectors,
+        HistoricalCustomerMealkitFeatures,
         TargetVectors,
         ImportanceVector,
         PartitionedRecommendations,
