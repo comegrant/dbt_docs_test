@@ -44,7 +44,8 @@ class GeneratePreview(BaseModel):
             portion_size=self.portion_size,
             number_of_recipes=5,
             override_deviation=False,
-            has_data_processing_consent=False
+            has_data_processing_consent=False,
+            quarentine_main_recipe_ids=[]
         )
 
 class Mealkit(BaseModel):
@@ -94,6 +95,8 @@ async def load_store() -> ContractStore:
             entity_names = store.feature_view(dep.name).view.entitiy_names
             if "agreement_id" in entity_names:
                 # Do not want any user spesific data
+                logger.info(dep.name)
+                store.feature_source.sources.pop(dep.identifier, None)
                 continue
 
         cache_sources.append((dep, InMemorySource.empty(), None))
@@ -112,14 +115,28 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logging.basicConfig(level=logging.INFO)
 
     with suppress(ValidationError):
+        # Adding data dog to the root
+        datadog_tags = {
+            "env": os.getenv('ENV'),
+        }
+
+        if "GIT_COMMIT_HASH" in os.environ:
+            datadog_tags["git_sha"] = os.getenv("GIT_COMMIT_HASH")
+
+        datadog_tag_string = ""
+        for key, value in datadog_tags.items():
+            datadog_tag_string += f"{key}:{value},"
+
         setup_datadog(
             logging.getLogger(""),
             config=DataDogConfig(
                 datadog_service_name="pre-selector-api",
                 datadog_source="python",
-                datadog_tags=f"env:{os.getenv('ENV', 'Unknown')}",
+                datadog_tags=datadog_tag_string.strip(","),
             ) # type: ignore[reportGeneralTypeIssues]
         )
+
+    await load_store()
 
     yield
 

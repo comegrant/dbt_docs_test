@@ -18,6 +18,7 @@ from aligned import (
 )
 from aligned.retrival_job import RetrivalJob
 from data_contracts.mealkits import OneSubMealkits
+from data_contracts.orders import QuarantinedRecipes
 from data_contracts.preselector.basket_features import (
     BasketFeatures,
     ImportanceVector,
@@ -159,6 +160,15 @@ def select_next_vector(
         )
         st.write(explaination)
 
+        st.write("Main reason for recipe")
+        st.write(
+            explaination.head(1)
+                .transpose(header_name="feature", include_header=True)
+                .sort("column_0", descending=False)
+                .head(10)
+        )
+        st.write(top_vectors.head(1))
+
 
     distance = potential_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
 
@@ -228,6 +238,11 @@ async def find_best_combination(
 
 
     current_vector: pl.DataFrame | None = None
+
+    if should_explain:
+        current_vector = pl.DataFrame({
+            col: [0] for col in columns
+        })
 
     # Sorting in order to get deterministic results
     if preselected_recipe_ids is not None:
@@ -308,8 +323,22 @@ async def find_best_combination(
             descending=False,
         )
 
-    # import streamlit as st
-    # st.write(final_combination.to_pandas())
+    if should_explain and current_vector is not None:
+        import streamlit as st
+
+        st.write("Resulting vector")
+        st.write(current_vector)
+
+        st.write("Weighted result vector")
+        st.write(
+            (
+                current_vector.select(columns).transpose() * importance_vector.select(columns).transpose()
+            )
+            .transpose()
+            .rename(lambda col: columns[int(col.split("_")[1])])
+        )
+
+        st.write(final_combination.to_pandas())
 
     return (final_combination["recipe_id"].to_list(), dict())
 
@@ -516,6 +545,37 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
 
     return importance, target
 
+
+def handle_calorie_concept(
+    target: pl.DataFrame, importance: pl.DataFrame, concept_ids: list[str]
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+
+    low_cal_id = "FD661CAD-7F45-4D02-A36E-12720D5C16CA"
+
+    if concept_ids == [low_cal_id]:
+        return (
+            target.with_columns(
+                is_low_calorie=pl.lit(1)
+            ),
+            importance.with_columns(
+                is_low_calorie=pl.lit(1)
+            )
+        )
+
+    if low_cal_id not in concept_ids:
+        return (
+            target.with_columns(
+                is_low_calorie=pl.lit(0)
+            ),
+            importance.with_columns(
+                is_low_calorie=pl.lit(0.5)
+            )
+        )
+
+    return target, importance
+
+
+
 async def historical_preselector_vector(
     agreement_id: int,
     request: GenerateMealkitRequest,
@@ -553,10 +613,15 @@ async def historical_preselector_vector(
     else:
         user_importance = pl.DataFrame()
 
+
+    default_importance, default_target = potentially_add_variation(default_importance, default_target)
+    default_importance = default_importance.with_columns(
+        pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+    )
+
     if user_importance.is_empty():
-        default_importance, default_target = potentially_add_variation(default_importance, default_target)
-        default_importance = default_importance.with_columns(
-            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+        default_target, default_importance = handle_calorie_concept(
+            default_target, default_importance, concept_ids
         )
         default_importance = default_importance.with_columns(mean_cost_of_food=pl.lit(0.25))
 
@@ -589,6 +654,10 @@ async def historical_preselector_vector(
     combined_target = default_target.select(pl.col(vector_features) * attribute_vector_weight).vstack(
         user_target.select(pl.col(vector_features) * user_vector_weight)
     ).sum().select(pl.all() / vector_sum)
+
+    combined_target, combined_importance = handle_calorie_concept(
+        combined_target, combined_importance, concept_ids
+    )
 
     # Roede
     if "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA" in concept_ids:
@@ -768,7 +837,17 @@ async def run_preselector_for_request(
 ) -> PreselectorResult:
     results: list[PreselectorYearWeekResponse] = []
 
-    all_selected_main_recipe_ids = request.quarentine_main_recipe_ids.copy()
+    if request.quarentine_main_recipe_ids is not None:
+        all_selected_main_recipe_ids = request.quarentine_main_recipe_ids.copy()
+    else:
+        quarentined_recipes = await store.feature_view(QuarantinedRecipes).select({
+            "main_recipe_ids"
+        }).features_for({
+            "agreement_id": [request.agreement_id],
+            "company_id": [request.company_id]
+        }).to_polars()
+        all_selected_main_recipe_ids = quarentined_recipes.to_dicts()[0]["main_recipe_ids"] or []
+        assert isinstance(all_selected_main_recipe_ids, list)
 
     cost_of_food = await cost_of_food_target_for(request, store)
 
@@ -868,7 +947,7 @@ async def run_preselector_for_request(
             recommendations = pl.DataFrame()
 
         logger.debug("Running preselector")
-        with duration("Running preselector", should_log=True):
+        with duration("Running preselector"):
             selected_recipe_ids, compliance = await run_preselector(
                 request,
                 menu,
@@ -911,7 +990,8 @@ async def run_preselector_for_request(
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
             compliancy=compliance,
-            target_cost_of_food_per_recipe=cof_target_value
+            target_cost_of_food_per_recipe=cof_target_value,
+            quarantined_recipe_ids=all_selected_main_recipe_ids
         )
         if not contains_history:
             set_cache(

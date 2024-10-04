@@ -50,8 +50,11 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
             if limit:
                 full_df = self.data.head(limit)
 
-            random_df = (await data_for_request(request, full_df.height)).lazy()
             join_columns = set(request.all_returned_columns) - set(full_df.columns)
+            if not join_columns:
+                return full_df.lazy()
+
+            random_df = (await data_for_request(request, full_df.height)).lazy()
             return full_df.hstack(random_df.select(pl.col(join_columns)).collect()).lazy()
 
 
@@ -74,8 +77,11 @@ class InMemorySource(BatchDataSource, DataFileReference, WritableFeatureSource):
         source, _ = requests[0]
 
         async def random_features_for(facts: RetrivalJob, request: RetrivalRequest) -> pl.LazyFrame:
-            random = (await data_for_request(request, source.data.height)).lazy()
             join_columns = set(request.all_returned_columns) - set(source.data.columns)
+            if not join_columns:
+                return source.data.lazy()
+
+            random = (await data_for_request(request, source.data.height)).lazy()
             return source.data.hstack(random.select(pl.col(join_columns)).collect()).lazy()
 
         request = RetrivalRequest.unsafe_combine([request for _, request in requests])

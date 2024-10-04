@@ -48,7 +48,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     st.session_state[str(agreement_id)] = agreement_records
     return agreement_records
 
-def select(responses: list[PreselectorSuccessfulResponse]) -> GenerateMealkitRequest | None:
+def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMealkitRequest, list[int]] | None:
 
     companies = {
         "8A613C15-35E4-471F-91CC-972F933331D7": "Adams",
@@ -103,21 +103,24 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> GenerateMealkitReq
     st.write("Compliance Value")
     st.write(year_week.compliancy)
 
-    return GenerateMealkitRequest(
-        agreement_id=response.agreement_id,
-        company_id=company_id,
-        compute_for=[
-            YearWeek(year=year_week.year, week=year_week.week)
-        ],
-        taste_preferences=[ # type: ignore
-            pref.model_dump() for pref in response.taste_preferences
-        ],
-        concept_preference_ids=response.concept_preference_ids,
-        number_of_recipes=len(year_week.main_recipe_ids),
-        portion_size=year_week.portion_size,
-        override_deviation=response.override_deviation,
-        has_data_processing_consent=True,
-        quarentine_main_recipe_ids=quarentined_recipes
+    return (
+        GenerateMealkitRequest(
+            agreement_id=response.agreement_id,
+            company_id=company_id,
+            compute_for=[
+                YearWeek(year=year_week.year, week=year_week.week)
+            ],
+            taste_preferences=[ # type: ignore
+                pref.model_dump() for pref in response.taste_preferences
+            ],
+            concept_preference_ids=response.concept_preference_ids,
+            number_of_recipes=len(year_week.main_recipe_ids),
+            portion_size=year_week.portion_size,
+            override_deviation=response.override_deviation,
+            has_data_processing_consent=True,
+            quarentine_main_recipe_ids=quarentined_recipes
+        ),
+        year_week.main_recipe_ids
     )
 
 
@@ -129,10 +132,12 @@ async def debug_app() -> None:
     if not responses:
         return
 
-    request = select(responses)
+    selection = select(responses)
 
-    if request is None:
+    if selection is None:
         return
+
+    request, expected_recipes = selection
 
     cache_store = await load_cache(
         store, company_id=request.company_id
@@ -144,6 +149,14 @@ async def debug_app() -> None:
 
     if not run_response.success:
         return
+
+    if (set(run_response.success[0].main_recipe_ids) - set(expected_recipes)):
+        st.header("Something is not right")
+        st.error(
+            f"You have drift in some way. Expected {expected_recipes} recipe ids, "
+            f"but got {run_response.success[0].main_recipe_ids}"
+        )
+
 
     await display_recipes(
         run_response.success[0],

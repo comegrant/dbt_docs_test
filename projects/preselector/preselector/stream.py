@@ -9,6 +9,7 @@ from azure.servicebus import (
     ServiceBusClient,
     ServiceBusReceivedMessage,
     ServiceBusReceiver,
+    ServiceBusSender,
     ServiceBusSubQueue,
 )
 from azure.servicebus._common.message import PrimitiveTypes
@@ -55,20 +56,27 @@ class ServiceBusStreamWriter(WritableStream):
         default_factory=dict
     )
 
+    _connection: ServiceBusSender | None = field(default=None)
+
+    def sender(self) -> ServiceBusSender:
+        if self._connection:
+            return self._connection
+        client = self.client.get_topic_sender(self.topic_name)
+        self._connection = client.__enter__()
+        return self._connection
+
     async def write(self, data: BaseModel) -> None:
         from azure.servicebus import ServiceBusMessage
 
         logger.info(
             f"Writing to service bus {self.topic_name} with {self.application_properties}"
         )
-        sender = self.client.get_topic_sender(self.topic_name)
-        with sender:
-            sender.send_messages(
-                ServiceBusMessage(
-                    data.model_dump_json(),
-                    application_properties=self.application_properties,
-                )
+        self.sender().send_messages(
+            ServiceBusMessage(
+                data.model_dump_json(),
+                application_properties=self.application_properties,
             )
+        )
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         from azure.servicebus import ServiceBusMessage
@@ -77,17 +85,16 @@ class ServiceBusStreamWriter(WritableStream):
             return
 
         logger.info(f"Writing {len(data)} to {self.topic_name}")
-        sender = self.client.get_topic_sender(self.topic_name)
-        with sender:
-            batch = sender.create_message_batch()
-            for item in data:
-                batch.add_message(
-                    ServiceBusMessage(
-                        item.model_dump_json(),
-                        application_properties=self.application_properties,
-                    )
+        sender = self.sender()
+        batch = sender.create_message_batch()
+        for item in data:
+            batch.add_message(
+                ServiceBusMessage(
+                    item.model_dump_json(),
+                    application_properties=self.application_properties,
                 )
-            sender.send_messages(batch)
+            )
+        sender.send_messages(batch)
 
 
 @dataclass
@@ -97,7 +104,7 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
     topic_name: str
     subscription_name: str
     sub_queue: ServiceBusSubQueue | None = field(default=None)
-    default_max_records: int = field(default=5)
+    default_max_records: int = field(default=10)
     max_wait_time: int = field(default=5)
 
     _connection: ServiceBusReceiver | None = field(default=None)

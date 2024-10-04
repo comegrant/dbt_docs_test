@@ -68,6 +68,7 @@ class PreselectorYearWeekResponse(BaseModel):
     main_recipe_ids: list[int]
     compliancy: PreselectorPreferenceCompliancy
     target_cost_of_food_per_recipe: float
+    quarantined_recipe_ids: list[int] | None = Field(None)
 
 
 class PreselectorSuccessfulResponse(BaseModel):

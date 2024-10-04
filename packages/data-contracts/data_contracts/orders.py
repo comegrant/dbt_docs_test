@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 import polars as pl
 from aligned import (
     Bool,
+    ContractStore,
     CustomMethodDataSource,
     EventTimestamp,
     Int32,
@@ -11,6 +12,8 @@ from aligned import (
     ValidFrom,
     feature_view,
 )
+from aligned.feature_store import FeatureViewStore, FeatureViewWrapper
+from aligned.schemas.feature_view import RetrivalRequest
 from project_owners.owner import Owner
 
 from data_contracts.mealkits import DefaultMealboxRecipes
@@ -38,6 +41,7 @@ data as (
         COALESCE(bao.cutoff_date, bao.created_date) as delivered_at,
         p.variation_portions as portion_size,
         r.recipe_id,
+        COALESCE(r.main_recipe_id, r.recipe_id) as main_recipe_id,
         rr.RATING as rating,
         wm.MENU_WEEK as week,
         wm.MENU_YEAR as year
@@ -79,6 +83,8 @@ class HistoricalRecipeOrders:
     week = Int32()
     year = Int32()
 
+    main_recipe_id = Int32()
+
     portion_size = Int32()
 
     delivered_at = ValidFrom()
@@ -89,9 +95,62 @@ class HistoricalRecipeOrders:
     did_make_dish = rating != 0
 
 
-deviation_sql = """SELECT
+async def quarantined_recipes(
+    request: RetrivalRequest, store: ContractStore | None = None
+) -> pl.LazyFrame:
+    from datetime import date
+
+    def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
+        """
+        Makes it easier to swap between prod, and manually defined data for testing.
+        """
+        if store:
+            return store.feature_view(view_wrapper.metadata.name)
+        else:
+            return view_wrapper.query()
+
+    today = date.today()
+    orders = await query(HistoricalRecipeOrders).filter(
+        today.year * 100 + today.isocalendar().week - 5 <= pl.col("year") * 100 + pl.col("week")
+    ).to_polars()
+
+    return orders.with_columns(
+        year_week=pl.col("year") * 100 + pl.col("week")
+    ).group_by(["agreement_id", "company_id"]).agg(
+        pl.col("main_recipe_id").alias("main_recipe_ids"),
+        pl.col("year_week").max().alias("year_week")
+    ).with_columns(
+        main_recipe_ids=pl.col("main_recipe_ids").list.unique(),
+        year=(pl.col("year_week") / 100).floor().cast(pl.Int32),
+        week=pl.col("year_week") % 100
+    ).lazy()
+
+
+@feature_view(
+    name="quarantined_recipes",
+    source=CustomMethodDataSource.from_load(
+        quarantined_recipes,
+        depends_on={ HistoricalRecipeOrders.location }
+    ),
+    materialized_source=materialized_data.partitioned_parquet_at(
+        "quarantined_recipes",
+        partition_keys=["company_id"]
+    )
+)
+class QuarantinedRecipes:
+    agreement_id = Int32().as_entity()
+    company_id = String().as_entity()
+
+    week = Int32()
+    year = Int32()
+
+    main_recipe_ids = List(Int32())
+
+
+deviation_sql = """SELECT TOP
     r.recipe_id,
     bab.agreement_id,
+    ba.company_id,
     babd.is_active,
     babd.week,
     babd.year,
@@ -118,11 +177,16 @@ WHERE babd.year >= 2024"""
 @feature_view(
     name="raw_deviated_recipes",
     source=adb.fetch(deviation_sql),
-    materialized_source=materialized_data.delta_at("deselected_recipes"),
+    materialized_source=materialized_data.partitioned_parquet_at(
+        "deselected_recipes",
+        partition_keys=["company_id"]
+    ),
 )
 class DeselectedRecipes:
     recipe_id = Int32().as_entity()
     agreement_id = Int32().as_entity()
+
+    company_id = String()
 
     is_active = Bool()
 

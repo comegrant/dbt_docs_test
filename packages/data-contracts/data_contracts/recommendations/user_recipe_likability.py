@@ -29,11 +29,15 @@ orders = HistoricalRecipeOrders()
         recipe_features.is_medium_cooking_time,
         recipe_features.is_high_cooking_time,
     ],
-    output_source=recommendations_dir.parquet_at("user_recipe_likability.parquet"),
+    output_source=recommendations_dir.partitioned_parquet_at(
+        "user_recipe_likability", partition_keys=["company_id"]
+    )
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()
     recipe_id = Int32().as_entity()
+
+    company_id = String()
 
     predicted_at = EventTimestamp()
     model_version = String().as_model_version()

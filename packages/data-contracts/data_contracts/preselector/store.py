@@ -12,6 +12,7 @@ from aligned import (
 )
 from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.mealkits import OneSubMealkits
+from data_contracts.orders import QuarantinedRecipes
 from data_contracts.preselector.basket_features import (
     ImportanceVector,
     PredefinedVectors,
@@ -76,6 +77,7 @@ class PreselectorTestChoice:
     source=CustomMethodDataSource.from_methods(
         depends_on_sources={
             OneSubMealkits.location,
+            QuarantinedRecipes.location,
             CostOfFoodPerMenuWeek.location,
             RecipeNegativePreferences.location,
             RecipeMainIngredientCategory.location,

@@ -140,6 +140,7 @@ async def run(
 
     with log_step("Predict user-recipe likability", logger=logger):
         ratings_preds = await rating_model.predict_over(menus, store, logger=logger)
+        ratings_preds["company_id"] = company_id
 
     with log_step(
         f"Store {ratings_preds.shape[0]} user-recipe likability predictions",
@@ -161,6 +162,7 @@ async def run(
         menu_per_agreement["agreement_id"] = agreement_ids.tolist() * menus.shape[0]
 
         recipes_to_rank_entities = menu_per_agreement.reset_index(drop=True)
+        recipes_to_rank_entities["company_id"] = company_id
 
         rec_store = store.model("rec_engine")
         recipes_to_rank = (

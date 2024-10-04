@@ -8,6 +8,7 @@ from aligned.data_source.batch_data_source import DummyDataSource, data_for_requ
 from aligned.feature_source import BatchFeatureSource
 from concept_definition_app import potential_features
 from data_contracts.in_mem_source import InMemorySource
+from data_contracts.orders import QuarantinedRecipes
 from data_contracts.preselector.basket_features import ImportanceVector, PredefinedVectors, TargetVectors
 from data_contracts.preselector.store import Preselector
 from numpy.random import seed as np_seed
@@ -182,6 +183,13 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     ).update_source_for(
         PredefinedVectors.location,
         InMemorySource(defined_vectors)
+    ).update_source_for(
+        QuarantinedRecipes.location,
+        InMemorySource.from_values({
+            "recipe_id": list(range(recipe_pool)),
+            "company_id": [company_id] * recipe_pool,
+            "main_recipe_ids": [[1, 2]] * recipe_pool
+        })
     )
 
     response = await run_preselector_for_request(request, store)

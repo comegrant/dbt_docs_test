@@ -394,9 +394,13 @@ async def process_stream_batch(
     failed_requests: list[PreselectorFailedResponse] = []
 
     with duration(f"Running Preselector Batch on {number_of_messages} requests", should_log=True):
+
+        preselector_runtime_sum = 0
+
         for index, message in enumerate(messages):
             raw_request = message.body
 
+            start_time = time.monotonic()
             try:
                 request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
                 result = await run_preselector_for_request(request, store)
@@ -415,6 +419,7 @@ async def process_stream_batch(
                         error_message=str(e), error_code=500, request=raw_request
                     )
                 )
+            preselector_runtime_sum += (time.monotonic() - start_time)
 
             completed_requests.append(message)
 
@@ -433,6 +438,10 @@ async def process_stream_batch(
                     await failed_output_stream.batch_write(failed_requests)
                     failed_requests = []
 
+        logger.info(
+            f"Time used in pre-selecor land: {preselector_runtime_sum}. "
+            f"mean time per req: {preselector_runtime_sum / number_of_messages}"
+        )
 
         await stream.mark_as_complete(completed_requests)
 
@@ -462,11 +471,23 @@ async def process_stream(
     logging.getLogger("aligned").setLevel(logging.ERROR)
 
     # Adding data dog to the root
+    datadog_tags = {
+        "env": os.getenv('ENV'),
+        "subscription": settings.service_bus_subscription_name,
+    }
+
+    if "GIT_COMMIT_HASH" in os.environ:
+        datadog_tags["git_sha"] = os.getenv("GIT_COMMIT_HASH")
+
+    datadog_tag_string = ""
+    for key, value in datadog_tags.items():
+        datadog_tag_string += f"{key}:{value},"
+
     setup_datadog(
         logging.getLogger(""),
         config=DataDogConfig(
             datadog_service_name="preselector",
-            datadog_tags=f"env:{os.getenv('ENV')},subscription:{settings.service_bus_subscription_name}",
+            datadog_tags=datadog_tag_string.strip(",")
         ) # type: ignore[reportGeneralTypeIssues]
     )
 

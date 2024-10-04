@@ -92,6 +92,7 @@ services:
       - preselector
     env_file:
       - .env
+      - ../../.env
 
   preselector-test:
     platform: linux/amd64
@@ -126,6 +127,7 @@ services:
       - preselector
     env_file:
       - .env
+      - ../../.env
 
   debug:
     platform: linux/amd64
