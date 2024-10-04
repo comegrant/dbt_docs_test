@@ -44,6 +44,7 @@ locals {
   data_lake_network_interface_name       = "nic-${var.project_name}-dls-${terraform.workspace}"
   ip_rules                               = ["109.74.178.186"] #Office
   databricks_repo_path                   = "/Repos/${var.azure_client_id}/${terraform.workspace}"
+  storage_account_common_name            = "st${var.project_name}common${terraform.workspace}"
 }
 
 module "resource_group_core" {
@@ -65,7 +66,6 @@ module "databricks_connector_core" {
   azure_databricks_access_connector_name = local.azure_databricks_access_connector_name
 }
 
-
 module "data_lake_core" {
   source                              = "../modules/data-lake-core"
   location                            = module.resource_group_core.location
@@ -83,7 +83,6 @@ module "data_lake_core" {
   azure_subscription_id               = var.azure_subscription_id
   azure_tenant_id                     = var.azure_tenant_id
 }
-
 
 module "databricks_core" {
   source                                 = "../modules/databricks-core"
@@ -124,3 +123,14 @@ module "virtual_network_core" {
   azure_tenant_id             = var.azure_tenant_id
 }
 
+module "storage_account_core" {
+  source                  = "../modules/storage-account-core"
+  resource_group_name     = module.resource_group_core.name
+  location                = module.resource_group_core.location
+  storage_account_name    = local.storage_account_common_name
+  azure_client_id         = var.azure_client_id
+  azure_subscription_id   = var.azure_subscription_id
+  azure_tenant_id         = var.azure_tenant_id
+  storage_container_names = ["dbt-manifest"]
+  common_key_vault_id     = module.databricks_core.azure_common_key_vault_id
+}

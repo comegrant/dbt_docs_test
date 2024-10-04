@@ -329,6 +329,14 @@ resource "databricks_group" "external-readers" {
   display_name = "external-readers"
 }
 
+resource "databricks_permissions" "token_usage" {
+  authorization = "tokens"
+  access_control {
+    group_name = databricks_group.service-principals.display_name
+    permission_level = "CAN_USE"
+  }
+}
+
 provider "databricks" {
   alias      = "accounts"
   host       = "https://accounts.azuredatabricks.net"
@@ -359,7 +367,7 @@ resource "databricks_group_member" "segment_sp_is_ws_admin" {
 
 resource "databricks_group_member" "segment_service_principal" {
   group_id = databricks_group.service-principals.id
-  member_id = databricks_service_principal.segment_sp.id  
+  member_id = databricks_service_principal.segment_sp.id
 }
 
 
@@ -378,12 +386,12 @@ resource "databricks_service_principal_secret" "databricks_reader_sp" {
 
 resource "databricks_group_member" "databricks_reader_service_principal" {
   group_id = databricks_group.service-principals.id
-  member_id = databricks_service_principal.databricks_reader_sp.id  
+  member_id = databricks_service_principal.databricks_reader_sp.id
 }
 
 resource "databricks_group_member" "databricks_reader_external_readers" {
   group_id = databricks_group.external-readers.id
-  member_id = databricks_service_principal.databricks_reader_sp.id  
+  member_id = databricks_service_principal.databricks_reader_sp.id
 }
 
 resource "databricks_access_control_rule_set" "automation_sp_databricks_reader_rule_set" {
@@ -435,7 +443,7 @@ resource "databricks_group_member" "bundle_sp_is_ws_admin" {
 
 resource "databricks_group_member" "bundle_service_principal" {
   group_id = databricks_group.service-principals.id
-  member_id = databricks_service_principal.bundle_sp.id  
+  member_id = databricks_service_principal.bundle_sp.id
 }
 
 resource "databricks_service_principal_secret" "bundle_sp" {
@@ -537,6 +545,11 @@ resource "azurerm_key_vault_secret" "segment_sp_OAuthSecret" {
   key_vault_id    = data.azurerm_key_vault.this.id
   content_type    = "Managed by Terraform. OAuth secret of the Databricks Service Principal used in the Segment Connection."
   expiration_date = "2050-01-01T00:00:00Z"
+}
+
+output "azure_common_key_vault_id" {
+  value       = data.azurerm_key_vault.this.id
+  description = "The ID of the common key vault"
 }
 
 
@@ -689,20 +702,20 @@ data "databricks_group" "scientists" {
 resource "databricks_group_member" "analysts_admin_dev" {
   count     = terraform.workspace == "dev" ? 1 : 0
   group_id  = data.databricks_group.admins.id
-  member_id = data.databricks_group.analysts.id 
+  member_id = data.databricks_group.analysts.id
 }
 
 
 resource "databricks_group_member" "scientists_admin_dev" {
   count     = terraform.workspace == "dev" ? 1 : 0
   group_id  = data.databricks_group.admins.id
-  member_id = data.databricks_group.scientists.id 
+  member_id = data.databricks_group.scientists.id
 }
 
 resource "databricks_group_member" "engineers_admin" {
   count     = terraform.workspace == "dev" ? 1 : 0
   group_id  = data.databricks_group.admins.id
-  member_id = data.databricks_group.engineers.id 
+  member_id = data.databricks_group.engineers.id
 }
 
 
