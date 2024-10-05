@@ -32,7 +32,7 @@ resource "azurerm_storage_container" "containers" {
 }
 
 resource "azurerm_key_vault_secret" "storage_account_key" {
-  name         = "${var.storage_account_name}-access-key-${terraform.workspace}"
+  name         = "azure-storageaccount-${var.storage_account_name}-key"
   value        = azurerm_storage_account.stchefdpcommon.primary_access_key
   key_vault_id = var.common_key_vault_id
   content_type    = "Managed by Terraform. Access key for common storage account. Run `terraform apply` within 60 days to refresh before it expires."
