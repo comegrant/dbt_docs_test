@@ -7,9 +7,9 @@ from typing import Annotated
 import polars as pl
 from aligned import ContractStore, FeatureLocation
 from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.sources.in_mem_source import InMemorySource
 from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
-from data_contracts.in_mem_source import InMemorySource
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from fastapi import Depends, FastAPI
 from fastapi.responses import JSONResponse

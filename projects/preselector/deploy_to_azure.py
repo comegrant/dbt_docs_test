@@ -47,7 +47,8 @@ def deploy_preselector(
     service_bus_namespace: str,
     env: str,
     image: str,
-    resource_group: str
+    resource_group: str,
+    topic_name: str
 ) -> None:
     from dotenv import load_dotenv
     load_dotenv(".env")
@@ -57,7 +58,8 @@ def deploy_preselector(
         docker_registry_username="bhregistry"
     ) # type: ignore[reportGeneralTypeIssues]
 
-    assert env in deploy_settings.user_assigned_identity_resource_id
+    if env != "prod":
+        assert env in deploy_settings.user_assigned_identity_resource_id
 
     client = ContainerInstanceManagementClient(
         credential=DefaultAzureCredential(),
@@ -71,7 +73,8 @@ def deploy_preselector(
             service_bus_subscription_name=company,
             service_bus_namespace=service_bus_namespace,
             service_bus_should_write=True,
-            service_bus_connection_string=None
+            service_bus_connection_string=None,
+            service_bus_success_topic_name=topic_name
         ),
         DataDogConfig( # type: ignore[reportGeneralTypeIssues]
             datadog_service_name="preselector",
@@ -168,29 +171,39 @@ def deploy_all(tag: str, env: str) -> None:
         "linas"
     ]
 
+    priority = {
+        # "": "deviation-request",
+        "priority": "priority-deviation-request"
+    }
+
     bus_namespace = {
         "test": "gg-deviation-service-qa.servicebus.windows.net",
         "prod": "gg-deviation-service-prod.servicebus.windows.net"
     }
 
     for company in company_names:
+        for queue, topic_name in priority.items():
 
-        logger.info(company)
-        name = f"preselector-{company}-worker"
-        if company == "godtlevert":
-            name = "preselector-gl-worker"
+            logger.info(company)
+            name = f"preselector-{company}-worker"
+            if company == "godtlevert":
+                name = "preselector-gl-worker"
 
-        name += f"-{env}"
-        logger.info(name)
+            if queue:
+                name += f"-{queue}"
 
-        deploy_preselector(
-            name=name,
-            company=company,
-            service_bus_namespace=bus_namespace[env],
-            env=env,
-            image=f"bhregistry.azurecr.io/preselector:{tag}",
-            resource_group=f"rg-chefdp-{env}",
-        )
+            name += f"-{env}"
+            logger.info(name)
+
+            deploy_preselector(
+                name=name,
+                company=company,
+                service_bus_namespace=bus_namespace[env],
+                env=env,
+                image=f"bhregistry.azurecr.io/preselector:{tag}",
+                resource_group=f"rg-chefdp-{env}",
+                topic_name=topic_name
+            )
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)

@@ -78,10 +78,12 @@ services:
 
   combination-app:
     platform: linux/amd64
-    image: preselector-preselector
+    image: preselector-combo
     build:
       context: ../../
       dockerfile: projects/preselector/Dockerfile
+      args:
+        - DEP_GROUP=--with=worker
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages

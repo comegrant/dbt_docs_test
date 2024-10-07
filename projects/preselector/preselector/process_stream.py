@@ -11,10 +11,11 @@ from aligned.data_source.batch_data_source import BatchDataSource
 from aligned.feature_source import (
     FeatureLocation,
 )
+from aligned.sources.in_mem_source import InMemorySource
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
-from data_contracts.in_mem_source import InMemorySource
+from data_contracts.orders import QuarantinedRecipes
 from data_contracts.preselector.basket_features import PredefinedVectors
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -204,6 +205,11 @@ async def load_cache(
         ),
         (
             PredefinedVectors.location,
+            InMemorySource.empty(),
+            pl.col("company_id") == company_id
+        ),
+        (
+            QuarantinedRecipes.location,
             InMemorySource.empty(),
             pl.col("company_id") == company_id
         )
@@ -474,6 +480,7 @@ async def process_stream(
     datadog_tags = {
         "env": os.getenv('ENV'),
         "subscription": settings.service_bus_subscription_name,
+        "request-topic": settings.service_bus_request_topic_name
     }
 
     if "GIT_COMMIT_HASH" in os.environ:

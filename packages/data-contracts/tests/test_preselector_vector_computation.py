@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 from aligned import ContractStore
 from aligned.request.retrival_request import RetrivalRequest
-from data_contracts.in_mem_source import InMemorySource
+from aligned.sources.random_source import RandomDataSource
 from data_contracts.orders import HistoricalRecipeOrders
 from data_contracts.preselector.basket_features import (
     HistoricalCustomerMealkitFeatures,
@@ -35,7 +35,7 @@ async def test_importance_and_target_vector_computation() -> None:
 
     store = store.update_source_for(
         HistoricalRecipeOrders.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "agreement_id": [1, 1, 1, 1, 2, 2, 2, 2],
             "recipe_id": [1, 2, 1, 1, 1, 3, 3, 2],
             "company_id": ["a"] * 8,
@@ -46,7 +46,7 @@ async def test_importance_and_target_vector_computation() -> None:
     )
     store = store.update_source_for(
         NormalizedRecipeFeatures.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 2, 3],
             "portion_size": [2, 2, 2],
             "company_id": ["a", "a", "a"],
@@ -86,7 +86,7 @@ async def test_importance_and_target_vector_computation() -> None:
     )
     store = store.update_source_for(
         RecipeMainIngredientCategory.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 2, 3],
             "main_protein_category_id": [1216, 1503, 1128],
             "main_protein_name": ["salmon", "chicken", "beef"],
@@ -108,7 +108,7 @@ async def test_importance_and_target_vector_computation() -> None:
 
     store = store.update_source_for(
         HistoricalCustomerMealkitFeatures.location,
-        InMemorySource(vectors)
+        RandomDataSource(partial_data=vectors)
     )
 
     lazy_vectors = await historical_preselector_vector(

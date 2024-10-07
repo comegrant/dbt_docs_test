@@ -165,8 +165,20 @@ def select_next_vector(
             explaination.head(1)
                 .transpose(header_name="feature", include_header=True)
                 .sort("column_0", descending=False)
+                .filter(pl.col("feature").is_in(["change_in_error"]).not_())
                 .head(10)
         )
+
+        st.write("Current biggest errors")
+        st.write(
+            top_vectors.head(1)
+                .transpose(header_name="feature", include_header=True)
+                .filter(pl.col("feature").is_in(["recipe_id", "total_error"]).not_())
+                .sort("column_0", descending=True)
+                .head(10)
+
+        )
+        st.write("Current basket vector")
         st.write(top_vectors.head(1))
 
 
@@ -613,13 +625,12 @@ async def historical_preselector_vector(
     else:
         user_importance = pl.DataFrame()
 
-
-    default_importance, default_target = potentially_add_variation(default_importance, default_target)
-    default_importance = default_importance.with_columns(
-        pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
-    )
-
     if user_importance.is_empty():
+        default_importance, default_target = potentially_add_variation(default_importance, default_target)
+        default_importance = default_importance.with_columns(
+            pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
+        )
+
         default_target, default_importance = handle_calorie_concept(
             default_target, default_importance, concept_ids
         )
@@ -644,16 +655,28 @@ async def historical_preselector_vector(
     attribute_vector_weight = 1
     vector_sum = user_vector_weight + attribute_vector_weight
 
-    combined_importance = (
-        default_importance.select(pl.col(vector_features) * attribute_vector_weight).vstack(
-            user_importance.select(pl.col(vector_features) * user_vector_weight)
-        ).sum().select(pl.all() / vector_sum)
-    ).with_columns(
-        mean_cost_of_food=pl.lit(0.25)
-    )
-    combined_target = default_target.select(pl.col(vector_features) * attribute_vector_weight).vstack(
-        user_target.select(pl.col(vector_features) * user_vector_weight)
-    ).sum().select(pl.all() / vector_sum)
+    with duration("Finding columns to overwrite"):
+        overwrite_columns: list[str] = [
+            key
+            for key, value in default_importance.to_dicts()[0].items()
+            if isinstance(value, float) and value > 0
+        ]
+        other_features = list(set(vector_features) - set(overwrite_columns))
+
+
+    with duration("Combining history and attributes"):
+        combined_importance = (
+            default_importance.select(pl.col(vector_features) * attribute_vector_weight).vstack(
+                user_importance.select(pl.col(vector_features) * user_vector_weight)
+            ).sum().select(pl.all() / vector_sum)
+        ).with_columns(
+            mean_cost_of_food=pl.lit(0.25)
+        )
+
+        combined_target = pl.concat([
+            default_target.select(overwrite_columns),
+            user_target.select(other_features)
+        ], how="horizontal")
 
     combined_target, combined_importance = handle_calorie_concept(
         combined_target, combined_importance, concept_ids
@@ -691,6 +714,7 @@ def duration(log: str, should_log: bool = False) -> Generator[None, None, None]:
     #     )
 
     if should_log:
+        logger.info(f"Starting '{log}'")
         start = time.monotonic()
         yield
         end = time.monotonic()
@@ -773,6 +797,7 @@ class PreselectorResult:
             override_deviation=self.request.override_deviation,
             model_version=self.model_version,
             generated_at=self.generated_at,
+            number_of_recipes=self.request.number_of_recipes,
             correlation_id=self.request.correlation_id,
             concept_preference_ids=self.request.concept_preference_ids,
             taste_preferences=self.request.taste_preferences
@@ -867,6 +892,7 @@ async def run_preselector_for_request(
         )
 
     if should_explain:
+        logger.info("Explaining data through streamlit")
         import streamlit as st
 
         st.write("Importance vector")

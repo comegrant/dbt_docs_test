@@ -12,10 +12,10 @@ from aligned import (
     String,
     feature_view,
 )
-from aligned.data_source.batch_data_source import DummyDataSource
 from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrivalRequest
+from aligned.sources.random_source import RandomDataSource
 from data_contracts.orders import HistoricalRecipeOrders
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.recommendations.recommendations import RecommendatedDish
@@ -66,7 +66,7 @@ def mean_of_bool(feature: Bool) -> Float:
     ).with_tag(PreselectorTags.binary_metric)
 
 
-@feature_view(name="basket_features", source=DummyDataSource())
+@feature_view(name="basket_features", source=RandomDataSource())
 class BasketFeatures:
     basket_id = Int32().as_entity()
 
@@ -279,13 +279,26 @@ async def historical_preselector_vector(
     exclude_columns = ["basket_id", "agreement_id"]
     manually_set_columns = ["mean_cost_of_food", "mean_rank"]
 
+    features = BasketFeatures.query().request.all_features
+
     feature_columns = [
-        feat
+        feat.name
         for feat
-        in basket_features.columns
+        in features
         if feat not in exclude_columns
     ]
-
+    scalar_feature_columns = [
+        feat.name
+        for feat
+        in features
+        if feat not in exclude_columns and (feat.tags is None or PreselectorTags.binary_metric not in feat.tags)
+    ]
+    boolean_feature_columns = [
+        feat.name
+        for feat
+        in features
+        if feat not in exclude_columns and feat.tags is not None and PreselectorTags.binary_metric in feat.tags
+    ]
     target = (
         basket_features.group_by("agreement_id")
         .agg([pl.col(feat).fill_nan(0).mean().alias(feat) for feat in feature_columns])
@@ -295,8 +308,8 @@ async def historical_preselector_vector(
     importance = (
         basket_features.filter((pl.len() > 1).over("agreement_id"))
         .group_by("agreement_id")
-        .agg(
-            [
+        .agg([
+            *[
                 (
                     1 / pl.col(feat).fill_nan(0).top_k(
                         # Adding top k as noise reduction
@@ -306,20 +319,28 @@ async def historical_preselector_vector(
                         (pl.len() * 0.51).ceil()
                     ).std()
                     .clip(lower_bound=0.1)
-                ).exp().sub(
-                    pl.lit(0.5).exp()
                 ).alias(feat)
-                for feat in feature_columns
+                for feat in scalar_feature_columns
+            ],
+            *[
+                (
+                    (pl.col(feat).filter(
+                        pl.col(feat) > 0
+                    ).len() / pl.col(feat).len() - 0.4) / 0.4
+                ).abs().clip(lower_bound=0, upper_bound=1).mul(10).alias(feat)
+                for feat in boolean_feature_columns
             ]
-        )
+        ])
         .with_columns([
             # No need to let cost of food effect the importance, so we set this to 0
             pl.lit(0).alias(feat) for feat in manually_set_columns
         ])
-        .with_columns([pl.col(feat) / pl.sum_horizontal(feature_columns) for feat in feature_columns])
+        .with_columns([pl.col(feat) / pl.sum_horizontal(scalar_feature_columns) for feat in feature_columns ])
         .with_columns(vector_type=pl.lit("importance"))
     )
-    return target.vstack(importance).with_columns(created_at=datetime.now(tz=timezone.utc)).lazy()
+    return target.vstack(
+        importance.select(target.columns)
+    ).with_columns(created_at=datetime.now(tz=timezone.utc)).lazy()
 
 
 PredefinedVectors = BasketFeatures.with_schema(

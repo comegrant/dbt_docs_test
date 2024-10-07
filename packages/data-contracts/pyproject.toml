@@ -8,7 +8,7 @@ packages = [{include = "data_contracts"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 # aligned = {version="^0.0.98", extras=["adlfs"]}
-aligned = { version="0.0.101", extras=["azure", "pandas"]}
+aligned = { version="0.0.104", extras=["azure", "pandas"]}
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.15.0"
 pyarrow = "^14.0.0"

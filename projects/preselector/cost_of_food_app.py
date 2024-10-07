@@ -273,16 +273,7 @@ async def set_cost_of_food(company_id: str, year: int, week: int, store: Contrac
 
 
 def dummy_store(store: ContractStore) -> ContractStore:
-    from aligned.data_source.batch_data_source import DummyDataSource
-    from aligned.feature_source import BatchFeatureSource
-
-    assert isinstance(store.feature_source, BatchFeatureSource)
-    assert isinstance(store.feature_source.sources, dict)
-
-    for source_name in store.feature_source.sources:
-        store.feature_source.sources[source_name] = DummyDataSource()
-
-    return store
+    return store.dummy_store()
 
 
 async def main() -> None:

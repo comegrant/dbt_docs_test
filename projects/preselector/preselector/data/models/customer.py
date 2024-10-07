@@ -76,6 +76,7 @@ class PreselectorSuccessfulResponse(BaseModel):
 
     correlation_id: str
     year_weeks: list[PreselectorYearWeekResponse]
+    number_of_recipes: int = Field(4)
 
     concept_preference_ids: list[str]
     taste_preferences: list[NegativePreference]

@@ -4,10 +4,9 @@ from random import seed
 import polars as pl
 import pytest
 from aligned import ContractStore, FeatureLocation
-from aligned.data_source.batch_data_source import DummyDataSource, data_for_request
 from aligned.feature_source import BatchFeatureSource
+from aligned.sources.random_source import RandomDataSource, data_for_request
 from concept_definition_app import potential_features
-from data_contracts.in_mem_source import InMemorySource
 from data_contracts.orders import QuarantinedRecipes
 from data_contracts.preselector.basket_features import ImportanceVector, PredefinedVectors, TargetVectors
 from data_contracts.preselector.store import Preselector
@@ -21,13 +20,7 @@ from preselector.store import preselector_store
 def dummy_store() -> ContractStore:
     store = preselector_store()
 
-    assert isinstance(store.feature_source, BatchFeatureSource)
-    assert isinstance(store.feature_source.sources, dict)
-
-    for source_name in store.feature_source.sources:
-        store.feature_source.sources[source_name] = DummyDataSource()
-
-    return store
+    return store.dummy_store()
 
 @pytest.mark.asyncio()
 async def test_preselector_run(dummy_store: ContractStore) -> None:
@@ -161,7 +154,7 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
 
     store = dummy_store.update_source_for(
         PreselectorYearWeekMenu.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": list(range(recipe_pool)),
             "portion_id": [1] * recipe_pool,
             "loaded_at": [iso_now] * recipe_pool,
@@ -176,16 +169,16 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
         })
     ).update_source_for(
         TargetVectors.location,
-        InMemorySource(target_data)
+        RandomDataSource(partial_data=target_data)
     ).update_source_for(
         ImportanceVector.location,
-        InMemorySource(target_data)
+        RandomDataSource(partial_data=target_data)
     ).update_source_for(
         PredefinedVectors.location,
-        InMemorySource(defined_vectors)
+        RandomDataSource(partial_data=defined_vectors)
     ).update_source_for(
         QuarantinedRecipes.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": list(range(recipe_pool)),
             "company_id": [company_id] * recipe_pool,
             "main_recipe_ids": [[1, 2]] * recipe_pool

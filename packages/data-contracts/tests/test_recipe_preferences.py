@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 from aligned import ContractStore
 from aligned.schemas.feature_view import RetrivalRequest
-from data_contracts.in_mem_source import InMemorySource
+from aligned.sources.random_source import RandomDataSource
 from data_contracts.recipe import (
     AllRecipeIngredients,
     IngredientAllergiesPreferences,
@@ -34,7 +34,7 @@ async def test_join_allergies_and_recipe_preferences() -> None:
 
     store = store.update_source_for(
         IngredientAllergiesPreferences.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "ingredient_id": [1, 2, 3],
             "allergy_id": [1, 2, 3],
             "has_trace_of": [False, False, False],
@@ -43,7 +43,7 @@ async def test_join_allergies_and_recipe_preferences() -> None:
         })
     ).update_source_for(
         AllRecipeIngredients.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 1, 3, 3],
             "ingredient_id": [1, 2, 3, 2],
             "portion_id": [1, 1, 1, 1],
@@ -54,7 +54,7 @@ async def test_join_allergies_and_recipe_preferences() -> None:
         })
     ).update_source_for(
         RecipePreferences.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 2],
             "portion_size": [2, 2],
             "loaded_at": [now, now],

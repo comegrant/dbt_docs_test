@@ -1,9 +1,8 @@
 
 import pytest
 from aligned import ContractStore
-from aligned.data_source.batch_data_source import DummyDataSource
 from aligned.feature_source import BatchFeatureSource
-from data_contracts.in_mem_source import InMemorySource
+from aligned.sources.random_source import RandomDataSource
 from data_contracts.recipe import (
     NormalizedRecipeFeatures,
     RecipeCost,
@@ -22,7 +21,7 @@ def dummy_store() -> ContractStore:
     assert isinstance(store.feature_source.sources, dict)
 
     for source_name in store.feature_source.sources:
-        store.feature_source.sources[source_name] = DummyDataSource()
+        store.feature_source.sources[source_name] = RandomDataSource()
 
     return store
 
@@ -31,19 +30,19 @@ async def test_normalize_features_logic(dummy_store: ContractStore) -> None:
 
     store = dummy_store.update_source_for(
         RecipeNutrition.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 1, 2, 2, 3, 3],
             "portion_size": [2, 4] * 3
         })
     ).update_source_for(
         RecipeCost.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "recipe_id": [1, 1, 2, 2, 3, 3],
             "portion_size": [2, 4] * 3
         })
     ).update_source_for(
         RecipeFeatures.location,
-        InMemorySource.from_values({
+        RandomDataSource.with_values({
             "main_recipe_id": [1, 2, 3],
             "recipe_id": [1, 2, 3],
             "year": [2024] * 3,

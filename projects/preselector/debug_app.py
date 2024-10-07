@@ -1,11 +1,12 @@
 import asyncio
 import logging
+from contextlib import suppress
 
 import streamlit as st
 from cheffelo_logging.logging import setup_streamlit
 from combinations_app import display_recipes
 from data_contracts.preselector.store import Preselector
-from preselector.data.models.customer import PreselectorFailedResponse, PreselectorSuccessfulResponse
+from preselector.data.models.customer import PreselectorSuccessfulResponse
 from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
@@ -33,12 +34,9 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     records = await reader.read()
 
     decoded_records = []
-    error_records = []
     for record in records:
-        try:
+        with suppress(ValidationError):
             decoded_records.append(PreselectorSuccessfulResponse.model_validate_json(record["json_data"], strict=True))
-        except ValidationError:
-            error_records.append(PreselectorFailedResponse.model_validate_json(record["json_data"]))
 
     agreement_records = [
         record
@@ -92,7 +90,7 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
             quarentined_recipes.extend(yw.main_recipe_ids)
 
     st.write("Quarentined Dishes")
-    st.write(quarentined_recipes)
+    st.write(year_week.quarantined_recipe_ids or quarentined_recipes)
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
@@ -114,11 +112,11 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
                 pref.model_dump() for pref in response.taste_preferences
             ],
             concept_preference_ids=response.concept_preference_ids,
-            number_of_recipes=len(year_week.main_recipe_ids),
+            number_of_recipes=4,
             portion_size=year_week.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
-            quarentine_main_recipe_ids=quarentined_recipes
+            quarentine_main_recipe_ids=None
         ),
         year_week.main_recipe_ids
     )

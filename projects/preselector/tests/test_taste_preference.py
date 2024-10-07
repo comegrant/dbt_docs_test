@@ -1,7 +1,7 @@
 import polars as pl
 import pytest
 from aligned import ContractStore
-from data_contracts.in_mem_source import InMemorySource
+from aligned.sources.random_source import RandomDataSource
 from preselector.main import filter_out_recipes_based_on_preference
 
 
@@ -14,7 +14,7 @@ def model_contracts() -> ContractStore:
     store.add_view(RecipeNegativePreferences)
 
     locations = {
-        RecipeNegativePreferences.location: InMemorySource.from_values({
+        RecipeNegativePreferences.location: RandomDataSource.with_values({
             "recipe_id":    [1, 2, 3, 4, 5, 6, 7],
             "portion_size": [2, 2, 2, 2, 2, 2, 2],
             "preference_ids": [["a", "b"], [], [], [], ["b"], ["a"], ["c"]],

@@ -29,6 +29,9 @@ hiredis = "^3.0.0"
 [tool.poetry.group.worker.dependencies]
 azure-servicebus = "^7.12.2"
 cheffelo_logging = {path = "../../packages/cheffelo-logging", develop = true}
+aiohttp = "3.10.8"
+dnspython = "2.6.1"
+narwhals = "1.9.0"
 
 [tool.poetry.group.deploy.dependencies]
 azure-mgmt-containerinstance = "^10.1.0"

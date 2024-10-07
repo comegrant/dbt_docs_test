@@ -159,7 +159,7 @@ async def main() -> None:
         override_deviation=False,
     )
 
-    response = await run_preselector_for_request(request, cached_store, should_explain=False)
+    response = await run_preselector_for_request(request, cached_store, should_explain=True)
 
     if response.success:
         await display_recipes(response.success[0], st)
