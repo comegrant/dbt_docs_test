@@ -36,11 +36,6 @@ models:
     silver:
       +schema: silver
 
-    drafts:
-      +schema: draft
-      +materialized: ephemeral
-      +enabled: false
-
     intermediate:
       +schema: intermediate
       +materialized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
@@ -50,3 +45,8 @@ models:
 
     mlgold:
       +schema: mlgold
+
+    drafts:
+      +schema: draft
+      +materialized: ephemeral
+      +enabled: false

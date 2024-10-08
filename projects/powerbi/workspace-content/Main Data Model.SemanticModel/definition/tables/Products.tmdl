@@ -37,13 +37,13 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Product Id'
+	column product_id
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 00684e75-2ac8-412f-b240-18f569fdb2d4
 		summarizeBy: none
-		sourceColumn: Product Id
+		sourceColumn: product_id
 
 		changedProperty = IsHidden
 
@@ -55,20 +55,20 @@ table Products
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 04095057-51dd-4491-ad06-bf96821a0e4b
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: product_status_id
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Product Variation Id'
+	column product_variation_id
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 3b8cc03b-c2b2-4495-adbe-1ee758701d04
 		summarizeBy: none
-		sourceColumn: Product Variation Id
+		sourceColumn: product_variation_id
 
 		changedProperty = IsHidden
 
@@ -134,35 +134,64 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Number of Meals'
+	column Meals
 		dataType: string
 		lineageTag: 0cfd128e-8134-4007-886f-3ed2f44a6279
 		summarizeBy: none
-		sourceColumn: Number of Meals
+		sourceColumn: Meals
 
 		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Portion Size'
-		dataType: string
-		lineageTag: db91c5b0-e0d9-41af-922c-22127b6627a3
-		summarizeBy: none
-		sourceColumn: Portion Size
-
-		changedProperty = DataType
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Preselected Mealbox Product Id'
+	column preselected_mealbox_product_id
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 1600489b-556a-403f-b1d5-e4b9e7412e1a
 		summarizeBy: none
-		sourceColumn: Preselected Mealbox Product Id
+		sourceColumn: preselected_mealbox_product_id
 
 		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preselected_mealbox_product_variation_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a3154d1c-eb7d-482a-b7e4-bcd14f688260
+		summarizeBy: none
+		sourceColumn: preselected_mealbox_product_variation_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preselected Mealbox Product Name'
+		dataType: string
+		isAvailableInMdx: false
+		lineageTag: 90e49601-821a-4e21-8f95-87efaf0ecf00
+		summarizeBy: none
+		sourceColumn: Preselected Mealbox Product Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preselected Mealbox Product Variation Name'
+		dataType: string
+		isAvailableInMdx: false
+		lineageTag: 438f0b39-8a70-470b-9559-08661a7eed45
+		summarizeBy: none
+		sourceColumn: Preselected Mealbox Product Variation Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Portion
+		dataType: int64
+		formatString: 0
+		lineageTag: 5fa348f4-8073-4778-9698-81d4b4c4ffb1
+		summarizeBy: sum
+		sourceColumn: Portion
 
 		annotation SummarizationSetBy = Automatic
 
@@ -174,7 +203,18 @@ table Products
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_products_Table = gold_Schema{[Name="dim_products",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_products_Table,{{"product_variation_id", "Product Variation Id"}, {"product_id", "Product Id"}, {"product_concept_name", "Product Concept Name"}, {"product_type_name", "Product Type Name"}, {"product_name", "Product Name"}, {"product_status_name", "Product Status Name"}, {"product_variation_name", "Product Variation Name"}, {"sku", "Sku"}, {"number_of_meals", "Number of Meals"}, {"number_of_portions", "Portion Size"}, {"preselected_mealbox_product_id", "Preselected Mealbox Product Id"}})
+				    #"Renamed Columns" = Table.RenameColumns(dim_products_Table,{
+						{"product_concept_name", "Product Concept Name"},
+						{"product_type_name", "Product Type Name"},
+						{"product_name", "Product Name"},
+						{"product_status_name", "Product Status Name"},
+						{"product_variation_name", "Product Variation Name"},
+						{"sku", "Sku"},
+						{"number_of_meals", "Meals"},
+						{"number_of_portions", "Portion"},
+						{"preselected_mealbox_product_name", "Preselected Mealbox Product Name"},
+						{"preselected_mealbox_product_variation_name", "Preselected Mealbox Product Variation Name"}
+						})
 				in
 				    #"Renamed Columns"
 

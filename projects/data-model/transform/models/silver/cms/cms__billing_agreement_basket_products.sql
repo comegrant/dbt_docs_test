@@ -20,11 +20,11 @@ source as (
         , quantity as product_variation_quantity
         
         {# booleans #}
-        , is_extra
+        , is_extra as is_extra_product
         
         {# scd #}
         , dbt_valid_from as valid_from
-        , dbt_valid_to as valid_to
+        , {{ get_scd_valid_to('dbt_valid_to', 'id') }} as valid_to
         
         {# system #}
         , created_at as source_created_at

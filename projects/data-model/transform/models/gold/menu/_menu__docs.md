@@ -42,3 +42,15 @@
 ...
 
 {% enddocs %}
+
+{% docs column__default_mealbox_product_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__default_mealbox_product_variation_id %}
+
+...
+
+{% enddocs %}

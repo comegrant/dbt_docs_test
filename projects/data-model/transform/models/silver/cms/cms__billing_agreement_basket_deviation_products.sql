@@ -28,7 +28,7 @@ source as (
         , quantity as product_variation_quantity
         
         {# booleans #}
-        , is_extra
+        , is_extra as is_extra_product
         
         {# system #}
         , created_at as source_created_at

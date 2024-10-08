@@ -30,7 +30,7 @@ source as (
         , week as menu_week
         
         {# booleans #}
-        , is_active
+        , is_active as is_active_deviation
 
         {# date #}
         , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date

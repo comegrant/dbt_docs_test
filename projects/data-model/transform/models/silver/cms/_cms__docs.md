@@ -139,7 +139,7 @@ The different intervals of weekly delivery:
 
 # Billing Agreement Orders
 
-{% docs column__cms_order_id %}
+{% docs column__billing_agreement_order_id %}
 
 This is the primary key in the CMS database for each placed order.
 
@@ -167,7 +167,7 @@ Business context: From February 2024 customers got the option to opt out of prin
 
 # Billing Agreement Order Lines
 
-{% docs column__order_line_id %}
+{% docs column__billing_agreement_order_line_id %}
 
 This is the primary key of the order line in CMS.
 
@@ -175,17 +175,7 @@ This is the primary key of the order line in CMS.
 
 {% docs column__order_line_type_name %}
 
-The type of the order line.
-* `Credit` 
-* `Debit`
-* `Debit_Gift`
-* `Discount`
-* `Discount_Gift`
-* `Invoice`
-* `Loyalty_Credit`
-* `P4P`
-* `PRP`
-* `Transport`
+The different type of order lines.
 
 {% enddocs %}
 

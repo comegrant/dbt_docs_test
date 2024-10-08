@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key='order_line_id',
+        unique_key='billing_agreement_order_line_id',
         on_schema_change='append_new_columns'
     )
 }}
@@ -18,8 +18,8 @@ renamed as (
 
     select
         {# ids #}
-        id as order_line_id
-        , agreement_order_id as cms_order_id
+        id as billing_agreement_order_line_id
+        , agreement_order_id as billing_agreement_order_id
         , variation_id as product_variation_id
      
         {# strings #}
@@ -38,8 +38,8 @@ calculated_columns as (
 
     select
         {# ids #}
-        order_line_id
-        , cms_order_id
+        billing_agreement_order_line_id
+        , billing_agreement_order_id
         , product_variation_id
      
         {# strings #}

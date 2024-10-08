@@ -56,9 +56,9 @@ meals_and_portions as (
 
 ),
 
-corresponding_mealboxes as (
+mealbox_product_mapping as (
 
-    select * from {{ ref('int_product_variations_corresponding_mealbox_ids_pivoted') }}
+    select * from {{ ref('int_product_variations_financial_mealbox_product_mapping') }}
 
 ),
 
@@ -86,7 +86,6 @@ product_tables_joined as (
         , product_variations.sku
         , coalesce(meals_and_portions.number_of_meals, meals_and_portions_default.number_of_meals) as number_of_meals
         , coalesce(meals_and_portions.number_of_portions, meals_and_portions_default.number_of_portions) as number_of_portions
-        , corresponding_mealboxes.preselected_mealbox_product_id
     from product_variations_companies
     left join product_variations
     on product_variations_companies.product_variation_id = product_variations.product_variation_id
@@ -105,9 +104,55 @@ product_tables_joined as (
     and product_variations_companies.company_id = meals_and_portions.company_id
     left join meals_and_portions_default
     on product_types.product_type_id = meals_and_portions_default.product_type_id
-    left join corresponding_mealboxes
-    on product_variations_companies.product_variation_id = corresponding_mealboxes.product_variation_id
-    and product_variations_companies.company_id = corresponding_mealboxes.company_id
 )
 
-select * from product_tables_joined
+, product_tables_add_preselected_variation (
+    select 
+        product_tables_joined.*
+        , mealbox_product_mapping.preselected_mealbox_product_id as preselected_mealbox_product_id
+        , preselected_variations.product_variation_id as preselected_mealbox_product_variation_id
+        , preselected_variations.product_name as preselected_mealbox_product_name
+        , preselected_variations.product_variation_name as preselected_mealbox_product_variation_name
+    from product_tables_joined
+    left join mealbox_product_mapping
+        on product_tables_joined.product_variation_id = mealbox_product_mapping.product_variation_id
+        and product_tables_joined.company_id = mealbox_product_mapping.company_id
+    left join product_tables_joined as preselected_variations
+        on mealbox_product_mapping.preselected_mealbox_product_id = preselected_variations.product_id
+        and product_tables_joined.company_id = preselected_variations.company_id
+        and product_tables_joined.number_of_meals = preselected_variations.number_of_meals
+        and product_tables_joined.number_of_portions = preselected_variations.number_of_portions
+
+)
+
+, add_unknown_row (
+
+    select 
+        * 
+    from product_tables_add_preselected_variation
+
+    union all
+
+    select 
+        '0'
+        , '0'
+        , '0'
+        , '0'
+        , 0
+        , '0'
+        , '0'
+        , "Not relevant"
+        , "Not relevant"
+        , "Not relevant"
+        , "Not relevant"
+        , "Not relevant"
+        , "0"
+        , null
+        , null
+        , "0"
+        , "0"
+        , "Not relevant"
+        , "Not relevant"
+)
+
+select * from add_unknown_row

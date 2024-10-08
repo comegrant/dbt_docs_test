@@ -105,6 +105,30 @@ models:
         data_tests:
           - not_null
 
+      - name: is_added_recipe
+        data_type: int
+        description: "{{ doc('column__is_added_recipe') }}"
+
+      - name: is_removed_recipe
+        data_type: int
+        description: "{{ doc('column__is_removed_recipe') }}"
+
+      - name: is_generated_recipe_line
+        data_type: boolean
+        description: "{{ doc('column__is_generated_recipe_line') }}"
+
+      - name: is_chef_composed_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_chef_composed_mealbox') }}"
+        
+      - name: is_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_mealbox') }}"
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
@@ -113,9 +137,17 @@ models:
         data_tests:
           - not_null
 
-      - name: cms_order_id
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_order_id
         data_type: varchar(36)
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__billing_agreement_order_id') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -141,15 +173,9 @@ models:
         data_tests:
           - not_null
 
-      - name: order_line_id
+      - name: billing_agreement_order_line_id
         data_type: varchar(36)
-        description: "{{ doc('column__order_line_id') }}"
-        constraints:
-          - type: unique
-          - type: not_null
-        data_tests:
-          - unique
-          - not_null
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
 
       - name: billing_agreement_id
         data_type: int
@@ -158,14 +184,30 @@ models:
           - type: not_null
         data_tests:
           - not_null
-
-      - name: product_variation_id
-        data_type: varchar(36)
-        description: "{{ doc('column__product_variation_id') }}"
+    
+      - name: valid_from_billing_agreements
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+
+      - name: preselected_product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preselected_product_variation_id') }}"
+      
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+
+      - name: preselected_recipe_id
+        data_type: int
+        description: "{{ doc('column__preselected_recipe_id') }}"
 
       - name: fk_dim_billing_agreements
         data_type: string
@@ -225,13 +267,46 @@ models:
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
-    #    constraints:
-    #      - type: not_null
-    #    data_tests:
-    #      - not_null
-    #      - relationships:
-    #          to: ref('dim_products')
-    #          field: pk_dim_products
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
+      
+      - name: fk_dim_products_preselected
+        data_type: string
+        description: "{{ doc('column__fk_dim_products_preselected') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:      
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+      
+      - name: fk_dim_recipes_preselected
+        data_type: string
+        description: "{{ doc('column__fk_dim_recipes_preselected') }}"
+        constraints:      
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
 
     versions:
       - v: 1

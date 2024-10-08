@@ -81,9 +81,9 @@ models:
   - name: cms__billing_agreement_orders
     description: "All placed orders. Gets populated at order gen and updated if the order changes."
     columns:
-      - name: cms_order_id
+      - name: billing_agreement_order_id
         data_type: varchar(36)
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__billing_agreement_order_id') }}"
         data_tests:
           - unique
           - not_null
@@ -145,16 +145,16 @@ models:
   - name: cms__billing_agreement_order_lines
     description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."
     columns:
-      - name: order_line_id
+      - name: billing_agreement_order_line_id
         data_type: varchar(36)
-        description: "{{ doc('column__order_line_id') }}"
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
         data_tests:
           - unique
           - not_null
 
-      - name: cms_order_id
+      - name: billing_agreement_order_id
         data_type: varchar(36)
-        description: "{{ doc('column__cms_order_id') }}"
+        description: "{{ doc('column__billing_agreement_order_id') }}"
         data_tests:
           - not_null
 
@@ -784,7 +784,7 @@ models:
         data_tests:
           - not_null
 
-      - name: is_active
+      - name: is_active_deviation
         data_type: boolean
         description: "{{ doc('column__is_active_basket_deviation') }}"
         data_tests:
@@ -852,7 +852,7 @@ models:
         data_tests:
           - not_null
 
-      - name: is_extra
+      - name: is_extra_product
         data_type: boolean
         description: "{{ doc('column__is_extra_basket_product') }}"
 
@@ -891,6 +891,7 @@ models:
     data_tests:
       - unique:
           column_name: "(billing_agreement_basket_id || '-' || valid_from)"
+      - unique:
           column_name: "(billing_agreement_id || '-' || valid_from)"
     columns:
       - name: billing_agreement_basket_id
@@ -923,13 +924,13 @@ models:
         data_tests:
           - not_null
 
-      - name: is_default
+      - name: is_default_basket
         data_type: boolean
         description: "{{ doc('column__is_default_basket') }}"
         data_tests:
           - not_null
 
-      - name: is_active
+      - name: is_active_basket
         data_type: boolean
         description: "{{ doc('column__is_active_basket') }}"
         data_tests:
@@ -944,6 +945,9 @@ models:
       - name: valid_to
         data_type: timestamp
         description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+
 
       - name: source_created_at
         data_type: timestamp
@@ -1011,7 +1015,7 @@ models:
         data_tests:
           - not_null
 
-      - name: is_extra
+      - name: is_extra_product
         data_type: boolean
         description: "{{ doc('column__is_extra_basket_product') }}"
 
@@ -1024,6 +1028,8 @@ models:
       - name: valid_to
         data_type: timestamp
         description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
 
       - name: source_created_at
         data_type: timestamp

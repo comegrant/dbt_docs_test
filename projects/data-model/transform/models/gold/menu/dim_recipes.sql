@@ -64,8 +64,34 @@ on recipes.main_recipe_id = main_recipes.recipe_id
 
 left join recipe_metadata as main_recipe_metadata
 on main_recipes.recipe_metadata_id = main_recipe_metadata.recipe_metadata_id
-and main_recipe_metadata.language_id = recipe_metadata.language_id 
-    
+and main_recipe_metadata.language_id = recipe_metadata.language_id
+
 )
 
-select * from join_tables
+, add_unknown_row (
+
+    select 
+        * 
+    from join_tables
+
+    union all
+
+    select 
+        '0',
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        "Not relevant",
+        "Not relevant",
+        "Not relevant",
+        "Not relevant",
+        false
+)
+
+select * from add_unknown_row

@@ -313,6 +313,15 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column is_artificial_week
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1873f07a-e127-4f1a-9b02-5bc047abbbb5
+		summarizeBy: none
+		sourceColumn: is_artificial_week
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Menu Measures' = m
 		mode: import
 		source =
@@ -324,7 +333,7 @@ table 'Menu Measures'
 				in
 				    fact_menus_Table
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
 
 	annotation PBI_NavigationStepName = Navigation
 

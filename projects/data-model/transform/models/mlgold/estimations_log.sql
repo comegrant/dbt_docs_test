@@ -82,9 +82,9 @@ dates as (
     from baskets
     left join agreements
     on agreements.billing_agreement_id = baskets.billing_agreement_id
-    where baskets.is_active = true 
+    where baskets.is_active_basket = true 
     and agreements.billing_agreement_status_id = 10 --active agreements
-    and baskets.is_active = true
+    and baskets.is_active_basket = true
 
 )
 
@@ -199,7 +199,7 @@ dates as (
     on basket_filtered_by_scheduler.billing_agreement_basket_id = deviations.billing_agreement_basket_id
     and basket_filtered_by_scheduler.menu_week_monday_date = deviations.menu_week_monday_date
     where basket_filtered_by_scheduler.billing_agreement_basket_id is not null
-    and deviations.is_active = true
+    and deviations.is_active_deviation = true
 
 )
 

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.2.0/schema.json",
+  "name": "8903ff31f2cdcf3420cf",
+  "position": {
+    "x": 879.71462544589781,
+    "y": 162.85374554102259,
+    "z": 4,
+    "height": 197.85969084423306,
+    "width": 298.31153388822833
+  },
+  "visual": {
+    "visualType": "card",
+    "autoSelectVisualType": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Share of Swapped Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Share of Swapped Dishes",
+              "nativeQueryRef": "Share of Swapped Dishes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

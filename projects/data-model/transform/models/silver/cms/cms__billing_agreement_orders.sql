@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key='cms_order_id',
+        unique_key='billing_agreement_order_id',
         on_schema_change='append_new_columns'
     )
 }}
@@ -18,7 +18,7 @@ renamed as (
 
     select
         {# ids #}
-        id as cms_order_id
+        id as billing_agreement_order_id
         , order_id as ops_order_id
         , order_type as order_type_id
         , order_status_id

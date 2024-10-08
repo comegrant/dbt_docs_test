@@ -19,12 +19,12 @@ source as (
         , timeblock as timeblock_id
         
         {# booleans #}
-        , is_default
-        , is_active
+        , is_default as is_default_basket
+        , is_active as is_active_basket
         
         {# scd #}
         , dbt_valid_from as valid_from
-        , dbt_valid_to as valid_to
+        , {{ get_scd_valid_to('dbt_valid_to', 'id') }} as valid_to
 
         {# system #}
         , created_at as source_created_at

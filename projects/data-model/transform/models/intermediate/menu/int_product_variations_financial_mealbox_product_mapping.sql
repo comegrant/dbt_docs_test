@@ -1,3 +1,8 @@
+{#
+    Intermediate CTE that can be used to map financial product variation ids 
+    to mealbox product variation ids.
+#}
+
 {%- set attributes_dict = {
     'preselected_mealbox_product_id': ['CB300C77-4D3E-4179-AC62-7AB391226E87']
 } -%}
@@ -11,14 +16,13 @@ attribute_values as (
 ),
 
 
-pivot_attribute_values as (
+attribute_values_pivoted as (
 
     select
         product_variation_id
         , company_id
 
         {% for key, value in attributes_dict.items() -%}
-        {# use any value to XYZ #}
             ,any_value(case
                 when attribute_id in ({{ value | map('tojson') | join(', ') }})
                 then attribute_value
@@ -30,12 +34,13 @@ pivot_attribute_values as (
     group by all
 ),
 
-cast_pivot_attribute_values as (
+attribute_values_pivoted_remove_nulls as (
     select
         product_variation_id
         , company_id
-        , preselected_mealbox_product_id
-    from pivot_attribute_values
+        , UPPER(preselected_mealbox_product_id) as preselected_mealbox_product_id
+    from attribute_values_pivoted
+    where preselected_mealbox_product_id is not null
 )
 
-select * from cast_pivot_attribute_values
+select * from attribute_values_pivoted_remove_nulls

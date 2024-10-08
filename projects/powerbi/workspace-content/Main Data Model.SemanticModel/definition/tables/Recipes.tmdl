@@ -19,7 +19,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 48e9feba-edf6-45fa-8bde-6e41295105b4
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: recipe_id
 
 		changedProperty = IsHidden
@@ -32,7 +32,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 50bfb52e-f28a-47a3-8d52-2ba2921c72d2
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: recipe_metadata_id
 
 		changedProperty = IsHidden
@@ -45,7 +45,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: e47d4a07-4540-4237-9a5a-f1c61b930bae
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: main_recipe_id
 
 		changedProperty = IsHidden
@@ -58,7 +58,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: e1147db8-bdb8-4156-96c7-044f4d37fd63
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: recipe_status_code_id
 
 		changedProperty = IsHidden
@@ -71,7 +71,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 35bfeb49-3f1a-4a9b-9589-c751f8ddfbd3
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: recipe_main_ingredient_id
 
 		changedProperty = IsHidden
@@ -84,7 +84,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: e421f4e6-0eaa-4e00-970d-339a03b9e4e7
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: recipe_difficulty_level_id
 
 		changedProperty = IsHidden
@@ -95,7 +95,7 @@ table Recipes
 		dataType: int64
 		formatString: 0
 		lineageTag: 374a33e7-6433-41c1-8f2a-bf8e08c1d13b
-		summarizeBy: none
+		summarizeBy: count
 		sourceColumn: Language Id
 
 		annotation SummarizationSetBy = Automatic
@@ -104,7 +104,7 @@ table Recipes
 		dataType: int64
 		formatString: 0
 		lineageTag: 09163257-1ebb-4768-9c79-989c2d75f3fc
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: Coocking Time From
 
 		annotation SummarizationSetBy = Automatic
@@ -113,7 +113,7 @@ table Recipes
 		dataType: int64
 		formatString: 0
 		lineageTag: 57887c9e-bd3a-4ec3-b197-9119f93156bf
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: Coocking Time To
 
 		annotation SummarizationSetBy = Automatic

@@ -8,7 +8,7 @@ order_lines as (
 
 , has_delivery (
     select distinct
-        cms_order_id,
+        billing_agreement_order_id,
         true as has_delivery
     from order_lines
     {# Only include transportation lines #}
