@@ -2,6 +2,9 @@ resources:
   jobs:
     ml-feature-store-weekly:
       name: ml-feature-store-weekly-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
 
       job_clusters:
         - job_cluster_key: ml-feature-store-weekly
