@@ -1,0 +1,66 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: postgres_net_backend__preferences_updated
+    description: "History of concept and taste preferences updated by users themselves."
+    columns:
+      - name: preference_updated_id
+        data_type: varchar(1024)
+        description: "{{ doc('column__preference_updated_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: ce_preference_updated_id
+        data_type: varchar(1024)
+        description: "{{ doc('column__ce_preference_updated_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: bigint
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: concept_preference_id
+        data_type: string
+        description: "{{ doc('column__concept_preference_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: concept_preference_list
+        data_type: string
+        description: "{{ doc('column__concept_preference_list') }}"
+
+      - name: taste_preference_list
+        data_type: string
+        description: "{{ doc('column__taste_preference_list') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null

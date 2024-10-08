@@ -216,9 +216,9 @@ models:
           - type: not_null
         data_tests:
           - not_null
-          - relationships:
-              to: ref('dim_billing_agreements')
-              field: pk_dim_billing_agreements
+#          - relationships:
+#              to: ref('dim_billing_agreements')
+#              field: pk_dim_billing_agreements
 
       - name: fk_dim_companies
         data_type: string
@@ -331,9 +331,8 @@ models:
 
   - name: dim_billing_agreements
     description: ""
-    latest_version: 1
+    latest_version: 2
     config:
-      alias: dim_billing_agreements
       contract:
         enforced: True
 
@@ -342,7 +341,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
-          - type: primary_key
           - type: unique
           - type: not_null
         data_tests:
@@ -368,6 +366,10 @@ models:
       - name: sales_point_id
         data_type: int
         description: "{{ doc('column__sales_point_id') }}"
+
+      - name: billing_agreement_preferences_updated_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
 
       - name: valid_from
         data_type: timestamp
@@ -508,4 +510,192 @@ models:
         description: "{{ doc('column__first_menu_week_year') }}"
 
     versions:
+      - v: 1
+        columns: 
+          - include: all
+            exclude: [billing_agreement_preferences_updated_id]
+      - v: 2
+        config:
+          alias: dim_billing_agreements
+        constraints:
+          - type: primary_key
+            columns: [pk_dim_billing_agreements]
+
+  - name: dim_preferences
+    description: "Contains all preferences and attributes that can belong to a billing agreement."
+    latest_version: 1
+    config:
+      alias: dim_preferences
+
+    columns:
+      - name: pk_dim_preferences
+        data_type: string
+        description: "{{ doc('column__pk_dim_preferences') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: preference_id
+        data_type: char(36)
+        description: "{{ doc('column__preference_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_type_id
+        data_type: char(36)
+        description: "{{ doc('column__preference_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_name_general
+        data_type: string
+        description: "{{ doc('column__preference_name_general') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_description_general
+        data_type: string
+        description: "{{ doc('column__preference_description_general') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          
+
+      - name: preference_name
+        data_type: string
+        description: "{{ doc('column__preference_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_description
+        data_type: string
+        description: "{{ doc('column__preference_description') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_type_name
+        data_type: string
+        description: "{{ doc('column__preference_type_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_type_description
+        data_type: string
+        description: "{{ doc('column__preference_type_description') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_active_preference
+        data_type: boolean
+        description: "{{ doc('column__is_active_preference') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_allergen
+        data_type: boolean
+        description: "{{ doc('column__is_allergen') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions: 
+      - v: 1
+
+  - name: bridge_billing_agreements_preferences
+    description: ""
+    latest_version: 1
+    config:
+      alias: bridge_billing_agreements_preferences
+    constraints:
+      - type: primary_key
+        columns: [pk_bridge_billing_agreements_preferences]
+
+    columns:
+      - name: pk_bridge_billing_agreements_preferences
+        data_type: string
+        description: "{{ doc('column__pk_bridge_billing_agreements_preferences') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_preferences
+        data_type: string
+        description: "{{ doc('column__pk_dim_preferences') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_preferences')
+              field: pk_dim_preferences
+
+      - name: billing_agreement_preferences_updated_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id
+        data_type: string
+        description: "{{ doc('column__preference_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions: 
       - v: 1

@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: postgres
+    schema: bronze
+    description: "Tables from the postgres staging database used to obtain history"
+    tables:
+      - name: postgres_net_backend__ce_preferences_updated
+      - name: postgres_net_backend_adams__ce_preferences_updated
+      - name: postgres_net_backend_linas__ce_preferences_updated
+      - name: postgres_net_backend_retnemt__ce_preferences_updated

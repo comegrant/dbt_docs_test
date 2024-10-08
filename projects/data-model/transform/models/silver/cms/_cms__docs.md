@@ -492,3 +492,122 @@ When the customer recieved the points.
 This is the primary key of the loylaty events in CMS.
 
 {% enddocs %}
+
+# Preferences
+
+{% docs column__preference_id %}
+
+This is the primary key of the preference table in CMS.
+
+{% enddocs %}
+
+{% docs column__preference_type_id %}
+
+This is the primary key of the preference type table in CMS.
+
+{% enddocs %}
+
+{% docs column__preference_name_general %}
+
+The general name of preferences and attributes that a customer can choose. Common for the companies and countries.
+For preference names specific for each company use instead the field called `preference_name`. 
+
+{% enddocs %}
+
+{% docs column__preference_description_general %}
+
+The general description of preferences and attributes that a customer can choose. Common for the companies and countries. For preference descriptions specific for each company use instead the field called `preference_description`. 
+
+{% enddocs %}
+
+{% docs column__is_allergen %}
+
+Is true when the corresponding preference is an allergen preference. 
+
+{% enddocs %}
+
+# Preference Types
+
+{% docs column__preference_type_name %}
+
+Type of preference (Concept, Taste, Optimization Preference or Selector Preference). This can be used across the companies.
+
+{% enddocs %}
+
+{% docs column__preference_type_description %}
+
+Description of the preference type. This can be used across the companies.
+
+{% enddocs %}
+
+# Preferences Companies
+
+{% docs column__preference_name %}
+
+The name of preferences and attributes that a customer can choose. Specific for each company. For the general name that can be used across companies, use instead the field called `preference_name_general`. 
+
+{% enddocs %}
+
+{% docs column__preference_description %}
+
+The description of preferences and attributes that a customer can choose. Specific for each company. For the general description that can be used across companies, use instead the field called `preference_description_general`. 
+
+{% enddocs %}
+
+{% docs column__is_active_preference %}
+
+True if the preference is active for the customer to choose. False if its not active.
+
+{% enddocs %}
+
+# Preference Attribute Values
+
+{% docs column__attribute_id_preference %}
+
+The preferences can have different type of attributes. This id corresponds what the attribute is. E.g. `attribute_id = '680D1B8A-F967-4713-A270-8E30D683F4B8'` is the attribute for linked mealboxes. 
+
+{% enddocs %}
+
+{% docs column__attribute_value_preference %}
+
+The value for the selcted attribute and preference. E.g. if the selected attribute is linked mealboxes and the preference is "Inspirational", then this value will be the mealbox product id that is linked to the preference "Inspirational". 
+
+{% enddocs %}
+
+# Register Baskets
+
+{% docs column__register_info_basket_id %}
+
+This is the primary key of the register_info_basket table in CMS.
+
+{% enddocs %}
+
+# Register Products
+
+{% docs column__register_info_product_id %}
+
+This is the primary key of the register_info_products table in CMS.
+
+{% enddocs %}
+
+# Billing Agreements Preferences List
+{% docs column__preference_id_list %}
+
+List of preference IDs that belong to the same billing agreement. 
+
+{% enddocs %}
+
+{% docs column__billing_agreement_preference_id_list %}
+
+List of the unique ids in the source table billing_agreement_preference table, that belong to the same billing agreement.
+
+{% enddocs %}
+
+{% docs column__basket_products_list %}
+
+A list of basket products objects based on the source table billing_agreement_basket_product.Each object contain the following:
+* product_variation_id
+* product_variation_quantity
+* is_extra flag
+
+{% enddocs %}

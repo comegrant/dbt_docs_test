@@ -256,7 +256,7 @@ For more information about why dbt suggest to use CTEs, read [this](https://docs
 
 ## Modelling in Silver
 
-### 1. Add model to `_<source_system>_source.yml`
+### 1. Add model to `_<source_system>__sources.yml`
 When adding new tables to the silver layer you first have to add the table name in bronze to the `_<source_system>_source.yml` file. This ensure that one can refer to it in when creating the model by using the [source()-function](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
 ### 2. Create model
@@ -297,7 +297,7 @@ After creating the model you need to add the code below to the `_<source_system>
 
 ```yml
  - name: model_name
-    description: ""
+   description: ""
 ```
 
 ### 4. Add documentation to silver models
@@ -311,6 +311,7 @@ Table description should be added directly under description in `_<source_system
 
 #### Columns
 Descriptions of columns should be added to the `_<source_system>__docs.md`.
+0. If you have not done so already run `dbt build -s <model_name>` in order to get the model into your schema in Databricks
 1. Add a heading with the table name to `_<source_system>__docs.md`
 2. Run the `generate-docs` command from [dbt-chef](packages/dbt-chef/README.md) in the terminal:
 ```

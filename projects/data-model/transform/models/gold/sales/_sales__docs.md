@@ -118,3 +118,25 @@ The unique id of the rows in Dim Order Statuses
 The unique id of the rows in Dim Order Types
 
 {% enddocs %}
+
+# Dim Preferences
+
+{% docs column__pk_dim_preferences %}
+
+Primary key of the preferences dimension. It is a composite key of preference_id and company_id. 
+
+{% enddocs %}
+
+# Bridge Billing Agreements Preferences
+
+{% docs column__pk_bridge_billing_agreements_preferences %}
+
+...
+
+{% enddocs %}
+
+{% docs column__billing_agreement_preferences_updated_id %}
+
+...
+
+{% enddocs %}

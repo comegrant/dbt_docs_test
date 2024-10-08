@@ -35,6 +35,9 @@ models:
 
     silver:
       +schema: silver
+      postgres:
+        base:
+          +materialized: table
 
     intermediate:
       +schema: intermediate

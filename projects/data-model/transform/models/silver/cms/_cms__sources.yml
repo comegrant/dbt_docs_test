@@ -26,3 +26,10 @@ sources:
       - name: cms__billing_agreement_basket_product
       - name: cms__billing_agreement_basket_scheduler
       - name: cms__delivery_week_type
+      - name: cms__preference
+      - name: cms__preference_type
+      - name: cms__preference_company
+      - name: cms__billing_agreement_preference
+      - name: cms__preference_attribute_value
+      - name: cms__register_info_basket
+      - name: cms__register_info_products

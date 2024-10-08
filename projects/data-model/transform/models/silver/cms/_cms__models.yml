@@ -1124,3 +1124,466 @@ models:
         description: "{{ doc('column__delivery_week_type_name') }}"
         data_tests:
           - not_null
+
+  - name: cms__preferences
+    description: "Preferences and concepts/attributes that a customer can choose"
+    columns:
+      - name: preference_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preference_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: preference_type_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preference_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_name_general
+        data_type: string
+        description: "{{ doc('column__preference_name_general') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_description_general
+        data_type: string
+        description: "{{ doc('column__preference_description_general') }}"
+
+      - name: is_allergen
+        data_type: boolean
+        description: "{{ doc('column__is_allergen') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__preference_types
+    description: "Preference types (e.g. concept, taste etc.)"
+    columns:
+      - name: preference_type_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preference_type_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: preference_type_name
+        data_type: string
+        description: "{{ doc('column__preference_type_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_type_description
+        data_type: string
+        description: "{{ doc('column__preference_type_description') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__preferences_companies
+    description: "The preferences with name and description for each company"
+    columns:
+      - name: preference_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preference_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_name
+        data_type: string
+        description: "{{ doc('column__preference_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_description
+        data_type: string
+        description: "{{ doc('column__preference_description') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_active_preference
+        data_type: boolean
+        description: "{{ doc('column__is_active_preference') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__preference_attribute_values
+    description: "Different attributes a preference can have, e.g. which pre OneSub mealbox a concept preference corresponds too."
+    data_tests:
+      - unique:
+          column_name: "(preference_id || '-' || attribute_id || '-' || company_id)"
+    columns:
+      - name: attribute_id
+        data_type: varchar(36)
+        description: "{{ doc('column__attribute_id_preference') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id
+        data_type: varchar(36)
+        description: "{{ doc('column__preference_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: attribute_value
+        data_type: string
+        description: "{{ doc('column__attribute_value_preference') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__register_info_baskets
+    description: "Information about the basket the customer chose on registration."
+    columns:
+      - name: register_info_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__register_info_basket_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_status_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: start_date
+        data_type: date
+        description: "{{ doc('column__start_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__register_info_products
+    description: "Contain the product variation(s) the customer subscribed to on registration."
+    columns:
+      - name: register_info_product_id
+        data_type: varchar(36)
+        description: "{{ doc('column__register_info_product_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: register_info_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__register_info_basket_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+
+  - name: cms__billing_agreements_preferences_list
+    description: "The subscribed preferences of billing agreements in a list format. Its based on cms__billing_agreement_preferences and is used in the scd logic in dim_billing_agreements."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_id || '-' || valid_from)"
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id_list
+        data_type: array<string>
+        description: "{{ doc('column__preference_id_list') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_preference_id_list
+        data_type: array<string>
+        description: "{{ doc('column__billing_agreement_preference_id_list') }}" 
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__billing_agreement_basket_products_list
+    description: "The basket products of a billing agreements in a list format. Its based on cms__billing_agreement_basket_products and is used to complement cms__billing_agreement_preferences with concept preferences."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_basket_id || '-' || valid_from)"
+    columns:
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: basket_products_list
+        data_type: array<struct<product_variation_id:string,product_variation_quantity:int,is_extra:boolean>>
+        description: "{{ doc('column__basket_products_list') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
