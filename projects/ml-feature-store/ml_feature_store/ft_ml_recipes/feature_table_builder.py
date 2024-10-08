@@ -7,6 +7,7 @@ from pyspark.sql import SparkSession
 from ml_feature_store.common.data import get_data_from_catalog, save_df_as_feature_table
 from ml_feature_store.feature_tables import ft_ml_recipes_configs
 from ml_feature_store.ft_ml_recipes.feature_generator import (
+    convert_columns_to_int,
     generate_boolean_taxonomy_attributes,
     generate_mean_cooking_time,
 )
@@ -29,7 +30,7 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
 
     df = generate_mean_cooking_time(df)
     df = generate_boolean_taxonomy_attributes(df)
-
+    df = convert_columns_to_int(df)
     fe = FeatureEngineeringClient()
 
     save_df_as_feature_table(

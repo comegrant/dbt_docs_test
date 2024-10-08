@@ -9,9 +9,18 @@ def generate_mean_cooking_time(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def convert_columns_to_int(df: pd.DataFrame) -> pd.DataFrame:
+    cols = ["recipe_main_ingredient_id", "number_of_taxonomies", "number_of_recipe_steps"]
+    for col in cols:
+        df[col] = df[col].fillna(-1).astype(int)
+    return df
+
+
 def generate_boolean_taxonomy_attributes(
     df: pd.DataFrame, mapping: TaxonomyOneSubMapping = TAXONOMY_ONESUB_MAPPING
 ) -> pd.DataFrame:
+    mapping_dict = mapping.model_dump()
+
     def process_row(row: pd.Series) -> pd.Series:
         if pd.isna(row["taxonomy_list"]):
             taxonomy_list = []
@@ -21,10 +30,12 @@ def generate_boolean_taxonomy_attributes(
         feature_flags = {}
         company_id = row["company_id"]
 
-        for category, company_keywords in mapping.model_dump().items():
-            feature_flags[f"has_{category}_taxonomy"] = company_id in company_keywords and any(
-                keyword in taxonomy_list for keyword in company_keywords[company_id]
-            )
+        for category, company_keywords in mapping_dict.items():
+            if company_id in company_keywords:
+                keywords = company_keywords[company_id]
+                feature_flags[f"has_{category}_taxonomy"] = any(
+                    any(keyword in taxonomy_item for taxonomy_item in taxonomy_list) for keyword in keywords
+                )
 
         return pd.Series(feature_flags)
 
