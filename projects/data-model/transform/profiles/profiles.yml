@@ -13,3 +13,21 @@ transform:
       http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
       host: "{{ env_var('DATABRICKS_HOST') }}"
       token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
+
+    test:
+      type: databricks
+      method: http
+      catalog: test
+      schema: test
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
+
+    prod:
+      type: databricks
+      method: http
+      catalog: prod
+      schema: prod
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"

@@ -1,0 +1,108 @@
+name: cd pipeline for dbt manifest creation
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+        description: "From which folder this pipeline executes"
+      python-version:
+        required: false
+        type: string
+      target-env:
+        required: true
+        type: string
+        description: "Target environment in Github Actions"
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  dbt-cd:
+    name: 'Run dbt parse in ${{inputs.working-directory}}'
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.target-env }}
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        timeout-minutes: 5
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: "poetry"
+          cache-dependency-path: |
+            poetry.lock
+            ${{ inputs.working-directory }}/poetry.lock
+
+      - name: Install Python packages
+        run: poetry install --with dev
+
+      - name: Install dbt dependencies
+        run: poetry run dbt deps --project-dir ./transform
+
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get Secrets from Key Vault
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+
+            DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            DATABRICKS_WAREHOUSE_DBT_ID=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-warehouse-dbt-id-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            DATABRICKS_WORKSPACE_URL=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-workspace-url-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            STORAGE_ACCOUNT_KEY=$(az keyvault secret show --vault-name kv-chefdp-common --name azure-storageaccount-stchefdpcommon${{ vars.ENVIRONMENT_VARIABLE }}-key --query value -o tsv)
+
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
+
+            echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
+            echo "::add-mask::${DATABRICKS_WAREHOUSE_DBT_ID}"
+            echo "::add-mask::${DATABRICKS_WORKSPACE_URL}"
+            echo "::add-mask::${STORAGE_ACCOUNT_KEY}"
+
+            echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
+            echo "DATABRICKS_WAREHOUSE_DBT_ID=${DATABRICKS_WAREHOUSE_DBT_ID}" >> $GITHUB_ENV
+            echo "DATABRICKS_WORKSPACE_URL=${DATABRICKS_WORKSPACE_URL}" >> $GITHUB_ENV
+            echo "STORAGE_ACCOUNT_KEY=${STORAGE_ACCOUNT_KEY}" >> $GITHUB_ENV
+
+      - name: dbt parse
+        run: poetry run dbt parse --target=${{ vars.ENVIRONMENT_VARIABLE }} --project-dir ./transform --profiles-dir ./transform/profiles
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+
+      - name: Upload manifest.json to Azure Blob Storage
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az storage blob upload \
+              --account-name stchefdpcommon${{ vars.ENVIRONMENT_VARIABLE }} \
+              --container-name dbt-manifest \
+              --name manifest.json \
+              --file ${{ inputs.working-directory }}/transform/target/manifest.json \
+              --account-key ${{ env.STORAGE_ACCOUNT_KEY }} \
+              --overwrite
