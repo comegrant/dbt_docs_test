@@ -52,3 +52,12 @@ relationship e3d2c6c0-3f64-33a8-0194-761fdfb88538
 	fromColumn: 'Menu Measures'.fk_dim_products
 	toColumn: Products.pk_dim_products
 
+relationship 4c54f81c-59bb-7841-5609-0594142de778
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 8a15615d-11fc-fbaa-2f96-ac8c881b9124
+	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_preferences
+	toColumn: Preferences.pk_dim_preferences
+

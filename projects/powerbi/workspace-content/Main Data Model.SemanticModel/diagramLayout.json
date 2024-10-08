@@ -4,8 +4,8 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 0,
-        "y": 15.696371097968445
+        "x": 617.39061933034122,
+        "y": 650.27823120154983
       },
       "nodes": [
         {
@@ -85,8 +85,8 @@
         },
         {
           "location": {
-            "x": 2189.5259466047692,
-            "y": 396.42412788179854
+            "x": 1980.1983876881641,
+            "y": 398.65101680644329
           },
           "nodeIndex": "Menu Measures",
           "nodeLineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
@@ -121,6 +121,32 @@
             "width": 234
           },
           "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1130.201955236231,
+            "y": 867.22567745467461
+          },
+          "nodeIndex": "Bridge Billing Agreements Preferences",
+          "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
+          "size": {
+            "height": 277.11552543070025,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1489.9161616843376,
+            "y": 805.49456670112227
+          },
+          "nodeIndex": "Preferences",
+          "nodeLineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",

@@ -1,0 +1,153 @@
+table Preferences
+	lineageTag: a1fb30ef-72c3-45ad-89e5-2a5341187904
+
+	column pk_dim_preferences
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 37d3f35e-e68c-4399-86ac-d90a7872d158
+		summarizeBy: none
+		sourceColumn: pk_dim_preferences
+
+		changedProperty = IsHidden
+
+	/// The name of preferences and attributes that a customer can choose. 
+	/// This is specific for each company. 
+	/// For the general name that can be used across companies, use instead the field called Preference Name General.
+	column 'Preference Name'
+		dataType: string
+		lineageTag: 469beb30-dccd-4f22-b149-36950fa2c37a
+		summarizeBy: none
+		sourceColumn: Preference Name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The description of preferences and attributes that a customer can choose. 
+	/// This is specific for each company. 
+	/// For the general description that can be used across companies, use instead the field called Preference Description General.
+	column 'Preference Description'
+		dataType: string
+		lineageTag: 289c43fa-43c5-4f6b-95a6-b7e908dcc019
+		summarizeBy: none
+		sourceColumn: Preference Description
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Type of preference (Concept, Taste, Optimization Preference or Selector Preference). 
+	/// This can be used across the companies.
+	column 'Preference Type Name'
+		dataType: string
+		lineageTag: b288f3d8-22bd-4ba9-9a4f-cbadf84640b6
+		summarizeBy: none
+		sourceColumn: Preference Type Name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Description of the preference type. 
+	/// This can be used across the companies.
+	column 'Preference Type Description'
+		dataType: string
+		lineageTag: 51c63639-7333-48b9-998e-d2bacfd70995
+		summarizeBy: none
+		sourceColumn: Preference Type Description
+
+		annotation SummarizationSetBy = Automatic
+
+	/// True if the preference is active for the customer to choose. False if its not active.
+	column 'Is Active'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: e43fbd78-4757-4d97-8688-4786ea9058a8
+		summarizeBy: none
+		sourceColumn: Is Active
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Is true when the preference is an allergen preference.
+	column 'Is Allergen'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 718cbf6e-ac37-4b94-8e7b-caf1b2bd7a81
+		summarizeBy: none
+		sourceColumn: Is Allergen
+
+		annotation SummarizationSetBy = Automatic
+
+	column preference_id
+		dataType: string
+		isHidden
+		lineageTag: a907aef2-e8fd-4f77-a9ff-815b2237a79d
+		summarizeBy: none
+		sourceColumn: preference_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		lineageTag: 78655ebd-14d0-4bef-8475-a69492fb06ec
+		summarizeBy: none
+		sourceColumn: company_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preference_type_id
+		dataType: string
+		isHidden
+		lineageTag: 76be8ae1-e7e1-4a57-a427-176882b4e109
+		summarizeBy: none
+		sourceColumn: preference_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+	
+	///The general name of preferences and attributes that a customer can choose. 
+	///This is common for the companies and countries. 
+	///For preference names specific for each company use instead the field called Preference Name.
+	column 'Preference Name General'
+		dataType: string
+		lineageTag: 5eb7a3b5-8f2b-4fdb-b34c-2a7cd9ae6699
+		summarizeBy: none
+		sourceColumn: Preference Name General
+
+		annotation SummarizationSetBy = Automatic
+
+	///The general description of preferences and attributes that a customer can choose. 
+	///This is common for the companies and countries. 
+	///For preference descriptions specific for each company use instead the field called Preference Description.
+	column 'Preference Description General'
+		dataType: string
+		lineageTag: 2e4e9832-af8e-4e59-adcc-0a17dc3d6dc8
+		summarizeBy: none
+		sourceColumn: Preference Description General
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Preferences = m
+		mode: import
+		source =
+				let
+					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+					dim_preferences_Table = gold_Schema{[Name="dim_preferences",Kind="Table"]}[Data],
+					#"Renamed Columns" = Table.RenameColumns(dim_preferences_Table,{
+						{"preference_name", "Preference Name"},
+						{"preference_description", "Preference Description"},
+						{"preference_type_name", "Preference Type Name"},
+						{"preference_type_description", "Preference Type Description"},
+						{"preference_name_general", "Preference Name General"},
+						{"preference_description_general", "Preference Description General"},
+						{"is_active_preference", "Is Active"},
+						{"is_allergen", "Is Allergen"}
+						})
+				in
+					#"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+

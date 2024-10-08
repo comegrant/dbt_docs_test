@@ -1,0 +1,89 @@
+table 'Bridge Billing Agreements Preferences'
+	isHidden
+	lineageTag: 3eacf138-1292-4b16-90b5-348f57351f03
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 76cdf523-bc3b-423a-ae30-694b62ca6390
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_preferences
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6ac159e1-44cb-42fb-89d3-b8cb8a7ee1cb
+		summarizeBy: none
+		sourceColumn: fk_dim_preferences
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column pk_bridge_billing_agreements_preferences
+		dataType: string
+		isHidden
+		lineageTag: f0c0b657-cae4-48e1-97b8-ef801707cc25
+		summarizeBy: none
+		sourceColumn: pk_bridge_billing_agreements_preferences
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_preferences_updated_id
+		dataType: string
+		isHidden
+		lineageTag: a15575b1-a170-4700-8bca-2694e51f4923
+		summarizeBy: none
+		sourceColumn: billing_agreement_preferences_updated_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preference_id
+		dataType: string
+		isHidden
+		lineageTag: 62b97399-910e-477b-b5fa-11ce0ca7aac6
+		summarizeBy: none
+		sourceColumn: preference_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		lineageTag: a29a4531-1590-45a3-9d75-f6405de812ef
+		summarizeBy: none
+		sourceColumn: company_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Bridge Billing Agreements Preferences' = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    bridge_billing_agreements_preferences_Table = gold_Schema{[Name="bridge_billing_agreements_preferences",Kind="Table"]}[Data]
+				in
+					bridge_billing_agreements_preferences_Table
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Exception
+
+	annotation PBI_NavigationStepName = Navigation
+
