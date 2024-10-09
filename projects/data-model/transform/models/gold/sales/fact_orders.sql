@@ -58,6 +58,10 @@ orders as (
         orders.menu_year
         , orders.menu_week
         , orders.menu_week_monday_date
+        , datediff(
+            WEEK
+            , billing_agreements.first_menu_week_monday_date
+            , orders.menu_week_monday_date) as weeks_since_first_order
         , orders.source_created_at
         , order_lines.product_variation_quantity
         , order_lines.vat
@@ -279,6 +283,7 @@ orders as (
         order_line_agreements_joined.menu_year
         , order_line_agreements_joined.menu_week
         , order_line_agreements_joined.menu_week_monday_date
+        , order_line_agreements_joined.weeks_since_first_order
         , order_line_agreements_joined.source_created_at
         , order_line_agreements_joined.product_variation_quantity
         , order_line_agreements_joined.vat
@@ -321,6 +326,7 @@ orders as (
         order_line_agreements_joined.menu_year
         , order_line_agreements_joined.menu_week
         , order_line_agreements_joined.menu_week_monday_date
+        , order_line_agreements_joined.weeks_since_first_order
         , order_line_agreements_joined.source_created_at
         , 0 as product_variation_quantity
         , 0 as vat

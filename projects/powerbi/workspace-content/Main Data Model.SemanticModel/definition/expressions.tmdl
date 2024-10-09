@@ -33,7 +33,7 @@ expression Catalog = "dev" meta [IsParameterQuery=true, Type="Text", IsParameter
 
 	annotation PBI_ResultType = Text
 
-expression Schema = "marie_borg_gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression Schema = "gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: f272b2f3-7ffe-4735-a2ec-baab430920e1
 
 	annotation PBI_NavigationStepName = Navigation

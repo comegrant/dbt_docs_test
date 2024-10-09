@@ -7,7 +7,7 @@ on:
       - '.github/workflows/dbt_reusable.yml'
       - '.github/workflows/ci_data_model.yml'
       - 'projects/data-model**'
-
+  
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:

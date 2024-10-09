@@ -13,9 +13,10 @@ table 'Order Measures'
 			    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 			    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 			    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
-			    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+			    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd),
+			    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows",{{"weeks_since_first_order", "Weeks Since First Order"}})
 			in
-			    #"Filtered Rows"
+			    #"Renamed Columns"
 
 	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
 		isHidden
@@ -233,6 +234,23 @@ table 'Order Measures'
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Customers N Weeks Retention' =
+			VAR SelectedWeeks = SELECTEDVALUE('Order Measures'[Weeks Since First Order], 0)
+			
+			RETURN CALCULATE(
+				DISTINCTCOUNT('Order Measures'[billing_agreement_id]),
+				'Order Measures'[Weeks Since First Order] <= SelectedWeeks
+			)
+		lineageTag: 63cee8b4-d10a-4a0d-89e7-c0ee8d372ed8
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Retention N Weeks Since First Order' = DIVIDE([Number of Subscription Orders], [Number of Customers N Weeks Retention], BLANK())
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: ed8fbdf7-0c62-49b8-826e-e797f41c2be1
 
 	measure 'Number of Preselected Dishes' =
 			CALCULATE(
@@ -752,6 +770,16 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Weeks Since First Order'
+		dataType: int64
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 0274f15c-78f5-4312-a396-c53b45da838d
+		summarizeBy: none
+		sourceColumn: Weeks Since First Order
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Order Measures' = m
 		mode: import
 		source =
@@ -760,9 +788,10 @@ table 'Order Measures'
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
-				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd),
+				    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows",{{"weeks_since_first_order", "Weeks Since First Order"}})
 				in
-				    #"Filtered Rows"
+				    #"Renamed Columns"
 
 	annotation PBI_IsMQueryFoldable = True
 

@@ -45,6 +45,14 @@ models:
         data_tests:
           - not_null
 
+      - name: weeks_since_first_order
+        data_type: bigint
+        description: "{{ doc('column__weeks_since_first_order') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"

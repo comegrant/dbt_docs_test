@@ -5,6 +5,12 @@ The unique key of each row in Fact Orders.
 
 {% enddocs %}
 
+{% docs column__weeks_since_first_order %}
+
+Number of weeks since the first order of the billing agreement.
+
+{% enddocs %}
+
 {% docs column__preselected_product_variation_id %}
 
 The product variation of the preselected mealbox that corresponds to the customer composed mealbox (pre Onesub).
