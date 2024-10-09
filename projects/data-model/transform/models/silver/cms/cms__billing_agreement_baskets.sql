@@ -15,7 +15,7 @@ source as (
         id as billing_agreement_basket_id
         , agreement_id as billing_agreement_id
         , shipping_address as shipping_address_id
-        , delivery_week_type as delivery_week_type_id
+        , delivery_week_type as basket_delivery_week_type_id
         , timeblock as timeblock_id
         
         {# booleans #}
@@ -24,7 +24,7 @@ source as (
         
         {# scd #}
         , dbt_valid_from as valid_from
-        , {{ get_scd_valid_to('dbt_valid_to', 'id') }} as valid_to
+        , {{ get_scd_valid_to('dbt_valid_from', 'id') }} as valid_to
 
         {# system #}
         , created_at as source_created_at

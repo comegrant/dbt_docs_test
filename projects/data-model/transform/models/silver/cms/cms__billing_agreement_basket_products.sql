@@ -14,7 +14,7 @@ source as (
         id as billing_agreement_basket_product_id
         , billing_agreement_basket_id
         , subscribed_product_variation_id as product_variation_id
-        , delivery_week_type as delivery_week_type_id
+        , delivery_week_type as product_delivery_week_type_id
 
         {# numerics #}
         , quantity as product_variation_quantity
@@ -24,7 +24,7 @@ source as (
         
         {# scd #}
         , dbt_valid_from as valid_from
-        , {{ get_scd_valid_to('dbt_valid_to', 'id') }} as valid_to
+        , {{ get_scd_valid_to('dbt_valid_from', 'billing_agreement_basket_id') }} as valid_to
         
         {# system #}
         , created_at as source_created_at

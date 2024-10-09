@@ -912,7 +912,7 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_week_type_id
+      - name: basket_delivery_week_type_id
         data_type: int
         description: "{{ doc('column__delivery_week_type_id') }}"
         data_tests:
@@ -1003,7 +1003,7 @@ models:
         data_tests:
           - not_null
 
-      - name: delivery_week_type_id
+      - name: product_delivery_week_type_id
         data_type: int
         description: "{{ doc('column__delivery_week_type_id') }}"
         data_tests:

@@ -66,7 +66,7 @@ preferences_godtlevert as (
             )
         ) AS preference_updated_id
         , id as ce_preference_updated_id
-        , agreement_id as billing_agreement_id
+        , cast(agreement_id as int) as billing_agreement_id
         , company_id
         , upper(concept_preference_id) as concept_preference_id
         , concept_preferences as concept_preference_list

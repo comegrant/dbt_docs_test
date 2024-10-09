@@ -260,6 +260,52 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
+	column billing_agreement_preferences_updated_id
+		dataType: string
+		isHidden
+		lineageTag: fadb0409-da35-4138-b87c-dabf327fa364
+		summarizeBy: none
+		sourceColumn: billing_agreement_preferences_updated_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Meals
+		dataType: int64
+		formatString: 0
+		lineageTag: 685f85f5-23c7-40e5-8cf6-0bf4fcf9123a
+		summarizeBy: sum
+		sourceColumn: Meals
+
+		annotation SummarizationSetBy = Automatic
+
+	column Portions
+		dataType: int64
+		formatString: 0
+		lineageTag: 0f02ea42-f7e3-4561-863f-4d22fcfa953d
+		summarizeBy: sum
+		sourceColumn: Portions
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subscribed Mealbox'
+		dataType: string
+		lineageTag: 34b510ce-1fc6-4269-9da1-78f3691b222c
+		summarizeBy: none
+		sourceColumn: Subscribed Mealbox
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is OneSub'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
+		summarizeBy: none
+		sourceColumn: Is OneSub
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Billing Agreements' = m
 		mode: import
 		source =
@@ -268,7 +314,28 @@ table 'Billing Agreements'
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{{"billing_agreement_id", "Agreement Id"}, {"payment_method", "Payment Method"}, {"signup_source", "Signup Source"}, {"signup_salesperson", "Signup Sales Person"}, {"billing_agreement_status_name", "Billing Agreement Status"}, {"signup_date", "Signup Date"}, {"signup_week", "Signup Week"}, {"signup_month", "Signup Month"}, {"signup_quarter", "Signup Quarter"}, {"signup_year", "Signup Year"}, {"first_menu_week_monday_date", "First Menu Date"}, {"first_menu_week_week", "First Menu Week"}, {"first_menu_week_month", "First Menu Month"}, {"first_menu_week_quarter", "First Menu Quarter"}, {"first_menu_week_year", "First Menu Year"}, {"sales_point_id", "Sales Point Id"}})
+				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{
+						{"billing_agreement_id", "Agreement Id"}, 
+						{"payment_method", "Payment Method"}, 
+						{"signup_source", "Signup Source"}, 
+						{"signup_salesperson", "Signup Sales Person"}, 
+						{"billing_agreement_status_name", "Billing Agreement Status"}, 
+						{"signup_date", "Signup Date"}, 
+						{"signup_week", "Signup Week"}, 
+						{"signup_month", "Signup Month"}, 
+						{"signup_quarter", "Signup Quarter"}, 
+						{"signup_year", "Signup Year"}, 
+						{"first_menu_week_monday_date", "First Menu Date"}, 
+						{"first_menu_week_week", "First Menu Week"}, 
+						{"first_menu_week_month", "First Menu Month"}, 
+						{"first_menu_week_quarter", "First Menu Quarter"}, 
+						{"first_menu_week_year", "First Menu Year"}, 
+						{"sales_point_id", "Sales Point Id"}, 
+						{"is_onesub", "Is OneSub"}, 
+						{"meals", "Meals"}, 
+						{"portions", "Portions"}, 
+						{"product_name", "Subscribed Mealbox"}
+					})
 				in
 				    #"Renamed Columns"
 

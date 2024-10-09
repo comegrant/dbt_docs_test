@@ -1,5 +1,5 @@
 {%- set attributes_dict = {
-    'number_of_meals': [
+    'meals': [
         'EDF04536-BC72-41FC-9491-024DD3E48FFF',
         '04974035-6A0A-4BC0-87C6-11138BB5B08F',
         '462A097B-2B57-4CD0-AF38-26BAC99B6020',
@@ -13,7 +13,7 @@
         '9221B4A2-2647-42D7-9E25-F97D0023A2B7',
         '8BA21161-51AC-4794-9FFA-F9EB2BDC11E0'
         ],
-    'number_of_portions': [
+    'portions': [
         'B438F8A6-3E2A-4C40-A930-0093FE84EC75',
         '55BDD7B1-76B6-4AC5-9F40-0D7A08CF9BC1',
         'B2D311ED-EE33-4CE7-89A1-10330A82E7E8',
@@ -62,8 +62,8 @@ cast_pivot_attribute_values as (
     select
         product_variation_id
         , company_id
-        , cast(number_of_meals as int) as number_of_meals
-        , cast(number_of_portions as int) as number_of_portions
+        , cast(meals as int) as meals
+        , cast(portions as int) as portions
     from pivot_attribute_values
 )
 

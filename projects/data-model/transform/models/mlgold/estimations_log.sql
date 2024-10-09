@@ -98,7 +98,7 @@ dates as (
         , baskets_with_company.billing_agreement_id
         , baskets_with_company.billing_agreement_basket_id
         , baskets_with_company.company_id
-        , baskets_with_company.delivery_week_type_id
+        , baskets_with_company.basket_delivery_week_type_id
 
     from baskets_with_company
     left join relevant_period
@@ -119,7 +119,7 @@ dates as (
     where 
     basket_and_period_joined.menu_week % 2 = 0 --even weeks
     and (basket_scheduler.billing_agreement_basket_id is null or basket_scheduler.has_delivery = true) --default scheduler
-    and basket_and_period_joined.delivery_week_type_id in (10, 20) --10 is every week, 20 is even weeks
+    and basket_and_period_joined.basket_delivery_week_type_id in (10, 20) --10 is every week, 20 is even weeks
 )
 
 , basket_odd_weeks_default_schedule as (
@@ -136,7 +136,7 @@ dates as (
     where 
     basket_and_period_joined.menu_week % 2 = 1 --odd weeks
     and (basket_scheduler.billing_agreement_basket_id is null or basket_scheduler.has_delivery = true) --default scheduler
-    and basket_and_period_joined.delivery_week_type_id in (10, 30) --10 is every week, 30 is odd weeks
+    and basket_and_period_joined.basket_delivery_week_type_id in (10, 30) --10 is every week, 30 is odd weeks
 )
 
 , basket_odd_weeks_scheduled_on_even_weeks as (
@@ -154,7 +154,7 @@ dates as (
     where 
     basket_and_period_joined.menu_week % 2 = 0 --even weeks
     and basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is odd
-    and basket_and_period_joined.delivery_week_type_id = 30 --30 is odd weeks
+    and basket_and_period_joined.basket_delivery_week_type_id = 30 --30 is odd weeks
 )
 
 , basket_even_weeks_scheduled_on_odd_weeks as (
@@ -172,7 +172,7 @@ dates as (
     where 
     basket_and_period_joined.menu_week % 2 = 1 --odd weeks
     and basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is even
-    and basket_and_period_joined.delivery_week_type_id = 20 --20 is even weeks
+    and basket_and_period_joined.basket_delivery_week_type_id = 20 --20 is even weeks
 )
 
 , basket_filtered_by_scheduler as (

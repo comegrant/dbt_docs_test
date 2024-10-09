@@ -40,7 +40,7 @@ preference_list as (
 
 , products as (
 
-    select * from {{ref('dim_products')}}
+    select * from {{ ref('int_product_tables_joined') }}
 
 )
 

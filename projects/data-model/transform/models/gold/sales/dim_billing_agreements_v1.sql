@@ -123,7 +123,7 @@ select
     , scd_timeline_valid_to_recalculated.valid_from
     , scd_timeline_valid_to_recalculated.valid_to
     , case 
-        when scd_timeline_valid_to_recalculated.valid_to = '9999-01-01'
+        when scd_timeline_valid_to_recalculated.valid_to = '{{ var("future_proof_date") }}'
         then true 
         else false 
     end as is_current

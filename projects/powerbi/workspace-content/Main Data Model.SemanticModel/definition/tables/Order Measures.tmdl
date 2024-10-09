@@ -284,10 +284,13 @@ table 'Order Measures'
 
 	column order_line_type_name
 		dataType: string
+		isHidden
 		isAvailableInMdx: false
 		lineageTag: 6093c33b-13e6-4718-84fa-0caeafa121df
 		summarizeBy: none
 		sourceColumn: order_line_type_name
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -683,45 +686,60 @@ table 'Order Measures'
 
 	column ops_order_id
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
 		summarizeBy: sum
 		sourceColumn: ops_order_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column valid_from_billing_agreements
 		dataType: dateTime
+		isHidden
 		formatString: General Date
 		lineageTag: 27d2d726-d57c-4385-a611-74d507d70083
 		summarizeBy: none
 		sourceColumn: valid_from_billing_agreements
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column preselected_product_variation_id
 		dataType: string
+		isHidden
 		lineageTag: c1704f19-b63d-43d0-9b42-e651da388077
 		summarizeBy: none
 		sourceColumn: preselected_product_variation_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column recipe_id
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 0704f8ef-3920-4380-a45a-e07118aaa5c8
 		summarizeBy: sum
 		sourceColumn: recipe_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column preselected_recipe_id
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: fe464424-3aec-4605-a156-127ea206aee8
 		summarizeBy: sum
 		sourceColumn: preselected_recipe_id
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

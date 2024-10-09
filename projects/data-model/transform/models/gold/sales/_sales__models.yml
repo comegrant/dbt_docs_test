@@ -216,9 +216,9 @@ models:
           - type: not_null
         data_tests:
           - not_null
-#          - relationships:
-#              to: ref('dim_billing_agreements')
-#              field: pk_dim_billing_agreements
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
 
       - name: fk_dim_companies
         data_type: string
@@ -509,11 +509,37 @@ models:
         data_type: int
         description: "{{ doc('column__first_menu_week_year') }}"
 
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portions') }}"
+
+      - name: product_name
+        data_type: string
+        description: "{{ doc('column__product_name') }}"
+      
+      - name: is_onesub
+        data_type: boolean
+        description: "{{ doc('column__is_onesub') }}"
+       # constraints:
+       #   - type: not_null
+       # data_tests:
+       #   - not_null
+
     versions:
       - v: 1
         columns: 
           - include: all
-            exclude: [billing_agreement_preferences_updated_id]
+            exclude: [
+              billing_agreement_preferences_updated_id, 
+              is_onesub, 
+              meals, 
+              portions, 
+              product_name
+              ]
       - v: 2
         config:
           alias: dim_billing_agreements

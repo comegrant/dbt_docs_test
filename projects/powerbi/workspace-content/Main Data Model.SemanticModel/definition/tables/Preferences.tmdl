@@ -11,8 +11,8 @@ table Preferences
 
 		changedProperty = IsHidden
 
-	/// The name of preferences and attributes that a customer can choose. 
-	/// This is specific for each company. 
+	/// The name of preferences and attributes that a customer can choose.
+	/// This is specific for each company.
 	/// For the general name that can be used across companies, use instead the field called Preference Name General.
 	column 'Preference Name'
 		dataType: string
@@ -22,8 +22,8 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The description of preferences and attributes that a customer can choose. 
-	/// This is specific for each company. 
+	/// The description of preferences and attributes that a customer can choose.
+	/// This is specific for each company.
 	/// For the general description that can be used across companies, use instead the field called Preference Description General.
 	column 'Preference Description'
 		dataType: string
@@ -33,7 +33,7 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Type of preference (Concept, Taste, Optimization Preference or Selector Preference). 
+	/// Type of preference (Concept, Taste, Optimization Preference or Selector Preference).
 	/// This can be used across the companies.
 	column 'Preference Type Name'
 		dataType: string
@@ -43,7 +43,7 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Description of the preference type. 
+	/// Description of the preference type.
 	/// This can be used across the companies.
 	column 'Preference Type Description'
 		dataType: string
@@ -105,10 +105,10 @@ table Preferences
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-	
-	///The general name of preferences and attributes that a customer can choose. 
-	///This is common for the companies and countries. 
-	///For preference names specific for each company use instead the field called Preference Name.
+
+	/// The general name of preferences and attributes that a customer can choose.
+	/// This is common for the companies and countries.
+	/// For preference names specific for each company use instead the field called Preference Name.
 	column 'Preference Name General'
 		dataType: string
 		lineageTag: 5eb7a3b5-8f2b-4fdb-b34c-2a7cd9ae6699
@@ -117,9 +117,9 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
-	///The general description of preferences and attributes that a customer can choose. 
-	///This is common for the companies and countries. 
-	///For preference descriptions specific for each company use instead the field called Preference Description.
+	/// The general description of preferences and attributes that a customer can choose.
+	/// This is common for the companies and countries.
+	/// For preference descriptions specific for each company use instead the field called Preference Description.
 	column 'Preference Description General'
 		dataType: string
 		lineageTag: 2e4e9832-af8e-4e59-adcc-0a17dc3d6dc8

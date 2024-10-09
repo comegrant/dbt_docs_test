@@ -186,12 +186,12 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
-	column Portion
+	column Portions
 		dataType: int64
 		formatString: 0
 		lineageTag: 5fa348f4-8073-4778-9698-81d4b4c4ffb1
 		summarizeBy: sum
-		sourceColumn: Portion
+		sourceColumn: Portions
 
 		annotation SummarizationSetBy = Automatic
 
@@ -210,8 +210,8 @@ table Products
 						{"product_status_name", "Product Status Name"},
 						{"product_variation_name", "Product Variation Name"},
 						{"sku", "Sku"},
-						{"number_of_meals", "Meals"},
-						{"number_of_portions", "Portion"},
+						{"meals", "Meals"},
+						{"portions", "Portions"},
 						{"preselected_mealbox_product_name", "Preselected Mealbox Product Name"},
 						{"preselected_mealbox_product_variation_name", "Preselected Mealbox Product Variation Name"}
 						})

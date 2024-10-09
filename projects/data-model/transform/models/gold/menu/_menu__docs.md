@@ -54,3 +54,15 @@
 ...
 
 {% enddocs %}
+
+{% docs column__meals %}
+
+...
+
+{% enddocs %}
+
+{% docs column__portions %}
+
+...
+
+{% enddocs %}

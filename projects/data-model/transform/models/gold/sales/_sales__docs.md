@@ -103,6 +103,12 @@ The year of the customers first delivery.
 
 {% enddocs %}
 
+{% docs column__is_onesub%}
+
+Agreements with Onesub Mealbox
+
+{% enddocs %}
+
 # Dim Order Statuses
 
 {% docs column__pk_dim_order_statuses %}

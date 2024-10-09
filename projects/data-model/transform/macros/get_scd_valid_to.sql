@@ -2,17 +2,17 @@
     
     {%- if column_timestamp is none and column_id is none -%}
 
-        cast('9999-01-01' as timestamp)
+        cast('{{ var("future_proof_date") }}' as timestamp)
     
     {%- elif column_timestamp is not none and column_id is none -%}
 
-        coalesce({{ column_timestamp }}, cast('9999-01-01' as timestamp))
+        coalesce({{ column_timestamp }}, cast('{{ var("future_proof_date") }}' as timestamp))
     
     {%- else -%}
 
         coalesce(
-            lead({{ column_timestamp }}, 1) over (partition by {{ column_id }} order by {{ column_timestamp }}), 
-            cast('9999-01-01' as timestamp)
+            lead({{ column_timestamp }}, 1) over (partition by {{ column_id }} order by {{ column_timestamp }})
+            , cast('{{ var("future_proof_date") }}' as timestamp)
         )
 
     {%- endif -%}

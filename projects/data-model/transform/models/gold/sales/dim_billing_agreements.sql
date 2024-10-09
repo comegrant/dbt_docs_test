@@ -8,8 +8,7 @@ billing_agreements as (
 
 , first_orders as (
 
-    select * 
-    from {{ ref('int_billing_agreements_extract_first_order') }}
+    select * from {{ ref('int_billing_agreements_extract_first_order') }}
 
 )
 
@@ -19,9 +18,20 @@ billing_agreements as (
 
 )
 
-, preferences_scd as (
+, preferences_scd2 as (
 
-    select * from {{ref('int_billing_agreement_preferences_unioned')}}
+    select
+        billing_agreement_preferences_updated_id
+        , billing_agreement_id
+        , valid_from
+        , valid_to
+    from {{ref('int_billing_agreement_preferences_unioned')}}
+
+)
+
+, basket_products_scd2 as (
+
+    select * from {{ ref('int_billing_agreements_basket_mealbox_scd') }}
 
 )
 
@@ -31,103 +41,89 @@ billing_agreements as (
 
 ) */
 
-, current as (
+, billing_agreements_scd1 as (
     select * from billing_agreements
     where valid_to is null
 )
 
-, billing_agreements_base as (
+, base_scd2 as (
     select 
-    current.billing_agreement_id
-    , case 
-        when first_orders.source_created_at < current.signup_at
-        then first_orders.source_created_at
-        else current.signup_at 
-        end as valid_from
-    , {{ get_scd_valid_to() }} as valid_to
+        billing_agreements_scd1.billing_agreement_id
+        , case 
+            when first_orders.source_created_at < billing_agreements_scd1.signup_at
+            then first_orders.source_created_at
+            else billing_agreements_scd1.signup_at 
+            end as valid_from
+        , {{ get_scd_valid_to() }} as valid_to
 
-    from current
+    from billing_agreements_scd1
     left join first_orders
-    on current.billing_agreement_id = first_orders.billing_agreement_id
+        on billing_agreements_scd1.billing_agreement_id = first_orders.billing_agreement_id
 
 )
 
 , billing_agreements_scd2 as (
 
     select
-        md5(
-            concat(
-                cast(billing_agreements.billing_agreement_id as string)
-                , cast(billing_agreements.valid_from as string)
-            )
-        ) as billing_agreements_scd2_id
-        , billing_agreements.billing_agreement_id
+        billing_agreements.billing_agreement_id
         , status_names.billing_agreement_status_name
         , billing_agreements.sales_point_id
         , billing_agreements.valid_from
         , {{ get_scd_valid_to('billing_agreements.valid_to') }} as valid_to
     from billing_agreements
     left join status_names
-    on billing_agreements.billing_agreement_status_id = status_names.billing_agreement_status_id
+        on billing_agreements.billing_agreement_status_id = status_names.billing_agreement_status_id
 )
 
-, unified_timeline_part1 as (
+-- Use macro to join all scd2 tables
+{% set id_column = 'billing_agreement_id' %}
+{% set table_names = [
+    'base_scd2' 
+    , 'billing_agreements_scd2'
+    , 'basket_products_scd2'
+    , 'preferences_scd2'
+    ] %}
 
-    {{join_snapshots('billing_agreements_base', 'billing_agreements_scd2', 'billing_agreement_id', 'billing_agreements_scd2_id')}}
+, scd2_tables_joined as (
+    
+    {{ join_scd2_tables(id_column, table_names) }}
 
 )
-
-, unified_timeline as (
-
-    {{join_snapshots('unified_timeline_part1', 'preferences_scd', 'billing_agreement_id', 'billing_agreement_preferences_updated_id')}}
-
-)
-
-{# TODO join in loyalty as well #}
 
 , all_tables_joined as (
 
     select
-    md5(concat(
-        cast(unified_timeline.billing_agreement_id as string),
-        cast(unified_timeline.valid_from as string)
-        )
-    ) as pk_dim_billing_agreements
-    , cast(unified_timeline.billing_agreement_id as int) as billing_agreement_id
-    , current.company_id
-    , billing_agreements_scd2.sales_point_id
-    , unified_timeline.billing_agreement_preferences_updated_id 
-    , unified_timeline.valid_from
-    , unified_timeline.valid_to
-    , case 
-        when unified_timeline.valid_to = '9999-01-01'
-        then true 
-        else false 
-    end as is_current
-    , current.payment_method
-    , current.signup_source
-    , current.signup_salesperson
-    , billing_agreements_scd2.billing_agreement_status_name
-    , current.signup_date
-    , current.signup_year_day
-    , current.signup_month_day
-    , current.signup_week_day
-    , current.signup_week
-    , current.signup_month
-    , current.signup_quarter
-    , current.signup_year
-    , first_orders.first_menu_week_monday_date
-    , first_orders.first_menu_week_week
-    , first_orders.first_menu_week_month
-    , first_orders.first_menu_week_quarter
-    , first_orders.first_menu_week_year
-    from unified_timeline
-    left join current
-    on unified_timeline.billing_agreement_id = current.billing_agreement_id
+        md5(
+            concat(
+            cast(scd2_tables_joined.billing_agreement_id as string),
+            cast(scd2_tables_joined.valid_from as string)
+            )
+        ) as pk_dim_billing_agreements
+        , billing_agreements_scd1.company_id
+        , billing_agreements_scd1.payment_method
+        , billing_agreements_scd1.signup_source
+        , billing_agreements_scd1.signup_salesperson
+        , billing_agreements_scd1.signup_date
+        , billing_agreements_scd1.signup_year_day
+        , billing_agreements_scd1.signup_month_day
+        , billing_agreements_scd1.signup_week_day
+        , billing_agreements_scd1.signup_week
+        , billing_agreements_scd1.signup_month
+        , billing_agreements_scd1.signup_quarter
+        , billing_agreements_scd1.signup_year
+        , first_orders.first_menu_week_monday_date
+        , first_orders.first_menu_week_week
+        , first_orders.first_menu_week_month
+        , first_orders.first_menu_week_quarter
+        , first_orders.first_menu_week_year
+        , scd2_tables_joined.*
+    
+    from scd2_tables_joined
+    left join billing_agreements_scd1
+        on scd2_tables_joined.billing_agreement_id = billing_agreements_scd1.billing_agreement_id
     left join first_orders
-    on unified_timeline.billing_agreement_id = first_orders.billing_agreement_id
-    left join billing_agreements_scd2
-    on unified_timeline.billing_agreements_scd2_id = billing_agreements_scd2.billing_agreements_scd2_id
+        on scd2_tables_joined.billing_agreement_id = first_orders.billing_agreement_id
+
 )
 
 select * from all_tables_joined
