@@ -15,11 +15,6 @@ on:
         required: true
         type: string
         description: "Target environment in Github Actions"
-      # TODO: Not being used
-      install-packages:
-        description: "Space seperated list of packages to install using apt-get."
-        default: ""
-        type: string
       # TODO: Did not understand the message under here
       # To avoid being billed 360 minutes if a step does not terminate
       # (we've seen the setup-python step below do so!)
@@ -63,7 +58,6 @@ jobs:
         timeout-minutes: 5
         with:
           python-version: ${{ inputs.python-version }}
-          python-version-file: 'pyproject.toml'
           cache: "poetry"
           cache-dependency-path: |
             poetry.lock
@@ -84,27 +78,67 @@ jobs:
 
       - name: Get Secrets from Key Vault
         uses: azure/cli@v2
-        with:  
+        with:
           azcliversion: latest
           inlineScript: |
             az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
-            
+
             DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
             DATABRICKS_WAREHOUSE_DBT_ID=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-warehouse-dbt-id-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
             DATABRICKS_WORKSPACE_URL=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-workspace-url-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
-            
+            STORAGE_ACCOUNT_KEY=$(az keyvault secret show --vault-name kv-chefdp-common --name azure-storageaccount-stchefdpcommonprod-key --query value -o tsv)
+
             az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
-            
+
             echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
             echo "::add-mask::${DATABRICKS_WAREHOUSE_DBT_ID}"
             echo "::add-mask::${DATABRICKS_WORKSPACE_URL}"
-            
+            echo "::add-mask::${STORAGE_ACCOUNT_KEY}"
+
             echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
             echo "DATABRICKS_WAREHOUSE_DBT_ID=${DATABRICKS_WAREHOUSE_DBT_ID}" >> $GITHUB_ENV
             echo "DATABRICKS_WORKSPACE_URL=${DATABRICKS_WORKSPACE_URL}" >> $GITHUB_ENV
+            echo "STORAGE_ACCOUNT_KEY=${STORAGE_ACCOUNT_KEY}" >> $GITHUB_ENV
 
-      - name: dbt build
-        run: poetry run dbt build --exclude drafts.* --target=${{ inputs.dbt-target }} --full-refresh --project-dir ./transform --profiles-dir ./transform/profiles
+      - name: Download manifest.json from Azure Blob Storage
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az storage blob download \
+              --account-name stchefdpcommonprod \
+              --container-name dbt-manifest \
+              --name manifest.json \
+              --file ${{ inputs.working-directory }}/transform/manifest.json \
+              --account-key ${{ env.STORAGE_ACCOUNT_KEY }}
+
+      - name: Compile dbt models
+        run: |
+          poetry run dbt compile --project-dir ./transform --profiles-dir ./transform/profiles
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+
+      - name: List modified nodes
+        run: |
+          echo "Modified nodes:"
+          poetry run dbt list --select state:modified.body --state ./ --project-dir ./transform --profiles-dir ./transform/profiles
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+
+      - name: Run dbt models
+        run: |
+          poetry run dbt run --models state:modified.body+ --state ./ --defer --project-dir ./transform --profiles-dir ./transform/profiles
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+
+      - name: Test dbt models
+        run: |
+          poetry run dbt test --models state:modified.body+ --state ./ --defer --project-dir ./transform --profiles-dir ./transform/profiles
         env:
           DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
           DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}

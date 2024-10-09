@@ -2,6 +2,7 @@ name: Data Model PR
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - '.github/workflows/dbt_reusable.yml'
       - '.github/workflows/ci_data_model.yml'
@@ -10,20 +11,23 @@ on:
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
-
-  deploy-dab-to-dev:
-    uses: ./.github/workflows/cd_dab_template.yml
-    with:
-      working-directory: projects/data-model
-      target-env: Development
-    secrets: inherit
-
   deploy-dbt-to-dev:
-    needs: deploy-dab-to-dev
+    # Skip this job for draft pull requests
+    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/dbt_reusable.yml
     with:
       working-directory: projects/data-model
       python-version: "3.11"
       target-env: Development
       dbt-target: dev
+    secrets: inherit
+
+  deploy-dab-to-dev:
+    # Skip this job for draft pull requests
+    if: github.event.pull_request.draft == false
+    needs: deploy-dbt-to-dev
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/data-model
+      target-env: Development
     secrets: inherit
