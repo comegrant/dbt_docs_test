@@ -1,5 +1,5 @@
 {
-  "config": "{\"version\":\"5.57\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU08\",\"version\":\"5.58\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":0,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}]}}",
+  "config": "{\"version\":\"5.57\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU08\",\"version\":\"5.58\",\"type\":2}},\"activeSectionIndex\":1,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":0,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}]}}",
   "layoutOptimization": 0,
   "resourcePackages": [
     {
@@ -32,6 +32,75 @@
           "height": 544.00,
           "width": 1200.00,
           "x": 24.00,
+          "y": 72.00,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 2",
+      "displayOption": 1,
+      "filters": "[{\"name\":\"bc86740a26cfae15ae5a\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Date\"}},\"Property\":\"Year\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Year\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2024L\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+      "height": 720.00,
+      "name": "aaaec40950d9623e8df2",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"2daea6de2b1cd6e0a7c1\",\"layouts\":[{\"id\":0,\"position\":{\"x\":16,\"y\":368,\"z\":1000,\"width\":1232,\"height\":312}}],\"singleVisual\":{\"visualType\":\"lineStackedColumnComboChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Recipes.Recipe Main Ingredient Name\",\"active\":true}],\"Y\":[{\"queryRef\":\"Order Measures.Share of Swapped Dishes\"}],\"Y2\":[{\"queryRef\":\"Order Measures.Number of Swapped In Dishes\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"Order Measures\",\"Type\":0},{\"Name\":\"r\",\"Entity\":\"Recipes\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"r\"}},\"Property\":\"Recipe Main Ingredient Name\"},\"Name\":\"Recipes.Recipe Main Ingredient Name\",\"NativeReferenceName\":\"Recipe Main Ingredient Name\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Share of Swapped Dishes\"},\"Name\":\"Order Measures.Share of Swapped Dishes\",\"NativeReferenceName\":\"Share of Swapped Dishes\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Number of Swapped In Dishes\"},\"Name\":\"Order Measures.Number of Swapped In Dishes\",\"NativeReferenceName\":\"Number of Swapped In Dishes\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Share of Swapped Dishes\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true}}",
+          "filters": "[{\"name\":\"9090cbb0ea2235a0103b\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Companies\"}},\"Property\":\"Company Name\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Companies\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Company Name\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Adams Matkasse'\"}}],[{\"Literal\":{\"Value\":\"'Godtlevert'\"}}],[{\"Literal\":{\"Value\":\"'Linas Matkasse'\"}}],[{\"Literal\":{\"Value\":\"'RetNemt'\"}}]]}}}]},\"type\":\"Categorical\",\"howCreated\":1,\"objects\":{}}]",
+          "height": 312.00,
+          "width": 1232.00,
+          "x": 16.00,
+          "y": 368.00,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"703ba6516932896909ee\",\"layouts\":[{\"id\":0,\"position\":{\"x\":16,\"y\":88,\"z\":0,\"width\":1248,\"height\":264}}],\"singleVisual\":{\"visualType\":\"lineChart\",\"projections\":{\"Y\":[{\"queryRef\":\"Order Measures.Share of Swapped Dishes\"}],\"Category\":[{\"queryRef\":\"Date.Week\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"Order Measures\",\"Type\":0},{\"Name\":\"d\",\"Entity\":\"Date\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Share of Swapped Dishes\"},\"Name\":\"Order Measures.Share of Swapped Dishes\",\"NativeReferenceName\":\"Share of Swapped Dishes\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Week\"},\"Name\":\"Date.Week\",\"NativeReferenceName\":\"Week\"}]},\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 264.00,
+          "width": 1248.00,
+          "x": 16.00,
+          "y": 88.00,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"e0b1236b866fc72e47b7\",\"layouts\":[{\"id\":0,\"position\":{\"x\":712,\"y\":0,\"z\":2000,\"width\":552,\"height\":72}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Companies.Company Name\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Companies\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Company Name\"},\"Name\":\"Companies.Company Name\",\"NativeReferenceName\":\"Company Name\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Companies\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Company Name\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Adams Matkasse'\"}}]]}}}]}}}}]}}}",
+          "filters": "[]",
+          "height": 72.00,
+          "width": 552.00,
+          "x": 712.00,
+          "y": 0.00,
+          "z": 2000.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 3",
+      "displayOption": 1,
+      "filters": "[{\"name\":\"9af81c242d0095718d47\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Billing Agreements\"}},\"Property\":\"Agreement Id\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"b\",\"Entity\":\"Billing Agreements\",\"Type\":0}],\"Where\":[{\"Condition\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"b\"}},\"Property\":\"Agreement Id\"}},\"Right\":{\"Literal\":{\"Value\":\"1342589L\"}}}}}]},\"type\":\"Advanced\",\"howCreated\":1},{\"name\":\"3a9939572f1ed86036db\",\"expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Entity\":\"Date\"}},\"Property\":\"Week\"}},\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date\",\"Type\":0}],\"Where\":[{\"Condition\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Week\"}},\"Right\":{\"Literal\":{\"Value\":\"41L\"}}}}}]},\"type\":\"Advanced\",\"howCreated\":1}]",
+      "height": 720.00,
+      "name": "af36f1d29abc4caf8ee6",
+      "ordinal": 2,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"6951ed280def47ee4588\",\"layouts\":[{\"id\":0,\"position\":{\"x\":360,\"y\":80,\"z\":1000,\"width\":296,\"height\":304}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Order Measures.Number of Preselected Dishes\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"Order Measures\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Number of Preselected Dishes\"},\"Name\":\"Order Measures.Number of Preselected Dishes\",\"NativeReferenceName\":\"Number of Preselected Dishes\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Number of Preselected Dishes\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true}}",
+          "filters": "[]",
+          "height": 304.00,
+          "width": 296.00,
+          "x": 360.00,
+          "y": 80.00,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"89fcebff7e119539189f\",\"layouts\":[{\"id\":0,\"position\":{\"x\":40,\"y\":72,\"z\":0,\"width\":296,\"height\":304}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Order Measures.Share of Swapped Dishes\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"o\",\"Entity\":\"Order Measures\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Share of Swapped Dishes\"},\"Name\":\"Order Measures.Share of Swapped Dishes\",\"NativeReferenceName\":\"Share of Swapped Dishes\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"o\"}},\"Property\":\"Share of Swapped Dishes\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true}}",
+          "filters": "[]",
+          "height": 304.00,
+          "width": 296.00,
+          "x": 40.00,
           "y": 72.00,
           "z": 0.00
         }

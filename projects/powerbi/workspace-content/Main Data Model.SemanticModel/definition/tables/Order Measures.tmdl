@@ -206,8 +206,8 @@ table 'Order Measures'
 	measure 'Number of Ordered Dishes' =
 			CALCULATE(
 				COUNTROWS('Order Measures'),
-				'Order Measures'[is_dish] = TRUE()
-				&& 'Order Measures'[is_added_recipe] <> 1
+				'Order Measures'[is_dish] = TRUE(),
+				'Order Measures'[fk_dim_recipes] <> "0"
 				)
 		formatString: 0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
@@ -228,11 +228,20 @@ table 'Order Measures'
 	measure 'Share of Swapped Dishes' =
 			DIVIDE(
 				[Number of Swapped Out Dishes],
-				[Number of Ordered Dishes], BLANK()
+				[Number of Preselected Dishes], BLANK()
 				)
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Preselected Dishes' =
+			CALCULATE(
+				COUNTROWS('Order Measures'),
+				'Order Measures'[is_dish] = TRUE(),
+				'Order Measures'[fk_dim_recipes_preselected] <> "0"
+			)
+		formatString: 0
+		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
 	column order_status_id
 		dataType: string
