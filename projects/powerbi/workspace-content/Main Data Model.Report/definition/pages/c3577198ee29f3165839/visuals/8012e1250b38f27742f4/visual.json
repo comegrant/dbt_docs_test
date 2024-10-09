@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.2.0/schema.json",
-  "name": "a2cd3a5e9769ab5d81d2",
+  "name": "8012e1250b38f27742f4",
   "position": {
     "x": 0,
     "y": 0,
-    "z": 2,
-    "height": 292.38933754326314,
+    "z": 2000,
+    "height": 650.531301232619,
     "width": 1280.0777217803145
   },
   "visual": {
@@ -36,20 +36,6 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Removed Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Removed Dishes",
-              "nativeQueryRef": "Number of Removed Dishes"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
                   "Property": "Number of Ordered Dishes"
                 }
               },
@@ -64,25 +50,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Share of Swapped Dishes"
+                  "Property": "Number of Removed Dishes"
                 }
               },
-              "queryRef": "Order Measures.Share of Swapped Dishes",
-              "nativeQueryRef": "Share of Swapped Dishes"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Orders with Increased Portions Temp"
-                }
-              },
-              "queryRef": "Order Measures.Orders with increased portions",
-              "nativeQueryRef": "Number of Orders with Increased Portions"
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Number of Removed Dishes"
             },
             {
               "field": {
@@ -110,7 +82,8 @@
                 }
               },
               "queryRef": "Sum(Billing Agreements.Portions)",
-              "nativeQueryRef": "Portions"
+              "nativeQueryRef": "Portions BA",
+              "displayName": "Portions BA"
             },
             {
               "field": {
@@ -124,7 +97,8 @@
                 }
               },
               "queryRef": "Sum(Products.Portions)",
-              "nativeQueryRef": "Portions1"
+              "nativeQueryRef": "Portions Portions",
+              "displayName": "Portions Portions"
             },
             {
               "field": {
@@ -134,11 +108,39 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Orders"
+                  "Property": "Number of Orders with Adjusted Portions"
                 }
               },
-              "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders"
+              "queryRef": "Order Measures.Number of Orders with Adjusted Portions",
+              "nativeQueryRef": "Number of Orders with Adjusted Portions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders with Adjusted Meals"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders with Adjusted Meals",
+              "nativeQueryRef": "Number of Orders with Adjusted Meals"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Recipes"
+                    }
+                  },
+                  "Property": "Recipe Name"
+                }
+              },
+              "queryRef": "Recipes.Recipe Name",
+              "nativeQueryRef": "Recipe Name"
             },
             {
               "field": {
@@ -167,6 +169,20 @@
               },
               "queryRef": "Products.Product Variation Name",
               "nativeQueryRef": "Product Variation Name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "pk_fact_orders"
+                }
+              },
+              "queryRef": "Order Measures.pk_fact_orders",
+              "nativeQueryRef": "pk_fact_orders"
             }
           ]
         }
@@ -189,43 +205,6 @@
         ]
       }
     },
-    "objects": {
-      "columnWidth": [
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "309.3889122043124D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Order Measures.Orders with increased portions"
-          }
-        }
-      ]
-    },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b75fb29403d48b26e01a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Billing Agreements"
-              }
-            },
-            "Property": "Agreement Id"
-          }
-        },
-        "type": "Advanced",
-        "howCreated": "User"
-      }
-    ]
   }
 }

@@ -1,12 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.2.0/schema.json",
-  "name": "a2cd3a5e9769ab5d81d2",
+  "name": "99aea8ed176bfee4b354",
   "position": {
     "x": 0,
-    "y": 0,
-    "z": 2,
-    "height": 292.38933754326314,
-    "width": 1280.0777217803145
+    "y": 305.28127289856587,
+    "z": 3,
+    "height": 379.02899612687116,
+    "width": 1279.4372448445515
   },
   "visual": {
     "visualType": "tableEx",
@@ -167,6 +167,20 @@
               },
               "queryRef": "Products.Product Variation Name",
               "nativeQueryRef": "Product Variation Name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "pk_fact_orders"
+                }
+              },
+              "queryRef": "Order Measures.pk_fact_orders",
+              "nativeQueryRef": "pk_fact_orders"
             }
           ]
         }
@@ -178,10 +192,10 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Date"
+                    "Entity": "Products"
                   }
                 },
-                "Property": "Week"
+                "Property": "Product Name"
               }
             },
             "direction": "Ascending"
@@ -208,24 +222,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b75fb29403d48b26e01a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Billing Agreements"
-              }
-            },
-            "Property": "Agreement Id"
-          }
-        },
-        "type": "Advanced",
-        "howCreated": "User"
-      }
-    ]
   }
 }

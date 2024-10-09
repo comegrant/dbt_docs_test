@@ -231,9 +231,8 @@ table 'Order Measures'
 				[Number of Swapped Out Dishes],
 				[Number of Preselected Dishes], BLANK()
 				)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Number of Customers N Weeks Retention' =
 			VAR SelectedWeeks = SELECTEDVALUE('Order Measures'[Weeks Since First Order], 0)
@@ -260,6 +259,219 @@ table 'Order Measures'
 			)
 		formatString: 0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
+
+	measure 'Number of Orders with Swaps' = ```
+			
+			    CALCULATE(
+			        [Number of Orders], 
+			        'Order Measures'[is_added_recipe]=1 || 
+			        'Order Measures'[is_removed_recipe]=1
+			    )
+			```
+		formatString: 0
+		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
+
+	measure 'Share of Orders with Swaps' = ```
+			
+			    DIVIDE(
+			        [Number of Orders with Swaps],
+			        [Number of Orders],
+			        BLANK()
+			    )
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
+
+	measure 'Average Number of Swaps per Order' = ```
+			
+			    DIVIDE(
+			        [Number of Swapped Out Dishes],
+			        [Number of Orders],
+			        BLANK()
+			    )
+			```
+		lineageTag: 7a742dc2-ed19-4712-92c9-da29eefc46f2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Orders with Increased Portions Temp' = ```
+			
+			    SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Portions] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Portions] < Products[Portions]
+			            )
+			        )
+			    )
+			```
+		formatString: 0
+		isHidden
+		lineageTag: 9745d73b-7921-4a1e-872a-32a8fba755b1
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Decreased Portions Temp' = ```
+			
+			    SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Portions] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Portions] > Products[Portions]
+			            )
+			        )
+			    )
+			```
+		formatString: 0
+		isHidden
+		lineageTag: 4bb775d0-d97b-4820-b779-f06eab35630d
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Adjusted Portions Temp' =
+			
+			SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Portions] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Portions] <> Products[Portions]
+			            )
+			        )
+			    )
+		formatString: 0
+		isHidden
+		lineageTag: 3ade197b-b364-4253-ab19-9783ad6abcf8
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Increased Meals Temp' = ```
+			
+			    SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Meals] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Meals] < Products[Meals]
+			            )
+			        )
+			    )
+			```
+		formatString: 0
+		isHidden
+		lineageTag: 36228cb7-dcf9-496f-b5ef-a40dac85aaa4
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Decreased Meals Temp' = ```
+			
+			    SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Meals] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Meals] > Products[Meals]
+			            )
+			        )
+			    )
+			```
+		formatString: 0
+		isHidden
+		lineageTag: 3dbf3a9b-3d57-4650-aa89-692c42373d81
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Adjusted Meals Temp' = ```
+			
+			    SUMX(
+			        Products,
+			        CALCULATE(
+			            [Number of Orders],
+			            Products[Product Type Name] IN {"Mealbox","Financial"},
+			            'Billing Agreements'[Meals] <> BLANK(),
+			            FILTER(
+			                'Billing Agreements',
+			                'Billing Agreements'[Meals] <> Products[Meals]
+			            )
+			        )
+			    )
+			```
+		formatString: 0
+		isHidden
+		lineageTag: 96f803fd-aec4-4497-9822-5031838b8e54
+
+		changedProperty = IsHidden
+
+	measure 'Number of Orders with Increased Portions' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Portions] > 'Order Measures'[Subscribed Portions]
+			)
+		formatString: 0
+		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
+
+	measure 'Number of Orders with Decreased Portions' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Portions] < 'Order Measures'[Subscribed Portions]
+			)
+		formatString: 0
+		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
+
+	measure 'Number of Orders with Adjusted Portions' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Portions] <> 'Order Measures'[Subscribed Portions]
+			)
+		formatString: 0
+		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
+
+	measure 'Number of Orders with Increased Meals' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Meals] > 'Order Measures'[Subscribed Meals]
+			)
+		formatString: 0
+		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
+
+	measure 'Number of Orders with Decreased Meals' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Meals] < 'Order Measures'[Subscribed Meals]
+			)
+		formatString: 0
+		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
+
+	measure 'Number of Orders with Adjusted Meals' =
+			
+			CALCULATE(
+			    [Number of Orders],
+			    'Order Measures'[Ordered Meals] <> 'Order Measures'[Subscribed Meals]
+			)
+		formatString: 0
+		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
 
 	column order_status_id
 		dataType: string
@@ -777,6 +989,80 @@ table 'Order Measures'
 		lineageTag: 0274f15c-78f5-4312-a396-c53b45da838d
 		summarizeBy: none
 		sourceColumn: Weeks Since First Order
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subscribed Portions' =
+			
+			IF(
+			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"},
+			    RELATED('Billing Agreements'[Portions]),
+			    BLANK()
+			)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 46ca213b-4807-4b04-adca-822ff2a08bab
+		summarizeBy: sum
+		isDataTypeInferred
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ordered Portions' =
+			
+			IF(
+			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"}
+			    && 'Order Measures'[Subscribed Portions] <> BLANK(),
+			    RELATED('Products'[Portions]),
+			    BLANK()
+			)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5cc68fcb-a682-43d2-a0d2-928edf2801ff
+		summarizeBy: sum
+		isDataTypeInferred
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subscribed Meals' =
+			
+			IF(
+			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"},
+			    RELATED('Billing Agreements'[Meals]),
+			    BLANK()
+			)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 11e246c6-e3fb-47c5-8d9c-68c35d7b6f18
+		summarizeBy: sum
+		isDataTypeInferred
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ordered Meals' =
+			
+			IF(
+			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"}
+			    && 'Order Measures'[Subscribed Meals] <> BLANK(),
+			    INT(RELATED('Products'[Meals])),
+			    BLANK()
+			)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bce194af-82e9-4b27-8da3-778fca63d2af
+		summarizeBy: sum
+		isDataTypeInferred
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

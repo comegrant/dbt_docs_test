@@ -138,19 +138,6 @@
             }
           ]
         }
-      },
-      {
-        "name": "3b117239df4f7ffd9b1a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Companies"
-              }
-            },
-            "Property": "Company Name"
-          }
-        }
       }
     ]
   }
