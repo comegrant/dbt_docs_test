@@ -1,16 +1,15 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.2.0/schema.json",
-  "name": "e64924d7d27b111754c4",
+  "name": "fa54c9b372452533dd29",
   "position": {
-    "x": 21.075921685662095,
-    "y": 139.10108312536983,
+    "x": 37.213004823811893,
+    "y": 44.301196218823684,
     "z": 0,
-    "height": 497.39175178162543,
-    "width": 1220.2958655998352
+    "height": 625.53289060979046,
+    "width": 1212.080728547016
   },
   "visual": {
-    "visualType": "lineChart",
-    "autoSelectVisualType": true,
+    "visualType": "columnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -32,6 +31,24 @@
             }
           ]
         },
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Recipes"
+                    }
+                  },
+                  "Property": "Recipe Main Ingredient Name"
+                }
+              },
+              "queryRef": "Recipes.Recipe Main Ingredient Name",
+              "nativeQueryRef": "Recipe Main Ingredient Name"
+            }
+          ]
+        },
         "Y": {
           "projections": [
             {
@@ -42,11 +59,22 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Orders with Adjusted Portions Temp"
+                  "Property": "Number of Orders"
                 }
               },
-              "queryRef": "Order Measures.Number of Orders with Adjusted Portions",
-              "nativeQueryRef": "Number of Orders with Adjusted Portions"
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "NativeVisualCalculation": {
+                  "Language": "dax",
+                  "Expression": "CALCULATE([Number of Orders],[Recipe Main Ingredient Name]=\"Fisk\")",
+                  "Name": "Orders with fish"
+                }
+              },
+              "queryRef": "select",
+              "nativeQueryRef": "Orders with fish"
             }
           ]
         }
@@ -74,58 +102,21 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "842a34e7e742f1c4f132",
+        "name": "6e430c7f073ed73bf4b2",
+        "ordinal": 2,
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Companies"
+                "Entity": "Recipes"
               }
             },
-            "Property": "Company Name"
+            "Property": "Recipe Name"
           }
-        },
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "c",
-              "Entity": "Companies",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "c"
-                          }
-                        },
-                        "Property": "Company Name"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'Adams Matkasse'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
         },
         "howCreated": "User"
       }
-    ]
+    ],
+    "filterSortOrder": "Custom"
   }
 }

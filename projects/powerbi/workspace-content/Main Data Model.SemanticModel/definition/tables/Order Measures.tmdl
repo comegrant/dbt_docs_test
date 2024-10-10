@@ -255,7 +255,9 @@ table 'Order Measures'
 			CALCULATE(
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
-				'Order Measures'[fk_dim_recipes_preselected] <> "0"
+				'Order Measures'[fk_dim_recipes_preselected] <> "0",
+				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
+				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
 			)
 		formatString: 0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
@@ -472,6 +474,10 @@ table 'Order Measures'
 			)
 		formatString: 0
 		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
+
+	measure 'Diff Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
+		formatString: 0
+		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
 
 	column order_status_id
 		dataType: string

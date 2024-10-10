@@ -20633,7 +20633,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Is OneSub"
+			          "ConceptualProperty": "Is OneSub Raw"
 			        }
 			      },
 			      "State": "Generated",

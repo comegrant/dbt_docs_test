@@ -297,12 +297,31 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Is OneSub'
+	column 'Is OneSub Raw'
 		dataType: boolean
+		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
 		summarizeBy: none
-		sourceColumn: Is OneSub
+		sourceColumn: Is OneSub Raw
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is OneSub' = ```
+			
+			    IF(
+			        'Billing Agreements'[Is OneSub Raw] = BLANK(),
+			        FALSE(),
+			        'Billing Agreements'[Is OneSub Raw]
+			    )
+			```
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b29ab713-ee0a-43e4-ae82-17ff2ffee2d2
+		summarizeBy: none
+		isDataTypeInferred
 
 		annotation SummarizationSetBy = Automatic
 
@@ -315,27 +334,27 @@ table 'Billing Agreements'
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data],
 				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{
-						{"billing_agreement_id", "Agreement Id"},
-						{"payment_method", "Payment Method"},
-						{"signup_source", "Signup Source"},
-						{"signup_salesperson", "Signup Sales Person"},
-						{"billing_agreement_status_name", "Billing Agreement Status"},
-						{"signup_date", "Signup Date"},
-						{"signup_week", "Signup Week"},
-						{"signup_month", "Signup Month"},
-						{"signup_quarter", "Signup Quarter"},
-						{"signup_year", "Signup Year"},
-						{"first_menu_week_monday_date", "First Menu Date"},
-						{"first_menu_week_week", "First Menu Week"},
-						{"first_menu_week_month", "First Menu Month"},
-						{"first_menu_week_quarter", "First Menu Quarter"},
-						{"first_menu_week_year", "First Menu Year"},
-						{"sales_point_id", "Sales Point Id"},
-						{"is_onesub", "Is OneSub"},
-						{"meals", "Meals"},
-						{"portions", "Portions"},
-						{"product_name", "Subscribed Mealbox"}
-					})
+						{"billing_agreement_id", "Agreement Id"}, 
+						{"payment_method", "Payment Method"}, 
+						{"signup_source", "Signup Source"}, 
+						{"signup_salesperson", "Signup Sales Person"}, 
+						{"billing_agreement_status_name", "Billing Agreement Status"}, 
+						{"signup_date", "Signup Date"}, 
+						{"signup_week", "Signup Week"}, 
+						{"signup_month", "Signup Month"}, 
+						{"signup_quarter", "Signup Quarter"}, 
+						{"signup_year", "Signup Year"}, 
+						{"first_menu_week_monday_date", "First Menu Date"}, 
+						{"first_menu_week_week", "First Menu Week"}, 
+						{"first_menu_week_month", "First Menu Month"}, 
+						{"first_menu_week_quarter", "First Menu Quarter"}, 
+						{"first_menu_week_year", "First Menu Year"}, 
+						{"sales_point_id", "Sales Point Id"}, 
+						{"is_onesub", "Is OneSub Raw"},
+						{"meals", "Meals"}, 
+						{"portions", "Portions"}, 
+						{"product_name", "Subscribed Mealbox"}}
+					)
 				in
 				    #"Renamed Columns"
 
