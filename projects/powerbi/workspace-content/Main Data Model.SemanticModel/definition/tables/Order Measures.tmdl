@@ -251,6 +251,13 @@ table 'Order Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: ed8fbdf7-0c62-49b8-826e-e797f41c2be1
 
+	measure 'Number of Orders All Recipes' = 
+			CALCULATE(
+				[Number of Orders],
+				ALL(Recipes)
+			)
+		formatString: 0
+
 	measure 'Number of Preselected Dishes' =
 			CALCULATE(
 				COUNTROWS('Order Measures'),
