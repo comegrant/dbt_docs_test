@@ -1261,6 +1261,20 @@ async def run_preselector(
 
     recipe_features = normalized_recipe_features
 
+    if recipe_features.height < customer.number_of_recipes:
+        recipes_of_interest = (
+            set(recipes["main_recipe_id"].to_list())
+            - set(recipe_features["main_recipe_id"].to_list())
+        )
+        logger.error(
+            f"Number of recipes are less then expected {recipe_features.height}. "
+            f"Most likely due to missing features in recipes: ({recipes_of_interest})"
+        )
+        return (
+            recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
+            compliance
+        )
+
     if should_explain:
         import streamlit as st
         st.write(recipe_features)
