@@ -8,7 +8,7 @@ baskets as (
 
 , basket_products as (
 
-    select * from {{ ref('cms__billing_agreement_basket_products_list') }}
+    select * from {{ ref('cms__billing_agreement_basket_products') }}
 )
 
 , billing_agreements as (
@@ -47,8 +47,18 @@ baskets as (
 
     select
 
-        billing_agreement_basket_id
-        , basket_products_list
+        billing_agreement_basket_product_id
+        , billing_agreement_basket_id
+        , product_variation_id
+        , product_delivery_week_type_id
+
+        {# numerics #}
+        , product_variation_quantity
+        
+        {# booleans #}
+        , is_extra_product
+        
+        {# scd #}
         , valid_from
         , valid_to
         
@@ -70,6 +80,7 @@ baskets as (
 
 )
 
+
 , add_scd1 as (
 
     select
@@ -80,26 +91,4 @@ baskets as (
         on scd2_tables_joined.billing_agreement_id = billing_agreements_scd1.billing_agreement_id
 )
 
-, explode_products as (
-
-    select 
-    billing_agreement_basket_id
-    , company_id
-    , billing_agreement_id
-    , shipping_address_id
-    , basket_delivery_week_type_id
-    , timeblock_id
-    , is_default_basket
-    , is_active_basket
-    , basket_product_object.product_variation_id
-    , basket_product_object.product_variation_quantity
-    , basket_product_object.is_extra as is_extra_product
-    , valid_from
-    , valid_to
-
-    from add_scd1
-    lateral view explode(basket_products_list) as basket_product_object
-
-)
-
-select * from explode_products
+select * from add_scd1

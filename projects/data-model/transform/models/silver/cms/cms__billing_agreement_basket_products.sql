@@ -24,7 +24,7 @@ source as (
         
         {# scd #}
         , dbt_valid_from as valid_from
-        , {{ get_scd_valid_to('dbt_valid_from', 'billing_agreement_basket_id') }} as valid_to
+        , {{ get_scd_valid_to('dbt_valid_from') }} as valid_to
         
         {# system #}
         , created_at as source_created_at

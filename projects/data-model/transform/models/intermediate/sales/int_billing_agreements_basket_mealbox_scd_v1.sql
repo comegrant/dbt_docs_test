@@ -18,33 +18,21 @@ basket_products as (
         basket_products.billing_agreement_id
         , basket_products.valid_from
         , basket_products.valid_to
-        , max(products.product_id) as max_product_id
-        , max(products.meals) as meals
-        , max(products.portions) as portions
+        , products.product_name
+        , case 
+            when products.product_id = 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
+            then true
+            else false
+        end as is_onesub
+        , products.meals
+        , products.portions
     from basket_products
     left join products
         on basket_products.company_id = products.company_id
         and basket_products.product_variation_id = products.product_variation_id
     where products.product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' --Mealbox
-    group by 1,2,3
+    and is_active_basket = true
 
 )
 
-, add_is_onesub_flag as (
-    select
-    billing_agreement_id
-    , valid_from
-    , valid_to
-    , 'Unknown' as product_name
-    , case
-        when max_product_id = 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
-        then true
-        else false
-    end as is_onesub
-    , meals
-    , portions
-    from basket_products_filter_and_join_mealbox
-
-)
-
-select * from add_is_onesub_flag
+select * from basket_products_filter_and_join_mealbox
