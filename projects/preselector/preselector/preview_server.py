@@ -114,6 +114,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     logging.basicConfig(level=logging.INFO)
 
+    logging.getLogger("azure").setLevel(logging.ERROR)
+    logging.getLogger("aligned").setLevel(logging.ERROR)
+
     with suppress(ValidationError):
         # Adding data dog to the root
         datadog_tags = {
@@ -156,7 +159,7 @@ async def generate_preview(
     An endpoint used to preview the output of the pre-selector.
     """
     req = body.request()
-    with duration("Generate"):
+    with duration("Generate", should_log=True):
         response = await run_preselector_for_request(
             req,
             store

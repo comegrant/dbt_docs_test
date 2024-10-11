@@ -540,6 +540,7 @@ async def missing_attributes() -> pl.DataFrame:
 
     df = pl.DataFrame(data_points)
     try:
+        st.write(PredefinedVectors.metadata.source)
         existing = (
             await PredefinedVectors.query().select_columns(["company_id", "concept_id", "vector_type"]).to_polars()
         )

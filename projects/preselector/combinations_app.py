@@ -116,6 +116,11 @@ async def main() -> None:
     if not selected_attributes:
         return
 
+    st.write([
+        att.id
+        for att in selected_attributes
+    ])
+
     with st.spinner("Loading Data"):
 
         cached_store = await load_cache(

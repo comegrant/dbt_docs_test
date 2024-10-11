@@ -132,7 +132,6 @@ def select_next_vector(
                 recipe_id=potential_vectors[exclude_column]
             )
             .sort("total_error", descending=False)
-            .head()
         )
 
         explaination = (
@@ -563,6 +562,7 @@ def handle_calorie_concept(
 ) -> tuple[pl.DataFrame, pl.DataFrame]:
 
     low_cal_id = "FD661CAD-7F45-4D02-A36E-12720D5C16CA"
+    vegetarian_id = "6A494593-2931-4269-80EE-470D38F04796"
 
     if concept_ids == [low_cal_id]:
         return (
@@ -574,7 +574,7 @@ def handle_calorie_concept(
             )
         )
 
-    if low_cal_id not in concept_ids:
+    if vegetarian_id not in concept_ids and low_cal_id not in concept_ids:
         return (
             target.with_columns(
                 is_low_calorie=pl.lit(0)
@@ -874,6 +874,30 @@ async def run_preselector_for_request(
         all_selected_main_recipe_ids = quarentined_recipes.to_dicts()[0]["main_recipe_ids"] or []
         assert isinstance(all_selected_main_recipe_ids, list)
 
+
+    subscription_variation = sorted(request.concept_preference_ids)
+    sorted_taste_pref = sorted(request.taste_preference_ids)
+
+    if not request.has_data_processing_consent and request.agreement_id == 0 and len(request.compute_for) == 1:
+        # Super fast cache for
+        cached_value = cached_output(
+            subscription_variation,
+            request.compute_for[0],
+            request.portion_size,
+            request.number_of_recipes,
+            sorted_taste_pref,
+            request.company_id
+        )
+        if cached_value:
+            return PreselectorResult(
+                success=[cached_value],
+                failures=[],
+                request=request,
+                model_version=model_version(),
+                generated_at=datetime.now(tz=timezone.utc),
+            )
+
+
     cost_of_food = await cost_of_food_target_for(request, store)
 
     assert cost_of_food.height == len(request.compute_for), (
@@ -901,8 +925,6 @@ async def run_preselector_for_request(
         st.write("Target vector")
         st.write(target_vector)
 
-    subscription_variation = sorted(request.concept_preference_ids)
-    sorted_taste_pref = sorted(request.taste_preference_ids)
 
     failed_weeks: list[PreselectorFailure] = []
 
@@ -1188,6 +1210,9 @@ async def run_preselector(
             store=store,
         )
 
+    if should_explain:
+        import streamlit as st
+        st.write(normalized_recipe_features)
 
     if (
         customer.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
@@ -1235,6 +1260,11 @@ async def run_preselector(
         )
 
     recipe_features = normalized_recipe_features
+
+    if should_explain:
+        import streamlit as st
+        st.write(recipe_features)
+
 
     if recipe_features.is_empty():
         raise ValueError(

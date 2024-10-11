@@ -208,4 +208,4 @@ def deploy_all(tag: str, env: str) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="dev-latest", env="test")
+    deploy_all(tag="03f5fbbc6dd06cfb3ee1174925ae3a822720f901", env="prod")

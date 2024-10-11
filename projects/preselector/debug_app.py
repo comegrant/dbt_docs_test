@@ -83,14 +83,10 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     if not year_week:
         return None
 
-    quarentined_recipes = []
-
-    for yw in response.year_weeks:
-        if yw.year * 100 + yw.week < year_week.year * 100 + year_week.week:
-            quarentined_recipes.extend(yw.main_recipe_ids)
+    quarentined_recipes = list(set(year_week.quarantined_recipe_ids or []) - set(year_week.main_recipe_ids))
 
     st.write("Quarentined Dishes")
-    st.write(year_week.quarantined_recipe_ids or quarentined_recipes)
+    st.write(quarentined_recipes)
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
@@ -112,7 +108,7 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
                 pref.model_dump() for pref in response.taste_preferences
             ],
             concept_preference_ids=response.concept_preference_ids,
-            number_of_recipes=4,
+            number_of_recipes=len(year_week.main_recipe_ids),
             portion_size=year_week.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
