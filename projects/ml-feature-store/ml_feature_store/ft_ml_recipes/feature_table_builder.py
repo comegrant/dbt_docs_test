@@ -1,9 +1,9 @@
 from typing import Literal
 
-from databricks.feature_engineering import FeatureEngineeringClient
 from pydantic import BaseModel
 from pyspark.sql import SparkSession
 
+from databricks.feature_engineering import FeatureEngineeringClient
 from ml_feature_store.common.data import get_data_from_catalog, save_df_as_feature_table
 from ml_feature_store.feature_tables import ft_ml_recipes_configs
 from ml_feature_store.ft_ml_recipes.feature_generator import (
@@ -18,6 +18,7 @@ class Args(BaseModel):
 
 
 def build_feature_table(args: Args, spark: SparkSession) -> None:
+    # build feature table
     table_config = ft_ml_recipes_configs
 
     df = get_data_from_catalog(
@@ -41,4 +42,5 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
         feature_table_name=table_config.feature_table_name,
         feature_table_schema=table_config.ml_feature_schema,
         primary_keys=table_config.primary_keys,
+        is_drop_existing=True,
     )

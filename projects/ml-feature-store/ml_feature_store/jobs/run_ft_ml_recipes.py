@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 spark = create_spark_context()
+# get environment variable
 env = dbutils.widgets.get("env")
 args = Args(env=env)
 build_feature_table(args=args, spark=spark)

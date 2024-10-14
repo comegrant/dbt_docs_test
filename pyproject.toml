@@ -86,3 +86,13 @@ extend-exclude = ["**/*.ipynb"]
     # Magic numbers
     "PLR2004"
 ]
+
+"**/ml-feature-store/**.py" = [
+    # Sort import
+    "I001"
+]
+
+"**/dishes-forecasting/**.py" = [
+    # Sort import
+    "I001"
+]
