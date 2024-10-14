@@ -189,3 +189,5 @@ crash.log
 crash.*.log
 
 .databricks
+databricks/*
+mlruns/*

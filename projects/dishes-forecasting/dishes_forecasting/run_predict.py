@@ -1,35 +1,58 @@
+from datetime import date
 from typing import Literal
 
+import mlflow
 from constants.companies import get_company_by_code
-from databricks.feature_store import FeatureStoreClient
-from pydantic import BaseModel, Field
-from pyspark.sql import DataFrame
+from pydantic import BaseModel
+from pyspark.sql import DataFrame, SparkSession
+from time_machine.forecasting import get_forecast_start
 
-from dishes_forecasting.paths import CONFIG_DIR
-from dishes_forecasting.predict.get_data import download_weekly_variations
-from dishes_forecasting.utils import read_yaml
+from dishes_forecasting.predict.configs import get_configs
+from dishes_forecasting.predict.data import create_pred_dataset
+from dishes_forecasting.predict.postprocessor import postprocess_predictions, save_predictions
+from dishes_forecasting.predict.predictor import make_predictions
+from dishes_forecasting.train.configs.feature_lookup_config import feature_lookup_config_list
 
 
 class Args(BaseModel):
     company: Literal["LMK", "AMK", "GL", "RT"]
     env: Literal["dev", "prod"]
-    prediction_date: str
-    num_weeks: int = Field(gt=10, lt=21)
+    forecast_date: str = None
+    is_running_on_databricks: bool
+    profile_name: str = "sylvia-liu"
 
 
-def run_predict(args: Args) -> DataFrame:
+def run_predict(args: Args, spark: SparkSession) -> DataFrame:
     company = get_company_by_code(args.company)
-    df = download_weekly_variations(
-        company=company,
-        prediction_date=args.prediction_date,
-        num_weeks=int(args.num_weeks),
+    pred_configs = get_configs(company_code=args.company)
+    if (args.forecast_date is None) or args.forecast_date == "":
+        forecast_date = date.today()
+    year, week = get_forecast_start(
+        cut_off_day=company.cut_off_week_day,
+        forecast_date=forecast_date
+    )
+    min_yyyyww = year * 100 + week
+    df_pred, df_left = create_pred_dataset(
+        spark=spark,
         env=args.env,
+        min_yyyyww=min_yyyyww,
+        company=company,
+        feature_lookup_config_list=feature_lookup_config_list
+    )
+    if args.is_running_on_databricks:
+        mlflow.set_tracking_uri("databricks")
+    else:
+        mlflow.set_tracking_uri(f"databricks://{args.profile_name}")
+    loaded_model = mlflow.pyfunc.load_model(pred_configs.model_uri)
+    df_predictions = make_predictions(model=loaded_model, df_pred=df_pred)
+
+    df_processed = postprocess_predictions(df_predictions=df_predictions)
+    save_predictions(
+        spark=spark,
+        df_to_write=df_processed,
+        env=args.env,
+        table_schema="mloutputs",
+        table_name="ml_dishes_ratios"
     )
 
-    predict_configs = read_yaml(directory=CONFIG_DIR, filename="predict.yml")
-    predict_config = predict_configs[company.company_code]
-    model_uri = predict_config["model_uri"]
-
-    fs = FeatureStoreClient()
-    scores_df = fs.score_batch(model_uri, df)
-    return scores_df
+    return df_predictions

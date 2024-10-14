@@ -1,4 +1,0 @@
----
-GL:
-  model_name: dishes_forecasting_model
-  model_uri: runs:/3a90b77b381f4c8d9b44299a4bf1df10/dishes_forecasting_model

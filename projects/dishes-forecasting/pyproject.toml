@@ -18,6 +18,11 @@ kaleido = "0.2.1"
 time-machine = {path = "../../packages/time-machine", develop = true}
 pycaret = "^3.3.2"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
+databricks-connect = "14.3"
+ipykernel = "^6.29.5"
+pydantic = "^2.9.1"
+xgboost = "^2.1.1"
+optuna = "^4.0.0"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"
