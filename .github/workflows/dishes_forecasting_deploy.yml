@@ -15,12 +15,12 @@ jobs:
     with:
       working-directory: projects/dishes-forecasting
       registry: ${{ vars.CONTAINER_REGISTRY }}
-      image-name: ml-feature-store-databricks
-      dockerfile: docker/Dockerfile.databricks
+      image-name: dishes-forecasting-databricks
+      dockerfile: Dockerfile.databricks
       push-latest: true
     secrets: inherit
 
-  deploy-ml-feature-store:
+  deploy-dishes-forecasting:
     strategy:
       matrix:
         target: [Test, Production]
@@ -29,7 +29,7 @@ jobs:
     needs: build-dishes-forecasting-databricks-image
     uses: ./.github/workflows/cd_dab_template.yml
     with:
-      working-directory: projects/ml-feature-store
+      working-directory: projects/dishes-forecasting
       target-env: ${{matrix.target}}
 
       # Setting the docker image which is needed for python projects
