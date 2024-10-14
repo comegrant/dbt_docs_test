@@ -26,3 +26,13 @@ jobs:
         dockerfile: Dockerfile.databricks
         tag: dev-latest
     secrets: inherit
+
+  deploy-to-dev:
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+        working-directory: projects/dishes-forecasting
+        target-env: Development
+
+        # Setting the docker image which is needed for python projects
+        extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/dishes-forecasting-databricks:dev-latest"'
+    secrets: inherit
