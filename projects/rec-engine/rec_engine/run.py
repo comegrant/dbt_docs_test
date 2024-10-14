@@ -178,7 +178,7 @@ async def run(
         logger=logger,
     ):
         logger.info(ranking.head())
-        await rec_store.insert_predictions(ranking)
+        await rec_store.upsert_predictions(ranking)
 
 
 def format_ranking_recommendations(

@@ -18,7 +18,8 @@ from rec_engine.run import (
 
 @pytest_asyncio.fixture
 async def model_contracts() -> FeatureStore:
-    from aligned.data_source.batch_data_source import BatchDataSource, DummyDataSource
+    from aligned.data_source.batch_data_source import BatchDataSource
+    from aligned.sources.random_source import RandomDataSource
 
     store = recommendation_feature_contracts()
 
@@ -45,7 +46,7 @@ async def model_contracts() -> FeatureStore:
         if location in location_source_map:
             continue
 
-        location_source_map[location] = DummyDataSource()
+        location_source_map[location] = RandomDataSource()
 
     return store.with_source(
         BatchFeatureSource(
