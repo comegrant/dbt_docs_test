@@ -199,16 +199,34 @@ Identifier for an ingredient (connected to a supplier)
 Used to join ingredient ids across different databases 
 
 {% enddocs %}
-s
+
+{% docs column__chef_ingredient_section_id %}  
+
+Identifier for each ingredient section, where an ingredient section is i.e. "pan-fried vegetables" contains the ingredient "carrots" and "broccoli"
+
+{% enddocs %}
+
+{% docs column__chef_ingredient_id %}
+
+Identifier for chef ingredient, which is an instance of generic ingredient with a 1-1 mapping with order ingredient.
+
+{% enddocs %}
+
+{% docs column__ingredient_type %}
+
+Parameter for production-line placement of products
+
+{% enddocs %}
+
+{% docs column__is_external_taxonomy %} 
+
+If the taxonomy is used in frontend, i.e. a user-friendly taxonomy
+
+{% enddocs %}
+
 ## Undocumented fields
 
-{% docs column__chef_ingredient_section_id %}  {% enddocs %}
 
-{% docs column__chef_ingredient_id %}  {% enddocs %}
-
-{% docs column__ingredient_type %}  {% enddocs %}
-
-{% docs column__is_external_taxonomy %}  {% enddocs %}
 
 
 

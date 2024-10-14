@@ -458,7 +458,7 @@ models:
         description: "{{ doc('column__generic_ingredient_name') }}"
 
   - name: pim__chef_ingredient_sections
-    description: ""
+    description: "Table mapping chef ingredient sections to recipe portions"
 
     columns:
       - name: chef_ingredient_section_id
@@ -470,7 +470,7 @@ models:
         description: "{{ doc('column__recipe_portion_id') }}"
 
   - name: pim__chef_ingredients
-    description: ""
+    description: "Table containing chef ingredient information (an instance of generic ingredient)"
 
     columns:
       - name: chef_ingredient_id
