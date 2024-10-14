@@ -172,6 +172,7 @@ async def generate_preview(
             model_version=response.model_version
         ).model_dump()
     elif response.failures:
+        logger.error(f"Failed for request {body}")
         response = response.failures[0].model_dump()
     else:
         raise ValueError("Found no successful or failure response. This should never happen.")

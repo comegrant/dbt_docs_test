@@ -259,18 +259,31 @@ async def find_best_combination(
     if preselected_recipe_ids is not None:
         final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
 
+
         if should_explain:
-            current_vector = await compute_basket(final_combination)
+            current_vector = await compute_basket(
+                final_combination.with_columns(
+                    basket_id=pl.lit(1)
+                )
+            )
 
         raw_recipe_nudge = recipes_to_choose_from.filter(
             pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
         ).with_columns(basket_id=pl.col("recipe_id"))
 
         raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
+
         recipe_nudge = (
             await compute_basket(raw_recipe_nudge)
         ).sort("basket_id", descending=False)
-        n_recipes_to_add = number_of_recipes - len(preselected_recipe_ids)
+
+        recipes_to_choose_from = recipes_to_choose_from.filter(
+            pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
+        )
+        if len(preselected_recipe_ids) != final_combination.height:
+            logger.error(f"We might be missing some features for ({preselected_recipe_ids})")
+
+        n_recipes_to_add = number_of_recipes - final_combination.height
     else:
         n_recipes_to_add = number_of_recipes
         recipe_nudge = (
@@ -327,6 +340,8 @@ async def find_best_combination(
         )
 
         raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
+        import streamlit as st
+        st.write(raw_recipe_nudge)
 
         # Sorting in order to get deterministic results
         recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort(

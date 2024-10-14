@@ -48,7 +48,6 @@ def deploy_preselector(
     env: str,
     image: str,
     resource_group: str,
-    topic_name: str
 ) -> None:
     from dotenv import load_dotenv
     load_dotenv(".env")
@@ -58,75 +57,86 @@ def deploy_preselector(
         docker_registry_username="bhregistry"
     ) # type: ignore[reportGeneralTypeIssues]
 
-    if env != "prod":
-        assert env in deploy_settings.user_assigned_identity_resource_id
-
     client = ContainerInstanceManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id=deploy_settings.subscription_id
     )
 
-    environment_variables: list[EnvironmentVariable] = []
+    def process_container(
+        topic_name: str,
+        container_name: str
+    ) -> Container:
 
-    settings = [
-        ProcessStreamSettings( # type: ignore[reportGeneralTypeIssues]
-            service_bus_subscription_name=company,
-            service_bus_namespace=service_bus_namespace,
-            service_bus_should_write=True,
-            service_bus_connection_string=None,
-            service_bus_success_topic_name=topic_name
-        ),
-        DataDogConfig( # type: ignore[reportGeneralTypeIssues]
-            datadog_service_name="preselector",
-            datadog_tags=f"subscription:{company}",
-        ),
-        RuntimeEnvs(
-            datalake_env=env,
-            env=env
-        )
-    ]
+        if env != "prod":
+            assert env in deploy_settings.user_assigned_identity_resource_id
 
-    for setting in settings:
-        for key, value in setting.model_dump().items():
-            if value is None:
-                continue
+        environment_variables: list[EnvironmentVariable] = []
 
-            if isinstance(value, SecretStr):
-                environment_variables.append(
-                    EnvironmentVariable(
-                        name=key.upper(),
-                        secure_value=value.get_secret_value()
+        settings = [
+            ProcessStreamSettings( # type: ignore[reportGeneralTypeIssues]
+                service_bus_subscription_name=company,
+                service_bus_namespace=service_bus_namespace,
+                service_bus_should_write=True,
+                service_bus_connection_string=None,
+                service_bus_request_topic_name=topic_name
+            ),
+            DataDogConfig( # type: ignore[reportGeneralTypeIssues]
+                datadog_service_name="preselector",
+                datadog_tags=f"subscription:{company}",
+            ),
+            RuntimeEnvs(
+                datalake_env=env,
+                env=env
+            )
+        ]
+
+        for setting in settings:
+            for key, value in setting.model_dump().items():
+                if value is None:
+                    continue
+
+                if isinstance(value, SecretStr):
+                    environment_variables.append(
+                        EnvironmentVariable(
+                            name=key.upper(),
+                            secure_value=value.get_secret_value()
+                        )
                     )
-                )
-            else:
-                environment_variables.append(
-                    EnvironmentVariable(
-                        name=key.upper(),
-                        value=value
+                else:
+                    environment_variables.append(
+                        EnvironmentVariable(
+                            name=key.upper(),
+                            value=value
+                        )
                     )
+
+
+        return Container(
+            name=container_name,
+            image=image,
+            environment_variables=environment_variables,
+            ports=[],
+            command=[ "/bin/bash", "-c", "python -m preselector.process_stream" ],
+            resources=ResourceRequirements(
+                requests=ResourceRequests(
+                    memory_in_gb=8,
+                    cpu=1.0,
+                    gpu=None
                 )
-
-
-
-
-    worker = Container(
-        name=name,
-        image=image,
-        environment_variables=environment_variables,
-        ports=[],
-        command=[ "/bin/bash", "-c", "python -m preselector.process_stream" ],
-        resources=ResourceRequirements(
-            requests=ResourceRequests(
-                memory_in_gb=8,
-                cpu=1.0,
-                gpu=None
             )
         )
-    )
-
 
     group = ContainerGroup(
-        containers=[worker],
+        containers=[
+            process_container(
+                topic_name="priority-deviation-request",
+                container_name=f"{name}-live"
+            ),
+            process_container(
+                topic_name="deviation-request",
+                container_name=f"{name}-batch"
+            )
+        ],
         os_type=OperatingSystemTypes.LINUX,
         restart_policy=ContainerGroupRestartPolicy.ON_FAILURE,
         identity=ContainerGroupIdentity(
@@ -147,7 +157,7 @@ def deploy_preselector(
 
     logger.info("deleting resource")
     poller = client.container_groups.begin_delete(
-       resource_group_name=resource_group, container_group_name=worker.name)
+       resource_group_name=resource_group, container_group_name=name)
 
     poller.wait()
     logger.info("Waiting for 10 secs")
@@ -159,53 +169,44 @@ def deploy_preselector(
     logger.info("creating resource")
     client.container_groups.begin_create_or_update(
         resource_group_name=resource_group,
-        container_group_name=worker.name,
+        container_group_name=name,
         container_group=group
     )
 
 def deploy_all(tag: str, env: str) -> None:
     company_names = [
         "godtlevert",
-        "retnemt",
         "adams",
-        "linas"
+        "linas",
+        "retnemt",
     ]
-
-    priority = {
-        # "": "deviation-request",
-        "priority": "priority-deviation-request"
-    }
 
     bus_namespace = {
         "test": "gg-deviation-service-qa.servicebus.windows.net",
         "prod": "gg-deviation-service-prod.servicebus.windows.net"
     }
 
+
     for company in company_names:
-        for queue, topic_name in priority.items():
 
-            logger.info(company)
-            name = f"preselector-{company}-worker"
-            if company == "godtlevert":
-                name = "preselector-gl-worker"
+        logger.info(company)
+        name = f"preselector-{company}-worker"
+        if company == "godtlevert":
+            name = "preselector-gl-worker"
 
-            if queue:
-                name += f"-{queue}"
+        name += f"-{env}"
+        logger.info(name)
 
-            name += f"-{env}"
-            logger.info(name)
-
-            deploy_preselector(
-                name=name,
-                company=company,
-                service_bus_namespace=bus_namespace[env],
-                env=env,
-                image=f"bhregistry.azurecr.io/preselector:{tag}",
-                resource_group=f"rg-chefdp-{env}",
-                topic_name=topic_name
-            )
+        deploy_preselector(
+            name=name,
+            company=company,
+            service_bus_namespace=bus_namespace[env],
+            env=env,
+            image=f"bhregistry.azurecr.io/preselector:{tag}",
+            resource_group=f"rg-chefdp-{env}",
+        )
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="03f5fbbc6dd06cfb3ee1174925ae3a822720f901", env="prod")
+    deploy_all(tag="ef50c58af5969c4488b65d7d5c2602539315d998", env="prod")

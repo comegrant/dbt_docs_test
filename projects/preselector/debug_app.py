@@ -158,7 +158,7 @@ async def debug_app() -> None:
     if not responses:
         return
 
-    request = responses[0]
+    request = responses[-1]
     expected_recipes = []
     # selection = select(responses)
     #
@@ -179,6 +179,7 @@ async def debug_app() -> None:
 
 
     if not run_response.success:
+        st.error(run_response.failures[0])
         return
 
     if (set(run_response.success[0].main_recipe_ids) - set(expected_recipes)):

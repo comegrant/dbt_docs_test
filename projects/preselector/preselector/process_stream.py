@@ -90,6 +90,7 @@ async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -
         topic_name=settings.service_bus_request_topic_name,
         subscription_name=settings.service_bus_subscription_name,
         sub_queue=ServiceBusSubQueue(settings.service_bus_sub_queue) if settings.service_bus_sub_queue else None,
+        default_max_records=settings.service_bus_request_size
     )
 
     error_writer = MultipleWriter([

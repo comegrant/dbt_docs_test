@@ -14,6 +14,7 @@ class ProcessStreamSettings(BaseSettings):
     service_bus_subscription_name: str | None = None
     service_bus_sub_queue: str | None = None
 
+    service_bus_request_size: int = Field(10)
     service_bus_request_topic_name: str = Field("deviation-request")
     service_bus_success_topic_name: str = Field("deviation-response")
     service_bus_failed_topic_name: str = Field("deviation-error")
