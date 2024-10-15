@@ -17,7 +17,9 @@ table 'Order Measures'
 			    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows",{{"weeks_since_first_order", "Weeks Since First Order"}})
 			in
 			    #"Renamed Columns"
-
+	
+	/// MEASURES ///
+	/// Revenue
 	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
 		isHidden
 		lineageTag: 9514c3b0-8d1c-49a4-a547-99ac13fa089d
@@ -34,49 +36,6 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Number of Orders' = DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id])
-		formatString: 0
-		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
-
-	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
-		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Average Total Amount Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Number of Orders],BLANK())
-		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
-		formatString: 0
-		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
-
-	measure 'Sum Total Product Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
-		formatString: 0
-		isHidden
-		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
-
-		changedProperty = IsHidden
-
-	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Order Product Variation Quantity])
-		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Average Unit Price Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Sum Order Product Variation Quantity])
-		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Number of Gift Cards' =
-			CALCULATE(
-			    [Number of Orders],
-			    'Order Types'[Order Type Name] = "Gift Card"
-				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-			)
-		formatString: 0
-		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
 
 	measure 'Sum Order Value Net Ex Vat' =
 			CALCULATE(
@@ -108,39 +67,6 @@ table 'Order Measures'
 		lineageTag: 9db412c4-2ea6-4c39-81b2-c68ec727df34
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Number of Subscription Orders' =
-			CALCULATE(
-				[Number Of Orders],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
-				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-				)
-		formatString: 0
-		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
-
-	measure 'Average Order Value Net Ex Vat' = DIVIDE([Sum Order Value Net Ex Vat],[Number of Orders],BLANK())
-		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Sum Order Value Gross Ex Vat],[Number of Orders],BLANK())
-		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Average Order Value Net Inc Vat' = DIVIDE([Sum Order Value Net Inc Vat],[Number of Orders],BLANK())
-		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Sum Order Product Variation Quantity' =
-			CALCULATE(
-				[Sum Total Product Variation Quantity],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
-				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-			)
-		formatString: 0
-		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
 
 	measure 'Sum Gift Card Value Ex Vat' =
 			CALCULATE(
@@ -196,44 +122,88 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Number of Swapped Out Dishes' = [Number of Removed Dishes]
+	/// Number of orders
+	measure 'Number of Orders' = DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id])
 		formatString: 0
-		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
+		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
-	measure 'Number of Swapped In Dishes' = [Number of Added Dishes]
+	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
 		formatString: 0
-		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
+		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
 
-	measure 'Number of Ordered Dishes' =
+	measure 'Number of Subscription Orders' =
 			CALCULATE(
-				COUNTROWS('Order Measures'),
-				'Order Measures'[is_dish] = TRUE(),
-				'Order Measures'[fk_dim_recipes] <> "0"
+				[Number of Orders],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		formatString: 0
-		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
+		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
 
-	measure 'Number of Added Dishes' = SUM('Order Measures'[is_added_recipe])
-		formatString: 0
-		lineageTag: 7919afdd-0322-4085-9960-441805140e39
-
-	measure 'Number of Removed Dishes' =
+	measure 'Number of Gift Cards' =
 			CALCULATE(
-				SUM('Order Measures'[is_removed_recipe]),
-				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
-				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+				[Number of Orders],
+				'Order Types'[Order Type Name] = "Gift Card"
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
 		formatString: 0
-		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
+		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
 
-	measure 'Share of Swapped Dishes' =
-			DIVIDE(
-				[Number of Swapped Out Dishes],
-				[Number of Preselected Dishes], BLANK()
-				)
-		formatString: 0.00\ %;-0.00\ %;0.00\ %
-		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
+	/// Average Revenue per Number of Orders
+	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
+		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Total Amount Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Number of Orders],BLANK())
+		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Unit Price Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Sum Order Product Variation Quantity])
+		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Net Ex Vat' = DIVIDE([Sum Order Value Net Ex Vat],[Number of Orders],BLANK())
+		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Sum Order Value Gross Ex Vat],[Number of Orders],BLANK())
+		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Net Inc Vat' = DIVIDE([Sum Order Value Net Inc Vat],[Number of Orders],BLANK())
+		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Product Variation Quantity
+	measure 'Sum Total Product Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
+		formatString: 0
+		isHidden
+		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
+
+		changedProperty = IsHidden
+	
+	/// Unit Price
+	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Order Product Variation Quantity])
+		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Order Product Variation Quantity' =
+			CALCULATE(
+				[Sum Total Product Variation Quantity],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: 0
+		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
+
+	/// Retention
 	measure 'Number of Customers N Weeks Retention' =
 			VAR SelectedWeeks = SELECTEDVALUE('Order Measures'[Weeks Since First Order], 0)
 			
@@ -251,12 +221,22 @@ table 'Order Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: ed8fbdf7-0c62-49b8-826e-e797f41c2be1
 
+	/// Mealbox Adjustments
 	measure 'Number of Orders All Recipes' = 
 			CALCULATE(
 				[Number of Orders],
 				ALL(Recipes)
 			)
 		formatString: 0
+
+	measure 'Number of Ordered Dishes' =
+			CALCULATE(
+				COUNTROWS('Order Measures'),
+				'Order Measures'[is_dish] = TRUE(),
+				'Order Measures'[fk_dim_recipes] <> "0"
+				)
+		formatString: 0
+		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
 	measure 'Number of Preselected Dishes' =
 			CALCULATE(
@@ -268,6 +248,35 @@ table 'Order Measures'
 			)
 		formatString: 0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
+
+	measure 'Number of Added Dishes' = SUM('Order Measures'[is_added_recipe])
+		formatString: 0
+		lineageTag: 7919afdd-0322-4085-9960-441805140e39
+
+	measure 'Number of Removed Dishes' =
+			CALCULATE(
+				SUM('Order Measures'[is_removed_recipe]),
+				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
+				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+			)
+		formatString: 0
+		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
+
+	measure 'Number of Swapped Out Dishes' = [Number of Removed Dishes]
+		formatString: 0
+		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
+
+	measure 'Number of Swapped In Dishes' = [Number of Added Dishes]
+		formatString: 0
+		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
+
+	measure 'Share of Swapped Dishes' =
+			DIVIDE(
+				[Number of Swapped Out Dishes],
+				[Number of Preselected Dishes], BLANK()
+				)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 	measure 'Number of Orders with Swaps' = ```
 			
@@ -1002,6 +1011,15 @@ table 'Order Measures'
 		lineageTag: 0274f15c-78f5-4312-a396-c53b45da838d
 		summarizeBy: none
 		sourceColumn: Weeks Since First Order
+
+		annotation SummarizationSetBy = Automatic
+	
+	column 'Preselection Origin'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: preselection_origin
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

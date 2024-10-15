@@ -137,6 +137,10 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
 
+      - name: preselection_origin
+        data_type: string
+        description: ""
+
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"

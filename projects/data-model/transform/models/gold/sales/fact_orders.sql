@@ -210,6 +210,13 @@ orders as (
     where menu_recipes.recipe_id is not null
 )
 
+-- Temp solution for identifying orders that are Onesub, but was not exposed to preselector output
+, orders_with_recommendation_engine as (
+    select distinct 
+        billing_agreement_order_id
+    from recommendation_engine_preselected_recipes
+)
+
 , preselected_recipes as ( 
     
     select 
@@ -218,10 +225,10 @@ orders as (
     
     union all
 
-    -- Only includ chef_preselected_recipes for orders where the recommendation engine was not run
     select
         *
     from chef_preselected_recipes 
+    -- Only include chef_preselected_recipes for orders where the recommendation engine was not run
     where chef_preselected_recipes.billing_agreement_order_id not in (
         select distinct 
             recommendation_engine_preselected_recipes.billing_agreement_order_id 
@@ -370,7 +377,7 @@ orders as (
         md5(concat_ws('-'
             , menu_week_monday_date
             , billing_agreement_id
-            , billing_agreement_order_id
+            , add_recipes_to_orders.billing_agreement_order_id
             , billing_agreement_order_line_id
             , product_variation_id
             , preselected_product_variation_id
@@ -379,6 +386,12 @@ orders as (
             )
         ) as pk_fact_orders
         , add_recipes_to_orders.*
+        -- Temp solution for identifying orders that are Onesub, but was not exposed to preselector output
+        , case 
+                when orders_with_recommendation_engine.billing_agreement_order_id is not null
+                then "Recommendation Engine"
+                else "Menu Team"
+            end as preselection_origin
         , md5(concat(
             cast(billing_agreement_id as string),
             cast(valid_from_billing_agreements as string)
@@ -424,6 +437,8 @@ orders as (
                 ), '0'
             ) as fk_dim_recipes_preselected
     from add_recipes_to_orders
+    left join orders_with_recommendation_engine
+    on add_recipes_to_orders.billing_agreement_order_id = orders_with_recommendation_engine.billing_agreement_order_id
 )
 
 select * from add_fks
