@@ -30,7 +30,7 @@ table Companies
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 329275a0-5720-466d-9645-4d0c85fc281a
-		summarizeBy: sum
+		summarizeBy: count
 		sourceColumn: Language Id
 
 		changedProperty = IsHidden

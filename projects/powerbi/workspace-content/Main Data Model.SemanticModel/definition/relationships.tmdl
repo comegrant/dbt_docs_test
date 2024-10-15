@@ -61,3 +61,35 @@ relationship 8a15615d-11fc-fbaa-2f96-ac8c881b9124
 	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_preferences
 	toColumn: Preferences.pk_dim_preferences
 
+relationship AutoDetected_9105416a-77e9-49ee-bf5d-c0f9cd8d2bb6
+	fromColumn: 'Agreement Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_b5aa7795-c7f8-4850-9e10-f47ec3b90dc2
+	fromColumn: 'Agreement Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship e863a9ca-e39e-3b1d-ceac-f143d8837a33
+	fromColumn: 'Agreement Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship af5188ce-5759-15f0-142f-82fdeabbbcea
+	fromColumn: 'Agreement Measures'.days_since_first_order
+	toColumn: 'Period Since First Order'.'Days Since First Order'
+
+relationship 80ad5cb7-6e7b-4f09-60ab-16f7b71c1212
+	fromColumn: 'Agreements Weekly'.days_since_first_order
+	toColumn: 'Period Since First Order'.'Days Since First Order'
+
+relationship 34c05f4c-e1ab-3500-05fd-114e4f3ff1e5
+	fromColumn: 'Agreements Weekly'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 360d6910-73d1-7780-6386-23ba2b1cc178
+	fromColumn: 'Agreements Weekly'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship b187097e-4edd-c2af-794c-54ec55a36dd9
+	fromColumn: 'Agreements Weekly'.fk_dim_date
+	toColumn: Date.pk_dim_date
+

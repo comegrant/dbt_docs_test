@@ -23,6 +23,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 vars:
  future_proof_date: '9999-12-31'
+ incremental_number_of_days: 30
+ full_load_first_date: '2024-01-15'
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models

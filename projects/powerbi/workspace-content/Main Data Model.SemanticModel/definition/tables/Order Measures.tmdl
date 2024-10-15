@@ -1006,10 +1006,11 @@ table 'Order Measures'
 
 	column 'Weeks Since First Order'
 		dataType: int64
+		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 0274f15c-78f5-4312-a396-c53b45da838d
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: Weeks Since First Order
 
 		annotation SummarizationSetBy = Automatic
@@ -1092,6 +1093,17 @@ table 'Order Measures'
 		lineageTag: bce194af-82e9-4b27-8da3-778fca63d2af
 		summarizeBy: sum
 		isDataTypeInferred
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preselection_origin
+		dataType: string
+		isHidden
+		lineageTag: f12beb68-e2ff-469b-95a4-1d6da19dd84a
+		summarizeBy: none
+		sourceColumn: preselection_origin
 
 		changedProperty = IsHidden
 

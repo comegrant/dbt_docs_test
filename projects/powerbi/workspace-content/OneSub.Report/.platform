@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
     "type": "Report",
-    "displayName": "OneSub "
+    "displayName": "OneSub"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "bb01c838-3e77-423f-ac98-9419076026ec"
+    "logicalId": "c462ba08-a3db-487f-861e-b0c0427def5e"
   }
 }

@@ -737,3 +737,21 @@ models:
 
     versions: 
       - v: 1
+
+  - name: fact_billing_agreements_daily
+    description: "All billing agreements, except deleted once, exploded to each day."
+    latest_version: 1
+    config:
+      alias: fact_billing_agreements_daily
+
+    versions:
+      - v: 1
+
+  - name: fact_billing_agreements_weekly
+    description: "All billing agreements, included deleted once, exploded to each week."
+    latest_version: 1
+    config:
+      alias: fact_billing_agreements_weekly
+
+    versions:
+      - v: 1
