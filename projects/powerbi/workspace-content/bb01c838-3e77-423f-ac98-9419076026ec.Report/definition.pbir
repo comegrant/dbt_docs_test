@@ -1,0 +1,9 @@
+{
+  "version": "4.0",
+  "datasetReference": {
+    "byPath": {
+      "path": "../Main Data Model.SemanticModel"
+    },
+    "byConnection": null
+  }
+}
