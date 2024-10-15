@@ -99,6 +99,8 @@ billing_agreements as (
             cast(scd2_tables_joined.valid_from as string)
             )
         ) as pk_dim_billing_agreements
+        , scd2_tables_joined.billing_agreement_id
+        , scd2_tables_joined.billing_agreement_preferences_updated_id
         , billing_agreements_scd1.company_id
         , billing_agreements_scd1.payment_method
         , billing_agreements_scd1.signup_source
@@ -116,7 +118,16 @@ billing_agreements as (
         , first_orders.first_menu_week_month
         , first_orders.first_menu_week_quarter
         , first_orders.first_menu_week_year
-        , scd2_tables_joined.*
+        , scd2_tables_joined.billing_agreement_status_name
+        , scd2_tables_joined.sales_point_id
+        , scd2_tables_joined.product_name
+        , coalesce(scd2_tables_joined.is_onesub, false) as is_onesub
+        , scd2_tables_joined.meals
+        , scd2_tables_joined.portions
+        , scd2_tables_joined.valid_from
+        , scd2_tables_joined.valid_to
+        , scd2_tables_joined.is_current
+        
     
     from scd2_tables_joined
     left join billing_agreements_scd1
