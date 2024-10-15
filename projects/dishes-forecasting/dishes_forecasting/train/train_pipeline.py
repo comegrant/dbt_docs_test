@@ -90,7 +90,7 @@ def train_model(
         mlflow.log_artifact("xtest.csv", "xtest.csv")
 
         model_container_name = "mloutputs"
-        model_name = f"dishes_pipeline_test_{company_code}"
+        model_name = f"dishes_pipeline_workflow_{company_code}"
         registered_model_name = (
             f"{env}.{model_container_name}.{model_name}"
         )

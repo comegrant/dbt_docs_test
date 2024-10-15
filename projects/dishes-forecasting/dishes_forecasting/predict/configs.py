@@ -6,7 +6,7 @@ class PredictConfigs(BaseModel):
 
 
 gl_configs = PredictConfigs(
-    model_uri="runs:/034d770e906c4cbd8a99aa392d0b19f6/dishes_pipeline_test_GL"
+    model_uri="runs:/19bcae6424464d4a9959dc3cc98eb214/dishes_pipeline_workflow_GL"
 )
 
 

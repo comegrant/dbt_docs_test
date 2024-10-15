@@ -8,6 +8,8 @@ bundle:
 include:
   - "jobs/**.yml"
   - "jobs/**.yaml"
+  - "jobs/workflows/**.yaml"
+  - "jobs/workflows/**.yml"
 
 variables:
   docker_image_url:
