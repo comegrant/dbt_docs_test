@@ -153,19 +153,19 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
 async def debug_app() -> None:
     store = preselector_store()
 
-    responses = await failure_responses_form()
+    responses = await responses_form()
 
     if not responses:
         return
 
-    request = responses[-1]
-    expected_recipes = []
-    # selection = select(responses)
-    #
-    # if selection is None:
-    #     return
-    #
-    # request, expected_recipes = selection
+    # request = responses[-1]
+    # expected_recipes = []
+    selection = select(responses)
+
+    if selection is None:
+        return
+
+    request, expected_recipes = selection
 
     cache_store = await load_cache(
         store, company_id=request.company_id

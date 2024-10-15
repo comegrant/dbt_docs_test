@@ -259,7 +259,6 @@ async def find_best_combination(
     if preselected_recipe_ids is not None:
         final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
 
-
         if should_explain:
             current_vector = await compute_basket(
                 final_combination.with_columns(

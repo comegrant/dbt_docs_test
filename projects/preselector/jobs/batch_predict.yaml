@@ -1,7 +1,7 @@
 resources:
   jobs:
-    preselector-simulation-wednesday:
-      name: preselector-simulation-wednesday-${bundle.target}
+    preselector-simulation-tuesday:
+      name: preselector-simulation-tuesday-${bundle.target}
 
       permissions:
         - group_name: data-scientists
@@ -20,7 +20,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 7 ? * WED'
+        quartz_cron_expression: '0 0 2 ? * TUE'
         timezone_id: UTC
 
       email_notifications:
@@ -57,8 +57,8 @@ resources:
           depends_on:
             - task_key: batch-predict-gl
 
-    preselector-simulation-thursday:
-      name: preselector-simulation-thursday-${bundle.target}
+    preselector-simulation-wednesday:
+      name: preselector-simulation-wednesday-${bundle.target}
 
       permissions:
         - group_name: data-scientists
@@ -77,7 +77,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 7 ? * THU'
+        quartz_cron_expression: '0 0 2 ? * WED'
         timezone_id: UTC
 
       email_notifications:
