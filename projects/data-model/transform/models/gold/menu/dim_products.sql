@@ -29,9 +29,6 @@ products as (
             then preselected_products.product_name
         else null
         end as preselected_mealbox_product_name
-        -- Kept these to avoid conflicts with PBI
-        , null as preselected_mealbox_product_variation_id
-        , null as preselected_mealbox_product_variation_name
     from products
     left join mealbox_product_mapping
         on products.product_variation_id = mealbox_product_mapping.product_variation_id
@@ -76,8 +73,6 @@ products as (
         , null
         , "0"
         , "Not relevant"
-        , null
-        , null
 )
 
 select * from add_unknown_row
