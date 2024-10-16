@@ -123,20 +123,21 @@ table 'Order Measures'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	/// Number of orders
-	measure 'Number of Orders' = DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id])
+	measure 'Number of Orders' =
+			CALCULATE(
+				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id]),
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				)
 		formatString: 0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
 	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
 		formatString: 0
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
-
-	measure 'Number of Subscription Orders' =
-			CALCULATE(
-				[Number of Orders],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
-				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-				)
+	
+	/// Not in use can be removed
+	measure 'Number of Subscription Orders' = 0
 		formatString: 0
 		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
 
@@ -217,7 +218,7 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure '% Retention N Weeks Since First Order' = DIVIDE([Number of Subscription Orders], [Number of Customers N Weeks Retention], BLANK())
+	measure '% Retention N Weeks Since First Order' = DIVIDE([Number of Orders], [Number of Customers N Weeks Retention], BLANK())
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: ed8fbdf7-0c62-49b8-826e-e797f41c2be1
 
@@ -233,7 +234,9 @@ table 'Order Measures'
 			CALCULATE(
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
-				'Order Measures'[fk_dim_recipes] <> "0"
+				'Order Measures'[fk_dim_recipes] <> "0",
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		formatString: 0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
@@ -243,19 +246,28 @@ table 'Order Measures'
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes_preselected] <> "0",
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
 				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
 			)
 		formatString: 0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
-	measure 'Number of Added Dishes' = SUM('Order Measures'[is_added_recipe])
+	measure 'Number of Added Dishes' = 
+			CALCULATE(
+				SUM('Order Measures'[is_added_recipe])
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
 		formatString: 0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
 
 	measure 'Number of Removed Dishes' =
 			CALCULATE(
 				SUM('Order Measures'[is_removed_recipe]),
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
 				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
 			)
@@ -284,6 +296,9 @@ table 'Order Measures'
 			        [Number of Orders], 
 			        'Order Measures'[is_added_recipe]=1 || 
 			        'Order Measures'[is_removed_recipe]=1
+					,'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
+					, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+
 			    )
 			```
 		formatString: 0
@@ -1098,16 +1113,23 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column preselection_origin
-		dataType: string
+	column meal_adjustment
+		dataType: int64
 		isHidden
-		lineageTag: f12beb68-e2ff-469b-95a4-1d6da19dd84a
-		summarizeBy: none
-		sourceColumn: preselection_origin
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: meal_adjustment
 
 		changedProperty = IsHidden
 
-		annotation SummarizationSetBy = Automatic
+	column portion_adjustment
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: portion_adjustment
+
+		changedProperty = IsHidden
 
 	partition 'Order Measures' = m
 		mode: import
@@ -1127,4 +1149,3 @@ table 'Order Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

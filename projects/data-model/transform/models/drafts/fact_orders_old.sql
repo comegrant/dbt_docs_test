@@ -28,11 +28,6 @@ orders as (
     select * from {{ ref('int_basket_deviation_products_joined') }}
 )
 
-, product_variation_before_onesub_migration as (
-
-    select * from {{ ref('int_product_variation_before_onesub_migration') }}
-)
-
 , menus as (
 
     select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
@@ -82,34 +77,13 @@ orders as (
         , orders.billing_agreement_order_id
         , billing_agreements.billing_agreement_id
         , billing_agreements.valid_from as valid_from_billing_agreements
-        , billing_agreements.meals
-        , billing_agreements.portions
-        , case
-            when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-                    , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
-                )
-            and orders.menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
-            then products.meals - billing_agreements.meals
-            else null 
-        end as meal_adjustment
-        , case
-            when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-                    , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
-                )
-            and orders.menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
-            then products.portions - billing_agreements.portions
-            else null 
-        end as portion_adjustment
         , orders.ops_order_id
         , orders.order_status_id
         , orders.order_type_id
         , order_lines.billing_agreement_order_line_id
         , products.product_type_id
-        , products.preselected_mealbox_product_id
+        , products.product_id
         , products.product_variation_id
-        -- TODO: This field is not needed anymore and can be removed
         , case 
             when products.product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
             and products.product_id != 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
@@ -119,6 +93,7 @@ orders as (
         , case
             when products.product_type_id in (
                     '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
+                    , 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- Velg&Vrak
                     , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
                 )
             then true
@@ -149,7 +124,6 @@ orders as (
 )
 
 , menu_recipes as (
-
     select distinct
         menu_week_monday_date
         , company_id
@@ -157,12 +131,8 @@ orders as (
         , recipe_id
     from menus
     where recipe_id is not null
-    -- Only fetch recipes after Onesub 10% launch
-    and menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
-
 )
 
--- BUG: Will be wrong if customer has both mealbox and velg&vrak
 , ordered_recipes as (
 
     select
@@ -170,8 +140,9 @@ orders as (
         , order_line_agreements_joined.billing_agreement_order_line_id
         , order_line_agreements_joined.product_variation_id
         , menu_recipes.recipe_id
-        , order_line_agreements_joined.is_dish
         , order_line_agreements_joined.is_chef_composed_mealbox
+        , order_line_agreements_joined.is_mealbox
+        , order_line_agreements_joined.is_dish
     from order_line_agreements_joined
     left join menu_recipes
         on order_line_agreements_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
@@ -181,8 +152,24 @@ orders as (
 
 )
 
--- TODO: Consider to move the two tables below to an intermediate step
--- Find the most recent deviation for a menu week
+, chef_preselected_recipes as (
+
+    select
+        order_line_agreements_joined.billing_agreement_order_id
+        , order_line_agreements_joined.product_variation_id
+        , menu_recipes.recipe_id
+    from order_line_agreements_joined
+    left join products
+        on order_line_agreements_joined.product_variation_id = products.product_variation_id
+        and order_line_agreements_joined.company_id = products.company_id
+    left join menu_recipes
+        on products.preselected_mealbox_product_variation_id = menu_recipes.product_variation_id
+        and order_line_agreements_joined.company_id = menu_recipes.company_id
+        and order_line_agreements_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
+    where menu_recipes.recipe_id is not null
+
+)
+
 , deviations_filter_active as (
     select 
         menu_week_monday_date
@@ -193,7 +180,6 @@ orders as (
     where deviations.is_active_deviation = true
 )
 
--- Map deviations to order ids
 , deviations_order_mapping as (
     select distinct 
         deviations_filter_active.billing_agreement_basket_id
@@ -205,17 +191,14 @@ orders as (
         on deviations_filter_active.menu_week_monday_date = order_line_agreements_joined.menu_week_monday_date
         and deviations_filter_active.billing_agreement_id = order_line_agreements_joined.billing_agreement_id
         and deviations_filter_active.product_variation_id = order_line_agreements_joined.product_variation_id
-    -- Only include deviations which has an order
     where order_line_agreements_joined.billing_agreement_order_id is not null
 )
 
--- Find the preselected recipes by the recommendation engine
 , recommendation_engine_preselected_recipes as (
     select
       deviations_order_mapping.billing_agreement_order_id
       , recommendations.product_variation_id
       , menu_recipes.recipe_id
-      , "Recommendation Engine" as preselection_origin
     from deviations_order_mapping
     left join recommendations
         on deviations_order_mapping.billing_agreement_basket_id = recommendations.billing_agreement_basket_id
@@ -227,64 +210,11 @@ orders as (
     where menu_recipes.recipe_id is not null
 )
 
--- Find the product type before being migrated to Onesub
--- for customers that have made deviations before being migrated
--- This is to be able to find the preselected mealbox for them
--- since the preselector has not been run
-, product_before_onesub_migration (
-    select 
-         deviations_order_mapping.billing_agreement_order_id
-         , product_variation_before_onesub_migration.product_variation_id
-         , products.preselected_mealbox_product_id
-    from product_variation_before_onesub_migration
-    left join deviations_order_mapping
-        on product_variation_before_onesub_migration.billing_agreement_basket_id = deviations_order_mapping.billing_agreement_basket_id
-        and product_variation_before_onesub_migration.menu_week_monday_date = deviations_order_mapping.menu_week_monday_date
-    left join products
-        on product_variation_before_onesub_migration.pre_onesub_product_variation_id = products.product_variation_id
-        and deviations_order_mapping.company_id = deviations_order_mapping.company_id
-)
-
--- Find the preselected product variations made by the chefs
-, chef_preselected_product_variations as (
-
-    select
-        order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.product_variation_id
-        , products.product_variation_id as preselected_mealbox_product_variation_id
-    from order_line_agreements_joined
-    left join product_before_onesub_migration
-        on order_line_agreements_joined.billing_agreement_order_id = product_before_onesub_migration.billing_agreement_order_id
-        and order_line_agreements_joined.product_variation_id = product_before_onesub_migration.product_variation_id
-    left join products
-        -- Use product id from product before onesub migration if exists
-        on coalesce(product_before_onesub_migration.preselected_mealbox_product_id, order_line_agreements_joined.preselected_mealbox_product_id) = products.product_id
-        and order_line_agreements_joined.company_id = products.company_id
-        and order_line_agreements_joined.meals = products.meals
-        and order_line_agreements_joined.portions = products.portions
-    -- Exclude order lines with no preselected mealbox product_variation_id
-    where products.product_id is not null
-
-)
-
--- Find the preselected recipes made by the chefs
-, chef_preselected_recipes as (
-
-    select
-        order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.product_variation_id
-        , menu_recipes.recipe_id
-        , "Menu Team" as preselection_origin
-    from order_line_agreements_joined
-    left join chef_preselected_product_variations
-        on order_line_agreements_joined.billing_agreement_order_id = chef_preselected_product_variations.billing_agreement_order_id
-        and order_line_agreements_joined.product_variation_id = chef_preselected_product_variations.product_variation_id
-    left join menu_recipes
-        on chef_preselected_product_variations.preselected_mealbox_product_variation_id = menu_recipes.product_variation_id
-        and order_line_agreements_joined.company_id = menu_recipes.company_id
-        and order_line_agreements_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
-    where menu_recipes.recipe_id is not null
-
+-- Temp solution for identifying orders that are Onesub, but was not exposed to preselector output
+, orders_with_recommendation_engine as (
+    select distinct 
+        billing_agreement_order_id
+    from recommendation_engine_preselected_recipes
 )
 
 , preselected_recipes as ( 
@@ -293,7 +223,8 @@ orders as (
         *
     from recommendation_engine_preselected_recipes
 
-    union all
+    -- TODO: Need to find a better way to implement this
+    /*union all
     select
         *
     from chef_preselected_recipes 
@@ -302,7 +233,7 @@ orders as (
         select distinct 
             recommendation_engine_preselected_recipes.billing_agreement_order_id 
         from recommendation_engine_preselected_recipes
-    )
+        )*/
 )
 
 , ordered_and_preselected_recipes_joined as (
@@ -318,35 +249,33 @@ orders as (
         , ordered_recipes.product_variation_id
         , preselected_recipes.product_variation_id as preselected_product_variation_id
         , coalesce(ordered_recipes.is_chef_composed_mealbox, false) as is_chef_composed_mealbox
-        , case
-            when ordered_recipes.recipe_id = preselected_recipes.recipe_id
+        , case 
+            when ordered_recipes.is_chef_composed_mealbox is true
             then 0
             when ordered_recipes.is_dish is false
             then null
             when ordered_recipes.recipe_id is not null 
             and preselected_recipes.recipe_id is null
             then 1
-            else null
+            else 0
             end as is_added_recipe
         , case
-            when ordered_recipes.recipe_id = preselected_recipes.recipe_id
-            then 0
-            when ordered_recipes.is_dish is false
+            when ordered_recipes.is_chef_composed_mealbox is false
+            and ordered_recipes.is_dish is false
             then null
             when ordered_recipes.recipe_id is null 
             and preselected_recipes.recipe_id is not null
             then 1
-            else null
+            else 0
             end as is_removed_recipe
         , case 
-            when preselection_origin = "Menu Team"
-            then true
             when ordered_recipes.recipe_id is null 
             and preselected_recipes.recipe_id is not null
             then true
+            when ordered_recipes.is_chef_composed_mealbox = true
+            then true
             else false
         end as is_generated_recipe_line
-        , preselected_recipes.preselection_origin
     from ordered_recipes
     full join preselected_recipes
         on ordered_recipes.billing_agreement_order_id = preselected_recipes.billing_agreement_order_id
@@ -387,13 +316,10 @@ orders as (
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
         , ordered_and_preselected_recipes_joined.is_added_recipe
         , ordered_and_preselected_recipes_joined.is_removed_recipe
-        , order_line_agreements_joined.meal_adjustment
-        , order_line_agreements_joined.portion_adjustment
         , false as is_generated_recipe_line
         , order_line_agreements_joined.is_chef_composed_mealbox
-        , order_line_agreements_joined.is_mealbox
-        , order_line_agreements_joined.is_dish
-        , ordered_and_preselected_recipes_joined.preselection_origin
+        , is_mealbox
+        , is_dish
     from order_line_agreements_joined
     left join ordered_and_preselected_recipes_joined
         on order_line_agreements_joined.billing_agreement_order_line_id = ordered_and_preselected_recipes_joined.billing_agreement_order_line_id
@@ -433,19 +359,16 @@ orders as (
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
         , ordered_and_preselected_recipes_joined.is_added_recipe
         , ordered_and_preselected_recipes_joined.is_removed_recipe
-        , null as meal_adjustment
-        , null as portion_adjustment
         , ordered_and_preselected_recipes_joined.is_generated_recipe_line
         , order_line_agreements_joined.is_chef_composed_mealbox
-        , false as is_mealbox
+        , true as is_mealbox
         , true as is_dish
-        , ordered_and_preselected_recipes_joined.preselection_origin
     from order_line_agreements_joined
     left join ordered_and_preselected_recipes_joined
         on order_line_agreements_joined.billing_agreement_order_id = ordered_and_preselected_recipes_joined.billing_agreement_order_id
         and order_line_agreements_joined.is_chef_composed_mealbox = ordered_and_preselected_recipes_joined.is_chef_composed_mealbox
     where ordered_and_preselected_recipes_joined.is_generated_recipe_line = true
-    order by source_created_at, billing_agreement_order_id
+    order by billing_agreement_order_id, source_created_at
 
 )
 
@@ -463,6 +386,12 @@ orders as (
             )
         ) as pk_fact_orders
         , add_recipes_to_orders.*
+        -- Temp solution for identifying orders that are Onesub, but was not exposed to preselector output
+        , case 
+                when orders_with_recommendation_engine.billing_agreement_order_id is not null
+                then "Recommendation Engine"
+                else "Menu Team"
+            end as preselection_origin
         , md5(concat(
             cast(billing_agreement_id as string),
             cast(valid_from_billing_agreements as string)
@@ -508,7 +437,8 @@ orders as (
                 ), '0'
             ) as fk_dim_recipes_preselected
     from add_recipes_to_orders
-
+    left join orders_with_recommendation_engine
+    on add_recipes_to_orders.billing_agreement_order_id = orders_with_recommendation_engine.billing_agreement_order_id
 )
 
 select * from add_fks

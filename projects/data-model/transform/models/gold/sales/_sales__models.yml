@@ -121,6 +121,14 @@ models:
         data_type: int
         description: "{{ doc('column__is_removed_recipe') }}"
 
+      - name: meal_adjustment
+        data_type: int
+        description: ""
+
+      - name: portion_adjustment
+        data_type: int
+        description: ""
+
       - name: is_generated_recipe_line
         data_type: boolean
         description: "{{ doc('column__is_generated_recipe_line') }}"
