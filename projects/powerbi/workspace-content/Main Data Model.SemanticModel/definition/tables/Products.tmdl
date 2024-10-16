@@ -191,8 +191,7 @@ table Products
 						{"sku", "Sku"},
 						{"meals", "Meals"},
 						{"portions", "Portions"},
-						{"preselected_mealbox_product_name", "Preselected Mealbox Product Name"},
-						{"preselected_mealbox_product_variation_name", "Preselected Mealbox Product Variation Name"}
+						{"preselected_mealbox_product_name", "Preselected Mealbox Product Name"}
 						})
 				in
 				    #"Renamed Columns"
