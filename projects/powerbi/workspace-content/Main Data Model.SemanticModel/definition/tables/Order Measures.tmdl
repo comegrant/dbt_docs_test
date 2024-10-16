@@ -294,11 +294,7 @@ table 'Order Measures'
 			
 			    CALCULATE(
 			        [Number of Orders], 
-			        'Order Measures'[is_added_recipe]=1 || 
 			        'Order Measures'[is_removed_recipe]=1
-					,'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
-					, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-
 			    )
 			```
 		formatString: 0
