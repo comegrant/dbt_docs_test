@@ -961,6 +961,7 @@ async def run_preselector_for_request(
 
 
     failed_weeks: list[PreselectorFailure] = []
+    generated_recipe_ids: dict[int, int] = {}
 
     for yearweek in request.compute_for:
         year = yearweek.year
@@ -1034,6 +1035,7 @@ async def run_preselector_for_request(
                 target_vector=target_vector,
                 importance_vector=importance_vector,
                 store=store,
+                selected_recipes=generated_recipe_ids,
                 should_explain=should_explain
             )
 
@@ -1050,6 +1052,10 @@ async def run_preselector_for_request(
                 )
             )
             continue
+
+
+        for main_recipe_id in selected_recipe_ids:
+            generated_recipe_ids[main_recipe_id] = year * 100 + week
 
         variation_ids = menu.filter(
             pl.col("main_recipe_id").is_in(selected_recipe_ids),
@@ -1181,7 +1187,8 @@ async def run_preselector(
     target_vector: pl.DataFrame,
     importance_vector: pl.DataFrame,
     store: ContractStore,
-    should_explain: bool = False
+    selected_recipes: dict[int, int],
+    should_explain: bool = False,
 ) -> tuple[list[int], PreselectorPreferenceCompliancy]:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
@@ -1193,8 +1200,6 @@ async def run_preselector(
         target_vector (pl.DataFrame): The target vector to hit
         importance_vector (pl.DataFrame): The importance of each feature in the target vector
         store (ContractStore): The definition of available features
-        select_top_n: The recipes to choose from, if recommendations exist
-        top_n_percent: A percentage to choose from, if recommendations exist
     """
     assert not available_recipes.is_empty(), "No recipes to select from"
     assert not target_vector.is_empty(), "No target vector to compare with"
@@ -1348,17 +1353,36 @@ async def run_preselector(
 
     assert not normalized_recipe_features.is_empty()
 
+    new_recipes_ids = recipe_features.filter(
+        pl.col("main_recipe_id").is_in(selected_recipes.keys()).not_()
+    )["main_recipe_id"]
+
     weeks_since_recipe = await store.feature_view(WeeksSinceRecipe).features_for({
-        "agreement_id": [customer.agreement_id] * recipe_features.height,
-        "company_id": [customer.company_id] * recipe_features.height,
+        "agreement_id": [customer.agreement_id] * new_recipes_ids.len(),
+        "company_id": [customer.company_id] * new_recipes_ids.len(),
         # Setting the from_year_week so it will be used when computing
-        "from_year_week": [year * 100 + week] * recipe_features.height,
-        "main_recipe_id": recipe_features["main_recipe_id"].to_list()
+        "from_year_week": [year * 100 + week] * new_recipes_ids.len(),
+        "main_recipe_id": new_recipes_ids.to_list()
     }).transform_polars(
         # Is currently a bug where this will not be compute
         # So need to remove it and then compute it again
         lambda df: df.select(pl.exclude("ordered_weeks_ago")) if "ordered_weeks_ago" in df.columns else df
     ).derive_features().to_polars()
+
+    if selected_recipes:
+        manual_data = {
+            "main_recipe_id": list(selected_recipes.keys()),
+            "last_order_year_week": list(selected_recipes.values()),
+            "company_id": [customer.company_id] * len(selected_recipes),
+            "agreement_id": [customer.agreement_id] * len(selected_recipes),
+            "from_year_week": [year * 100 + week] * len(selected_recipes)
+        }
+        selected_recipe_computation = await store.feature_view(WeeksSinceRecipe).process_input(manual_data).to_polars()
+        weeks_since_recipe.vstack(
+            selected_recipe_computation.select(weeks_since_recipe.columns).cast(
+                dtypes=dict(weeks_since_recipe.schema)
+            )
+        )
 
     recipe_features = recipe_features.cast({"main_recipe_id": pl.Int32}).join(
         weeks_since_recipe.select(["main_recipe_id", "ordered_weeks_ago"]).fill_null(1),

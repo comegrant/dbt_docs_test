@@ -64,7 +64,8 @@ def deploy_preselector(
 
     def process_container(
         topic_name: str,
-        container_name: str
+        container_name: str,
+        batch_size: int
     ) -> Container:
 
         if env != "prod":
@@ -78,7 +79,8 @@ def deploy_preselector(
                 service_bus_namespace=service_bus_namespace,
                 service_bus_should_write=True,
                 service_bus_connection_string=None,
-                service_bus_request_topic_name=topic_name
+                service_bus_request_topic_name=topic_name,
+                service_bus_request_size=batch_size
             ),
             DataDogConfig( # type: ignore[reportGeneralTypeIssues]
                 datadog_service_name="preselector",
@@ -130,11 +132,13 @@ def deploy_preselector(
         containers=[
             process_container(
                 topic_name="priority-deviation-request",
-                container_name=f"{name}-live"
+                container_name=f"{name}-live",
+                batch_size=10
             ),
             process_container(
                 topic_name="deviation-request",
-                container_name=f"{name}-batch"
+                container_name=f"{name}-batch",
+                batch_size=50
             )
         ],
         os_type=OperatingSystemTypes.LINUX,
@@ -209,4 +213,4 @@ def deploy_all(tag: str, env: str) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="ef50c58af5969c4488b65d7d5c2602539315d998", env="prod")
+    deploy_all(tag="14523dd085e654572d942fda2291e09c334ced23", env="prod")

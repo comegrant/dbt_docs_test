@@ -92,6 +92,9 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
             for feat in features
         }),
         recommendations=pl.DataFrame(),
+        selected_recipes={
+            1: year * 100 + week - 3
+        },
         store=dummy_store
     )
 
