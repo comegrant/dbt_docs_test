@@ -79,7 +79,7 @@ async def run() -> None:
         from_date + timedelta(weeks=week_dif) for week_dif in range(number_of_weeks)
     ]
     year_weeks = [
-        YearWeek(week=week.isocalendar().week, year=week.year)
+        YearWeek(week=week.isocalendar().week, year=week.isocalendar().year)
         for week in year_week_dates
     ]
 

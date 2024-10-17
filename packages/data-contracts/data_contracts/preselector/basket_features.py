@@ -16,7 +16,7 @@ from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrivalRequest
 from aligned.sources.random_source import RandomDataSource
-from data_contracts.orders import HistoricalRecipeOrders
+from data_contracts.orders import HistoricalRecipeOrders, WeeksSinceRecipe
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import materialized_data
@@ -66,6 +66,22 @@ def mean_of_bool(feature: Bool) -> Float:
     ).with_tag(PreselectorTags.binary_metric)
 
 
+quarantining = WeeksSinceRecipe()
+
+ordered_ago_agg = quarantining.ordered_weeks_ago.aggregate()
+
+@feature_view(
+    name="injected_preselector_features",
+    source=RandomDataSource()
+)
+class InjectedFeatures:
+    mean_cost_of_food = recipe_cost_whole_units_agg.mean().is_optional()
+    mean_rank = order_rank_agg.mean().default_value(0)
+    mean_ordered_ago = ordered_ago_agg.mean().default_value(1)
+
+
+injected_features = InjectedFeatures()
+
 @feature_view(name="basket_features", source=RandomDataSource())
 class BasketFeatures:
     basket_id = Int32().as_entity()
@@ -75,7 +91,9 @@ class BasketFeatures:
     mean_veg_fruit = veg_fruit_agg.mean()
     mean_fat_saturated = fat_saturated_agg.mean()
 
-    mean_cost_of_food = recipe_cost_whole_units_agg.mean().is_optional()
+    mean_rank = injected_features.mean_rank
+    mean_cost_of_food = injected_features.mean_cost_of_food
+    mean_ordered_ago = injected_features.mean_ordered_ago.default_value(0)
 
     mean_energy = energy_kcal_agg.mean()
     mean_number_of_ratings = number_of_ratings_agg.mean().with_tag(VariationTags.quality)
@@ -84,7 +102,6 @@ class BasketFeatures:
         pl.col("average_rating").fill_nan(0).mean(), as_type=Float()
     ).with_tag(VariationTags.quality)
 
-    mean_rank = order_rank_agg.mean().default_value(0)
     # std_fat = fat_agg.std()
     # std_protein = protein_agg.std()
     # std_veg_fruit = veg_fruit_agg.std()
@@ -190,6 +207,11 @@ async def historical_customer_mealkit_features(
     normalized_recipes = query(NormalizedRecipeFeatures)
     main_ingredient_category = query(RecipeMainIngredientCategory)
 
+    inject_features = InjectedFeatures.query().request.aggregated_features
+    needed_dummy_features = []
+    for feature in inject_features:
+        needed_dummy_features.extend(feature.depending_on_names)
+
     year_week_number = [year * 100 + week for year, week in year_weeks]
 
     df = await history.select_columns([
@@ -215,9 +237,13 @@ async def historical_customer_mealkit_features(
         .features_for(norm_features)
         .with_subfeatures()
         .to_lazy_polars()
-    ).with_columns(
-        order_rank=pl.lit(1)
     )
+
+    features = features.with_columns([
+        pl.lit(1).alias(feat)
+        for feat in needed_dummy_features
+        if feat not in features.columns
+    ])
 
     basket_features = (
         await BasketFeatures.process_input(
@@ -276,11 +302,14 @@ async def historical_preselector_vector(
 
     basket_features = await query(HistoricalCustomerMealkitFeatures).all().to_polars()
 
+    inject_features = InjectedFeatures.query().request.all_feature_names
     exclude_columns = ["basket_id", "agreement_id"]
-    manually_set_columns = ["mean_cost_of_food", "mean_rank"]
 
-    features = BasketFeatures.query().request.all_features
-
+    features = {
+        feat
+        for feat in BasketFeatures.query().request.all_features
+        if feat.name not in inject_features
+    }
     feature_columns = [
         feat.name
         for feat
@@ -331,16 +360,18 @@ async def historical_preselector_vector(
                 for feat in boolean_feature_columns
             ]
         ])
-        .with_columns([
-            # No need to let cost of food effect the importance, so we set this to 0
-            pl.lit(0).alias(feat) for feat in manually_set_columns
-        ])
         .with_columns([pl.col(feat) / pl.sum_horizontal(scalar_feature_columns) for feat in feature_columns ])
         .with_columns(vector_type=pl.lit("importance"))
     )
     return target.vstack(
         importance.select(target.columns)
-    ).with_columns(created_at=datetime.now(tz=timezone.utc)).lazy()
+    ).with_columns(
+        created_at=datetime.now(tz=timezone.utc),
+        **{
+            feat: 0
+            for feat in inject_features
+        }
+    ).lazy()
 
 
 PredefinedVectors = BasketFeatures.with_schema(
@@ -365,6 +396,7 @@ PreselectorVector = with_freshness(
         additional_features=dict(
             vector_type=String().accepted_values(["importance", "target"]), created_at=EventTimestamp()
         ),
+        copy_default_values=True
     ),
     acceptable_freshness=timedelta(days=6),
 )

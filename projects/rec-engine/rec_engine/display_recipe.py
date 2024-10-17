@@ -1,9 +1,9 @@
 from typing import Annotated
 
-from aligned import feature_view, Int32, String, List
+import pandas as pd
+from aligned import Int32, List, String, feature_view
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
 
-import pandas as pd
 
 @feature_view(
     name="recipe_information",
@@ -25,7 +25,7 @@ class RecipeInformation:
     taxonomie_names = String()
 
     taxonomies = taxonomie_names.transform_pandas(
-        lambda x: x["taxonomie_names"].str.split(", ").apply(lambda x: list(set(x))),
+        lambda x, store: x["taxonomie_names"].str.split(", ").apply(lambda x: list(set(x))),
         as_dtype=List(String()),
     )
     photo_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/")

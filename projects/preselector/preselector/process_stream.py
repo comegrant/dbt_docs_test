@@ -15,7 +15,7 @@ from aligned.sources.in_mem_source import InMemorySource
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
-from data_contracts.orders import QuarantinedRecipes
+from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -145,9 +145,9 @@ async def load_cache_for(
 
         logger.info(f"Loading {location} to cache")
         if location.location_type == "feature_view":
-            job = store.feature_view(location.name).all()
+            job = store.feature_view(location.name).all().remove_derived_features()
         else:
-            job = store.model(location.name).all_predictions()
+            job = store.model(location.name).all_predictions().remove_derived_features()
 
 
         if pl_filter is not None:
@@ -210,8 +210,8 @@ async def load_cache(
             pl.col("company_id") == company_id
         ),
         (
-            QuarantinedRecipes.location,
-            InMemorySource.empty(),
+            WeeksSinceRecipe.location,
+            cache_dir.parquet_at(f"{company_id}/weeks_since_recipe.parquet"),
             pl.col("company_id") == company_id
         )
     ]

@@ -133,9 +133,7 @@ class CBModel:
                     f"Missing {needed_entities} in menus. Got {menu.columns}",
                 )
 
-        entities = menu[needed_entities].drop_duplicates()
-
-        recipe_features = await model_store.features_for(entities).drop_invalid().to_pandas()
+        recipe_features = await model_store.features_for(menu).with_subfeatures().drop_invalid().to_pandas()
 
         logger.info(
             f"Predicting recommendation ratings for {recipe_features.shape[0]} recipes",
@@ -147,7 +145,9 @@ class CBModel:
         preds = self.predict(recipe_features, logger)
         preds["predicted_at"] = predicted_at
         preds["model_version"] = self.model_version
-
+        preds["year_week"] = np.repeat(
+            recipe_features["yearweek"].to_numpy(), int(preds.shape[0] / recipe_features.shape[0])
+        )
         return preds.dropna()
 
     @staticmethod
@@ -213,7 +213,6 @@ class CBModel:
         store: FeatureStore,
         model_contract_name: str,
         explicit_rating_view: str,
-        behavioral_rating_view: str,
         model_version: str | None = None,
         logger: Logger | None = None,
     ) -> "CBModel":

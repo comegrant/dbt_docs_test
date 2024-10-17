@@ -30,12 +30,13 @@ orders = HistoricalRecipeOrders()
         recipe_features.is_high_cooking_time,
     ],
     output_source=recommendations_dir.partitioned_parquet_at(
-        "user_recipe_likability", partition_keys=["company_id"]
+        "user_recipe_likability", partition_keys=["company_id", "year_week"]
     )
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()
     recipe_id = Int32().as_entity()
+    year_week = Int32()
 
     company_id = String()
 

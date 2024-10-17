@@ -116,38 +116,36 @@ async def quarantined_recipes(
 
     return orders.with_columns(
         year_week=pl.col("year") * 100 + pl.col("week")
-    ).group_by(["agreement_id", "company_id"]).agg(
-        pl.col("main_recipe_id").alias("main_recipe_ids"),
-        pl.col("year_week").max().alias("year_week")
-    ).with_columns(
-        main_recipe_ids=pl.col("main_recipe_ids").list.unique(),
-        year=(pl.col("year_week") / 100).floor().cast(pl.Int32),
-        week=pl.col("year_week") % 100
+    ).group_by(["agreement_id", "company_id", "main_recipe_id"]).agg(
+        pl.col("year_week").max().alias("last_order_year_week")
     ).lazy()
 
 
 @feature_view(
-    name="quarantined_recipes",
+    name="weeks_since_recipe",
     source=CustomMethodDataSource.from_load(
         quarantined_recipes,
         depends_on={ HistoricalRecipeOrders.location }
     ),
     materialized_source=materialized_data.partitioned_parquet_at(
-        "quarantined_recipes",
+        "weeks_since_recipe",
         partition_keys=["company_id"]
     )
 )
-class QuarantinedRecipes:
+class WeeksSinceRecipe:
     agreement_id = Int32().as_entity()
     company_id = String().as_entity()
+    main_recipe_id = Int32().as_entity()
 
-    week = Int32()
-    year = Int32()
+    from_year_week = Int32().is_optional().description("Needs to be sent in")
+    last_order_year_week = Int32()
 
-    main_recipe_ids = List(Int32())
+    ordered_weeks_ago = Int32().transformed_using_features_polars(
+        using_features=[from_year_week, last_order_year_week],
+        transformation=(pl.col("from_year_week") - pl.col("last_order_year_week")).clip(upper_bound=5) / 5 # type: ignore
+    )
 
-
-deviation_sql = """SELECT TOP
+deviation_sql = """SELECT
     r.recipe_id,
     bab.agreement_id,
     ba.company_id,
@@ -257,6 +255,10 @@ async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
             default_baskets,
             left_on=["variation_id", "week", "year"],
             right_on=["variation_id", "menu_week", "menu_year"],
+            how="left"
+        )
+        .with_columns(
+            recipe_ids=pl.col("recipe_ids").fill_null([])
         )
         .collect()
     )

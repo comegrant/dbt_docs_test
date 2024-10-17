@@ -69,7 +69,6 @@ async def run(
     update_source_threshold: timedelta | None = None,
     ratings_update_source_threshold: timedelta | None = None,
     ratings_view: str = "historical_recipe_orders",
-    behavior_ratings_view: str = "mealbox_changes_as_rating",
     recipe_rating_contract: str = "user_recipe_likability",
     recipe_cluster_contract: str = "recipe_cluster",
     logger: Logger | None = None,
@@ -100,7 +99,7 @@ async def run(
 
     if ratings_update_source_threshold:
         with log_step("Updating ratings view", logger=logger):
-            views = [ratings_view, behavior_ratings_view]
+            views = [ratings_view]
             await update_view_from_source_if_older_than(
                 threshold=ratings_update_source_threshold,
                 views=views,
@@ -122,7 +121,6 @@ async def run(
             store,
             model_contract_name=recipe_rating_contract,
             explicit_rating_view=ratings_view,
-            behavioral_rating_view=behavior_ratings_view,
             model_version=model_id,
             logger=logger,
         )
@@ -172,6 +170,31 @@ async def run(
         ).to_pandas()
         ranking = predict_rankings(recipes_to_rank, menus, logger=logger)
         ranking["company_id"] = company_id
+
+    if (
+        isinstance(dataset, CompanyDataset)
+        and dataset.only_for_agreement_ids
+        and len(dataset.year_weeks_to_predict_on) == 1
+    ):
+        import streamlit as st
+
+        from rec_engine.display_recipe import display_recipe, recipe_information_for_ids
+
+        st.write("Ranking weights")
+        st.write(rating_model.matrix.transpose())
+
+        infos = await recipe_information_for_ids(
+            ranking["recipe_id"].unique().tolist(),
+            year=dataset.year_weeks_to_predict_on[0] // 100,
+            week=dataset.year_weeks_to_predict_on[0] % 100,
+        )
+        infos = infos.merge(ranking, on="recipe_id").sort_values(
+            "order_rank",
+        )
+
+        for _, row in infos.iterrows():
+            logger.info(row["order_rank"])
+            display_recipe(row)
 
     with log_step(
         f"Writing {ranking.shape[0]} rankings for point in time storage",

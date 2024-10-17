@@ -5,10 +5,15 @@ import polars as pl
 import pytest
 from aligned import ContractStore, FeatureLocation
 from aligned.feature_source import BatchFeatureSource
+from aligned.sources.in_mem_source import InMemorySource
 from aligned.sources.random_source import RandomDataSource, data_for_request
 from concept_definition_app import potential_features
-from data_contracts.orders import QuarantinedRecipes
-from data_contracts.preselector.basket_features import ImportanceVector, PredefinedVectors, TargetVectors
+from data_contracts.preselector.basket_features import (
+    ImportanceVector,
+    PredefinedVectors,
+    TargetVectors,
+    WeeksSinceRecipe,
+)
 from data_contracts.preselector.store import Preselector
 from numpy.random import seed as np_seed
 from preselector.main import run_preselector, run_preselector_for_request
@@ -39,6 +44,23 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
     recipe_pool = 100
 
     features = potential_features()
+
+    dummy_store = dummy_store.update_source_for(
+        WeeksSinceRecipe.location,
+        InMemorySource(
+            pl.DataFrame(
+                data={
+                    "agreement_id": list(range(recipe_pool)),
+                    "recipe_id": list(range(recipe_pool)),
+                    "company_id": ["dd"] * recipe_pool,
+                    "main_recipe_id": [1] * recipe_pool,
+                    "last_order_year_week": [year * 100 + week - 3] * recipe_pool,
+                    "from_year_week": [year * 100 + week - 3] * recipe_pool,
+                }
+            )
+        )
+    )
+
 
     main_recipe_ids, _ = await run_preselector(
         customer=GenerateMealkitRequest(
@@ -177,12 +199,19 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
         PredefinedVectors.location,
         RandomDataSource(partial_data=defined_vectors)
     ).update_source_for(
-        QuarantinedRecipes.location,
-        RandomDataSource.with_values({
-            "recipe_id": list(range(recipe_pool)),
-            "company_id": [company_id] * recipe_pool,
-            "main_recipe_ids": [[1, 2]] * recipe_pool
-        })
+        WeeksSinceRecipe.location,
+        InMemorySource(
+            pl.DataFrame(
+                data={
+                    "agreement_id": list(range(recipe_pool)),
+                    "recipe_id": list(range(recipe_pool)),
+                    "company_id": ["dd"] * recipe_pool,
+                    "main_recipe_id": [1] * recipe_pool,
+                    "last_order_year_week": [year * 100 + week - 3] * recipe_pool,
+                    "from_year_week": [year * 100 + week - 3] * recipe_pool,
+                }
+            )
+        )
     )
 
     response = await run_preselector_for_request(request, store)

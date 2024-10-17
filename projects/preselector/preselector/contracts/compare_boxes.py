@@ -143,7 +143,7 @@ class RecipeInformation:
     taxonomie_names = String()
 
     taxonomies = taxonomie_names.transform_pandas(
-        lambda x: x["taxonomie_names"].str.split(", ").apply(lambda x: list(set(x))),
+        lambda x, store: x["taxonomie_names"].str.split(", ").apply(lambda x: list(set(x))),
         as_dtype=List(String()),
     )
     photo_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/")
