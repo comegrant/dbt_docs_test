@@ -15,6 +15,10 @@ source as (
         , menu_external_id as product_id
         , status_code_id   as menu_status_code_id
 
+        {# booleans #}
+        , menu_selected as is_selected_menu
+        , recipes_locked as is_locked_recipe
+
         {# system #}
         , created_by       as source_created_by
         , created_date     as source_created_at
@@ -28,8 +32,6 @@ source as (
         , ingredients_state
         , menu_comment
         , pdf
-        , menu_selected
-        , recipes_locked
         , delivery_date
         , product_type_id
         , product_type_name

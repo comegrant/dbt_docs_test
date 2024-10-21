@@ -87,11 +87,13 @@ menu_weeks as (
         , menu_weeks_with_flags.weekly_menu_id
         , menu_weeks_with_flags.company_id
         , menu_weeks_with_flags.menu_id
+        , menu_weeks_with_flags.menu_variation_id
         , menu_weeks_with_flags.product_variation_id
         , menu_weeks_with_flags.menu_recipe_id
         , menu_weeks_with_flags.recipe_id
         , menu_weeks_with_flags.recipe_portion_id
         , menu_weeks_with_flags.portion_id
+        , menu_weeks_with_flags.portion_id_recipes
 
         , menu_weeks_with_flags.menu_year
         , menu_weeks_with_flags.menu_week
@@ -106,7 +108,8 @@ menu_weeks as (
         , menu_weeks_with_flags.recipe_status_code_id
         , menu_weeks_with_flags.portion_status_code_id
         
-        {# Add flags #}
+        , menu_weeks_with_flags.is_locked_recipe
+        , menu_weeks_with_flags.is_selected_menu
         , menu_weeks_with_flags.has_menu_recipes
         , menu_weeks_with_flags.has_recipe_portions
         , menu_weeks_with_flags.is_dish

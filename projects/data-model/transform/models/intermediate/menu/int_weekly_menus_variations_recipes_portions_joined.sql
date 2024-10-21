@@ -47,6 +47,7 @@ weekly_menus as (
         weekly_menus.weekly_menu_id
         , weekly_menus.company_id
         , menus.menu_id
+        , menu_variations.menu_variation_id
         , menu_recipes.menu_recipe_id
         , menu_variations.product_variation_id
         , menu_recipes.recipe_id
@@ -62,6 +63,9 @@ weekly_menus as (
         , menu_recipes.menu_recipe_order
 
         , portions.portion_size
+
+        , menus.is_selected_menu
+        , menus.is_locked_recipe
 
         , weekly_menus.weekly_menu_status_code_id
         , menus.menu_status_code_id

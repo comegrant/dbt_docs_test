@@ -67,6 +67,10 @@ models:
           - type: not_null        
         data_tests:
           - not_null
+  
+      - name: menu_variation_id
+        data_type: int
+        description: "{{ doc('column__menu_variation_id') }}"
 
       - name: product_variation_id
         data_type: char(36)
@@ -112,6 +116,10 @@ models:
                 severity: error
                 error_if: ">44"
                 warn_if: "<44"
+
+      - name: portion_id_recipes
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
 
       - name: menu_year
         data_type: smallint
@@ -204,7 +212,15 @@ models:
         #        severity: error
         #        error_if: ">44"
         #       warn_if: "<44"
-        
+
+      - name: is_selected_menu
+        data_type: boolean
+        description: ""     
+
+      - name: is_locked_recipe
+        data_type: boolean
+        description: ""        
+
       - name: is_artificial_week
         data_type: boolean
         description: "{{ doc('column__is_artificial_week') }}"
