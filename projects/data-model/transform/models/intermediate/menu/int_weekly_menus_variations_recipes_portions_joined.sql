@@ -52,6 +52,7 @@ weekly_menus as (
         , menu_recipes.recipe_id
         , recipe_portions.recipe_portion_id
         , menu_variations.portion_id
+        , recipe_portions.portion_id as portion_id_recipes
 
         , weekly_menus.menu_year
         , weekly_menus.menu_week
