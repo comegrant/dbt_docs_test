@@ -66,6 +66,24 @@ The primary key of recipe metadata table in the pim database.
 
 {% enddocs %}
 
+{% docs column__cooking_time_from%}
+
+Minimum estimated time to make the recipe.
+
+{% enddocs %}
+
+{% docs column__cooking_time_to%}
+
+Maximum estimated time to make the recipe.
+
+{% enddocs %}
+
+{% docs column__recipe_photo%}
+
+Photo of the recipe, used by frontend in web. Append string as suffix to the URL: https://pimimages.azureedge.net/images/resized/ to visualize images in i.e. a streamlit app.
+
+{% enddocs %}
+
 # Recipe Portions
 {% docs column__recipe_portion_id %}
 
@@ -224,7 +242,24 @@ If the taxonomy is used in frontend, i.e. a user-friendly taxonomy
 
 {% enddocs %}
 
+{% docs column__recipe_main_ingredient_id%}
+
+Identifier for the recipe's main ingredient
+
+{% enddocs %}
+
+{% docs column__recipe_difficulty_level_id%}
+
+Identifier for the recipes difficulty level
+
+{% enddocs %}
+
 ## Undocumented fields
+
+
+
+
+
 
 
 

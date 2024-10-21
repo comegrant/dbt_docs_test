@@ -332,6 +332,30 @@ models:
     description: ""
 
     columns:
+      - name: recipe_metadata_id
+        data_type: int
+        description: "{{ doc('column__recipe_metadata_id') }}"  #recipe_metadata
+
+      - name: recipe_main_ingredient_id
+        data_type: int
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"   # recipe_main_ingredient
+
+      - name: recipe_difficulty_level_id
+        data_type: int
+        description: "{{ doc('column__recipe_difficulty_level_id') }}"   # recipe_difficulty_level_translations 
+
+      - name: cooking_time_from
+        data_type: int
+        description: "{{ doc('column__cooking_time_from') }}"   # metadata 
+
+      - name: cooking_time_to
+        data_type: int
+        description: "{{ doc('column__cooking_time_to') }}"   # metadata 
+      
+      - name: recipe_photo
+        data_type: string
+        description: "{{ doc('column__recipe_photo') }}"    # metadata 
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
