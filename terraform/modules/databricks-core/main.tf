@@ -112,7 +112,7 @@ resource "databricks_external_location" "segment_shared" {
   count   = terraform.workspace == "prod" ? 1 : 0
   name     = "delta_lake_segment"
   url = format("abfss://%s@%s.dfs.core.windows.net/",
-    "segment",
+    "segment_shared",
     var.data_lake_name
   )
   credential_name = databricks_storage_credential.this.id
