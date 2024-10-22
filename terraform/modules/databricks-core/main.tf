@@ -108,6 +108,19 @@ resource "databricks_external_location" "segment" {
   owner           = "location-owners"
 }
 
+resource "databricks_external_location" "segment_shared" {
+  count   = terraform.workspace == "prod" ? 1 : 0
+  name     = "delta_lake_segment"
+  url = format("abfss://%s@%s.dfs.core.windows.net/",
+    "segment",
+    var.data_lake_name
+  )
+  credential_name = databricks_storage_credential.this.id
+  comment         = "Managed by Terraform"
+  skip_validation = true
+  owner           = "location-owners"
+}
+
 resource "databricks_schema" "this" {
   for_each     = toset(var.schemas)
   catalog_name = var.databricks_catalog_name
@@ -124,6 +137,16 @@ resource "databricks_catalog" "segment" {
   }
   storage_root = databricks_external_location.segment.url
   isolation_mode = "ISOLATED"
+}
+
+resource "databricks_catalog" "segment_shared" {
+  count   = terraform.workspace == "prod" ? 1 : 0
+  name = "segment"
+  comment = "Managed by Terraform. This catalog is used for ingestion from Segment and is shared between the environments"
+  properties = {
+    purpose = "Segment Ingest"
+  }
+  storage_root = databricks_external_location.segment_shared[count.index].url
 }
 
 
@@ -352,7 +375,7 @@ resource "time_rotating" "this" {
 #####################################
 
 resource "databricks_service_principal" "segment_sp" {
-  display_name = "segment_sp_${terraform.workspace}"
+  display_name = "segment_sp"
 }
 
 resource "databricks_service_principal_secret" "segment_sp" {
@@ -597,7 +620,9 @@ resource "databricks_grants" "catalog" {
 }
 
 resource "databricks_grants" "catalog_segment" {
-  catalog = databricks_catalog.segment.name
+  count = terraform.workspace == "prod" ? 1 : 0
+  
+  catalog = databricks_catalog.segment_shared[count.index].name
 
   grant {
     principal  = var.azure_client_id
@@ -647,7 +672,8 @@ resource "databricks_grants" "external_location" {
 
 
 resource "databricks_grants" "external_location_segment" {
-  external_location = databricks_external_location.segment.id
+  count = terraform.workspace == "prod" ? 1 : 0
+  external_location = databricks_external_location.segment_shared[count.index].id
   grant {
     principal  = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]
