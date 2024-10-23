@@ -5,17 +5,22 @@ from aligned import (
     Bool,
     ContractStore,
     CustomMethodDataSource,
+    Embedding,
     EventTimestamp,
     Float,
     Int32,
     List,
     String,
+    Timestamp,
     feature_view,
+    model_contract,
 )
+from aligned.exposed_model.interface import openai_embedding
 from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.retrival_job import RetrivalJob
 from aligned.schemas.feature_view import RetrivalRequest
+from aligned.sources.in_mem_source import InMemorySource
 from project_owners.owner import Owner
 
 from data_contracts.sources import adb, adb_ml, materialized_data, pim_core
@@ -86,6 +91,7 @@ FROM (SELECT rec.recipe_id,
              rmt.recipe_name,
              tx.taxonomies,
              tx.taxonomy_ids,
+             rm.MODIFIED_DATE as updated_at,
              GETDATE() as loaded_at,
              ROW_NUMBER() over (PARTITION BY rec.recipe_id ORDER BY rmt.language_id) as nr
       FROM pim.recipes rec
@@ -159,13 +165,14 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
         pl.col(parent_cat_col).cast(pl.Int64)
     ).with_columns(
         pl.when(
-            pl.col(cat_desc) != target_group
+            pl.col(cat_desc).is_null() | (pl.col(cat_desc) != target_group)
         ).then(
             pl.col(parent_cat_col)
         ).otherwise(
             pl.lit(None)
         ).alias(parent_cat_col)
     )
+
     root_categories = all_categories.filter(
         pl.col(parent_cat_col).is_null()
     ).select(
@@ -174,9 +181,12 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
         pl.col(cat_desc),
         pl.col(cat_name_col).alias(root_cat_name_col),
         pl.col(ingred_cat_col).alias(root_col),
+    ).filter(
+        pl.col(cat_desc) == target_group
     )
 
     join_parents = all_categories.filter(pl.col(parent_cat_col).is_not_null())
+
 
     # Join as long as there exist a parent id
     while not join_parents.is_empty():
@@ -213,9 +223,22 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
 
     return root_categories.filter(pl.col(cat_desc) == target_group).lazy()
 
+
+@feature_view(
+    name="raw_ingredient_categories",
+    source=adb.fetch(ingredient_categories),
+    materialized_source=materialized_data.parquet_at("raw_ingredient_categories.parquet")
+)
+class RawIngredientCategories:
+    ingredient_category_id = Int32().as_entity()
+    ingredient_category_name = String()
+    parent_category_id = Int32()
+    category_description = String()
+
+
 @feature_view(
     name="ingredient_category_groups",
-    source=adb.fetch(ingredient_categories).transform_with_polars(join_root_ingredient_category),
+    source=RawIngredientCategories.as_source().transform_with_polars(join_root_ingredient_category),
     materialized_source=materialized_data.parquet_at("ingredient_category_group.parquet")
 )
 class IngredientCategories:
@@ -374,7 +397,8 @@ main_ingredient_ids = {
 class RecipeFeatures:
     recipe_id = Int32().lower_bound(1).upper_bound(10_000_000).as_entity()
 
-    loaded_at = EventTimestamp()
+    updated_at = EventTimestamp()
+    loaded_at = Timestamp()
 
     main_recipe_id = Int32()
     main_ingredient_id = Int32()
@@ -461,6 +485,65 @@ class RecipeFeatures:
         ]
     )
     is_vegetarian = is_vegetarian_ingredient.logical_or(is_vegan)
+
+
+@feature_view(
+    name="main_recipe_features",
+    source=RecipeFeatures.metadata.materialized_source.transform_with_polars( # type: ignore
+        lambda df: df.filter(
+            pl.col("year") * 100 + pl.col("week") >= 202430 # noqa: PLR2004
+        ).sort("recipe_id").unique(
+            "main_recipe_id", keep="first", maintain_order=True
+        )
+    )
+)
+class MainRecipeFeature:
+    """
+    Mainly used to filter out data for computational heavy stuff.
+    Like the recipe embeddings.
+    """
+
+    main_recipe_id = Int32().as_entity()
+    recipe_id = Int32()
+    company_id = String()
+
+    year = Int32()
+    week = Int32()
+
+    recipe_name = String()
+
+
+@model_contract(
+    name="recipe_embedding",
+    input_features=[MainRecipeFeature().recipe_name],
+    exposed_model=openai_embedding("text-embedding-3-small", batch_on_n_chunks=100),
+    output_source=materialized_data.partitioned_parquet_at(
+        "recipe_embeddings",
+        partition_keys=["company_id"]
+    ),
+    acceptable_freshness=timedelta(days=6)
+)
+class RecipeEmbedding:
+    main_recipe_id = Int32().as_entity()
+    company_id = String().as_entity()
+    recipe_id = Int32()
+    recipe_name = String()
+    embedding = Embedding(1536)
+    predicted_at = EventTimestamp()
+
+
+@feature_view(
+    name="mealkit_recipe_similarity",
+    source=InMemorySource.empty(),
+    description="Computes the mealkit recipe similarity given a mealkit embedding."
+)
+class MealkitRecipeSimilarity:
+    mealkit_embedding = Embedding(1536).description(
+        "Assumes that it is normalized to 1 so we can use the dot product"
+    )
+    similarity = mealkit_embedding.dot_product(
+        RecipeEmbedding().embedding
+    )
 
 
 @feature_view(

@@ -111,7 +111,7 @@ async def quarantined_recipes(
 
     today = date.today()
     orders = await query(HistoricalRecipeOrders).filter(
-        today.year * 100 + today.isocalendar().week - 5 <= pl.col("year") * 100 + pl.col("week")
+        today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week")
     ).to_polars()
 
     return orders.with_columns(
@@ -142,7 +142,9 @@ class WeeksSinceRecipe:
 
     ordered_weeks_ago = Int32().transformed_using_features_polars(
         using_features=[from_year_week, last_order_year_week],
-        transformation=(pl.col("from_year_week") - pl.col("last_order_year_week")).clip(upper_bound=5) / 5 # type: ignore
+        transformation=(
+            6 - (pl.col("from_year_week") - pl.col("last_order_year_week"))
+        ).clip(lower_bound=1).log(2) / pl.lit(6).log(2)
     )
 
 deviation_sql = """SELECT

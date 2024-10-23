@@ -115,10 +115,8 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     if not year_week:
         return None
 
-    quarentined_recipes = list(set(year_week.quarantined_recipe_ids or []) - set(year_week.main_recipe_ids))
-
     st.write("Quarentined Dishes")
-    st.write(quarentined_recipes)
+    st.write(year_week.generated_recipe_ids)
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
@@ -144,7 +142,8 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
             portion_size=year_week.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
-            quarentine_main_recipe_ids=None
+            quarentine_main_recipe_ids=None,
+            ordered_weeks_ago=year_week.generated_recipe_ids
         ),
         year_week.main_recipe_ids
     )
@@ -158,8 +157,8 @@ async def debug_app() -> None:
     if not responses:
         return
 
-    # request = responses[-1]
-    # expected_recipes = []
+    request = responses[-1]
+    expected_recipes = []
     selection = select(responses)
 
     if selection is None:

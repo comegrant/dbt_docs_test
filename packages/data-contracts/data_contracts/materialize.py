@@ -37,6 +37,126 @@ def dependency_level(
 
     return deps
 
+async def materialize_view(
+    location: FeatureLocation,
+    should_force_update: bool,
+    store: ContractStore,
+    logger: Callable[[object], None]
+) -> None:
+    logger(location.name)
+
+    view = store.feature_view(location.name).view
+    view_tags = view.tags or set()
+
+    if not view.materialized_source:
+        logger(f"Skipping: {location.identifier}")
+        return
+
+    if not should_force_update and view.event_timestamp and view.acceptable_freshness:
+        try:
+            freshness = await store.feature_view(location.name).freshness()
+        except Exception as e:
+            logger(f"Got error when loading freshness: {e}")
+            freshness = None
+        logger(freshness)
+
+        if freshness:
+            now = datetime.now(tz=freshness.tzinfo)
+            if now - freshness < view.acceptable_freshness:
+                logger(f"Skipping: {location.identifier}")
+                return
+            elif "incremental" in view_tags:
+                await store.upsert_into(
+                    location,
+                    store.feature_view(location.name)
+                    .using_source(view.source)
+                    .between_dates(start_date=freshness, end_date=now)
+                )
+                return
+    else:
+        logger(
+            "Did not check freshness since one of the following was evaluated to false"
+            f"Force Upadate: {should_force_update}\n"
+            f"Event Timestamp: {view.event_timestamp}\n"
+            f"Freshness: {view.acceptable_freshness}"
+        )
+
+    await store.overwrite(
+        location, store.feature_view(location.name).using_source(view.source).all()
+    )
+
+async def materialize_model(
+    location: FeatureLocation,
+    should_force_update: bool,
+    store: ContractStore,
+    logger: Callable[[object], None]
+) -> None:
+    logger(location.name)
+
+    model = store.model(location.name).model
+    pred_view = model.predictions_view
+    model_tags = model.tags or set()
+    model_store = store.model(location.name)
+
+    if not pred_view.source:
+        logger(f"Skipping: {location.identifier}")
+        return
+
+    if model.exposed_model is None:
+        logger(f"Missing an exposed model for: {location.identifier}")
+        return
+
+    requests = model_store.input_request().needed_requests
+
+    if len(requests) != 1:
+        logger(f"Model {model.name} have more then one input source. Will not predict.")
+        return
+
+    input_request = requests[0]
+    input_loc = input_request.location
+    if input_loc.location_type != "feature_view":
+        logger(
+            f"Expected a feature view as input, but got {input_loc.location_type}. "
+            f"Will therefore skip {location.name}"
+        )
+        return
+
+    if not should_force_update and pred_view.event_timestamp and "incremental" in model_tags:
+        try:
+            freshness = await store.model(location.name).prediction_freshness()
+        except Exception as e:
+            logger(f"Got error when loading freshness: {e}")
+            freshness = None
+        logger(freshness)
+
+        if freshness:
+            now = datetime.now(tz=freshness.tzinfo)
+            if pred_view.acceptable_freshness and now - freshness < pred_view.acceptable_freshness:
+                logger(f"Skipping: {location.identifier}")
+                return
+            else:
+                await store.upsert_into(
+                    location,
+                    store.model(location.name).predict_over(
+                        store.feature_view(input_loc.name).between_dates(
+                            start_date=freshness, end_date=now
+                        )
+                    ).with_subfeatures()
+                )
+                return
+    else:
+        logger(
+            "Did not check freshness since one of the following was evaluated to false"
+            f"Force Upadate: {should_force_update}\n"
+            f"Event Timestamp: {pred_view.event_timestamp}\n"
+            f"Freshness: {pred_view.acceptable_freshness}"
+        )
+
+    preds = store.model(location.name).predict_over(
+        store.feature_view(input_loc.name).all()
+    ).with_subfeatures()
+    await store.overwrite(location, preds)
+
 
 async def materialize_data(
     store: ContractStore,
@@ -60,50 +180,13 @@ async def materialize_data(
     )
 
     for location, _ in sorted_deps:
-        if location.location_type != "feature_view":
-            logger(f"Skipping: {location.identifier}")
-            continue
-
-        logger(location.name)
-
-        view = store.feature_view(location.name).view
-        view_tags = view.tags or set()
-
-        if not view.materialized_source:
-            logger(f"Skipping: {location.identifier}")
-            continue
-
-        if not should_force_update and view.event_timestamp and view.acceptable_freshness:
-            try:
-                freshness = await store.feature_view(location.name).freshness()
-            except Exception as e:
-                logger(f"Got error when loading freshness: {e}")
-                freshness = None
-            logger(freshness)
-
-            if freshness:
-                now = datetime.now(tz=freshness.tzinfo)
-                if now - freshness < view.acceptable_freshness:
-                    logger(f"Skipping: {location.identifier}")
-                    continue
-                elif "incremental" in view_tags:
-                    await store.upsert_into(
-                        location,
-                        store.feature_view(location.name)
-                        .using_source(view.source)
-                        .between_dates(start_date=freshness, end_date=now)
-                    )
-                    continue
-        else:
-            logger(
-                "Did not check freshness since one of the following was evaluated to false"
-                f"Force Upadate: {should_force_update}\n"
-                f"Event Timestamp: {view.event_timestamp}\n"
-                f"Freshness: {view.acceptable_freshness}"
+        if location.location_type == "feature_view":
+            await materialize_view(
+                location, should_force_update=should_force_update, store=store, logger=logger
             )
-
-        await store.overwrite(
-            location, store.feature_view(location.name).using_source(view.source).all()
-        )
+        else:
+            await materialize_model(
+                location, should_force_update=should_force_update, store=store, logger=logger
+            )
 
     return sorted_deps

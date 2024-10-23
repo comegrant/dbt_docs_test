@@ -2,8 +2,15 @@ from aligned import FeatureStore
 from aligned.compiler.model import ModelContractWrapper
 from aligned.feature_view.feature_view import FeatureViewWrapper
 from data_contracts.orders import WeeksSinceRecipe
-from data_contracts.preselector.basket_features import HistoricalCustomerMealkitFeatures
-from data_contracts.recipe import AllRecipeIngredients, IngredientAllergiesPreferences, RecipeNegativePreferences
+from data_contracts.preselector.basket_features import BasketFeatures, HistoricalCustomerMealkitFeatures
+from data_contracts.recipe import (
+    AllRecipeIngredients,
+    IngredientAllergiesPreferences,
+    MainRecipeFeature,
+    RawIngredientCategories,
+    RecipeEmbedding,
+    RecipeNegativePreferences,
+)
 
 
 def recommendation_feature_contracts() -> FeatureStore:
@@ -61,6 +68,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         HistoricalRecipeOrders,
         BasketDeviation,
         RecipeFeatures,
+        MainRecipeFeature,
         RecipeNutrition,
         RecipeCost,
         DeselectedRecipes,
@@ -82,12 +90,15 @@ def recommendation_feature_contracts() -> FeatureStore:
         MainIngredients,
         YearWeekMenu,
         WeeksSinceRecipe,
+        RawIngredientCategories,
+        BasketFeatures,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,
         RecipeCluster,
         UserRecipeLikability,
         PresentedRecommendations,
+        RecipeEmbedding,
     ]
 
     store = FeatureStore.empty()

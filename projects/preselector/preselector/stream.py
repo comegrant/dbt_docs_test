@@ -6,6 +6,7 @@ from typing import Any, Generic, Literal, Protocol, TypeVar
 from aligned.streams.interface import SinakableStream
 from aligned.streams.redis import RedisStream
 from azure.servicebus import (
+    AutoLockRenewer,
     ServiceBusClient,
     ServiceBusReceivedMessage,
     ServiceBusReceiver,
@@ -111,11 +112,13 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
 
     def receiver(self) -> ServiceBusReceiver:
         if self._connection is None:
+            renewer = AutoLockRenewer()
             rec = self.client.get_subscription_receiver(
                 topic_name=self.topic_name,
                 subscription_name=self.subscription_name,
                 sub_queue=self.sub_queue,
                 max_wait_time=self.max_wait_time,
+                auto_lock_renewer=renewer
             )
             self._connection = rec.__enter__()
 

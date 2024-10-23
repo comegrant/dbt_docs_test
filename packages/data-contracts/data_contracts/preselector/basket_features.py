@@ -17,7 +17,7 @@ from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrivalRequest
 from aligned.sources.random_source import RandomDataSource
 from data_contracts.orders import HistoricalRecipeOrders, WeeksSinceRecipe
-from data_contracts.recipe import NormalizedRecipeFeatures, RecipeMainIngredientCategory
+from data_contracts.recipe import MealkitRecipeSimilarity, NormalizedRecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import materialized_data
 
@@ -34,6 +34,7 @@ recipe_nutrition = NormalizedRecipeFeatures()
 recipe_cost = NormalizedRecipeFeatures()
 recipe_main_ingredient = RecipeMainIngredientCategory()
 recommandations = RecommendatedDish()
+mealkit_recipe_similiarty = MealkitRecipeSimilarity()
 
 fat_agg = recipe_nutrition.fat_pct.aggregate()
 protein_agg = recipe_nutrition.protein_pct.aggregate()
@@ -78,6 +79,7 @@ class InjectedFeatures:
     mean_cost_of_food = recipe_cost_whole_units_agg.mean().is_optional()
     mean_rank = order_rank_agg.mean().default_value(0)
     mean_ordered_ago = ordered_ago_agg.mean().default_value(1)
+    inter_week_similarity = Float().default_value(0)
 
 
 injected_features = InjectedFeatures()
@@ -94,6 +96,7 @@ class BasketFeatures:
     mean_rank = injected_features.mean_rank
     mean_cost_of_food = injected_features.mean_cost_of_food
     mean_ordered_ago = injected_features.mean_ordered_ago.default_value(0)
+    inter_week_similarity = injected_features.inter_week_similarity
 
     mean_energy = energy_kcal_agg.mean()
     mean_number_of_ratings = number_of_ratings_agg.mean().with_tag(VariationTags.quality)
@@ -124,7 +127,6 @@ class BasketFeatures:
     is_gluten_free_percentage = mean_of_bool(recipe_features.is_gluten_free)
     is_spicy_percentage = mean_of_bool(recipe_features.is_spicy)
 
-    is_ww_percentage = mean_of_bool(recipe_features.is_weight_watchers).description("Makes only sense in Linas")
     is_roede_percentage = mean_of_bool(recipe_features.is_roede).description("Makes only sense in GL")
 
     # Main Proteins
@@ -164,18 +166,6 @@ class BasketFeatures:
         .with_tag(VariationTags.carbohydrate)
     )
 
-    repeated_taxonomies = Float().polars_aggregation_using_features(
-        aggregation=(
-            pl.col("taxonomy_of_interest").list.explode().unique_counts().quantile(0.9) / pl.count("recipe_id")
-        ),
-        using_features=[
-            recipe_features.taxonomy_of_interest,
-            recipe_features.recipe_id
-        ]
-    ).with_tag(VariationTags.equal_dishes)
-
-
-
 async def historical_customer_mealkit_features(
     request: RetrivalRequest,
     from_date: date | None = None,
@@ -207,7 +197,8 @@ async def historical_customer_mealkit_features(
     normalized_recipes = query(NormalizedRecipeFeatures)
     main_ingredient_category = query(RecipeMainIngredientCategory)
 
-    inject_features = InjectedFeatures.query().request.aggregated_features
+    inject_request = InjectedFeatures.query().request
+    inject_features = inject_request.aggregated_features
     needed_dummy_features = []
     for feature in inject_features:
         needed_dummy_features.extend(feature.depending_on_names)
@@ -260,6 +251,11 @@ async def historical_customer_mealkit_features(
         year=((pl.col("basket_id") % 1_000_000) / 100).floor().cast(pl.UInt64),
         week=(pl.col("basket_id") % 100)
     )
+
+    for feat in inject_request.features_to_include:
+        basket_features = basket_features.with_columns(
+            pl.lit(0).alias(feat)
+        )
 
     assert not basket_features.is_empty(), "Found no basket features"
     return basket_features.lazy()
@@ -374,9 +370,116 @@ async def historical_preselector_vector(
     ).lazy()
 
 
+async def generate_attribut_definition_vectors(request: RetrivalRequest) -> pl.LazyFrame:
+    from dataclasses import dataclass
+
+    @dataclass
+    class FeatureImportance:
+        target: float
+        importance: float
+
+    companies = {
+        "AMK": "8A613C15-35E4-471F-91CC-972F933331D7",
+        "GL": "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
+        "LMK": "6A2D0B60-84D6-4830-9945-58D518D27AC2",
+        "RT": "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
+    }
+
+    default_values = {
+        # Quick and easy
+        "C28F210B-427E-45FA-9150-D6344CAE669B": {
+            "cooking_time_mean": FeatureImportance(target=0.0, importance=1.0),
+        },
+        # Chef favorite
+        "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {
+            "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=1.0),
+            "mean_number_of_ratings": FeatureImportance(target=0.75, importance=0.3),
+            "mean_ratings": FeatureImportance(target=0.8, importance=0.6),
+        },
+        # Family
+        "B172864F-D58E-4395-B182-26C6A1F1C746": {
+            "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Vegetarion
+        "6A494593-2931-4269-80EE-470D38F04796": {
+            "is_vegetarian_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Low Cal
+        "FD661CAD-7F45-4D02-A36E-12720D5C16CA": {
+            "is_low_calorie": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Roede
+        "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA": {
+            "is_roede_percentage": FeatureImportance(target=1.0, importance=1.0),
+        },
+        # Singel
+        "37CE056F-4779-4593-949A-42478734F747": {},
+    }
+
+    vector_types = ["importance", "target"]
+    preferences = {
+        "GL": {
+            "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Single mealkit": "37CE056F-4779-4593-949A-42478734F747",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Roede mealkit": "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA",
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+        },
+        "AMK": {
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Quick and Easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+        },
+        "LMK": {
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+        },
+        "RT": {
+            "Vegetarian": "6A494593-2931-4269-80EE-470D38F04796",
+            "Chef's Favorite": "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "Quick and easy": "C28F210B-427E-45FA-9150-D6344CAE669B",
+            "Family Friendly": "B172864F-D58E-4395-B182-26C6A1F1C746",
+            "Low calorie": "FD661CAD-7F45-4D02-A36E-12720D5C16CA",
+        },
+    }
+
+    features = list(BasketFeatures.compile().request_all.needed_requests[0].all_features)
+    data_points: list[dict] = []
+
+    for company_name, comp_id in companies.items():
+        for vector_type in vector_types:
+            for concept_name, concept_id in preferences[company_name].items():
+
+                default_concept_values = default_values[concept_id]
+
+                row: dict = {
+                    # Select either importance or target
+                    # From the defaults, either set it to 0.0
+                    feature.name: getattr(
+                        default_concept_values.get(feature.name, FeatureImportance(0.0, 0.0)),
+                        vector_type
+                    )
+                    for feature in features
+                }
+                row["concept_id"] = concept_id
+                row["concept_name"] = concept_name
+                row["vector_type"] = vector_type
+                row["company_id"] = comp_id
+                data_points.append(row)
+
+    return pl.DataFrame(data_points).lazy()
+
 PredefinedVectors = BasketFeatures.with_schema(
     name="predefined_vectors",
-    source=materialized_data.parquet_at("predefined_vectors.parquet"),
+    source=CustomMethodDataSource.from_load(generate_attribut_definition_vectors),
+    materialized_source=materialized_data.parquet_at("predefined_vectors.parquet"),
     entities=dict(
         concept_id=String(), company_id=String(), vector_type=String().accepted_values(["importance", "target"])
     ),

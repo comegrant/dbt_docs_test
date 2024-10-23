@@ -13,6 +13,14 @@ This have lead to an approach where we do a bredth first search through a multi 
 
 ## Get started
 
+### Most important files
+The pre-selector contains many moving parts. However, the most important file is `preselector/main.py`.
+This contains all of the logic that computes the best recipes, how we load the data, and how we validate data.
+
+The second most important file is the `preselector/process_stream.py` which is the worker node that process every request in production.
+This will read from an Azure Servicebus, making it easy to compleate tasks async and meaks it easy to scale up processing power if needed.
+
+### Run the pre-selector
 Before you manage to get started you will need to set the following environment variables in a `.env` file.
 
 ```
@@ -38,6 +46,7 @@ docker compose up combination-app
 
 This should start an app at `http://localhost:8506` which makes it possible to experiment with different combinations and explain why the pre-selector outputs what it does.
 
+
 ## Suggested Development
 
 It is recommended to develop everything locally through `docker`. This is due to the combination of Databricks and Azure resources, as they serve different purposes.
@@ -48,6 +57,9 @@ If you do any local changes, startup the `combination-app` and run the app to se
 If any customers have any issues in production, then startup the `debug` app, again through `docker compose`.
 This will find the generation request that the customer had, and try to reproduce the results as closely as possible.
 There is a posibility of data drift, so a 1:1 recreation is probably not possible.
+
+### Logging
+All of the logs can be found in `DataDog`. Here can we filter on the company worker, the environment, and get some insights into the performance and when something errored.
 
 ## Cost of Food
 There is a app to measure Cost of Food as well. This can be started with `docker compose cof-app`.

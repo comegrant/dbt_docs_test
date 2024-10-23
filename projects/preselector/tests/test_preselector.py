@@ -28,6 +28,76 @@ def dummy_store() -> ContractStore:
     return store.dummy_store()
 
 @pytest.mark.asyncio()
+async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> None:
+    """
+    Tests that all data is processed in the expected way.
+    Therefore, we expecte a successful response, but a not a meaningful response.
+    """
+    seed(1)
+    np_seed(1)
+
+    number_of_recipes = 3
+    week = 10
+    year = 2024
+    portion_size = 4
+
+    recipe_pool = 100
+
+    features = potential_features()
+
+    assert isinstance(dummy_store.feature_source, BatchFeatureSource)
+    assert isinstance(dummy_store.feature_source.sources, dict)
+
+    for source in list(dummy_store.feature_source.sources.keys()):
+        loc = FeatureLocation.from_string(source)
+        if loc.location_type != "feature_view":
+            continue
+
+        request = dummy_store.feature_view(loc.name).request
+        if "agreement_id" in request.entity_names:
+            del dummy_store.feature_source.sources[loc.identifier]
+
+
+    main_recipe_ids, _ = await run_preselector(
+        customer=GenerateMealkitRequest(
+            agreement_id=0,
+            company_id="some-id",
+            compute_for=[YearWeek(week=week, year=year)],
+            concept_preference_ids=["some-id"],
+            taste_preferences=[],
+            portion_size=portion_size,
+            number_of_recipes=number_of_recipes,
+            override_deviation=False,
+            has_data_processing_consent=False
+        ),
+        available_recipes=pl.DataFrame({
+            "recipe_id": list(range(recipe_pool)),
+            "menu_week": [week] * recipe_pool,
+            "menu_year": [year] * recipe_pool,
+            "main_recipe_id": list(range(recipe_pool)),
+            "variation_id": ["a"] * recipe_pool,
+            "product_id": ["a"] * recipe_pool,
+            "variation_portions": [4] * recipe_pool
+        }),
+        target_vector=pl.DataFrame({
+            feat.name: 0.5
+            for feat in features
+        }),
+        importance_vector=pl.DataFrame({
+            feat.name: 0.5
+            for feat in features
+        }),
+        recommendations=pl.DataFrame(),
+        selected_recipes={
+            1: year * 100 + week - 3
+        },
+        store=dummy_store
+    )
+
+    assert len(main_recipe_ids) == number_of_recipes
+
+
+@pytest.mark.asyncio()
 async def test_preselector_run(dummy_store: ContractStore) -> None:
     """
     Tests that all data is processed in the expected way.
@@ -64,7 +134,7 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
 
     main_recipe_ids, _ = await run_preselector(
         customer=GenerateMealkitRequest(
-            agreement_id=0,
+            agreement_id=1,
             company_id="some-id",
             compute_for=[YearWeek(week=week, year=year)],
             concept_preference_ids=["some-id"],

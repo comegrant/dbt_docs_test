@@ -17,6 +17,7 @@ from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
+from data_contracts.recipe import RecipeEmbedding
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -47,8 +48,6 @@ class KeyVaultSettings(BaseSettings):
     key_mappings: dict[str, str] = Field({
         "service-bus-connection-string": "service_bus_connection_string".upper()
     })
-
-
 
 
 @dataclass
@@ -212,6 +211,11 @@ async def load_cache(
         (
             WeeksSinceRecipe.location,
             cache_dir.parquet_at(f"{company_id}/weeks_since_recipe.parquet"),
+            pl.col("company_id") == company_id
+        ),
+        (
+            RecipeEmbedding.location,
+            cache_dir.parquet_at(f"{company_id}/recipe_embeddings.parquet"),
             pl.col("company_id") == company_id
         )
     ]
@@ -434,9 +438,6 @@ async def process_stream_batch(
                 progress_callback(index + 1, number_of_messages)
 
             if index % write_batch_interval == 0 and index != 0:
-                await stream.mark_as_complete(completed_requests)
-                completed_requests = []
-
                 if successful_output_stream:
                     await successful_output_stream.batch_write(successful_responses)
                     successful_responses = []
@@ -445,12 +446,13 @@ async def process_stream_batch(
                     await failed_output_stream.batch_write(failed_requests)
                     failed_requests = []
 
+                await stream.mark_as_complete(completed_requests)
+                completed_requests = []
+
         logger.info(
             f"Time used in pre-selecor land: {preselector_runtime_sum}. "
             f"mean time per req: {preselector_runtime_sum / number_of_messages}"
         )
-
-        await stream.mark_as_complete(completed_requests)
 
         if successful_output_stream:
             await successful_output_stream.batch_write(successful_responses)
@@ -458,6 +460,7 @@ async def process_stream_batch(
         if failed_output_stream:
             await failed_output_stream.batch_write(failed_requests)
 
+        await stream.mark_as_complete(completed_requests)
 
         if progress_callback:
             progress_callback(number_of_messages, number_of_messages)

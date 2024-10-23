@@ -69,6 +69,7 @@ class PreselectorYearWeekResponse(BaseModel):
     compliancy: PreselectorPreferenceCompliancy
     target_cost_of_food_per_recipe: float
     quarantined_recipe_ids: list[int] | None = Field(None)
+    generated_recipe_ids: dict[int, int] | None = Field(None)
 
 
 class PreselectorSuccessfulResponse(BaseModel):
@@ -76,7 +77,6 @@ class PreselectorSuccessfulResponse(BaseModel):
 
     correlation_id: str
     year_weeks: list[PreselectorYearWeekResponse]
-    number_of_recipes: int = Field(4)
 
     concept_preference_ids: list[str]
     taste_preferences: list[NegativePreference]

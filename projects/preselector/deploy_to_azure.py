@@ -213,4 +213,4 @@ def deploy_all(tag: str, env: str) -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="14523dd085e654572d942fda2291e09c334ced23", env="prod")
+    deploy_all(tag="d005bc59930486a4f9b0a9243402d2d0348cca74", env="prod")

@@ -36,6 +36,7 @@ class GenerateMealkitRequest(BaseModel):
     override_deviation: bool
 
     quarentine_main_recipe_ids: list[int] | None = Field(default=None)
+    ordered_weeks_ago: dict[int, int] | None = Field(default=None)
     has_data_processing_consent: bool = Field(False)
     correlation_id: str = Field(default_factory=lambda: str(uuid4()))
 

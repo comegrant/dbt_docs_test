@@ -29,8 +29,8 @@ assert environment != ""
 os.environ["DATALAKE_ENV"] = environment
 
 
+from data_contracts.materialize import materialize_data
 from data_contracts.preselector.store import Preselector
-from preselector.materialize import materialize_data
 from preselector.store import preselector_store
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
@@ -51,6 +51,10 @@ os.environ["CORE_PIM_CONNECTION"] = "DRIVER=ODBC Driver 18 for SQL Server;DATABA
 os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
     scope="auth_common",
     key="azure-storageAccount-experimental-name",
+)
+os.environ["OPENAI_API_KEY"] = dbutils.secrets.get(
+    scope="auth_common",
+    key="openai-preselector-key",
 )
 os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
     scope="auth_common",

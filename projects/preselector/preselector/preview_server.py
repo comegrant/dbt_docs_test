@@ -160,10 +160,14 @@ async def generate_preview(
     """
     req = body.request()
     with duration("Generate", should_log=True):
-        response = await run_preselector_for_request(
-            req,
-            store
-        )
+        try:
+            response = await run_preselector_for_request(
+                req,
+                store
+            )
+        except Exception as error:
+            logger.error(error)
+            raise error
 
     success = response.success_response()
     if success:

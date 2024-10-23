@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import polars as pl
+from aligned import EventTimestamp
 from aligned.data_source.batch_data_source import (
     BatchDataSource,
-    EventTimestamp,
     FeatureType,
 )
 from aligned.feature_source import WritableFeatureSource

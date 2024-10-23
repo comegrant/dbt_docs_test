@@ -22,6 +22,7 @@ from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, MenuWeekRecip
 from data_contracts.recipe import (
     NormalizedRecipeFeatures,
     RecipeCost,
+    RecipeEmbedding,
     RecipeMainIngredientCategory,
     RecipeNegativePreferences,
     RecipePreferences,
@@ -77,6 +78,7 @@ class PreselectorTestChoice:
     source=CustomMethodDataSource.from_methods(
         depends_on_sources={
             OneSubMealkits.location,
+            RecipeEmbedding.location,
             WeeksSinceRecipe.location,
             CostOfFoodPerMenuWeek.location,
             RecipeNegativePreferences.location,
