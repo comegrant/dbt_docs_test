@@ -1,0 +1,10 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/source-properties
+
+version: 2
+
+sources:
+  - name: analyticsdb
+    schema: bronze
+    description: "Tables from the AnalyticsDB (ADB) database"
+    tables:
+      - name: analyticsdb_cms__estimations_log

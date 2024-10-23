@@ -101,4 +101,54 @@ models:
         data_type: string
 
   - name: estimations_log
-    description: Showing what would have been ordered for the next 14 weeks if the cutoff was today
+    description: Showing what would have been ordered for the next 14 weeks if the cutoff was when the estimation was generated
+
+    columns: 
+      - name: pk_estimations_log
+        description: The unique primary key in estimations_log table|
+        data_type: string
+        data_tests:
+          - not_null
+          - unique
+
+      - name: menu_year
+        description: "{{doc('column__menu_year')}}"
+        data_type: int
+          - not_null
+
+      - name: menu_week
+        description: "{{doc('column__menu_week')}}"
+        data_type: int
+
+      - name: company_id
+        description: "{{doc('column__company_id')}}"
+        data_type: string
+
+      - name: product_variation_id
+        description: "{{doc('column__product_variation_id')}}"
+        data_type: string
+
+      - name: billing_agreement_basket_deviation_origin_id
+        description: "{{doc('column__billing_agreement_basket_deviation_origin_id')}}"
+        data_type: string
+        data_tests:
+          - required_values:
+              value_list: 
+                - 25017D0E-F788-48D7-8DC4-62581D58B698 # Normal deviation
+                - 9E016A92-9E5C-4B5B-AC5D-739CEFD6F07B # Meal selector
+                - 6AD5DF6F-6CDA-4E45-96D0-A169B633247C # Pre selector
+                - 00000000-0000-0000-0000-000000000000 # Not deviation
+              config:
+                where: 'estimation_generated_at >= current_date'
+
+      - name: product_variation_quantity
+        description: "{{doc('column__product_variation_quantity')}}"
+        data_type: int
+
+      - name: estimation_generated_at
+        description: The timestamp of when the estimation was created
+        data_type: timestamp
+
+      - name: source
+        description: Indicates if the data is imported from ADB to get history, or if it is generated in the new data platform (NDP)
+        data_type: int
