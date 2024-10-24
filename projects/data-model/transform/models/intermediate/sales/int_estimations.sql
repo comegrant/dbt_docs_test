@@ -122,7 +122,7 @@ dates as (
 
     from baskets_with_company
     left join relevant_period
-    on baskets_with_company.company_id=baskets_with_company.company_id
+    on baskets_with_company.company_id = relevant_period.company_id
 )
 
 , basket_even_weeks_default_schedule as (
