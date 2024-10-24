@@ -6,7 +6,7 @@
 }}
 
 {% set current_timestamp = run_started_at.strftime('%Y-%m-%d %H:%M:%S') %}
-{% set number_of_estimated_weeks = 14 %}
+{% set number_of_estimated_weeks = 12 %}
 
 with 
 
@@ -58,17 +58,37 @@ dates as (
     select * from {{ref('dim_products')}}
 )
 
+, orders as (
+
+    select * from {{ref('fact_orders')}}
+)
+
+, last_menu_week as (
+
+    select 
+    company_id
+    , max(menu_week_monday_date) as menu_week_monday_date
+    from orders
+    group by 1
+
+)
+
 , relevant_period as (
 
     select  
 
-      year as menu_year
+    company_id
+    , year as menu_year
     , week as menu_week
     , date as menu_week_monday_date
 
     from dates
-    where date > getdate() and date <= dateadd(week, 14, getdate())
-    and weekday_name = 'Monday'
+    left join last_menu_week
+    on 1=1
+    where 
+        date > greatest(last_menu_week.menu_week_monday_date, getdate())
+        and date <= dateadd(week, {{number_of_estimated_weeks}}, greatest(last_menu_week.menu_week_monday_date, getdate()) )
+        and weekday_name = 'Monday'
 
 )
 
@@ -102,7 +122,7 @@ dates as (
 
     from baskets_with_company
     left join relevant_period
-    on 1=1
+    on baskets_with_company.company_id=baskets_with_company.company_id
 )
 
 , basket_even_weeks_default_schedule as (
