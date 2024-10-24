@@ -129,24 +129,15 @@ resource "databricks_schema" "this" {
   storage_root = databricks_external_location.this[each.key].url
 }
 
-resource "databricks_catalog" "segment" {
-  name = "segment_${terraform.workspace}"
-  comment = "Managed by Terraform. This catalog is used for ingestion from Segment"
-  properties = {
-    purpose = "Segment Ingest"
-  }
-  storage_root = databricks_external_location.segment.url
-  isolation_mode = "ISOLATED"
-}
-
 resource "databricks_catalog" "segment_shared" {
-  count   = terraform.workspace == "prod" ? 1 : 0
-  name = "segment"
-  comment = "Managed by Terraform. This catalog is used for ingestion from Segment and is shared between the environments"
-  properties = {
+  count         = terraform.workspace == "prod" ? 1 : 0
+  name          = "segment"
+  comment       = "Managed by Terraform. This catalog is used for ingestion from Segment and is shared between the environments"
+  properties    = {
     purpose = "Segment Ingest"
   }
   storage_root = databricks_external_location.segment_shared[count.index].url
+  owner        = "location-owners"
 }
 
 
@@ -306,10 +297,12 @@ resource "databricks_permissions" "db_wh_external_read" {
 }
 
 resource "databricks_sql_endpoint" "db_wh_segment" {
+  count                     = terraform.workspace == "prod" ? 1 : 0
+  
   name                      = "Segment SQL Warehouse"
-  cluster_size              = "Small"
-  min_num_clusters          = 2
-  max_num_clusters          = 6
+  cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
+  min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
+  max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
   auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
   enable_serverless_compute = true
   tags {
@@ -375,22 +368,26 @@ resource "time_rotating" "this" {
 #####################################
 
 resource "databricks_service_principal" "segment_sp" {
-  display_name = "segment_sp"
+  count         = terraform.workspace == "prod" ? 1 : 0
+  display_name  = "segment_sp_${terraform.workspace}"
 }
 
 resource "databricks_service_principal_secret" "segment_sp" {
+  count                = terraform.workspace == "prod" ? 1 : 0
   provider             = databricks.accounts
-  service_principal_id = databricks_service_principal.segment_sp.id
+  service_principal_id = databricks_service_principal.segment_sp[count.index].id
 }
 
 resource "databricks_group_member" "segment_sp_is_ws_admin" {
+  count     = terraform.workspace == "prod" ? 1 : 0
   group_id  = data.databricks_group.admins.id
-  member_id = databricks_service_principal.segment_sp.id
+  member_id = databricks_service_principal.segment_sp[count.index].id
 }
 
 resource "databricks_group_member" "segment_service_principal" {
-  group_id = databricks_group.service-principals.id
-  member_id = databricks_service_principal.segment_sp.id
+  count     = terraform.workspace == "prod" ? 1 : 0
+  group_id  = databricks_group.service-principals.id
+  member_id = databricks_service_principal.segment_sp[count.index].id
 }
 
 
@@ -443,10 +440,7 @@ provider "databricks" {
 
 resource "databricks_token" "pat_databricks_reader_sp" {
   provider = databricks.databricks-reader-sp
-  comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
-  # Token is valid for 60 days but is rotated after 30 days.
-  # Run `terraform apply` within 60 days to refresh before it expires.
-  lifetime_seconds = 60 * 24 * 60 * 60
+  comment  = "Managed by Terraform, not rotated"
 }
 
 
@@ -550,8 +544,8 @@ resource "azurerm_key_vault_secret" "databricks_reader_sp_pat" {
   name            = "databricks-sp-databricksReader-pat-${terraform.workspace}"
   value           = databricks_token.pat_databricks_reader_sp.token_value
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform. Personal access token for databricks reader service principal. Run `terraform apply` within 60 days to refresh before it expires."
-  expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
+  content_type    = "Managed by Terraform. Personal access token for databricks reader service principal."
+  expiration_date = "2050-01-01T00:00:00Z"
 }
 
 resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
@@ -563,8 +557,9 @@ resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
 }
 
 resource "azurerm_key_vault_secret" "segment_sp_OAuthSecret" {
+  count           = terraform.workspace == "prod" ? 1 : 0
   name            = "databricks-sp-segment-oauthSecret-${terraform.workspace}"
-  value           = databricks_service_principal_secret.segment_sp.secret
+  value           = databricks_service_principal_secret.segment_sp[count.index].secret
   key_vault_id    = data.azurerm_key_vault.this.id
   content_type    = "Managed by Terraform. OAuth secret of the Databricks Service Principal used in the Segment Connection."
   expiration_date = "2050-01-01T00:00:00Z"
@@ -594,11 +589,6 @@ resource "databricks_grants" "catalog" {
   }
 
   grant {
-    principal = databricks_service_principal.segment_sp.application_id
-    privileges = ["ALL_PRIVILEGES"]
-  }
-
-  grant {
     principal = databricks_service_principal.databricks_reader_sp.application_id
     privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
@@ -619,30 +609,20 @@ resource "databricks_grants" "catalog" {
   }
 }
 
-resource "databricks_grants" "catalog_segment" {
-  count = terraform.workspace == "prod" ? 1 : 0
-  
+resource "databricks_grants" "catalog_segment" { 
+  count   = terraform.workspace == "prod" ? 1 : 0
   catalog = databricks_catalog.segment_shared[count.index].name
 
   grant {
-    principal  = var.azure_client_id
-    privileges = ["ALL_PRIVILEGES"]
-  }
-
-  grant {
-    principal = databricks_service_principal.segment_sp.application_id
-    privileges = ["ALL_PRIVILEGES"]
-  }
-
-  grant {
-    principal = "data-engineers"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
-  }
-
-  grant {
-    principal = databricks_service_principal.bundle_sp.application_id
+    principal = "segment-readers"
     privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
+
+  grant {
+    principal = "segment-admins"
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
 }
 
 resource "databricks_grants" "external_location" {
@@ -672,19 +652,12 @@ resource "databricks_grants" "external_location" {
 
 
 resource "databricks_grants" "external_location_segment" {
-  count = terraform.workspace == "prod" ? 1 : 0
+  count             = terraform.workspace == "prod" ? 1 : 0
   external_location = databricks_external_location.segment_shared[count.index].id
   grant {
     principal  = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]
   }
-  # Only add this all privileges if environment is dev
-
-  grant {
-    principal = "data-engineers"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["READ_FILES"]
-  }
-
 }
 
 

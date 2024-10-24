@@ -3,25 +3,25 @@ version: 2
 sources:
 
   - name: segment_net_backend_linas
-    catalog: segment_dev
+    catalog: segment
     schema: net_backend_linas
     tables:
       - name: ce_deviation_ordered
 
   - name: segment_net_backend_retnemt
-    catalog: segment_dev
+    catalog: segment
     schema: net_backend_retnemt
     tables: 
       - name: ce_deviation_ordered
 
   - name: segment_net_backend_adams
-    catalog: segment_dev
+    catalog: segment
     schema: net_backend_adams
     tables:
       - name: ce_deviation_ordered
 
   - name: segment_net_backend_godtlevert
-    catalog: segment_dev
+    catalog: segment
     schema: net_backend
     tables:
       - name: ce_deviation_ordered
