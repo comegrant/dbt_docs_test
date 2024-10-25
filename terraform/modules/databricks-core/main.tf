@@ -97,22 +97,10 @@ resource "databricks_external_location" "this" {
 }
 
 resource "databricks_external_location" "segment" {
+  count    = terraform.workspace == "prod" ? 1 : 0
   name     = "delta_lake_${terraform.workspace}_segment"
   url = format("abfss://%s@%s.dfs.core.windows.net/",
     "segment",
-    var.data_lake_name
-  )
-  credential_name = databricks_storage_credential.this.id
-  comment         = "Managed by Terraform"
-  skip_validation = true
-  owner           = "location-owners"
-}
-
-resource "databricks_external_location" "segment_shared" {
-  count   = terraform.workspace == "prod" ? 1 : 0
-  name     = "delta_lake_segment"
-  url = format("abfss://%s@%s.dfs.core.windows.net/",
-    "segment_shared",
     var.data_lake_name
   )
   credential_name = databricks_storage_credential.this.id
@@ -136,7 +124,7 @@ resource "databricks_catalog" "segment_shared" {
   properties    = {
     purpose = "Segment Ingest"
   }
-  storage_root = databricks_external_location.segment_shared[count.index].url
+  storage_root = databricks_external_location.segment[count.index].url
   owner        = "location-owners"
 }
 
@@ -653,7 +641,7 @@ resource "databricks_grants" "external_location" {
 
 resource "databricks_grants" "external_location_segment" {
   count             = terraform.workspace == "prod" ? 1 : 0
-  external_location = databricks_external_location.segment_shared[count.index].id
+  external_location = databricks_external_location.segment[count.index].id
   grant {
     principal  = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]

@@ -107,6 +107,7 @@ resource "azurerm_resource_group_template_deployment" "container" {
 
 resource "azurerm_resource_group_template_deployment" "segment" {
   // This is a workaround since it is not possible to use the normal approach when deploying containers if firewall is enabled.
+  count               = terraform.workspace == "prod" ? 1 : 0
   deployment_mode     = "Incremental"
   name                = "segment"
   resource_group_name = azurerm_storage_account.this.resource_group_name
