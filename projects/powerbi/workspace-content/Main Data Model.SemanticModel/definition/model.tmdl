@@ -10,7 +10,7 @@ annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.136.1478.0 (24.09)
+annotation PBIDesktopVersion = 2.137.952.0 (24.10)
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -30,6 +30,7 @@ ref table Preferences
 ref table 'Agreement Measures'
 ref table 'Period Since First Order'
 ref table 'Agreements Weekly'
+ref table '(Param) Measures'
 
 ref cultureInfo en-US
 

@@ -322,6 +322,42 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column menu_variation_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 55bf48a9-a24c-43df-9a67-96fee45a6c20
+		summarizeBy: sum
+		sourceColumn: menu_variation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column portion_id_recipes
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d0ea6dd-0a54-4fea-8938-16fb3db6766a
+		summarizeBy: sum
+		sourceColumn: portion_id_recipes
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_selected_menu
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: edfc22d5-7624-4c72-a456-6a130a133577
+		summarizeBy: none
+		sourceColumn: is_selected_menu
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_locked_recipe
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: e3952b20-2c9d-4c87-a255-4c8c807a5aa7
+		summarizeBy: none
+		sourceColumn: is_locked_recipe
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Menu Measures' = m
 		mode: import
 		source =
