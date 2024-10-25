@@ -9,7 +9,7 @@ with filtered_rows as (
 , date_bounds as (
     select
         date_add(current_date, (7 - pmod(datediff(current_date, '1970-01-01'), 7)) + ( 2 * 7)) as start_date,
-        date_add(current_date, (7 - pmod(datediff(current_date, '1970-01-01'), 7)) + (13 * 7)) as end_date
+        date_add(current_date, (7 - pmod(datediff(current_date, '1970-01-01'), 7)) + (12 * 7)) as end_date
 )
 
 , expected_menu_weeks as (
