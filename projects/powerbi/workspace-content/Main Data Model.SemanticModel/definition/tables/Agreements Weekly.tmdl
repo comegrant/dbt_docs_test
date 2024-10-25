@@ -194,17 +194,6 @@ table 'Agreements Weekly'
 
 		annotation SummarizationSetBy = Automatic
 
-	column first_menu_week_monday_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 59f17318-41dc-4755-9a6c-ca6b9363b8db
-		summarizeBy: none
-		sourceColumn: first_menu_week_monday_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
 	partition 'Agreements Weekly' = m
 		mode: import
 		source =
@@ -224,4 +213,3 @@ table 'Agreements Weekly'
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-
