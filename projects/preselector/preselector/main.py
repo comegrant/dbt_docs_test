@@ -670,9 +670,7 @@ def handle_calorie_concept(
     vegetarian_id = "6A494593-2931-4269-80EE-470D38F04796"
     roede_id = "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA"
 
-    if concept_ids == [roede_id]:
-        return target, importance
-
+    # Roede
     if concept_ids == [low_cal_id]:
         return (
             target.with_columns(
@@ -681,6 +679,25 @@ def handle_calorie_concept(
             importance.with_columns(
                 is_low_calorie=pl.lit(1)
             )
+        )
+    elif roede_id in concept_ids:
+        # Roede can choose negative preferences, so we will not select a pre-defined mealkit
+        # But rather find the most optimal selection
+        # As a result will we weight the roede features above everything else.
+        # But if there are no left, then they will start to get other types of dishes
+        target = target.with_columns(
+            is_roede_percentage=pl.lit(1)
+        )
+        importance = importance.with_columns(
+            is_roede_percentage=pl.lit(1)
+        )
+        return target, importance
+    else:
+        target = target.with_columns(
+            is_roede_percentage=pl.lit(0)
+        )
+        importance = importance.with_columns(
+            is_roede_percentage=pl.lit(1)
         )
 
     if vegetarian_id not in concept_ids and low_cal_id not in concept_ids:
@@ -692,8 +709,8 @@ def handle_calorie_concept(
                 is_low_calorie=pl.lit(0.5)
             )
         )
-
-    return target, importance
+    else:
+        return target, importance
 
 
 
@@ -834,25 +851,6 @@ async def historical_preselector_vector(
         combined_target, combined_importance, concept_ids
     )
 
-    # Roede
-    if "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA" in concept_ids:
-        # Roede can choose negative preferences, so we will not select a pre-defined mealkit
-        # But rather find the most optimal selection
-        # As a result will we weight the roede features above everything else.
-        # But if there are no left, then they will start to get other types of dishes
-        combined_target = combined_target.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
-        combined_importance = combined_importance.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
-    else:
-        combined_target = combined_target.with_columns(
-            is_roede_percentage=pl.lit(0)
-        )
-        combined_importance = combined_importance.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
 
     user_importance = combined_importance
 

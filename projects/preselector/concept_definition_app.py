@@ -383,7 +383,7 @@ async def view_mealkit(
 
     target_vector = await normalize_cost(
         year_week=YearWeek(week=week, year=year),
-        mealkit_target_cost_of_food=raw_cost_of_food_value,
+        target_cost_of_food=raw_cost_of_food_value,
         request=customer,
         vector=target_vector,
         store=store,
@@ -397,6 +397,7 @@ async def view_mealkit(
             target_vector=target_vector,
             importance_vector=normalized_importance,
             store=cache_store,
+            selected_recipes={}
         )
 
     with st.spinner("Loading recipe info"):

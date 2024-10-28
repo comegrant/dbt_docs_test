@@ -1,12 +1,11 @@
 from os import getenv
 
-from aligned import PostgreSQLConfig, RedisConfig
+from aligned import AzureBlobConfig, PostgreSQLConfig, RedisConfig
 
-from data_contracts.azure_blob import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
 from data_contracts.unity_catalog import DatabricksConnectionConfig, UnityCatalog, UnityCatalogSchema
 
-azure_dl_creds = AzureBlobConfig(
+azure_dl_creds = AzureBlobConfig( # type: ignore
     account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",
     account_id_env="DATALAKE_STORAGE_ACCOUNT_KEY",
     tenant_id_env="AZURE_TENANT_ID",

@@ -7,6 +7,7 @@ from typing import Annotated
 import polars as pl
 from aligned import ContractStore, FeatureLocation
 from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.feature_source import BatchFeatureSource
 from aligned.sources.in_mem_source import InMemorySource
 from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
@@ -96,6 +97,8 @@ async def load_store() -> ContractStore:
             if "agreement_id" in entity_names:
                 # Do not want any user spesific data
                 logger.info(dep.name)
+                assert isinstance(store.feature_source, BatchFeatureSource)
+                assert isinstance(store.feature_source.sources, dict)
                 store.feature_source.sources.pop(dep.identifier, None)
                 continue
 

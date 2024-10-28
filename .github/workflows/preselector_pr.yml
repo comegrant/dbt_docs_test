@@ -12,10 +12,9 @@ on:
 jobs:
   test-preselector:
     uses:
-      ./.github/workflows/template_test_in_docker.yml
+      ./.github/workflows/template_test_python.yml
     with:
-      dockerfile: Dockerfile
-      extra-args: "--build-arg DEP_GROUP=--with=dev"
+      python-version: "3.10.13"
       working-directory: projects/preselector
     secrets: inherit
 

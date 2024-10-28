@@ -156,7 +156,7 @@ services:
       dockerfile: projects/preselector/docker/Dockerfile.databricks
     command: "echo 'hello'"
     volumes:
-      - ./:/opt/projects/rec-engine/
+      - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
     env_file:
       - ../../.env

@@ -115,6 +115,9 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     if not year_week:
         return None
 
+    st.write("Used model")
+    st.write(response.model_version)
+
     st.write("Quarentined Dishes")
     st.write(year_week.generated_recipe_ids)
 

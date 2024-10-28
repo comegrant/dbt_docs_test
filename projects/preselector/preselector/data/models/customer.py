@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import IntEnum
+from typing import Annotated
 
 from pydantic import BaseModel, Field
 
@@ -68,8 +69,8 @@ class PreselectorYearWeekResponse(BaseModel):
     main_recipe_ids: list[int]
     compliancy: PreselectorPreferenceCompliancy
     target_cost_of_food_per_recipe: float
-    quarantined_recipe_ids: list[int] | None = Field(None)
-    generated_recipe_ids: dict[int, int] | None = Field(None)
+    quarantined_recipe_ids: Annotated[list[int] | None, Field] = None
+    generated_recipe_ids: Annotated[dict[int, int] | None, Field] = None
 
 
 class PreselectorSuccessfulResponse(BaseModel):
@@ -80,6 +81,7 @@ class PreselectorSuccessfulResponse(BaseModel):
 
     concept_preference_ids: list[str]
     taste_preferences: list[NegativePreference]
+    number_of_recipes: int
 
     override_deviation: bool
     "Echoing the value from the request. Is useful for CMS."

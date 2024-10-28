@@ -117,7 +117,7 @@ class Preselector:
         ]
     )
 
-    main_recipe_ids = List(Int32().lower_bound(1000).upper_bound(9999))
+    main_recipe_ids = List(Int32().lower_bound(1000))
     variation_ids = List(String())
     generated_at = EventTimestamp()
     model_version = String()

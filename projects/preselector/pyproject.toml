@@ -63,7 +63,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.pyright]
 exclude = [
     "**/jobs/**.py",
-    "ui/deeplinks/show_results.py"
+    "ui/deeplinks/show_results.py",
+    ".venv"
 ]
 
 [tool.poetry.scripts]

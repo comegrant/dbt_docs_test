@@ -176,5 +176,4 @@ async def run() -> None:
         write_batch_interval=1000,
     )
 
-
 await run()

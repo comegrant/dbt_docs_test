@@ -3,13 +3,13 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import polars as pl
-from aligned import EventTimestamp
 from aligned.data_source.batch_data_source import (
     BatchDataSource,
     FeatureType,
 )
 from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
+from aligned.schemas.feature import Feature
 from aligned.sources.local import FileFactualJob
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ class DatabricksConnectionConfig:
 
             return spark
 
-        from databricks.connect import DatabricksSession
+        from databricks.connect.session import DatabricksSession
         return DatabricksSession.builder.host(self.host).token(self.token).clusterId(self.cluster_id).getOrCreate()
 
 
@@ -118,8 +118,10 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
         raise NotImplementedError(type(self))
 
     @classmethod
-    def multi_source_features_for(
-        cls, facts: RetrivalJob, requests: list[tuple['UCFeatureTableSource', RetrivalRequest]] # noqa: ANN102
+    def multi_source_features_for( # type: ignore
+        cls: type['UCFeatureTableSource'],
+        facts: RetrivalJob,
+        requests: list[tuple['UCFeatureTableSource', RetrivalRequest]]
     ) -> RetrivalJob:
         from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
 
@@ -149,7 +151,7 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
             if result_request is None:
                 result_request = request
             else:
-                result_request  = result_request.unsafe_combine(request)
+                result_request  = result_request.unsafe_combine([request])
 
         assert lookups, "Found no lookups"
         assert result_request, "A `request_result` was supposed to be created."
@@ -188,7 +190,7 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
         """
         raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
 
-    async def freshness(self, event_timestamp: EventTimestamp) -> datetime | None:
+    async def freshness(self, feature: Feature) -> datetime | None:
         """
         my_table_freshenss = await (PostgreSQLConfig("DB_URL")
             .table("my_table")
@@ -197,8 +199,8 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
         """
         spark = self.config.connection()
         return spark.sql(
-            f"SELECT MAX({event_timestamp.name}) as {event_timestamp.name} FROM {self.table.identifier()}"
-        ).toPandas()[event_timestamp.name].to_list()[0]
+            f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}"
+        ).toPandas()[feature.name].to_list()[0]
 
 
     async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
@@ -213,7 +215,7 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
         client = FeatureEngineeringClient()
 
         conn = self.config.connection()
-        df = conn.createDataFrame(await job.to_pandas())
+        df = conn.createDataFrame(await job.unique_entities().to_pandas())
 
         client.create_table(
             name=self.table.identifier(),
@@ -254,8 +256,8 @@ class UCTableSource(BatchDataSource):
         raise NotImplementedError(type(self))
 
     @classmethod
-    def multi_source_features_for(
-        cls, facts: RetrivalJob, requests: list[tuple['UCTableSource', RetrivalRequest]] # noqa: ANN102
+    def multi_source_features_for( # type: ignore
+        cls: type['UCTableSource'], facts: RetrivalJob, requests: list[tuple['UCTableSource', RetrivalRequest]] # type: ignore
     ) -> RetrivalJob:
         from aligned.sources.local import DateFormatter
 
@@ -296,7 +298,7 @@ class UCTableSource(BatchDataSource):
         """
         raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
 
-    async def freshness(self, event_timestamp: EventTimestamp) -> datetime | None:
+    async def freshness(self, feature: Feature) -> datetime | None:
         """
         my_table_freshenss = await (PostgreSQLConfig("DB_URL")
             .table("my_table")
@@ -305,5 +307,5 @@ class UCTableSource(BatchDataSource):
         """
         spark = self.config.connection()
         return spark.sql(
-            f"SELECT MAX({event_timestamp.name}) as {event_timestamp.name} FROM {self.table.identifier()}"
-        ).toPandas()[event_timestamp.name].to_list()[0]
+            f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}"
+        ).toPandas()[feature.name].to_list()[0]

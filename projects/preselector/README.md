@@ -9,7 +9,35 @@ This is due the the nature where the recommendation of the recipe $n$ is depende
 
 Therefore, at the time of this writing is this more of an optimalisation problem then a ml problem, even tho a few of the optimalisation dimentions are outputs of other ml models.
 
+### The high-level concept
+
 This have lead to an approach where we do a bredth first search through a multi dimentional space.
+
+Bellow is an image that tries to indicate how the pre-selector computes the different dimentions for all recipes and selects the closes one. And then goes through an iteritive process by adding one by one.
+
+![Preselector Search](assets/vector-search.png)
+Here are the blue arrows candicates, the green is the target vector and the orange is the closes recipe for a given iteration.
+
+#### Target vector
+In the vector defines the characteristic of a mealkit that the customer would ideally get. This could mean 100% family friendly, or a mean cooking time of 15 min.
+At the time of this writing do we compute the target vector by taking the mean of multiple historical orders.
+
+This is also indicated by the green line in the preselector search image.
+
+#### Importance Vector
+Having an ideal vector to hit is good. However, it is not enough as different customers have different prefeferences.
+Meaning they may have the same target vector, but would still want a different behavior.
+E.g. I might have ordered a mealkit with a mean cooking time of 15min, but the cooking time is not that important to get right.
+
+This is why we also have an importance vector which indicates which dimensions that it is important to get right.
+You can think of it as describing how important each dimension is with a percentage.
+E.g. it is 20% important to get cost of food correct, 10% to get number of chicken dishes correct, and 5% to get variation correct.
+
+![Importance Vector](assets/importance-vector.png)
+
+Such a vector is used when computing what the error will be for all recipes.
+This also means that we can inject business logic into the algorithm, such as hittin the cost of food, which is important to make sure we do not spend too much.
+
 
 ## Get started
 
@@ -52,6 +80,11 @@ This should start an app at `http://localhost:8506` which makes it possible to e
 It is recommended to develop everything locally through `docker`. This is due to the combination of Databricks and Azure resources, as they serve different purposes.
 
 If you do any local changes, startup the `combination-app` and run the app to see if fix the issue.
+
+## Get familiar with the project
+If you are new to the project, it is recommended to open the `combination-app` and go nuts.
+Try to break it, print as much as possible to `streamlit` and so on.
+This should hopefully make it easier to understand what each component do, in a safe environment.
 
 ## Debugging
 If any customers have any issues in production, then startup the `debug` app, again through `docker compose`.

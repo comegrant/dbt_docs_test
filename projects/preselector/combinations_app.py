@@ -126,12 +126,6 @@ async def main() -> None:
         cached_store = await load_cache(
             store,
             company_id=company_id,
-            exclude_views={
-                # FeatureLocation.model("rec_engine"),
-                # PartitionedRecommendations.location,
-                # TargetVectors.location,
-                # ImportanceVector.location,
-            },
         )
 
     # Generate all combinations of selected attributes and taste preferences
@@ -168,7 +162,7 @@ async def main() -> None:
 
     if response.success:
         await display_recipes(response.success[0], st)
-        recipes = response.success[0]
+        recipes = response.success[0].main_recipe_ids
 
     else:
         st.error(response.failures[0].error_message)
@@ -223,7 +217,7 @@ async def main() -> None:
                 "company_id": [company_id],
                 "year": [year],
                 "week": [week],
-                "recipes": [recipes.main_recipe_ids],
+                "recipes": [recipes],
                 "rating": [st.session_state.get("rating")],
                 "attributes": [[attr.name for attr in atters]],
                 "taste_preferences": [[pref.name for pref in prefs]],

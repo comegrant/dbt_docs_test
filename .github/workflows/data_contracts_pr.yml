@@ -12,8 +12,8 @@ on:
 jobs:
   test-data-contracts:
     uses:
-      ./.github/workflows/template_test_in_docker.yml
+      ./.github/workflows/template_test_python.yml
     with:
+      python-version: "3.10.13"
       working-directory: packages/data-contracts
-      dockerfile: Dockerfile
     secrets: inherit

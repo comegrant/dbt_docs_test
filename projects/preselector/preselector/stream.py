@@ -3,6 +3,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, TypeVar
 
+from aligned import ContractStore
 from aligned.streams.interface import SinakableStream
 from aligned.streams.redis import RedisStream
 from azure.servicebus import (
@@ -15,6 +16,7 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.message import PrimitiveTypes
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
+from data_contracts.preselector.store import Preselector
 from data_contracts.sql_server import SqlServerConfig
 from pydantic import BaseModel, ValidationError
 
@@ -265,22 +267,34 @@ class SqlServerStream(Generic[T], ReadableStream[T]):
 
 @dataclass
 class PreselectorResultWriter(WritableStream):
+
     company_id: str
+
+    store: ContractStore = field(default_factory=lambda: Preselector.query().store)
 
     async def write(self, data: BaseModel) -> None:
         await self.batch_write([data])
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         import polars as pl
-        from data_contracts.preselector.store import Preselector
 
-        df = pl.DataFrame(
-            [
-                row.model_dump()
-                for row in data
-                if isinstance(row, PreselectorSuccessfulResponse)
-            ]
-        )
+        mapped_data = [
+            row.model_dump(
+                exclude={
+                    "year_weeks": {
+                        "__all__":{
+                            # May contain only null values, leading to issues
+                            # As the schema is undefined
+                            "quarantined_recipe_ids",
+                            "generated_recipe_ids",
+                        }
+                    }
+                }
+            )
+            for row in data
+            if isinstance(row, PreselectorSuccessfulResponse)
+        ]
+        df = pl.DataFrame(mapped_data)
 
         if df.is_empty():
             return
@@ -291,8 +305,8 @@ class PreselectorResultWriter(WritableStream):
             .with_columns(company_id=pl.lit(self.company_id))
         )
 
-        await Preselector.query().store.insert_into(
-            next(iter(Preselector.as_source().location_id())), df
+        await self.store.insert_into(
+            Preselector.location, df
         )
 
 @dataclass
@@ -323,7 +337,7 @@ class PreselectorResultStreamWriter(WritableStream):
         source = view.stream_data_source.consumer()
         assert isinstance(source, RedisStream)
 
-        await source.client.ping()
+        await source.client.ping() # type: ignore
 
         assert isinstance(source, SinakableStream)
 

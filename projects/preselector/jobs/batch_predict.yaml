@@ -26,8 +26,12 @@ resources:
       email_notifications:
         on_failure:
           - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
         on_success:
           - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
 
       tasks:
         - task_key: materialization
@@ -83,8 +87,12 @@ resources:
       email_notifications:
         on_failure:
           - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
         on_success:
           - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
 
       tasks:
         - task_key: materialization
