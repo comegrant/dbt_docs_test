@@ -1,0 +1,40 @@
+resources:
+  jobs:
+
+    slack_notification:
+      name: slack_notification
+
+      environments:
+        - environment_key: notification-default
+          spec:
+            client: "1"
+
+      tasks:
+        - task_key: "slack_notification"
+          spark_python_task:
+            python_file: "../slack_connector/run_workflow_notification.py"
+            parameters:
+              - --header_message
+              - "{{job.parameters.header_message}}"
+              - --body_message
+              - "{{job.parameters.body_message}}"
+              - --relevant_people
+              - "{{job.parameters.relevant_people}}"
+              - --environment
+              - "{{job.parameters.environment}}"
+              - --is_error
+              - "{{job.parameters.is_error}}"
+          environment_key: notification-default
+
+      edit_mode: EDITABLE
+      parameters:
+        - name: header_message
+          default: 🧑‍🍳 Something has happened
+        - name: body_message
+          default: 💬 Something has happened, it may be good or bad.
+        - name: relevant_people
+          default: ""
+        - name: environment
+          default: local_dev
+        - name: is_error
+          default: false

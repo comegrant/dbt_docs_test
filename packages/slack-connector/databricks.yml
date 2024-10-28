@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=bundle_config_schema.json
+
+# This file defines the structure of this project and how it is deployed
+# to production using Databricks Asset Bundles.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
+bundle:
+  name: slack-connector
+
+include:
+- jobs/*.yml
+
+variables:
+  client-id:
+    description: The ID of the service Service Principal
+    default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
+  warehouse_id:
+    description: The id of the sql warehouse used for the dbt task
+
+targets:
+  dev:
+    default: true
+    # We use 'mode: development' to indicate this is a personal development copy.
+    # Any job schedules and triggers are paused by default.
+    mode: development
+    variables:
+      warehouse_id: 45100b61eb7ee2f5
+
+  test:
+    mode: production
+    variables:
+      warehouse_id: 76c581aa18fb7b4f
+
+  prod:
+    mode: production
+    variables:
+      warehouse_id: 1a2fc265706df5fb

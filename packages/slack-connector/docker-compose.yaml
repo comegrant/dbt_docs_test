@@ -1,0 +1,12 @@
+version: '3'
+services:
+  slack-connector-test:
+    image: slack-connector-slack-connector-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/slack-connector/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/slack-connector
+    profiles: ["test"]
