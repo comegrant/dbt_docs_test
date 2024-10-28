@@ -1,4 +1,6 @@
-# Slack Connector 💬
+<h1 align="center">
+Slack Connector 💬
+</h1>
 
 A Python package to send notifications to Slack from Databricks workflows or Python scripts.
 
