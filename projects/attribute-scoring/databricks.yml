@@ -1,0 +1,30 @@
+# This is a Databricks asset bundle definition for attribute-scoring.
+# The file was generated automatically by the Databricks extension. 
+# It's based on the configuration located in `.databricks/project.json`.
+# If you don't want this file to be created automatically, remove the `.databricks/project.json`.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
+bundle:
+  name: attribute-scoring
+
+include:
+  - "jobs/**.yml"
+  - "jobs/**.yaml"
+  - "jobs/workflows/**.yaml"
+  - "jobs/workflows/**.yml"
+
+variables:
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+    default: bhregistry.azurecr.io/attribute-scoring-databricks:dev-latest
+  mode:
+    description: The mode to deploy in
+    default: development
+  environment:
+    description: The environment to deploy to
+    default: dev
+
+targets:
+  default:
+    default: true
+    mode: "${var.mode}"

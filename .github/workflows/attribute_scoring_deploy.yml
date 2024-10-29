@@ -1,0 +1,38 @@
+name: Deploy Attribute Scoring
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/attribute_scoring_deploy.yml'
+      - 'projects/attribute-scoring/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-attribute-scoring-databricks-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/attribute-scoring
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: attribute-scoring-databricks
+      dockerfile: docker/Dockerfile.databricks
+      push-latest: true
+    secrets: inherit
+
+  deploy-attribute-scoring:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-attribute-scoring-databricks-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/attribute-scoring
+      target-env: ${{matrix.target}}
+      docker-image-name: attribute-scoring-databricks
+      docker-image-tag: ${{ github.sha }}
+      # Setting the docker image which is needed for python projects
+      extra-args: '--var="mode=production"'
+    secrets: inherit

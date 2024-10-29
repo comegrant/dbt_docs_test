@@ -1,0 +1,80 @@
+resources:
+  jobs:
+    attribute-scoring-predict-weekly:
+      name: attribute-scoring-predict-weekly-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: attribute-scoring-predict-weekly
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 0 8 ? * MON *'
+        timezone_id: Europe/Amsterdam
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
+      tasks:
+        - task_key: predict-attribute-scoring-AMK
+          job_cluster_key: attribute-scoring-predict-weekly
+          notebook_task:
+            notebook_path: ../2_predict.py
+            base_parameters:
+              env: "${var.environment}"
+              company: AMK
+              start_yyyyww: None
+              end_yyyyww: None
+
+        - task_key: predict-attribute-scoring-GL
+          job_cluster_key: attribute-scoring-predict-weekly
+          run_if: ALL_DONE
+          notebook_task:
+            notebook_path: ../2_predict.py
+            base_parameters:
+              env: "${var.environment}"
+              company: GL
+              start_yyyyww: None
+              end_yyyyww: None
+          depends_on:
+            - task_key: predict-attribute-scoring-AMK
+
+        - task_key: predict-attribute-scoring-RT
+          job_cluster_key: attribute-scoring-predict-weekly
+          run_if: ALL_DONE
+          notebook_task:
+            notebook_path: ../2_predict.py
+            base_parameters:
+              env: "${var.environment}"
+              company: RT
+              start_yyyyww: None
+              end_yyyyww: None
+          depends_on:
+            - task_key: predict-attribute-scoring-GL
+              
+        - task_key: predict-attribute-scoring-LMK
+          job_cluster_key: attribute-scoring-predict-weekly
+          run_if: ALL_DONE
+          notebook_task:
+            notebook_path: ../2_predict.py
+            base_parameters:
+              env: "${var.environment}"
+              company: LMK
+              start_yyyyww: None
+              end_yyyyww: None
+          depends_on:
+            - task_key: predict-attribute-scoring-RT

@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  base:
+    image: attribute-scoring-base
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/attribute-scoring/docker/Dockerfile
+    command: ["echo", "'Hello from attribute-scoring'"]
+    volumes:
+      - ./:/opt/projects/attribute-scoring
+      - ./../../packages:/opt/packages
+
+  test:
+    image: attribute-scoring-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/attribute-scoring/docker/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/attribute-scoring
+      - ./../../packages:/opt/packages
+    depends_on:
+      - base
+    profiles: ["test"]

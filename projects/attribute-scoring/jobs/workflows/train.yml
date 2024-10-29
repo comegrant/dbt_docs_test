@@ -1,0 +1,35 @@
+resources:
+  jobs:
+    attribute-scoring-train:
+      name: attribute-scoring-train-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: attribute-scoring-train
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
+      tasks:
+        - task_key: train-attribute-scoring
+          job_cluster_key: attribute-scoring-train
+          notebook_task:
+            notebook_path: ../1_model_train.py
+            base_parameters:
+              env: "${var.environment}"
+              company: LMK
+              target: has_chefs_favorite_taxonomy

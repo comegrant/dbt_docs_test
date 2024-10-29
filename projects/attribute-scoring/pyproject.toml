@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "attribute-scoring"
+version = "0.1.0"
+description = "A Python project by Cheffelo."
+authors = ["Agathe Raaum <agathe.raaum@cheffelo.com>"]
+packages = [{include = "attribute_scoring"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+streamlit = "^1.38.0"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+databricks-connect = "14.3.0"
+databricks-feature-engineering = "^0.7.0"
+constants = {path = "../../packages/constants", develop = true}
+scikit-learn = "^1.5.2"
+xgboost = "^2.1.1"
+seaborn = "^0.13.2"
+matplotlib = "^3.9.2"
+petname = "^2.6"
+optuna = "^4.0.0"
+optuna-integration = "^4.0.0"
+lightgbm = "^4.5.0"
+catboost = "^1.2.7"
+imbalanced-learn = "^0.12.4"
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
