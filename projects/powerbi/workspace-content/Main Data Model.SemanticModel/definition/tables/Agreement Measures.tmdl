@@ -19,22 +19,22 @@ table 'Agreement Measures'
 			    #"Filtered Rows"
 
 	measure 'Number of Customers' = DISTINCTCOUNT('Agreement Measures'[billing_agreement_id])
-		formatString: 0
+		formatString: #,0
 		lineageTag: 3c376a1c-10ec-4f27-a197-d2bdd9455984
 
 	measure 'Retention Number of Customers' = DISTINCTCOUNT('Agreements Weekly'[billing_agreement_id])
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: f6e71f0d-cf84-4777-af33-311720db8290
 
 	measure 'Retention Number of Customers with Orders' = ```
-			
+
 			    CALCULATE(
 			        [Retention Number of Customers],
 			        'Agreements Weekly'[has_order] = 1
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 6675856e-88d1-49eb-80f7-d57ee90af51f
 

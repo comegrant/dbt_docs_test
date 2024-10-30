@@ -2,11 +2,11 @@ table 'Menu Measures'
 	lineageTag: 007c46b4-40eb-4dda-b8d8-38aff56cc4ff
 
 	measure 'Number of Recipes' = DISTINCTCOUNTNOBLANK('Menu Measures'[recipe_id])
-		formatString: 0
+		formatString: #,0
 		lineageTag: aa718a65-cb1e-4b91-8c98-f185b10bf852
 
 	measure 'Number of Menus' = DISTINCTCOUNTNOBLANK('Menu Measures'[menu_id])
-		formatString: 0
+		formatString: #,0
 		lineageTag: 1f670f36-e0c8-4565-acf8-ba11a315573d
 
 	column weekly_menu_id

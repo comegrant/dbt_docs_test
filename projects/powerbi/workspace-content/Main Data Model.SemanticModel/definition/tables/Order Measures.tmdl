@@ -17,7 +17,7 @@ table 'Order Measures'
 			    #"Renamed Columns" = Table.RenameColumns(#"Filtered Rows",{{"weeks_since_first_order", "Weeks Since First Order"}})
 			in
 			    #"Renamed Columns"
-	
+
 	/// MEASURES ///
 	/// Revenue
 	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
@@ -129,16 +129,16 @@ table 'Order Measures'
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
 				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
-		formatString: 0
+		formatString: #,0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
 	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
-		formatString: 0
+		formatString: #,0
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
-	
+
 	/// Not in use can be removed
 	measure 'Number of Subscription Orders' = 0
-		formatString: 0
+		formatString: #,0
 		lineageTag: 3fe674e5-e11d-4968-b77f-38e87d1f983e
 
 	measure 'Number of Gift Cards' =
@@ -147,7 +147,7 @@ table 'Order Measures'
 				'Order Types'[Order Type Name] = "Gift Card"
 				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
 
 	/// Average Revenue per Number of Orders
@@ -183,12 +183,12 @@ table 'Order Measures'
 
 	/// Product Variation Quantity
 	measure 'Sum Total Product Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
 
 		changedProperty = IsHidden
-	
+
 	/// Unit Price
 	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Order Product Variation Quantity])
 		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
@@ -201,13 +201,13 @@ table 'Order Measures'
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
 				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
 
 	/// Retention
 	measure 'Number of Customers N Weeks Retention' =
 			VAR SelectedWeeks = SELECTEDVALUE('Order Measures'[Weeks Since First Order], 0)
-			
+
 			RETURN CALCULATE(
 				DISTINCTCOUNT('Order Measures'[billing_agreement_id]),
 				'Order Measures'[Weeks Since First Order] <= SelectedWeeks
@@ -223,12 +223,12 @@ table 'Order Measures'
 		lineageTag: ed8fbdf7-0c62-49b8-826e-e797f41c2be1
 
 	/// Mealbox Adjustments
-	measure 'Number of Orders All Recipes' = 
+	measure 'Number of Orders All Recipes' =
 			CALCULATE(
 				[Number of Orders],
 				ALL(Recipes)
 			)
-		formatString: 0
+		formatString: #,0
 
 	measure 'Number of Ordered Dishes' =
 			CALCULATE(
@@ -238,7 +238,7 @@ table 'Order Measures'
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
 				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
 	measure 'Number of Preselected Dishes' =
@@ -251,16 +251,16 @@ table 'Order Measures'
 				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
 				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
-	measure 'Number of Added Dishes' = 
+	measure 'Number of Added Dishes' =
 			CALCULATE(
 				SUM('Order Measures'[is_added_recipe])
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"}
 				, 'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
 
 	measure 'Number of Removed Dishes' =
@@ -271,15 +271,15 @@ table 'Order Measures'
 				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
 				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
 
 	measure 'Number of Swapped Out Dishes' = [Number of Removed Dishes]
-		formatString: 0
+		formatString: #,0
 		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
 
 	measure 'Number of Swapped In Dishes' = [Number of Added Dishes]
-		formatString: 0
+		formatString: #,0
 		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
 
 	measure 'Share of Swapped Dishes' =
@@ -291,9 +291,9 @@ table 'Order Measures'
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 	measure 'Number of Orders with Swaps' = ```
-			
+
 			    CALCULATE(
-			        [Number of Orders], 
+			        [Number of Orders],
 			        'Order Measures'[is_removed_recipe]=1
 			    )
 			```
@@ -301,7 +301,7 @@ table 'Order Measures'
 		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
 
 	measure 'Share of Orders with Swaps' = ```
-			
+
 			    DIVIDE(
 			        [Number of Orders with Swaps],
 			        [Number of Orders],
@@ -312,7 +312,7 @@ table 'Order Measures'
 		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
 
 	measure 'Average Number of Swaps per Order' = ```
-			
+
 			    DIVIDE(
 			        [Number of Swapped Out Dishes],
 			        [Number of Orders],
@@ -324,7 +324,7 @@ table 'Order Measures'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Number of Orders with Increased Portions Temp' = ```
-			
+
 			    SUMX(
 			        Products,
 			        CALCULATE(
@@ -338,14 +338,14 @@ table 'Order Measures'
 			        )
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 9745d73b-7921-4a1e-872a-32a8fba755b1
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Decreased Portions Temp' = ```
-			
+
 			    SUMX(
 			        Products,
 			        CALCULATE(
@@ -359,14 +359,14 @@ table 'Order Measures'
 			        )
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 4bb775d0-d97b-4820-b779-f06eab35630d
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Adjusted Portions Temp' =
-			
+
 			SUMX(
 			        Products,
 			        CALCULATE(
@@ -379,14 +379,14 @@ table 'Order Measures'
 			            )
 			        )
 			    )
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 3ade197b-b364-4253-ab19-9783ad6abcf8
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Increased Meals Temp' = ```
-			
+
 			    SUMX(
 			        Products,
 			        CALCULATE(
@@ -400,14 +400,14 @@ table 'Order Measures'
 			        )
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 36228cb7-dcf9-496f-b5ef-a40dac85aaa4
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Decreased Meals Temp' = ```
-			
+
 			    SUMX(
 			        Products,
 			        CALCULATE(
@@ -421,14 +421,14 @@ table 'Order Measures'
 			        )
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 3dbf3a9b-3d57-4650-aa89-692c42373d81
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Adjusted Meals Temp' = ```
-			
+
 			    SUMX(
 			        Products,
 			        CALCULATE(
@@ -442,68 +442,68 @@ table 'Order Measures'
 			        )
 			    )
 			```
-		formatString: 0
+		formatString: #,0
 		isHidden
 		lineageTag: 96f803fd-aec4-4497-9822-5031838b8e54
 
 		changedProperty = IsHidden
 
 	measure 'Number of Orders with Increased Portions' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Portions] > 'Order Measures'[Subscribed Portions]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
 
 	measure 'Number of Orders with Decreased Portions' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Portions] < 'Order Measures'[Subscribed Portions]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
 
 	measure 'Number of Orders with Adjusted Portions' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Portions] <> 'Order Measures'[Subscribed Portions]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
 
 	measure 'Number of Orders with Increased Meals' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Meals] > 'Order Measures'[Subscribed Meals]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
 
 	measure 'Number of Orders with Decreased Meals' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Meals] < 'Order Measures'[Subscribed Meals]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
 
 	measure 'Number of Orders with Adjusted Meals' =
-			
+
 			CALCULATE(
 			    [Number of Orders],
 			    'Order Measures'[Ordered Meals] <> 'Order Measures'[Subscribed Meals]
 			)
-		formatString: 0
+		formatString: #,0
 		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
 
 	measure 'Diff Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
-		formatString: 0
+		formatString: #,0
 		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
 
 	column order_status_id
@@ -1025,7 +1025,7 @@ table 'Order Measures'
 		sourceColumn: Weeks Since First Order
 
 		annotation SummarizationSetBy = Automatic
-	
+
 	column 'Preselection Origin'
 		dataType: string
 		summarizeBy: none
@@ -1036,7 +1036,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column 'Subscribed Portions' =
-			
+
 			IF(
 			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"},
 			    RELATED('Billing Agreements'[Portions]),
@@ -1054,7 +1054,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column 'Ordered Portions' =
-			
+
 			IF(
 			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"}
 			    && 'Order Measures'[Subscribed Portions] <> BLANK(),
@@ -1073,7 +1073,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column 'Subscribed Meals' =
-			
+
 			IF(
 			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"},
 			    RELATED('Billing Agreements'[Meals]),
@@ -1091,7 +1091,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column 'Ordered Meals' =
-			
+
 			IF(
 			    RELATED(Products[Product Type Name]) IN {"Mealbox","Financial"}
 			    && 'Order Measures'[Subscribed Meals] <> BLANK(),
