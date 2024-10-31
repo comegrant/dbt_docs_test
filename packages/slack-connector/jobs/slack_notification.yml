@@ -29,9 +29,9 @@ resources:
       edit_mode: EDITABLE
       parameters:
         - name: header_message
-          default: 🧑‍🍳 Something has happened
+          default: ""
         - name: body_message
-          default: 💬 Something has happened, it may be good or bad.
+          default: ""
         - name: relevant_people
           default: ""
         - name: environment

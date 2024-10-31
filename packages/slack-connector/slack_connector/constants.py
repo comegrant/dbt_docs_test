@@ -114,3 +114,9 @@ slack_users = {
         ]
     ]
 }
+
+slack_notification_job_ids = {
+    "dev": 221967110790300,
+    "test": 823927532277018,
+    "prod": 808732355997444,
+}

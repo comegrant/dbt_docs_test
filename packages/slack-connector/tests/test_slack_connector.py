@@ -38,7 +38,7 @@ def test_send_slack_notification(mock_send_slack_message) -> None: #NOQA: ANN001
     blocks = args[0]
 
     # Check if the correct number of blocks are present
-    assert len(blocks) == 4, "Expected 4 blocks in the Slack message"
+    assert len(blocks) == 3, "Expected 3 blocks in the Slack message"
 
     # Check the header block
     assert blocks[0]["type"] == "header"

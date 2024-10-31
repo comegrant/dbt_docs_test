@@ -34,7 +34,7 @@ send_slack_notification(
 
 _And here is an example of what the notification looks like:_
 
-![Photo of example notification](assets/slack_notification_example.jpg)
+![Photo of example notification](../../assets/slack-connector/slack_notification_example.jpg)
 
 ## Functionality
 The main functionality of this package is to send notifications to Slack from Databricks workflows or Python scripts.
@@ -144,36 +144,59 @@ send_slack_notification(
 To use this package in a workflow, for example to notify about the success or failure of a workflow step, you can either create a Python
 script task and call the `send_slack_notification()` function, or you can simply create a task that runs the pre-made job `slack_connector/jobs/slack_notification.yml` with the parameters you need.
 
-A Databricks workflow would look something like this:
+In order for this to work, you need to first update your `databricks.yml` file with the correct job IDs for each environment, such that they can be read in when deployed, like so:
+
+```yaml
+variables:
+  slack_notification_job_id:
+    description: The id of the slack notification job to call
+
+targets:
+  dev:
+    default: true
+    variables:
+      slack_notification_job_id: 221967110790300
+  test:
+    variables:
+      slack_notification_job_id: 823927532277018
+  prod:
+    variables:
+      slack_notification_job_id: 808732355997444
+```
+
+Then, in your workflow, you can add a task that runs the pre-made job `slack_connector/jobs/slack_notification.yml` with the parameters you need, like so:
 
 ```yaml
 tasks:
-    - task_key: some_task
-    - task_key: slack_error
+    - task_key: some-task
+    - task_key: slack-notification
         depends_on:
-        - task_key: some_task
+        - task_key: some-task
         run_if: ALL_FAILED
         run_job_task:
-            job_id: `id of the slack_notification job, e.g. 221967110790300`
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
-                environment: `dev`
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
                 header_message: ❌ Your job failed, panic!
                 body_message: 🙋‍♂️ Something has happened in your workflow. Check Databricks
                 for more details
-                is_error: "true"
+                is_error: true
                 relevant_people: stephen, engineering
 ```
-
-#### `job_id`
-
-The `job_id` is the ID of the pre-made job that is used to send notifications.
-
-They are different for each environment.
-
-- `dev` workspace: `221967110790300`
-- `test` workspace: `221967110790301`
-- `prod` workspace: `221967110790302`
 
 #### Limitations
 
 - When sending via the pre-made job, it's less straight-forward to inject relevant data, this method is an easy way to send a standard notification.
+
+## Best practices
+
+When sending notifications, please rememebr:
+
+- Be concise
+- Only provide relevant information
+- Only tag people if they are relevant
+- Use standard emojis to indicate the status of the notification:
+  - ✅: Success
+  - ❌: Error
+  - 🚀: Started
+  - 🧑‍🍳: Information

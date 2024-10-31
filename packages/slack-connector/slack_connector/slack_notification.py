@@ -166,7 +166,6 @@ def send_slack_notification(
 
     # Only add blocks if there's content
     if blocks:
-        blocks.append({"type": "divider"})
         send_slack_message_via_webhook(blocks, webhook_urls[environment])
     else:
         logging.warning("No content provided for Slack notification. Skipping send.")
