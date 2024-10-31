@@ -8,11 +8,6 @@ resources:
        quartz_cron_expression: 0 0 5 * * ?
        timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - marie.borg@cheffelo.com
-          - anna.broyn@cheffelo.com
-
       environments:
         - environment_key: dbt-default
           spec:
@@ -21,28 +16,48 @@ resources:
               - dbt-databricks>=1.0.0,<2.0.0
 
       tasks:
+        - task_key: start-notification
+          run_job_task:
+              job_id: ${var.slack_notification_job_id}
+              job_parameters:
+                  environment: ${bundle.target}
+                  body_message: 🚀 Main data model job has started
+                  is_error: "false"
+
         - task_key: bronze_cms_full
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_cms_full.py
 
         - task_key: bronze_pim_full
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_pim_full.py
 
         - task_key: bronze_psl_full
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_psl_full.py
 
         - task_key: bronze_cms_billing_agreement_order_and_order_lines
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_cms_billing_agreement_order_&_order_lines.py
 
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
         - task_key: bronze_cms_register_info_basket
-          notebook_task: 
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
             notebook_path: ../ingest/bronze_cms_register_info_basket.py
 
         - task_key: dbt
@@ -61,11 +76,42 @@ resources:
             {task_key: bronze_cms_billing_agreement_order_and_order_lines},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
             {task_key: bronze_cms_register_info_basket}
-          ]          
-      
+          ]
+
         - task_key: refresh-powerbi
-          notebook_task: 
+          notebook_task:
             notebook_path: ../powerbi-refresh/powerbi-refresh.py
           depends_on: [
             {task_key: dbt}
           ]
+
+        - task_key: success-notification
+          depends_on:
+            - task_key: refresh-powerbi
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Main data model job completed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_pim_full},
+            {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+            {task_key: bronze_cms_register_info_basket},
+            {task_key: dbt},
+            {task_key: refresh-powerbi}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Main data model job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, engineering

@@ -16,6 +16,8 @@ variables:
     default: 9d48429c-9bb6-4c22-ae63-26095e7aab6f
   warehouse_id:
     description: The id of the sql warehouse used for the dbt task
+  slack_notification_job_id:
+    description: The id of the slack notification job to call
 
 targets:
   dev:
@@ -25,13 +27,14 @@ targets:
     mode: development
     variables:
       warehouse_id: 45100b61eb7ee2f5
-
+      slack_notification_job_id: 221967110790300
   test:
     mode: production
     variables:
       warehouse_id: 76c581aa18fb7b4f
-
+      slack_notification_job_id: 823927532277018
   prod:
     mode: production
     variables:
       warehouse_id: 1a2fc265706df5fb
+      slack_notification_job_id: 808732355997444
