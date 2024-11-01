@@ -20,7 +20,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 2 ? * TUE'
+        quartz_cron_expression: '0 0 2 ? * MON'
         timezone_id: UTC
 
       email_notifications:
@@ -81,7 +81,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 2 ? * WED'
+        quartz_cron_expression: '0 0 2 ? * TUE'
         timezone_id: UTC
 
       email_notifications:

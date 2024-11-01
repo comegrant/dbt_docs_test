@@ -25,6 +25,7 @@ streamlit-cookies-manager = "^0.2.0"
 ruff = "^0.6.6"
 redis = "^4.3.1"
 hiredis = "^3.0.0"
+datadog = "^0.50.1"
 
 [tool.poetry.group.worker.dependencies]
 azure-servicebus = "^7.12.2"

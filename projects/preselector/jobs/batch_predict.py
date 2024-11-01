@@ -19,10 +19,8 @@ from datetime import date, timedelta
 
 dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
-dbutils.widgets.text("should_force_update", "false")
 dbutils.widgets.text("environment", defaultValue="")
 
-should_force_update = dbutils.widgets.get("should_force_update").lower() == "true"
 environment = dbutils.widgets.get("environment")
 
 assert isinstance(environment, str)
@@ -63,7 +61,7 @@ from_date = dbutils.widgets.get("from_date_iso_format")
 if from_date:
     from_date = date.fromisoformat(from_date)
 else:
-    from_date = date.today() + timedelta(weeks=4)
+    from_date = date.today() + timedelta(weeks=6)
 
 
 logging.basicConfig(level=logging.INFO)

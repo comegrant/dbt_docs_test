@@ -111,7 +111,7 @@ WHERE pt.product_type_id = 'cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1'
     materialized_source=materialized_data.partitioned_parquet_at(
         "preselector_year_week_menu", partition_keys=["company_id", "menu_year"]
     ),
-    acceptable_freshness=timedelta(days=6),
+    acceptable_freshness=timedelta(hours=6),
 )
 class PreselectorYearWeekMenu:
     recipe_id = Int32().as_entity()

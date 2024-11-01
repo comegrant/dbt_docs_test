@@ -66,8 +66,12 @@ async def test_write_to_redis() -> None:
 
 @pytest.mark.asyncio
 async def test_write_to_preselector_batch_output() -> None:
+    request = Preselector.query().request
+    source = InMemorySource.from_values({
+        feat: []
+        for feat in request.all_returned_columns
+    })
 
-    source = InMemorySource.empty()
     store = Preselector.query().store.update_source_for(
         Preselector.location, source
     )

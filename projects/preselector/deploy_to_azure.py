@@ -8,6 +8,8 @@ from azure.mgmt.containerinstance.models import (
     ContainerGroup,
     ContainerGroupIdentity,
     ContainerGroupRestartPolicy,
+    ContainerNetworkProtocol,
+    ContainerPort,
     EnvironmentVariable,
     ImageRegistryCredential,
     OperatingSystemTypes,
@@ -15,7 +17,7 @@ from azure.mgmt.containerinstance.models import (
     ResourceRequirements,
     UserAssignedIdentities,
 )
-from cheffelo_logging.logging import DataDogConfig
+from cheffelo_logging.logging import DataDogConfig, DataDogStatsdConfig
 from preselector.process_stream_settings import ProcessStreamSettings
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
@@ -39,6 +41,26 @@ class RuntimeEnvs(BaseSettings):
     env: str
 
 
+def datadog_agent_container(config: DataDogConfig, name: str) -> Container:
+    image = "gcr.io/datadoghq/agent:latest"
+    return Container(
+        name=name,
+        image=image,
+        environment_variables=[
+            EnvironmentVariable(name="DD_API_KEY", secure_value=config.datadog_api_key),
+            EnvironmentVariable(name="DD_SITE", value=config.datadog_site),
+            EnvironmentVariable(name="DD_HOSTNAME", value=config.datadog_service_name),
+            EnvironmentVariable(name="DD_SERVICE", value=config.datadog_service_name),
+        ],
+        ports=[ContainerPort(port=8125, protocol=ContainerNetworkProtocol.UDP)],
+        resources=ResourceRequirements(
+            requests=ResourceRequests(
+                memory_in_gb=1.0,
+                cpu=1.0,
+                gpu=None
+            )
+        )
+    )
 
 
 def deploy_preselector(
@@ -47,6 +69,7 @@ def deploy_preselector(
     service_bus_namespace: str,
     env: str,
     image: str,
+    image_tag: str,
     resource_group: str,
 ) -> None:
     from dotenv import load_dotenv
@@ -61,6 +84,11 @@ def deploy_preselector(
         credential=DefaultAzureCredential(),
         subscription_id=deploy_settings.subscription_id
     )
+    dd_config = DataDogConfig( # type: ignore[reportGeneralTypeIssues]
+        datadog_service_name="preselector",
+        datadog_tags=f"subscription:{company},env:{env},image-tag:{image_tag}",
+    )
+    datadog_host = "datadog-agent"
 
     def process_container(
         topic_name: str,
@@ -82,9 +110,12 @@ def deploy_preselector(
                 service_bus_request_topic_name=topic_name,
                 service_bus_request_size=batch_size
             ),
+            DataDogStatsdConfig(
+                datadog_host="127.0.0.1"
+            ),
             DataDogConfig( # type: ignore[reportGeneralTypeIssues]
                 datadog_service_name="preselector",
-                datadog_tags=f"subscription:{company}",
+                datadog_tags=dd_config.datadog_tags + f",topic:{topic_name}"
             ),
             RuntimeEnvs(
                 datalake_env=env,
@@ -121,7 +152,7 @@ def deploy_preselector(
             command=[ "/bin/bash", "-c", "python -m preselector.process_stream" ],
             resources=ResourceRequirements(
                 requests=ResourceRequests(
-                    memory_in_gb=8,
+                    memory_in_gb=7,
                     cpu=1.0,
                     gpu=None
                 )
@@ -130,6 +161,7 @@ def deploy_preselector(
 
     group = ContainerGroup(
         containers=[
+            datadog_agent_container(dd_config, name=datadog_host),
             process_container(
                 topic_name="priority-deviation-request",
                 container_name=f"{name}-live",
@@ -190,7 +222,6 @@ def deploy_all(tag: str, env: str) -> None:
         "prod": "gg-deviation-service-prod.servicebus.windows.net"
     }
 
-
     for company in company_names:
 
         logger.info(company)
@@ -207,10 +238,11 @@ def deploy_all(tag: str, env: str) -> None:
             service_bus_namespace=bus_namespace[env],
             env=env,
             image=f"bhregistry.azurecr.io/preselector:{tag}",
+            image_tag=tag,
             resource_group=f"rg-chefdp-{env}",
         )
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="7890580a3715023fb6b444c2d076b0f6709bc46c", env="prod")
+    deploy_all(tag="dev-latest", env="test")

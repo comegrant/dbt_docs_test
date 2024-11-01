@@ -15,8 +15,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/truste
 
 
 # set the home directory
-ENV APP_HOME /workspaces/sous-chef
-ENV SERVICE_HOME $APP_HOME/projects/preselector
+ENV APP_HOME=/workspaces/sous-chef
+ENV SERVICE_HOME=$APP_HOME/projects/preselector
 
 # copy source code
 WORKDIR $APP_HOME

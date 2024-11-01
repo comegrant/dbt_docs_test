@@ -120,7 +120,8 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
                 subscription_name=self.subscription_name,
                 sub_queue=self.sub_queue,
                 max_wait_time=self.max_wait_time,
-                auto_lock_renewer=renewer
+                auto_lock_renewer=renewer,
+                prefetch_count=self.default_max_records
             )
             self._connection = rec.__enter__()
 
@@ -304,10 +305,16 @@ class PreselectorResultWriter(WritableStream):
             .unnest("year_weeks")
             .with_columns(company_id=pl.lit(self.company_id))
         )
+        request = self.store.feature_view(Preselector).request
+        features = request.all_returned_columns
+        try:
+            await self.store.upsert_into(
+                Preselector.location, df.select(features)
+            )
+        except ValueError as e:
+            logger.error(f"Error when upserting {df.head()}")
+            logger.exception(e)
 
-        await self.store.insert_into(
-            Preselector.location, df
-        )
 
 @dataclass
 class PreselectorResultStreamWriter(WritableStream):

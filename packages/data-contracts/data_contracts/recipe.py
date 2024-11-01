@@ -392,7 +392,7 @@ main_ingredient_ids = {
     name="recipe_features",
     source=adb.fetch(recipe_features_sql),
     materialized_source=materialized_data.parquet_at("recipe_features.parquet"),
-    acceptable_freshness=timedelta(days=4),
+    acceptable_freshness=timedelta(hours=6),
 )
 class RecipeFeatures:
     recipe_id = Int32().lower_bound(1).upper_bound(10_000_000).as_entity()
@@ -521,7 +521,7 @@ class MainRecipeFeature:
         "recipe_embeddings",
         partition_keys=["company_id"]
     ),
-    acceptable_freshness=timedelta(days=6)
+    acceptable_freshness=timedelta(hours=6)
 )
 class RecipeEmbedding:
     main_recipe_id = Int32().as_entity()

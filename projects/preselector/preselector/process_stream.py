@@ -15,6 +15,8 @@ from aligned.sources.in_mem_source import InMemorySource
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
+from cheffelo_logging import DataDogConfig
+from cheffelo_logging.logging import DataDogStatsdConfig
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
 from data_contracts.recipe import RecipeEmbedding
@@ -123,24 +125,26 @@ async def load_cache_for(
     store: ContractStore,
     loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]]
 ) -> ContractStore:
-    from aligned.request.retrival_request import RequestResult
-
     for location, source, pl_filter in loads:
         if (
             isinstance(source, InMemorySource) and not source.data.is_empty()
         ) or (
             not isinstance(source, InMemorySource)
         ):
+            if location.location_type == "feature_view":
+                request = store.feature_view(location.name).request
+            else:
+                request = store.model(location.name).prediction_request()
+
             try:
-                # Checking if the data exists locally already
-                _ = await source.all(
-                    RequestResult(set(), set(), None), limit=10
-                ).to_polars()
-                store = store.update_source_for(location, source) # type: ignore
+                # Checking if the data exists locally already with the correct schema
+                _ = await source.all_data(request, limit=10).to_polars()
+                store = store.update_source_for(location, source)
                 logger.info(f"Found data for {location}, will therefore skip")
                 continue
             except Exception:
-                pass
+                logger.info(f"Either missing data, or incorrect schema. for {location}")
+
 
         logger.info(f"Loading {location} to cache")
         if location.location_type == "feature_view":
@@ -156,9 +160,8 @@ async def load_cache_for(
 
             job = job.polars_method(filter_df)
 
-
         await job.write_to_source(source)  # type: ignore
-        store = store.update_source_for(location, source) # type: ignore
+        store = store.update_source_for(location, source)
         logger.info(f"Loaded {location.name} from cache")
 
     return store
@@ -394,43 +397,45 @@ async def process_stream_batch(
     progress_callback_interval: int = 5,
     write_batch_interval: int = 100,
 ) -> None:
-    messages = await stream.read()
+    from datadog.dogstatsd.base import statsd
+
+    with duration("read_batch"):
+        messages = await stream.read()
+
     number_of_messages = len(messages)
 
     if number_of_messages == 0:
         return
 
+    statsd.increment("preselector.processed-requests", number_of_messages)
+
     successful_responses: list[PreselectorSuccessfulResponse] = []
     completed_requests: list[StreamMessage] = []
     failed_requests: list[PreselectorFailedResponse] = []
 
-    with duration(f"Running Preselector Batch on {number_of_messages} requests", should_log=True):
-
-        preselector_runtime_sum = 0
-
+    with duration("process_messages"):
         for index, message in enumerate(messages):
             raw_request = message.body
 
-            start_time = time.monotonic()
-            try:
-                request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
-                result = await run_preselector_for_request(request, store)
+            with duration("process_single_message"):
+                try:
+                    request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
+                    result = await run_preselector_for_request(request, store)
 
-                success_response = result.success_response()
-                if success_response:
-                    successful_responses.append(success_response)
+                    success_response = result.success_response()
+                    if success_response:
+                        successful_responses.append(success_response)
 
-                failed_requests.extend(result.failed_responses())
-            except Exception as e:
-                logger.exception(f"Error processing request {raw_request}")
-                logger.exception(e)
+                    failed_requests.extend(result.failed_responses())
+                except Exception as e:
+                    logger.exception(f"Error processing request {raw_request}")
+                    logger.exception(e)
 
-                failed_requests.append(
-                    PreselectorFailedResponse(
-                        error_message=str(e), error_code=500, request=raw_request
+                    failed_requests.append(
+                        PreselectorFailedResponse(
+                            error_message=str(e), error_code=500, request=raw_request
+                        )
                     )
-                )
-            preselector_runtime_sum += (time.monotonic() - start_time)
 
             completed_requests.append(message)
 
@@ -438,29 +443,26 @@ async def process_stream_batch(
                 progress_callback(index + 1, number_of_messages)
 
             if index % write_batch_interval == 0 and index != 0:
-                if successful_output_stream:
-                    await successful_output_stream.batch_write(successful_responses)
-                    successful_responses = []
+                with duration("write_batch"):
+                    if successful_output_stream:
+                        await successful_output_stream.batch_write(successful_responses)
+                        successful_responses = []
 
-                if failed_output_stream:
-                    await failed_output_stream.batch_write(failed_requests)
-                    failed_requests = []
+                    if failed_output_stream:
+                        await failed_output_stream.batch_write(failed_requests)
+                        failed_requests = []
 
-                await stream.mark_as_complete(completed_requests)
-                completed_requests = []
+                    await stream.mark_as_complete(completed_requests)
+                    completed_requests = []
 
-        logger.info(
-            f"Time used in pre-selecor land: {preselector_runtime_sum}. "
-            f"mean time per req: {preselector_runtime_sum / number_of_messages}"
-        )
+        with duration("write_batch"):
+            if successful_output_stream:
+                await successful_output_stream.batch_write(successful_responses)
 
-        if successful_output_stream:
-            await successful_output_stream.batch_write(successful_responses)
+            if failed_output_stream:
+                await failed_output_stream.batch_write(failed_requests)
 
-        if failed_output_stream:
-            await failed_output_stream.batch_write(failed_requests)
-
-        await stream.mark_as_complete(completed_requests)
+            await stream.mark_as_complete(completed_requests)
 
         if progress_callback:
             progress_callback(number_of_messages, number_of_messages)
@@ -470,9 +472,9 @@ async def process_stream(
     settings: ProcessStreamSettings,
     min_sleep_time: float = 0.1,
 ) -> None:
-    import os
 
-    from cheffelo_logging import DataDogConfig, setup_datadog
+    from cheffelo_logging import setup_datadog
+    from datadog import initialize
 
     logging.basicConfig(level=logging.INFO)
 
@@ -480,31 +482,19 @@ async def process_stream(
     logging.getLogger("azure").setLevel(logging.ERROR)
     logging.getLogger("aligned").setLevel(logging.ERROR)
 
-    # Adding data dog to the root
-    datadog_tags = {
-        "env": os.getenv('ENV'),
-        "subscription": settings.service_bus_subscription_name,
-        "request-topic": settings.service_bus_request_topic_name
-    }
+    config = DataDogConfig() # type: ignore[reportGeneralTypeIssues]
 
-    if "GIT_COMMIT_HASH" in os.environ:
-        datadog_tags["git_sha"] = os.getenv("GIT_COMMIT_HASH")
-
-    datadog_tag_string = ""
-    for key, value in datadog_tags.items():
-        datadog_tag_string += f"{key}:{value},"
-
-    setup_datadog(
-        logging.getLogger(""),
-        config=DataDogConfig(
-            datadog_service_name="preselector",
-            datadog_tags=datadog_tag_string.strip(",")
-        ) # type: ignore[reportGeneralTypeIssues]
-    )
+    setup_datadog(logging.getLogger(""), config)
 
     try:
-        logger.info(settings)
         store = preselector_store()
+        datadog_config = DataDogStatsdConfig() # type: ignore[reportGeneralTypeIssues]
+        initialize(
+            statsd_host=datadog_config.datadog_host,
+            statsd_port=datadog_config.datadog_port,
+            statsd_constant_tags=config.datadog_tags.split(",")
+        )
+        logger.info(settings)
 
         company_map = {
             "godtlevert": "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
@@ -526,12 +516,13 @@ async def process_stream(
         logger.info(f"'{settings.service_bus_subscription_name}' ready for some cooking!")
         while True:
             batch_start = time.monotonic()
-            await process_stream_batch(
-                store,
-                streams.request_stream,
-                streams.successful_output_stream,
-                streams.failed_output_stream,
-            )
+            with duration("run_full_batch"):
+                await process_stream_batch(
+                    store,
+                    streams.request_stream,
+                    streams.successful_output_stream,
+                    streams.failed_output_stream,
+                )
             batch_end = time.monotonic()
 
             batch_duration = batch_end - batch_start

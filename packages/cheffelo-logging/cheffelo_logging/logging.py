@@ -1,6 +1,6 @@
 import logging
 from logging import Formatter, Logger, LogRecord, StreamHandler
-from typing import Optional
+from typing import Annotated, Optional
 
 from datadog_api_client.v2 import ApiClient, ApiException, Configuration
 from datadog_api_client.v2.api import logs_api
@@ -10,13 +10,18 @@ from pydantic_settings import BaseSettings
 from pythonjsonlogger import jsonlogger
 
 
+class DataDogStatsdConfig(BaseSettings):
+    datadog_host: str
+    datadog_port: Annotated[int, Field] = 8125
+
+
 class DataDogConfig(BaseSettings):
     datadog_api_key: str
     datadog_service_name: str
     datadog_tags: str
 
-    datadog_site: str = Field("datadoghq.eu")
-    datadog_source: str = Field("python")
+    datadog_site: Annotated[str, Field] = "datadoghq.eu"
+    datadog_source: Annotated[str, Field] = "python"
 
     def configuration(self) -> Configuration:
         config = Configuration()
@@ -61,7 +66,6 @@ class DataDogStreamHandler(StreamHandler):
             logging.exception(
                 "Exception when calling LogsApi->submit_log: %s\n", api_exception
             )
-
 
 def setup_datadog(logger: Logger, config: DataDogConfig, formatter: Optional[Formatter] = None) -> None:
     """

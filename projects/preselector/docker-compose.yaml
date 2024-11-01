@@ -8,6 +8,15 @@ services:
 
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
+  agent:
+    image: gcr.io/datadoghq/agent:latest
+    platform: linux/amd64
+    env_file:
+      - ../../.env
+      - .env
+    ports:
+      - 8125:8125/udp
+
   preselector:
     image: preselector-preselector
     platform: linux/amd64

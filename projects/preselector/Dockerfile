@@ -6,8 +6,8 @@ ARG TAG
 RUN pip install --no-cache-dir poetry=='1.8.2'
 
 # set the home directory
-ENV APP_HOME /opt
-ENV SERVICE_HOME $APP_HOME/projects/preselector
+ENV APP_HOME=/opt
+ENV SERVICE_HOME=$APP_HOME/projects/preselector
 
 # Installing utils deps
 RUN apt-get update && \

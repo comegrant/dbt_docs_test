@@ -13,7 +13,6 @@ from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from fastapi import Depends, FastAPI
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 
 from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
@@ -143,7 +142,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         )
 
     await load_store()
-
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -157,19 +155,19 @@ def index() -> str:
 async def generate_preview(
     body: GeneratePreview,
     store: Annotated[ContractStore, Depends(load_store)]
-) -> JSONResponse:
+) -> Mealkit:
     """
     An endpoint used to preview the output of the pre-selector.
     """
     req = body.request()
-    with duration("Generate", should_log=True):
+    with duration("preview-api-generate"):
         try:
             response = await run_preselector_for_request(
                 req,
                 store
             )
         except Exception as error:
-            logger.error(error)
+            logger.exception(error)
             raise error
 
     success = response.success_response()
@@ -177,18 +175,12 @@ async def generate_preview(
         response = Mealkit(
             main_recipe_ids=success.year_weeks[0].main_recipe_ids,
             model_version=response.model_version
-        ).model_dump()
+        )
     elif response.failures:
         logger.error(f"Failed for request {body}")
-        response = response.failures[0].model_dump()
+        response = response.failures[0]
+        raise ValueError(response.error_message)
     else:
         raise ValueError("Found no successful or failure response. This should never happen.")
 
-    cache_in_seconds = 60 * 5
-
-    return JSONResponse(
-        response,
-        headers={
-            "Cache-Control": f"max-age={cache_in_seconds}"
-        }
-    )
+    return response

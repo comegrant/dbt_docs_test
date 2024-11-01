@@ -1,5 +1,4 @@
 import logging
-import time
 from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -546,7 +545,7 @@ async def normalize_cost(
     vector: pl.DataFrame,
     store: ContractStore,
 ) -> pl.DataFrame:
-    with duration("Loading CoF min max normalization values"):
+    with duration("load-cof-min-max-in-week"):
         cost_of_food_normalization = (
             await store.feature_view("menu_week_recipe_stats")
             .select({"min_cost_of_food", "max_cost_of_food"})
@@ -770,7 +769,7 @@ async def historical_preselector_vector(
     company_id = request.company_id
     concept_ids = [concept_id.upper() for concept_id in request.concept_preference_ids]
 
-    with duration("Loading concept definition"):
+    with duration("load-concept-definitions"):
         default_importance, default_target = await importance_vector_for_concept(concept_ids, store, company_id)
 
     default_importance = default_importance.with_columns(
@@ -778,7 +777,7 @@ async def historical_preselector_vector(
     )
 
     if request.has_data_processing_consent:
-        with duration("Loading importance vector"):
+        with duration("load-importance-vector"):
             user_importance = (
                 await store.feature_view(ImportanceVector)
                 .features_for(
@@ -806,7 +805,7 @@ async def historical_preselector_vector(
         )
         return default_target, default_importance, False
 
-    with duration("Loading target vector"):
+    with duration("load-target-vector"):
         user_target = (
             await store.feature_view(TargetVectors)
             .features_for(
@@ -823,7 +822,7 @@ async def historical_preselector_vector(
     attribute_vector_weight = 1
     vector_sum = user_vector_weight + attribute_vector_weight
 
-    with duration("Finding columns to overwrite"):
+    with duration("find-attributes-to-overwrite-in-vector"):
         overwrite_columns: list[str] = [
             key
             for key, value in default_importance.to_dicts()[0].items()
@@ -832,7 +831,7 @@ async def historical_preselector_vector(
         other_features = list(set(vector_features) - set(overwrite_columns))
 
 
-    with duration("Combining history and attributes"):
+    with duration("combine-importance-vectors"):
         combined_importance = (
             default_importance.select(pl.col(vector_features) * attribute_vector_weight).vstack(
                 user_importance.select(pl.col(vector_features) * user_vector_weight)
@@ -862,29 +861,25 @@ async def historical_preselector_vector(
 
 
 @contextmanager
-def duration(log: str, should_log: bool = False) -> Generator[None, None, None]:
-    # if tracemalloc.is_tracing():
-    #     now, max_memory = tracemalloc.get_traced_memory()
-    #     megabytes = 2**20
-    #     logger.info(
-    #         f"Starting with (current, max) bytes ({now / megabytes} MB, {max_memory / megabytes} MB)",
-    #     )
+def duration(metric: str) -> Generator[None, None, None]:
+    import os
+    from time import monotonic
 
-    if should_log:
-        logger.info(f"Starting '{log}'")
-        start = time.monotonic()
+    from datadog.dogstatsd.base import statsd
+
+    if statsd.host is None:
         yield
-        end = time.monotonic()
-        logger.info(f"{log} took {end - start} seconds")
     else:
+        metric_name = metric.lower().replace(" ", "-")
+        metric_name = f"preselector.{metric_name}_time.histogram"
+        start_time = monotonic()
         yield
-    # if tracemalloc.is_tracing():
-    #     now, max_memory = tracemalloc.get_traced_memory()
-    #     megabytes = 2**20
-    #     logger.info(
-    #         f"Completed with (current, max) bytes ({now / megabytes} MB, {max_memory / megabytes} MB)",
-    #     )
-
+        tags = None
+        # Shit solution but but
+        if "service_bus_request_topic_name" in os.environ:
+            topic = os.environ["service_bus_request_topic_name".upper()]
+            tags = [f"topic:{topic}"]
+        statsd.histogram(metric_name, monotonic() - start_time, tags=tags)
 
 mealkit_cache = {}
 
@@ -965,7 +960,7 @@ async def cost_of_food_target_for(
     store: ContractStore
 ) -> Annotated[pl.DataFrame, CostOfFoodPerMenuWeek]:
 
-    with duration("Loading mealkit CoF target"):
+    with duration("load-mealkit-cof-target"):
         cof_entities = {
             "company_id": [request.company_id] * len(request.compute_for),
             "number_of_recipes": [request.number_of_recipes] * len(request.compute_for),
@@ -1049,7 +1044,7 @@ async def run_preselector_for_request(
         f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
     )
 
-    with duration("Computing preselector vector"):
+    with duration("construct-vector"):
         (
             target_vector,
             importance_vector,
@@ -1111,7 +1106,7 @@ async def run_preselector_for_request(
         )
 
         logger.debug("Loading menu")
-        with duration("Loading menu"):
+        with duration("load-menu"):
             menu = await load_menu_for(request.company_id, year, week, store=store)
         logger.debug(f"Number of recipes {menu.height}")
 
@@ -1130,7 +1125,7 @@ async def run_preselector_for_request(
 
         if request.has_data_processing_consent:
             logger.debug("Loading recommendations")
-            with duration("Loading recommendations"):
+            with duration("loading-recommendations"):
                 recommendations = await load_recommendations(
                     agreement_id=request.agreement_id, year=year, week=week, store=store
                 )
@@ -1141,7 +1136,7 @@ async def run_preselector_for_request(
         st.write(generated_recipe_ids)
 
         logger.debug("Running preselector")
-        with duration("Running preselector"):
+        with duration("running-preselector"):
             selected_recipe_ids, compliance = await run_preselector(
                 request,
                 menu,
@@ -1226,7 +1221,7 @@ async def filter_out_recipes_based_on_preference(
     Returns:
         pl.DataFrame: The recipes that do not conflict with the taste preferences
     """
-    with duration("Loading recipe preferences"):
+    with duration("load-recipe-information"):
         preferences = (
             await store.feature_view(RecipeNegativePreferences)
             .select({"recipe_id", "preference_ids"})
@@ -1423,7 +1418,7 @@ async def run_preselector(
     assert year is not None, f"Found no recipes for year {year} and week {week}"
     assert week is not None
 
-    with duration("Loading normalized recipe features"):
+    with duration("load-normalized-features"):
         normalized_recipe_features = await compute_normalized_features(
             recipes.with_columns(
                 year=pl.lit(year),
@@ -1463,7 +1458,7 @@ async def run_preselector(
     if filtered.height >= customer.number_of_recipes:
         normalized_recipe_features = filtered
 
-    with duration("Loading main ingredient category"):
+    with duration("load-main-ingredient-catagory"):
         normalized_recipe_features = await store.feature_view(
             RecipeMainIngredientCategory
         ).features_for(
@@ -1474,7 +1469,7 @@ async def run_preselector(
             pl.col("main_carbohydrate_category_id").is_not_null()
         ).with_subfeatures().to_polars()
 
-    with duration("Load recipe cost features"):
+    with duration("load-recipe-cost"):
         normalized_recipe_features = (
             await store.feature_view("recipe_cost")
             .select({"recipe_cost_whole_units"})
@@ -1512,7 +1507,7 @@ async def run_preselector(
         )
 
     if not recommendations.is_empty():
-        with duration("Filtering on recs"):
+        with duration("add-recommendations-data"):
             with_rank = recipes.cast({
                 "recipe_id": pl.Int32
             }).join(
@@ -1548,16 +1543,18 @@ async def run_preselector(
         year_week=year * 100 + week, # type: ignore
         selected_recipes=selected_recipes
     )
-    recipe_embeddings = await store.model(RecipeEmbedding).predictions_for(
-        recipe_features.select([
-            "main_recipe_id", "company_id"
-        ])
-    ).select(["embedding"]).to_polars()
 
-    recipe_embeddings = recipe_embeddings.join(
-        recipe_features.cast({ "main_recipe_id": pl.Int32 }).select(["recipe_id", "main_recipe_id"]),
-        on="main_recipe_id"
-    )
+    with duration("load-recipe-embeddings"):
+        recipe_embeddings = await store.model(RecipeEmbedding).predictions_for(
+            recipe_features.select([
+                "main_recipe_id", "company_id"
+            ])
+        ).select(["embedding"]).to_polars()
+
+        recipe_embeddings = recipe_embeddings.join(
+            recipe_features.cast({ "main_recipe_id": pl.Int32 }).select(["recipe_id", "main_recipe_id"]),
+            on="main_recipe_id"
+        )
 
     if recipe_embeddings.height != recipe_features.height:
         missing_recipes = set(
@@ -1569,7 +1566,7 @@ async def run_preselector(
 
     assert not recipe_features.is_empty(), "Found no features something is very wrong"
 
-    with duration("Finding best combination"):
+    with duration("find-best-combination"):
         best_recipe_ids, _ = await find_best_combination(
             target_vector,
             importance_vector,
