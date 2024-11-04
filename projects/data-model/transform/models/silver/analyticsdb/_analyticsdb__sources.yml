@@ -8,3 +8,5 @@ sources:
     description: "Tables from the AnalyticsDB (ADB) database"
     tables:
       - name: analyticsdb_cms__estimations_log
+
+      - name: analyticsdb_analytics__billing_agreement_basket_product_log

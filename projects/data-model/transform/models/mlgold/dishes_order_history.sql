@@ -7,7 +7,6 @@ with fact_orders as (
         product_variation_quantity,
         fk_dim_order_statuses,
         fk_dim_companies,
-        fk_dim_billing_agreements,
         fk_dim_products
     from {{ ref('fact_orders') }}
 ),

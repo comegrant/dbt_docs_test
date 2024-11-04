@@ -45,14 +45,6 @@ models:
         data_tests:
           - not_null
 
-      - name: weeks_since_first_order
-        data_type: bigint
-        description: "{{ doc('column__weeks_since_first_order') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
@@ -97,6 +89,34 @@ models:
         data_tests:
           - not_null
 
+      - name: meal_adjustment
+        data_type: int
+        description: ""
+
+      - name: portion_adjustment
+        data_type: int
+        description: ""
+
+      - name: is_added_dish
+        data_type: int
+        description: "{{ doc('column__is_added_dish') }}"
+
+      - name: is_removed_dish
+        data_type: int
+        description: "{{ doc('column__is_removed_dish') }}"
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
+      - name: is_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_mealbox') }}"
+
+      - name: is_chef_composed_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_chef_composed_mealbox') }}"
+
       - name: has_recipe_leaflets
         data_type: boolean
         description: "{{ doc('column__has_recipe_leaflets') }}"
@@ -113,53 +133,9 @@ models:
         data_tests:
           - not_null
 
-      - name: is_added_recipe
+      - name: billing_agreement_id
         data_type: int
-        description: "{{ doc('column__is_added_recipe') }}"
-
-      - name: is_removed_recipe
-        data_type: int
-        description: "{{ doc('column__is_removed_recipe') }}"
-
-      - name: meal_adjustment
-        data_type: int
-        description: ""
-
-      - name: portion_adjustment
-        data_type: int
-        description: ""
-
-      - name: is_generated_recipe_line
-        data_type: boolean
-        description: "{{ doc('column__is_generated_recipe_line') }}"
-
-      - name: is_chef_composed_mealbox
-        data_type: boolean
-        description: "{{ doc('column__is_chef_composed_mealbox') }}"
-        
-      - name: is_mealbox
-        data_type: boolean
-        description: "{{ doc('column__is_mealbox') }}"
-
-      - name: is_dish
-        data_type: boolean
-        description: "{{ doc('column__is_dish') }}"
-
-      - name: preselection_origin
-        data_type: string
-        description: ""
-
-      - name: company_id
-        data_type: varchar(36)
-        description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: language_id
-        data_type: int
-        description: "{{ doc('column__language_id') }}"
+        description: "{{ doc('column__billing_agreement_id') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -177,6 +153,26 @@ models:
         data_type: bigint
         description: "{{ doc('column__ops_order_id') }}"
 
+      - name: billing_agreement_order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: order_status_id
         data_type: varchar(36)
         description: "{{ doc('column__order_status_id') }}"
@@ -188,26 +184,6 @@ models:
       - name: order_type_id
         data_type: varchar(36)
         description: "{{ doc('column__order_type_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: billing_agreement_order_line_id
-        data_type: varchar(36)
-        description: "{{ doc('column__billing_agreement_order_line_id') }}"
-
-      - name: billing_agreement_id
-        data_type: int
-        description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-    
-      - name: valid_from_billing_agreements
-        data_type: timestamp
-        description: "{{ doc('column__valid_from') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -229,7 +205,18 @@ models:
         data_type: int
         description: "{{ doc('column__preselected_recipe_id') }}"
 
-      - name: fk_dim_billing_agreements
+      - name: fk_dim_billing_agreements_deviations
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+      
+      - name: fk_dim_billing_agreements_ordergen
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
@@ -351,7 +338,7 @@ models:
 
   - name: dim_billing_agreements
     description: ""
-    latest_version: 2
+    latest_version: 1
     config:
       contract:
         enforced: True
@@ -390,6 +377,10 @@ models:
       - name: billing_agreement_preferences_updated_id
         data_type: string
         description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
+
+      - name: billing_agreement_basket_product_updated_id
+        data_type: string
+        description: ""
 
       - name: valid_from
         data_type: timestamp
@@ -444,6 +435,14 @@ models:
       #- name: loyalty_level_id
       #  data_type: char(36)
       #  description: "{{ doc('column__loyalty_level_id') }}"
+
+      - name: signup_at
+        data_type: timestamp
+        description: "{{ doc('column__signup_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
       - name: signup_date
         data_type: date
@@ -529,43 +528,24 @@ models:
         data_type: int
         description: "{{ doc('column__first_menu_week_year') }}"
 
-      - name: meals
-        data_type: int
-        description: "{{ doc('column__meals') }}"
-
-      - name: portions
-        data_type: int
-        description: "{{ doc('column__portions') }}"
-
-      - name: product_name
+      - name: preselector_flag
         data_type: string
-        description: "{{ doc('column__product_name') }}"
-      
-      - name: is_onesub
-        data_type: boolean
-        description: "{{ doc('column__is_onesub') }}"
-       # constraints:
-       #   - type: not_null
-       # data_tests:
-       #   - not_null
+        description: ""
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: onesub_flag
+        data_type: string
+        description: ""
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
     versions:
       - v: 1
-        columns: 
-          - include: all
-            exclude: [
-              billing_agreement_preferences_updated_id, 
-              is_onesub, 
-              meals, 
-              portions, 
-              product_name
-              ]
-      - v: 2
-        config:
-          alias: dim_billing_agreements
-        constraints:
-          - type: primary_key
-            columns: [pk_dim_billing_agreements]
 
   - name: dim_preferences
     description: "Contains all preferences and attributes that can belong to a billing agreement."

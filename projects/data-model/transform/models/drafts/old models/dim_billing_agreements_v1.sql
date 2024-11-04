@@ -21,7 +21,7 @@ billing_agreements as (
 
 /*, scd_loyalty_level as (
 
-    select * from {{ ref('int_billing_agreements_loyalty_levels_scd') }}
+    select * from {{ ref('int_billing_agreements_loyalty_levels_scd2') }}
 
 ) */
 

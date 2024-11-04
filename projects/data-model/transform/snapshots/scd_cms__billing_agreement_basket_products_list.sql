@@ -51,7 +51,8 @@ source as (
         struct(
           subscribed_product_variation_id as product_variation_id 
           , quantity as product_variation_quantity
-          , is_extra)
+          , is_extra
+          )
       )
    ) as products_list
   from source

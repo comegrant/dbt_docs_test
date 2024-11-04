@@ -29,13 +29,13 @@ The order has a delivery related to it.
 
 {% enddocs %}
 
-{% docs column__is_added_recipe %}
+{% docs column__is_added_dish %}
 
 The recipe has been selected by the customer.
 
 {% enddocs %}
 
-{% docs column__is_removed_recipe %}
+{% docs column__is_removed_dish %}
 
 The preselected recipe has been removed by the customer. 
 

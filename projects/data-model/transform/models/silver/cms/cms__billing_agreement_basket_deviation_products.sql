@@ -33,8 +33,8 @@ source as (
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by
-        , updated_by as source_updated_at
-        , updated_at as source_updated_by
+        , updated_at as source_updated_at
+        , updated_by as source_updated_by
 
     from source
 

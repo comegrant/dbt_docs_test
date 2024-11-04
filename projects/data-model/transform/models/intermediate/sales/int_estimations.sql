@@ -31,7 +31,7 @@ dates as (
 
 , basket_products as (
 
-    select * from {{ref('int_basket_products_joined')}}
+    select * from {{ref('int_basket_products_scd2')}}
     where valid_to = '{{ var("future_proof_date") }}'
 
 )

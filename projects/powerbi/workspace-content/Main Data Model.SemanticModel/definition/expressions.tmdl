@@ -12,31 +12,30 @@ expression RangeEnd = #datetime(2030, 1, 1, 0, 0, 0) meta [IsParameterQuery=true
 
 	annotation PBI_ResultType = DateTime
 
-expression Host = "adb-3181126873992963.3.azuredatabricks.net" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression Host = "adb-4291784437205825.5.azuredatabricks.net" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
 	lineageTag: 1ab58ff7-81dc-4c2c-9fa6-e03e9d1dff96
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
 
-expression HttpPath = "/sql/1.0/warehouses/5c76141a221bd6c3" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression HttpPath = "/sql/1.0/warehouses/7a406a7f9665587e" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
 	lineageTag: b77a4279-1cdf-4830-8c3b-b988134dce75
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
 
-expression Catalog = "prod" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression Catalog = "dev" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
 	lineageTag: bf27b4eb-18be-4bca-8a68-9e2142a0fa3c
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
 
-expression Schema = "gold" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression Schema = "~marie_borg_gold" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
 	lineageTag: f272b2f3-7ffe-4735-a2ec-baab430920e1
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
-

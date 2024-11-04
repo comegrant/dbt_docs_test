@@ -18,27 +18,20 @@ billing_agreements as (
 
 )
 
-, preferences as (
+, preferences_scd2 as (
 
-    select * from {{ref('int_billing_agreement_preferences_unioned')}}
-
-)
-
-, basket_products_joined as (
-
-    select *  from {{ ref('int_basket_products_scd2') }}
-
-)
-
-, products as (
-
-    select *  from {{ ref('int_product_tables_joined') }}
+    select
+        billing_agreement_preferences_updated_id
+        , billing_agreement_id
+        , valid_from
+        , valid_to
+    from {{ref('int_billing_agreement_preferences_unioned')}}
 
 )
 
-, recommendations as (
+, basket_products_scd2 as (
 
-    select * from {{ ref('int_basket_deviation_recommendations') }}
+    select * from {{ ref('int_billing_agreements_basket_mealbox_scd') }}
 
 )
 
@@ -47,19 +40,6 @@ billing_agreements as (
     select * from {{ ref('int_billing_agreements_loyalty_levels_scd2') }}
 
 ) */
-
-, onesub_agreements as (
-    select 
-    basket_products_joined.billing_agreement_basket_product_updated_id
-    , max(product_id) as product_id_mealbox
-    from basket_products_joined
-    left join products
-        on basket_products_joined.company_id = products.company_id
-        and basket_products_joined.product_variation_id = products.product_variation_id
-    where products.product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' --Mealbox
-    group by 1
-    having max(product_id) = 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
-)
 
 , billing_agreements_scd1 as (
     select * from billing_agreements
@@ -82,19 +62,6 @@ billing_agreements as (
 
 )
 
-, preselector_agreements_scd2 as (
-
-    select 
-        recommendations.billing_agreement_id
-        , "Preselector" as preselector_flag
-        , min(recommendations.deviation_created_at) as valid_from
-        , {{ get_scd_valid_to() }} as valid_to
-    from recommendations
-    where billing_agreement_basket_deviation_origin_id = '{{ var("preselector_origin_id") }}'
-    group by 1,2,4
-
-)
-
 , billing_agreements_scd2 as (
 
     select
@@ -108,29 +75,6 @@ billing_agreements as (
         on billing_agreements.billing_agreement_status_id = status_names.billing_agreement_status_id
 )
 
-, basket_products_scd2 as (
-
-    select distinct
-    basket_products_joined.billing_agreement_basket_product_updated_id
-    , basket_products_joined.billing_agreement_id
-    , basket_products_joined.valid_from
-    , basket_products_joined.valid_to
-    from basket_products_joined
-    where basket_products_joined.billing_agreement_id is not null
-
-)
-
-, preferences_scd2 as (
-
-    select
-        billing_agreement_preferences_updated_id
-        , billing_agreement_id
-        , valid_from
-        , valid_to
-    from preferences
-
-)
-
 -- Use macro to join all scd2 tables
 {% set id_column = 'billing_agreement_id' %}
 {% set table_names = [
@@ -138,7 +82,6 @@ billing_agreements as (
     , 'billing_agreements_scd2'
     , 'basket_products_scd2'
     , 'preferences_scd2'
-    , 'preselector_agreements_scd2'
     ] %}
 
 , scd2_tables_joined as (
@@ -158,12 +101,10 @@ billing_agreements as (
         ) as pk_dim_billing_agreements
         , scd2_tables_joined.billing_agreement_id
         , scd2_tables_joined.billing_agreement_preferences_updated_id
-        , scd2_tables_joined.billing_agreement_basket_product_updated_id
         , billing_agreements_scd1.company_id
         , billing_agreements_scd1.payment_method
         , billing_agreements_scd1.signup_source
         , billing_agreements_scd1.signup_salesperson
-        , billing_agreements_scd1.signup_at
         , billing_agreements_scd1.signup_date
         , billing_agreements_scd1.signup_year_day
         , billing_agreements_scd1.signup_month_day
@@ -179,12 +120,10 @@ billing_agreements as (
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name
         , scd2_tables_joined.sales_point_id
-        , coalesce("Not Preselector", scd2_tables_joined.preselector_flag) as preselector_flag
-        , case
-            when onesub_agreements.billing_agreement_basket_product_updated_id is null
-            then 'Not OneSub'
-            else 'OneSub'
-        end as onesub_flag
+        , scd2_tables_joined.product_name
+        , coalesce(scd2_tables_joined.is_onesub, false) as is_onesub
+        , scd2_tables_joined.meals
+        , scd2_tables_joined.portions
         , scd2_tables_joined.valid_from
         , scd2_tables_joined.valid_to
         , scd2_tables_joined.is_current
@@ -195,8 +134,6 @@ billing_agreements as (
         on scd2_tables_joined.billing_agreement_id = billing_agreements_scd1.billing_agreement_id
     left join first_orders
         on scd2_tables_joined.billing_agreement_id = first_orders.billing_agreement_id
-    left join onesub_agreements
-        on scd2_tables_joined.billing_agreement_basket_product_updated_id = onesub_agreements.billing_agreement_basket_product_updated_id
 
 )
 

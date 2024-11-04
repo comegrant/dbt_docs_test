@@ -1,0 +1,41 @@
+# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: analyticsdb_analytics__billing_agreement_basket_products_log
+    description: "Log table of basket products from AnalyticsDB. Was run before every cutoff."
+    columns:
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: is_extra_product
+        data_type: boolean
+        description: "{{ doc('column__is_extra_basket_product') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null

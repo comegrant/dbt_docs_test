@@ -1,20 +1,14 @@
 with
 
-orders as (
+order_lines as (
 
-    select * from {{ ref('cms__billing_agreement_orders') }}
-
-)
-
-, order_lines as (
-
-    select * from {{ ref('cms__billing_agreement_order_lines') }}
+    select * from {{ ref('int_billing_agreement_order_lines_joined') }}
 
 )
 
-, has_delivery as (
+, menus as (
 
-    select * from {{ ref('int_billing_agreement_order_lines_with_delivery') }}
+    select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
 
 )
 
@@ -23,19 +17,15 @@ orders as (
     select * from {{ ref('int_basket_deviation_recommendations_most_recent') }}
 )
 
-, deviations as (
+, deviations_order_mapping as (
 
-    select * from {{ ref('int_basket_deviation_products_joined') }}
+    select * from {{ ref('int_basket_deviations_order_mapping') }}
+
 )
 
-, product_variation_before_onesub_migration as (
+, bridge_subscribed_products as (
 
-    select * from {{ ref('int_product_variation_before_onesub_migration') }}
-)
-
-, menus as (
-
-    select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
+    select * from {{ ref('bridge_billing_agreements_basket_products') }}
 
 )
 
@@ -57,94 +47,57 @@ orders as (
 
 )
 
-, order_line_agreements_joined as (
+, order_line_dimensions_joined as (
 
     select
-        orders.menu_year
-        , orders.menu_week
-        , orders.menu_week_monday_date
-        , datediff(
-            WEEK
-            , billing_agreements.first_menu_week_monday_date
-            , orders.menu_week_monday_date) as weeks_since_first_order
-        , orders.source_created_at
-        , order_lines.product_variation_quantity
-        , order_lines.vat
-        , order_lines.unit_price_ex_vat
-        , order_lines.unit_price_inc_vat
-        , order_lines.total_amount_ex_vat
-        , order_lines.total_amount_inc_vat
-        , order_lines.order_line_type_name
-        , orders.has_recipe_leaflets
-        , coalesce(has_delivery.has_delivery, false) as has_delivery
-        , billing_agreements.company_id
-        , companies.language_id
-        , orders.billing_agreement_order_id
-        , billing_agreements.billing_agreement_id
-        , billing_agreements.valid_from as valid_from_billing_agreements
-        , billing_agreements.meals
-        , billing_agreements.portions
+        order_lines.*
+        , products.portions
+        , products.meals
         , case
             when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-                    , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
-                )
-            and orders.menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
-            then products.meals - billing_agreements.meals
-            else null 
-        end as meal_adjustment
-        , case
-            when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-                    , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
-                )
-            and orders.menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
-            then products.portions - billing_agreements.portions
-            else null 
-        end as portion_adjustment
-        , orders.ops_order_id
-        , orders.order_status_id
-        , orders.order_type_id
-        , order_lines.billing_agreement_order_line_id
-        , products.product_type_id
-        , products.preselected_mealbox_product_id
-        , products.product_variation_id
-        -- TODO: This field is not needed anymore and can be removed
-        , case 
-            when products.product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-            and products.product_id != 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
-            then true
-            else false
-        end as is_chef_composed_mealbox
-        , case
-            when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
-                    , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- Financial
+                    '{{ var("mealbox_product_type_id") }}'
+                    , '{{ var("financial_product_type_id") }}'
                 )
             then true
             else false
         end as is_mealbox
-        , case 
-            when products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- Velg&Vrak
+        , case
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             then true
             else false
         end as is_dish
-    from orders
-    left join order_lines
-        on orders.billing_agreement_order_id = order_lines.billing_agreement_order_id
-    left join has_delivery
-        on orders.billing_agreement_order_id = has_delivery.billing_agreement_order_id
-    left join billing_agreements
-        on orders.billing_agreement_id = billing_agreements.billing_agreement_id
-        and orders.source_created_at >= billing_agreements.valid_from
-        and orders.source_created_at < billing_agreements.valid_to
+        , case
+            when products.product_type_id = '{{ var("mealbox_product_type_id") }}'
+            and products.product_id != '{{ var("onesub_product_id") }}'
+            then true
+            else false
+        end as is_chef_composed_mealbox
+        , companies.company_id
+        , companies.language_id
+        , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
+        , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
+        , companies.pk_dim_companies as fk_dim_companies
+        , cast(date_format(order_lines.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , md5(order_lines.order_status_id) AS fk_dim_order_statuses
+        , md5(order_lines.order_type_id) AS fk_dim_order_types
+        , coalesce(products.pk_dim_products, 0) AS fk_dim_products
+    from order_lines
+    left join deviations_order_mapping
+        on order_lines.billing_agreement_order_id = deviations_order_mapping.billing_agreement_order_id
+    left join billing_agreements as billing_agreements_ordergen
+        on order_lines.billing_agreement_id = billing_agreements_ordergen.billing_agreement_id
+        and order_lines.source_created_at >= billing_agreements_ordergen.valid_from
+        and order_lines.source_created_at < billing_agreements_ordergen.valid_to
+    -- TODO: Will technically be wrong for agreements which was migrated to Onesub, were pre-selector was not run
+    left join billing_agreements as billing_agreements_deviations
+        on order_lines.billing_agreement_id = billing_agreements_deviations.billing_agreement_id
+        and deviations_order_mapping.basket_mapping_created_at >= billing_agreements_deviations.valid_from
+        and deviations_order_mapping.basket_mapping_created_at  < billing_agreements_deviations.valid_to
     left join products
         on order_lines.product_variation_id = products.product_variation_id
-        and billing_agreements.company_id = products.company_id
+        and billing_agreements_ordergen.company_id = products.company_id
     left join companies
-        on billing_agreements.company_id = companies.company_id
-    -- Exclude orders without any order lines
-    where billing_agreement_order_line_id is not null
+        on billing_agreements_ordergen.company_id = companies.company_id
 
 )
 
@@ -152,70 +105,84 @@ orders as (
 
     select distinct
         menu_week_monday_date
-        , company_id
         , product_variation_id
         , recipe_id
+        , company_id
     from menus
     where recipe_id is not null
-    -- Only fetch recipes after Onesub 10% launch
+    -- only fetch recipes after Onesub 10% launch
     and menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
 
 )
 
--- BUG: Will be wrong if customer has both mealbox and velg&vrak
+-- ASSUMPTION (Pre OneSub): Not possible to have a mealbox product and velg&vrak
+-- Will be wrong if customer has both mealbox and velg&vrak pre Onesub
 , ordered_recipes as (
 
     select
-        order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.billing_agreement_order_line_id
-        , order_line_agreements_joined.product_variation_id
+        order_line_dimensions_joined.billing_agreement_order_id
+        , order_line_dimensions_joined.billing_agreement_order_line_id
+        , order_line_dimensions_joined.product_variation_id
         , menu_recipes.recipe_id
-        , order_line_agreements_joined.is_dish
-        , order_line_agreements_joined.is_chef_composed_mealbox
-    from order_line_agreements_joined
+        , order_line_dimensions_joined.is_chef_composed_mealbox
+        , order_line_dimensions_joined.is_dish
+    from order_line_dimensions_joined
     left join menu_recipes
-        on order_line_agreements_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
-        and order_line_agreements_joined.product_variation_id = menu_recipes.product_variation_id
-        and order_line_agreements_joined.company_id = menu_recipes.company_id
+        on order_line_dimensions_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
+        and order_line_dimensions_joined.product_variation_id = menu_recipes.product_variation_id
+        and order_line_dimensions_joined.company_id = menu_recipes.company_id
     where menu_recipes.recipe_id is not null
 
 )
 
--- TODO: Consider to move the two tables below to an intermediate step
--- Find the most recent deviation for a menu week
-, deviations_filter_active as (
-    select 
-        menu_week_monday_date
-        , billing_agreement_id
-        , billing_agreement_basket_id
-        , product_variation_id
-    from deviations
-    where deviations.is_active_deviation = true
+-- Gets all the product variations that customer subscribed to when placing an order
+-- ASSUMPTION: Dishes will never exist as basket products
+, subscribed_product_variations_mealbox as (
+
+    select distinct
+        order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.billing_agreement_order_id
+        , order_line_dimensions_joined.company_id
+        , products.product_variation_id
+        , products.meals
+        , products.portions
+    from order_line_dimensions_joined
+    left join bridge_subscribed_products
+        on order_line_dimensions_joined.fk_dim_billing_agreements_deviations = bridge_subscribed_products.fk_dim_billing_agreements
+    left join products
+        on bridge_subscribed_products.fk_dim_products = products.pk_dim_products
+    -- only fetch recipes after Onesub 10% launch
+    where order_line_dimensions_joined.menu_week_monday_date >= '{{ var("onesub_beta_launch_date") }}'
+    -- TODO: I am sure this can be done in a more smooth way
+    and products.product_type_id = '{{ var("mealbox_product_type_id") }}'
+    and order_line_dimensions_joined.is_mealbox = true
+
 )
 
--- Map deviations to order ids
-, deviations_order_mapping as (
-    select distinct 
-        deviations_filter_active.billing_agreement_basket_id
-        , deviations_filter_active.menu_week_monday_date
-        , order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.company_id
-    from deviations_filter_active
-    left join order_line_agreements_joined
-        on deviations_filter_active.menu_week_monday_date = order_line_agreements_joined.menu_week_monday_date
-        and deviations_filter_active.billing_agreement_id = order_line_agreements_joined.billing_agreement_id
-        and deviations_filter_active.product_variation_id = order_line_agreements_joined.product_variation_id
-    -- Only include deviations which has an order
-    where order_line_agreements_joined.billing_agreement_order_id is not null
+-- TODO: How will this affect grocery subscriptions?
+-- The preselected recipes for each subscribed product variation set by the chefs
+, chef_preselected_recipes as (
+
+    select
+        subscribed_product_variations_mealbox.billing_agreement_order_id
+        , menu_recipes.product_variation_id
+        , menu_recipes.recipe_id
+    from subscribed_product_variations_mealbox
+    left join menu_recipes
+        on subscribed_product_variations_mealbox.menu_week_monday_date = menu_recipes.menu_week_monday_date
+        and subscribed_product_variations_mealbox.product_variation_id = menu_recipes.product_variation_id
+        and subscribed_product_variations_mealbox.company_id = menu_recipes.company_id
+    where menu_recipes.recipe_id is not null
+
 )
 
+-- ASSUMPTION: There can not be a normal deviation inbetween Rec Engine runs
 -- Find the preselected recipes by the recommendation engine
 , recommendation_engine_preselected_recipes as (
     select
       deviations_order_mapping.billing_agreement_order_id
       , recommendations.product_variation_id
       , menu_recipes.recipe_id
-      , "Recommendation Engine" as preselection_origin
     from deviations_order_mapping
     left join recommendations
         on deviations_order_mapping.billing_agreement_basket_id = recommendations.billing_agreement_basket_id
@@ -227,82 +194,20 @@ orders as (
     where menu_recipes.recipe_id is not null
 )
 
--- Find the product type before being migrated to Onesub
--- for customers that have made deviations before being migrated
--- This is to be able to find the preselected mealbox for them
--- since the preselector has not been run
-, product_before_onesub_migration (
-    select 
-         deviations_order_mapping.billing_agreement_order_id
-         , product_variation_before_onesub_migration.product_variation_id
-         , products.preselected_mealbox_product_id
-    from product_variation_before_onesub_migration
-    left join deviations_order_mapping
-        on product_variation_before_onesub_migration.billing_agreement_basket_id = deviations_order_mapping.billing_agreement_basket_id
-        and product_variation_before_onesub_migration.menu_week_monday_date = deviations_order_mapping.menu_week_monday_date
-    left join products
-        on product_variation_before_onesub_migration.pre_onesub_product_variation_id = products.product_variation_id
-        and deviations_order_mapping.company_id = deviations_order_mapping.company_id
-)
+, preselected_recipes (
 
--- Find the preselected product variations made by the chefs
-, chef_preselected_product_variations as (
-
-    select
-        order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.product_variation_id
-        , products.product_variation_id as preselected_mealbox_product_variation_id
-    from order_line_agreements_joined
-    left join product_before_onesub_migration
-        on order_line_agreements_joined.billing_agreement_order_id = product_before_onesub_migration.billing_agreement_order_id
-        and order_line_agreements_joined.product_variation_id = product_before_onesub_migration.product_variation_id
-    left join products
-        -- Use product id from product before onesub migration if exists
-        on coalesce(product_before_onesub_migration.preselected_mealbox_product_id, order_line_agreements_joined.preselected_mealbox_product_id) = products.product_id
-        and order_line_agreements_joined.company_id = products.company_id
-        and order_line_agreements_joined.meals = products.meals
-        and order_line_agreements_joined.portions = products.portions
-    -- Exclude order lines with no preselected mealbox product_variation_id
-    where products.product_id is not null
-
-)
-
--- Find the preselected recipes made by the chefs
-, chef_preselected_recipes as (
-
-    select
-        order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.product_variation_id
-        , menu_recipes.recipe_id
-        , "Menu Team" as preselection_origin
-    from order_line_agreements_joined
-    left join chef_preselected_product_variations
-        on order_line_agreements_joined.billing_agreement_order_id = chef_preselected_product_variations.billing_agreement_order_id
-        and order_line_agreements_joined.product_variation_id = chef_preselected_product_variations.product_variation_id
-    left join menu_recipes
-        on chef_preselected_product_variations.preselected_mealbox_product_variation_id = menu_recipes.product_variation_id
-        and order_line_agreements_joined.company_id = menu_recipes.company_id
-        and order_line_agreements_joined.menu_week_monday_date = menu_recipes.menu_week_monday_date
-    where menu_recipes.recipe_id is not null
-
-)
-
-, preselected_recipes as ( 
-    
-    select 
-        *
-    from recommendation_engine_preselected_recipes
+    select * from recommendation_engine_preselected_recipes
 
     union all
-    select
-        *
-    from chef_preselected_recipes 
+    
+    select * from chef_preselected_recipes 
     -- Only include chef_preselected_recipes for orders where the recommendation engine was not run
     where chef_preselected_recipes.billing_agreement_order_id not in (
         select distinct 
             recommendation_engine_preselected_recipes.billing_agreement_order_id 
         from recommendation_engine_preselected_recipes
     )
+
 )
 
 , ordered_and_preselected_recipes_joined as (
@@ -318,35 +223,39 @@ orders as (
         , ordered_recipes.product_variation_id
         , preselected_recipes.product_variation_id as preselected_product_variation_id
         , coalesce(ordered_recipes.is_chef_composed_mealbox, false) as is_chef_composed_mealbox
+        , coalesce(ordered_recipes.is_dish, true) as is_dish
         , case
+            when ordered_recipes.is_dish = false and ordered_recipes.is_chef_composed_mealbox != true -- exclude product variations that are not dishes
+            then null
             when ordered_recipes.recipe_id = preselected_recipes.recipe_id
             then 0
-            when ordered_recipes.is_dish is false
-            then null
-            when ordered_recipes.recipe_id is not null 
-            and preselected_recipes.recipe_id is null
+            when ordered_recipes.recipe_id is null and preselected_recipes.recipe_id is not null
+            then 0
+            when ordered_recipes.recipe_id is not null and preselected_recipes.recipe_id is null
             then 1
             else null
-            end as is_added_recipe
+            end as is_added_dish
         , case
+            when ordered_recipes.is_dish = false and ordered_recipes.is_chef_composed_mealbox != true -- exclude product variations that are not dishes
+            then null
             when ordered_recipes.recipe_id = preselected_recipes.recipe_id
             then 0
-            when ordered_recipes.is_dish is false
-            then null
-            when ordered_recipes.recipe_id is null 
-            and preselected_recipes.recipe_id is not null
+            when ordered_recipes.recipe_id is null and preselected_recipes.recipe_id is not null
             then 1
+            when ordered_recipes.recipe_id is not null and preselected_recipes.recipe_id is null
+            then 0
             else null
-            end as is_removed_recipe
-        , case 
-            when preselection_origin = "Menu Team"
+            end as is_removed_dish
+        -- Identifier for lines that will be appended to the order lines
+        , case
+            -- All recipes belonging to a chef composed mealbox product
+            when ordered_recipes.is_chef_composed_mealbox = true
             then true
-            when ordered_recipes.recipe_id is null 
-            and preselected_recipes.recipe_id is not null
+            -- All preselected recipes that does not have a matching ordered recipe
+            when ordered_recipes.billing_agreement_order_line_id is null
             then true
             else false
         end as is_generated_recipe_line
-        , preselected_recipes.preselection_origin
     from ordered_recipes
     full join preselected_recipes
         on ordered_recipes.billing_agreement_order_id = preselected_recipes.billing_agreement_order_id
@@ -358,133 +267,58 @@ orders as (
     
     -- Recipes that have a direct relation to an order line
     select
-        order_line_agreements_joined.menu_year
-        , order_line_agreements_joined.menu_week
-        , order_line_agreements_joined.menu_week_monday_date
-        , order_line_agreements_joined.weeks_since_first_order
-        , order_line_agreements_joined.source_created_at
-        , order_line_agreements_joined.product_variation_quantity
-        , order_line_agreements_joined.vat
-        , order_line_agreements_joined.unit_price_ex_vat
-        , order_line_agreements_joined.unit_price_inc_vat
-        , order_line_agreements_joined.total_amount_ex_vat
-        , order_line_agreements_joined.total_amount_inc_vat
-        , order_line_agreements_joined.order_line_type_name
-        , order_line_agreements_joined.has_recipe_leaflets
-        , order_line_agreements_joined.has_delivery
-        , order_line_agreements_joined.billing_agreement_order_id
-        , order_line_agreements_joined.ops_order_id
-        , order_line_agreements_joined.order_status_id
-        , order_line_agreements_joined.order_type_id
-        , order_line_agreements_joined.company_id
-        , order_line_agreements_joined.language_id
-        , order_line_agreements_joined.billing_agreement_id
-        , order_line_agreements_joined.valid_from_billing_agreements
-        , order_line_agreements_joined.billing_agreement_order_line_id
-        , order_line_agreements_joined.product_variation_id
+        order_line_dimensions_joined.menu_year
+        , order_line_dimensions_joined.menu_week
+        , order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.source_created_at
+        , order_line_dimensions_joined.billing_agreement_order_id
+        , order_line_dimensions_joined.ops_order_id
+        , order_line_dimensions_joined.billing_agreement_order_line_id
+        , order_line_dimensions_joined.product_variation_quantity
+        , order_line_dimensions_joined.vat
+        , order_line_dimensions_joined.unit_price_ex_vat
+        , order_line_dimensions_joined.unit_price_inc_vat
+        , order_line_dimensions_joined.total_amount_ex_vat
+        , order_line_dimensions_joined.total_amount_inc_vat
+        , order_line_dimensions_joined.order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
+        , case
+            when order_line_dimensions_joined.is_mealbox = true
+            then order_line_dimensions_joined.meals - subscribed_product_variations_mealbox.meals
+            else null
+        end as meal_adjustment
+        , case 
+            when order_line_dimensions_joined.is_dish = true or order_line_dimensions_joined.is_chef_composed_mealbox = true
+            then order_line_dimensions_joined.portions - subscribed_product_variations_mealbox.portions
+            else null
+        end as portion_adjustment
+        , ordered_and_preselected_recipes_joined.is_added_dish
+        , ordered_and_preselected_recipes_joined.is_removed_dish
+        , order_line_dimensions_joined.is_dish
+        , order_line_dimensions_joined.is_chef_composed_mealbox
+        , order_line_dimensions_joined.is_mealbox
+        , order_line_dimensions_joined.has_delivery
+        , order_line_dimensions_joined.has_recipe_leaflets
+        , order_line_dimensions_joined.billing_agreement_id
+        , order_line_dimensions_joined.company_id
+        , order_line_dimensions_joined.language_id
+        , order_line_dimensions_joined.order_status_id
+        , order_line_dimensions_joined.order_type_id
+        , order_line_dimensions_joined.product_variation_id
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
-        , ordered_and_preselected_recipes_joined.is_added_recipe
-        , ordered_and_preselected_recipes_joined.is_removed_recipe
-        , order_line_agreements_joined.meal_adjustment
-        , order_line_agreements_joined.portion_adjustment
-        , false as is_generated_recipe_line
-        , order_line_agreements_joined.is_chef_composed_mealbox
-        , order_line_agreements_joined.is_mealbox
-        , order_line_agreements_joined.is_dish
-        , ordered_and_preselected_recipes_joined.preselection_origin
-    from order_line_agreements_joined
-    left join ordered_and_preselected_recipes_joined
-        on order_line_agreements_joined.billing_agreement_order_line_id = ordered_and_preselected_recipes_joined.billing_agreement_order_line_id
-        and ordered_and_preselected_recipes_joined.is_generated_recipe_line = false
-
-    union all
-
-    -- Add recipes that does not belong to an order line:
-    -- Fixed mealkit dishes and swapped out dishes
-    select distinct
-        order_line_agreements_joined.menu_year
-        , order_line_agreements_joined.menu_week
-        , order_line_agreements_joined.menu_week_monday_date
-        , order_line_agreements_joined.weeks_since_first_order
-        , order_line_agreements_joined.source_created_at
-        , 0 as product_variation_quantity
-        , 0 as vat
-        , 0 as unit_price_ex_vat
-        , 0 as unit_price_inc_vat
-        , 0 as total_amount_ex_vat
-        , 0 as total_amount_inc_vat
-        , "GENERATED" as order_line_type_name
-        , order_line_agreements_joined.has_recipe_leaflets
-        , order_line_agreements_joined.has_delivery
-        , order_line_agreements_joined.billing_agreement_order_id
-        , null as ops_order_id
-        , order_line_agreements_joined.order_status_id
-        , order_line_agreements_joined.order_type_id
-        , order_line_agreements_joined.company_id
-        , order_line_agreements_joined.language_id
-        , order_line_agreements_joined.billing_agreement_id
-        , order_line_agreements_joined.valid_from_billing_agreements
-        , null as billing_agreement_order_line_id
-        , null as product_variation_id
-        , ordered_and_preselected_recipes_joined.recipe_id
-        , ordered_and_preselected_recipes_joined.preselected_recipe_id
-        , ordered_and_preselected_recipes_joined.preselected_product_variation_id
-        , ordered_and_preselected_recipes_joined.is_added_recipe
-        , ordered_and_preselected_recipes_joined.is_removed_recipe
-        , null as meal_adjustment
-        , null as portion_adjustment
-        , ordered_and_preselected_recipes_joined.is_generated_recipe_line
-        , order_line_agreements_joined.is_chef_composed_mealbox
-        , false as is_mealbox
-        , true as is_dish
-        , ordered_and_preselected_recipes_joined.preselection_origin
-    from order_line_agreements_joined
-    left join ordered_and_preselected_recipes_joined
-        on order_line_agreements_joined.billing_agreement_order_id = ordered_and_preselected_recipes_joined.billing_agreement_order_id
-        and order_line_agreements_joined.is_chef_composed_mealbox = ordered_and_preselected_recipes_joined.is_chef_composed_mealbox
-    where ordered_and_preselected_recipes_joined.is_generated_recipe_line = true
-    order by source_created_at, billing_agreement_order_id
-
-)
-
-, add_fks as (
-    select 
-        md5(concat_ws('-'
-            , menu_week_monday_date
-            , billing_agreement_id
-            , add_recipes_to_orders.billing_agreement_order_id
-            , billing_agreement_order_line_id
-            , product_variation_id
-            , preselected_product_variation_id
-            , recipe_id
-            , preselected_recipe_id
-            )
-        ) as pk_fact_orders
-        , add_recipes_to_orders.*
-        , md5(concat(
-            cast(billing_agreement_id as string),
-            cast(valid_from_billing_agreements as string)
-            )
-        ) AS fk_dim_billing_agreements
-        , md5(company_id) AS fk_dim_companies
-        , cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
-        , md5(order_status_id) AS fk_dim_order_statuses
-        , md5(order_type_id) AS fk_dim_order_types
+        , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
+        , order_line_dimensions_joined.fk_dim_billing_agreements_deviations
+        , order_line_dimensions_joined.fk_dim_companies
+        , order_line_dimensions_joined.fk_dim_date
+        , order_line_dimensions_joined.fk_dim_order_statuses
+        , order_line_dimensions_joined.fk_dim_order_types
+        , order_line_dimensions_joined.fk_dim_products
         , coalesce(
             md5(
                 concat(
-                    product_variation_id,
-                    company_id
-                    )
-            ), '0'
-            ) as fk_dim_products
-        , coalesce(
-            md5(
-                concat(
-                    preselected_product_variation_id,
-                    company_id
+                    ordered_and_preselected_recipes_joined.preselected_product_variation_id,
+                    order_line_dimensions_joined.company_id
                     )
                 ), '0'
             ) as fk_dim_products_preselected
@@ -492,8 +326,8 @@ orders as (
             md5(
                 cast(
                     concat(
-                        recipe_id, 
-                        language_id
+                        ordered_and_preselected_recipes_joined.recipe_id, 
+                        order_line_dimensions_joined.language_id
                         ) as string
                     )
                 ), '0'
@@ -502,13 +336,125 @@ orders as (
             md5(
                 cast(
                     concat(
-                        preselected_recipe_id, 
-                        language_id) as string
+                        ordered_and_preselected_recipes_joined.preselected_recipe_id, 
+                        order_line_dimensions_joined.language_id
+                        ) as string
                     )
                 ), '0'
             ) as fk_dim_recipes_preselected
-    from add_recipes_to_orders
+    from order_line_dimensions_joined
+    left join ordered_and_preselected_recipes_joined
+        on order_line_dimensions_joined.billing_agreement_order_line_id = ordered_and_preselected_recipes_joined.billing_agreement_order_line_id
+        and ordered_and_preselected_recipes_joined.is_generated_recipe_line = false
+    left join subscribed_product_variations_mealbox
+        on order_line_dimensions_joined.billing_agreement_order_id = subscribed_product_variations_mealbox.billing_agreement_order_id
+    
+    union all
+
+    -- Add recipes that does not belong to an order line:
+    -- Chef composed mealbox dishes and swapped out dishes
+    select distinct
+        order_line_dimensions_joined.menu_year
+        , order_line_dimensions_joined.menu_week
+        , order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.source_created_at
+        , order_line_dimensions_joined.billing_agreement_order_id
+        , order_line_dimensions_joined.ops_order_id
+        , null as billing_agreement_order_line_id
+        , 0 as product_variation_quantity
+        , 0 as vat
+        , 0 as unit_price_ex_vat
+        , 0 as unit_price_inc_vat
+        , 0 as total_amount_ex_vat
+        , 0 as total_amount_inc_vat
+        , 'GENERATED' as order_line_type_name
+        , ordered_and_preselected_recipes_joined.recipe_id
+        , ordered_and_preselected_recipes_joined.preselected_recipe_id
+        , null as meal_adjustment
+        , null as portion_adjustment
+        , ordered_and_preselected_recipes_joined.is_added_dish
+        , ordered_and_preselected_recipes_joined.is_removed_dish
+        , true as is_dish
+        , false as is_chef_composed_mealbox
+        , false as is_mealbox
+        , order_line_dimensions_joined.has_delivery
+        , order_line_dimensions_joined.has_recipe_leaflets
+        , order_line_dimensions_joined.billing_agreement_id
+        , order_line_dimensions_joined.company_id
+        , order_line_dimensions_joined.language_id
+        , order_line_dimensions_joined.order_status_id
+        , order_line_dimensions_joined.order_type_id
+        -- TODO: Not sure if this should be null
+        , ordered_and_preselected_recipes_joined.product_variation_id
+        -- TODO: Not sure if this should be null for chef composed mealbox and added to mealbox line instead
+        , ordered_and_preselected_recipes_joined.preselected_product_variation_id
+        , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
+        , order_line_dimensions_joined.fk_dim_billing_agreements_deviations
+        , order_line_dimensions_joined.fk_dim_companies
+        , order_line_dimensions_joined.fk_dim_date
+        , order_line_dimensions_joined.fk_dim_order_statuses
+        , order_line_dimensions_joined.fk_dim_order_types
+        -- TODO: Not sure if this should be null
+        , coalesce(
+            md5(
+                concat(
+                    ordered_and_preselected_recipes_joined.product_variation_id,
+                    order_line_dimensions_joined.company_id
+                    )
+            ), '0'
+            ) as fk_dim_products
+        -- TODO: Not sure if this should be null for chef composed mealbox and added to mealbox line instead
+        , coalesce(
+            md5(
+                concat(
+                    ordered_and_preselected_recipes_joined.preselected_product_variation_id,
+                    order_line_dimensions_joined.company_id
+                    )
+                ), '0'
+            ) as fk_dim_products_preselected
+        , coalesce(
+            md5(
+                cast(
+                    concat(
+                        ordered_and_preselected_recipes_joined.recipe_id, 
+                        order_line_dimensions_joined.language_id
+                        ) as string
+                    )
+                ), '0'
+            ) as fk_dim_recipes
+        , coalesce(
+            md5(
+                cast(
+                    concat(
+                        ordered_and_preselected_recipes_joined.preselected_recipe_id, 
+                        order_line_dimensions_joined.language_id
+                        ) as string
+                    )
+                ), '0'
+            ) as fk_dim_recipes_preselected
+    from order_line_dimensions_joined
+    left join ordered_and_preselected_recipes_joined
+        on order_line_dimensions_joined.billing_agreement_order_id = ordered_and_preselected_recipes_joined.billing_agreement_order_id
+    where ordered_and_preselected_recipes_joined.is_generated_recipe_line = true
 
 )
 
-select * from add_fks
+
+, add_pk (
+    select 
+        md5(concat_ws('-'
+            , menu_week_monday_date
+            , billing_agreement_id
+            , billing_agreement_order_id
+            , billing_agreement_order_line_id
+            , product_variation_id
+            , preselected_product_variation_id
+            , recipe_id
+            , preselected_recipe_id
+            )
+        ) as pk_fact_orders
+        , add_recipes_to_orders.* 
+    from add_recipes_to_orders
+)
+
+select * from add_pk

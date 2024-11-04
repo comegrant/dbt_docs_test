@@ -15,7 +15,7 @@ relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
 	toColumn: Companies.pk_dim_companies
 
 relationship AutoDetected_bb7a349e-8746-426e-866e-67d5a2719c56
-	fromColumn: 'Order Measures'.fk_dim_billing_agreements
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 
 relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8

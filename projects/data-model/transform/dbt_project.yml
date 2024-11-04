@@ -28,6 +28,7 @@ vars:
  onesub_product_id: 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3'
  mealbox_product_type_id: '2F163D69-8AC1-6E0C-8793-FF0000804EB3'
  financial_product_type_id: '288ED8CA-B437-4A6D-BE16-8F9A30185008'
+ velg&vrak_product_type_id: 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
  incremental_number_of_days: 30
  full_load_first_date: '2024-01-15'
 

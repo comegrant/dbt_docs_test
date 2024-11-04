@@ -18,7 +18,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 49bc4193-4ea4-49b5-a837-df27efae7aa9
 		summarizeBy: count
-		sourceColumn: Agreement Id
+		sourceColumn: billing_agreement_id
 
 		annotation SummarizationSetBy = Automatic
 
@@ -39,7 +39,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 7f1fa672-5f50-4026-8bb4-c237d13ff6be
 		summarizeBy: count
-		sourceColumn: Sales Point Id
+		sourceColumn: sales_point_id
 
 		changedProperty = IsHidden
 
@@ -75,7 +75,7 @@ table 'Billing Agreements'
 		dataType: string
 		lineageTag: a5eaf2ae-1125-44bc-99d3-59ab436653c3
 		summarizeBy: none
-		sourceColumn: Payment Method
+		sourceColumn: payment_method
 
 		annotation SummarizationSetBy = Automatic
 
@@ -87,15 +87,15 @@ table 'Billing Agreements'
 		dataType: string
 		lineageTag: 1a914ada-c927-4a2b-9253-db4eec9a059b
 		summarizeBy: none
-		sourceColumn: Signup Source
+		sourceColumn: signup_source
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Signup Sales Person'
+	column 'Signup Salesperson'
 		dataType: string
 		lineageTag: c8eb41e1-bf6e-4b16-8b7c-3314401ce778
 		summarizeBy: none
-		sourceColumn: Signup Sales Person
+		sourceColumn: signup_salesperson
 
 		annotation SummarizationSetBy = Automatic
 
@@ -103,7 +103,7 @@ table 'Billing Agreements'
 		dataType: string
 		lineageTag: c8033f23-a99a-4496-9988-f77fa8cbf142
 		summarizeBy: none
-		sourceColumn: Billing Agreement Status
+		sourceColumn: billing_agreement_status_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -114,7 +114,7 @@ table 'Billing Agreements'
 		isAvailableInMdx: false
 		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
 		summarizeBy: none
-		sourceColumn: Signup Date
+		sourceColumn: signup_date
 
 		changedProperty = IsHidden
 
@@ -166,7 +166,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 28c5e978-6167-43f6-b71d-8c6bed7a56c0
 		summarizeBy: sum
-		sourceColumn: Signup Week
+		sourceColumn: signup_week
 
 		annotation SummarizationSetBy = Automatic
 
@@ -175,7 +175,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 370a5d43-c083-4583-a04f-36f335bf432f
 		summarizeBy: sum
-		sourceColumn: Signup Month
+		sourceColumn: signup_month
 
 		annotation SummarizationSetBy = Automatic
 
@@ -184,7 +184,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 798e3d8b-39a3-4b3d-96ab-ed5b5be61fe7
 		summarizeBy: sum
-		sourceColumn: Signup Quarter
+		sourceColumn: signup_quarter
 
 		annotation SummarizationSetBy = Automatic
 
@@ -193,7 +193,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 6e6c84c5-1173-4d3a-a0ef-6770e432318f
 		summarizeBy: sum
-		sourceColumn: Signup Year
+		sourceColumn: signup_year
 
 		annotation SummarizationSetBy = Automatic
 
@@ -203,7 +203,7 @@ table 'Billing Agreements'
 		formatString: Long Date
 		lineageTag: d67151df-ae12-48b5-beb5-cf563a456e54
 		summarizeBy: none
-		sourceColumn: First Menu Date
+		sourceColumn: first_menu_week_monday_date
 
 		changedProperty = IsHidden
 
@@ -216,7 +216,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: bbce92b8-d9b0-4148-afb6-e430f1b8fcad
 		summarizeBy: sum
-		sourceColumn: First Menu Week
+		sourceColumn: first_menu_week_week
 
 		annotation SummarizationSetBy = Automatic
 
@@ -225,7 +225,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: a4b5b32d-c78f-45da-9e80-5e97f3bf0d87
 		summarizeBy: sum
-		sourceColumn: First Menu Month
+		sourceColumn: first_menu_week_month
 
 		annotation SummarizationSetBy = Automatic
 
@@ -234,7 +234,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: 8f0a19c5-6c68-40f7-bbdb-87ba3e6377fe
 		summarizeBy: sum
-		sourceColumn: First Menu Quarter
+		sourceColumn: first_menu_week_quarter
 
 		annotation SummarizationSetBy = Automatic
 
@@ -243,7 +243,7 @@ table 'Billing Agreements'
 		formatString: 0
 		lineageTag: b33e20b9-81e5-406e-abee-b76e87cc1c89
 		summarizeBy: sum
-		sourceColumn: First Menu Year
+		sourceColumn: first_menu_week_year
 
 		annotation SummarizationSetBy = Automatic
 
@@ -271,38 +271,20 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Meals
-		dataType: int64
-		formatString: 0
-		lineageTag: 685f85f5-23c7-40e5-8cf6-0bf4fcf9123a
-		summarizeBy: sum
-		sourceColumn: Meals
-
-		annotation SummarizationSetBy = Automatic
-
-	column Portions
-		dataType: int64
-		formatString: 0
-		lineageTag: 0f02ea42-f7e3-4561-863f-4d22fcfa953d
-		summarizeBy: sum
-		sourceColumn: Portions
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Subscribed Mealbox'
+	column 'OneSub Flag'
 		dataType: string
-		lineageTag: 34b510ce-1fc6-4269-9da1-78f3691b222c
-		summarizeBy: none
-		sourceColumn: Subscribed Mealbox
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Is OneSub'
-		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
 		summarizeBy: none
-		sourceColumn: Is OneSub
+		sourceColumn: onesub_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preselector Flag'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: preselector_flag
 
 		changedProperty = IsHidden
 
@@ -315,10 +297,9 @@ table 'Billing Agreements'
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{{"billing_agreement_id", "Agreement Id"}, {"payment_method", "Payment Method"}, {"signup_source", "Signup Source"}, {"signup_salesperson", "Signup Sales Person"}, {"billing_agreement_status_name", "Billing Agreement Status"}, {"signup_date", "Signup Date"}, {"signup_week", "Signup Week"}, {"signup_month", "Signup Month"}, {"signup_quarter", "Signup Quarter"}, {"signup_year", "Signup Year"}, {"first_menu_week_monday_date", "First Menu Date"}, {"first_menu_week_week", "First Menu Week"}, {"first_menu_week_month", "First Menu Month"}, {"first_menu_week_quarter", "First Menu Quarter"}, {"first_menu_week_year", "First Menu Year"}, {"sales_point_id", "Sales Point Id"}, {"is_onesub", "Is OneSub"}, {"meals", "Meals"}, {"portions", "Portions"}, {"product_name", "Subscribed Mealbox"}})
+				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data]
 				in
-				    #"Renamed Columns"
+				    #"dim_calendar_Table"
 
 	annotation PBI_ResultType = Table
 

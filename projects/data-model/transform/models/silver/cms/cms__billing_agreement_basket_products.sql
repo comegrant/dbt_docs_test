@@ -23,13 +23,13 @@ source as (
         , is_extra as is_extra_product
         
         {# scd #}
-        , dbt_valid_from as valid_from
-        , {{ get_scd_valid_to('dbt_valid_from') }} as valid_to
+        , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from) as valid_from
+        , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to) as valid_to
         
         {# system #}
-        , created_at as source_created_at
+        , convert_timezone('Europe/Oslo', 'UTC', created_at) as source_created_at
         , created_by as source_created_by
-        , updated_at as source_updated_at
+        , convert_timezone('Europe/Oslo', 'UTC', updated_at) as source_updated_at
         , updated_by as source_updated_by
 
     from source

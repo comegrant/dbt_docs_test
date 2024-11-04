@@ -47,7 +47,11 @@ baskets as (
 
     select
 
-        billing_agreement_basket_id
+        md5(concat(
+            cast(billing_agreement_basket_id as string)
+            , cast(valid_from as string)
+        )) as billing_agreement_basket_product_updated_id
+        , billing_agreement_basket_id
         , basket_products_list
         , valid_from
         , valid_to
@@ -83,7 +87,8 @@ baskets as (
 , explode_products as (
 
     select 
-    billing_agreement_basket_id
+    billing_agreement_basket_product_updated_id
+    , billing_agreement_basket_id
     , company_id
     , billing_agreement_id
     , shipping_address_id
