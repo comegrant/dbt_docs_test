@@ -340,6 +340,7 @@ models:
     description: ""
     latest_version: 1
     config:
+      alias: dim_billing_agreements
       contract:
         enforced: True
 
