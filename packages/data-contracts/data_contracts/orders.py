@@ -31,14 +31,16 @@ contacts = [Owner.matsmoll().markdown(), Owner.niladri().markdown()]
 historical_orders_sql = """
 WITH velgandvrak AS (
     SELECT * FROM mb.products p
-    WHERE p.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' AND variation_portions != 1
+    WHERE p.product_type_id in ('CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1', '2f163d69-8ac1-6e0c-8793-ff0000804eb3')
+    rufAND variation_portions != 1
 ),
 
 data as (
     SELECT
         ba.agreement_id,
         ba.company_id,
-        COALESCE(bao.cutoff_date, bao.created_date) as delivered_at,
+        --COALESCE(bao.cutoff_date, bao.created_date) as delivered_at,
+        bao.delivery_date as delivered_at,
         p.variation_portions as portion_size,
         r.recipe_id,
         COALESCE(r.main_recipe_id, r.recipe_id) as main_recipe_id,
