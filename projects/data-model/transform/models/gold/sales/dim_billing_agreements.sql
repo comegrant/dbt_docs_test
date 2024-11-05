@@ -179,7 +179,7 @@ billing_agreements as (
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name
         , scd2_tables_joined.sales_point_id
-        , coalesce("Not Preselector", scd2_tables_joined.preselector_flag) as preselector_flag
+        , coalesce(scd2_tables_joined.preselector_flag, "Not Preselector") as preselector_flag
         , case
             when onesub_agreements.billing_agreement_basket_product_updated_id is null
             then 'Not OneSub'
