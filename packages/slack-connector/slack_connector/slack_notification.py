@@ -129,7 +129,7 @@ def send_slack_notification(
         )
 
     # Add the relevant people section if provided
-    if relevant_people:
+    if relevant_people and environment not in ["local_dev", "dev"]:
         if isinstance(relevant_people, str):
             relevant_people = [owner.strip() for owner in relevant_people.split(",")]
         else:

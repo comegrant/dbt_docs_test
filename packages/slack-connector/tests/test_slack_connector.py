@@ -26,7 +26,7 @@ def test_get_slack_user_ids_from_short_names() -> None:
 def test_send_slack_notification(mock_send_slack_message) -> None: #NOQA: ANN001
     """Test the send_slack_notification function."""
     send_slack_notification(
-        environment="dev",
+        environment="prod",
         header_message="Test Header",
         body_message="Test Body",
         relevant_people=["stephen", "stevo", "engineering"],  # Each name should be a separate string

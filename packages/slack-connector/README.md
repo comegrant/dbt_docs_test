@@ -86,9 +86,11 @@ E.g. `🔗 Please see the <https://databricks.com|Databricks workspace> for more
 
 The `relevant_people` parameter defines who should be notified about the notification as a comma separated list of short names or groups. It is optional.
 
-The people you list here will be mentioned in the notification. You can either list short names or groups as defined in the `slack_users` dictionary in `slack_connector/constants.py`. You can also pass in a list of slack handles or user_ids if they are not already defined.
+The people you list here will be mentioned in the notification, but only in test and prod environments. You can either list short names or groups as defined in the `slack_users` dictionary in `slack_connector/constants.py`. You can also pass in a list of slack handles or user_ids if they are not already defined.
 
 E.g. `stephen, engineering`
+
+Note: People will only be tagged in test and prod environments. In local_dev and dev environments, the relevant_people parameter will be ignored to avoid unnecessary notifications during development.
 
 Available short names:
 - `stephen`
