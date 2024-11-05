@@ -1,3 +1,17 @@
+--THIS IS A TEMPORARY HARDCODED FIX
+{{ config(
+   post_hook= '''
+    UPDATE {{ this }} 
+    SET 
+        basket_products_list = ARRAY(STRUCT("F2A85E75-D47B-4C5F-B7B2-A813BFACD68C" AS product_variation_id, 1 AS product_variation_quantity, false as is_extra))
+    WHERE 
+        basket_products_list = ARRAY(
+            STRUCT("8105008F-93DC-4158-85C6-A9A548D7B4EF" AS product_variation_id, 1 AS product_variation_quantity, false as is_extra),
+            STRUCT("F2A85E75-D47B-4C5F-B7B2-A813BFACD68C" AS product_variation_id, 1 AS product_variation_quantity, false as is_extra)
+        )
+   '''
+) }}
+
 with
 
 source as (
