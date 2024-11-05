@@ -34,6 +34,7 @@ from data_contracts.recipe import (
     RecipeNegativePreferences,
 )
 from data_contracts.recommendations.recommendations import RecommendatedDish
+from data_contracts.user import UserCompletedQuiz
 
 from preselector.contracts.compare_boxes import compute_normalized_features
 from preselector.data.models.customer import (
@@ -522,6 +523,10 @@ async def importance_vector_for_concept(
             (importance.transpose() * target.transpose()).transpose()
         )
 
+    if not combined_targets:
+        raise ValueError(
+            f"Unable to find any target or importance vector for the concept ids: {concept_ids} in company {company_id}"
+        )
 
     target_vector = (
         (pl.concat(combined_targets).sum().transpose() / importances.select(features).sum().transpose()).fill_nan(0)
@@ -565,8 +570,10 @@ async def normalize_cost(
 
     logger.debug(f"Min CoF {min_cof} max: {max_cof}")
 
-
-    assert min_cof, "Missing min cof. Therefore, can not normalize the cof target"
+    assert min_cof, (
+        f"Missing min cof for {request.company_id}, year: {year_week.year}, week: {year_week.week}, "
+        f"{request.portion_size} portions. Therefore, can not normalize the cof target"
+    )
     assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
     cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
@@ -1132,8 +1139,20 @@ async def run_preselector_for_request(
         else:
             recommendations = pl.DataFrame()
 
-        import streamlit as st
-        st.write(generated_recipe_ids)
+        could_be_ww = False
+
+        # Only for Linas, Low Calorie, and if it is only week 51 that is computed.
+        if (
+            request.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2"
+        ) and (
+            request.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
+        ) and (
+            request.compute_for == [YearWeek(year=2024, week=51)]
+        ):
+            value = await store.feature_view(UserCompletedQuiz).features_for({
+                "agreement_id": [request.agreement_id]
+            }).to_polars()
+            could_be_ww = value["has_completed_quiz"].to_list()[0] == False # noqa: E712
 
         logger.debug("Running preselector")
         with duration("running-preselector"):
@@ -1145,6 +1164,7 @@ async def run_preselector_for_request(
                 importance_vector=importance_vector,
                 store=store,
                 selected_recipes=generated_recipe_ids,
+                could_be_weight_watchers=could_be_ww,
                 should_explain=should_explain
             )
 
@@ -1372,6 +1392,7 @@ async def run_preselector(
     importance_vector: pl.DataFrame,
     store: ContractStore,
     selected_recipes: dict[int, int],
+    could_be_weight_watchers: bool,
     should_explain: bool = False,
 ) -> tuple[list[int], PreselectorPreferenceCompliancy]:
     """
@@ -1406,7 +1427,6 @@ async def run_preselector(
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
         return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance)
 
-
     recipes, compliance, preselected_recipes = await filter_on_preferences(
         customer, recipes, store
     )
@@ -1433,13 +1453,7 @@ async def run_preselector(
         import streamlit as st
         st.write(normalized_recipe_features)
 
-    if (
-        customer.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
-    ) and (
-        customer.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2"
-    ) and (
-        year * 100 + week # type: ignore
-    ) <= 202451: # noqa: PLR2004
+    if could_be_weight_watchers:
         # Only return weight watchers recipes up to week 51 in Linas
         filtered = normalized_recipe_features.filter(
             pl.col("is_weight_watchers")
@@ -1447,14 +1461,19 @@ async def run_preselector(
         if filtered.height >= customer.number_of_recipes:
             return (filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance)
         else:
-            logger.error("Should have returned a mealkit for WW, but it did not.")
+            available_ww_recipes = filtered["main_recipe_id"].to_list()
+            logger.error(
+                f"Should have returned a mealkit for WW, but it did not. Available recipes:{available_ww_recipes}"
+            )
+    else:
+        filtered = normalized_recipe_features.filter(
+            pl.col("is_adams_signature").is_not(),
+            pl.col("is_cheep").is_not(),
+            pl.col("is_weight_watchers").is_not()
+        ).select(
+            pl.exclude(["is_adams_signature", "is_cheep"]),
+        )
 
-    filtered = normalized_recipe_features.filter(
-        pl.col("is_adams_signature").is_not(),
-        pl.col("is_cheep").is_not()
-    ).select(
-        pl.exclude(["is_adams_signature", "is_cheep"]),
-    )
     if filtered.height >= customer.number_of_recipes:
         normalized_recipe_features = filtered
 
@@ -1497,7 +1516,6 @@ async def run_preselector(
     if should_explain:
         import streamlit as st
         st.write(recipe_features)
-
 
     if recipe_features.is_empty():
         raise ValueError(

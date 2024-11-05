@@ -13,7 +13,7 @@ from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from fastapi import Depends, FastAPI
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
 from preselector.process_stream import load_cache_for
@@ -28,17 +28,25 @@ class GeneratePreview(BaseModel):
     taste_preferences: list[NegativePreference] | None
     attribute_ids: list[str]
 
-    year: int
-    week: int
+    year: Annotated[int, Field(gt=2023)]
+    week: Annotated[int, Field(gt=0, lt=54)]
     company_id: str
 
     portion_size: int
 
     def request(self) -> GenerateMealkitRequest:
+
+        week = self.week
+        year = self.year
+
+        if week == 53: # noqa: PLR2004
+            week = 1
+            year = year + 1
+
         return GenerateMealkitRequest(
             agreement_id=0,
             company_id=self.company_id,
-            compute_for=[YearWeek(week=self.week, year=self.year)],
+            compute_for=[YearWeek(week=week, year=year)],
             concept_preference_ids=self.attribute_ids,
             taste_preferences=self.taste_preferences or [],
             portion_size=self.portion_size,

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 from aligned.data_source.batch_data_source import (
     BatchDataSource,
+    CodableBatchDataSource,
     FeatureType,
 )
 from aligned.feature_source import WritableFeatureSource
@@ -84,8 +85,11 @@ class UnityCatalogTableConfig:
         return f"{self.catalog}.{self.schema}.{self.table}"
 
 
+class DatabricksSource:
+    config: DatabricksConnectionConfig
+
 @dataclass
-class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
+class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
@@ -225,12 +229,13 @@ class UCFeatureTableSource(BatchDataSource, WritableFeatureSource):
 
 
 @dataclass
-class UCTableSource(BatchDataSource):
+class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
 
     def job_group_key(self) -> str:
+        # One fetch job per table
         return f"uc_table-{self.table.identifier()}"
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
@@ -309,3 +314,19 @@ class UCTableSource(BatchDataSource):
         return spark.sql(
             f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}"
         ).toPandas()[feature.name].to_list()[0]
+
+    async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        conn = self.config.connection()
+        df = conn.createDataFrame(await job.to_pandas())
+
+        df.write.mode("append").saveAsTable(self.table.identifier())
+
+    async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        raise NotImplementedError(type(self))
+
+
+    async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        conn = self.config.connection()
+        df = conn.createDataFrame(await job.unique_entities().to_pandas())
+
+        df.write.mode("overwrite").saveAsTable(self.table.identifier())

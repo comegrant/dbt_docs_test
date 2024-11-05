@@ -5,6 +5,7 @@ from aligned import (
     Timestamp,
     feature_view,
 )
+from aligned.sources.in_mem_source import InMemorySource
 
 from data_contracts.sources import adb, materialized_data
 
@@ -46,3 +47,11 @@ class UserSubscription:
     timeblock = Int32()
 
     subscribed_product_variation_id = String()
+
+@feature_view(
+    name="user_completed_onesub_quiz",
+    source=InMemorySource.empty()
+)
+class UserCompletedQuiz:
+    agreement_id = Int32().as_entity()
+    has_completed_quiz = Bool()

@@ -397,7 +397,8 @@ async def view_mealkit(
             target_vector=target_vector,
             importance_vector=normalized_importance,
             store=cache_store,
-            selected_recipes={}
+            selected_recipes={},
+            could_be_weight_watchers=False
         )
 
     with st.spinner("Loading recipe info"):

@@ -91,7 +91,8 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
         selected_recipes={
             1: year * 100 + week - 3
         },
-        store=dummy_store
+        store=dummy_store,
+        could_be_weight_watchers=False
     )
 
     assert len(main_recipe_ids) == number_of_recipes
@@ -165,7 +166,8 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
         selected_recipes={
             1: year * 100 + week - 3
         },
-        store=dummy_store
+        store=dummy_store,
+        could_be_weight_watchers=False
     )
 
     assert len(main_recipe_ids) == number_of_recipes

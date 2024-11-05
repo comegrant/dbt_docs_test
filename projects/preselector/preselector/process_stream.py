@@ -29,7 +29,7 @@ from preselector.data.models.customer import (
 )
 from preselector.main import duration, run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
-from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
 from preselector.stream import (
     MultipleWriter,
@@ -376,6 +376,17 @@ def convert_concepts_to_attributes(
             mappings.get(concept_id, set())
         )
 
+    new_year_weeks = []
+
+    for year_week in request.compute_for:
+        if year_week.week == 53: # noqa: PLR2004
+            new_year_weeks.append(
+                YearWeek(year=year_week.year + 1, week=1)
+            )
+        else:
+            new_year_weeks.append(year_week)
+    request.compute_for = new_year_weeks
+
     if not all_attribute_ids:
         all_attribute_ids = {
             concept_id for concept_id in request.concept_preference_ids
@@ -420,20 +431,31 @@ async def process_stream_batch(
             with duration("process_single_message"):
                 try:
                     request = convert_concepts_to_attributes(raw_request.to_upper_case_ids())
-                    result = await run_preselector_for_request(request, store)
+                except Exception as e:
+                    logger.exception(f"Error converting {raw_request}")
+                    logger.exception(e)
 
+                    failed_requests.append(
+                        PreselectorFailedResponse(
+                            error_message=str(e), error_code=500, request=raw_request
+                        )
+                    )
+                    continue
+
+                try:
+                    result = await run_preselector_for_request(request, store)
                     success_response = result.success_response()
                     if success_response:
                         successful_responses.append(success_response)
 
                     failed_requests.extend(result.failed_responses())
                 except Exception as e:
-                    logger.exception(f"Error processing request {raw_request}")
+                    logger.exception(f"Error processing request {request}")
                     logger.exception(e)
 
                     failed_requests.append(
                         PreselectorFailedResponse(
-                            error_message=str(e), error_code=500, request=raw_request
+                            error_message=str(e), error_code=500, request=request
                         )
                     )
 

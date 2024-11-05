@@ -11,6 +11,7 @@ from data_contracts.recipe import (
     RecipeEmbedding,
     RecipeNegativePreferences,
 )
+from data_contracts.user import UserCompletedQuiz
 
 
 def recommendation_feature_contracts() -> FeatureStore:
@@ -92,6 +93,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         WeeksSinceRecipe,
         RawIngredientCategories,
         BasketFeatures,
+        UserCompletedQuiz,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,

@@ -7,7 +7,7 @@ packages = [{include = "data_catalog"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-data-contracts = {path = "../../packages/data-contracts", develop = true, extras=["mssql"]}
+data-contracts = {path = "../../packages/data-contracts", develop = true, extras=["mssql", "databricks"]}
 streamlit = "^1.30.0"
 pydantic-settings = "^2.1.0"
 project-owners = {path = "../../packages/project-owners", develop = true}
