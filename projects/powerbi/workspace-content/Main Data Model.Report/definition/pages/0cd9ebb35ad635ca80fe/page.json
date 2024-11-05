@@ -69,7 +69,7 @@
                 "Entity": "Billing Agreements"
               }
             },
-            "Property": "Agreement Id"
+            "Property": "billing_agreement_id"
           }
         },
         "type": "Advanced",

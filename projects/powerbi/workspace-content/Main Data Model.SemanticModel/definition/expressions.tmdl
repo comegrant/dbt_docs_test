@@ -12,21 +12,21 @@ expression RangeEnd = #datetime(2030, 1, 1, 0, 0, 0) meta [IsParameterQuery=true
 
 	annotation PBI_ResultType = DateTime
 
-expression Host = "adb-4291784437205825.5.azuredatabricks.net" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression Host = "adb-3194696976104051.11.azuredatabricks.net" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: 1ab58ff7-81dc-4c2c-9fa6-e03e9d1dff96
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
 
-expression HttpPath = "/sql/1.0/warehouses/7a406a7f9665587e" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression HttpPath = "/sql/1.0/warehouses/463fcaf6343392a6" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: b77a4279-1cdf-4830-8c3b-b988134dce75
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
 
-expression Catalog = "dev" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = "Text"]
+expression Catalog = "test" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: bf27b4eb-18be-4bca-8a68-9e2142a0fa3c
 
 	annotation PBI_NavigationStepName = Navigation

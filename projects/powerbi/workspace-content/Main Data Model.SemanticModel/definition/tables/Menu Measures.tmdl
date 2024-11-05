@@ -336,3 +336,4 @@ table 'Menu Measures'
 	annotation PBI_ResultType = Exception
 
 	annotation PBI_NavigationStepName = Navigation
+

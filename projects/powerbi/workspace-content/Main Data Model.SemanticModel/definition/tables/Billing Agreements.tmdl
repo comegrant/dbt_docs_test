@@ -276,13 +276,13 @@ table 'Billing Agreements'
 		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
 		summarizeBy: none
 		sourceColumn: onesub_flag
-
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Preselector Flag'
 		dataType: string
+		lineageTag: 7607933b-d7a4-470b-99b8-a70999c01551
 		summarizeBy: none
 		sourceColumn: preselector_flag
 

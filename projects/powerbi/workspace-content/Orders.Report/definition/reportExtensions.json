@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Agreement Measures",
+      "measures": [
+        {
+          "name": "YTD orders",
+          "dataType": "Double",
+          "expression": "",
+          "formatString": "General Number",
+          "references": {
+            "unrecognizedReferences": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Measures",
+      "measures": [
+        {
+          "name": "Running orders",
+          "dataType": "Double",
+          "expression": "",
+          "formatString": "General Number",
+          "measureTemplate": {
+            "daxTemplateName": "RunningTotal",
+            "version": 0
+          },
+          "references": {
+            "unrecognizedReferences": true
+          }
+        },
+        {
+          "name": "Running orders LY",
+          "dataType": "Double",
+          "expression": "\n\nCALCULATE([Running orders], DATEADD('Date'[Date],-1, YEAR))",
+          "formatString": "General Number",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "Running orders"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

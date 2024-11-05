@@ -16,7 +16,7 @@
                 "Entity": "Billing Agreements"
               }
             },
-            "Property": "Agreement Id"
+            "Property": "billing_agreement_id"
           }
         },
         "type": "Advanced",
@@ -41,7 +41,7 @@
                           "Source": "b"
                         }
                       },
-                      "Property": "Agreement Id"
+                      "Property": "billing_agreement_id"
                     }
                   },
                   "Right": {

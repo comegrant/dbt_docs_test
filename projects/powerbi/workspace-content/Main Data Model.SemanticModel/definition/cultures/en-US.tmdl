@@ -18835,7 +18835,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Agreement Id"
+			          "ConceptualProperty": "billing_agreement_id"
 			        }
 			      },
 			      "State": "Generated",
@@ -19083,7 +19083,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Sales Point Id"
+			          "ConceptualProperty": "sales_point_id"
 			        }
 			      },
 			      "State": "Generated",
@@ -19277,7 +19277,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Payment Method"
+			          "ConceptualProperty": "payment_method"
 			        }
 			      },
 			      "State": "Generated",
@@ -19399,7 +19399,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Source"
+			          "ConceptualProperty": "signup_source"
 			        }
 			      },
 			      "State": "Generated",
@@ -19643,7 +19643,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Billing Agreement Status"
+			          "ConceptualProperty": "billing_agreement_status_name"
 			        }
 			      },
 			      "State": "Generated",
@@ -19771,7 +19771,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Date"
+			          "ConceptualProperty": "signup_date"
 			        }
 			      },
 			      "State": "Generated",
@@ -19953,7 +19953,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Week"
+			          "ConceptualProperty": "signup_week"
 			        }
 			      },
 			      "State": "Generated",
@@ -19969,7 +19969,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Month"
+			          "ConceptualProperty": "signup_month"
 			        }
 			      },
 			      "State": "Generated",
@@ -19995,7 +19995,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Quarter"
+			          "ConceptualProperty": "signup_quarter"
 			        }
 			      },
 			      "State": "Generated",
@@ -20021,7 +20021,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "Signup Year"
+			          "ConceptualProperty": "signup_year"
 			        }
 			      },
 			      "State": "Generated",
@@ -20054,7 +20054,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "First Menu Date"
+			          "ConceptualProperty": "first_menu_week_monday_date"
 			        }
 			      },
 			      "State": "Generated",
@@ -20126,7 +20126,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "First Menu Week"
+			          "ConceptualProperty": "first_menu_week_week"
 			        }
 			      },
 			      "State": "Generated",
@@ -20148,7 +20148,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "First Menu Month"
+			          "ConceptualProperty": "first_menu_week_month"
 			        }
 			      },
 			      "State": "Generated",
@@ -20190,7 +20190,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "First Menu Quarter"
+			          "ConceptualProperty": "first_menu_week_quarter"
 			        }
 			      },
 			      "State": "Generated",
@@ -20232,7 +20232,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Billing Agreements",
-			          "ConceptualProperty": "First Menu Year"
+			          "ConceptualProperty": "first_menu_week_year"
 			        }
 			      },
 			      "State": "Generated",

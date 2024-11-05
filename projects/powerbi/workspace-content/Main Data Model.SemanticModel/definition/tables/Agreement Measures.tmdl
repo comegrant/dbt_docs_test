@@ -28,7 +28,7 @@ table 'Agreement Measures'
 		lineageTag: f6e71f0d-cf84-4777-af33-311720db8290
 
 	measure 'Retention Number of Customers with Orders' = ```
-
+			
 			    CALCULATE(
 			        [Retention Number of Customers],
 			        'Agreements Weekly'[has_order] = 1
@@ -230,3 +230,4 @@ table 'Agreement Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_IsMQueryFoldable = True
+

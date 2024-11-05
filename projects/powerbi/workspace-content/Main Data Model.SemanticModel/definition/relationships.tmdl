@@ -14,10 +14,6 @@ relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
 	fromColumn: 'Menu Measures'.fk_dim_companies
 	toColumn: Companies.pk_dim_companies
 
-relationship AutoDetected_bb7a349e-8746-426e-866e-67d5a2719c56
-	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
-	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
-
 relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8
 	fromColumn: 'Order Measures'.fk_dim_order_types
 	toColumn: 'Order Types'.pk_dim_order_types
@@ -92,4 +88,13 @@ relationship 360d6910-73d1-7780-6386-23ba2b1cc178
 relationship b187097e-4edd-c2af-794c-54ec55a36dd9
 	fromColumn: 'Agreements Weekly'.fk_dim_date
 	toColumn: Date.pk_dim_date
+
+relationship fac71034-d799-104e-1ea2-c1e73f43fb7f
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_deviations
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 

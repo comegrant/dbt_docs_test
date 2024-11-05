@@ -66,6 +66,12 @@ foreach ($dir in $reportDirs) {
         continue
     }
     $pbipReportPath = $dir.FullName
+    $definitionFilePath = "$($pbipReportPath)/definition.pbir"
+
+    $jsonContent = Get-Content -Path $definitionFilePath -Raw | ConvertFrom-Json
+    $jsonContent.datasetReference.byConnection.connectionString = "Data Source=powerbi://api.powerbi.com/v1.0/myorg/$workspaceName;Initial Catalog='$modelName';Access Mode=readonly;Integrated Security=ClaimsToken"
+    $jsonContent | ConvertTo-Json -Depth 10 | Set-Content -Path $definitionFilePath
+
     $reportImport = Import-FabricItem -workspaceId $workspaceId -path $pbipReportPath -itemProperties @{"semanticModelId" = $semanticModelImport.Id}
 }
 
