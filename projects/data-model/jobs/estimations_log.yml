@@ -8,11 +8,6 @@ resources:
        quartz_cron_expression: 0 30 8-22/2,0 ? * * *
        timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - marie.borg@cheffelo.com
-          - anna.broyn@cheffelo.com
-
       environments:
         - environment_key: dbt-default
           spec:
@@ -21,19 +16,36 @@ resources:
               - dbt-databricks>=1.0.0,<2.0.0
 
       tasks:
+
+        - task_key: start-notification
+          run_job_task:
+              job_id: ${var.slack_notification_job_id}
+              job_parameters:
+                  environment: ${bundle.target}
+                  body_message: 🚀 Estimations log job has started
+                  is_error: "false"
+
         - task_key: bronze_cms_full
+          depends_on:
+            - task_key: start-notification
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_full.py
 
         - task_key: bronze_psl_full
+          depends_on:
+            - task_key: start-notification
           notebook_task: 
             notebook_path: ../ingest/bronze_psl_full.py
 
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
+          depends_on:
+            - task_key: start-notification
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
         - task_key: bronze_cms_billing_agreement_basket_scheduler
+          depends_on:
+            - task_key: start-notification
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_billing_agreement_basket_scheduler.py
 
@@ -44,13 +56,43 @@ resources:
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
+              - 'dbt snapshot'
               - 'dbt build -s +estimations_log'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_cms_full},
             {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_basket_scheduler},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products}
           ]          
+
+        - task_key: success-notification
+          depends_on:
+            - task_key: dbt
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Estimations log job completed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_basket_scheduler},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+            {task_key: dbt}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Estimations log job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, sylvia, grant, engineering
 
 
 

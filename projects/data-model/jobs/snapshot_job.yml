@@ -1,0 +1,68 @@
+resources:
+  jobs:
+    snapshot_job:
+      name: snapshot_job
+
+      schedule:
+       #Run every day every second hour between 3 and 21 (utc)
+       quartz_cron_expression: 0 30 3-21/2 ? * * *
+       timezone_id: UTC
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: start-notification
+          run_job_task:
+              job_id: ${var.slack_notification_job_id}
+              job_parameters:
+                  environment: ${bundle.target}
+                  body_message: 🚀 Snapshot job has started
+                  is_error: "false"
+
+        - task_key: bronze_cms_full_snapshot_tables
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/bronze_cms_full_snapshot_tables.py
+
+        - task_key: dbt
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt snapshot'
+          environment_key: dbt-default
+          depends_on: [
+            {task_key: bronze_cms_full_snapshot_tables}
+          ]
+
+        - task_key: success-notification
+          depends_on:
+            - task_key: dbt
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Snapshot job completed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: bronze_cms_full_snapshot_tables},
+            {task_key: dbt}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Snapshot job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, engineering
