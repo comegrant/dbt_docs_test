@@ -7,13 +7,16 @@ sources:
     schema: bronze
     description: "Tables from the cms database in the CoreDB Azure SQL Server"
     tables:
+      - name: cms__category_consent
       - name: cms__company
+      - name: cms__consent
       - name: cms__country
       - name: cms__billing_agreement_order
       - name: cms__billing_agreement_order_line
       - name: cms__billing_agreement_order_status
       - name: cms__order_type
       - name: cms__billing_agreement
+      - name: cms__billing_agreement_consent
       - name: cms__billing_agreement_status
       - name: cms__billing_agreement_addon_subscriptions
       - name: cms__addon_subscriptions
