@@ -46,6 +46,7 @@ lint.select = [
 ]
 lint.ignore = [
     "ANN101", # Missing type annotation for self in method
+    "ANN102", # Missing type annotation for class
     "ANN204", # Missing type annotation for special method
     "UP017",
     "DTZ011", # Use of `datetime.now` without timezone

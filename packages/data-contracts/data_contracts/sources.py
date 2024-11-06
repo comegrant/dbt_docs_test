@@ -1,7 +1,8 @@
 from os import getenv
 
-from aligned import AzureBlobConfig, PostgreSQLConfig, RedisConfig
+from aligned import PostgreSQLConfig, RedisConfig
 
+from data_contracts.azure import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
 from data_contracts.unity_catalog import DatabricksConnectionConfig, UnityCatalog, UnityCatalogSchema
 

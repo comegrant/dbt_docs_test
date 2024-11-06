@@ -1155,18 +1155,30 @@ async def run_preselector_for_request(
             could_be_ww = value["has_completed_quiz"].to_list()[0] == False # noqa: E712
 
         logger.debug("Running preselector")
-        with duration("running-preselector"):
-            selected_recipe_ids, compliance = await run_preselector(
-                request,
-                menu,
-                recommendations,
-                target_vector=target_vector,
-                importance_vector=importance_vector,
-                store=store,
-                selected_recipes=generated_recipe_ids,
-                could_be_weight_watchers=could_be_ww,
-                should_explain=should_explain
+        try:
+            with duration("running-preselector"):
+                selected_recipe_ids, compliance = await run_preselector(
+                    request,
+                    menu,
+                    recommendations,
+                    target_vector=target_vector,
+                    importance_vector=importance_vector,
+                    store=store,
+                    selected_recipes=generated_recipe_ids,
+                    could_be_weight_watchers=could_be_ww,
+                    should_explain=should_explain
+                )
+        except (AssertionError, ValueError) as e:
+            logger.exception(e)
+            failed_weeks.append(
+                PreselectorFailure(
+                    error_message=str(e),
+                    error_code=500,
+                    year=yearweek.year,
+                    week=yearweek.week
+                )
             )
+            continue
 
         if len(selected_recipe_ids) != request.number_of_recipes:
             failed_weeks.append(
@@ -1506,7 +1518,8 @@ async def run_preselector(
         )
         logger.error(
             f"Number of recipes are less then expected {recipe_features.height}. "
-            f"Most likely due to missing features in recipes: ({recipes_of_interest})"
+            f"Most likely due to missing features in recipes: ({recipes_of_interest}) "
+            f"In portion size {customer.portion_size}"
         )
         return (
             recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),

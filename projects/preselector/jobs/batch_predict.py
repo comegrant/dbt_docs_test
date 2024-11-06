@@ -20,6 +20,7 @@ from datetime import date, timedelta
 dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
+dbutils.widgets.text("batch_write_interval", defaultValue="1000")
 
 environment = dbutils.widgets.get("environment")
 
@@ -53,6 +54,7 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
 
 company_id = dbutils.widgets.get("company_id")
 assert company_id, "Need a company id to run"
+batch_write_interval = int(dbutils.widgets.get("batch_write_interval"))
 
 
 number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
@@ -171,7 +173,7 @@ async def run() -> None:
         failed_output_stream=LoggerWriter(
             level="error", context_title="Preselector failed to generate for"
         ),
-        write_batch_interval=1000,
+        write_batch_interval=batch_write_interval,
     )
 
 await run()
