@@ -18,12 +18,14 @@ with fact_menu as (
     select
         pk_dim_companies
         , company_id
+        , language_id
     from {{ ref('dim_companies') }}
 )
 
 , dim_recipes as (
     select
         pk_dim_recipes
+        , main_recipe_id
         , recipe_id
         , recipe_name
         , cooking_time_from
@@ -151,6 +153,8 @@ with fact_menu as (
         fact_menu.fk_dim_companies
         , fact_menu.fk_dim_recipes
         , dim_companies.company_id
+        , dim_companies.language_id
+        , dim_recipes.main_recipe_id
         , dim_recipes.recipe_id
         , fact_menu.recipe_portion_id
         , dim_recipes.recipe_name

@@ -64,6 +64,20 @@ models:
         data_tests:
           - not_null
 
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
+
       - name: recipe_id
         description: "{{ doc('column__recipe_id') }}"
         data_type: int
@@ -72,33 +86,57 @@ models:
               config:
                 severity: warn
           - not_null
+      
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+        data_tests:
+          - not_null:
+              config:
+                  severity: warn
 
       - name: recipe_name
         data_type: string
 
       - name: cooking_time_from
         data_type: int
+        description: "{{ doc('column__cooking_time_from') }}"
 
       - name: cooking_time_to
         data_type: int
+        description: "{{ doc('column__cooking_time_to') }}"
 
       - name: recipe_difficulty_level_id
         data_type: int
+        description: "{{ doc('column__recipe_difficulty_level_id') }}"
 
       - name: recipe_difficulty_name
         data_type: string
 
       - name: recipe_main_ingredient_id
         data_type: int
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"
 
       - name: recipe_main_ingredient_name
         data_type: string
 
       - name: taxonomy_list
         data_type: string
-
-      - name: chef_ingredient_id_list
+      
+      - name: number_of_taxonomies
+        data_type: int
+      
+      - name: generic_ingredient_id_list
         data_type: string
+      
+      - name: number_of_ingredients
+        data_type: int
+
+      - name: recipe_step_id_list
+        data_type: string
+      
+      - name: number_of_recipe_steps
+        data_type: int
 
   - name: estimations_log
     description: Showing what would have been ordered for the next 14 weeks if the cutoff was when the estimation was generated
