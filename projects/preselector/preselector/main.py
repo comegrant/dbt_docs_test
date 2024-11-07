@@ -327,7 +327,9 @@ async def find_best_combination(
             pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
         )
         if len(preselected_recipe_ids) != final_combination.height:
-            logger.error(f"We might be missing some features for ({preselected_recipe_ids})")
+            found_recipe_ids = final_combination["recipe_id"].to_list()
+            missing_ids = set(preselected_recipe_ids) - set(found_recipe_ids)
+            logger.error(f"We might be missing some features for ({missing_ids})")
 
         n_recipes_to_add = number_of_recipes - final_combination.height
     else:
@@ -1467,10 +1469,6 @@ async def run_preselector(
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
         return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance)
 
-    recipes, compliance, preselected_recipes = await filter_on_preferences(
-        customer, recipes, store
-    )
-    logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
     year = recipes["menu_year"].max()
     week = recipes["menu_week"].max()
@@ -1515,6 +1513,11 @@ async def run_preselector(
         ).select(
             pl.exclude(["is_adams_signature", "is_cheep"]),
         )
+
+    recipes, compliance, preselected_recipes = await filter_on_preferences(
+        customer, recipes, store
+    )
+    logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
     if filtered.height >= customer.number_of_recipes:
         normalized_recipe_features = filtered
