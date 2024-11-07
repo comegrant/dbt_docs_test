@@ -72,7 +72,7 @@ recipe_features_sql = """WITH taxonomies AS (
     FROM pim.TAXONOMIES_TRANSLATIONS tt
     INNER JOIN pim.RECIPES_TAXONOMIES rt on rt.TAXONOMIES_ID = tt.TAXONOMIES_ID
     INNER JOIN pim.taxonomies t ON t.taxonomies_id = tt.TAXONOMIES_ID
-    WHERE t.taxonomy_type IN ('1', '10', '11', '12', '19')
+    WHERE t.taxonomy_type IN ('1', '9', '10', '11', '12', '19')
     GROUP BY rt.RECIPE_ID
 )
 
@@ -431,6 +431,12 @@ class RecipeFeatures:
     is_adams_signature = taxonomy_ids.contains(2146)
     is_weight_watchers = taxonomy_ids.contains(1878)
 
+    is_slow_grown_chicken = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2109)
+        | pl.col("taxonomy_ids").list.contains(2104),
+        as_dtype=Bool()
+    )
+
     is_roede = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2015)
         | pl.col("taxonomy_ids").list.contains(2096),
@@ -766,16 +772,6 @@ class NormalizedRecipeFeatures:
 
     taxonomy_ids = List(Int32())
 
-    # PoC. Should rather only use a subset of the taxonomy types
-    taxonomy_of_interest = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.unique().list.set_difference(
-            pl.lit([
-                971, 1837, 985, 1838, 1178, 1212, 986, 1064, 1213, 1839, 991, 184, 247, 2096, 226, 217, 1177, 1067
-            ])
-        ),
-        as_dtype=List(Int32())
-    )
-
     year = Int32()
     week = Int32()
 
@@ -786,6 +782,11 @@ class NormalizedRecipeFeatures:
 
     cooking_time_from = Float()
 
+    is_slow_grown_chicken = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2109)
+        | pl.col("taxonomy_ids").list.contains(2104),
+        as_dtype=Bool()
+    )
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
     is_high_cooking_time = Bool()

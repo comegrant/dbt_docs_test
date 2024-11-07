@@ -1463,6 +1463,7 @@ async def run_preselector(
 
     if should_explain:
         import streamlit as st
+        st.write("Raw Recipe Features")
         st.write(normalized_recipe_features)
 
     if could_be_weight_watchers:
@@ -1481,7 +1482,8 @@ async def run_preselector(
         filtered = normalized_recipe_features.filter(
             pl.col("is_adams_signature").is_not(),
             pl.col("is_cheep").is_not(),
-            pl.col("is_weight_watchers").is_not()
+            pl.col("is_weight_watchers").is_not(),
+            pl.col("is_slow_grown_chicken").is_not(),
         ).select(
             pl.exclude(["is_adams_signature", "is_cheep"]),
         )
@@ -1528,6 +1530,7 @@ async def run_preselector(
 
     if should_explain:
         import streamlit as st
+        st.write("Recipe Candidates")
         st.write(recipe_features)
 
     if recipe_features.is_empty():
