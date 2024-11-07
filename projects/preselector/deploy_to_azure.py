@@ -1,5 +1,6 @@
 import logging
 from time import sleep
+from typing import Literal
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
@@ -19,10 +20,16 @@ from azure.mgmt.containerinstance.models import (
 )
 from cheffelo_logging.logging import DataDogConfig, DataDogStatsdConfig
 from preselector.process_stream_settings import ProcessStreamSettings
-from pydantic import SecretStr
+from pydantic import BaseModel, SecretStr
+from pydantic_argparser import parse_args
 from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
+
+
+class RunArgs(BaseModel):
+    tag: str
+    env: Literal["test", "prod"]
 
 
 class DeploySettings(BaseSettings):
@@ -242,7 +249,11 @@ def deploy_all(tag: str, env: str) -> None:
             resource_group=f"rg-chefdp-{env}",
         )
 
+def main() -> None:
+    args = parse_args(RunArgs)
+    deploy_all(tag=args.tag, env=args.env)
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     logging.getLogger(__name__).setLevel(logging.DEBUG)
-    deploy_all(tag="51cb4b50c693c2ad4dd3a714074f4058fca419d8", env="prod")
+    deploy_all(tag="25db09f2def744b42a68bd89a1cd52a993fb2bc1", env="prod")

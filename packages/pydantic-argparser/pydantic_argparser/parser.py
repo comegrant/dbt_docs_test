@@ -2,9 +2,10 @@ import argparse
 import datetime
 import logging
 from types import UnionType
-from typing import TypeVar, get_args, get_origin
+from typing import Literal, TypeVar, get_args, get_origin
 
 from pydantic import BaseModel
+from pydantic_core import PydanticUndefined
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -55,6 +56,8 @@ def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
                 annotation = (
                     sub_types[0] if sub_types[0] != type(None) else sub_types[1]
                 )
+        elif get_origin(annotation) == Literal:
+            annotation = None
 
         parser.add_argument(
             f"--{name}",
@@ -73,7 +76,7 @@ def parser_for(model: type[BaseModel]) -> argparse.ArgumentParser:
     return parser
 
 
-def parse_args(model: type[BaseModel]) -> BaseModel:
+def parse_args(model: type[T]) -> T:
     "Parse command-line arguments into a Pydantic model"
     parser = parser_for(model)
     return decode_args(parser.parse_args(), model)
@@ -84,13 +87,19 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
 
     values = dict(vars(parser))
     for name, field in model.model_fields.items():
+        value = getattr(parser, name)
+
+        if value == PydanticUndefined:
+            raise ValueError(f"Got an undefined value for '{name}'")
+
         if is_list_annotation(field.annotation):
-            parser_values = getattr(parser, name)
-            value = ["".join(sub_value) for sub_value in parser_values]
+            value = ["".join(sub_value) for sub_value in value]
             values[name] = value
-        elif field.annotation == str:
-            values[name] = "".join(getattr(parser, name))
+        elif field.annotation == str or get_origin(field.annotation) == Literal:
+            values[name] = "".join(value)
+        elif isinstance(value, list):
+            values[name] = value[0]
         else:
-            values[name] = getattr(parser, name)
+            values[name] = value
 
     return model(**values)

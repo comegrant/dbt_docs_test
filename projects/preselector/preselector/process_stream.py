@@ -29,7 +29,7 @@ from preselector.data.models.customer import (
 )
 from preselector.main import duration, run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
-from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.store import preselector_store
 from preselector.stream import (
     MultipleWriter,
@@ -375,17 +375,6 @@ def convert_concepts_to_attributes(
         all_attribute_ids.update(
             mappings.get(concept_id, set())
         )
-
-    new_year_weeks = []
-
-    for year_week in request.compute_for:
-        if year_week.week == 53: # noqa: PLR2004
-            new_year_weeks.append(
-                YearWeek(year=year_week.year + 1, week=1)
-            )
-        else:
-            new_year_weeks.append(year_week)
-    request.compute_for = new_year_weeks
 
     if not all_attribute_ids:
         all_attribute_ids = {

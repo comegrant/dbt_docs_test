@@ -205,6 +205,17 @@ class StreamlitStreamMock(Generic[T], ReadableStream[T]):
 
 
 @dataclass
+class CustomWriter(WritableStream):
+
+    function: Callable[[Sequence[BaseModel]], None]
+
+    async def write(self, data: BaseModel) -> None:
+        self.function([data])
+
+    async def batch_write(self, data: Sequence[BaseModel]) -> None:
+        self.function(data)
+
+@dataclass
 class LoggerWriter(WritableStream):
     level: Literal["info", "error"] = field(default="info")
     context_title: str | None = field(default=None)

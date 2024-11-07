@@ -299,7 +299,7 @@ async def find_best_combination(
         })
 
     # Sorting in order to get deterministic results
-    if preselected_recipe_ids is not None:
+    if preselected_recipe_ids is not None and preselected_recipe_ids:
         final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
 
         assert not final_combination.is_empty(), (
@@ -1080,6 +1080,10 @@ async def run_preselector_for_request(
         year = yearweek.year
         week = yearweek.week
 
+        if (year * 100 + week) in generated_recipe_ids:
+            logger.info(f"Skipping for {year} {week}")
+            continue
+
         logger.debug(f"Running for {year} {week}")
 
         if not contains_history:
@@ -1098,19 +1102,43 @@ async def run_preselector_for_request(
         cof_target = cost_of_food.filter(
             pl.col("year") == year, pl.col("week") == week
         )
-        assert cof_target.height == 1, (
-            f"Expected only one cof target for a week got {cof_target.height} for year week {yearweek}"
-        )
+
+        if cof_target.height != 1:
+            failed_weeks.append(
+                PreselectorFailure(
+                    error_message=(
+                        f"Expected only one cof target for a week got {cof_target.height} for year week {yearweek}."
+                        "This is usually a sign that the menu is missing."
+                    ),
+                    error_code=2,
+                    year=yearweek.year,
+                    week=yearweek.week
+                )
+            )
+            continue
 
         cof_target_value = cof_target["cost_of_food_target_per_recipe"].to_list()[0]
 
-        target_vector = await normalize_cost(
-            year_week=yearweek,
-            target_cost_of_food=cof_target_value,
-            request=request,
-            vector=target_vector,
-            store=store,
-        )
+        try:
+            target_vector = await normalize_cost(
+                year_week=yearweek,
+                target_cost_of_food=cof_target_value,
+                request=request,
+                vector=target_vector,
+                store=store,
+            )
+        except AssertionError as e:
+            failed_weeks.append(
+                PreselectorFailure(
+                    error_message=(
+                        str(e) + "This is usually a sign that the menu is missing."
+                    ),
+                    error_code=3,
+                    year=yearweek.year,
+                    week=yearweek.week
+                )
+            )
+            continue
 
         logger.debug("Loading menu")
         with duration("load-menu"):

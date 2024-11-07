@@ -36,17 +36,10 @@ class GeneratePreview(BaseModel):
 
     def request(self) -> GenerateMealkitRequest:
 
-        week = self.week
-        year = self.year
-
-        if week == 53: # noqa: PLR2004
-            week = 1
-            year = year + 1
-
         return GenerateMealkitRequest(
             agreement_id=0,
             company_id=self.company_id,
-            compute_for=[YearWeek(week=week, year=year)],
+            compute_for=[YearWeek(week=self.week, year=self.year)],
             concept_preference_ids=self.attribute_ids,
             taste_preferences=self.taste_preferences or [],
             portion_size=self.portion_size,

@@ -1,0 +1,52 @@
+resources:
+  jobs:
+    preselector-deploy:
+      name: preselector-deploy
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      email_notifications:
+        on_failure:
+          - mats.mollestad@cheffelo.com
+        on_success:
+          - mats.mollestad@cheffelo.com
+
+      tasks:
+        - task_key: materialization
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"
+
+        - task_key: deploy
+          job_cluster_key: preselector
+          spark_python_task:
+            python_file: deploy.py
+            parameters:
+              - "--tag"
+              - "{{job.parameters.tag}}"
+              - "--env"
+              - "{{job.parameters.env}}"
+          # depends_on:
+          #   - task_key: materialization
+
+      parameters:
+        - name: tag
+          default: ""
+        - name: env
+          default: "${var.environment}"

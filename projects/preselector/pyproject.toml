@@ -40,6 +40,7 @@ azure-mgmt-containerinstance = "^10.1.0"
 [tool.poetry.group.databricks.dependencies]
 databricks-env = {path = "../../packages/databricks-env", develop = true}
 databricks-feature-engineering = "^0.7.0"
+nest_asyncio = "1.6.0"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.37.0"

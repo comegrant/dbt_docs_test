@@ -38,5 +38,11 @@ RUN source /databricks/python3/bin/activate \
 ENV PYTHONPATH=/databricks/python3/bin
 ENV PATH=/databricks/python3/bin:$PATH
 
+# store the git branch and commit hash as env variables
+ARG GIT_BRANCH
+ARG GIT_COMMIT_HASH
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+
 # copy source code
 COPY projects/preselector .

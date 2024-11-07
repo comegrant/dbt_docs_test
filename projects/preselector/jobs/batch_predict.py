@@ -1,7 +1,11 @@
 # Databricks notebook source
 # COMMAND ----------
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
+
+from preselector.data.models.customer import PreselectorFailedResponse
+from pydantic import BaseModel
 
 if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
@@ -36,7 +40,7 @@ from data_contracts.sources import adb
 from preselector.process_stream import load_cache, process_stream_batch
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
-from preselector.stream import LoggerWriter, PreselectorResultWriter, SqlServerStream
+from preselector.stream import CustomWriter, PreselectorResultWriter, SqlServerStream
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     scope="auth_common",
@@ -165,14 +169,18 @@ async def run() -> None:
     AND UPPER(ba.company_id) = '{company_id}'"""
     )
 
+    def failed_requests(data: Sequence[BaseModel]) -> None:
+        for req in data:
+            assert isinstance(req, PreselectorFailedResponse)
+            if req.error_code > 100: # noqa: PLR2004
+                raise ValueError(f"The preselector failed with an unknown error code: {data}")
+
     store = await load_cache(store, company_id=company_id)
     await process_stream_batch(
         store,
         stream=read_stream,
         successful_output_stream=PreselectorResultWriter(company_id),
-        failed_output_stream=LoggerWriter(
-            level="error", context_title="Preselector failed to generate for"
-        ),
+        failed_output_stream=CustomWriter(failed_requests),
         write_batch_interval=batch_write_interval,
     )
 
