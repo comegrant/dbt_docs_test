@@ -1,5 +1,7 @@
 #This template is taken from this page: https://learn.microsoft.com/en-us/rest/api/fabric/articles/get-started/deploy-project?toc=%2Fpower-bi%2Fdeveloper%2Fprojects%2FTOC.json
 
+. "$PSScriptRoot/powerbi_add_refresh_policy.ps1"
+
 # Parameters 
 $workspaceName = ""
 if (${env:ENVIRONMENT} -eq "dev") {
@@ -47,7 +49,7 @@ Set-Location $currentPath
 # Ensure workspace exists
 $workspaceId = New-FabricWorkspace  -name $workspaceName -skipErrorIfExists
 
-# Import the semantic model and save the item id
+# Update parameters to correct catalog and schema
 Set-SemanticModelParameters -path $pbipSemanticModelPath -parameters @{
     "Catalog"       = ${env:ENVIRONMENT}; 
     "Schema"        = "gold"; 
@@ -55,6 +57,25 @@ Set-SemanticModelParameters -path $pbipSemanticModelPath -parameters @{
     "HttpPath"      = ${env:DATABRICKS_HTTP_PATH}
 }
 
+# Change from directQuery to import mode
+$tablesPath = "$($pbipSemanticModelPath)/definition/tables"
+$tableFiles = Get-ChildItem -Path $tablesPath -Filter "*.tmdl"
+foreach ($file in $tableFiles) {
+    $tmdlContent = Get-Content -Path $file.FullName -Raw
+    $updatedContent = $tmdlContent -replace "directQuery", "import"
+    Set-Content -Path $file.FullName -Value $updatedContent
+    Write-Host "Updated $($file.Name) to import mode."
+}
+
+# Add incremental load
+$ordersPath = "$($tablesPath)/Order Measures.tmdl"
+Add-RefreshPolicy -tmdlFilePath $ordersPath -sourceTableName "fact_orders"
+$agreementsPath = "$($tablesPath)/Agreement Measures.tmdl"
+Add-RefreshPolicy -tmdlFilePath $agreementsPath -sourceTableName "fact_billing_agreements_daily"
+$agreementsWeeklyPath = "$($tablesPath)/Agreements Weekly.tmdl"
+Add-RefreshPolicy -tmdlFilePath $agreementsWeeklyPath -sourceTableName "fact_billing_agreements_weekly"
+
+# Import the semantic model and save the item id
 $semanticModelImport = Import-FabricItem -workspaceId $workspaceId -path $pbipSemanticModelPath
 
 # Get all paths ending with .Report

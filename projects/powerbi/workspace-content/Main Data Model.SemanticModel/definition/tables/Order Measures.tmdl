@@ -1,22 +1,6 @@
 table 'Order Measures'
 	lineageTag: 6c298811-8ad5-482b-b89a-827db89210a3
 
-	refreshPolicy
-		policyType: basic
-		rollingWindowGranularity: year
-		rollingWindowPeriods: 6
-		incrementalGranularity: month
-		incrementalPeriods: 1
-		sourceExpression =
-			let
-			    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
-			    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
-			    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-			    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
-			    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
-			in
-				#"Filtered Rows"
-
 	/// MEASURES ///
 	/// Revenue
 	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
@@ -1029,7 +1013,7 @@ table 'Order Measures'
 		changedProperty = IsHidden
 
 	partition 'Order Measures' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
@@ -1043,4 +1027,5 @@ table 'Order Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
+
 

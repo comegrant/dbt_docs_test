@@ -90,7 +90,7 @@ table Products
 		dataType: string
 		lineageTag: 5a455508-7287-4878-9abd-ca0273bdc011
 		summarizeBy: none
-		sourceColumn: Product Concept Name
+		sourceColumn: product_concept_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -98,7 +98,7 @@ table Products
 		dataType: string
 		lineageTag: 456bd8d7-d4ac-46e9-b1f6-e96f873ff591
 		summarizeBy: none
-		sourceColumn: Product Type Name
+		sourceColumn: product_type_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -106,7 +106,7 @@ table Products
 		dataType: string
 		lineageTag: d0e82a8a-e75a-4798-8aa2-8c571e35d25b
 		summarizeBy: none
-		sourceColumn: Product Name
+		sourceColumn: product_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -114,7 +114,7 @@ table Products
 		dataType: string
 		lineageTag: d2b6fc73-9a89-4c96-ba32-8a1872086041
 		summarizeBy: none
-		sourceColumn: Product Status Name
+		sourceColumn: product_status_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -122,7 +122,7 @@ table Products
 		dataType: string
 		lineageTag: 08c10034-50aa-4f58-b805-4fb3130f272b
 		summarizeBy: none
-		sourceColumn: Product Variation Name
+		sourceColumn: product_variation_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -130,7 +130,7 @@ table Products
 		dataType: string
 		lineageTag: 9430db27-2352-43b5-a569-090687009da2
 		summarizeBy: none
-		sourceColumn: Sku
+		sourceColumn: sku
 
 		annotation SummarizationSetBy = Automatic
 
@@ -138,7 +138,7 @@ table Products
 		dataType: string
 		lineageTag: 0cfd128e-8134-4007-886f-3ed2f44a6279
 		summarizeBy: none
-		sourceColumn: Meals
+		sourceColumn: meals
 
 		changedProperty = DataType
 
@@ -161,7 +161,7 @@ table Products
 		isAvailableInMdx: false
 		lineageTag: 90e49601-821a-4e21-8f95-87efaf0ecf00
 		summarizeBy: none
-		sourceColumn: Preselected Mealbox Product Name
+		sourceColumn: preselected_mealbox_product_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -170,31 +170,21 @@ table Products
 		formatString: 0
 		lineageTag: 5fa348f4-8073-4778-9698-81d4b4c4ffb1
 		summarizeBy: sum
-		sourceColumn: Portions
+		sourceColumn: portions
 
 		annotation SummarizationSetBy = Automatic
 
 	partition Products = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_products_Table = gold_Schema{[Name="dim_products",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_products_Table,{
-						{"product_concept_name", "Product Concept Name"},
-						{"product_type_name", "Product Type Name"},
-						{"product_name", "Product Name"},
-						{"product_status_name", "Product Status Name"},
-						{"product_variation_name", "Product Variation Name"},
-						{"sku", "Sku"},
-						{"meals", "Meals"},
-						{"portions", "Portions"},
-						{"preselected_mealbox_product_name", "Preselected Mealbox Product Name"}
-						})
+				    dim_products_Table = gold_Schema{[Name="dim_products",Kind="Table"]}[Data]
 				in
-				    #"Renamed Columns"
+					dim_products_Table
 
 	annotation PBI_ResultType = Table
+
 

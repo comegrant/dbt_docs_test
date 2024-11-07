@@ -71,7 +71,7 @@ table 'Bridge Billing Agreements Preferences'
 		annotation SummarizationSetBy = Automatic
 
 	partition 'Bridge Billing Agreements Preferences' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
@@ -86,4 +86,5 @@ table 'Bridge Billing Agreements Preferences'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
+
 

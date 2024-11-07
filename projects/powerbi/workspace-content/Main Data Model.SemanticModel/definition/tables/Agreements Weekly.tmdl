@@ -2,22 +2,6 @@ table 'Agreements Weekly'
 	isHidden
 	lineageTag: 3bced9b8-db9f-4144-a9ba-6388673c1c5e
 
-	refreshPolicy
-		policyType: basic
-		rollingWindowGranularity: year
-		rollingWindowPeriods: 6
-		incrementalGranularity: month
-		incrementalPeriods: 1
-		sourceExpression =
-			let
-				Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
-				catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
-				gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				dim_preferences_Table = gold_Schema{[Name="fact_billing_agreements_weekly",Kind="Table"]}[Data],
-			    #"Filtered Rows" = Table.SelectRows(dim_preferences_Table, each [monday_date] >= RangeStart and [monday_date] < RangeEnd)
-			in
-			    #"Filtered Rows"
-
 	column pk_fact_billing_agreements_weekly
 		dataType: string
 		isHidden
@@ -195,7 +179,7 @@ table 'Agreements Weekly'
 		annotation SummarizationSetBy = Automatic
 
 	partition 'Agreements Weekly' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
@@ -213,4 +197,5 @@ table 'Agreements Weekly'
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+
 

@@ -323,7 +323,7 @@ table 'Menu Measures'
 		annotation SummarizationSetBy = Automatic
 
 	partition 'Menu Measures' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
@@ -336,4 +336,5 @@ table 'Menu Measures'
 	annotation PBI_ResultType = Exception
 
 	annotation PBI_NavigationStepName = Navigation
+
 

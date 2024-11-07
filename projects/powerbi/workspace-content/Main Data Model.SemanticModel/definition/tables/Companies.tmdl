@@ -18,20 +18,7 @@ table Companies
 		isHidden
 		lineageTag: 2f5a893e-1f08-4b4a-bcec-9dcd7fd5eab0
 		summarizeBy: none
-		sourceColumn: Company Id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Language Id'
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 329275a0-5720-466d-9645-4d0c85fc281a
-		summarizeBy: count
-		sourceColumn: Language Id
+		sourceColumn: company_id
 
 		changedProperty = IsHidden
 
@@ -41,7 +28,7 @@ table Companies
 		dataType: string
 		lineageTag: 10650cc4-9738-4853-ac78-25e87facc476
 		summarizeBy: none
-		sourceColumn: Company Name
+		sourceColumn: company_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -49,7 +36,7 @@ table Companies
 		dataType: string
 		lineageTag: f4673059-815e-4434-8dca-5319e86ea0ad
 		summarizeBy: none
-		sourceColumn: Country Name
+		sourceColumn: country_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -57,21 +44,21 @@ table Companies
 		dataType: string
 		lineageTag: 6575a8f8-985e-46ac-8cb2-f1ba94453368
 		summarizeBy: none
-		sourceColumn: Country Currency
+		sourceColumn: country_currency
 
 		annotation SummarizationSetBy = Automatic
 
 	partition Companies = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_companies_Table = gold_Schema{[Name="dim_companies",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_companies_Table,{{"company_id", "Company Id"}, {"language_id", "Language Id"}, {"company_name", "Company Name"}, {"country_name", "Country Name"}, {"country_currency", "Country Currency"}})
+				    dim_companies_Table = gold_Schema{[Name="dim_companies",Kind="Table"]}[Data]
 				in
-				    #"Renamed Columns"
+					dim_companies_Table
 
 	annotation PBI_ResultType = Table
+
 

@@ -6,7 +6,7 @@ table Date
 		formatString: General Date
 		lineageTag: 6366d1c4-67b1-4a44-a7b8-c136c3f586f6
 		summarizeBy: none
-		sourceColumn: Date
+		sourceColumn: date
 
 		annotation SummarizationSetBy = Automatic
 
@@ -15,7 +15,7 @@ table Date
 		formatString: 0
 		lineageTag: f38f21a9-2f3d-451d-9172-a903b146c14b
 		summarizeBy: none
-		sourceColumn: Year
+		sourceColumn: year
 		sortByColumn: 'Year - Sort'
 
 		changedProperty = SortByColumn
@@ -27,7 +27,7 @@ table Date
 		formatString: 0
 		lineageTag: a98b5055-879e-4b10-99f6-bd5edbd56c85
 		summarizeBy: none
-		sourceColumn: Week
+		sourceColumn: week
 		sortByColumn: 'Week - Sort'
 
 		changedProperty = SortByColumn
@@ -52,7 +52,7 @@ table Date
 		formatString: 0
 		lineageTag: 05f108e3-a9be-4681-a618-2abffbce12df
 		summarizeBy: none
-		sourceColumn: Day of Week
+		sourceColumn: day_of_week
 
 		annotation SummarizationSetBy = User
 
@@ -60,7 +60,7 @@ table Date
 		dataType: string
 		lineageTag: c61c59bc-19c1-44c8-b040-928bacec9496
 		summarizeBy: none
-		sourceColumn: Weekday Name
+		sourceColumn: weekday_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -69,7 +69,7 @@ table Date
 		formatString: 0
 		lineageTag: b984b07a-925c-4bde-b6e0-16aee6062185
 		summarizeBy: none
-		sourceColumn: Quarter
+		sourceColumn: quarter
 
 		annotation SummarizationSetBy = User
 
@@ -78,7 +78,7 @@ table Date
 		formatString: 0
 		lineageTag: 476993ff-0482-4ff8-82b3-71653f3a7b12
 		summarizeBy: none
-		sourceColumn: Month Number
+		sourceColumn: month_number
 
 		annotation SummarizationSetBy = User
 
@@ -86,7 +86,7 @@ table Date
 		dataType: string
 		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
 		summarizeBy: none
-		sourceColumn: Month Name
+		sourceColumn: mont_name
 		sortByColumn: 'Month Number'
 
 		annotation SummarizationSetBy = Automatic
@@ -116,22 +116,20 @@ table Date
 		annotation SummarizationSetBy = Automatic
 
 	partition Date = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_calendar_Table = gold_Schema{[Name="dim_date",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_calendar_Table,{{"date", "Date"}, {"year", "Year"}, {"week", "Week"}, {"day_of_week", "Day of Week"}, {"weekday_name", "Weekday Name"}, {"quarter", "Quarter"}, {"month_number", "Month Number"}, {"month_name", "Month Name"}}),
-				    #"Duplicated Column" = Table.DuplicateColumn(#"Renamed Columns", "Year", "Year - Copy"),
-				    #"Renamed Columns1" = Table.RenameColumns(#"Duplicated Column",{{"Year - Copy", "Year - Sort"}}),
-				    #"Duplicated Column1" = Table.DuplicateColumn(#"Renamed Columns1", "Week", "Week - Copy"),
-				    #"Renamed Columns2" = Table.RenameColumns(#"Duplicated Column1",{{"Week - Copy", "Week - Sort"}})
+				    #"Added Year - Sort" = Table.DuplicateColumn(dim_calendar_Table, "year", "Year - Sort"),
+				    #"Added Week - Sort" = Table.DuplicateColumn(#"Added Year - Sort", "week", "Week - Sort")
 				in
-				    #"Renamed Columns2"
+					#"Added Week - Sort"
 
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
+
 

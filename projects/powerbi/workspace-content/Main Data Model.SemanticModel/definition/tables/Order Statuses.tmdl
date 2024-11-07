@@ -17,7 +17,7 @@ table 'Order Statuses'
 		dataType: string
 		lineageTag: 8fbab1fb-dc08-4292-b902-71c8c29cf93c
 		summarizeBy: none
-		sourceColumn: Order Status Name
+		sourceColumn: order_status_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -26,7 +26,7 @@ table 'Order Statuses'
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 4ca3ee74-95aa-4585-a202-a21d279d0c52
 		summarizeBy: none
-		sourceColumn: Can be Cancelled
+		sourceColumn: can_be_cancelled
 
 		annotation SummarizationSetBy = Automatic
 
@@ -41,18 +41,18 @@ table 'Order Statuses'
 		annotation SummarizationSetBy = Automatic
 
 	partition 'Order Statuses' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_order_status_Table = gold_Schema{[Name="dim_order_statuses",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_order_status_Table,{{"order_status_name", "Order Status Name"}, {"can_be_cancelled", "Can be Cancelled"}})
+				    dim_order_status_Table = gold_Schema{[Name="dim_order_statuses",Kind="Table"]}[Data]
 				in
-				    #"Renamed Columns"
+					dim_order_status_Table
 
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
+
 

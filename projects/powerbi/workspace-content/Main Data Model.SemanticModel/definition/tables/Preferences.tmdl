@@ -18,7 +18,7 @@ table Preferences
 		dataType: string
 		lineageTag: 469beb30-dccd-4f22-b149-36950fa2c37a
 		summarizeBy: none
-		sourceColumn: Preference Name
+		sourceColumn: preference_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -29,7 +29,7 @@ table Preferences
 		dataType: string
 		lineageTag: 289c43fa-43c5-4f6b-95a6-b7e908dcc019
 		summarizeBy: none
-		sourceColumn: Preference Description
+		sourceColumn: preference_description
 
 		annotation SummarizationSetBy = Automatic
 
@@ -39,7 +39,7 @@ table Preferences
 		dataType: string
 		lineageTag: b288f3d8-22bd-4ba9-9a4f-cbadf84640b6
 		summarizeBy: none
-		sourceColumn: Preference Type Name
+		sourceColumn: preference_type_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -49,7 +49,7 @@ table Preferences
 		dataType: string
 		lineageTag: 51c63639-7333-48b9-998e-d2bacfd70995
 		summarizeBy: none
-		sourceColumn: Preference Type Description
+		sourceColumn: preference_type_description
 
 		annotation SummarizationSetBy = Automatic
 
@@ -59,7 +59,7 @@ table Preferences
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: e43fbd78-4757-4d97-8688-4786ea9058a8
 		summarizeBy: none
-		sourceColumn: Is Active
+		sourceColumn: is_active_preference
 
 		annotation SummarizationSetBy = Automatic
 
@@ -69,7 +69,7 @@ table Preferences
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 718cbf6e-ac37-4b94-8e7b-caf1b2bd7a81
 		summarizeBy: none
-		sourceColumn: Is Allergen
+		sourceColumn: is_allergen
 
 		annotation SummarizationSetBy = Automatic
 
@@ -113,7 +113,7 @@ table Preferences
 		dataType: string
 		lineageTag: 5eb7a3b5-8f2b-4fdb-b34c-2a7cd9ae6699
 		summarizeBy: none
-		sourceColumn: Preference Name General
+		sourceColumn: preference_name_general
 
 		annotation SummarizationSetBy = Automatic
 
@@ -124,30 +124,21 @@ table Preferences
 		dataType: string
 		lineageTag: 2e4e9832-af8e-4e59-adcc-0a17dc3d6dc8
 		summarizeBy: none
-		sourceColumn: Preference Description General
+		sourceColumn: preference_description_general
 
 		annotation SummarizationSetBy = Automatic
 
 	partition Preferences = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-					dim_preferences_Table = gold_Schema{[Name="dim_preferences",Kind="Table"]}[Data],
-					#"Renamed Columns" = Table.RenameColumns(dim_preferences_Table,{
-						{"preference_name", "Preference Name"},
-						{"preference_description", "Preference Description"},
-						{"preference_type_name", "Preference Type Name"},
-						{"preference_type_description", "Preference Type Description"},
-						{"preference_name_general", "Preference Name General"},
-						{"preference_description_general", "Preference Description General"},
-						{"is_active_preference", "Is Active"},
-						{"is_allergen", "Is Allergen"}
-						})
+					dim_preferences_Table = gold_Schema{[Name="dim_preferences",Kind="Table"]}[Data]
 				in
-					#"Renamed Columns"
+					dim_preferences_Table
 
 	annotation PBI_ResultType = Table
+
 

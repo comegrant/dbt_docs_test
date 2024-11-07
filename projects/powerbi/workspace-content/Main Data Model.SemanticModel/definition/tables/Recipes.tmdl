@@ -26,32 +26,6 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
-	column recipe_metadata_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 50bfb52e-f28a-47a3-8d52-2ba2921c72d2
-		summarizeBy: sum
-		sourceColumn: recipe_metadata_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column main_recipe_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: e47d4a07-4540-4237-9a5a-f1c61b930bae
-		summarizeBy: sum
-		sourceColumn: main_recipe_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column recipe_status_code_id
 		dataType: int64
 		isHidden
@@ -65,47 +39,12 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
-	column recipe_main_ingredient_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 35bfeb49-3f1a-4a9b-9589-c751f8ddfbd3
-		summarizeBy: sum
-		sourceColumn: recipe_main_ingredient_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column recipe_difficulty_level_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: e421f4e6-0eaa-4e00-970d-339a03b9e4e7
-		summarizeBy: sum
-		sourceColumn: recipe_difficulty_level_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Language Id'
-		dataType: int64
-		formatString: 0
-		lineageTag: 374a33e7-6433-41c1-8f2a-bf8e08c1d13b
-		summarizeBy: count
-		sourceColumn: Language Id
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Coocking Time From'
 		dataType: int64
 		formatString: 0
 		lineageTag: 09163257-1ebb-4768-9c79-989c2d75f3fc
 		summarizeBy: sum
-		sourceColumn: Coocking Time From
+		sourceColumn: cooking_time_from
 
 		annotation SummarizationSetBy = Automatic
 
@@ -114,7 +53,7 @@ table Recipes
 		formatString: 0
 		lineageTag: 57887c9e-bd3a-4ec3-b197-9119f93156bf
 		summarizeBy: sum
-		sourceColumn: Coocking Time To
+		sourceColumn: cooking_time_to
 
 		annotation SummarizationSetBy = Automatic
 
@@ -122,7 +61,7 @@ table Recipes
 		dataType: string
 		lineageTag: fe9bf7f7-27df-4365-b1ad-e0218690634d
 		summarizeBy: none
-		sourceColumn: Recipe Name
+		sourceColumn: recipe_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -130,7 +69,7 @@ table Recipes
 		dataType: string
 		lineageTag: 0001f150-74ec-4b7c-a932-df05b4c62272
 		summarizeBy: none
-		sourceColumn: Recipe Difficulty
+		sourceColumn: recipe_difficulty_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -138,7 +77,7 @@ table Recipes
 		dataType: string
 		lineageTag: 74688ed6-412e-4ef6-9858-c508efec0bc7
 		summarizeBy: none
-		sourceColumn: Recipe Main Ingredient Name
+		sourceColumn: recipe_main_ingredient_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -146,7 +85,7 @@ table Recipes
 		dataType: string
 		lineageTag: 7f2798ef-8885-4969-8934-2c2be899d39b
 		summarizeBy: none
-		sourceColumn: Main Recipe Name
+		sourceColumn: main_recipe_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -155,21 +94,21 @@ table Recipes
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 77300f20-5de9-4d3b-8988-a7fe5ccc64c3
 		summarizeBy: none
-		sourceColumn: Is Main Recipe
+		sourceColumn: is_main_recipe
 
 		annotation SummarizationSetBy = Automatic
 
 	partition Recipes = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_recipes_Table = gold_Schema{[Name="dim_recipes",Kind="Table"]}[Data],
-				    #"Renamed Columns" = Table.RenameColumns(dim_recipes_Table,{{"language_id", "Language Id"}, {"cooking_time_from", "Coocking Time From"}, {"cooking_time_to", "Coocking Time To"}, {"recipe_name", "Recipe Name"}, {"recipe_difficulty_name", "Recipe Difficulty"}, {"recipe_main_ingredient_name", "Recipe Main Ingredient Name"}, {"main_recipe_name", "Main Recipe Name"}, {"is_main_recipe", "Is Main Recipe"}})
+				    dim_recipes_Table = gold_Schema{[Name="dim_recipes",Kind="Table"]}[Data]
 				in
-				    #"Renamed Columns"
+					dim_recipes_Table
 
 	annotation PBI_ResultType = Table
+
 

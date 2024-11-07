@@ -291,17 +291,18 @@ table 'Billing Agreements'
 		annotation SummarizationSetBy = Automatic
 
 	partition 'Billing Agreements' = m
-		mode: import
+		mode: directQuery
 		source =
 				let
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_calendar_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data]
+				    dim_billing_agreements_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data]
 				in
-				    #"dim_calendar_Table"
+				    #"dim_billing_agreements_Table"
 
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
+
 
