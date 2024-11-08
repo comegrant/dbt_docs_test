@@ -1585,3 +1585,22 @@ models:
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+
+  - name: cms__onesub_beta_agreements
+    description: "List of billing agreements that have been used for the internal launch and 10% customer launch of Onesub."
+    columns: 
+      - name: billing_agreement_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_internal
+        data_type: boolean
+        description: "{{ doc('column__is_internal') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null

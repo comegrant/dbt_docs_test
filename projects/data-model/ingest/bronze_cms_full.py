@@ -22,7 +22,6 @@ tables = [
         "delivery_week_type",
         "loyalty_agreement_ledger",
         "loyalty_level",
-        "onesub_beta_agreements",
         "order_type",
         "preference",
         "preference_company",

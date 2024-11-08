@@ -7,6 +7,7 @@ sources:
     schema: bronze
     description: "Tables from the cms database in the CoreDB Azure SQL Server"
     tables:
+      - name: cms__onesub_beta_agreements
       - name: cms__category_consent
       - name: cms__company
       - name: cms__consent

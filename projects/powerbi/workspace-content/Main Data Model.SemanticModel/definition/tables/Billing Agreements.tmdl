@@ -290,6 +290,15 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Onesub Beta Flag'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: onesub_beta_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Billing Agreements' = m
 		mode: directQuery
 		source =

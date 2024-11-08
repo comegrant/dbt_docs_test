@@ -531,7 +531,7 @@ models:
 
       - name: preselector_flag
         data_type: string
-        description: ""
+        description: "{{ doc('column__preselector_flag') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -539,7 +539,15 @@ models:
 
       - name: onesub_flag
         data_type: string
-        description: ""
+        description: "{{ doc('column__onesub_flag') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+  
+      - name: onesub_beta_flag
+        data_type: string
+        description: "{{ doc('column__onesub_beta_flag') }}"
         constraints:
           - type: not_null
         data_tests:

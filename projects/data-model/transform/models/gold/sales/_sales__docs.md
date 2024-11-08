@@ -109,11 +109,24 @@ The year of the customers first delivery.
 
 {% enddocs %}
 
-{% docs column__is_onesub%}
+{% docs column__onesub_flag%}
 
-Agreements with Onesub Mealbox
+Describes if the customer has a OneSub product or not in their basket. It will not "OneSub" from the time when the customer got OneSub in their basket for each indivisual customer and "Not OneSub" before.
 
 {% enddocs %}
+
+{% docs column__preselector_flag %}
+
+Describes if a customer has been rolled over to the preselector during Onesub launch. The field is changed to "Preselector" at the time preselector was run first time for each individual customer, and is "Not Preselector" before this for each customer. After the launch people get preselector output for the weeks visble in the webpage if they have taken the preference quiz and not made a deviation themselves. For the weeks not visble in the webpage at launch the preselector will run for all customers.
+
+{% enddocs %}
+
+{% docs column__onesub_beta_flag %}
+
+Describes if the customer was a part of the Internal Launch or the 10% Customer Beta Launch of Onesub.
+
+{% enddocs %}
+
 
 # Dim Order Statuses
 

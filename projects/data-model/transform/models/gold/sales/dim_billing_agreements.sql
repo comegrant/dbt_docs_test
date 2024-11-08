@@ -6,6 +6,12 @@ billing_agreements as (
 
 )
 
+, onesub_beta_agreements as (
+
+    select * from {{ ref('cms__onesub_beta_agreements') }}
+
+)
+
 , first_orders as (
 
     select * from {{ ref('int_billing_agreements_extract_first_order') }}
@@ -156,6 +162,9 @@ billing_agreements as (
             cast(scd2_tables_joined.valid_from as string)
             )
         ) as pk_dim_billing_agreements
+        , scd2_tables_joined.valid_from
+        , scd2_tables_joined.valid_to
+        , scd2_tables_joined.is_current
         , scd2_tables_joined.billing_agreement_id
         , scd2_tables_joined.billing_agreement_preferences_updated_id
         , scd2_tables_joined.billing_agreement_basket_product_updated_id
@@ -185,11 +194,11 @@ billing_agreements as (
             then 'Not OneSub'
             else 'OneSub'
         end as onesub_flag
-        , scd2_tables_joined.valid_from
-        , scd2_tables_joined.valid_to
-        , scd2_tables_joined.is_current
-        
-    
+        , case 
+            when onesub_beta_agreements.is_internal is false then "10% Customer Launch"
+            when onesub_beta_agreements.is_internal is true then "Internal Launch"
+        else "Normal Customer"
+        end as onesub_beta_flag
     from scd2_tables_joined
     left join billing_agreements_scd1
         on scd2_tables_joined.billing_agreement_id = billing_agreements_scd1.billing_agreement_id
@@ -197,6 +206,8 @@ billing_agreements as (
         on scd2_tables_joined.billing_agreement_id = first_orders.billing_agreement_id
     left join onesub_agreements
         on scd2_tables_joined.billing_agreement_basket_product_updated_id = onesub_agreements.billing_agreement_basket_product_updated_id
+    left join onesub_beta_agreements
+        on scd2_tables_joined.billing_agreement_id = onesub_beta_agreements.billing_agreement_id
 
 )
 

@@ -611,3 +611,10 @@ A list of basket products objects based on the source table billing_agreement_ba
 * is_extra flag
 
 {% enddocs %}
+
+# Onesub Beta Agreements
+{% docs column__is_internal %}
+
+Billing Agreements of employees that was a part of the internal Onesub Launch.
+
+{% enddocs %}
