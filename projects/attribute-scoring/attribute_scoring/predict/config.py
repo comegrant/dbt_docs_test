@@ -2,20 +2,20 @@ class PredictionConfig:
     def __init__(self):
         self.model_uri_mapping = {
             "AMK": {
-                "has_chefs_favorite_taxonomy": "runs:/d232b763aab049538ff8aee9307a3029/pyfunc_packaged_model",
-                "has_family_friendly_taxonomy": "runs:/d6798687d18f42de83662ab57ad72598/pyfunc_packaged_model",
+                "has_chefs_favorite_taxonomy": "runs:/122295a85df94997b50d9e8951001266/pyfunc_packaged_model",
+                "has_family_friendly_taxonomy": "runs:/89b200e07d18434598fe9962d0dcd250/pyfunc_packaged_model",
             },
             "GL": {
-                "has_chefs_favorite_taxonomy": "runs:/3a8383bb85bd4323a47a93a8bc02e096/pyfunc_packaged_model",
-                "has_family_friendly_taxonomy": "runs:/e2bca2c10e12419fa0bc59e4e1965a3d/pyfunc_packaged_model",
+                "has_chefs_favorite_taxonomy": "runs:/f2b9b995c68347d0825294b17b147daa/pyfunc_packaged_model",
+                "has_family_friendly_taxonomy": "runs:/67b82d6c2c044db2b835810a030b238a/pyfunc_packaged_model",
             },
             "RT": {
-                "has_chefs_favorite_taxonomy": "runs:/a5296197360545ae8ae71470dc9d08d9/pyfunc_packaged_model",
-                "has_family_friendly_taxonomy": "runs:/e5f2ab645b9545bf986ecc44970c45a6/pyfunc_packaged_model",
+                "has_chefs_favorite_taxonomy": "runs:/3fa583cefd014cc48ca0a575cb8d9078/pyfunc_packaged_model",
+                "has_family_friendly_taxonomy": "runs:/159dbfe562324dfcb5f282e27a37d0df/pyfunc_packaged_model",
             },
             "LMK": {
-                "has_chefs_favorite_taxonomy": "runs:/e14250fd8cff4d3ab1f5ecadfb563569/pyfunc_packaged_model",
-                "has_family_friendly_taxonomy": "runs:/141c2453becd4b1dbfee4a057d5e38e7/pyfunc_packaged_model",
+                "has_chefs_favorite_taxonomy": "runs:/0ec7191654104516a88797af706544ae/pyfunc_packaged_model",
+                "has_family_friendly_taxonomy": "runs:/81de530990f54b0ca8f7d4b5395e5cf7/pyfunc_packaged_model",
             },
         }
 

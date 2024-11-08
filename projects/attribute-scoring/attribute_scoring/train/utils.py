@@ -52,13 +52,17 @@ def log_metrics(y_true: np.ndarray, y_pred: np.ndarray, cv_results: dict) -> flo
     return test_metrics[MODEL_CONFIG.evaluation_metric]
 
 
-def log_feature_importance(args: Args, feature_importance: list[float], feature_names: list[str]) -> None:
+def log_feature_importance(args: Args, feature_importance: list[float], feature_names: list[str], top_n=15) -> None:
     """Logs and saves a feature importance plot."""
+    features_sorted = sorted(zip(feature_importance, feature_names), reverse=True, key=lambda x: x[0])
+    top_features = features_sorted[:top_n]
+    top_importance, top_names = zip(*top_features)
+
     plt.figure(figsize=(10, 6))
-    plt.barh(feature_names, feature_importance)
+    plt.barh(top_names, top_importance)
     plt.xlabel("Feature Importance")
     plt.ylabel("Features")
-    plt.title(f"Feature Importance {args.company} ({args.target})")
+    plt.title(f"Top {top_n} Feature Importance {args.company} ({args.target})")
     plt.tight_layout()
     plt.savefig("feature_importance_plot.png")
     mlflow.log_artifact("feature_importance_plot.png")
@@ -76,5 +80,5 @@ class ModelWrapper(mlflow.pyfunc.PythonModel):
 
     def predict(self, context, model_input):
         processed_df = self.preprocess_result(model_input.copy())
-        results = self.model.predict_proba(processed_df)
+        results = self.model.predict_proba(processed_df)[:, 1]
         return results

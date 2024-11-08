@@ -1,6 +1,7 @@
 import pandas as pd
 from databricks.connect import DatabricksSession
 from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
+from attribute_scoring.train.config import FeatureLookupConfig
 
 
 def get_raw_data(
@@ -24,6 +25,8 @@ def get_raw_data(
     target_query = f"""
         select
             recipe_id,
+            recipe_portion_id,
+            language_id,
             {target_label}
         from {env}.mlfeatures.ft_ml_recipes
         where company_id = '{company_id}'
@@ -35,26 +38,29 @@ def get_raw_data(
 
 
 def get_feature_lookups(
-    feature_table: str,
-    feature_names: list[str],
-    primary_keys: list[str],
+    lookup_recipe: FeatureLookupConfig,
+    lookup_ingredients: FeatureLookupConfig,
 ) -> list:
     """
     Creates a list of FeatureLookup objects for feature engineering.
 
     Args:
-        feature_table (str): The name of the feature table.
-        feature_names (list[str]): A list of feature column names to include.
-        primary_keys (list[str]): A list of primary key column names for lookup.
+        lookup_recipe: feature_table, feature_names, and primary_keys from recipe feature table
+        lookup_ingredients: feature_table, feature_names, and primary_keys from ingredients feature table
 
     Returns:
         list: A list containing a single FeatureLookup object.
     """
     feature_lookup = [
         FeatureLookup(
-            table_name=feature_table,
-            feature_names=feature_names,
-            lookup_key=primary_keys,
+            table_name=lookup_recipe.feature_table,
+            feature_names=lookup_recipe.feature_names,
+            lookup_key=lookup_recipe.primary_keys,
+        ),
+        FeatureLookup(
+            table_name=lookup_ingredients.feature_table,
+            feature_names=lookup_ingredients.feature_names,
+            lookup_key=lookup_ingredients.primary_keys,
         ),
     ]
 

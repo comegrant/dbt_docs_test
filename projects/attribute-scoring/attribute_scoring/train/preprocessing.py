@@ -50,9 +50,8 @@ def prepare_training_data(
     raw_data = get_raw_data(env=args.env, company_id=company_id, target_label=target_label, spark=spark)
 
     lookup = get_feature_lookups(
-        feature_table=DATA_CONFIG.feature_table,
-        feature_names=DATA_CONFIG.feature_names,
-        primary_keys=DATA_CONFIG.primary_keys,
+        lookup_recipe=DATA_CONFIG.recipe_feature_lookup,
+        lookup_ingredients=DATA_CONFIG.ingredient_feature_lookup,
     )
 
     logging.info("Creating training set...")

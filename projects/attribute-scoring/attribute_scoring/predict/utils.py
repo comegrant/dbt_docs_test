@@ -130,7 +130,9 @@ def filter_data(env: str, spark: DatabricksSession, company_id: str, data: DataF
     ft_data = spark.sql(
         f"""
         select
-            recipe_id
+            recipe_id,
+            recipe_portion_id,
+            language_id
         from {env}.mlfeatures.ft_ml_recipes
         where company_id = '{company_id}'
         """
@@ -144,6 +146,8 @@ def filter_data(env: str, spark: DatabricksSession, company_id: str, data: DataF
     else:
         logging.info("No recipe IDs were removed.")
 
-    processed_data = data.join(ft_data, data["recipe_id"] == ft_data["recipe_id"], "inner").select(data["*"])
+    processed_data = data.join(ft_data, data["recipe_id"] == ft_data["recipe_id"], "inner").select(
+        data["*"], ft_data["recipe_portion_id"], ft_data["language_id"]
+    )
 
     return processed_data
