@@ -97,62 +97,6 @@
           }
         },
         "type": "RelativeDate",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "d",
-              "Entity": "Date",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Between": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "d"
-                        }
-                      },
-                      "Property": "Date"
-                    }
-                  },
-                  "LowerBound": {
-                    "DateSpan": {
-                      "Expression": {
-                        "DateAdd": {
-                          "Expression": {
-                            "DateAdd": {
-                              "Expression": {
-                                "Now": {}
-                              },
-                              "Amount": 1,
-                              "TimeUnit": 0
-                            }
-                          },
-                          "Amount": -6,
-                          "TimeUnit": 2
-                        }
-                      },
-                      "TimeUnit": 0
-                    }
-                  },
-                  "UpperBound": {
-                    "DateSpan": {
-                      "Expression": {
-                        "Now": {}
-                      },
-                      "TimeUnit": 0
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
         "howCreated": "User"
       },
       {
@@ -363,13 +307,6 @@
                     [
                       {
                         "Literal": {
-                          "Value": "'''Agreement Measures''[Number of Customers]'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
                           "Value": "'''Order Measures''[Sum Order Value Net Ex Vat]'"
                         }
                       }
@@ -438,17 +375,6 @@
                           "0": [
                             {
                               "Literal": {
-                                "Value": "'''Agreement Measures''[Number of Customers]'"
-                              }
-                            }
-                          ]
-                        }
-                      ],
-                      [
-                        {
-                          "0": [
-                            {
-                              "Literal": {
                                 "Value": "'''Order Measures''[Sum Order Value Net Ex Vat]'"
                               }
                             }
@@ -491,9 +417,6 @@
                     },
                     {
                       "0": "Average Order Value (Gross)"
-                    },
-                    {
-                      "0": "Number of Customers"
                     },
                     {
                       "0": "Total Amount (Net)"
@@ -635,6 +558,78 @@
             }
           ]
         }
+      },
+      {
+        "name": "ae49c53e7959007dfc0a",
+        "ordinal": 7,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "source_created_at"
+          }
+        },
+        "type": "RelativeDate",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "o",
+              "Entity": "Order Measures",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Between": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "o"
+                        }
+                      },
+                      "Property": "source_created_at"
+                    }
+                  },
+                  "LowerBound": {
+                    "DateSpan": {
+                      "Expression": {
+                        "DateAdd": {
+                          "Expression": {
+                            "DateAdd": {
+                              "Expression": {
+                                "Now": {}
+                              },
+                              "Amount": 1,
+                              "TimeUnit": 0
+                            }
+                          },
+                          "Amount": -6,
+                          "TimeUnit": 2
+                        }
+                      },
+                      "TimeUnit": 0
+                    }
+                  },
+                  "UpperBound": {
+                    "DateSpan": {
+                      "Expression": {
+                        "Now": {}
+                      },
+                      "TimeUnit": 0
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
       }
     ],
     "filterSortOrder": "Custom"

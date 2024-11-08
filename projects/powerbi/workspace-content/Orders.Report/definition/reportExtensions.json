@@ -9,7 +9,6 @@
           "name": "YTD orders",
           "dataType": "Double",
           "expression": "",
-          "formatString": "General Number",
           "references": {
             "unrecognizedReferences": true
           }
@@ -23,7 +22,6 @@
           "name": "Running orders",
           "dataType": "Double",
           "expression": "",
-          "formatString": "General Number",
           "measureTemplate": {
             "daxTemplateName": "RunningTotal",
             "version": 0
@@ -36,7 +34,6 @@
           "name": "Running orders LY",
           "dataType": "Double",
           "expression": "\n\nCALCULATE([Running orders], DATEADD('Date'[Date],-1, YEAR))",
-          "formatString": "General Number",
           "references": {
             "measures": [
               {
