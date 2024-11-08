@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     tag: str
     env: Literal["test", "prod"]
+    with_additional: Annotated[bool, Field] = False
 
 class ScaleArgs(BaseModel):
     tag: str
@@ -416,7 +417,7 @@ async def deploy_preselector(
         container_group=group
     )
 
-async def deploy_all(tag: str, env: str) -> None:
+async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> None:
     company_names = [
         "godtlevert",
         "adams",
@@ -439,16 +440,8 @@ async def deploy_all(tag: str, env: str) -> None:
         name += f"-{env}"
         logger.info(name)
 
-        await deploy_preselector(
-            name=name,
-            company=company,
-            service_bus_namespace=bus_namespace[env],
-            env=env,
-            image_tag=tag,
-            resource_group=f"rg-chefdp-{env}",
-        )
 
-        if env == "prod":
+        if deploy_additional_workers:
             # Currently we want to have an additional scaler
             await scale_worker(
                 tag=tag,
@@ -457,7 +450,14 @@ async def deploy_all(tag: str, env: str) -> None:
                 company=company
             )
         else:
-            logger.info("Skipping the deployment of additional workers")
+            await deploy_preselector(
+                name=name,
+                company=company,
+                service_bus_namespace=bus_namespace[env],
+                env=env,
+                image_tag=tag,
+                resource_group=f"rg-chefdp-{env}",
+            )
 
 async def scale_worker(tag: str, env: str, worker_id: int, company: str) -> None:
 
@@ -512,7 +512,7 @@ async def main() -> None:
     logging.getLogger("azure").setLevel(logging.ERROR)
 
     args = parse_args(RunArgs)
-    await deploy_all(tag=args.tag, env=args.env)
+    await deploy_all(tag=args.tag, env=args.env, deploy_additional_workers=args.with_additional)
 
 if __name__ == "__main__":
     with suppress(ImportError):

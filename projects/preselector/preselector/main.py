@@ -238,6 +238,11 @@ async def find_best_combination(
     mealkit_embedding = None
 
     async def compute_basket(df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Computes the basket features for a group of recipes.
+
+        e.g. recipe a and b -> 1 chicken, 0.2 similary, 0.5 CoF, etc.
+        """
         job = RetrivalJob.from_polars_df(df, [basket_computations])
         aggregations = await job.aggregate(basket_computations).to_polars()
 
@@ -265,6 +270,7 @@ async def find_best_combination(
         return aggregations.join(
             with_mealkit.select([
                 pl.col("recipe_id"),
+                # Normalize [0, 1] as all features will be in this range.
                 ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity")
             ]), left_on="basket_id", right_on="recipe_id"
         )
@@ -274,9 +280,7 @@ async def find_best_combination(
         raw_recipe_nudge: pl.DataFrame
     ) -> pl.DataFrame:
         """
-        Computes where we land if we select recipe x.
-
-        Therefore, it adds the selected recipes, and a potential recipe and computes the features of interest.
+        Creates a new dataframe that enables us to compute where we end up if we choose recipe x.
         """
 
         # Using numpy in order to vectorize the code and imporve the performance
@@ -427,7 +431,7 @@ async def find_best_combination(
 
         st.write(final_combination.to_pandas())
 
-    return (final_combination["recipe_id"].to_list(), dict())
+    return (final_combination["main_recipe_id"].to_list(), dict())
 
 
 @feature_view(
@@ -1172,7 +1176,8 @@ async def run_preselector_for_request(
         could_be_ww = False
 
         # Only for Linas, Low Calorie, and if it is only week 51 that is computed.
-        if (
+        # Using processing concent as a proxy for "has taken quiz"
+        if not request.has_data_processing_consent and (
             request.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2"
         ) and (
             request.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
@@ -1506,16 +1511,16 @@ async def run_preselector(
             )
     else:
         filtered = normalized_recipe_features.filter(
-            pl.col("is_adams_signature").is_not(),
-            pl.col("is_cheep").is_not(),
-            pl.col("is_weight_watchers").is_not(),
-            pl.col("is_slow_grown_chicken").is_not(),
+            pl.col("is_adams_signature").is_not()
+            & pl.col("is_cheep").is_not()
+            & pl.col("is_weight_watchers").is_not()
+            & pl.col("is_slow_grown_chicken").is_not()
         ).select(
             pl.exclude(["is_adams_signature", "is_cheep"]),
         )
 
-    recipes, compliance, preselected_recipes = await filter_on_preferences(
-        customer, recipes, store
+    filtered, compliance, preselected_recipes = await filter_on_preferences(
+        customer, filtered, store
     )
     logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
@@ -1594,7 +1599,7 @@ async def run_preselector(
     )
 
     if recipe_features.height <= customer.number_of_recipes:
-        logger.debug(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
+        logger.error(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
         return (
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
             compliance
@@ -1629,7 +1634,9 @@ async def run_preselector(
             f"We are missing some embeddings for main recipe ids: {missing_recipes}"
         )
 
-    assert not recipe_features.is_empty(), "Found no features something is very wrong"
+    assert not recipe_features.is_empty(), (
+        f"Found no features something is very wrong for {customer.agreement_id}, {year}, {week}"
+    )
 
     with duration("find-best-combination"):
         best_recipe_ids, _ = await find_best_combination(
@@ -1643,6 +1650,6 @@ async def run_preselector(
         )
 
     return (
-        recipes.filter(pl.col("recipe_id").is_in(best_recipe_ids))["main_recipe_id"].to_list(),
+        best_recipe_ids,
         compliance,
     )

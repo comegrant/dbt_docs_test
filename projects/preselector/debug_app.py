@@ -166,13 +166,20 @@ async def debug_app() -> None:
     async def failed_responses() -> tuple[GenerateMealkitRequest, list[int]] | None:
         failed = await failure_responses_form()
 
+        if not failed:
+            st.write("Found no failures")
+            return None
+
         return (failed[-1], [])
 
 
     response = await failed_responses()
     if response is None:
         return
+
     request, expected_recipes = response
+
+    st.write(request)
 
     cache_store = await load_cache(
         store, company_id=request.company_id
@@ -181,8 +188,26 @@ async def debug_app() -> None:
     st.write(request.number_of_recipes)
 
     run_response = await run_preselector_for_request(
-        request=request, store=cache_store, should_explain=True
+        request=request, store=cache_store, should_explain=False
     )
+
+    if run_response.failures and run_response.success:
+
+        failed_request = request.copy()
+        failed_request.compute_for = [
+            YearWeek(year=res.year, week=res.week)
+            for res in run_response.failures
+        ]
+        st.write("Failed Requests")
+        st.write(failed_request)
+        new_run_response = await run_preselector_for_request(
+            request=failed_request, store=cache_store, should_explain=True
+        )
+        st.write(new_run_response.failures)
+        st.write(new_run_response.success)
+        return
+
+
 
 
     if not run_response.success:

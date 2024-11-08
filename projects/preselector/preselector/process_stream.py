@@ -459,7 +459,9 @@ async def process_stream_batch(
                         await successful_output_stream.batch_write(successful_responses)
                         successful_responses = []
 
-                    if failed_output_stream:
+                    if failed_output_stream and failed_requests:
+                        failed_ids = [ req.request.agreement_id for req in failed_requests ]
+                        logger.error(f"Error for user with id: {failed_ids}")
                         await failed_output_stream.batch_write(failed_requests)
                         failed_requests = []
 
@@ -470,7 +472,9 @@ async def process_stream_batch(
             if successful_output_stream:
                 await successful_output_stream.batch_write(successful_responses)
 
-            if failed_output_stream:
+            if failed_output_stream and failed_requests:
+                failed_ids = [req.request.agreement_id for req in failed_requests]
+                logger.error(f"Error for user with id: {failed_ids}")
                 await failed_output_stream.batch_write(failed_requests)
 
             await stream.mark_as_complete(completed_requests)
