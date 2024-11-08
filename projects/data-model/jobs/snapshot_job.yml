@@ -16,17 +16,7 @@ resources:
               - dbt-databricks>=1.0.0,<2.0.0
 
       tasks:
-        - task_key: start-notification
-          run_job_task:
-              job_id: ${var.slack_notification_job_id}
-              job_parameters:
-                  environment: ${bundle.target}
-                  body_message: 🚀 Snapshot job has started
-                  is_error: "false"
-
         - task_key: bronze_cms_full_snapshot_tables
-          depends_on:
-            - task_key: start-notification
           notebook_task:
             notebook_path: ../ingest/bronze_cms_full_snapshot_tables.py
 
@@ -41,16 +31,6 @@ resources:
           depends_on: [
             {task_key: bronze_cms_full_snapshot_tables}
           ]
-
-        - task_key: success-notification
-          depends_on:
-            - task_key: dbt
-          run_job_task:
-            job_id: ${var.slack_notification_job_id}
-            job_parameters:
-              environment: ${bundle.target}
-              body_message: ✅ Snapshot job completed successfully
-              is_error: "false"
 
         - task_key: fail-notification
           depends_on: [
