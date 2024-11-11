@@ -1,0 +1,26 @@
+resources:
+  jobs:
+    dbt_developer_bulk_ingest_silver_tables:
+      name: dbt_developer_bulk_ingest_silver_tables 
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks: 
+
+        - task_key: ingest_silver_tables
+          notebook_task: 
+            notebook_path: ../useful/dbt_development/bulk_ingest_silver_tables.py
+
+      parameters:
+        - name: firstname_lastname
+          default: ""
+
+        - name: table_list
+          default: ""
+
+      edit_mode: EDITABLE

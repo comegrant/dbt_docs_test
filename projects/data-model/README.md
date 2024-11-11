@@ -64,7 +64,7 @@ This will then open the file in VSCode, where you can copy the template below.
     local_dev:
       type: databricks
       catalog: dev
-      schema: firstname_lastname # Need to be configured by you
+      schema: ~firstname_lastname # Need to be configured by you
       host: xyz.azuredatabricks.net # Need to be configured by you
       http_path: /SQL/YOUR/HTTP/PATH # Need to be configured by you
       token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you
@@ -137,46 +137,67 @@ Run `dbt debug` in the terminal, the output should look something like this if t
 > If you have errors during the debug, then restarting your machine may do the trick or creating a new access token
 
 ### 6. Start developing 🥳
-Hurray! Now you can start developing in dbt. So let's get some data into your schema that you defined earlier in your dbt profile.
+Hurray! Now you can start developing in dbt.
 
-1. Our orders fact table is a good candidate to start with. Let's run it and all its upstream models:
-```bash
-dbt run -s +fact_orders
-```
-2. Once this has completed, go to [Databricks](https://adb-4291784437205825.5.azuredatabricks.net/?o=4291784437205825) and see the result under your personal gold schema in the dev catalog.
-
-Now you're all good to go and start developing your models.
-
-Start by playing around and getting familiar with dbt by adding some changes to the existing models and creating new ones. Once you're ready to add a change to the main data model, just create a new branch, make your changes, create a PR and assign someone to review it.
-
-Please ensure to follow the Git Guidelines (coming) and the guidelines in the [Data Model Development](#data-model-development) section.
-
-#### Helpful commands
-
-Here are some commands that you may find useful:
-- `dbt run -s model_name` to run a specific model
-- `dbt run -s +model_name` to run a specific model and all its upstream models
-- `dbt run -s model_name+` to run a specific model and all its downstream models
-- `dbt build -s model_name` to compile, run and test a specific model
-- `dbt test -s model_name` to test a specific model
-
-# Workflow Development
-
-Coming...
+Please ensure to follow the the guidelines in the [Data Model Development](#data-model-development) section.
 
 # Data Model Development: Ingest
-Changes to ingestion can be done from the Databricks UI. Each source system has a notebook for ingest under the ingest folder.
+Ingest refers to fetching data from the source databases and other source systems.
+
+Each source system has a notebook for ingest under the ingest folder. Changes to ingestion can be done from the Databricks Dev Workspace or in Visual Studio Code.
+
+## Databricks Dev Workspace 
 1. Go into sous chef from Databricks
 2. Pull changes and create a new branch
 3. Open the relevant ingest notebook (`bronze_<source_system>_full`)
-4. Add the tables you want to include in the tables list
+4. Add the tables you want to include in the tables list in alphabetic order
 5. Commit and push changes from Databricks and create a PR and assign Marie or Anna to review
 
 To ingest the data immediatly to bronze you can run the notebook only for the tables that you have added by either commenting out the other tables or copy the cell and remove the tables that already exist. You can also run the whole notebook, it will not take that much time yet.
 
+## Visual Studio Code
+1. Ensure that you are in main: ```git checkout main```
+2. Pull the latest changes from main: ```git pull```
+3. Create a new branch: ```git checkout -b "firstname/your-branch-name"```
+3. Open the relevant ingest notebook (`bronze_<source_system>_full`)
+4. Add the tables you want to include in the tables list in alphabetic order
+6. Commit and push changes to GitHub (ask if you do not how)
+7. Create a PR and assign Marie or Anna to review
+
 # Data Model Development: Transform
 This section contains information on how to develop in our dbt project. *Models* refers to the script which does the transformation to the data, while *tables* refers to the end results which is found in Databricks as a table.
 
+## Deployment and Developer Schema
+Each developer should have their own schema in the Databricks Dev Workspace which their models are populated to when developing locally. The whole point of this setup is to avoid conflicts while developing features. This section explains how the developer schema setup works.
+
+The development schema is set when creating the [local profile for dbt]((#2-first-time-only-set-up-local-dbt-profile)) and should be on the following format: `~firstname_lastname`. This will end up as a prefix to the schema of your models. I.e. if you deploy a silver model the schema of this model would be `~firstname_lastname_silver`, while for gold it will be `~firstname_lastname_gold`.
+
+#### Deploy Models
+You can deploy dbt models from the CLI by using any of the following commands. You can read more about [dbt CLI commands here](https://docs.getdbt.com/reference/dbt-commands). 
+
+Here are some commands that you may find useful:
+- `dbt run -s model_name` to run a specific model
+- `dbt run -s +model_name` to run a specific model and all the models that it depends on
+- `dbt run -s model_name+` to run a specific model and all the models that are depending on it
+- `dbt build -s model_name` to compile, run and test a specific model all at once (can you + in the same way as with run)
+- `dbt test -s model_name` to run tests for a specific model
+
+### Insert tables from the silver layer into the development schema
+Data can be inserted to the silver development layer in two ways (i) by deploying a model through the CLI, (ii) by running the `dbt_developer_bulk_ingest_silver_tables`-job in the Databricks Dev Workspace. Some of the models in silver is incremental, meaning that the data in bronze is not complete. If you need complete data you must ingest data to silver by using option (ii).
+
+The `bulk_ingest_silver_tables`-job will ingest all the tables from the `silver` schema in Databricks unless other is specified. You can specify individual tables by passing the table names as a list to the `table_list` parameter. In addition you must pass in your `firstname_lastname` for the tables to be inserted to the right developer schema.
+
+Example:
+* `firstname_lastname`: marie_borg
+* `table_list`: cms__companies, cms__billing_agreements
+
+### Bulk delete tables in development schema
+There is a `dbt_developer_bulk_delete_tables`-job which allow you to delete all the tables in a specified layer (i.e. silver, intermediate, gold, mlgold). 
+
+You specify the layer by passing it into the `layer` parameter. In addition you must pass in your `firstname_lastname` for the tables to be inserted to the right developer schema. 
+
+### Full Refresh of Development Schema
+If you want to clean up your developer schemas for every layer you can run the `dbt_developer_bulk_delete_tables`-job. This will delete all the tables from your developer schemas. In this case you need to pass in your `firstname_lastname` for the tables to be inserted to the right developer schema.
 
 ## Project layers, Subdirectories and Model Names
 
