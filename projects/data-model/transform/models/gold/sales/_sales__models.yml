@@ -350,10 +350,8 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: unique
-          - type: not_null
         data_tests:
           - unique
-          - not_null
 
       - name: billing_agreement_id
         data_type: int

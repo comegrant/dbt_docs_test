@@ -3,8 +3,14 @@ resources:
     estimations_log:
       name: estimations_log
 
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+
       max_retries: 1
-      timeout_seconds: 1800 #Timeout after 30 mins
+      timeout_seconds: 3000 #Timeout after 50 mins
       edit_mode: EDITABLE
 
       schedule:
