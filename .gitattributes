@@ -1,0 +1,2 @@
+## Force all text files in powerbi workspace-content to use LF to avoid clashes between Windows and Mac usage
+projects/powerbi/** text eol=lf
