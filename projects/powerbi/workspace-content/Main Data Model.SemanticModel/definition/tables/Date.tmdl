@@ -86,7 +86,7 @@ table Date
 		dataType: string
 		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
 		summarizeBy: none
-		sourceColumn: mont_name
+		sourceColumn: month_name
 		sortByColumn: 'Month Number'
 
 		annotation SummarizationSetBy = Automatic
