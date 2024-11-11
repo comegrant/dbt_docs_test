@@ -1,4 +1,4 @@
--- Makes sure that we generate estimations for all relevant menu_weeks
+-- Makes sure that we generate estimations for all relevant menu_weeks for each company
 
 with filtered_rows as (
     select  *
@@ -21,12 +21,33 @@ with filtered_rows as (
     )
 )
 
-, missing_menu_weeks as (
-    select expected_menu_weeks.menu_week
-    from expected_menu_weeks
+, expected_companies(company_id) as (
+    values
+        ('6A2D0B60-84D6-4830-9945-58D518D27AC2') --Linas
+        , ('8A613C15-35E4-471F-91CC-972F933331D7') --Adams
+        , ('09ECD4F0-AE58-4539-8E8F-9275B1859A19') --Godtlevert
+        , ('5E65A955-7B1A-446C-B24F-CFE576BF52D7') --RetNemt
+)
+
+, expected_companies_with_weeks as (
+    select 
+    menu_week
+    , company_id
+    from expected_menu_weeks 
+    left join expected_companies
+    on 1=1
+)
+
+, missing_companies_with_weeks as (
+    select 
+        expected_companies_with_weeks.menu_week
+        , expected_companies_with_weeks.company_id
+    from expected_companies_with_weeks 
     left join filtered_rows
-    on expected_menu_weeks.menu_week = filtered_rows.menu_week
+    on 
+        expected_companies_with_weeks.menu_week = filtered_rows.menu_week
+        and expected_companies_with_weeks.company_id = filtered_rows.company_id
     where filtered_rows.menu_week is null
 )
 
-select * from missing_menu_weeks
+select * from missing_companies_with_weeks

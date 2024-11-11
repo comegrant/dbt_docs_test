@@ -3,6 +3,10 @@ resources:
     estimations_log:
       name: estimations_log
 
+      max_retries: 1
+      timeout_seconds: 1800 #Timeout after 30 mins
+      edit_mode: EDITABLE
+
       schedule:
        #Run every day every second hour between 8 and 22. (8:30, 10:30, 12:30 etc.) and midnight 00:30. 
        quartz_cron_expression: 0 30 8-22/2,0 ? * * *
@@ -28,10 +32,17 @@ resources:
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_psl_full}
+          ]  
 
         - task_key: bronze_cms_billing_agreement_basket_scheduler
           notebook_task: 
             notebook_path: ../ingest/bronze_cms_billing_agreement_basket_scheduler.py
+          depends_on: [
+            {task_key: bronze_cms_full}
+          ]  
 
         - task_key: dbt
           dbt_task:

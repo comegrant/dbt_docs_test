@@ -69,6 +69,12 @@ dates as (
     company_id
     , max(menu_week_monday_date) as menu_week_monday_date
     from orders
+    where 
+        order_type_id = '5F34860B-7E61-46A0-80F7-98DCDC53BA9E' -- Recurring
+        and order_status_id in (
+            '4508130E-6BA1-4C14-94A4-A56B074BB135' --Finished
+            , '38A5CC25-A639-4433-A8E6-43FB35DABFD9' --Processing
+        )
     group by 1
 
 )
