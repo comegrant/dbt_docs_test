@@ -69,11 +69,11 @@ foreach ($file in $tableFiles) {
 
 # Add incremental load
 $ordersPath = "$($tablesPath)/Order Measures.tmdl"
-Add-RefreshPolicy -tmdlFilePath $ordersPath -sourceTableName "fact_orders"
+Add-RefreshPolicy -tmdlFilePath $ordersPath -sourceTableName "fact_orders" -dateFieldName "source_created_at"
 $agreementsPath = "$($tablesPath)/Agreement Measures.tmdl"
-Add-RefreshPolicy -tmdlFilePath $agreementsPath -sourceTableName "fact_billing_agreements_daily"
+Add-RefreshPolicy -tmdlFilePath $agreementsPath -sourceTableName "fact_billing_agreements_daily" -dateFieldName "date"
 $agreementsWeeklyPath = "$($tablesPath)/Agreements Weekly.tmdl"
-Add-RefreshPolicy -tmdlFilePath $agreementsWeeklyPath -sourceTableName "fact_billing_agreements_weekly"
+Add-RefreshPolicy -tmdlFilePath $agreementsWeeklyPath -sourceTableName "fact_billing_agreements_weekly" -dateFieldName "monday_date"
 
 # Import the semantic model and save the item id
 $semanticModelImport = Import-FabricItem -workspaceId $workspaceId -path $pbipSemanticModelPath

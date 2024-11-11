@@ -1,7 +1,8 @@
 function Add-RefreshPolicy {
     param (
         [string]$tmdlFilePath,
-        [string]$sourceTableName
+        [string]$sourceTableName,
+        [string]$dateFieldName
     )
 
     # Les innholdet av TMDL-filen som tekstlinjer
@@ -21,7 +22,7 @@ function Add-RefreshPolicy {
         "`t`t`t`tcatalog_Database = Source{[Name=Catalog,Kind=`"Database`"]}[Data],"
         "`t`t`t`tgold_Schema = catalog_Database{[Name=Schema,Kind=`"Schema`"]}[Data],"
         "`t`t`t`t$sourceTableName`_Table = gold_Schema{[Name=`"$sourceTableName`",Kind=`"Table`"]}[Data],"
-        "`t`t`t`t`#`"Filtered Rows`" = Table.SelectRows($sourceTableName`_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)"
+        "`t`t`t`t`#`"Filtered Rows`" = Table.SelectRows($sourceTableName`_Table, each [$dateFieldName] >= RangeStart and [$dateFieldName] < RangeEnd)"
         "`t`t`tin"
         "`t`t`t`t`#`"Filtered Rows`""
         ""
