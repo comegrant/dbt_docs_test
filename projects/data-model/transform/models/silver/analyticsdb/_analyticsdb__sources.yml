@@ -9,4 +9,7 @@ sources:
     tables:
       - name: analyticsdb_cms__estimations_log
 
+      - name: analyticsdb_cms__estimations_log_history
+
+
       - name: analyticsdb_analytics__billing_agreement_basket_product_log

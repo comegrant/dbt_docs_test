@@ -1,32 +1,23 @@
-with 
+with base_estimations_log_history as (
 
-source as (
-
-    select * from {{ source('analyticsdb', 'analyticsdb_cms__estimations_log') }}
+    select * from {{ ref('base_analyticsdb_cms__estimations_log_history') }}
 
 )
 
-, renamed as (
+, base_estimations_log as (
 
-    select
-
-        
-        {# ids #}
-        id as estimations_log_id
-        , company_id
-        , variation_id as product_variation_id
-        , deviation_origin as billing_agreement_basket_deviation_origin_id
-
-        {# numerics #}
-        , year as menu_year
-        , week as menu_week
-        , total_quantity as product_variation_quantity
-        
-        {# timestamp #}
-        , timestamp as estimation_generated_at
-
-    from source
+    select * from {{ ref('base_analyticsdb_cms__estimations_log') }}
 
 )
 
-select * from renamed
+
+, unioned as (
+
+    select *
+    from base_estimations_log_history
+    union all
+    select *
+    from base_estimations_log
+)
+
+select * from unioned
