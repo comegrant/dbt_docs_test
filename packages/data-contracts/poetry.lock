@@ -2377,9 +2377,9 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2891,8 +2891,8 @@ files = [
 annotated-types = ">=0.6.0"
 pydantic-core = "2.23.4"
 typing-extensions = [
-    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
     {version = ">=4.6.1", markers = "python_version < \"3.13\""},
+    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
 ]
 
 [package.extras]
@@ -3584,6 +3584,21 @@ files = [
 ]
 
 [[package]]
+name = "sqlglot"
+version = "25.30.0"
+description = "An easily customizable SQL parser and transpiler"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "sqlglot-25.30.0-py3-none-any.whl", hash = "sha256:2008e51f0d352d6bb967be71767810abdd396e84f2d07dd7816b75775323246b"},
+    {file = "sqlglot-25.30.0.tar.gz", hash = "sha256:f39ad054750f3be164e69ea74c784b5bcbb237c49416695ba95df696cd81c9d5"},
+]
+
+[package.extras]
+dev = ["duckdb (>=0.6)", "maturin (>=1.4,<2.0)", "mypy", "pandas", "pandas-stubs", "pdoc", "pre-commit", "python-dateutil", "pytz", "ruff (==0.7.2)", "types-python-dateutil", "types-pytz", "typing-extensions"]
+rs = ["sqlglotrs (==0.2.13)"]
+
+[[package]]
 name = "sqlparse"
 version = "0.5.1"
 description = "A non-validating SQL parser."
@@ -4021,4 +4036,4 @@ openai = ["openai", "tiktoken"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "31f9fe8b7a932482b9c06bb7444ce2e419d0e5042bf197edee5f549aa5809b02"
+content-hash = "5d6f542a2fa34b8f0b3e95b32635ede69f5db6ae79120209112b5bc72ae99ec0"

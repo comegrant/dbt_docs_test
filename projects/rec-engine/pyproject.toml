@@ -19,6 +19,7 @@ aioodbc = "0.4.1"
 pyodbc = {version = "4.0.35" }
 databricks-env = {path = "../../packages/databricks-env", develop = true}
 polars-lts-cpu = "0.20.31"
+numpy = "1.26.4"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

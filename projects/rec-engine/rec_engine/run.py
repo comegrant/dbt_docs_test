@@ -1,7 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Annotated
 
 import dotenv
@@ -9,6 +9,7 @@ import pandas as pd
 import polars as pl
 from aligned import FeatureLocation, FeatureStore
 from aligned.feature_store import ConvertableToRetrivalJob, RetrivalJob
+from aligned.sources.in_mem_source import InMemorySource
 from data_contracts.menu import YearWeekMenu
 from data_contracts.orders import MealboxChangesAsRating
 from data_contracts.sql_server import SqlServerConfig
@@ -23,10 +24,6 @@ from rec_engine.model_registry import (
 from rec_engine.ranking_model import predict_rankings
 from rec_engine.source_selector import use_local_sources_in
 from rec_engine.sources import adb
-from rec_engine.update_source import (
-    update_models_from_source_if_older_than,
-    update_view_from_source_if_older_than,
-)
 
 file_logger: logging.Logger = logging.getLogger(__name__)
 
@@ -66,11 +63,8 @@ async def run(
     run_id: str | None = None,
     model_regristry: ModelRegistry | None = None,
     write_to_path: str | None = "data/rec_engine",
-    update_source_threshold: timedelta | None = None,
-    ratings_update_source_threshold: timedelta | None = None,
     ratings_view: str = "historical_recipe_orders",
     recipe_rating_contract: str = "user_recipe_likability",
-    recipe_cluster_contract: str = "recipe_cluster",
     logger: Logger | None = None,
 ) -> None:
     logger = logger or file_logger
@@ -85,27 +79,6 @@ async def run(
         logger.info(
             "Unable to load .env file. This can break things if you have not set secrets in another way",
         )
-
-    if update_source_threshold:
-        with log_step("Updating model freshness", logger=logger):
-            model_contracts = [recipe_rating_contract, recipe_cluster_contract]
-
-            await update_models_from_source_if_older_than(
-                threshold=update_source_threshold,
-                models=model_contracts,
-                store=store,
-                logger=logger,
-            )
-
-    if ratings_update_source_threshold:
-        with log_step("Updating ratings view", logger=logger):
-            views = [ratings_view]
-            await update_view_from_source_if_older_than(
-                threshold=ratings_update_source_threshold,
-                views=views,
-                store=store,
-                logger=logger,
-            )
 
     with log_step("Selecting who to train and predict for", logger=logger):
         recipe_entities, menus = await select_entities(dataset, logger=logger)
@@ -149,6 +122,10 @@ async def run(
             FeatureLocation.model(rating_model.model_contract_name),
             ratings_preds,
         )
+        store = store.update_source_for(
+            FeatureLocation.model(rating_model.model_contract_name),
+            InMemorySource(pl.from_pandas(ratings_preds))
+        )
 
     with log_step("Predicting ranking for recipes", logger=logger):
         # Should in theory be the menu recipe ids x agreement ids
@@ -159,7 +136,7 @@ async def run(
         # Need to do to list, as this will repeat the list n times, and not the items n items
         menu_per_agreement["agreement_id"] = agreement_ids.tolist() * menus.shape[0]
 
-        recipes_to_rank_entities = menu_per_agreement.reset_index(drop=True)
+        recipes_to_rank_entities = menu_per_agreement.drop(columns=["product_id"]).reset_index(drop=True)
         recipes_to_rank_entities["company_id"] = company_id
 
         rec_store = store.model("rec_engine")

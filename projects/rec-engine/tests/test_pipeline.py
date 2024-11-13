@@ -87,8 +87,6 @@ async def test_training_pipelines(model_contracts: FeatureStore) -> None:
         dataset=dataset,
         store=model_contracts,
         write_to_path=write_path,
-        update_source_threshold=None,  # Setting None makes sure we do not update
-        ratings_update_source_threshold=None,
     )
 
     rec_engine_file = FileSource.csv_at(f"{write_path}/rec_engine.csv")

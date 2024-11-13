@@ -107,6 +107,7 @@ Query:
         event_column = request.event_timestamp.name
 
         parsed = sqlglot.parse_one(self.query)
+        assert isinstance(parsed, type(sqlglot.select("*"))), f"Expected a select statement, got type: {type(parsed)}"
 
         parsed = parsed.where(f"CONVERT(DATETIME, '{start_date}', 121) <= {event_column}", dialect="tsql").where(
             f"{event_column} <= CONVERT(DATETIME, '{end_date}', 121)", dialect="tsql"
