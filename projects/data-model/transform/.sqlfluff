@@ -6,6 +6,7 @@ max_line_length = 110
 indent_unit = space
 sql_file_exts = .sql
 ignore_templated_areas = True
+exclude_rules = ambiguous.column_count, structure.column_order
 
 [sqlfluff:templater]
 unwrap_wrapped_queries = True
