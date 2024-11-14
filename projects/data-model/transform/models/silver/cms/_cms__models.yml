@@ -1586,6 +1586,76 @@ models:
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
 
+  - name: cms__billing_agreement_basket_scheduler
+    columns:
+      - name: billing_agreement_basket_scheduler_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_scheduler_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_basket_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_week_type_id
+        data_type: int
+        description: "{{ doc('column__delivery_week_type_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: billing_agreement_basket_menu_week_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_basket_menu_week_id') }}"
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: timeblock
+        data_type: int 
+        description: "{{ doc('column__timeblock') }}"
+      
+      - name: has_delivery
+        data_type: boolean
+        description: "{{ doc('has_delivery') }}"
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
   - name: cms__onesub_beta_agreements
     description: "List of billing agreements that have been used for the internal launch and 10% customer launch of Onesub."
     columns: 

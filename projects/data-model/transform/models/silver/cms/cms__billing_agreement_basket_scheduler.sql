@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key='billing_agreement_basket_scheduler_id',
+        unique_key='billing_agreement_basket_menu_week_id',
         on_schema_change='append_new_columns'
     )
 }}
@@ -23,6 +23,7 @@ source as (
         id as billing_agreement_basket_scheduler_id
         , billing_agreement_basket_id
         , order_delivery_type as delivery_week_type_id
+        , concat(billing_agreement_basket_id, cast(year as string), cast(week as string)) as billing_agreement_basket_menu_week_id
 
         {# numerics #}
         , year as menu_year

@@ -110,7 +110,6 @@ dates as (
     on agreements.billing_agreement_id = baskets.billing_agreement_id
     where baskets.is_active_basket = true 
     and agreements.billing_agreement_status_id = 10 --active agreements
-    and baskets.is_active_basket = true
 
 )
 

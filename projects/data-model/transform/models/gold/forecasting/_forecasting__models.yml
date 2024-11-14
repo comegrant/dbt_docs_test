@@ -1,0 +1,102 @@
+  models: 
+  - name: fact_estimations
+    description: "Table of all estimations at each timestamp they're generated"
+    latest_version: 1
+    config:
+      alias: fact_estimations
+    columns:
+      - name: pk_fact_estimations
+        data_type: string
+        description: "{{ doc('column__pk_fact_estimations') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_date_estimation_generated
+        datatype: bigint
+        description: "{{ doc('column__fk_dim_date_estimation_generated') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_time_estimation_generated
+        datatype: bigint
+        description: "{{ doc('column__fk_dim_time_estimation_generated') }}"
+        data_tests:
+          - not_null
+      
+      - name: fk_dim_date_menu_week
+        datatype: int
+        description: "{{ doc('column__fk_dim_date_menu_week') }}" 
+        data_tests:
+          - not_null
+      
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+        data_tests:
+          - not_null
+
+
+      - name: fk_dim_basket_deviation_origins
+        data_type: string
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: int
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__estimations_product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: is_latest_estimation
+        data_type: boolean
+        description: "{{ doc('column__is_latest_estimation') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+
+  - name: dim_basket_deviation_origins
+    description: Dimension table for basket deviation origins
+    latest_version: 1
+    config:
+      alias: dim_basket_deviation_origins
+
+    columns:
+      - name: pk_dim_basket_deviation_origins
+        data_type: string
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: basket_deviation_origin_name
+        data_type: string
+        description: "{{ doc('column__basket_deviation_origin_name') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+      
+
+

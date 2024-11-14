@@ -618,3 +618,30 @@ A list of basket products objects based on the source table billing_agreement_ba
 Billing Agreements of employees that was a part of the internal Onesub Launch.
 
 {% enddocs %}
+
+# Billing Agreement Basket Scheduler
+
+{% docs column__billing_agreement_basket_scheduler_id %}
+
+The ID of the basket scheduler in the CMS database.
+
+{% enddocs %}
+
+{% docs column__billing_agreement_basket_menu_week_id %}
+
+The unique identifier for a specific menu week for a billing agreement basket. This is a composite key made up of the billing agreement basket ID, menu year and menu week.
+
+{% enddocs %}
+
+
+{% docs column__timeblock %}
+
+The id of the timeblock as it would appear in the OPS system.
+
+{% enddocs %}
+
+{% docs has_delivery %}
+
+True if the created schedule will make a delivery, else False. Used to handle cancelled deliveries for a menu week.
+
+{% enddocs %}

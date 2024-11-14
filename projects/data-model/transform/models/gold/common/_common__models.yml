@@ -62,3 +62,34 @@ models:
           
     versions:
       - v: 1
+    
+  - name: dim_time
+    description: "Dimension table for time-related attributes"
+    latest_version: 1
+    config:
+      alias: dim_time
+      contract:
+        enforced: false
+    
+    columns:
+      - name: pk_dim_time
+        description: "{{ doc('column__pk_dim_time') }}"
+        data_type: bigint
+        data_tests:
+          - unique
+          - not_null
+
+      - name: hour
+        description: "{{ doc('column__hour') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: minute
+        description: "{{ doc('column__minute') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
