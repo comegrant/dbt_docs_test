@@ -44,7 +44,7 @@ def run_train(args: Args, spark: SparkSession) -> tuple[Pipeline, pd.Series, pd.
         is_running_on_databricks=args.is_running_on_databricks,
         is_log_model=True,
         is_register_model=True,
-        env="dev",
+        env=args.env,
         spark=spark,
         train_config=train_config,
         company=company
