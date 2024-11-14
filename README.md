@@ -110,16 +110,9 @@ If you get a "Running scripts is disabled on this system" error, you can enable 
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 ```
 
-3. Close and reopen your code editor
+3. Add pyenv to your path
 
-4. Check if the installation was successful.
-```
-pyenv --version
-```
-
-5. Add pyenv to your path
-
-Adding new environment variables.
+Adding PYENV, PYENV_HOME and PYENV_ROOT to your Environment Variables:
 ```powershell
 [System.Environment]::SetEnvironmentVariable('PYENV',$env:USERPROFILE + "\.pyenv\pyenv-win\","User")
 
@@ -128,9 +121,32 @@ Adding new environment variables.
 [System.Environment]::SetEnvironmentVariable('PYENV_HOME',$env:USERPROFILE + "\.pyenv\pyenv-win\","User")
 ```
 
-Adding the environment variables to the path.
+Now adding the following paths to your USER PATH variable in order to access the pyenv command:
 ```powershell
 [System.Environment]::SetEnvironmentVariable('path', $env:USERPROFILE + "\.pyenv\pyenv-win\bin;" + $env:USERPROFILE + "\.pyenv\pyenv-win\shims;" + [System.Environment]::GetEnvironmentVariable('path', "User"),"User")
+```
+
+If for some reason you cannot execute PowerShell command, type "environment variables for you account" in Windows search bar and open Environment Variables dialog.
+
+You will need create those 3 new variables in System Variables section (bottom half). Let's assume username is `my_pc`.
+
+|Variable|Value|
+|---|---|
+|PYENV|C:\Users\my_pc\\.pyenv\pyenv-win\
+|PYENV_HOME|C:\Users\my_pc\\.pyenv\pyenv-win\
+|PYENV_ROOT|C:\Users\my_pc\\.pyenv\pyenv-win\
+
+And add two more lines to user variable `Path`.
+```
+C:\Users\my_pc\.pyenv\pyenv-win\bin
+C:\Users\my_pc\.pyenv\pyenv-win\shims
+```
+
+4. Close and reopen your code editor
+
+5. Check if the installation was successful.
+```
+pyenv --version
 ```
 
 6. Check a list of Python versions supported by `pyenv-win`
@@ -264,11 +280,11 @@ Poetry is a tool for dependency management in Python projects. It helps manage p
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
-2. Add Poetry to your PATH
+2. Add Poetry to your PATH by
 ```powershell
 [System.Environment]::SetEnvironmentVariable(
     "path",
-    ";%APPDATA%\Python\Scripts",
+    [System.Environment]::GetEnvironmentVariable("path", "User") + ";%APPDATA%\Python\Scripts",
     "User"
 )
 ```
