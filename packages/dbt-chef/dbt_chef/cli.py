@@ -57,14 +57,11 @@ def generate_yaml(model_name: str) -> None:
 
 def generate_silver_model_sql_file(source_system: str, source_table_name: str, model_name: str) -> None:
     click.echo(f"Generating the SQL file models/silver/{source_system}/{model_name}.sql")
-    args = (
-        f"'{{'source_name': '{source_system}', "
-        f"'source_table_name': '{source_table_name}'}}'"
-    )
     output_file = f"models/silver/{source_system}/{model_name}.sql"
     sql_command = (
-        f"dbt run-operation --quiet generate_silver_model_sql "
-        f"--args {args} > {output_file}"
+        f'dbt run-operation --quiet generate_silver_model_sql '
+        f'--args \"{{\'source_name\': \'{source_system}\', \'source_table_name\': \'{source_table_name}\'}}\" '
+        f'> {output_file}'
     )
     subprocess.run(sql_command, shell=True, check=True)
 
@@ -75,13 +72,13 @@ def build_model(model_name: str) -> None:
 
 def generate_column_docs(model_name: str) -> None:
     click.echo(f"Generating column documentation for {model_name}")
-    docs_command = f"dbt run-operation generate_column_docs --args '{{'model_name': '{model_name}'}}'"
+    docs_command = f'dbt run-operation generate_column_docs --args "model_name: {model_name}"'
     subprocess.run(docs_command, shell=True, check=True)
     click.echo("⬆️  Copy the above output and paste it into the relevant __docs.md file for this model ⬆️")
 
 def generate_column_yaml(model_name: str) -> None:
     click.echo(f"Generating column YAML for {model_name}")
-    yaml_command = f"dbt run-operation generate_column_yaml --args '{{'model_name': '{model_name}'}}'"
+    yaml_command = f'dbt run-operation generate_column_yaml --args "model_name: {model_name}"'
     subprocess.run(yaml_command, shell=True, check=True)
     click.echo("⬆️  Copy the above output and paste it into the relevant __models.yml folder ⬆️")
 
