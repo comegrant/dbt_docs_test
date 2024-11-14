@@ -16,7 +16,7 @@ from dishes_forecasting.train.training_set import create_training_set
 
 class Args(BaseModel):
     company: Literal["LMK", "AMK", "GL", "RT"]
-    env: Literal["dev", "prod"]
+    env: Literal["dev", "test", "prod"]
     is_running_on_databricks: bool
 
 
