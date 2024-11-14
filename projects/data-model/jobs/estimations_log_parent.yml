@@ -1,0 +1,49 @@
+resources:
+  jobs:
+    estimations_log_parent:
+      name: estimations_log_parent
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+
+      max_retries: 1
+      timeout_seconds: 3000 #Timeout after 50 mins
+      edit_mode: EDITABLE
+
+      schedule:
+       #Run every day every second hour between 8 and 22. (8:30, 10:30, 12:30 etc.) and midnight 00:30. 
+       quartz_cron_expression: 0 30 8-22/2,0 ? * * *
+       timezone_id: UTC
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+
+        - task_key: estimations_log_core
+          run_job_task:
+            job_id: ${resources.jobs.estimations_log_child.id}
+
+        - task_key: fail-notification
+          depends_on: 
+            - task_key: estimations_log_core
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Estimations log job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, sylvia, grant, engineering
+
+
+
+      

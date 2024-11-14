@@ -1,0 +1,60 @@
+resources:
+  jobs:
+    estimations_log_child:
+      name: estimations_log_child
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+
+      edit_mode: EDITABLE
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+
+        - task_key: bronze_psl_full
+          notebook_task: 
+            notebook_path: ../ingest/bronze_psl_full.py
+
+        - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+
+        - task_key: bronze_cms_billing_agreement_basket_scheduler
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_scheduler.py
+
+        - task_key: bronze_cms_full
+          notebook_task: 
+            notebook_path: ../ingest/bronze_cms_full.py
+          depends_on: [
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+            {task_key: bronze_cms_billing_agreement_basket_scheduler}
+          ]
+
+        - task_key: dbt
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt snapshot'
+              - 'dbt build -s +estimations_log'
+          environment_key: dbt-default
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_psl_full}
+          ]          
+
+
+
+      

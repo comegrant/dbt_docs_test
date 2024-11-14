@@ -60,15 +60,17 @@ dates as (
 
 , orders as (
 
-    select * from {{ref('fact_orders')}}
+    select * from {{ref('cms__billing_agreement_orders')}}
 )
 
 , last_menu_week as (
 
     select 
-    company_id
+    agreements.company_id
     , max(menu_week_monday_date) as menu_week_monday_date
     from orders
+    left join agreements
+        on orders.billing_agreement_id = agreements.billing_agreement_id
     where 
         order_type_id = '5F34860B-7E61-46A0-80F7-98DCDC53BA9E' -- Recurring
         and order_status_id in (
