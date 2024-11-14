@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 # COMMAND ----------
-from dishes_forecasting.run_train import Args, run_train
+from dishes_forecasting.train.run_train import Args, run_train
 from dishes_forecasting.spark_context import create_spark_context
 
 spark = create_spark_context()
@@ -24,7 +24,7 @@ if is_get_params_from_workflow:
     company = dbutils.widgets.get("company")
 else:
     env = "dev"
-    company = "GL"
+    company = "AMK"
 
 # COMMAND ----------
 args = Args(company=company, env=env, is_running_on_databricks=is_running_on_databricks)

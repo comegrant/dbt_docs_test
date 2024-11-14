@@ -14,6 +14,7 @@ def get_test_metrics(
     y_pred_transformed: pd.Series,
     min_yyyyww: int,
     max_yyyyww: Optional[int],
+    is_normalized: Optional[bool] = False,
 ) -> tuple[pd.DataFrame, float]:
     df_training_target = get_training_pk_target(
         spark=spark,
@@ -26,6 +27,21 @@ def get_test_metrics(
 
     df_test = df_training_target.loc[X_test.index]
     df_test["y_pred_transformed"] = y_pred_transformed
+    if is_normalized:
+        yyyywws = (
+            df_test["menu_year"].astype(int) * 100 + df_test["menu_week"].astype(int)
+        )
+        min_yyyyww = yyyywws.min()
+        df_test = df_test[yyyywws > min_yyyyww]
+        df_normalization = pd.DataFrame(
+            df_test.groupby(["menu_year", "menu_week"])["y_pred_transformed"].sum()
+        ).reset_index().rename(
+            columns={"y_pred_transformed": "normalization_constant"}
+        )
+        df_test = df_test.merge(df_normalization, how="left", on=["menu_year", "menu_week"])
+        df_test["y_pred_transformed"] = (
+            df_test["y_pred_transformed"] / df_test["normalization_constant"]
+        )
     df_test, mae, mape = compute_metrics(df_test=df_test)
     df_test_binned = get_test_metrics_binned(
         df_test=df_test,

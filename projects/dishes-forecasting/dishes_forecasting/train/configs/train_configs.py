@@ -14,20 +14,20 @@ def get_training_configs(
 
 train_config_gl = {
     "train_start_yyyyww": 202101,
-    "train_end_yyyyww": 202501
+    "train_end_yyyyww": 205001
 }
 
 train_config_amk = {
     "train_start_yyyyww": 202101,
-    "train_end_yyyyww": 202501
+    "train_end_yyyyww": 205001
 }
 
 train_config_lmk = {
     "train_start_yyyyww": 202101,
-    "train_end_yyyyww": 202501
+    "train_end_yyyyww": 205001
 }
 
 train_config_rt = {
-    "train_start_yyyyww": 202101,
-    "train_end_yyyyww": 202501
+    "train_start_yyyyww": 202201,
+    "train_end_yyyyww": 205001
 }

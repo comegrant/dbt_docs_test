@@ -52,6 +52,8 @@ recipes_lookup = FeatureLookUpConfig(
         "has_quick_and_easy_taxonomy",
         "has_vegetarian_taxonomy",
         "has_low_calorie_taxonomy",
+        "number_of_recipe_steps",
+        "number_of_ingredients"
     ],
     exclude_in_training_set=[
         "recipe_id",
@@ -71,6 +73,7 @@ recipe_ingredients_lookup = FeatureLookUpConfig(
         "has_dry_pasta",
         "has_white_fish_filet",
         "has_cod_fillet",
+        "has_breaded_cod",
         "has_salmon_filet",
         "has_seafood",
         "has_pork_filet",
@@ -89,6 +92,10 @@ recipe_ingredients_lookup = FeatureLookUpConfig(
         "has_salsa",
         "has_flat_bread",
         "has_pita",
+        "has_potato",
+        "has_rice",
+        "has_nuts",
+        "has_chili",
     ],
     exclude_in_training_set=[
         "recipe_portion_id",

@@ -25,6 +25,8 @@ def train_model(
     spark: SparkSession,
     train_config: dict,
     is_running_on_databricks: Optional[bool] = False,
+    is_register_model: Optional[bool] = False,
+    is_log_model: Optional[bool] = True,
     profile_name: Optional[str] = "sylvia-liu"  # For databricks connect authentication
 ) -> tuple[Pipeline, pd.Series, pd.Series, pd.Series, pd.Series]:
     company_code = company.company_code
@@ -51,14 +53,13 @@ def train_model(
             training_set_df = training_set.load_df().toPandas()
         else:
             training_set_df = training_set
-        na_index = training_set_df[training_set_df.isna().sum(axis=1)>0].index
         training_set_df = training_set_df.dropna()
 
         X_train, X_test, y_train, y_test = split_train_test(  # noqa
             training_set=training_set_df,
             method="sequential",
             random_state=42,
-            test_size=0.03,
+            test_size=0.02,
         )
         # Print the shapes of the resulting datasets
         print(f"Training set shape: {X_train.shape}") # noqa
@@ -68,7 +69,6 @@ def train_model(
         custom_pipeline.fit(X_train, np.log(y_train))
         y_pred = custom_pipeline.predict(X_test)
         y_pred_transformed = np.exp(y_pred)
-        mape2 = (abs(y_pred_transformed - y_test)/y_test).mean()
 
         df_test_metrics, mae, mape, df_test_binned = get_test_metrics(
             spark=spark,
@@ -77,11 +77,22 @@ def train_model(
             y_pred_transformed=y_pred_transformed,
             min_yyyyww=train_config["train_start_yyyyww"],
             max_yyyyww=train_config["train_end_yyyyww"],
-            company_id=company_id
+            company_id=company_id,
+            is_normalized=False
         )
-        mlflow.log_metric(key="mape_test", value=mape)
-        mlflow.log_metric(key="mape_true", value=mape2)
+        mlflow.log_metric(key="mape", value=mape)
+        mlflow.log_metric(key="mae", value=mae)
+        for k, v in params_lgb.items():
+            mlflow.log_params({"lgb_" + k: float(v)})
+        for k, v in params_xgb.items():
+            mlflow.log_params({"xgb_" + k: float(v)})
+        for k, v in params_rf.items():
+            mlflow.log_params({"rf_" + k: float(v)})
         # Log df_test_binned as an artifact
+        # Flatten the columns in df_test_binned
+        df_test_binned.columns = [
+            '_'.join(col).strip() for col in df_test_binned.columns.values
+        ]
         df_test_binned.to_csv("test_binned_results.csv", index=True)
         mlflow.log_artifact("test_binned_results.csv", "test_binned_results.csv")
         df_test_metrics.to_csv("test_metrics.csv", index=True)
@@ -90,18 +101,18 @@ def train_model(
         mlflow.log_artifact("xtest.csv", "xtest.csv")
 
         model_container_name = "mloutputs"
-        model_name = f"dishes_pipeline_workflow_{company_code}"
+        model_name = f"dishes_forecasting_{company_code}"
         registered_model_name = (
             f"{env}.{model_container_name}.{model_name}"
         )
-        if is_running_on_databricks:
+        if is_register_model:
             mlflow.sklearn.log_model(
                 sk_model=custom_pipeline,
                 artifact_path=model_name,
                 input_example=X_train,
                 registered_model_name=registered_model_name,
             )
-        else:
+        elif is_log_model:
             mlflow.sklearn.log_model(
                 sk_model=custom_pipeline,
                 artifact_path=model_name,
@@ -109,7 +120,7 @@ def train_model(
             )
         mlflow.end_run()
 
-    return custom_pipeline, X_train, X_test, y_train, y_test, na_index
+    return custom_pipeline, X_train, X_test, y_train, y_test, mape, mae, df_test_metrics, df_test_binned
 
 
 def split_train_test(

@@ -27,18 +27,18 @@ def define_ensemble_model(
     taxonomy_features = ["taxonomy_list"]
     # Create preprocessing steps
     categorical_transformer = OneHotEncoder(handle_unknown="ignore")
-    custom_transformer = TaxonomyOneHotTransformer(top_n=100)
+    custom_transformer = TaxonomyOneHotTransformer(top_n=250)
 
     # Define the TF-IDF preprocessing for recipe_name
     stop_words = get_stopwords(company_code=company_code)
-    tfidf_transformer = TfidfVectorizer(stop_words=stop_words, max_features=100)
+    tfidf_transformer = TfidfVectorizer(stop_words=stop_words, binary=True, max_features=200)
 
     # Combine preprocessing steps
     preprocessor = ColumnTransformer(
         transformers=[
             ("cat", categorical_transformer, categorical_features),
             ("taxonomies", custom_transformer, taxonomy_features),
-            ("tfidf", tfidf_transformer, "recipe_name"),
+            ("tfidf_recipe", tfidf_transformer, "recipe_name"),
         ],
         remainder="passthrough"
     )
@@ -46,7 +46,6 @@ def define_ensemble_model(
     lgbm = LGBMRegressor(**params_lgb)
     rf = RandomForestRegressor(**params_rf)
     xgb = XGBRegressor(**params_xgb)
-
     ensemble = VotingRegressor(
         estimators=[
             ("lgbm", lgbm),

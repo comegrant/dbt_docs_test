@@ -1,17 +1,17 @@
 from typing import Literal
 
-import pandas as pd
+
 from constants.companies import get_company_by_code
 from pydantic import BaseModel
 from pyspark.sql import SparkSession
-from sklearn.pipeline import Pipeline
+
 
 from databricks.feature_store import FeatureStoreClient
 from dishes_forecasting.train.configs.feature_lookup_config import feature_lookup_config_list
-from dishes_forecasting.train.configs.hyper_params import load_hyperparams
+
 from dishes_forecasting.train.configs.train_configs import get_training_configs
-from dishes_forecasting.train.train_pipeline import train_model
 from dishes_forecasting.train.training_set import create_training_set
+from dishes_forecasting.train.tune import grid_search_params
 
 
 class Args(BaseModel):
@@ -20,7 +20,7 @@ class Args(BaseModel):
     is_running_on_databricks: bool
 
 
-def run_train(args: Args, spark: SparkSession) -> tuple[Pipeline, pd.Series, pd.Series, pd.Series, pd.Series]:
+def run_tune(args: Args, spark: SparkSession) -> tuple[dict, float]:
     company = get_company_by_code(args.company)
     company_id = company.company_id
     train_config = get_training_configs(company_code=args.company)
@@ -34,17 +34,11 @@ def run_train(args: Args, spark: SparkSession) -> tuple[Pipeline, pd.Series, pd.
         spark=spark,
         feature_lookup_config_list=feature_lookup_config_list
     )
-
-    params_lgb, params_rf, params_xgb = load_hyperparams(company=args.company)
-    custom_pipeline, X_train, X_test, y_train, y_test, _ = train_model(  # noqa
-        training_set=training_set,
-        params_lgb=params_lgb,
-        params_rf=params_rf,
-        params_xgb=params_xgb,
-        is_running_on_databricks=args.is_running_on_databricks,
-        env="dev",
+    grid_search_params(
+        company=company,
+        env=args.env,
         spark=spark,
         train_config=train_config,
-        company=company
+        training_set=training_set,
+        # n_trials=50
     )
-    return custom_pipeline, X_train, X_test, y_train, y_test
