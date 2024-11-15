@@ -16,6 +16,7 @@ dates.head()
 # COMMAND ----------
 
 dates['year'] = dates['year'].astype('int32')
+dates['year_of_week'] = dates['year_of_week'].astype('int32')
 dates['week'] = dates['week'].astype('int32')
 
 # COMMAND ----------

@@ -12,6 +12,7 @@ def get_calendar_dataframe(start_date: str, end_date: str) -> pd.DataFrame:
     Returns:
     - pd.DataFrame: A DataFrame containing the calendar with the following columns:
         - date (datetime64): The date of each day in the calendar.
+        - year_of_week (int): The year of the iso-week in the calendar.
         - year (int): The year of each day in the calendar.
         - week (int): The week number of each day in the calendar.
         - datekey (int): The date in integer format, obtained by removing dashes from the date string.
@@ -28,7 +29,8 @@ def get_calendar_dataframe(start_date: str, end_date: str) -> pd.DataFrame:
     date_range = pd.date_range(start=start_date, end=end_date, freq="D")
     df = pd.DataFrame({"date": date_range})
 
-    df["year"] = df["date"].dt.isocalendar().year
+    df["year_of_week"] = df["date"].dt.isocalendar().year
+    df["year"] = df["date"].dt.year
     df["week"] = df["date"].dt.isocalendar().week
     df["datekey"] = df["date"].astype(str).str.replace("-", "").astype(int)
     df["day_of_week"] = df["date"].dt.dayofweek
