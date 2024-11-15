@@ -8,9 +8,9 @@ packages = [{include = "attribute_scoring"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
-streamlit = "^1.38.0"
+streamlit = "^1.40.0"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
-databricks-connect = "14.3.0"
+databricks-connect = "15.4.3"
 databricks-feature-engineering = "^0.7.0"
 constants = {path = "../../packages/constants", develop = true}
 scikit-learn = "^1.5.2"
@@ -23,6 +23,7 @@ optuna-integration = "^4.0.0"
 lightgbm = "^4.5.0"
 catboost = "^1.2.7"
 imbalanced-learn = "^0.12.4"
+msal = "^1.31.0"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

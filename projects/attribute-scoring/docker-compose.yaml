@@ -27,3 +27,22 @@ services:
     depends_on:
       - base
     profiles: ["test"]
+  
+  app:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/attribute-scoring/docker/Dockerfile.databricks
+    volumes:
+      # - ./:/opt/projects/attribute-scoring/
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run streamlit_app/Attribute_Scoring.py --server.fileWatcherType poll"
+
+    depends_on:
+      - base
+    ports:
+      - 8501:8501
+      - 8888:8888
+    env_file:
+      - ../../.env
+      - .env

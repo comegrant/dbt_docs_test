@@ -1,4 +1,4 @@
-FROM databricksruntime/python:14.3-LTS
+FROM databricksruntime/python:15.4-LTS
 
 SHELL ["/bin/bash", "-c"]
 

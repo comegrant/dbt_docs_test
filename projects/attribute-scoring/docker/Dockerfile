@@ -34,3 +34,4 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 # set starting command
 WORKDIR $SERVICE_HOME
 CMD python attribute_scoring/main.py
+

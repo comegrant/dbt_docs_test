@@ -10,8 +10,8 @@ class PredictionConfig:
                 "has_family_friendly_taxonomy": "runs:/67b82d6c2c044db2b835810a030b238a/pyfunc_packaged_model",
             },
             "RT": {
-                "has_chefs_favorite_taxonomy": "runs:/3fa583cefd014cc48ca0a575cb8d9078/pyfunc_packaged_model",
-                "has_family_friendly_taxonomy": "runs:/159dbfe562324dfcb5f282e27a37d0df/pyfunc_packaged_model",
+                "has_chefs_favorite_taxonomy": "runs:/c88c2e757d764ba2a42accfb59982dec/pyfunc_packaged_model",
+                "has_family_friendly_taxonomy": "runs:/401f5f7f14ec4189b1b06d1d26c9a7eb/pyfunc_packaged_model",
             },
             "LMK": {
                 "has_chefs_favorite_taxonomy": "runs:/0ec7191654104516a88797af706544ae/pyfunc_packaged_model",
