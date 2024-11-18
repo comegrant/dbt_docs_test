@@ -5,6 +5,7 @@ from constants.companies import Company
 from pyspark.sql import DataFrame, SparkSession
 
 from dishes_forecasting.train.configs.feature_lookup_config import FeatureLookUpConfig
+from dishes_forecasting.schema import feature_schema
 
 
 def create_pred_dataset(
@@ -45,6 +46,8 @@ def create_pred_dataset(
     for df in df_list:
         df_merged = df_merged.merge(df, how="left")
     df_merged = df_merged.dropna()
+    feature_schema.coerce = True
+    df_merged = feature_schema.validate(df_merged)
     return df_merged, df_left
 
 

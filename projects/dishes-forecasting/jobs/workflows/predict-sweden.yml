@@ -1,13 +1,13 @@
 resources:
   jobs:
-    dishes-forecasting-predict-norway-weekly:
-      name: dishes-forecasting-predict-norway-weekly-${bundle.target}
+    dishes-forecasting-predict-sweden-weekly:
+      name: dishes-forecasting-predict-sweden-weekly-${bundle.target}
       permissions:
         - group_name: data-scientists
           level: CAN_MANAGE_RUN
 
       job_clusters:
-        - job_cluster_key: dishes-forecasting-predict-norway-weekly
+        - job_cluster_key: dishes-forecasting-predict-sweden-weekly
           new_cluster:
             num_workers: 1
             spark_version: 14.3.x-scala2.12
@@ -19,7 +19,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 20 ? * TUE'
+        quartz_cron_expression: '0 0 20 ? * WED'
         timezone_id: UTC
 
       email_notifications:
@@ -29,17 +29,10 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
-        - task_key: predict-dishes-forecasting-norway-gl
-          job_cluster_key: dishes-forecasting-predict-norway-weekly
+        - task_key: predict-dishes-forecasting-sweden-lmk
+          job_cluster_key: dishes-forecasting-predict-sweden-weekly
           notebook_task:
             notebook_path: ../2_predict.py
             base_parameters:
               env: "${var.environment}"
-              company: GL
-        - task_key: predict-dishes-forecasting-norway-amk
-          job_cluster_key: dishes-forecasting-predict-norway-weekly
-          notebook_task:
-            notebook_path: ../2_predict.py
-            base_parameters:
-              env: "${var.environment}"
-              company: AMK
+              company: LMK

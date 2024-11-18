@@ -1,0 +1,52 @@
+import pandera as pa
+from pandera import Column, DataFrameSchema
+
+# Define the Pandera schema
+feature_schema = DataFrameSchema(
+    {
+        'menu_year': Column(pa.Int16),
+        'menu_week': Column(pa.Int16),
+        'portion_size': Column(pa.Float64),
+        'cooking_time_from': Column(pa.Float64),
+        'cooking_time_to': Column(pa.Float64),
+        'recipe_difficulty_level_id': Column(pa.Float64),
+        'recipe_main_ingredient_id': Column(pa.Float64),
+        'taxonomy_list': Column(pa.String),
+        'number_of_taxonomies': Column(pa.Float64),
+        'has_chefs_favorite_taxonomy': Column(pa.Float64),
+        'has_family_friendly_taxonomy': Column(pa.Float64),
+        'has_quick_and_easy_taxonomy': Column(pa.Float64),
+        'has_vegetarian_taxonomy': Column(pa.Float64),
+        'has_low_calorie_taxonomy': Column(pa.Float64),
+        'number_of_recipe_steps': Column(pa.Float64),
+        'number_of_ingredients': Column(pa.Float64),
+        'has_chicken_filet': Column(pa.Float64),
+        'has_chicken': Column(pa.Float64),
+        'has_dry_pasta': Column(pa.Float64),
+        'has_white_fish_filet': Column(pa.Float64),
+        'has_cod_fillet': Column(pa.Float64),
+        'has_breaded_cod': Column(pa.Float64),
+        'has_salmon_filet': Column(pa.Float64),
+        'has_seafood': Column(pa.Float64),
+        'has_pork_filet': Column(pa.Float64),
+        'has_pork_cutlet': Column(pa.Float64),
+        'has_trout_filet': Column(pa.Float64),
+        'has_parmasan': Column(pa.Float64),
+        'has_cheese': Column(pa.Float64),
+        'has_minced_meat': Column(pa.Float64),
+        'has_burger_patty': Column(pa.Float64),
+        'has_noodles': Column(pa.Float64),
+        'has_sausages': Column(pa.Float64),
+        'has_pizza_crust': Column(pa.Float64),
+        'has_bacon': Column(pa.Float64),
+        'has_wok_sauce': Column(pa.Float64),
+        'has_asian_sauces': Column(pa.Float64),
+        'has_salsa': Column(pa.Float64),
+        'has_flat_bread': Column(pa.Float64),
+        'has_pita': Column(pa.Float64),
+        'has_potato': Column(pa.Float64),
+        'has_rice': Column(pa.Float64),
+        'has_nuts': Column(pa.Float64),
+        'has_chili': Column(pa.Float64)
+    }
+)

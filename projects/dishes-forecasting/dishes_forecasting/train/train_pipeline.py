@@ -13,6 +13,7 @@ from sklearn.pipeline import Pipeline
 from databricks.feature_store.training_set import TrainingSet
 from dishes_forecasting.train.metrics import get_test_metrics
 from dishes_forecasting.train.model import define_ensemble_model
+from dishes_forecasting.schema import feature_schema
 
 
 def train_model(
@@ -54,6 +55,10 @@ def train_model(
         else:
             training_set_df = training_set
         training_set_df = training_set_df.dropna()
+        # Coercing datatype
+        print(f"Forcing feature columns to be the defined data type...") # noqa
+        feature_schema.coerce = True
+        training_set_df = feature_schema.validate(training_set_df)
 
         X_train, X_test, y_train, y_test = split_train_test(  # noqa
             training_set=training_set_df,

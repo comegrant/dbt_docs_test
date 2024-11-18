@@ -16,7 +16,7 @@ from dishes_forecasting.train.configs.feature_lookup_config import feature_looku
 
 class Args(BaseModel):
     company: Literal["LMK", "AMK", "GL", "RT"]
-    env: Literal["dev", "prod"]
+    env: Literal["dev", "test", "prod"]
     forecast_date: str = None
     is_running_on_databricks: bool
     profile_name: str = "sylvia-liu"
@@ -43,7 +43,9 @@ def run_predict(args: Args, spark: SparkSession) -> DataFrame:
         mlflow.set_tracking_uri("databricks")
     else:
         mlflow.set_tracking_uri(f"databricks://{args.profile_name}")
-    loaded_model = mlflow.pyfunc.load_model(pred_configs.model_uri)
+
+    model_uri = pred_configs.model_uri[args.env]
+    loaded_model = mlflow.pyfunc.load_model(model_uri)
     df_predictions = make_predictions(model=loaded_model, df_pred=df_pred)
 
     df_processed = postprocess_predictions(df_predictions=df_predictions)
