@@ -76,7 +76,7 @@ jobs:
       uses: databricks/setup-cli@v0.224.1
 
     - name: Validate DABs
-      run: databricks bundle validate ${{inputs.extra-args}}
+      run: databricks bundle validate ${{inputs.extra-args}} --output json
       env:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
         DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}

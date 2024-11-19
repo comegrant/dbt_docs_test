@@ -34,6 +34,14 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
+        - task_key: batch-predict-gl-amk-slack-notification-start
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for GL & AMK started
+              is_error: false
+
         - task_key: materialization
           job_cluster_key: preselector
           notebook_task:
@@ -51,6 +59,30 @@ resources:
           depends_on:
             - task_key: materialization
 
+        - task_key: batch-predict-gl-slack-notification-end-fail
+          depends_on:
+          - task_key: batch-predict-gl
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector forecast job failed for GL
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: mats, sylvia, grant, lina, synne
+
+        - task_key: batch-predict-gl-slack-notification-end-success
+          depends_on:
+          - task_key: batch-predict-gl
+          run_if: NONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for GL succeeded
+              is_error: false
+
         - task_key: batch-predict-amk
           job_cluster_key: preselector
           notebook_task:
@@ -60,6 +92,30 @@ resources:
               environment: "${var.environment}"
           depends_on:
             - task_key: batch-predict-gl
+
+        - task_key: batch-predict-amk-slack-notification-end-fail
+          depends_on:
+          - task_key: batch-predict-amk
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector forecast job failed for AMK
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: mats, sylvia, grant, lina, synne
+        
+        - task_key: batch-predict-amk-slack-notification-end-success
+          depends_on:
+          - task_key: batch-predict-amk
+          run_if: NONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for AMK succeeded
+              is_error: false
 
     preselector-simulation-wednesday:
       name: preselector-simulation-wednesday-${bundle.target}
@@ -95,6 +151,14 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
+        - task_key: batch-predict-lmk-rt-slack-notification-start
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for LMK & RT started
+              is_error: false
+
         - task_key: materialization
           job_cluster_key: preselector
           notebook_task:
@@ -112,6 +176,30 @@ resources:
           depends_on:
             - task_key: materialization
 
+        - task_key: batch-predict-lmk-slack-notification-end-fail
+          depends_on:
+          - task_key: batch-predict-lmk
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector forecast job failed for LMK
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: mats, sylvia, grant, lina, synne
+
+        - task_key: batch-predict-lmk-slack-notification-end-success
+          depends_on:
+          - task_key: batch-predict-lmk
+          run_if: NONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for LMK succeeded
+              is_error: false
+
         - task_key: batch-predict-rt
           job_cluster_key: preselector
           notebook_task:
@@ -121,3 +209,27 @@ resources:
               environment: "${var.environment}"
           depends_on:
             - task_key: batch-predict-lmk
+
+        - task_key: batch-predict-rt-slack-notification-end-fail
+          depends_on:
+          - task_key: batch-predict-rt
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector forecast job failed for RT
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: mats, sylvia, grant, lina, synne
+
+        - task_key: batch-predict-rt-slack-notification-end-success
+          depends_on:
+          - task_key: batch-predict-rt
+          run_if: NONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for RT succeeded
+              is_error: false

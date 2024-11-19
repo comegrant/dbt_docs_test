@@ -45,4 +45,6 @@ jobs:
       docker-image-tag: ${{ github.sha }}
       # Setting the docker image which is needed for python projects
       extra-args: '--var="mode=production"'
+      should-change-target: true
     secrets: inherit
+    
