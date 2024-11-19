@@ -17,10 +17,10 @@ load_postgres_full(dbutils, "net_backend_retnemt", "ce_preferences_updated")
 
 # COMMAND ----------
 
-load_postgres_full(dbutils, "net_backend", "update_subscription_step_completed")
-load_postgres_full(dbutils, "net_backend_adams", "update_subscription_step_completed")
-load_postgres_full(dbutils, "net_backend_linas", "update_subscription_step_completed")
-load_postgres_full(dbutils, "net_backend_retnemt", "update_subscription_step_completed")
+load_postgres_full(dbutils, "js", "update_subscription_step_completed")
+load_postgres_full(dbutils, "javascript_adams", "update_subscription_step_completed")
+load_postgres_full(dbutils, "javascript_lmk", "update_subscription_step_completed")
+load_postgres_full(dbutils, "javascript_retnemt", "update_subscription_step_completed")
 
 # COMMAND ----------
 
