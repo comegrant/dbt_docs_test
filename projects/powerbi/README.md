@@ -190,3 +190,29 @@ When you are finished with your development work you should create a PR and merg
 
 ## Where to go if you need help
 If you need help, you can ask in the #data_powerbi_support Slack channel.
+
+## Custom theme
+
+### Applying Cheffelo custom theme in Power BI
+Changing the custom theme can only be done in the desktop app for Power BI.
+1. Navigate to the "View" pane in the toolbar.
+2. Click the arrow next to "Themes".
+3. Select "Browse for themes".
+4. Navigate to the powerbi project in sous-chef and select the file called "Cheffelo-Theme.json" and open the file.
+5. Voilà! You now have the custom theme applied to your report.
+
+### What is specified in the custom theme?
+- Colors: 
+    - There are 6 official colors in the template. In visualisations that include colors, the four first colors should always be used. In order to maintain consistency, make sure that the color of a brand is always the same. The brand colors should always be:
+        - Adams Matkasse: Purple
+        - GodtLevert: Blue
+        - Linas Matkasse: Yellow
+        - Retnemt: Green
+    - There are also colors for good, bad and neutral (green, yellow, red)
+    - Background color (behind visualizations) is standardized. 
+- Text: 
+    - Font size, font and text color are specified for different scenarios (eg., titles, headers, labels)
+- Legend:
+    - In top left corner as standard with circle markers
+- Border:
+    - Rounded corners on all visualizations
