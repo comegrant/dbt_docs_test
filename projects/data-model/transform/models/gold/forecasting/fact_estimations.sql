@@ -31,10 +31,20 @@ estimations as (
             , billing_agreement_basket_deviation_origin_id
         )) as pk_fact_estimations
 
+        -- IDs
+        , estimations.menu_year
+        , estimations.menu_week
+        , estimations.menu_week_monday_date
+        , estimations.company_id
+        , estimations.billing_agreement_id
+        , estimations.product_variation_id
+        , estimations.billing_agreement_basket_deviation_origin_id
+        , estimations.estimation_generated_at
+
         -- FKs
         , cast(date_format(estimation_generated_at, 'yyyyMMdd') as int) as fk_dim_date_estimation_generated
         , cast(date_format(estimation_generated_at, 'HHmm') as string) as fk_dim_time_estimation_generated
-        , cast(date_format({{ get_iso_week_start_date('estimations.menu_year', 'estimations.menu_week') }}, 'yyyyMMdd') as int) as fk_dim_date_menu_week
+        , cast(date_format(estimations.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
         , md5(estimations.company_id) as fk_dim_companies
         , md5(concat(estimations.product_variation_id,estimations.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
