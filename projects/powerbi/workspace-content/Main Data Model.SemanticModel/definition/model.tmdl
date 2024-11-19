@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","Recipes","Products","Order Measures","RangeStart","RangeEnd","Host","HttpPath","Menu Measures","Billing Agreements","Catalog","Schema","Bridge Billing Agreements Preferences","Preferences","Agreement Measures","Agreements Weekly"]
+annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","Recipes","Products","Order Measures","RangeStart","RangeEnd","Host","HttpPath","Menu Measures","Billing Agreements","Catalog","Schema","Bridge Billing Agreements Preferences","Preferences","Agreement Measures","Agreements Weekly","Subscription Quiz Measures"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -31,6 +31,7 @@ ref table 'Agreement Measures'
 ref table 'Period Since First Order'
 ref table 'Agreements Weekly'
 ref table '(Param) Measures'
+ref table 'Subscription Quiz Measures'
 
 ref cultureInfo en-US
 

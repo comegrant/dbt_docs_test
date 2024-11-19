@@ -98,3 +98,15 @@ relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
 	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 
+relationship 63a19fc9-c4fd-4535-be80-e864e132d10e
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 41c64e31-dd99-14c5-70ee-9585ecb949c1
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship 68328fbb-4f22-943b-4a02-e3b0c2d5feb1
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_date_source_created_at_segment
+	toColumn: Date.pk_dim_date
+

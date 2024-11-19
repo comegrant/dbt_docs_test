@@ -196,7 +196,7 @@ models:
       - name: preselected_product_variation_id
         data_type: varchar(36)
         description: "{{ doc('column__preselected_product_variation_id') }}"
-      
+
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
@@ -215,7 +215,7 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
-      
+
       - name: fk_dim_billing_agreements_ordergen
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
@@ -281,7 +281,7 @@ models:
           - relationships:
               to: ref('dim_products')
               field: pk_dim_products
-      
+
       - name: fk_dim_products_preselected
         data_type: string
         description: "{{ doc('column__fk_dim_products_preselected') }}"
@@ -296,18 +296,18 @@ models:
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
-        constraints:      
+        constraints:
           - type: not_null
         data_tests:
           - not_null
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
-      
+
       - name: fk_dim_recipes_preselected
         data_type: string
         description: "{{ doc('column__fk_dim_recipes_preselected') }}"
-        constraints:      
+        constraints:
           - type: not_null
         data_tests:
           - not_null
@@ -420,7 +420,7 @@ models:
       - name: signup_salesperson
         data_type: string
         description: "{{ doc('column__signup_salesperson') }}"
-      
+
       - name: billing_agreement_status_name
         data_type: string
         description: "{{ doc('column__billing_agreement_status_name') }}"
@@ -542,7 +542,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-  
+
       - name: onesub_beta_flag
         data_type: string
         description: "{{ doc('column__onesub_beta_flag') }}"
@@ -611,7 +611,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-          
+
 
       - name: preference_name
         data_type: string
@@ -661,7 +661,7 @@ models:
         data_tests:
           - not_null
 
-    versions: 
+    versions:
       - v: 1
 
   - name: bridge_billing_agreements_preferences
@@ -730,7 +730,7 @@ models:
         data_tests:
           - not_null
 
-    versions: 
+    versions:
       - v: 1
 
   - name: fact_billing_agreements_daily
@@ -750,3 +750,88 @@ models:
 
     versions:
       - v: 1
+
+  - name: fact_subscription_quiz
+    description: "Events relating to when a customer updates their subscription."
+    latest_version: 1
+    config:
+      alias: fact_subscription_quiz
+
+    versions:
+      - v: 1
+
+    columns:
+      - name: pk_fact_subscription_quiz
+        data_type: string
+        description: "{{ doc('column__pk_fact_subscription_quiz') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_date_source_created_at_segment
+        data_type: bigint
+        description: "{{ doc('column__fk_dim_date_source_created_at_segment') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: pk_dim_date
+
+      - name: fk_dim_time_source_created_at_segment
+        data_type: string
+        description: "{{ doc('column__fk_dim_time_source_created_at_segment') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_time')
+              field: pk_dim_time
+
+      - name: has_started_subscription_quiz
+        data_type: int
+        description: "{{ doc('column__has_started_subscription_quiz') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: has_completed_subscription_quiz
+        data_type: int
+        description: "{{ doc('column__has_completed_subscription_quiz') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]

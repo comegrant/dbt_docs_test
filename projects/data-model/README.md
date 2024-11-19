@@ -213,7 +213,7 @@ If you want to delete tables in all the `~firstname_lastname`-schemas you can us
 📃 **Model names:** `<source_system>__<source_table_name>(s).sql`
 - All tables that ends with the entity of the table should be end in plural, e.g billing_agreement_order_line contains several order lines, hence the appropriate name is billing_agreement_order_lines
 - If the table is a bridge table it should be plural for both entites that are being linked, otherwise only the last word in the table should be plural.
-- There are some edge cases where the table name should not be plural, this is for instance if the table name is something else than the entity of the table. E.g. tables that end with ledgend shoyld not be plural as it does not contains several legend but is a legend for some type of item.
+- There are some edge cases where the table name should not be plural, this is for instance if the table name is something else than the entity of the table. E.g. tables that end with legend should not be plural as it does not contains several legend but is a legend for some type of item.
 
 ### Intermediate 🏄🏻
 ⭐️ **Purpose:** Performs need transformations to silver tables need before entering the gold layer.

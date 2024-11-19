@@ -47,7 +47,7 @@ The timestamp of when the row was created in the source system.
 
 {% docs column__source_created_by %}
 
-Who created the row in the source system. 
+Who created the row in the source system.
 
 {% enddocs %}
 
@@ -60,5 +60,48 @@ The timestamp of when the row was updated in the source system.
 {% docs column__source_updated_by %}
 
 Who updated the row in the source system.
+
+{% enddocs %}
+
+# Segment Fields
+
+{% docs column__client_device_called_at %}
+
+System field from Segment originially called `originalTimestamp`. Time on the client device when call was invoked or the timestamp value manually passed in through server-side libraries. Used by Segment to calculate timestamp.
+
+Note: originalTimestamp is not useful for analysis since it’s not always trustworthy as it can be easily adjusted and affected by clock skew.
+
+{% enddocs %}
+
+{% docs column__client_device_sent_at %}
+
+System field from Segment originially called `sentAt`. Time on client device when call was sent or sentAt value manually passed in. Used by Segment to calculate timestamp.
+
+Note: sentAt is not useful for analysis since it’s not always trustworthy as it can be easily adjusted and affected by clock skew.
+
+{% enddocs %}
+
+{% docs column__source_recieved_at %}
+
+System field from Segment originially called `recievedAt`. Time on Segment server clock when call was received. Used by Segment to calculate timestamp, and used as sort key in Warehouses.
+
+Note: For max query speed, receivedAt is the recommended timestamp for analysis when chronology does not matter as chronology is not ensured.
+
+{% enddocs %}
+
+{% docs column__source_created_at_segment %}
+
+System field from Segment originially called `timestamp`. alculated by Segment to correct client-device clock skew using the following formula:
+receivedAt - (sentAt - originalTimestamp)
+
+Used by Segment to send to downstream destinations, and used for historical replays.
+
+Note: Recommended timestamp for analysis when chronology does matter.
+
+{% enddocs %}
+
+{% docs column__event_id_segment %}
+
+Unique id created by Segment when an event is sent.
 
 {% enddocs %}

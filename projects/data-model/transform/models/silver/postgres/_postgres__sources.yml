@@ -9,3 +9,11 @@ sources:
       - name: postgres_net_backend_adams__ce_preferences_updated
       - name: postgres_net_backend_linas__ce_preferences_updated
       - name: postgres_net_backend_retnemt__ce_preferences_updated
+      - name: postgres_javascript_adams__update_subscription_step_completed
+      - name: postgres_javascript_lmk__update_subscription_step_completed
+      - name: postgres_javascript_retnemt__update_subscription_step_completed
+      - name: postgres_js__update_subscription_step_completed
+      - name: postgres_javascript_adams__update_subscription_step_viewed
+      - name: postgres_javascript_lmk__update_subscription_step_viewed
+      - name: postgres_javascript_retnemt__update_subscription_step_viewed
+      - name: postgres_js__update_subscription_step_viewed

@@ -37,7 +37,7 @@ The recipe has been selected by the customer.
 
 {% docs column__is_removed_dish %}
 
-The preselected recipe has been removed by the customer. 
+The preselected recipe has been removed by the customer.
 
 {% enddocs %}
 
@@ -148,7 +148,7 @@ The unique id of the rows in Dim Order Types
 
 {% docs column__pk_dim_preferences %}
 
-Primary key of the preferences dimension. It is a composite key of preference_id and company_id. 
+Primary key of the preferences dimension. It is a composite key of preference_id and company_id.
 
 {% enddocs %}
 
@@ -163,5 +163,37 @@ Primary key of the preferences dimension. It is a composite key of preference_id
 {% docs column__billing_agreement_preferences_updated_id %}
 
 ...
+
+{% enddocs %}
+
+# Fact Subscription Quiz
+
+{% docs column__pk_fact_subscription_quiz %}
+
+Primary key of the fact subscription quiz table. It is a composite key of segment_event_id, segment_updated_at, billing_agreement_id, company_id, has_started_subscription_quiz and has_completed_subscription_quiz.
+
+{% enddocs %}
+
+{% docs column__fk_dim_date_source_created_at_segment %}
+
+Foreign key that is used to relate the created at timestamp from Segment to Dim Date.
+
+{% enddocs %}
+
+{% docs column__fk_dim_time_source_created_at_segment %}
+
+Foreign key that is used to relate the created at timestamp from Segment to Dim Time.
+
+{% enddocs %}
+
+{% docs column__has_started_subscription_quiz %}
+
+The customer has started the subscription quiz to update their subscription preferences, size, and portions.
+
+{% enddocs %}
+
+{% docs column__has_completed_subscription_quiz %}
+
+The customer has completed the subscription quiz to update their subscription preferences, size, and portions.
 
 {% enddocs %}
