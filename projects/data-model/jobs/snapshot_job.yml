@@ -3,6 +3,8 @@ resources:
     snapshot_job:
       name: snapshot_job
 
+      timeout_seconds: 1200 #Timeout after 20 mins
+
       schedule:
        #Run every day every second hour between 3 and 21 (utc)
        quartz_cron_expression: 0 30 3-21/2 ? * * *

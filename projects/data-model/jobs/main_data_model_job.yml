@@ -4,6 +4,7 @@ resources:
       name: main-data-model-job
 
       max_retries: 1
+      timeout_seconds: 3000 #Timeout after 50 mins
       edit_mode: EDITABLE
 
       schedule:
