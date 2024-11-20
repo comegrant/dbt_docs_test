@@ -182,7 +182,7 @@ async def run() -> None:
         sink=databricks_catalog(environment).schema("mloutputs").table("preselector_batch")
     )
 
-    if write_mode is None or write_mode == "gl":
+    if write_mode is None or write_mode == "dl":
         writer = MultipleWriter([
             PreselectorResultWriter(company_id),
             db_source
