@@ -71,6 +71,7 @@ class PreselectorYearWeekResponse(BaseModel):
     target_cost_of_food_per_recipe: float
     quarantined_recipe_ids: Annotated[list[int] | None, Field] = None
     generated_recipe_ids: Annotated[dict[int, int] | None, Field] = None
+    error_vector: Annotated[dict[str, float] | None, Field] = None
 
 
 class PreselectorSuccessfulResponse(BaseModel):

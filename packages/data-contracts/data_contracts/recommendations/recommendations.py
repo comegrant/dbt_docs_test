@@ -62,15 +62,6 @@ class RecommendatedDish:
         # .estemating_rank(behavioral_ratings.rating)
     )
 
-
-PartitionedRecommendations = RecommendatedDish.as_view_wrapper().with_schema(
-    name="partitioned_recommendations",
-    source=RecommendatedDish.as_source(),
-    materialized_source=recommendations_dir.partitioned_parquet_at(
-        "partitioned_recommended_recipes", partition_keys=["company_id", "year", "week"]
-    ),
-)
-
 rec_engine = RecommendatedDish()
 
 

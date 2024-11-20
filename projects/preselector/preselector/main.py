@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from math import log2
-from typing import Annotated
+from typing import Annotated, Optional
 
 import numpy as np
 import polars as pl
@@ -45,6 +45,7 @@ from preselector.data.models.customer import (
     PreselectorYearWeekResponse,
 )
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
+from preselector.schemas.output import PreselectorWeekOutput
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,8 @@ def select_next_vector(
     columns: list[str],
     exclude_column: str = "basket_id",
     rename_column: str = "recipe_id",
-    explain_based_on_current: pl.DataFrame | None = None
+    explain_based_on_current: pl.DataFrame | None = None,
+    error_column: str | None = None
 ) -> pl.DataFrame:
     """
     Selects the vector that is closest to the target vector
@@ -91,27 +93,19 @@ def select_next_vector(
         columns (list[str]): The feature located at the vector indexes
         exclude_column (str): The column to exclude in the computations. E.g. IDs
         rename_column (str): What to name the exclude column in the response
+        error_column (str | None): The colum where we return all the errors for each dim
 
     Returns:
         pl.DataFrame: The vector that is closes to the target.
     """
-    distance = (
-        potential_vectors.select(pl.exclude(exclude_column))
-        .select(columns)
-        .transpose()
-        .lazy()
-        .select(
-            ((pl.all() - target_vector) * 10 * importance_vector)
-            # Need to fill with 0 to avoid a nan sum
-            # Which would lead to picking the first recipe in the list
-            .fill_null(0)
-            .fill_nan(0)
-            .pow(2)
-            # Using sum, as it is faster than mean and lead to the same result
-            .sum()
-        )
-        .collect()
-        .transpose()
+
+    error_expression = (
+        ((pl.all() - target_vector) * 10 * importance_vector)
+        # Need to fill with 0 to avoid a nan sum
+        # Which would lead to picking the first recipe in the list
+        .fill_null(0)
+        .fill_nan(0)
+        .pow(2)
     )
 
     if explain_based_on_current is not None:
@@ -122,14 +116,7 @@ def select_next_vector(
             .select(columns)
             .transpose()
             .lazy()
-            .select(
-                ((pl.all() - target_vector) * 10 * importance_vector)
-                # Need to fill with 0 to avoid a nan sum
-                # Which would lead to picking the first recipe in the list
-                .fill_null(0)
-                .fill_nan(0)
-                .pow(2)
-            )
+            .select(error_expression)
             .collect()
             .transpose()
             .rename(lambda col: columns[int(col.split("_")[1])])
@@ -186,13 +173,42 @@ def select_next_vector(
         st.write("Current basket vector")
         st.write(top_vectors.head(1))
 
+    if error_column:
+        return (
+            potential_vectors.select(pl.exclude(exclude_column))
+            .select(columns)
+            .transpose()
+            .lazy()
+            .select(error_expression)
+            .collect()
+            .transpose()
+            .rename(lambda col: columns[int(col.split("_")[1])])
+            .with_columns(
+                pl.sum_horizontal(columns).alias("total_error"),
+                potential_vectors[exclude_column].alias(rename_column),
+                pl.struct(pl.col(columns)).alias(error_column)
+            )
+            .sort("total_error", descending=False)
+            .head(1)
+        )
+    else:
+        distance = (
+            potential_vectors.select(pl.exclude(exclude_column))
+            .select(columns)
+            .transpose()
+            .lazy()
+            .select(error_expression.sum())
+            .collect()
+            .transpose()
+        )
+        distance = potential_vectors.with_columns(
+            distance=distance["column_0"]
+        ).sort("distance", descending=False).limit(1)
 
-    distance = potential_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
-
-    return distance.select(
-        pl.exclude(["distance", exclude_column]),
-        pl.col(exclude_column).alias(rename_column),
-    )
+        return distance.select(
+            pl.exclude(["distance", exclude_column]),
+            pl.col(exclude_column).alias(rename_column),
+        )
 
 
 async def compute_vector(
@@ -223,8 +239,9 @@ async def find_best_combination(
     recipe_embeddings: Annotated[pl.DataFrame, RecipeEmbedding],
     number_of_recipes: int,
     preselected_recipe_ids: list[int] | None = None,
-    should_explain: bool = True
-) -> tuple[list[int], Annotated[dict, "Soft preference error"]]:
+    should_explain: bool = True,
+    should_return_error: bool = False
+) -> tuple[list[int], Annotated[Optional[dict[str, float]], "Soft preference error"]]:
 
     final_combination = pl.DataFrame()
 
@@ -354,7 +371,13 @@ async def find_best_combination(
         if feat.tags and PreselectorTags.binary_metric in feat.tags
     ]
 
-    for _ in range(n_recipes_to_add):
+    # Just to fix a type error
+    next_vector = pl.DataFrame()
+    error_column: str | None = None
+    if should_return_error:
+        error_column = "dim_errors"
+
+    for index in range(n_recipes_to_add):
 
         # For a five recipe selection on the first run
         # log(1.2) => 0.26
@@ -377,7 +400,8 @@ async def find_best_combination(
                 for feat in binary_features
             ]).transpose().to_series(),
             columns,
-            explain_based_on_current=current_vector
+            explain_based_on_current=current_vector,
+            error_column=error_column if index == n_recipes_to_add - 1 else None
         )
 
         selected_recipe_id = next_vector[0, "recipe_id"]
@@ -431,7 +455,10 @@ async def find_best_combination(
 
         st.write(final_combination.to_pandas())
 
-    return (final_combination["main_recipe_id"].to_list(), dict())
+    return (
+        final_combination["main_recipe_id"].to_list(),
+        next_vector[error_column].to_list()[0] if error_column else None
+    )
 
 
 @feature_view(
@@ -1080,6 +1107,8 @@ async def run_preselector_for_request(
 
 
     failed_weeks: list[PreselectorFailure] = []
+
+    # main_recipe_id: year_week it was last ordered
     generated_recipe_ids: dict[int, int] = request.ordered_weeks_ago or {}
 
     for yearweek in request.compute_for:
@@ -1192,7 +1221,7 @@ async def run_preselector_for_request(
         logger.debug("Running preselector")
         try:
             with duration("running-preselector"):
-                selected_recipe_ids, compliance = await run_preselector(
+                output = await run_preselector(
                     request,
                     menu,
                     recommendations,
@@ -1203,6 +1232,7 @@ async def run_preselector_for_request(
                     could_be_weight_watchers=could_be_ww,
                     should_explain=should_explain
                 )
+                selected_recipe_ids = output.main_recipe_ids
         except (AssertionError, ValueError) as e:
             logger.exception(e)
             failed_weeks.append(
@@ -1245,10 +1275,11 @@ async def run_preselector_for_request(
             portion_size=request.portion_size,
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
-            compliancy=compliance,
+            compliancy=output.compliancy,
             target_cost_of_food_per_recipe=cof_target_value,
             quarantined_recipe_ids=None,
-            generated_recipe_ids=generated_recipe_ids
+            generated_recipe_ids=generated_recipe_ids,
+            error_vector=output.error_vector
         )
 
         for main_recipe_id in selected_recipe_ids:
@@ -1441,7 +1472,7 @@ async def run_preselector(
     selected_recipes: dict[int, int],
     could_be_weight_watchers: bool,
     should_explain: bool = False,
-) -> tuple[list[int], PreselectorPreferenceCompliancy]:
+) -> PreselectorWeekOutput:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
 
@@ -1468,11 +1499,15 @@ async def run_preselector(
     logger.debug(f"Filtering based on portion size done: {recipes.height}")
 
     if recipes.is_empty():
-        return ([], compliance)
+        return PreselectorWeekOutput([], compliance, None)
 
     # Singlekassen
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
-        return (recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance)
+        return PreselectorWeekOutput(
+            recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(),
+            compliance,
+            None
+        )
 
 
     year = recipes["menu_year"].max()
@@ -1503,7 +1538,11 @@ async def run_preselector(
             pl.col("is_weight_watchers")
         )
         if filtered.height >= customer.number_of_recipes:
-            return (filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance)
+            return PreselectorWeekOutput(
+                filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
+                compliance,
+                None
+            )
         else:
             available_ww_recipes = filtered["main_recipe_id"].to_list()
             logger.error(
@@ -1559,9 +1598,10 @@ async def run_preselector(
             f"Most likely due to missing features in recipes: ({recipes_of_interest}) "
             f"In portion size {customer.portion_size}"
         )
-        return (
+        return PreselectorWeekOutput(
             recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
-            compliance
+            compliance,
+            None
         )
 
     if should_explain:
@@ -1600,19 +1640,20 @@ async def run_preselector(
 
     if recipe_features.height <= customer.number_of_recipes:
         logger.error(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
-        return (
+        return PreselectorWeekOutput(
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
-            compliance
+            compliance,
+            None
         )
 
-
-    recipe_features = await add_ordered_since_feature(
-        customer,
-        store,
-        recipe_features,
-        year_week=year * 100 + week, # type: ignore
-        selected_recipes=selected_recipes
-    )
+    with duration("compute-ordered-since"):
+        recipe_features = await add_ordered_since_feature(
+            customer,
+            store,
+            recipe_features,
+            year_week=year * 100 + week, # type: ignore
+            selected_recipes=selected_recipes
+        )
 
     with duration("load-recipe-embeddings"):
         recipe_embeddings = await store.model(RecipeEmbedding).predictions_for(
@@ -1639,17 +1680,24 @@ async def run_preselector(
     )
 
     with duration("find-best-combination"):
-        best_recipe_ids, _ = await find_best_combination(
+        best_recipe_ids, error = await find_best_combination(
             target_vector,
             importance_vector,
             recipe_features,
             recipe_embeddings=recipe_embeddings,
             number_of_recipes=customer.number_of_recipes,
             preselected_recipe_ids=preselected_recipes,
-            should_explain=should_explain
+            should_explain=should_explain,
+            should_return_error=True
         )
 
-    return (
-        best_recipe_ids,
-        compliance,
+    if should_explain and error is not None:
+        import streamlit as st
+        st.write("Error Vector:")
+        st.write(error)
+
+    return PreselectorWeekOutput(
+        main_recipe_ids=best_recipe_ids,
+        compliancy=compliance,
+        error_vector=error
     )

@@ -1,0 +1,12 @@
+version: '3'
+services:
+  key-vault-test:
+    image: key-vault-key-vault-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/key-vault/Dockerfile
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/packages/key-vault
+    profiles: ["test"]

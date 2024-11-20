@@ -1,0 +1,18 @@
+---
+name: CI packages/key-vault
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/ci_key_vault.yml'
+      - 'packages/key-vault/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  ci-libs-key-vault:
+    uses:
+      ./.github/workflows/python_reusable.yml
+    with:
+      working-directory: packages/key-vault
+    secrets: inherit

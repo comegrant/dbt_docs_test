@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "key_vault"
+version = "0.1.0"
+description = "A package to simplify how to load key vault values into a python application"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "key_vault"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+azure-keyvault-secrets = "^4.8.0"
+azure-identity = "*"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

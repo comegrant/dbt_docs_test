@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, TypeVar
 
 from aligned import ContractStore
+from aligned.feature_source import BatchDataSource
 from aligned.streams.interface import SinakableStream
 from aligned.streams.redis import RedisStream
 from azure.servicebus import (
@@ -16,6 +17,7 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.message import PrimitiveTypes
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
+from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import Preselector
 from data_contracts.sql_server import SqlServerConfig
 from pydantic import BaseModel, ValidationError
@@ -154,6 +156,7 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
                 logger.error(f"Unable to decode {body} - {error}")
                 receiver.abandon_message(msg)
 
+        logger.debug(f"Read {len(messages)} from service bus")
         return messages
 
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
@@ -283,12 +286,24 @@ class PreselectorResultWriter(WritableStream):
     company_id: str
 
     store: ContractStore = field(default_factory=lambda: Preselector.query().store)
+    sink: BatchDataSource | None = field(default=None)
+    error_features: list[str] | None = field(default=None)
 
     async def write(self, data: BaseModel) -> None:
         await self.batch_write([data])
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         import polars as pl
+        from aligned.schemas.feature import StaticFeatureTags
+
+        if self.error_features is None:
+            self.error_features = [
+                feat.name for feat
+                in BasketFeatures.query().request.all_returned_features
+                if StaticFeatureTags.is_entity not in (feat.tags or [])
+            ]
+
+        assert self.error_features is not None
 
         mapped_data = [
             row.model_dump(
@@ -306,8 +321,26 @@ class PreselectorResultWriter(WritableStream):
             for row in data
             if isinstance(row, PreselectorSuccessfulResponse)
         ]
-        df = pl.DataFrame(mapped_data)
 
+        year_week_struct = pl.List(pl.Struct({
+            "year": pl.Int16,
+            "week": pl.Int16,
+            "portion_size": pl.Int16,
+            "variation_ids": pl.List(pl.String),
+            "main_recipe_ids": pl.List(pl.Int32),
+            "compliancy": pl.Int8,
+            "target_cost_of_food_per_recipe": pl.Float32,
+            "error_vector": pl.Struct({
+                feat: pl.Float32
+                for feat in self.error_features
+            })
+        }))
+        df = pl.DataFrame(
+            mapped_data,
+            schema_overrides={
+                "year_weeks": year_week_struct
+            }
+        )
         if df.is_empty():
             return
 
@@ -316,8 +349,16 @@ class PreselectorResultWriter(WritableStream):
             .unnest("year_weeks")
             .with_columns(company_id=pl.lit(self.company_id))
         )
+
         request = self.store.feature_view(Preselector).request
         features = request.all_returned_columns
+
+        if self.sink is not None:
+            self.store = self.store.update_source_for(
+                Preselector.location,
+                self.sink
+            )
+
         try:
             await self.store.upsert_into(
                 Preselector.location, df.select(features)

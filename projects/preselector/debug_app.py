@@ -173,9 +173,10 @@ async def debug_app() -> None:
         return (failed[-1], [])
 
 
-    response = await failed_responses()
+    response = await successful_responses()
     if response is None:
         return
+
 
     request, expected_recipes = response
 

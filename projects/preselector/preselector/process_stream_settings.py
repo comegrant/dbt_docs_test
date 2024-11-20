@@ -22,3 +22,15 @@ class ProcessStreamSettings(BaseSettings):
     service_bus_should_write: bool = Field(True)
 
     ideal_poll_interval: float = Field(5)
+
+    @property
+    def environment(self) -> str:
+        if not self.service_bus_namespace:
+            return "unknown"
+
+        if "prod" in self.service_bus_namespace:
+            return "prod"
+        elif "qa" in self.service_bus_namespace:
+            return "test"
+        else:
+            return "unknown"

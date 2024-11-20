@@ -17,7 +17,7 @@ from aligned.schemas.feature_view import RetrivalRequest
 from project_owners.owner import Owner
 
 from data_contracts.mealkits import DefaultMealboxRecipes
-from data_contracts.sources import adb, adb_ml, materialized_data
+from data_contracts.sources import adb, adb_ml, databricks_config, materialized_data
 from data_contracts.user import UserSubscription
 
 flex_dish_id = "CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1"
@@ -95,6 +95,38 @@ class HistoricalRecipeOrders:
     )
     did_make_dish = rating != 0
 
+current_selection_sql = """SELECT
+    estimations.billing_agreement_id as agreement_id,
+    estimations.company_id,
+    menus.recipe_id,
+    estimations.menu_week as week,
+    estimations.menu_year as year,
+    coalesce(recipes.main_recipe_id, recipes.recipe_id) as main_recipe_id
+FROM gold.fact_estimations estimations
+INNER JOIN gold.fact_menus menus
+  ON estimations.fk_dim_products = menus.fk_dim_products
+  AND estimations.fk_dim_date_menu_week = menus.fk_dim_date
+INNER JOIN gold.dim_recipes recipes
+  ON menus.fk_dim_recipes = recipes.pk_dim_recipes
+WHERE estimations.is_latest_estimation
+  AND estimations.menu_year * 100 + estimations.menu_week >= 202446"""
+
+@feature_view(
+    name="current_selected_recipes",
+    source=databricks_config.sql(current_selection_sql),
+    materialized_source=materialized_data.partitioned_parquet_at(
+        "current_selected_recipes",
+        partition_keys=["company_id"]
+    )
+)
+class CurrentSelectedRecipes:
+    agreement_id = Int32().as_entity()
+    recipe_id = Int32().as_entity()
+    company_id = String().as_entity()
+    week = Int32()
+    year = Int32()
+    main_recipe_id = Int32()
+
 
 async def quarantined_recipes(
     request: RetrivalRequest, store: ContractStore | None = None
@@ -114,8 +146,13 @@ async def quarantined_recipes(
     orders = await query(HistoricalRecipeOrders).filter(
         today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week")
     ).to_polars()
+    current_selection = await query(CurrentSelectedRecipes).all().to_polars()
 
-    return orders.with_columns(
+    subset = orders.select(current_selection.columns)
+
+    return subset.vstack(
+        current_selection.cast(subset.schema) # type: ignore
+    ).with_columns(
         year_week=pl.col("year") * 100 + pl.col("week")
     ).group_by(["agreement_id", "company_id", "main_recipe_id"]).agg(
         pl.col("year_week").max().alias("last_order_year_week")
@@ -126,7 +163,7 @@ async def quarantined_recipes(
     name="weeks_since_recipe",
     source=CustomMethodDataSource.from_load(
         quarantined_recipes,
-        depends_on={ HistoricalRecipeOrders.location }
+        depends_on={ HistoricalRecipeOrders.location, CurrentSelectedRecipes.location }
     ),
     materialized_source=materialized_data.partitioned_parquet_at(
         "weeks_since_recipe",
@@ -147,6 +184,9 @@ class WeeksSinceRecipe:
             6 - (pl.col("from_year_week") - pl.col("last_order_year_week"))
         ).clip(lower_bound=1).log(2) / pl.lit(6).log(2)
     )
+
+
+
 
 deviation_sql = """SELECT
     r.recipe_id,

@@ -25,6 +25,7 @@ dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
 dbutils.widgets.text("batch_write_interval", defaultValue="1000")
+dbutils.widgets.text("write_mode", defaultValue="dl")
 
 environment = dbutils.widgets.get("environment")
 
@@ -36,11 +37,11 @@ assert environment != ""
 os.environ["DATALAKE_ENV"] = environment
 
 
-from data_contracts.sources import adb
+from data_contracts.sources import adb, databricks_catalog
 from preselector.process_stream import load_cache, process_stream_batch
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
-from preselector.stream import CustomWriter, PreselectorResultWriter, SqlServerStream
+from preselector.stream import CustomWriter, MultipleWriter, PreselectorResultWriter, SqlServerStream
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     scope="auth_common",
@@ -56,6 +57,7 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
     key="azure-storageAccount-experimental-key",
 )
 
+write_mode = dbutils.widgets.get("write_mode")
 company_id = dbutils.widgets.get("company_id")
 assert company_id, "Need a company id to run"
 batch_write_interval = int(dbutils.widgets.get("batch_write_interval"))
@@ -175,11 +177,26 @@ async def run() -> None:
             if req.error_code > 100: # noqa: PLR2004
                 raise ValueError(f"The preselector failed with an unknown error code: {data}")
 
+    db_source = PreselectorResultWriter(
+        company_id,
+        sink=databricks_catalog(environment).schema("mloutputs").table("preselector_batch")
+    )
+
+    if write_mode is None or write_mode == "gl":
+        writer = MultipleWriter([
+            PreselectorResultWriter(company_id),
+            db_source
+        ])
+    elif write_mode == "db":
+        writer = db_source
+    else:
+        writer = PreselectorResultWriter(company_id)
+
     store = await load_cache(store, company_id=company_id)
     await process_stream_batch(
         store,
         stream=read_stream,
-        successful_output_stream=PreselectorResultWriter(company_id),
+        successful_output_stream=writer,
         failed_output_stream=CustomWriter(failed_requests),
         write_batch_interval=batch_write_interval,
     )

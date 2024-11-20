@@ -5,6 +5,7 @@ from aligned import (
     FeatureStore,
     Float,
     Int32,
+    Json,
     List,
     String,
     Timestamp,
@@ -27,7 +28,7 @@ from data_contracts.recipe import (
     RecipeNegativePreferences,
     RecipePreferences,
 )
-from data_contracts.recommendations.recommendations import PartitionedRecommendations
+from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import data_science_data_lake, redis_cluster
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
@@ -80,11 +81,11 @@ class PreselectorTestChoice:
             OneSubMealkits.location,
             RecipeEmbedding.location,
             WeeksSinceRecipe.location,
+            RecommendatedDish.location,
             CostOfFoodPerMenuWeek.location,
             RecipeNegativePreferences.location,
             RecipeMainIngredientCategory.location,
             MenuWeekRecipeNormalization.location,
-            PartitionedRecommendations.location,
             NormalizedRecipeFeatures.location,
             PreselectorYearWeekMenu.location,
             PredefinedVectors.location,
@@ -117,9 +118,13 @@ class Preselector:
         ]
     )
 
+    error_vector = Json().is_optional()
     main_recipe_ids = List(Int32().lower_bound(1000))
     variation_ids = List(String())
     generated_at = EventTimestamp()
+    compliancy = Int32().lower_bound(0).upper_bound(4)
+    concept_preference_ids = List(String())
+    taste_preferences = List(Json())
     model_version = String()
     "The git hash of the program"
 

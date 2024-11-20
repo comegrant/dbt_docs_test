@@ -11,9 +11,15 @@ from data_contracts.preselector.menu import CostOfFoodPerMenuWeek
 from data_contracts.preselector.store import Preselector
 from data_contracts.recipe import RecipeCost
 from preselector.store import preselector_store
+from pydantic import SecretStr
+from pydantic_settings import BaseSettings
 from streamlit.delta_generator import DeltaGenerator
 from tabs.tabs import tab_index
 
+
+class CostOfFoodConfig(BaseSettings):
+    datalake_service_account_name: str
+    datalake_storage_account_key: SecretStr
 
 def format_number(number: float) -> str:
     return f"{number:,.0f}".replace(",", " ")

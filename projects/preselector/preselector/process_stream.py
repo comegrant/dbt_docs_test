@@ -19,7 +19,8 @@ from cheffelo_logging import DataDogConfig
 from cheffelo_logging.logging import DataDogStatsdConfig
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
-from data_contracts.recipe import RecipeEmbedding
+from data_contracts.recipe import RecipeEmbedding, RecipeNegativePreferences
+from data_contracts.recommendations.recommendations import RecommendatedDish
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -181,7 +182,12 @@ async def load_cache(
 
     depends_on = store.feature_view("preselector_output").view.source.depends_on()
 
-    partition_recs = cache_dir.parquet_at(f"{company_id}/recommendations.parquet")
+    partition_recs = cache_dir.partitioned_parquet_at(
+        f"{company_id}/recs",
+        partition_keys=[
+            "year", "week"
+        ]
+    )
 
     cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
         (
@@ -200,7 +206,7 @@ async def load_cache(
             (pl.col("year") >= today.year) & (pl.col("company_id") == company_id),
         ),
         (
-            FeatureLocation.feature_view("partitioned_recommendations"),
+            RecommendatedDish.location,
             partition_recs,
             (pl.col("company_id") == company_id)
             & (pl.col("year") >= today.year)
@@ -220,6 +226,11 @@ async def load_cache(
             RecipeEmbedding.location,
             cache_dir.parquet_at(f"{company_id}/recipe_embeddings.parquet"),
             pl.col("company_id") == company_id
+        ),
+        (
+            RecipeNegativePreferences.location,
+            cache_dir.partitioned_parquet_at("recipe_negative_preferences", partition_keys=["portion_size"]),
+            None
         )
     ]
 
@@ -239,8 +250,6 @@ async def load_cache(
     ]
 
     store = await load_cache_for(store, load_for)
-    store = store.update_source_for(FeatureLocation.model("rec_engine"), partition_recs)
-
     return store
 
 

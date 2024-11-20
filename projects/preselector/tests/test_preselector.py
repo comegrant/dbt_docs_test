@@ -58,7 +58,7 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
             del dummy_store.feature_source.sources[loc.identifier]
 
 
-    main_recipe_ids, _ = await run_preselector(
+    output = await run_preselector(
         customer=GenerateMealkitRequest(
             agreement_id=0,
             company_id="some-id",
@@ -95,7 +95,7 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
         could_be_weight_watchers=False
     )
 
-    assert len(main_recipe_ids) == number_of_recipes
+    assert len(output.main_recipe_ids) == number_of_recipes
 
 
 @pytest.mark.asyncio()
@@ -133,7 +133,7 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
     )
 
 
-    main_recipe_ids, _ = await run_preselector(
+    output = await run_preselector(
         customer=GenerateMealkitRequest(
             agreement_id=1,
             company_id="some-id",
@@ -170,7 +170,7 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
         could_be_weight_watchers=False
     )
 
-    assert len(main_recipe_ids) == number_of_recipes
+    assert len(output.main_recipe_ids) == number_of_recipes
 
 @pytest.mark.asyncio()
 async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:

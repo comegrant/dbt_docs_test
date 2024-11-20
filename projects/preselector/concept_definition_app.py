@@ -402,7 +402,7 @@ async def view_mealkit(
         )
 
     with st.spinner("Loading recipe info"):
-        recipe_info = await cached_recipe_info(output[0], year=year, week=week)
+        recipe_info = await cached_recipe_info(output.main_recipe_ids, year=year, week=week)
 
     mealkit(recipe_info, st) # type: ignore
 

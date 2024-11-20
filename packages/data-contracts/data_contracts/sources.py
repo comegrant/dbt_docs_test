@@ -25,7 +25,6 @@ recommendations_dir = data_science_data_lake.directory("recommendations")
 
 
 local_mssql = SqlServerConfig("LOCAL_SQL", schema="dbo")
-
 adb = SqlServerConfig("ADB_CONNECTION")
 pim_core = SqlServerConfig("CORE_PIM_CONNECTION")
 
@@ -33,8 +32,8 @@ adb_ml = adb.with_schema("ml")
 adb_ml_output = adb.with_schema("ml_output")
 
 redis_cluster = RedisConfig("REDIS_URL")
-
 segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
+databricks_config = DatabricksConnectionConfig.on_databricks_only()
 
 def databricks_catalog(catalog: str | None = None) -> UnityCatalog:
     import os
@@ -42,7 +41,7 @@ def databricks_catalog(catalog: str | None = None) -> UnityCatalog:
     if catalog is None:
         catalog = os.getenv("UC_ENV", "dev")
 
-    return DatabricksConnectionConfig.on_databricks_only().catalog(catalog)
+    return databricks_config.catalog(catalog)
 
 def ml_features(catalog: str | None = None) -> UnityCatalogSchema:
     return databricks_catalog(catalog).schema("mlfeatures")

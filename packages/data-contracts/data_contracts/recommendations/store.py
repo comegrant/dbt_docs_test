@@ -1,7 +1,7 @@
 from aligned import FeatureStore
 from aligned.compiler.model import ModelContractWrapper
 from aligned.feature_view.feature_view import FeatureViewWrapper
-from data_contracts.orders import WeeksSinceRecipe
+from data_contracts.orders import CurrentSelectedRecipes, WeeksSinceRecipe
 from data_contracts.preselector.basket_features import BasketFeatures, HistoricalCustomerMealkitFeatures
 from data_contracts.recipe import (
     AllRecipeIngredients,
@@ -50,7 +50,6 @@ def recommendation_feature_contracts() -> FeatureStore:
         RecipeTaxonomies,
     )
     from data_contracts.recommendations.recommendations import (
-        PartitionedRecommendations,
         PresentedRecommendations,
         RecipeCluster,
         RecommendatedDish,
@@ -84,7 +83,6 @@ def recommendation_feature_contracts() -> FeatureStore:
         HistoricalCustomerMealkitFeatures,
         TargetVectors,
         ImportanceVector,
-        PartitionedRecommendations,
         OneSubMealkits,
         IngredientCategories,
         RecipeMainIngredientCategory,
@@ -94,6 +92,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         RawIngredientCategories,
         BasketFeatures,
         UserCompletedQuiz,
+        CurrentSelectedRecipes,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,

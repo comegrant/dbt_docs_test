@@ -2,8 +2,10 @@ import os
 from datetime import datetime
 
 import pytest
+from aligned.schemas.feature import StaticFeatureTags
 from aligned.sources.in_mem_source import InMemorySource
 from aligned.sources.redis import RedisStreamSource
+from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import Preselector
 from preselector.data.models.customer import (
     PreselectorPreferenceCompliancy,
@@ -76,6 +78,13 @@ async def test_write_to_preselector_batch_output() -> None:
         Preselector.location, source
     )
 
+    features = [
+        feat.name
+        for feat
+        in BasketFeatures.query().request.all_returned_features
+        if StaticFeatureTags.is_entity not in (feat.tags or [])
+    ]
+
     write = PreselectorResultWriter("test", store=store)
     example_output = PreselectorSuccessfulResponse(
         agreement_id=1,
@@ -88,7 +97,11 @@ async def test_write_to_preselector_batch_output() -> None:
                 variation_ids=["abc", "bca"],
                 main_recipe_ids=[1, 2],
                 compliancy=PreselectorPreferenceCompliancy.all_complient,
-                target_cost_of_food_per_recipe=39
+                target_cost_of_food_per_recipe=39,
+                error_vector={
+                    feat: 0.83
+                    for feat in features[:10]
+                }
             ),
             PreselectorYearWeekResponse(
                 year=2024,
@@ -97,7 +110,15 @@ async def test_write_to_preselector_batch_output() -> None:
                 variation_ids=["abc", "bca"],
                 main_recipe_ids=[1, 2],
                 compliancy=PreselectorPreferenceCompliancy.all_complient,
-                target_cost_of_food_per_recipe=39
+                target_cost_of_food_per_recipe=39,
+                error_vector={
+                    feat: 0.83
+                    for feat in features
+                },
+                generated_recipe_ids={
+                    1: 202453,
+                    2: 202442,
+                }
             )
         ],
         number_of_recipes=4,
@@ -114,3 +135,4 @@ async def test_write_to_preselector_batch_output() -> None:
     await write.batch_write([example_output])
 
     assert source.data.height == 2, f"Expected two row in the source, got {source.data.height}"
+    assert not source.data["error_vector"].has_nulls()

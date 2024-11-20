@@ -44,6 +44,8 @@ class DatabricksConnectionConfig:
         from databricks.connect.session import DatabricksSession
         return DatabricksSession.builder.host(self.host).token(self.token).clusterId(self.cluster_id).getOrCreate()
 
+    def sql(self, query: str) -> 'UCSqlSource':
+        return UCSqlSource(self, query)
 
 @dataclass
 class UnityCatalog:
@@ -53,6 +55,9 @@ class UnityCatalog:
 
     def schema(self, schema: str) -> 'UnityCatalogSchema':
         return UnityCatalogSchema(self.config, self.catalog, schema)
+
+    def sql(self, query: str) -> 'UCSqlSource':
+        return UCSqlSource(self.config, query)
 
 
 @dataclass
@@ -87,6 +92,71 @@ class UnityCatalogTableConfig:
 
 class DatabricksSource:
     config: DatabricksConnectionConfig
+
+
+@dataclass
+class UCSqlSource(CodableBatchDataSource, DatabricksSource):
+
+    config: DatabricksConnectionConfig
+    query: str
+
+    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+        client = self.config.connection()
+
+        async def load() -> pl.LazyFrame:
+            spark_df = client.sql(self.query)
+
+            if limit:
+                spark_df = spark_df.limit(limit)
+
+            return pl.from_pandas(spark_df.toPandas()).lazy()
+
+        return RetrivalJob.from_lazy_function(load, request)
+
+    def all_between_dates(
+        self,
+        request: RetrivalRequest,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> RetrivalJob:
+        raise NotImplementedError(type(self))
+
+    @classmethod
+    def multi_source_features_for( # type: ignore
+        cls: type['UCSqlSource'],
+        facts: RetrivalJob,
+        requests: list[tuple['UCSqlSource', RetrivalRequest]]
+    ) -> RetrivalJob:
+        raise NotImplementedError(cls)
+
+
+    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+        return type(self).multi_source_features_for(facts, [(self, request)])
+
+    async def schema(self) -> dict[str, FeatureType]:
+        """Returns the schema for the data source
+
+        ```python
+        source = FileSource.parquet_at('test_data/titanic.parquet')
+        schema = await source.schema()
+        >>> {'passenger_id': FeatureType(name='int64'), ...}
+        ```
+
+        Returns:
+            dict[str, FeatureType]: A dictionary containing the column name and the feature type
+        """
+        raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
+
+    async def freshness(self, feature: Feature) -> datetime | None:
+        """
+        my_table_freshenss = await (PostgreSQLConfig("DB_URL")
+            .table("my_table")
+            .freshness()
+        )
+        """
+        raise NotImplementedError(type(self))
+
+
 
 @dataclass
 class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
@@ -322,7 +392,27 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         df.write.mode("append").saveAsTable(self.table.identifier())
 
     async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        raise NotImplementedError(type(self))
+        conn = self.config.connection()
+
+        target_table = self.table.identifier()
+
+        if not conn.catalog.tableExists(target_table):
+            await self.insert(job, request)
+        else:
+            entities = request.entity_names
+            on_statement = " AND ".join([
+                f"target.{ent} = source.{ent}" for ent in entities
+            ])
+            df = conn.createDataFrame(await job.unique_entities().to_pandas())
+            temp_table = "new_values"
+            df.createOrReplaceTempView(temp_table)
+            conn.sql(f"""MERGE INTO {target_table} AS target
+USING {temp_table} AS source
+ON {on_statement}
+WHEN MATCHED THEN
+  UPDATE SET *
+WHEN NOT MATCHED THEN
+  INSERT *""")
 
 
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:

@@ -437,8 +437,6 @@ async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> Non
         if company == "godtlevert":
             name = "preselector-gl-worker"
 
-        name += f"-{env}"
-        logger.info(name)
 
 
         if deploy_additional_workers:
@@ -450,6 +448,9 @@ async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> Non
                 company=company
             )
         else:
+            name += f"-{env}"
+            logger.info(name)
+
             await deploy_preselector(
                 name=name,
                 company=company,
