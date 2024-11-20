@@ -339,6 +339,21 @@ resource "databricks_permissions" "token_usage" {
     group_name = databricks_group.service-principals.display_name
     permission_level = "CAN_USE"
   }
+
+  access_control {
+    group_name = "data-engineers"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-analysts"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-scientists"
+    permission_level = "CAN_USE"
+  }
 }
 
 provider "databricks" {
