@@ -1,72 +1,103 @@
 {
     "name": "CheffeloTemplate",
-        "dataColors": ["#A894EB","#36C7E4", "#F8C243", "#7ACD86","#B59077", "#F17EDC"],
-        "firstLevelElements": "#252423",
-        "secondLevelElements": "#605E5C",
-        "thirdLevelElements": "#F3F2F1",
-        "fourthLevelElements": "#B3B0AD",
-        "background": "#FFFFFF",
-        "good": "#64c633",
-        "neutral": "#ebc32e",
-        "bad": "#ec1e1e",
-      "textClasses": {
-            "callout": {
-                "fontSize": 45,
-                "fontFace": "Segoe UI Semibold",
-                "color": "#252423"
-            },
-            "title": {
-                "fontSize": 18,
-                "fontFace": "Segoe UI",
-                "color": "#252423"
-            },
-            "header": {
-                "fontSize": 13,
-                "fontFace": "Segoe UI Semibold",
-                "color": "#252423"
-            },
-            "label": {
-                "fontSize": 10,
-                "fontFace": "Segoe UI",
-                "color": "#252423"
-            }
+    "dataColors": [
+        "#A894EB",
+        "#36C7E4",
+        "#F8C243",
+        "#7ACD86",
+        "#B59077",
+        "#F17EDC"
+    ],
+    "firstLevelElements": "#252423",
+    "secondLevelElements": "#605E5C",
+    "thirdLevelElements": "#F3F2F1",
+    "fourthLevelElements": "#B3B0AD",
+    "background": "#FFFFFF",
+    "good": "#64c633",
+    "neutral": "#ebc32e",
+    "bad": "#ec1e1e",
+    "textClasses": {
+        "callout": {
+            "fontSize": 45,
+            "fontFace": "Segoe UI Semibold",
+            "color": "#252423"
         },
-        "visualStyles": {
+        "title": {
+            "fontSize": 18,
+            "fontFace": "Segoe UI",
+            "color": "#252423"
+        },
+        "header": {
+            "fontSize": 13,
+            "fontFace": "Segoe UI Semibold",
+            "color": "#252423"
+        },
+        "label": {
+            "fontSize": 10,
+            "fontFace": "Segoe UI",
+            "color": "#252423"
+        }
+    },
+    "visualStyles": {
+        "*": {
             "*": {
-                "*": {
-                                   "legend": [{
+                "legend": [
+                    {
                         "show": true,
                         "position": "Top Left",
                         "showTitle": true,
                         "titleText": "",
-                        "labelColor": { "solid": { "color": "#252423"}},
+                        "labelColor": {
+                            "solid": {
+                                "color": "#252423"
+                            }
+                        },
                         "fontFamily": "Segoe UI",
                         "fontSize": 10,
                         "legendMarkerRendering": "markerCircleDefault",
                         "matchLineColor": true,
                         "defaultToCircle": true
-                    }],
-                    "title": [{
-                       "show": true,
-                        "fontColor": { "solid": { "color": "#000000" } },
+                    }
+                ],
+                "title": [
+                    {
+                        "show": true,
+                        "fontColor": {
+                            "solid": {
+                                "color": "#000000"
+                            }
+                        },
                         "alignment": "Top Left",
                         "fontSize": 12,
                         "fontFamily": "Segoe UI"
-                    }],
-                    "border": [{
-                    "show": true,
-                    "radius": 10,
-                    "color": { "solid": { "color": "#FFFFFF" } }
-            }]
-                }
-            },
-            "page": {
-                "*": {
-                    "background": [{
-                        "color": { "solid": { "color": "#DBD8C2" } },
+                    }
+                ],
+                "border": [
+                    {
+                        "show": true,
+                        "radius": 10,
+                        "color": {
+                            "solid": {
+                                "color": "#FFFFFF"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "page": {
+            "*": {
+                "background": [
+                    {
+                        "color": {
+                            "solid": {
+                                "color": "#DBD8C2"
+                            }
+                        },
                         "transparency": 35
-                    }]
-                }
+                    }
+                ]
             }
         }
     }
+}
