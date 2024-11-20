@@ -182,7 +182,7 @@ resource "databricks_sql_endpoint" "db_wh_explore" {
   cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
   min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
   max_num_clusters          = var.databricks_sql_warehouse_explore_max_num_clusters
-  auto_stop_mins            = var.databricks_sql_warehouse_auto_stop_mins
+  auto_stop_mins            = 0
   enable_serverless_compute = true
   tags {
     custom_tags {
@@ -583,7 +583,7 @@ resource "databricks_grants" "catalog" {
 
   grant {
     principal = "data-scientists"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA", "EXECUTE", "READ_VOLUME"]
   }
 
   grant {

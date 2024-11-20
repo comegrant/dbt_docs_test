@@ -154,7 +154,7 @@ variable "databricks_sql_warehouse_explore_max_num_clusters" {
 
 variable "databricks_sql_warehouse_auto_stop_mins" {
   type        = number
-  default     = 10
+  default     = 2
   description = "Number of minutes of inactivity before the SQL warehouses is stopped."
 }
 
