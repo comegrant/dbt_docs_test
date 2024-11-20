@@ -34,7 +34,6 @@ from data_contracts.recipe import (
     RecipeNegativePreferences,
 )
 from data_contracts.recommendations.recommendations import RecommendatedDish
-from data_contracts.user import UserCompletedQuiz
 
 from preselector.contracts.compare_boxes import compute_normalized_features
 from preselector.data.models.customer import (
@@ -1213,10 +1212,7 @@ async def run_preselector_for_request(
         ) and (
             request.compute_for == [YearWeek(year=2024, week=51)]
         ):
-            value = await store.feature_view(UserCompletedQuiz).features_for({
-                "agreement_id": [request.agreement_id]
-            }).to_polars()
-            could_be_ww = value["has_completed_quiz"].to_list()[0] == False # noqa: E712
+            could_be_ww = True
 
         logger.debug("Running preselector")
         try:
