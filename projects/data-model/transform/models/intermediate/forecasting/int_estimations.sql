@@ -86,7 +86,7 @@ dates as (
     select  
 
     company_id
-    , year as menu_year
+    , year_of_week as menu_year
     , week as menu_week
     , date as menu_week_monday_date
 
