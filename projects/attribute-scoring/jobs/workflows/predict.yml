@@ -12,6 +12,11 @@ resources:
             num_workers: 1
             spark_version: 14.3.x-scala2.12
             node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Attribute scoring"
+              env: ${bundle.target}
+              managed_by: "manually"
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
@@ -65,7 +70,7 @@ resources:
               end_yyyyww: None
           depends_on:
             - task_key: predict-attribute-scoring-GL
-              
+
         - task_key: predict-attribute-scoring-LMK
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
