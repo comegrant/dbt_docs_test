@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "Number of Customers Completed Quiz running total in Date",
+          "dataType": "Double",
+          "expression": "\nCALCULATE(\n\t\t\t[Number of Customers Completed Quiz],\n\t\t\tFILTER(\n\t\t\t\tALLSELECTED('Date'),\n\t\t\t\t'Date'[Date] <= MAX('Date'[Date])\n\t\t\t)\n\t\t)",
+          "formatString": "General Number",
+          "measureTemplate": {
+            "daxTemplateName": "RunningTotal",
+            "version": 0
+          },
+          "references": {
+            "measures": [
+              {
+                "entity": "Subscription Quiz Measures",
+                "name": "Number of Customers Completed Quiz"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.2.0/schema.json",
+  "name": "84f1c77dceb5a195185f",
+  "displayName": "Quiz Completion per Brand",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}
