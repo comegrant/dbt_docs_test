@@ -14,10 +14,10 @@ resources:
             spark_version: 14.3.x-scala2.12
             node_type_id: Standard_DS4_v2
             custom_tags:
-              user: mats
-              tool: preselector
+              user: "Data scientists"
+              tool: "Preselector"
               env: ${bundle.target}
-              managed_by: manually
+              managed_by: "manually"
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
