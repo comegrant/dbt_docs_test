@@ -14,7 +14,7 @@ with
 
 source as (
 
-  select * from dev.bronze.pim__recipes_taxonomies
+  select * from {{ source('pim', 'pim__recipes_taxonomies') }}
 
 )
 
