@@ -10,11 +10,15 @@ resources:
             num_workers: 0
             spark_version: 14.3.x-scala2.12
             node_type_id: Standard_DS5_v2
+            custom_tags:
+              "ResourceClass": "SingleNode"
+              user: "Data scientists"
+              tool: "Rec engine"
+              env: ${bundle.target}
+              managed_by: "manually"
             spark_conf:
               "spark.databricks.cluster.profile": "singleNode"
               "spark.master": "local[*]"
-            custom_tags:
-              "ResourceClass": "SingleNode"
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
