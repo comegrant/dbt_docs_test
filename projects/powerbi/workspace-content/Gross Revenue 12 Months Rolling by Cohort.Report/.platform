@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Gross Revenue 12 Months Rolling by Cohort"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "28fbae88-05f0-405d-87a1-93c223c73394"
+  }
+}

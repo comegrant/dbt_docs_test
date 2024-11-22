@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Billing Agreements",
+      "measures": [
+        {
+          "name": "Rolling Gross Revenue",
+          "dataType": "Double",
+          "expression": "CALCULATE([Sum Order Value Gross Ex Vat], ALL('Date'), DATESINPERIOD('Date'[Date],MAX('Date'[Date]),-12, MONTH))",
+          "formatString": "General Number",
+          "measureTemplate": {
+            "daxTemplateName": "RunningTotal",
+            "version": 0
+          },
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Sum Order Value Gross Ex Vat"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Total Last 12 Months Gross Revenue",
+          "dataType": "Double",
+          "expression": "\nCALCULATE(\n    [Rolling Gross Revenue], \n    DATESINPERIOD(\n        'Date'[Date], \n        LASTDATE('Date'[Date]), \n        -12, \n        MONTH\n    )\n)",
+          "formatString": "General Number",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Billing Agreements",
+                "name": "Rolling Gross Revenue"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "% sales last 12 months",
+          "dataType": "Double",
+          "expression": "[Rolling Gross Revenue]/[Total Last 12 Months Gross Revenue]",
+          "formatString": "General Number",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Billing Agreements",
+                "name": "Rolling Gross Revenue"
+              },
+              {
+                "schema": "extension",
+                "entity": "Billing Agreements",
+                "name": "Total Last 12 Months Gross Revenue"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
