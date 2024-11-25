@@ -18,7 +18,7 @@ from attribute_scoring.train.train import train_pipeline
 from databricks.feature_engineering import FeatureEngineeringClient
 
 mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("Shared/ml_experiments/attribute-scoring")
+mlflow.set_experiment("/Shared/ml_experiments/attribute-scoring")
 
 env = dbutils.widgets.get("env")
 company = dbutils.widgets.get("company")
