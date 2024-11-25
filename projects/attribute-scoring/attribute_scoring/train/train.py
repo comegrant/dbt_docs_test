@@ -53,7 +53,7 @@ def train_pipeline(args: Args, fe: FeatureEngineeringClient, spark: DatabricksSe
         artifact_path="pyfunc_packaged_model",
         training_set=training_set,
         flavor=mlflow.pyfunc,
-        registered_model_name=f"dev.mloutputs.attribute_scoring_{args.company}_{external_target_name}",
+        registered_model_name=f"{args.env}.mloutputs.attribute_scoring_{args.company}_{external_target_name}",
     )
 
     logging.info(f"\nFinished training for {args.company} ({external_target_name}).\n")
