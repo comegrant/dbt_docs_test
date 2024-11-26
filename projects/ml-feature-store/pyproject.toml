@@ -24,6 +24,7 @@ da-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/dow
 sv-core-news-sm = {url = "https://github.com/explosion/spacy-models/releases/download/sv_core_news_sm-3.8.0/sv_core_news_sm-3.8.0-py3-none-any.whl"}
 en-core-web-sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"}
 ruff = "0.6.9"
+slack-connector = {path = "../../packages/slack-connector", develop = true}
 
 
 [tool.poetry.group.cli.dependencies]

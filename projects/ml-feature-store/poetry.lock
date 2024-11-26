@@ -3966,6 +3966,22 @@ files = [
 ]
 
 [[package]]
+name = "slack-connector"
+version = "0.1.0"
+description = "A Python package to communicate to and from Slack"
+optional = false
+python-versions = "^3.10"
+files = []
+develop = true
+
+[package.dependencies]
+pytz = "^2024.2"
+
+[package.source]
+type = "directory"
+url = "../../packages/slack-connector"
+
+[[package]]
 name = "smart-open"
 version = "7.0.5"
 description = "Utils for streaming large files (S3, HDFS, GCS, Azure Blob Storage, gzip, bz2...)"
@@ -4706,4 +4722,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1ee24029917192db1c2c94a4c6df44994ffd8cb1b63e5699b44a5d483f047a7a"
+content-hash = "f6d96d5d94fb8e0620b3876a84e0f89ad0ba0350abafa23a522e059b57957e30"

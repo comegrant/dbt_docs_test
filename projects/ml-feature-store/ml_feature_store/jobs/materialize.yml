@@ -30,8 +30,8 @@ resources:
       email_notifications:
         on_failure:
           - sylvia.liu@cheffelo.com
-        on_success:
-          - sylvia.liu@cheffelo.com
+          - agathe.raaum@cheffelo.com
+          - niladri.banerjee@cheffelo.com
 
       tasks:
         - task_key: ft-ml-recipes
@@ -47,9 +47,63 @@ resources:
             notebook_path: run_ft_weekly_dishes_variations.py
             base_parameters:
               env: "${var.environment}"
+
         - task_key: ft-recipe-ingredients
           job_cluster_key: ml-feature-store-weekly
           notebook_task:
             notebook_path: run_ft_recipe_ingredients.py
             base_parameters:
               env: "${var.environment}"
+
+        - task_key: slack-notification-success
+          depends_on: [
+            {task_key: ft-ml-recipes},
+            {task_key: ft-weekly-dishes-variations},
+            {task_key: ft-recipe-ingredients},
+          ]
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                body_message: ✅ ML feature store job successful!
+                is_error: false
+
+        - task_key: slack-notification-failure-ft-ml-recipes
+          depends_on:
+            - task_key: ft-ml-recipes
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                header_message: ❌ ft_ml_recipes table generation in ML feature store failed!
+                body_message: Check databricks log for more details...
+                is_error: true
+                relevant_people: agathe, sylvia, science
+
+        - task_key: slack-notification-failure-ft-weekly-dishes-variations
+          depends_on:
+            - task_key: ft-weekly-dishes-variations
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                header_message: ❌ ft-weekly-dishes-variations table in ML feature store failed!
+                body_message: Check databricks log for more details...
+                is_error: true
+                relevant_people: sylvia, science
+
+        - task_key: slack-notification-failure-ft-recipe-ingredients
+          depends_on:
+            - task_key: ft-recipe-ingredients
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                header_message: ❌ ft-recipe-ingredients table generation in ML feature store failed!
+                body_message: Check databricks log for more details...
+                is_error: true
+                relevant_people: agathe, sylvia, science
