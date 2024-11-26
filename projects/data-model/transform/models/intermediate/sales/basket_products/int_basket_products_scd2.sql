@@ -34,8 +34,9 @@ basket_mealboxes as (
     left join billing_agreements
     on 
         baskets.billing_agreement_id = billing_agreements.billing_agreement_id
-        and baskets.valid_to = '{{ var("future_proof_date") }}'
         and billing_agreements.valid_to = '{{ var("future_proof_date") }}'
+    where baskets.valid_to = '{{ var("future_proof_date") }}'
+    and billing_agreements.billing_agreement_id is not null
 
 )
 

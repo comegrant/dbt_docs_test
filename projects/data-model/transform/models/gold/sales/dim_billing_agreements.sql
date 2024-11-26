@@ -91,12 +91,13 @@ billing_agreements as (
 , preselector_agreements_scd2 as (
 
     select 
-        recommendations.billing_agreement_id
+        billing_agreement_id
         , "Preselector" as preselector_flag
-        , min(recommendations.deviation_created_at) as valid_from
+        , min(deviation_created_at) as valid_from
         , {{ get_scd_valid_to() }} as valid_to
     from recommendations
     where billing_agreement_basket_deviation_origin_id = '{{ var("preselector_origin_id") }}'
+    and billing_agreement_id is not null
     group by 1,2,4
 
 )
