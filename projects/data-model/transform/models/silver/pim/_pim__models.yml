@@ -757,3 +757,46 @@ models:
           - not_null:
               config:
                 severity: warn
+  
+  - name: pim__taxonomy_types
+    description: "Table of taxonomy type information"
+
+    columns:
+      - name: taxonomy_type_id
+        data_type: int
+        description: "{{ doc('column__taxonomy_type_id') }}"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: taxonomy_type_name
+        data_type: string
+        description: "{{ doc('column__taxonomy_type_name') }}"
+        data_tests:
+          - not_null
+
+  - name: pim__status_code_translations
+    description: "Table mapping status code ids to their names in different languages"
+
+    columns:
+      - name: status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        data_tests:
+          - not_null
+      
+      - name: status_code_name
+        data_type: string
+        description: "{{ doc('column__status_code_name') }}"
+        data_tests:
+          - not_null
+
+      - name: status_code_description
+        data_type: string
+        description: "{{ doc('column__status_code_description') }}"
+

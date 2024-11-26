@@ -32,3 +32,5 @@ sources:
       - name: pim__ingredient_categories
       - name: pim__recipes_rating
       - name: pim__recipes_comments
+      - name: pim__taxonomy_types
+      - name: pim__status_codes_translations

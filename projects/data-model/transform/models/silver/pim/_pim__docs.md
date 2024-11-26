@@ -1,9 +1,4 @@
 # Common
-{% docs column__pim_status_code_id %}
-
-Identifier for the status of a certain object.
-
-{% enddocs %}
 
 # Weekly Menus
 {% docs column__weekly_menu_id %}
@@ -142,13 +137,25 @@ Identifier for the ingredient category parent, indicating the hierarchy within i
 
 {% docs column__taxonomy_id %} 
 
-Identifier for each taxonomy 
+Identifier for each taxonomy
 
 {% enddocs %}
 
 {% docs column__taxonomy_name %} 
 
 Name of the taxonomy 
+
+{% enddocs %}
+
+{% docs column__taxonomy_type_id %}
+
+Identifier for each taxonomy type
+
+{% enddocs %}
+
+{% docs column__taxonomy_type_name %}
+
+The name of each taxonomy type 
 
 {% enddocs %}
 
@@ -171,6 +178,26 @@ Identifier for each generic ingredient, i.e. "soy-sauce"
 {% docs column__generic_ingredient_name %}
 
 Name of the generic ingredient 
+
+{% enddocs %}
+
+# Status Code Translations
+
+{% docs column__pim_status_code_id %}
+
+Identifier for the status
+
+{% enddocs %}
+
+{% docs column__status_code_name %}
+
+The name of a status code.
+
+{% enddocs %}
+
+{% docs column__status_code_description %}
+
+The description of the status code.
 
 {% enddocs %}
 

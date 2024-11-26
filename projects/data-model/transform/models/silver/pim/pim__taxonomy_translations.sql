@@ -15,7 +15,6 @@ renamed as (
 
         {# strings #}
         , taxonomies_name as taxonomy_name
-        --, taxonomies_description as taxonomy_description
 
     from source
 

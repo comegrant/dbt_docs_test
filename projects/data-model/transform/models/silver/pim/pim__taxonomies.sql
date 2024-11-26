@@ -11,11 +11,9 @@ renamed as (
         taxonomies_id as taxonomy_id
         , status_code_id as taxonomy_status_code_id
         , country_id
-        --, preference_id
+        , taxonomy_type as taxonomy_type_id
 
-        --{# ints #}
-        --, taxonomy_type
-        --, taxonomy_order
+        {# ints #}
 
         {# system #}
         , created_by as source_created_by
@@ -25,7 +23,6 @@ renamed as (
         
         {# booleans #} 
         , is_external as is_external_taxonomy
-        --, frontend_grouping
 
     from source
 

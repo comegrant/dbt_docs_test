@@ -19,6 +19,101 @@ models:
     versions:
       - v: 1
 
+  - name: dim_taxonomies
+    description: "Table of all taxonomies which are used to tag recipes"
+    latest_version: 1
+    config:
+      alias: dim_taxonomies
+
+    columns:
+      - name: pk_dim_taxonomies
+        data_type: string
+        description: "{{ doc('column__pk_dim_taxonomies') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: taxonomy_id
+        data_type: int
+        description: "{{ doc('column__taxonomy_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: taxonomy_name
+        data_type: string
+        description: "{{ doc('column__taxonomy_name') }}"
+        data_tests:
+          - not_null
+
+      - name: taxonomy_status_code_name
+        data_type: string
+        description: "{{ doc('column__status_code_name') }}"
+        data_tests:
+          - not_null
+
+      - name: taxonomy_type_name
+        data_type: string
+        description: "{{ doc('column__taxonomy_type_name') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: bridge_dim_recipes_dim_taxonomies
+    description: "Bridge table connecting Dim Recipes and Dim Taxonomies"
+    latest_version: 1
+    config:
+      alias: bridge_dim_recipes_dim_taxonomies
+
+    columns:
+      - name: pk_bridge_dim_recipes_dim_taxonomies
+        data_type: string
+        description: "{{ doc('column__pk_bridge_dim_recipes_dim_taxonomies') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+
+      - name: fk_dim_taxonomies
+        data_type: string
+        description: "{{ doc('column__pk_dim_taxonomies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_taxonomies')
+              field: pk_dim_taxonomies
+
+    versions:
+      - v: 1
+
+
   - name: fact_menus
     description: ""
     latest_version: 1

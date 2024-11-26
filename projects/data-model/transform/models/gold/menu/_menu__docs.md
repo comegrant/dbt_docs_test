@@ -66,3 +66,18 @@
 ...
 
 {% enddocs %}
+
+# Dim Taxonomies
+{% docs column__pk_dim_taxonomies %}
+
+Primary key of the dim_taxonomies table.
+
+{% enddocs %}
+
+# Bridge Dim Recipes Dim Taxonomies
+
+{% docs column__pk_bridge_dim_recipes_dim_taxonomies %}
+
+Primary key of the bridge table which connects dim_recipes and dim_taxonomies
+
+{% enddocs %}
