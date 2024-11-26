@@ -69,7 +69,7 @@ billing_agreements as (
 
 , billing_agreements_scd1 as (
     select * from billing_agreements
-    where valid_to is null
+    where valid_to = '{{ var("future_proof_date") }}'
 )
 
 , base_scd2 as (

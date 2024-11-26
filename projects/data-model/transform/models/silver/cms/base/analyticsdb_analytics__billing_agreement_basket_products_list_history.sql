@@ -18,7 +18,7 @@ source as (
             , is_extra)
          )
       ) as basket_products_list
-      , source_created_at
+      , timestampadd(hour, -1, source_created_at) as source_created_at -- this is to make sure that the logged basket is before cutoff date
       , source_created_by
    from source
    group by 1,3,4
@@ -38,4 +38,4 @@ source as (
 
 )
 
-select * from basket_product_list_scd2
+select * from basket_product_list_scd2 

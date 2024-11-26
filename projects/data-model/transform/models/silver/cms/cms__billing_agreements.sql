@@ -52,7 +52,7 @@ renamed as (
 
         {# scd #}
         , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from) as valid_from
-        , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to) as valid_to
+        , coalesce(convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to), cast('{{ var("future_proof_date") }}' as timestamp)) as valid_to
 
         {# system #}
         , convert_timezone('Europe/Oslo', 'UTC', created_at) as source_created_at

@@ -3,6 +3,14 @@ with
 baskets as (
 
     select * from {{ ref('cms__billing_agreement_baskets') }}
+    where valid_to = '{{ var("future_proof_date") }}'
+
+)
+
+, billing_agreements as (
+
+    select * from {{ ref('cms__billing_agreements') }}
+    where valid_to = '{{ var("future_proof_date") }}'
 
 )
 
@@ -18,18 +26,12 @@ baskets as (
 
 )
 
-, baskets_distinct (
-    select distinct 
-        billing_agreement_basket_id
-        , billing_agreement_id 
-    from baskets
-)
-
 , basket_deviation_products_joined as (
 
     select
-        baskets_distinct.billing_agreement_id
-        , baskets_distinct.billing_agreement_basket_id
+        baskets.billing_agreement_id
+        , baskets.billing_agreement_basket_id
+        , billing_agreements.company_id
         , deviations.billing_agreement_basket_deviation_id
         , deviations.billing_agreement_basket_deviation_origin_id
         , deviation_products.billing_agreement_basket_deviation_product_id
@@ -52,8 +54,10 @@ baskets as (
     from deviations
     left join deviation_products
       on deviations.billing_agreement_basket_deviation_id = deviation_products.billing_agreement_basket_deviation_id
-    left join baskets_distinct
-      on deviations.billing_agreement_basket_id = baskets_distinct.billing_agreement_basket_id
+    left join baskets
+      on deviations.billing_agreement_basket_id = baskets.billing_agreement_basket_id
+    left join billing_agreements
+        on billing_agreements.billing_agreement_id = baskets.billing_agreement_id 
 )
 
 select * from basket_deviation_products_joined

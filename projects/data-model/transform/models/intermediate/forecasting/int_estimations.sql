@@ -19,7 +19,7 @@ dates as (
 , agreements as (
 
     select * from {{ref('cms__billing_agreements')}}
-    where valid_to is null
+    where valid_to = '{{ var("future_proof_date") }}'
 )
 
 , baskets as (
