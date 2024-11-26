@@ -31,6 +31,8 @@ with recommendations as (
         , recommendations.billing_agreement_basket_id
         , recommendations.billing_agreement_id
         , recommendations.product_variation_id
+        , recommendations.deviation_created_at
+        , recommendations.deviation_created_by
         , menus.recipe_id
     from recommendations
     left join agreements
