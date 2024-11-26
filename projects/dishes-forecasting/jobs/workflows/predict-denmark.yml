@@ -30,8 +30,6 @@ resources:
       email_notifications:
         on_failure:
           - sylvia.liu@cheffelo.com
-        on_success:
-          - sylvia.liu@cheffelo.com
 
       tasks:
         - task_key: predict-dishes-forecasting-denmark-rt
@@ -41,3 +39,26 @@ resources:
             base_parameters:
               env: "${var.environment}"
               company: RT
+        - task_key: slack-notification-success
+          depends_on:
+            - task_key: predict-dishes-forecasting-denmark-rt
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Dishes forecasting predict step for RT finished!
+              is_error: false
+              relevant_people: sylvia, science
+        - task_key: slack-notification-failure
+          depends_on:
+            - task_key: predict-dishes-forecasting-denmark-rt
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Dishes forecasting predict step for RT failed!
+              body_message: Go to databricks to check for run details...
+              is_error: true
+              relevant_people: sylvia, science

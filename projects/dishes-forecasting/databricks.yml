@@ -21,8 +21,17 @@ variables:
   environment:
     description: The environment to deploy to
     default: dev
+  slack_notification_job_id:
+    description: The id of the slack notification job to call
 
 targets:
-  default:
+  dev:
     default: true
-    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 221967110790300
+  test:
+    variables:
+      slack_notification_job_id: 823927532277018
+  prod:
+    variables:
+      slack_notification_job_id: 808732355997444

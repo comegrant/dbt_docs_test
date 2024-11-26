@@ -5451,6 +5451,22 @@ tests = ["pytest (>=7.4,<7.5)", "pytest-cov (>=4.1,<4.2)", "pytest-randomly (>=3
 transformations = ["esig (>=0.9.7,<0.10)", "filterpy (>=1.4.5,<1.5)", "holidays (>=0.29,<0.42)", "mne (>=1.5,<1.7)", "numba (>=0.53,<0.59)", "pycatch22 (>=0.4,<0.4.4)", "pykalman-bardo (>=0.9.7,<0.10)", "statsmodels (>=0.12.1,<0.15)", "stumpy (>=1.5.1,<1.13)", "tsfresh (>=0.17,<0.21)"]
 
 [[package]]
+name = "slack-connector"
+version = "0.1.0"
+description = "A Python package to communicate to and from Slack"
+optional = false
+python-versions = "^3.10"
+files = []
+develop = true
+
+[package.dependencies]
+pytz = "^2024.2"
+
+[package.source]
+type = "directory"
+url = "../../packages/slack-connector"
+
+[[package]]
 name = "smmap"
 version = "5.0.1"
 description = "A pure Python implementation of a sliding window memory map manager"
@@ -6501,4 +6517,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10, <3.13"
-content-hash = "7d73a6d02ae59ca2cccc28fd601ce085ecf94c67c408bb3e45246bc80fae111f"
+content-hash = "029f2e00bcfc08b39aa345995a4b27082cfcdc4f4420a69581cd7eb4ce6c48ea"
