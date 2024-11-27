@@ -41,7 +41,7 @@ def predict_pipeline(
     for target in CONFIG.target_mapped:
         logging.info(f"Starting prediction for {args.company} ({target})")
 
-        model_uri = CONFIG.model_uri(args.company, target)
+        model_uri = CONFIG.model_uri(args.env, args.company, target)
         probability = fe.score_batch(model_uri=model_uri, df=filtered_data, result_type="string").toPandas()
 
         df = postprocess_predictions(probability, target)
