@@ -11,7 +11,6 @@ deviations as (
 
 )
 
--- TODO: Feels a bit redundant to adding this all the time in int tables
 , billing_agreements as (
 
     select * from {{ref('cms__billing_agreements')}}
@@ -20,7 +19,7 @@ deviations as (
 )
 
 -- ASSUMPTION: Only one basket per customer
--- Get the customers most recent deviation for a menu week
+-- Find the first normal deviation that occured
 , first_customer_deviation as (
 
     select
@@ -34,16 +33,13 @@ deviations as (
             deviation_created_at
         ) as first_deviation_created_at
     from deviations
-    where
-        billing_agreement_basket_deviation_origin_id not in (
-            '{{ var("mealselector_origin_id") }}'
-            , '{{ var("preselector_origin_id") }}'
-        )
-    group by 1, 2, 3
+    where billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
+    group by 1,2,3
 
 )
 
-, last_mealselector_deviation as (
+-- Find the last deviation made by the mealselector or the preselector before a normal deviation
+, last_recommendations_deviation as (
 
     select
         deviations.menu_week_monday_date
@@ -57,14 +53,12 @@ deviations as (
         ) as last_deviation_created_at
     from deviations
     left join first_customer_deviation
-        on
-            deviations.menu_week_monday_date = first_customer_deviation.menu_week_monday_date
-            and deviations.billing_agreement_basket_id = first_customer_deviation.billing_agreement_basket_id
-            and deviations.billing_agreement_id = first_customer_deviation.billing_agreement_id
-    where
-        deviations.billing_agreement_basket_deviation_origin_id in (
-            '{{ var("mealselector_origin_id") }}' -- Meal-selector
-            , '{{ var("preselector_origin_id") }}' -- Pre-selector
+        on deviations.menu_week_monday_date = first_customer_deviation.menu_week_monday_date
+        and deviations.billing_agreement_basket_id = first_customer_deviation.billing_agreement_basket_id
+        and deviations.billing_agreement_id = first_customer_deviation.billing_agreement_id
+    where deviations.billing_agreement_basket_deviation_origin_id in (
+        '{{ var("preselector_origin_id") }}',
+        '{{ var("mealselector_origin_id") }}'
         )
         and (
             deviations.deviation_created_at < first_customer_deviation.first_deviation_created_at
@@ -78,11 +72,12 @@ deviations as (
 -- Get the customers most recent deviation for a menu week
 , deviations_filter_active as (
 
-    select
-        deviations.menu_week_monday_date
-        , deviations.billing_agreement_id
-        , deviations.billing_agreement_basket_id
-        , deviations.product_variation_id
+    select 
+        menu_week_monday_date
+        , billing_agreement_id
+        , billing_agreement_basket_id
+        , product_variation_id
+        , billing_agreement_basket_deviation_origin_id
     from deviations
     where deviations.is_active_deviation = true
 
@@ -97,28 +92,18 @@ deviations as (
         , deviations_filter_active.menu_week_monday_date
         , order_lines.billing_agreement_order_id
         , billing_agreements.company_id
-        , coalesce(
-            last_mealselector_deviation.billing_agreement_basket_deviation_origin_id
-            , first_customer_deviation.billing_agreement_basket_deviation_origin_id
-        ) as billing_agreement_basket_deviation_origin_id
-        , coalesce(
-            last_mealselector_deviation.last_deviation_created_at
-            , first_customer_deviation.first_deviation_created_at
-        ) as basket_mapping_created_at
+        , deviations_filter_active.billing_agreement_basket_deviation_origin_id
+        -- last recommendation engine deviation is used as first deviation since that is what the customer will see on the front end
+        , coalesce(last_recommendations_deviation.last_deviation_created_at, first_customer_deviation.first_deviation_created_at) as first_deviation_created_at
     from deviations_filter_active
     left join first_customer_deviation
-        on
-            deviations_filter_active.menu_week_monday_date = first_customer_deviation.menu_week_monday_date
-            and deviations_filter_active.billing_agreement_basket_id
-            = first_customer_deviation.billing_agreement_basket_id
-            and deviations_filter_active.billing_agreement_id = first_customer_deviation.billing_agreement_id
-    left join last_mealselector_deviation
-        on
-            deviations_filter_active.menu_week_monday_date = last_mealselector_deviation.menu_week_monday_date
-            and deviations_filter_active.billing_agreement_basket_id
-            = last_mealselector_deviation.billing_agreement_basket_id
-            and deviations_filter_active.billing_agreement_id
-            = last_mealselector_deviation.billing_agreement_id
+        on deviations_filter_active.menu_week_monday_date = first_customer_deviation.menu_week_monday_date
+        and deviations_filter_active.billing_agreement_basket_id = first_customer_deviation.billing_agreement_basket_id
+        and deviations_filter_active.billing_agreement_id = first_customer_deviation.billing_agreement_id
+    left join last_recommendations_deviation
+        on deviations_filter_active.menu_week_monday_date = last_recommendations_deviation.menu_week_monday_date
+        and deviations_filter_active.billing_agreement_basket_id = last_recommendations_deviation.billing_agreement_basket_id
+        and deviations_filter_active.billing_agreement_id = last_recommendations_deviation.billing_agreement_id
     left join order_lines
         on
             deviations_filter_active.menu_week_monday_date = order_lines.menu_week_monday_date

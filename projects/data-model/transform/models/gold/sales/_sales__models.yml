@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: fact_orders
-    description: ""
+    description: "Information about what a customer ordered. For orders after 2024 the table also contains information about dish swapping. I.e. which dishes the customer swapped in and out as well as if they made any adjustments to number of portions and meals. Contains both cancelled and finished orders. "
     latest_version: 1
     config:
       alias: fact_orders
@@ -89,14 +89,14 @@ models:
         data_tests:
           - not_null
 
-      - name: meal_adjustment
+      - name: meal_adjustment_subscription
         data_type: int
         description: ""
 
-      - name: portion_adjustment
+      - name: portion_adjustment_subscription
         data_type: int
         description: ""
-
+        
       - name: is_added_dish
         data_type: int
         description: "{{ doc('column__is_added_dish') }}"
@@ -108,14 +108,6 @@ models:
       - name: is_dish
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
-
-      - name: is_mealbox
-        data_type: boolean
-        description: "{{ doc('column__is_mealbox') }}"
-
-      - name: is_chef_composed_mealbox
-        data_type: boolean
-        description: "{{ doc('column__is_chef_composed_mealbox') }}"
 
       - name: has_recipe_leaflets
         data_type: boolean
@@ -204,6 +196,28 @@ models:
       - name: preselected_recipe_id
         data_type: int
         description: "{{ doc('column__preselected_recipe_id') }}"
+
+      - name: fk_dim_basket_deviation_origins
+        data_type: string
+        description: ""
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_basket_deviation_origins')
+              field: pk_dim_basket_deviation_origins
+    
+      - name: fk_dim_basket_deviation_origins_preselected
+        data_type: string
+        description: ""
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_basket_deviation_origins')
+              field: pk_dim_basket_deviation_origins
 
       - name: fk_dim_billing_agreements_deviations
         data_type: string

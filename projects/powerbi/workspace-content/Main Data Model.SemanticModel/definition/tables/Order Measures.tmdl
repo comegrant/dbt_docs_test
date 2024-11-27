@@ -218,38 +218,25 @@ table 'Order Measures'
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		formatString: #,0
-		formatString: #,0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
 	measure 'Number of Added Dishes' =
-			
-			IF(
-			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
 			    CALCULATE(
 			    	SUM('Order Measures'[is_added_dish]),
 			    	'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
-			    ),
-			    BLANK()
-			)
-		formatString: #,0
+			    )
 		formatString: #,0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
 
 	measure 'Number of Removed Dishes' =
-			
-			IF(
-			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
-			    CALCULATE(
-			    	SUM('Order Measures'[is_removed_dish]),
-			    	'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
-			    	USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
-			    	USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
-			    ),
-			    BLANK()
-			)
-		formatString: #,0
+				CALCULATE(
+						SUM('Order Measures'[is_removed_dish]),
+						'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+						'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+						USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
+						USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+					)
 		formatString: #,0
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
 
@@ -263,9 +250,6 @@ table 'Order Measures'
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 	measure 'Number of Preselected Dishes' =
-			
-			IF(
-			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
 			    CALCULATE(
 			    	COUNTROWS('Order Measures'),
 			    	'Order Measures'[is_dish] = TRUE(),
@@ -274,9 +258,7 @@ table 'Order Measures'
 			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 			    	USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
 			    	USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
-			    ),
-			    BLANK()
-			)
+			    )
 		formatString: #,0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
@@ -331,7 +313,7 @@ table 'Order Measures'
 			        BLANK(),
 			        CALCULATE(
 			            [Number of Orders],
-			            'Order Measures'[portion_adjustment] > 0
+			            'Order Measures'[portion_adjustment_subscription] > 0
 			        )
 			    )
 			)
@@ -348,7 +330,7 @@ table 'Order Measures'
 			        BLANK(),
 			        CALCULATE(
 			            [Number of Orders],
-			            'Order Measures'[portion_adjustment] < 0
+			            'Order Measures'[portion_adjustment_subscription] < 0
 			        )
 			    )
 			)
@@ -365,7 +347,7 @@ table 'Order Measures'
 			        BLANK(),
 			        CALCULATE(
 			            [Number of Orders],
-			            'Order Measures'[portion_adjustment] <> 0
+			            'Order Measures'[portion_adjustment_subscription] <> 0
 			        )
 			    )
 			)
@@ -373,9 +355,6 @@ table 'Order Measures'
 		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
 
 	measure 'Number of Orders with Increased Meals' =
-			
-			IF(
-			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
 			    IF(
 			        ISFILTERED('Recipes'),
 			            BLANK(),
@@ -384,12 +363,10 @@ table 'Order Measures'
 			                BLANK(),
 			                CALCULATE(
 			                    [Number of Orders],
-			                    'Order Measures'[meal_adjustment] > 0
+			                    'Order Measures'[meal_adjustment_subscription] > 0
 			                )
 			            )
-			    ),
-			    BLANK()
-			)
+			    )
 		formatString: #,0
 		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
 
@@ -405,7 +382,7 @@ table 'Order Measures'
 			                BLANK(),
 			                CALCULATE(
 			                    [Number of Orders],
-			                    'Order Measures'[meal_adjustment] < 0
+			                    'Order Measures'[meal_adjustment_subscription] < 0
 			                )
 			            )
 			    ),
@@ -426,7 +403,7 @@ table 'Order Measures'
 			                BLANK(),
 			                CALCULATE(
 			                    [Number of Orders],
-			                    'Order Measures'[meal_adjustment] <> 0
+			                    'Order Measures'[meal_adjustment_subscription] <> 0
 			                )
 			            )
 			    ),
@@ -458,7 +435,7 @@ table 'Order Measures'
 			                ISFILTERED('Products'),
 			                BLANK(),
 			                CALCULATE(
-			    	            SUM('Order Measures'[meal_adjustment]),
+			    	            SUM('Order Measures'[meal_adjustment_subscription]),
 			    	            'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order",    "Campaign"},
 			    	            'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			                )
@@ -472,7 +449,7 @@ table 'Order Measures'
 	measure 'Decreased Meals' =
 			CALCULATE(
 				[Meal Adjustments],
-				'Order Measures'[meal_adjustment] < 0
+				'Order Measures'[meal_adjustment_subscription] < 0
 			
 			)
 		formatString: #,0
@@ -481,7 +458,7 @@ table 'Order Measures'
 	measure 'Increased Meals' =
 			CALCULATE(
 				[Meal Adjustments],
-				'Order Measures'[meal_adjustment] > 0
+				'Order Measures'[meal_adjustment_subscription] > 0
 			
 			)
 		formatString: #,0
@@ -489,7 +466,7 @@ table 'Order Measures'
 
 	measure 'Portion Adjustments' =
 			CALCULATE(
-				SUM('Order Measures'[meal_adjustment]),
+				SUM('Order Measures'[portion_adjustment_subscription]),
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
@@ -686,6 +663,27 @@ table 'Order Measures'
 		lineageTag: 272a1795-5763-4cfd-9ac3-330f7a344bf8
 		summarizeBy: none
 		sourceColumn: fk_dim_products
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_basket_deviation_origins
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_basket_deviation_origins
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_basket_deviation_origins_preselected
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_basket_deviation_origins_preselected
 
 		changedProperty = IsHidden
 
@@ -906,19 +904,6 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_chef_composed_mealbox
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 039d4cd4-e28b-4ecf-9492-2c16adfab930
-		summarizeBy: none
-		sourceColumn: is_chef_composed_mealbox
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column is_dish
 		dataType: boolean
 		isHidden
@@ -927,19 +912,6 @@ table 'Order Measures'
 		lineageTag: c0037b56-1a60-4707-a64a-e2906f2b493c
 		summarizeBy: none
 		sourceColumn: is_dish
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column is_mealbox
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 5c706b01-cf68-4d0a-8d45-6c0034495550
-		summarizeBy: none
-		sourceColumn: is_mealbox
 
 		changedProperty = IsHidden
 
@@ -992,23 +964,23 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column meal_adjustment
+	column meal_adjustment_subscription
 		dataType: int64
 		isHidden
 		formatString: 0
 		lineageTag: 9de2f151-76bb-4299-b656-b162975c6d4e
 		summarizeBy: sum
-		sourceColumn: meal_adjustment
+		sourceColumn: meal_adjustment_subscription
 
 		changedProperty = IsHidden
 
-	column portion_adjustment
+	column portion_adjustment_subscription
 		dataType: int64
 		isHidden
 		formatString: 0
 		lineageTag: 016251e9-4b56-4c8e-9bd0-a5612a033a5a
 		summarizeBy: sum
-		sourceColumn: portion_adjustment
+		sourceColumn: portion_adjustment_subscription
 
 		changedProperty = IsHidden
 

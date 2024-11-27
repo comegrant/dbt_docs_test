@@ -24,6 +24,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 vars:
  future_proof_date: '9999-12-31'
  onesub_beta_launch_date: '2024-10-14'
+ mealbox_adjustments_cutoff: '2024-01-01'
  preselector_origin_id: '6AD5DF6F-6CDA-4E45-96D0-A169B633247C'
  mealselector_origin_id: '9E016A92-9E5C-4B5B-AC5D-739CEFD6F07B'
  normal_origin_id: '25017D0E-F788-48D7-8DC4-62581D58B698'
