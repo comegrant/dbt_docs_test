@@ -49,7 +49,6 @@ resources:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               body_message: ✅ Dishes forecasting predict step for RT finished!
               is_error: false
-              relevant_people: sylvia, science
         - task_key: slack-notification-failure
           depends_on:
             - task_key: predict-dishes-forecasting-denmark-rt
@@ -61,4 +60,4 @@ resources:
               header_message: ❌ Dishes forecasting predict step for RT failed!
               body_message: Go to databricks to check for run details...
               is_error: true
-              relevant_people: sylvia, science
+              relevant_people: sylvia

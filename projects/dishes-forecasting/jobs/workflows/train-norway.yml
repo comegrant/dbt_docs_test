@@ -63,7 +63,6 @@ resources:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               body_message: ✅ Dishes forecasting training step for GL finished!
               is_error: false
-              relevant_people: sylvia, science
         - task_key: slack-notification-failied-gl
           depends_on:
             - task_key: train-dishes-forecasting-norway-gl
@@ -75,7 +74,7 @@ resources:
               message_header: ❌ Dishes forecasting training step for GL failed!
               body_message: Check databricks for details...
               is_error: true
-              relevant_people: sylvia, science
+              relevant_people: sylvia
         - task_key: slack-notification-failied-amk
           depends_on:
             - task_key: train-dishes-forecasting-norway-amk
@@ -87,4 +86,4 @@ resources:
               message_header: ❌ Dishes forecasting training step for AMK failed!
               body_message: Check databricks for details...
               is_error: true
-              relevant_people: sylvia, science
+              relevant_people: sylvia
