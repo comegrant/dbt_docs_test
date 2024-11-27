@@ -31,6 +31,7 @@ jobs:
     with:
       working-directory: projects/ml-feature-store
       target-env: ${{matrix.target}}
+      should-change-target: true
 
       # Setting the docker image which is needed for python projects
       extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/ml-feature-store-databricks:${{ github.sha }}" --var="mode=production"'
