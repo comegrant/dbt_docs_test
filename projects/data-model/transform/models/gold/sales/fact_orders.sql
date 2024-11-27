@@ -47,6 +47,17 @@ order_lines as (
 
 )
 
+-- TODO: This solution is a bit hacky
+, recommendations_origin as (
+
+    select distinct
+        billing_agreement_basket_id
+        , menu_week_monday_date
+        , billing_agreement_basket_deviation_origin_id
+    from recommendations
+
+)
+
 , order_line_dimensions_joined as (
 
     select
@@ -58,6 +69,8 @@ order_lines as (
         , companies.language_id
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
+        , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
+        , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
         , companies.pk_dim_companies as fk_dim_companies
         , cast(date_format(order_lines.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(order_lines.order_status_id) AS fk_dim_order_statuses
@@ -66,6 +79,9 @@ order_lines as (
     from order_lines
     left join deviations_order_mapping
         on order_lines.billing_agreement_order_id = deviations_order_mapping.billing_agreement_order_id
+    left join recommendations_origin
+        on deviations_order_mapping.billing_agreement_basket_id = recommendations_origin.billing_agreement_basket_id
+        and deviations_order_mapping.menu_week_monday_date = recommendations_origin.menu_week_monday_date
     left join billing_agreements as billing_agreements_ordergen
         on order_lines.billing_agreement_id = billing_agreements_ordergen.billing_agreement_id
         and order_lines.source_created_at >= billing_agreements_ordergen.valid_from
@@ -91,10 +107,7 @@ order_lines as (
         , order_line_dimensions_joined.product_type_id
         , order_line_dimensions_joined.product_variation_id
         , menus.recipe_id
-        , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
     from order_line_dimensions_joined
-    left join deviations_order_mapping
-        on order_line_dimensions_joined.billing_agreement_order_id = deviations_order_mapping.billing_agreement_order_id
     left join menus
         on order_line_dimensions_joined.menu_week_monday_date = menus.menu_week_monday_date
         and order_line_dimensions_joined.product_variation_id = menus.product_variation_id
@@ -142,7 +155,6 @@ order_lines as (
         subscribed_product_variations.billing_agreement_order_id
         , menus.product_variation_id
         , menus.recipe_id
-        , '00000000-0000-0000-0000-000000000000' as billing_agreement_basket_deviation_origin_id
     from subscribed_product_variations
     left join menus
         on subscribed_product_variations.menu_week_monday_date = menus.menu_week_monday_date
@@ -161,7 +173,6 @@ order_lines as (
       deviations_order_mapping.billing_agreement_order_id
       , recommendations.product_variation_id
       , menus.recipe_id
-      , recommendations.billing_agreement_basket_deviation_origin_id
     from deviations_order_mapping
     left join recommendations
         on deviations_order_mapping.billing_agreement_basket_id = recommendations.billing_agreement_basket_id
@@ -206,8 +217,6 @@ order_lines as (
         , preselected_recipes_unioned.recipe_id as preselected_recipe_id
         , ordered_recipes.product_variation_id
         , preselected_recipes_unioned.product_variation_id as preselected_product_variation_id
-        , ordered_recipes.billing_agreement_basket_deviation_origin_id as order_billing_agreement_basket_deviation_origin_id
-        , preselected_recipes_unioned.billing_agreement_basket_deviation_origin_id as preselected_billing_agreement_basket_deviation_origin_id
     from ordered_recipes
     full join preselected_recipes_unioned
         on ordered_recipes.billing_agreement_order_id = preselected_recipes_unioned.billing_agreement_order_id
@@ -277,8 +286,8 @@ order_lines as (
         , order_line_dimensions_joined.order_type_id
         , order_line_dimensions_joined.product_variation_id
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
-        , coalesce(md5(ordered_and_preselected_recipes_joined.order_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
-        , coalesce(md5(ordered_and_preselected_recipes_joined.preselected_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins_preselected
         , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
         , order_line_dimensions_joined.fk_dim_billing_agreements_deviations
         , order_line_dimensions_joined.fk_dim_companies
@@ -359,8 +368,8 @@ order_lines as (
         , order_line_dimensions_joined.order_type_id
         , null as product_variation_id
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
-        , coalesce(md5(ordered_and_preselected_recipes_joined.order_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
-        , coalesce(md5(ordered_and_preselected_recipes_joined.preselected_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins_preselected
         , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
         , order_line_dimensions_joined.fk_dim_billing_agreements_deviations
         , order_line_dimensions_joined.fk_dim_companies
@@ -446,8 +455,8 @@ order_lines as (
         -- TODO: Not sure if this should be null instead
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
         -- TODO: Need to change from 0 to something else
-        , coalesce(md5(ordered_and_preselected_recipes_joined.order_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
-        , coalesce(md5(ordered_and_preselected_recipes_joined.preselected_billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins
+        , order_line_dimensions_joined.fk_dim_basket_deviation_origins_preselected
         , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
         , order_line_dimensions_joined.fk_dim_billing_agreements_deviations
         , order_line_dimensions_joined.fk_dim_companies
