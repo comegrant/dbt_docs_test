@@ -31,7 +31,7 @@ jobs:
     with:
       working-directory: projects/dishes-forecasting
       target-env: ${{matrix.target}}
-
+      should-change-target: true
       # Setting the docker image which is needed for python projects
       extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/dishes-forecasting-databricks:${{ github.sha }}" --var="mode=production"'
     secrets: inherit
