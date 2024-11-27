@@ -97,7 +97,6 @@ billing_agreements as (
         , {{ get_scd_valid_to() }} as valid_to
     from recommendations
     where billing_agreement_basket_deviation_origin_id = '{{ var("preselector_origin_id") }}'
-    and billing_agreement_id is not null
     group by 1,2,4
 
 )
