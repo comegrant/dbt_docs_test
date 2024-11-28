@@ -204,14 +204,17 @@ Changing the custom theme can only be done in the desktop app for Power BI.
 ### What is specified in the custom theme?
 - Colors: 
     - There are 6 official colors in the template. In visualisations that include colors, the four first colors should always be used. In order to maintain consistency, make sure that the color of a brand is always the same. The brand colors should always be:
-        - Adams Matkasse: Purple
-        - GodtLevert: Blue
-        - Linas Matkasse: Yellow
-        - Retnemt: Green
+        - Adams Matkasse: Blue
+        - GodtLevert: Green
+        - Linas Matkasse: Pink
+        - Retnemt: Yellow
     - There are also colors for good, bad and neutral (green, yellow, red)
-    - Background color (behind visualizations) is standardized. 
+    - Background color (behind visualizations) is standardized in the theme.
+    - The color for the background and matching color for headers are in the color list. 
 - Text: 
     - Font size, font and text color are specified for different scenarios (eg., titles, headers, labels)
+- Padding:
+    - All visualizations have padding on all sides (5px top/bottom and 10px right/left)
 - Legend:
     - In top left corner as standard with circle markers
 - Border:

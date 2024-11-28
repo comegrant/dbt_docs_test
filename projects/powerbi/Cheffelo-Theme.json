@@ -1,12 +1,14 @@
 {
     "name": "CheffeloTemplate",
     "dataColors": [
-        "#A894EB",
-        "#36C7E4",
-        "#F8C243",
-        "#7ACD86",
-        "#B59077",
-        "#F17EDC"
+        "#5360AE",
+        "#889C55",
+        "#D86680",
+        "#FCA033",
+        "#8F435A",
+        "#996F5C",
+	"#DBD8C2",
+	"#D8D6C9"    
     ],
     "firstLevelElements": "#252423",
     "secondLevelElements": "#605E5C",
@@ -59,6 +61,25 @@
                         "defaultToCircle": true
                     }
                 ],
+		"padding": [
+                    {
+                        "top": 5,
+            		"bottom": 5,
+            		"right": 10,
+            		"left": 10
+                    }
+                ],
+
+		"valueAxis": [
+                    {
+                        "fontSize": 11
+                    }
+                ],
+                "categoryAxis": [
+                    {
+                        "fontSize": 11
+                    }
+                ],
                 "title": [
                     {
                         "show": true,
@@ -68,7 +89,7 @@
                             }
                         },
                         "alignment": "Top Left",
-                        "fontSize": 12,
+                        "fontSize": 14,
                         "fontFamily": "Segoe UI"
                     }
                 ],
@@ -94,7 +115,7 @@
                                 "color": "#DBD8C2"
                             }
                         },
-                        "transparency": 35
+                        "transparency": 65
                     }
                 ]
             }
