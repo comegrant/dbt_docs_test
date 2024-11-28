@@ -14,7 +14,19 @@ source as (
         id as billing_agreement_basket_deviation_origin_id
 
         {# strings #}
-        , origin_name as basket_deviation_origin_name
+        , origin_name as basket_deviation_origin_source_name
+        , case
+            when id = '{{ var("mealselector_origin_id")}}' then 'Mealselector'
+            when id = '{{ var("preselector_origin_id")}}' then 'Preselector'
+            when id = '{{ var("normal_origin_id")}}' then 'Normal'
+            else 'Unknown'
+        end as basket_deviation_origin_name
+        , case
+            when id = '{{ var("mealselector_origin_id")}}' then 'Not Preselector'
+            when id = '{{ var("preselector_origin_id")}}' then 'Preselector'
+            when id = '{{ var("normal_origin_id")}}' then 'Not Preselector'
+            else 'Unknown'
+        end as preselector_category
         
         {# system #}
         , created_at as source_created_at

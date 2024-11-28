@@ -56,17 +56,15 @@ table Companies
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    dim_companies_Table = gold_Schema{[Name="dim_companies",Kind="Table"]}[Data],
-					
-					filtered_table = Table.SelectRows(dim_companies_Table, each 
+				
+					filtered_table = Table.SelectRows(dim_companies_Table, each
 								[company_id]="6A2D0B60-84D6-4830-9945-58D518D27AC2"
 								or [company_id]="09ECD4F0-AE58-4539-8E8F-9275B1859A19"
 								or [company_id]="8A613C15-35E4-471F-91CC-972F933331D7"
 								or [company_id]="5E65A955-7B1A-446C-B24F-CFE576BF52D7")
-					
+				
 				in
 					filtered_table
 
-
 	annotation PBI_ResultType = Table
-
 

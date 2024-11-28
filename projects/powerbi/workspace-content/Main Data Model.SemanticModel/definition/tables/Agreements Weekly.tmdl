@@ -95,18 +95,6 @@ table 'Agreements Weekly'
 
 		annotation SummarizationSetBy = Automatic
 
-	column valid_from_billing_agreements
-		dataType: dateTime
-		isHidden
-		formatString: General Date
-		lineageTag: 6796b631-dcfd-4c4a-a0de-2cc80226b368
-		summarizeBy: none
-		sourceColumn: valid_from_billing_agreements
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column company_id
 		dataType: string
 		isHidden
@@ -178,6 +166,18 @@ table 'Agreements Weekly'
 
 		annotation SummarizationSetBy = Automatic
 
+	column valid_from_billing_agreements
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 6796b631-dcfd-4c4a-a0de-2cc80226b368
+		summarizeBy: none
+		sourceColumn: valid_from_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Agreements Weekly' = m
 		mode: directQuery
 		source =
@@ -192,10 +192,9 @@ table 'Agreements Weekly'
 
 	changedProperty = IsHidden
 
-	annotation PBI_IsMQueryFoldable = True
-
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
 
+	annotation PBI_IsMQueryFoldable = True
 

@@ -73,4 +73,3 @@ table 'Order Types'
 
 	annotation PBI_ResultType = Table
 
-

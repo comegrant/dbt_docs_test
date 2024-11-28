@@ -55,4 +55,3 @@ table 'Order Statuses'
 
 	annotation PBI_NavigationStepName = Navigation
 
-

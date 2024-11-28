@@ -10,9 +10,9 @@ annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.137.1102.0 (24.10)
+annotation PBIDesktopVersion = 2.138.1004.0 (24.11)
 
-annotation PBI_ProTooling = ["DevMode"]
+annotation PBI_ProTooling = ["DevMode","TMDL-Extension"]
 
 annotation __TEdtr = 1
 
@@ -32,6 +32,10 @@ ref table 'Period Since First Order'
 ref table 'Agreements Weekly'
 ref table '(Param) Measures'
 ref table 'Subscription Quiz Measures'
+ref table 'Origin of Preselected Dishes'
+ref table 'Billing Agreements Deviation'
+ref table 'Subscribed Products'
+ref table 'Bridge Billing Agreements Subscribed Products'
 
 ref cultureInfo en-US
 

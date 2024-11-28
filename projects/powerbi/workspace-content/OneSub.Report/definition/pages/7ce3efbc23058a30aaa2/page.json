@@ -44,10 +44,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Origin of Preselected Dishes"
               }
             },
-            "Property": "Preselector Flag"
+            "Property": "Preselector Category"
           }
         },
         "filter": {
@@ -55,7 +55,7 @@
           "From": [
             {
               "Name": "b",
-              "Entity": "Billing Agreements",
+              "Entity": "Origin of Preselected Dishes",
               "Type": 0
             }
           ],
@@ -71,7 +71,7 @@
                             "Source": "b"
                           }
                         },
-                        "Property": "Preselector Flag"
+                        "Property": "Preselector Category"
                       }
                     }
                   ],

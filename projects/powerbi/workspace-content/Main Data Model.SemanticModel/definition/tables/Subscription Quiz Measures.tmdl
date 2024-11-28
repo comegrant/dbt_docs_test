@@ -102,3 +102,4 @@ table 'Subscription Quiz Measures'
 				    fact_subscription_quiz_Table = gold_Schema{[Name="fact_subscription_quiz",Kind="Table"]}[Data]
 				in
 				    fact_subscription_quiz_Table
+

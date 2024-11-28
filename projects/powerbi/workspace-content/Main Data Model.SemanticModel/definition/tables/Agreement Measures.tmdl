@@ -124,18 +124,6 @@ table 'Agreement Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column valid_from_billing_agreements
-		dataType: dateTime
-		isHidden
-		formatString: General Date
-		lineageTag: 38b8b235-6385-461d-b01e-b8cfb9c178b4
-		summarizeBy: none
-		sourceColumn: valid_from_billing_agreements
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column company_id
 		dataType: string
 		isHidden
@@ -195,6 +183,18 @@ table 'Agreement Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column valid_from_billing_agreements
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 38b8b235-6385-461d-b01e-b8cfb9c178b4
+		summarizeBy: none
+		sourceColumn: valid_from_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Agreement Measures' = m
 		mode: directQuery
 		source =
@@ -214,5 +214,4 @@ table 'Agreement Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_IsMQueryFoldable = True
-
 

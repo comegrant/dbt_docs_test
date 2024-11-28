@@ -34,17 +34,6 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Sales Point Id'
-		dataType: int64
-		formatString: 0
-		lineageTag: 7f1fa672-5f50-4026-8bb4-c237d13ff6be
-		summarizeBy: count
-		sourceColumn: sales_point_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column valid_from
 		dataType: dateTime
 		isHidden
@@ -106,21 +95,6 @@ table 'Billing Agreements'
 		sourceColumn: billing_agreement_status_name
 
 		annotation SummarizationSetBy = Automatic
-
-	column 'Signup Date'
-		dataType: dateTime
-		isHidden
-		formatString: Long Date
-		isAvailableInMdx: false
-		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
-		summarizeBy: none
-		sourceColumn: signup_date
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
 
 	column signup_year_day
 		dataType: int64
@@ -260,6 +234,42 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'OneSub Flag'
+		dataType: string
+		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
+		summarizeBy: none
+		sourceColumn: onesub_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Point Id'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7f1fa672-5f50-4026-8bb4-c237d13ff6be
+		summarizeBy: count
+		sourceColumn: sales_point_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Date'
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		isAvailableInMdx: false
+		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
+		summarizeBy: none
+		sourceColumn: signup_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
 	column billing_agreement_preferences_updated_id
 		dataType: string
 		isHidden
@@ -271,27 +281,9 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'OneSub Flag'
-		dataType: string
-		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
-		summarizeBy: none
-		sourceColumn: onesub_flag
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Preselector Flag'
-		dataType: string
-		lineageTag: 7607933b-d7a4-470b-99b8-a70999c01551
-		summarizeBy: none
-		sourceColumn: preselector_flag
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Onesub Beta Flag'
 		dataType: string
+		lineageTag: d3091add-fecf-47e4-913e-ece695213054
 		summarizeBy: none
 		sourceColumn: onesub_beta_flag
 
@@ -313,5 +305,4 @@ table 'Billing Agreements'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-
 

@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Origin of Preselected Dishes"
                     }
                   },
-                  "Property": "Preselector Flag"
+                  "Property": "Preselector Category"
                 }
               },
-              "queryRef": "Billing Agreements.Preselector Flag",
-              "nativeQueryRef": "Preselector Flag"
+              "queryRef": "Origin of Preselected Dishes.Preselector Category",
+              "nativeQueryRef": "Preselector Category"
             }
           ]
         },

@@ -52,7 +52,7 @@
         {
           "name": "Diff Share of Orders With Swaps by Preselector",
           "dataType": "Double",
-          "expression": "CALCULATE([Share of Orders with Swaps],'Billing Agreements'[Preselector Flag]=\"Preselector\")-CALCULATE([Share of Orders with Swaps],'Billing Agreements'[Preselector Flag]=\"Not Preselector\")",
+          "expression": "CALCULATE([Share of Orders with Swaps],'Origin of Preselected Dishes'[Preselector Category]=\"Preselector\")-CALCULATE([Share of Orders with Swaps],'Origin of Preselected Dishes'[Preselector Category]=\"Not Preselector\")",
           "formatString": "0\\ %;-0\\ %;0\\ %",
           "references": {
             "measures": [

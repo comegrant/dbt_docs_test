@@ -95,6 +95,18 @@
         data_tests:
           - not_null
 
+      - name: basket_deviation_origin_source_name
+        data_type: string
+        description: "{{ doc('column__basket_deviation_origin_source_name') }}"
+        data_tests:
+          - not_null
+
+      - name: preselector_category
+        data_type: string
+        description: "{{ doc('column__preselector_category') }}"
+        data_tests:
+          - not_null
+
     versions:
       - v: 1
       

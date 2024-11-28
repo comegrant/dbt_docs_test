@@ -1,0 +1,41 @@
+table 'Origin of Preselected Dishes'
+	lineageTag: 5dc57e37-a162-4b62-a970-7d6cc1315f19
+
+	/// The primary key of the basket deviation origin in the CMS database.
+	column pk_dim_basket_deviation_origins
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: fcf0a4fb-6b91-457f-b1ab-49d30c0fbf17
+		summarizeBy: none
+		sourceColumn: pk_dim_basket_deviation_origins
+
+	/// The origin of the dishes presented to the customer before potential manual deviation.
+	/// Can be "No deviation", "Mealselector" or "Preselector".
+	column 'Origin Name'
+		dataType: string
+		lineageTag: bc3cb59d-5d84-4ff1-9203-f675a3cca0b4
+		summarizeBy: none
+		sourceColumn: basket_deviation_origin_name
+
+	/// Categorization of the origin of the dishes presented to the customer before potential manual deviation.
+	/// If the origin was Mealselector it will be categorized as "Not Preselector".
+	/// For customers that has not been migrated to OneSub or during the migration period had not taken the quiz it will be categorized as "Not preselector".
+	/// For customers that has been migrated to OneSub and taken the quiz it will be categorized as "Preselector".
+	column 'Preselector Category'
+		dataType: string
+		lineageTag: 213c3fae-4ef7-41ea-9d62-e05c4187225a
+		summarizeBy: none
+		sourceColumn: preselector_category
+
+	partition 'Basket Deviation Origins' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_basket_deviation_origins_Table = gold_Schema{[Name="dim_basket_deviation_origins",Kind="Table"]}[Data]
+				in
+				dim_basket_deviation_origins_Table
+

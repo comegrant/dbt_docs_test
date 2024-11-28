@@ -1,0 +1,365 @@
+{
+  "version": "1.0",
+  "conceptualSchemaSettings": {},
+  "queries": [
+    {
+      "name": "Date",
+      "lineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_calendar_Table = gold_Schema{[Name=\"dim_date\",Kind=\"Table\"]}[Data],",
+        "    #\"Added Year - Sort\" = Table.DuplicateColumn(dim_calendar_Table, \"year\", \"Year - Sort\"),",
+        "    #\"Added Week - Sort\" = Table.DuplicateColumn(#\"Added Year - Sort\", \"week\", \"Week - Sort\")",
+        "in",
+        "\t#\"Added Week - Sort\""
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_calendar_Table = gold_Schema{[Name=\\\"dim_date\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Added Year - Sort\\\" = Table.DuplicateColumn(dim_calendar_Table, \\\"year\\\", \\\"Year - Sort\\\"),\\n    #\\\"Added Week - Sort\\\" = Table.DuplicateColumn(#\\\"Added Year - Sort\\\", \\\"week\\\", \\\"Week - Sort\\\")\\nin\\n\\t#\\\"Added Week - Sort\\\"\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Companies",
+      "lineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_companies_Table = gold_Schema{[Name=\"dim_companies\",Kind=\"Table\"]}[Data],",
+        "",
+        "\tfiltered_table = Table.SelectRows(dim_companies_Table, each",
+        "\t\t\t\t[company_id]=\"6A2D0B60-84D6-4830-9945-58D518D27AC2\"",
+        "\t\t\t\tor [company_id]=\"09ECD4F0-AE58-4539-8E8F-9275B1859A19\"",
+        "\t\t\t\tor [company_id]=\"8A613C15-35E4-471F-91CC-972F933331D7\"",
+        "\t\t\t\tor [company_id]=\"5E65A955-7B1A-446C-B24F-CFE576BF52D7\")",
+        "",
+        "in",
+        "\tfiltered_table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_companies_Table = gold_Schema{[Name=\\\"dim_companies\\\",Kind=\\\"Table\\\"]}[Data],\\n\\n\\tfiltered_table = Table.SelectRows(dim_companies_Table, each\\n\\t\\t\\t\\t[company_id]=\\\"6A2D0B60-84D6-4830-9945-58D518D27AC2\\\"\\n\\t\\t\\t\\tor [company_id]=\\\"09ECD4F0-AE58-4539-8E8F-9275B1859A19\\\"\\n\\t\\t\\t\\tor [company_id]=\\\"8A613C15-35E4-471F-91CC-972F933331D7\\\"\\n\\t\\t\\t\\tor [company_id]=\\\"5E65A955-7B1A-446C-B24F-CFE576BF52D7\\\")\\n\\nin\\n\\tfiltered_table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Order Statuses",
+      "lineageTag": "1328111a-5f01-4b3f-8a2c-c02c4dad327c",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_order_status_Table = gold_Schema{[Name=\"dim_order_statuses\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tdim_order_status_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_order_status_Table = gold_Schema{[Name=\\\"dim_order_statuses\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tdim_order_status_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Order Types",
+      "lineageTag": "6fa76248-580e-4a45-882f-c64c0358e75c",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_order_types_Table = gold_Schema{[Name=\"dim_order_types\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tdim_order_types_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_order_types_Table = gold_Schema{[Name=\\\"dim_order_types\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tdim_order_types_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Recipes",
+      "lineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_recipes_Table = gold_Schema{[Name=\"dim_recipes\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tdim_recipes_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_recipes_Table = gold_Schema{[Name=\\\"dim_recipes\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tdim_recipes_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Products",
+      "lineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_products_Table = gold_Schema{[Name=\"dim_products\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tdim_products_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_products_Table = gold_Schema{[Name=\\\"dim_products\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tdim_products_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Order Measures",
+      "lineageTag": "6c298811-8ad5-482b-b89a-827db89210a3",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    fact_orders_Table = gold_Schema{[Name=\"fact_orders\",Kind=\"Table\"]}[Data],",
+        "    #\"Filtered Rows\" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)",
+        "in",
+        "    #\"Filtered Rows\""
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    fact_orders_Table = gold_Schema{[Name=\\\"fact_orders\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Filtered Rows\\\" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)\\nin\\n    #\\\"Filtered Rows\\\"\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "RangeStart",
+      "lineageTag": "2cca26a3-5246-400e-96c5-26c3bce6df81",
+      "navigationStepName": "Navigation",
+      "text": [
+        "#datetime(2024, 10, 10, 0, 0, 0) meta [IsParameterQuery=true, Type=\"DateTime\", IsParameterQueryRequired=true]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "DateTime",
+      "isHidden": false
+    },
+    {
+      "name": "RangeEnd",
+      "lineageTag": "ef536345-e389-4353-8696-6e0be921b5eb",
+      "navigationStepName": "Navigation",
+      "text": [
+        "#datetime(2030, 1, 1, 0, 0, 0) meta [IsParameterQuery=true, Type=\"DateTime\", IsParameterQueryRequired=true]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "DateTime",
+      "isHidden": false
+    },
+    {
+      "name": "Host",
+      "lineageTag": "1ab58ff7-81dc-4c2c-9fa6-e03e9d1dff96",
+      "navigationStepName": "Navigation",
+      "text": [
+        "\"adb-4291784437205825.5.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "Text",
+      "isHidden": false
+    },
+    {
+      "name": "HttpPath",
+      "lineageTag": "b77a4279-1cdf-4830-8c3b-b988134dce75",
+      "navigationStepName": "Navigation",
+      "text": [
+        "\"/sql/1.0/warehouses/aab086fdb2e5d821\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "Text",
+      "isHidden": false
+    },
+    {
+      "name": "Menu Measures",
+      "lineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    fact_menus_Table = gold_Schema{[Name=\"fact_menus\",Kind=\"Table\"]}[Data]",
+        "in",
+        "    fact_menus_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    fact_menus_Table = gold_Schema{[Name=\\\"fact_menus\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n    fact_menus_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Exception",
+      "isHidden": false
+    },
+    {
+      "name": "Billing Agreements",
+      "lineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_billing_agreements_Table = gold_Schema{[Name=\"dim_billing_agreements\",Kind=\"Table\"]}[Data]",
+        "in",
+        "    #\"dim_billing_agreements_Table\""
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    dim_billing_agreements_Table = gold_Schema{[Name=\\\"dim_billing_agreements\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n    #\\\"dim_billing_agreements_Table\\\"\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Catalog",
+      "lineageTag": "bf27b4eb-18be-4bca-8a68-9e2142a0fa3c",
+      "navigationStepName": "Navigation",
+      "text": [
+        "\"dev\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "Text",
+      "isHidden": false
+    },
+    {
+      "name": "Schema",
+      "lineageTag": "f272b2f3-7ffe-4735-a2ec-baab430920e1",
+      "navigationStepName": "Navigation",
+      "text": [
+        "\"~anna_broyn_gold\" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = \"Text\"]"
+      ],
+      "loadAsTableDisabled": true,
+      "resultType": "Text",
+      "isHidden": false
+    },
+    {
+      "name": "Bridge Billing Agreements Preferences",
+      "lineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    bridge_billing_agreements_preferences_Table = gold_Schema{[Name=\"bridge_billing_agreements_preferences\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tbridge_billing_agreements_preferences_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n    bridge_billing_agreements_preferences_Table = gold_Schema{[Name=\\\"bridge_billing_agreements_preferences\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tbridge_billing_agreements_preferences_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Preferences",
+      "lineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
+      "text": [
+        "let",
+        "\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "\tcatalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "\tgold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "\tdim_preferences_Table = gold_Schema{[Name=\"dim_preferences\",Kind=\"Table\"]}[Data]",
+        "in",
+        "\tdim_preferences_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n\\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n\\tcatalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n\\tgold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n\\tdim_preferences_Table = gold_Schema{[Name=\\\"dim_preferences\\\",Kind=\\\"Table\\\"]}[Data]\\nin\\n\\tdim_preferences_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Agreement Measures",
+      "lineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "\tcatalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "\tgold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "\tdim_preferences_Table = gold_Schema{[Name=\"fact_billing_agreements_daily\",Kind=\"Table\"]}[Data],",
+        "    #\"Filtered Rows\" = Table.SelectRows(dim_preferences_Table, each [date] >= RangeStart and [date] < RangeEnd)",
+        "in",
+        "    #\"Filtered Rows\""
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n\\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n\\tcatalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n\\tgold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n\\tdim_preferences_Table = gold_Schema{[Name=\\\"fact_billing_agreements_daily\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Filtered Rows\\\" = Table.SelectRows(dim_preferences_Table, each [date] >= RangeStart and [date] < RangeEnd)\\nin\\n    #\\\"Filtered Rows\\\"\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Agreements Weekly",
+      "lineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
+      "navigationStepName": "Navigation",
+      "text": [
+        "let",
+        "\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "\tcatalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "\tgold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "\tdim_preferences_Table = gold_Schema{[Name=\"fact_billing_agreements_weekly\",Kind=\"Table\"]}[Data],",
+        "    #\"Filtered Rows\" = Table.SelectRows(dim_preferences_Table, each [monday_date] >= RangeStart and [monday_date] < RangeEnd)",
+        "in",
+        "    #\"Filtered Rows\""
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n\\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n\\tcatalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n\\tgold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n\\tdim_preferences_Table = gold_Schema{[Name=\\\"fact_billing_agreements_weekly\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Filtered Rows\\\" = Table.SelectRows(dim_preferences_Table, each [monday_date] >= RangeStart and [monday_date] < RangeEnd)\\nin\\n    #\\\"Filtered Rows\\\"\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Table",
+      "isHidden": false
+    },
+    {
+      "name": "Subscription Quiz Measures",
+      "lineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    fact_subscription_quiz_Table = gold_Schema{[Name=\"fact_subscription_quiz\",Kind=\"Table\"]}[Data]",
+        "in",
+        "    fact_subscription_quiz_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\r\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\r\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\r\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\r\\n    fact_subscription_quiz_Table = gold_Schema{[Name=\\\"fact_subscription_quiz\\\",Kind=\\\"Table\\\"]}[Data]\\r\\nin\\r\\n    fact_subscription_quiz_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Unknown",
+      "isHidden": false
+    },
+    {
+      "name": "Basket Deviation Origins",
+      "lineageTag": "5dc57e37-a162-4b62-a970-7d6cc1315f19",
+      "text": [
+        "let",
+        "    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
+        "    catalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
+        "    gold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
+        "    dim_basket_deviation_origins_Table = gold_Schema{[Name=\"dim_basket_deviation_origins\",Kind=\"Table\"]}[Data]",
+        "in",
+        "dim_basket_deviation_origins_Table"
+      ],
+      "isDirectQuery": true,
+      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\r\\n    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\r\\n    catalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\r\\n    gold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\r\\n    dim_basket_deviation_origins_Table = gold_Schema{[Name=\\\"dim_basket_deviation_origins\\\",Kind=\\\"Table\\\"]}[Data]\\r\\nin\\r\\ndim_basket_deviation_origins_Table\",\"ReferencedQueriesFormulaText\":{}}",
+      "loadAsTableDisabled": false,
+      "resultType": "Unknown",
+      "isHidden": false
+    }
+  ],
+  "queryGroups": [],
+  "culture": "nb-NO",
+  "firewallEnabled": true
+}

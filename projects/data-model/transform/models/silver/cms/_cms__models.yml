@@ -1069,6 +1069,20 @@ models:
           - unique
           - not_null
 
+      - name: basket_deviation_origin_source_name
+        data_type: string
+        description: "{{ doc('column__basket_deviation_origin_source_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Normal', 
+                'Recommendations', 
+                'OneSub - Recommendations'
+                ]
+              config:
+                severity: warn
+
       - name: basket_deviation_origin_name
         data_type: string
         description: "{{ doc('column__basket_deviation_origin_name') }}"
@@ -1077,8 +1091,21 @@ models:
           - accepted_values:
               values: [
                 'Normal', 
-                'Recommendations', 
-                'OneSub - Recommendations'
+                'Mealselector', 
+                'Preselector'
+                ]
+              config:
+                severity: warn
+
+      - name: preselector_category
+        data_type: string
+        description: "{{ doc('column__preselector_category') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                'Not Preselector', 
+                'Preselector'
                 ]
               config:
                 severity: warn

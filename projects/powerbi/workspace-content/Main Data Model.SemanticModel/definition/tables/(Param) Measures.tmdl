@@ -2,10 +2,8 @@ table '(Param) Measures'
 	lineageTag: 6249c02e-7c72-4883-8fd1-d5a33f3de090
 
 	column '(Param) Order Measures'
-		dataType: string
 		lineageTag: 4cf21065-49e0-4c4a-9ec6-92d27bf110eb
 		summarizeBy: none
-		isDataTypeInferred
 		sourceColumn: [Value1]
 		sortByColumn: '(Param) Order Measures Order'
 
@@ -15,11 +13,9 @@ table '(Param) Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column '(Param) Order Measures Fields'
-		dataType: string
 		isHidden
 		lineageTag: d81aada3-05b8-4af0-a906-93dae105c8dd
 		summarizeBy: none
-		isDataTypeInferred
 		sourceColumn: [Value2]
 		sortByColumn: '(Param) Order Measures Order'
 
@@ -32,12 +28,10 @@ table '(Param) Measures'
 		annotation SummarizationSetBy = Automatic
 
 	column '(Param) Order Measures Order'
-		dataType: int64
 		isHidden
 		formatString: 0
 		lineageTag: 2deecfb2-4b1e-4016-aa03-d30f941bee78
 		summarizeBy: sum
-		isDataTypeInferred
 		sourceColumn: [Value3]
 
 		annotation SummarizationSetBy = Automatic
@@ -56,5 +50,4 @@ table '(Param) Measures'
 				}
 
 	annotation PBI_Id = 3a5cb21ce3c24a8bad46c62a1aed393f
-
 

@@ -1,0 +1,61 @@
+/// This is a hidden table that is used to connect fact tables to preferences and basket products using
+/// the foreign key representing the billing agreement at deviation time, not order time.
+table 'Billing Agreements Deviation'
+	lineageTag: a9dc5972-85e4-4024-983d-23afcc61bfd9
+
+	column pk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: e9ec789a-40fd-4fab-9340-ae450fa090d7
+		summarizeBy: none
+		sourceColumn: pk_dim_billing_agreements
+
+	column 'Agreement Id'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 5530994c-2f14-426b-8784-9bf3325d7f4e
+		summarizeBy: count
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_from
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: 7612e5a4-9e46-4673-9b9e-36b0d9a408ff
+		summarizeBy: none
+		sourceColumn: valid_from
+
+	column valid_to
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: 00866f55-ea4b-4926-8b9a-f4aa2172a4cd
+		summarizeBy: none
+		sourceColumn: valid_to
+
+	column 'Billing Agreement Status'
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6b6468b5-b6b3-45f9-90cd-f310abba33d1
+		summarizeBy: none
+		sourceColumn: billing_agreement_status_name
+
+	partition 'Billing Agreements Deviation' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_billing_agreements_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data]
+				in
+				    #"dim_billing_agreements_Table"
+

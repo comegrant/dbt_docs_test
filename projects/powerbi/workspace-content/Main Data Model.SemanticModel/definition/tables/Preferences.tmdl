@@ -95,17 +95,6 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
-	column preference_type_id
-		dataType: string
-		isHidden
-		lineageTag: 76be8ae1-e7e1-4a57-a427-176882b4e109
-		summarizeBy: none
-		sourceColumn: preference_type_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	/// The general name of preferences and attributes that a customer can choose.
 	/// This is common for the companies and countries.
 	/// For preference names specific for each company use instead the field called Preference Name.
@@ -128,6 +117,17 @@ table Preferences
 
 		annotation SummarizationSetBy = Automatic
 
+	column preference_type_id
+		dataType: string
+		isHidden
+		lineageTag: 76be8ae1-e7e1-4a57-a427-176882b4e109
+		summarizeBy: none
+		sourceColumn: preference_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Preferences = m
 		mode: directQuery
 		source =
@@ -140,5 +140,4 @@ table Preferences
 					dim_preferences_Table
 
 	annotation PBI_ResultType = Table
-
 

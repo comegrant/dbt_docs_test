@@ -2,11 +2,9 @@ table 'Period Since First Order'
 	lineageTag: 45e03479-e4f8-48e0-9804-190221e983b8
 
 	column 'Days Since First Order'
-		dataType: int64
 		formatString: 0
 		lineageTag: 596934c8-43ae-4a72-a155-6e94e0233dd6
 		summarizeBy: none
-		isDataTypeInferred
 		sourceColumn: [Value]
 
 		annotation SummarizationSetBy = Automatic
@@ -52,5 +50,4 @@ table 'Period Since First Order'
 		source = GENERATESERIES(0,2000,1)
 
 	annotation PBI_Id = b21e169e40d14c3db3b3a342557733df
-
 

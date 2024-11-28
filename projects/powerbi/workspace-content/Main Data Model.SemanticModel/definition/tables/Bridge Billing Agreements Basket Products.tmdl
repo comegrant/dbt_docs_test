@@ -1,0 +1,63 @@
+table 'Bridge Billing Agreements Subscribed Products'
+	isHidden
+	lineageTag: 488b18a8-7e56-41db-b1d3-d04d09d34886
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 07672423-f73d-45f8-bdcc-6a5d0a077bbe
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 708d3c09-6efe-47e8-91e9-281f1d709eab
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+	column pk_bridge_billing_agreements_basket_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: b9f556ad-ef32-421b-af86-bb2d4cce79a8
+		summarizeBy: none
+		sourceColumn: pk_bridge_billing_agreements_basket_products
+
+	column billing_agreement_basket_product_updated_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4645df86-a784-46de-9334-e71512c9d8f1
+		summarizeBy: none
+		sourceColumn: billing_agreement_basket_product_updated_id
+
+	column product_variation_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 00c99a6e-b7ea-4f9d-9d40-1da2f7f56143
+		summarizeBy: none
+		sourceColumn: product_variation_id
+
+	column company_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 54d425b4-c8b3-4198-a95b-cb7a4aa8f206
+		summarizeBy: none
+		sourceColumn: company_id
+
+	partition 'Bridge Billing Agreements Subscribed Products' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    bridge_billing_agreements_basket_products_Table = gold_Schema{[Name="bridge_billing_agreements_basket_products",Kind="Table"]}[Data]
+				in
+					bridge_billing_agreements_basket_products_Table
+

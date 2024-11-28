@@ -105,12 +105,31 @@ The primary key of the basket deviation origin in the CMS database.
 
 {% enddocs %}
 
+{% docs column__basket_deviation_origin_source_name %}
+
+The name of the origin as it is in the CMS database.
+* `Normal`: Customer, Customer Service or Sales
+* `Recommendations`: Mealselector
+* `Onesub - Recommendations`: Preselector
+* `No Deviation`: When there has been no deviation, e.i. missing origin
+
+{% enddocs %}
+
 {% docs column__basket_deviation_origin_name %}
 
-The name of the origin.
+A more user friendly name of the origin of the deviation.
 * `Normal`: Customer, Customer Service or Sales
-* `Recommendations`: Meal selector
-* `Onesub - Recommendations`: Pre selector
+* `Mealselector`: Mealselector
+* `Preselector`: Preselector
+* `No Deviation`: When there has been no deviation from the preset basket of the customer. I.e., there exist no rows for the basket in the deviation tables.
+
+{% enddocs %}
+
+{% docs column__preselector_category %}
+
+Categorizes the origins to be preselector or not preselector.
+* `Not Preselector`: Normal, Mealselector or no deviation
+* `Preselector`: Preselector
 
 {% enddocs %}
 
