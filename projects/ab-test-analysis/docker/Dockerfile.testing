@@ -1,0 +1,3 @@
+FROM ab-test-analysis-base:latest
+
+RUN poetry install

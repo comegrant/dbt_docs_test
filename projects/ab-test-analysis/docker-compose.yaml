@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  base:
+    image: ab-test-analysis-base
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/ab-test-analysis/docker/Dockerfile
+    command: ["echo", "'Hello from ab-test-analysis'"]
+    volumes:
+      - ./:/opt/projects/ab-test-analysis
+      - ./../../packages:/opt/packages
+
+  test:
+    image: ab-test-analysis-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/ab-test-analysis/docker/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/ab-test-analysis
+      - ./../../packages:/opt/packages
+    depends_on:
+      - base
+    profiles: ["test"]

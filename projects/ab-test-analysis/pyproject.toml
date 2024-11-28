@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "ab-test-analysis"
+version = "0.1.0"
+description = "An AB result analysis"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "ab_test_analysis"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic-settings = "^2.1.0"
+databricks-connect = "15.4"
+ipykernel = "^6.29.5"
+databricks = "^0.2"
+databricks-cli = "^0.18.0"
+plotly = "^5.24.1"
+scipy = "^1.14.1"
+streamlit = "^1.40.1"
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

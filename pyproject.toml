@@ -97,3 +97,8 @@ extend-exclude = ["**/*.ipynb"]
     # Sort import
     "I001"
 ]
+
+"**/ab-test-analysis/**.py" = [
+    # Sort import
+    "I001"
+]
