@@ -34,16 +34,17 @@ async def test_write_to_redis() -> None:
     consumer = stream.consumer(latest_timestamp)
 
     example_output = PreselectorSuccessfulResponse(
+        company_id="Test",
+        has_data_processing_consent=True,
         agreement_id=1,
         correlation_id="abc",
         year_weeks=[
             PreselectorYearWeekResponse(
                 year=2024,
                 week=50,
-                portion_size=4,
                 variation_ids=["abc", "bca"],
                 main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_complient,
+                compliancy=PreselectorPreferenceCompliancy.all_compliant,
                 target_cost_of_food_per_recipe=39
             )
         ],
@@ -56,6 +57,7 @@ async def test_write_to_redis() -> None:
         ],
         override_deviation=True,
         model_version="test",
+        portion_size=4,
         generated_at=datetime.now() # noqa: DTZ005
     )
 
@@ -87,16 +89,18 @@ async def test_write_to_preselector_batch_output() -> None:
 
     write = PreselectorResultWriter("test", store=store)
     example_output = PreselectorSuccessfulResponse(
+        company_id="Test",
+        has_data_processing_consent=True,
         agreement_id=1,
         correlation_id="abc",
+        portion_size=4,
         year_weeks=[
             PreselectorYearWeekResponse(
                 year=2024,
                 week=50,
-                portion_size=4,
                 variation_ids=["abc", "bca"],
                 main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_complient,
+                compliancy=PreselectorPreferenceCompliancy.all_compliant,
                 target_cost_of_food_per_recipe=39,
                 error_vector={
                     feat: 0.83
@@ -106,16 +110,15 @@ async def test_write_to_preselector_batch_output() -> None:
             PreselectorYearWeekResponse(
                 year=2024,
                 week=51,
-                portion_size=4,
                 variation_ids=["abc", "bca"],
                 main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_complient,
+                compliancy=PreselectorPreferenceCompliancy.all_compliant,
                 target_cost_of_food_per_recipe=39,
                 error_vector={
                     feat: 0.83
                     for feat in features
                 },
-                generated_recipe_ids={
+                ordered_weeks_ago={
                     1: 202453,
                     2: 202442,
                 }

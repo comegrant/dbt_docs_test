@@ -110,6 +110,13 @@ def select_next_vector(
     if explain_based_on_current is not None:
         import streamlit as st
 
+        unimportant_columns = []
+        for index, is_unimportant in enumerate((importance_vector == 0).to_list()):
+            if is_unimportant:
+                unimportant_columns.append(
+                    columns[index]
+                )
+
         top_vectors = (
             potential_vectors.select(pl.exclude(exclude_column))
             .select(columns)
@@ -148,12 +155,14 @@ def select_next_vector(
                 change_in_error=pl.sum_horizontal(columns),
                 recipe_id=top_vectors["recipe_id"]
             )
+            .select(pl.exclude(unimportant_columns))
         )
         st.write(explaination)
 
         st.write("Main reason for recipe")
         st.write(
             explaination.head(1)
+                .select(pl.exclude(unimportant_columns))
                 .transpose(header_name="feature", include_header=True)
                 .sort("column_0", descending=False)
                 .filter(pl.col("feature").is_in(["change_in_error"]).not_())
@@ -163,6 +172,7 @@ def select_next_vector(
         st.write("Current biggest errors")
         st.write(
             top_vectors.head(1)
+                .select(pl.exclude(unimportant_columns))
                 .transpose(header_name="feature", include_header=True)
                 .filter(pl.col("feature").is_in(["recipe_id", "total_error"]).not_())
                 .sort("column_0", descending=True)
@@ -311,27 +321,28 @@ async def find_best_combination(
         ).sort(["basket_id", "recipe_id"])
 
 
-    current_vector: pl.DataFrame | None = None
+    async def setup_starting_state(
+        recipes_to_choose_from: pl.DataFrame,
+    ) -> tuple[int, pl.DataFrame]:
+        async def default_response() -> tuple[int, pl.DataFrame]:
+            n_recipes_to_add = number_of_recipes
+            recipe_nudge = (
+                await compute_basket(
+                    recipes_to_choose_from.with_columns(basket_id=pl.col("recipe_id")),
+                )
+            ).sort("basket_id", descending=False)
 
-    if should_explain:
-        current_vector = pl.DataFrame({
-            col: [0] for col in columns
-        })
+            return n_recipes_to_add, recipe_nudge
 
-    # Sorting in order to get deterministic results
-    if preselected_recipe_ids is not None and preselected_recipe_ids:
-        final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
+        if preselected_recipe_ids is None or not preselected_recipe_ids:
+            return await default_response()
 
-        assert not final_combination.is_empty(), (
-            f"Unable to find data for preselected recipe_ids: {preselected_recipe_ids}"
+        final_combination = recipes_to_choose_from.filter(
+            pl.col("recipe_id").is_in(preselected_recipe_ids)
         )
 
-        if should_explain:
-            current_vector = await compute_basket(
-                final_combination.with_columns(
-                    basket_id=pl.lit(1)
-                )
-            )
+        if not final_combination.is_empty():
+            return await default_response()
 
         raw_recipe_nudge = recipes_to_choose_from.filter(
             pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
@@ -352,14 +363,15 @@ async def find_best_combination(
             logger.error(f"We might be missing some features for ({missing_ids})")
 
         n_recipes_to_add = number_of_recipes - final_combination.height
-    else:
-        n_recipes_to_add = number_of_recipes
-        recipe_nudge = (
-            await compute_basket(
-                recipes_to_choose_from.with_columns(basket_id=pl.col("recipe_id")),
-            )
-        ).sort("basket_id", descending=False)
+        return n_recipes_to_add, recipe_nudge
 
+
+    current_vector: pl.DataFrame | None = None
+
+    if should_explain:
+        current_vector = pl.DataFrame({
+            col: [0] for col in columns
+        })
 
     mean_target_vector = target_combination_values.select(columns).transpose().to_series()
     feature_importance = importance_vector.select(columns)
@@ -375,6 +387,8 @@ async def find_best_combination(
     error_column: str | None = None
     if should_return_error:
         error_column = "dim_errors"
+
+    n_recipes_to_add, recipe_nudge = await setup_starting_state(recipes_to_choose_from)
 
     for index in range(n_recipes_to_add):
 
@@ -492,14 +506,13 @@ async def load_recommendations(
     week: int,
     store: ContractStore,
 ) -> pl.DataFrame:
-    preds = await store.model("rec_engine").all_predictions().to_lazy_polars()
+    preds = await store.model("rec_engine").all_predictions().filter(
+        (pl.col("agreement_id") == agreement_id)
+        & (pl.col("year") == year)
+        & (pl.col("week") == week)
+    ).to_lazy_polars()
     return (
-        preds.filter(
-            pl.col("agreement_id") == agreement_id,
-            pl.col("year") == year,
-            pl.col("week") == week,
-        )
-        .sort("predicted_at", descending=True)
+        preds.sort("predicted_at", descending=True)
         .unique(["agreement_id", "week", "year", "product_id"], keep="first")
     ).collect()
 
@@ -607,6 +620,9 @@ async def normalize_cost(
         f"{request.portion_size} portions. Therefore, can not normalize the cof target"
     )
     assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
+    assert min_cof != max_cof, (
+        f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
+    )
     cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
     logger.debug(f"Normalized value from {target_cost_of_food} to {cost_of_food_value}")
@@ -988,10 +1004,13 @@ class PreselectorResult:
             override_deviation=self.request.override_deviation,
             model_version=self.model_version,
             generated_at=self.generated_at,
-            number_of_recipes=self.request.number_of_recipes,
             correlation_id=self.request.correlation_id,
             concept_preference_ids=self.request.concept_preference_ids,
-            taste_preferences=self.request.taste_preferences
+            taste_preferences=self.request.taste_preferences,
+            company_id=self.request.company_id,
+            has_data_processing_consent=self.request.has_data_processing_consent,
+            number_of_recipes=self.request.number_of_recipes,
+            portion_size=self.request.portion_size,
         )
 
 async def cost_of_food_target_for(
@@ -1268,13 +1287,11 @@ async def run_preselector_for_request(
         result = PreselectorYearWeekResponse(
             year=year,
             week=week,
-            portion_size=request.portion_size,
             variation_ids=variation_ids,
             main_recipe_ids=selected_recipe_ids,
             compliancy=output.compliancy,
             target_cost_of_food_per_recipe=cof_target_value,
-            quarantined_recipe_ids=None,
-            generated_recipe_ids=generated_recipe_ids,
+            ordered_weeks_ago=generated_recipe_ids,
             error_vector=output.error_vector
         )
 
@@ -1353,7 +1370,7 @@ async def filter_on_preferences(
 ) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, list[int] | None]:
 
     if not customer.taste_preferences:
-        return recipes, PreselectorPreferenceCompliancy.all_complient, None
+        return recipes, PreselectorPreferenceCompliancy.all_compliant, None
 
     recipes_to_use = await filter_out_recipes_based_on_preference(
         recipes,
@@ -1363,7 +1380,7 @@ async def filter_on_preferences(
     )
 
     if recipes_to_use.height >= customer.number_of_recipes:
-        return recipes_to_use, PreselectorPreferenceCompliancy.all_complient, None
+        return recipes_to_use, PreselectorPreferenceCompliancy.all_compliant, None
 
     preselected_recipes = recipes_to_use["recipe_id"].to_list()
 
@@ -1379,10 +1396,10 @@ async def filter_on_preferences(
     )
 
     if recipes_to_use.height >= customer.number_of_recipes:
-        return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_complient, preselected_recipes
+        return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_compliant, preselected_recipes
 
     preselected_recipes = recipes_to_use["recipe_id"].to_list()
-    return recipes, PreselectorPreferenceCompliancy.non_preference_complient, preselected_recipes
+    return recipes, PreselectorPreferenceCompliancy.non_preference_compliant, preselected_recipes
 
 
 async def add_ordered_since_feature(
@@ -1484,7 +1501,7 @@ async def run_preselector(
     assert not target_vector.is_empty(), "No target vector to compare with"
     assert target_vector.height == importance_vector.height, "Target and importance vector must have the same length"
 
-    compliance = PreselectorPreferenceCompliancy.all_complient
+    compliance = PreselectorPreferenceCompliancy.all_compliant
 
     recipes = available_recipes
 

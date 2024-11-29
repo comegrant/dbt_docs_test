@@ -16,6 +16,8 @@ variables:
     default: development
   slack_notification_job_id:
     description: The id of the slack notification job to call
+  cluster_version:
+    default: 15.4.x-scala2.12
 
 targets:
   dev:

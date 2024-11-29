@@ -135,8 +135,8 @@ class BasketFeatures:
     is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
     is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
 
-    is_seefood_percentage = mean_of_bool(
-        recipe_main_ingredient.is_seefood
+    is_seafood_percentage = mean_of_bool(
+        recipe_main_ingredient.is_seafood
     ).with_tag(VariationTags.protein).default_value(0)
 
     for protein in recipe_main_ingredient.all_proteins:

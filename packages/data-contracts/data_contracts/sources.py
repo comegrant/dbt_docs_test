@@ -33,7 +33,7 @@ adb_ml_output = adb.with_schema("ml_output")
 
 redis_cluster = RedisConfig("REDIS_URL")
 segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
-databricks_config = DatabricksConnectionConfig.on_databricks_only()
+databricks_config = DatabricksConnectionConfig.databricks_or_serverless()
 
 def databricks_catalog(catalog: str | None = None) -> UnityCatalog:
     import os

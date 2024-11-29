@@ -11,7 +11,7 @@ resources:
         - job_cluster_key: preselector
           new_cluster:
             num_workers: 1
-            spark_version: 14.3.x-scala2.12
+            spark_version: ${var.cluster_version}
             node_type_id: Standard_DS4_v2
             custom_tags:
               user: "Data scientists"

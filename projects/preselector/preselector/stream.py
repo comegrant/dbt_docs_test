@@ -44,6 +44,9 @@ class ReadableStream(Protocol[T]):
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         ...
 
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
+        ...
+
 
 class WritableStream(Protocol):
     async def write(self, data: BaseModel) -> None:
@@ -52,6 +55,8 @@ class WritableStream(Protocol):
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         ...
 
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        ...
 
 @dataclass
 class ServiceBusStreamWriter(WritableStream):
@@ -60,6 +65,7 @@ class ServiceBusStreamWriter(WritableStream):
     application_properties: dict[str | bytes, PrimitiveTypes] = field(
         default_factory=dict
     )
+    reader_subscription: str | None = field(default=None)
 
     _connection: ServiceBusSender | None = field(default=None)
 
@@ -89,7 +95,7 @@ class ServiceBusStreamWriter(WritableStream):
         if not data:
             return
 
-        logger.info(f"Writing {len(data)} to {self.topic_name}")
+        logger.info(f"Writing {len(data)} to '{self.topic_name}'")
         sender = self.sender()
         batch = sender.create_message_batch()
         for item in data:
@@ -100,6 +106,18 @@ class ServiceBusStreamWriter(WritableStream):
                 )
             )
         sender.send_messages(batch)
+
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        if self.reader_subscription is None:
+            return None
+
+        return ServiceBusStream(
+            payload=model,
+            client=self.client,
+            topic_name=self.topic_name,
+            subscription_name=self.reader_subscription,
+            sub_queue=None
+        )
 
 
 @dataclass
@@ -165,7 +183,7 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
 
         receiver = self.receiver()
 
-        logger.info(f"Marking {len(messages)} as completed for {self.topic_name} and {self.subscription_name}")
+        logger.info(f"Marking {len(messages)} as completed for '{self.topic_name}' and '{self.subscription_name}'")
 
         for message in messages:
             try:
@@ -179,6 +197,11 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
             except (SessionLockLostError, MessageAlreadySettled) as error:
                 logger.error(f"Error when marking message. Will try to abandon {error}")
                 receiver.abandon_message(message.raw_message)
+
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
+        receiver = self.receiver()
+        for message in messages:
+            receiver.abandon_message(message.raw_message)
 
 
 @dataclass
@@ -206,6 +229,9 @@ class StreamlitStreamMock(Generic[T], ReadableStream[T]):
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         pass
 
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
+        pass
+
 
 @dataclass
 class CustomWriter(WritableStream):
@@ -217,6 +243,9 @@ class CustomWriter(WritableStream):
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         self.function(data)
+
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None
 
 @dataclass
 class LoggerWriter(WritableStream):
@@ -241,6 +270,8 @@ class LoggerWriter(WritableStream):
             log_func(data)
         log_func(data)
 
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None
 
 @dataclass
 class StreamlitWriter(WritableStream):
@@ -257,6 +288,10 @@ class StreamlitWriter(WritableStream):
             return
 
         st.write(data[:5])
+
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None
+
 
 
 @dataclass
@@ -278,6 +313,10 @@ class SqlServerStream(Generic[T], ReadableStream[T]):
 
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         pass
+
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
+        pass
+
 
 
 @dataclass
@@ -310,10 +349,7 @@ class PreselectorResultWriter(WritableStream):
                 exclude={
                     "year_weeks": {
                         "__all__":{
-                            # May contain only null values, leading to issues
-                            # As the schema is undefined
-                            "quarantined_recipe_ids",
-                            "generated_recipe_ids",
+                            "ordered_weeks_ago",
                         }
                     }
                 }
@@ -325,7 +361,6 @@ class PreselectorResultWriter(WritableStream):
         year_week_struct = pl.List(pl.Struct({
             "year": pl.Int16,
             "week": pl.Int16,
-            "portion_size": pl.Int16,
             "variation_ids": pl.List(pl.String),
             "main_recipe_ids": pl.List(pl.Int32),
             "compliancy": pl.Int8,
@@ -366,6 +401,10 @@ class PreselectorResultWriter(WritableStream):
         except ValueError as e:
             logger.error(f"Error when upserting {df.head()}")
             logger.exception(e)
+
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None
+
 
 
 @dataclass
@@ -412,6 +451,10 @@ class PreselectorResultStreamWriter(WritableStream):
             stream=source
         )
 
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None
+
+
 @dataclass
 class MultipleWriter(WritableStream):
 
@@ -423,3 +466,6 @@ class MultipleWriter(WritableStream):
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         for source in self.sources:
             await source.batch_write(data)
+
+    def reader(self, model: type[T]) -> ReadableStream[T] | None:
+        return None

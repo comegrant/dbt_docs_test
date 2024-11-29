@@ -19,7 +19,6 @@ class GenerateMealkitRequest(BaseModel):
     company_id: str
     compute_for: list[YearWeek]
 
-
     concept_preference_ids: list[str]
     """Represents the different attributs that a user can select"""
 
@@ -35,7 +34,6 @@ class GenerateMealkitRequest(BaseModel):
     number_of_recipes: int
     override_deviation: bool
 
-    quarentine_main_recipe_ids: list[int] | None = Field(default=None)
     ordered_weeks_ago: dict[int, int] | None = Field(default=None)
     has_data_processing_consent: bool = Field(False)
     correlation_id: str = Field(default_factory=lambda: str(uuid4()))

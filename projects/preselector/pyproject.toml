@@ -8,7 +8,7 @@ packages = [{include = "preselector"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
-data-contracts = {path = "../../packages/data-contracts", develop = true, extras = ["openai"]}
+data-contracts = {path = "../../packages/data-contracts", develop = true, extras = ["openai", "databricks"]}
 tqdm = "^4.66.2"
 streamlit-pages = {path = "../../packages/streamlit-pages", develop = true}
 aioodbc = {version = "0.4.1" }
@@ -26,6 +26,7 @@ ruff = "^0.6.6"
 redis = "^4.3.1"
 hiredis = "^3.0.0"
 datadog = "^0.50.1"
+virtualenv = "20.24.2"
 
 [tool.poetry.group.worker.dependencies]
 azure-servicebus = "^7.12.2"

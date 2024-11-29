@@ -159,6 +159,11 @@ async def quarantined_recipes(
     ).lazy()
 
 
+quarantining_week_interval = 8
+
+def week_to_date(col: str) -> pl.Expr:
+    return pl.format("{}1", col).str.to_date("%G%V%w", strict=False)
+
 @feature_view(
     name="weeks_since_recipe",
     source=CustomMethodDataSource.from_load(
@@ -178,14 +183,18 @@ class WeeksSinceRecipe:
     from_year_week = Int32().is_optional().description("Needs to be sent in")
     last_order_year_week = Int32()
 
-    ordered_weeks_ago = Int32().transformed_using_features_polars(
+    order_diff = Int32().transformed_using_features_polars(
         using_features=[from_year_week, last_order_year_week],
         transformation=(
-            6 - (pl.col("from_year_week") - pl.col("last_order_year_week"))
-        ).clip(lower_bound=1).log(2) / pl.lit(6).log(2)
+            week_to_date("from_year_week") - week_to_date("last_order_year_week")
+        ).dt.total_days() / 7
     )
-
-
+    ordered_weeks_ago = Int32().transformed_using_features_polars(
+        using_features=[order_diff],
+        transformation=(
+            quarantining_week_interval - pl.col("order_diff")
+        ).clip(lower_bound=1).log(2) / pl.lit(quarantining_week_interval).log(2)
+    )
 
 
 deviation_sql = """SELECT

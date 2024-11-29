@@ -1,3 +1,4 @@
+
 import asyncio
 import logging
 from contextlib import suppress
@@ -119,7 +120,7 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     st.write(response.model_version)
 
     st.write("Quarentined Dishes")
-    st.write(year_week.generated_recipe_ids)
+    st.write(year_week.ordered_weeks_ago)
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
@@ -129,6 +130,8 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
 
     st.write("Compliance Value")
     st.write(year_week.compliancy)
+
+    assert response.portion_size
 
     return (
         GenerateMealkitRequest(
@@ -142,11 +145,10 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
             ],
             concept_preference_ids=response.concept_preference_ids,
             number_of_recipes=len(year_week.main_recipe_ids),
-            portion_size=year_week.portion_size,
+            portion_size=response.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
-            quarentine_main_recipe_ids=None,
-            ordered_weeks_ago=year_week.generated_recipe_ids
+            ordered_weeks_ago=year_week.ordered_weeks_ago
         ),
         year_week.main_recipe_ids
     )
@@ -175,25 +177,27 @@ async def debug_app() -> None:
 
     response = await successful_responses()
     if response is None:
+        st.write("Found no results")
         return
 
 
     request, expected_recipes = response
 
     st.write(request)
+    st.write(expected_recipes)
 
     cache_store = await load_cache(
         store, company_id=request.company_id
     )
 
+
     st.write(request.number_of_recipes)
 
     run_response = await run_preselector_for_request(
-        request=request, store=cache_store, should_explain=False
+        request=request, store=cache_store, should_explain=True
     )
 
     if run_response.failures and run_response.success:
-
         failed_request = request.copy()
         failed_request.compute_for = [
             YearWeek(year=res.year, week=res.week)

@@ -331,7 +331,6 @@ async def compare_week(state: CompareWeekState) -> None:
         concept_preference_ids=[customer.concept_preference_id],
         portion_size=customer.portion_size,
         number_of_recipes=customer.number_of_recipes,
-        quarentine_main_recipe_ids=list(selected_recipe_ids),
         override_deviation=False,
         has_data_processing_consent=True
     )

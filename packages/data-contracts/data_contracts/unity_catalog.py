@@ -21,28 +21,74 @@ def is_running_on_databricks() -> bool:
     import os
     return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
+
+@dataclass
+class DatabricksAuthConfig:
+    token: str
+    host: str
+
 @dataclass
 class DatabricksConnectionConfig:
 
-    token: str
-    host: str
-    cluster_id: str
+    cluster_id: str | None
+    auth_config: DatabricksAuthConfig | None
+    "None => reading from default databricks env files etc."
+
+    def with_auth(self, token: str, host: str) -> 'DatabricksConnectionConfig':
+        return DatabricksConnectionConfig(
+            cluster_id=self.cluster_id,
+            auth_config=DatabricksAuthConfig(token=token, host=host)
+        )
 
     @staticmethod
-    def on_databricks_only() -> 'DatabricksConnectionConfig':
-        return DatabricksConnectionConfig("", "", "")
+    def databricks_or_serverless() -> 'DatabricksConnectionConfig':
+        return DatabricksConnectionConfig(
+            cluster_id=None,
+            auth_config=None
+        )
+
+    @staticmethod
+    def serverless() -> 'DatabricksConnectionConfig':
+        return DatabricksConnectionConfig(
+            cluster_id="serverless", auth_config=None
+        )
+
+    @staticmethod
+    def with_cluster_id(cluster_id: str) -> 'DatabricksConnectionConfig':
+        return DatabricksConnectionConfig(
+            cluster_id=cluster_id, auth_config=None
+        )
 
     def catalog(self, catalog: str) -> 'UnityCatalog':
         return UnityCatalog(self, catalog)
 
     def connection(self) -> 'SparkSession':
-        if is_running_on_databricks() or self.token == "":
+
+        cluster_id = self.cluster_id
+
+        if not cluster_id:
             from databricks.sdk.runtime import spark
 
-            return spark
+            if spark is not None:
+                return spark
+
+            # If no spark session
+            # Assume that serverless is available
+            cluster_id = "serverless"
 
         from databricks.connect.session import DatabricksSession
-        return DatabricksSession.builder.host(self.host).token(self.token).clusterId(self.cluster_id).getOrCreate()
+
+        builder = DatabricksSession.builder
+
+        if cluster_id == "serverless":
+            builder = builder.serverless()
+        else:
+            builder = builder.clusterId(cluster_id)
+
+        if self.auth_config:
+            builder = builder.host(self.auth_config.host).token(self.auth_config.token)
+
+        return builder.getOrCreate()
 
     def sql(self, query: str) -> 'UCSqlSource':
         return UCSqlSource(self, query)

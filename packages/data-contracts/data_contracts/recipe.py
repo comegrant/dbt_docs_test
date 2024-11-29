@@ -321,6 +321,7 @@ def is_non_of(features: list[str]) -> pl.Expr:
     materialized_source=materialized_data.parquet_at("recipe_main_ingredient_category.parquet")
 )
 class RecipeMainIngredientCategory:
+
     recipe_id = Int32().as_entity()
 
     main_protein_category_id = Int32().is_optional()
@@ -339,7 +340,7 @@ class RecipeMainIngredientCategory:
     is_mixed_meat = main_protein_category_id == 1186  # noqa: PLR2004
     is_tuna = main_protein_category_id == 1388  # noqa: PLR2004
 
-    is_seefood = Bool().transformed_using_features_polars(
+    is_seafood = Bool().transformed_using_features_polars(
         [is_salmon, is_cod, is_tuna, is_shrimp],
         pl.col("is_salmon") | pl.col("is_cod") | pl.col("is_tuna") | pl.col("is_shrimp") # type: ignore
     )

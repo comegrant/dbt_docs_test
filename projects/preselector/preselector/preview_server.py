@@ -46,7 +46,6 @@ class GeneratePreview(BaseModel):
             number_of_recipes=5,
             override_deviation=False,
             has_data_processing_consent=False,
-            quarentine_main_recipe_ids=[]
         )
 
 class Mealkit(BaseModel):
@@ -94,13 +93,16 @@ async def load_store() -> ContractStore:
 
         if dep.location_type == "feature_view":
             entity_names = store.feature_view(dep.name).view.entitiy_names
-            if "agreement_id" in entity_names:
-                # Do not want any user spesific data
-                logger.info(dep.name)
-                assert isinstance(store.feature_source, BatchFeatureSource)
-                assert isinstance(store.feature_source.sources, dict)
-                store.feature_source.sources.pop(dep.identifier, None)
-                continue
+        else:
+            entity_names = store.model(dep.name).model.predictions_view.request("").entity_names
+
+        if "agreement_id" in entity_names:
+            # Do not want any user spesific data
+            logger.info(dep.name)
+            assert isinstance(store.feature_source, BatchFeatureSource)
+            assert isinstance(store.feature_source.sources, dict)
+            store.feature_source.sources.pop(dep.identifier, None)
+            continue
 
         cache_sources.append((dep, InMemorySource.empty(), None))
 

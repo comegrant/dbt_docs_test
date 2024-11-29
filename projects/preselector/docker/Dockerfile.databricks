@@ -1,4 +1,4 @@
-FROM databricksruntime/python:14.3-LTS
+FROM databricksruntime/python:15.4-LTS
 
 SHELL ["/bin/bash", "-c"]
 
@@ -32,7 +32,7 @@ RUN mkdir -p preselector && touch preselector/__init__.py
 RUN source /databricks/python3/bin/activate \
 	&& echo "$(which poetry)" \
 	&& poetry config virtualenvs.create false \
-	&& poetry install --with=databricks
+	&& poetry install --with=databricks && rm -rf ~/.cache/pypoetry/cache
 
 
 ENV PYTHONPATH=/databricks/python3/bin

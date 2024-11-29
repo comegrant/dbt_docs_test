@@ -3,7 +3,7 @@ import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
 
 import polars as pl
 from aligned import ContractStore
@@ -12,6 +12,7 @@ from aligned.feature_source import (
     FeatureLocation,
 )
 from aligned.sources.in_mem_source import InMemorySource
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
@@ -19,8 +20,10 @@ from cheffelo_logging import DataDogConfig
 from cheffelo_logging.logging import DataDogStatsdConfig
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
-from data_contracts.recipe import RecipeEmbedding, RecipeNegativePreferences
+from data_contracts.preselector.store import FailedPreselectorOutput, SuccessfulPreselectorOutput
+from data_contracts.recipe import RecipeEmbedding
 from data_contracts.recommendations.recommendations import RecommendatedDish
+from data_contracts.unity_catalog import DatabricksConnectionConfig, DatabricksSource
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -33,8 +36,6 @@ from preselector.process_stream_settings import ProcessStreamSettings
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.store import preselector_store
 from preselector.stream import (
-    MultipleWriter,
-    PreselectorResultStreamWriter,
     ReadableStream,
     ServiceBusStream,
     ServiceBusStreamWriter,
@@ -62,8 +63,6 @@ class PreselectorStreams:
 
 
 async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -> PreselectorStreams:
-    redis_writer = await PreselectorResultStreamWriter.for_company(company_id)
-
     if settings.service_bus_connection_string:
         client = ServiceBusClient.from_connection_string(
             settings.service_bus_connection_string.get_secret_value()
@@ -95,22 +94,18 @@ async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -
         default_max_records=settings.service_bus_request_size
     )
 
-    error_writer = MultipleWriter([
-        ServiceBusStreamWriter(
-            client,
-            topic_name=settings.service_bus_failed_topic_name,
-            application_properties={"company": settings.service_bus_subscription_name},
-        ),
-        redis_writer
-    ])
-    success_writer = MultipleWriter([
-        ServiceBusStreamWriter(
-            client,
-            topic_name=settings.service_bus_success_topic_name,
-            application_properties={"company": settings.service_bus_subscription_name},
-        ),
-        redis_writer
-    ])
+    error_writer = ServiceBusStreamWriter(
+        client,
+        topic_name=settings.service_bus_failed_topic_name,
+        application_properties={"company": settings.service_bus_subscription_name},
+        reader_subscription=settings.service_bus_failed_subscription_name
+    )
+    success_writer = ServiceBusStreamWriter(
+        client,
+        topic_name=settings.service_bus_success_topic_name,
+        application_properties={"company": settings.service_bus_subscription_name},
+        reader_subscription=settings.service_bus_success_subscription_name
+    )
 
     return PreselectorStreams(
         request_stream=request_stream,
@@ -124,14 +119,15 @@ async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -
 
 async def load_cache_for(
     store: ContractStore,
-    loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]]
+    loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]],
+    force_load: bool = False
 ) -> ContractStore:
     for location, source, pl_filter in loads:
-        if (
+        if not force_load and ((
             isinstance(source, InMemorySource) and not source.data.is_empty()
         ) or (
             not isinstance(source, InMemorySource)
-        ):
+        )):
             if location.location_type == "feature_view":
                 request = store.feature_view(location.name).request
             else:
@@ -144,7 +140,7 @@ async def load_cache_for(
                 logger.info(f"Found data for {location}, will therefore skip")
                 continue
             except Exception:
-                logger.info(f"Either missing data, or incorrect schema. for {location}")
+                logger.info(f"Will load data due to either missing data, or incorrect schema. for {location}")
 
 
         logger.info(f"Loading {location} to cache")
@@ -170,7 +166,8 @@ async def load_cache_for(
 async def load_cache(
     store: ContractStore,
     company_id: str,
-    exclude_views: set[FeatureLocation] | None = None
+    exclude_views: set[FeatureLocation] | None = None,
+    force_load: bool = False
 ) -> ContractStore:
     from preselector.recipe_contracts import cache_dir
 
@@ -227,11 +224,6 @@ async def load_cache(
             cache_dir.parquet_at(f"{company_id}/recipe_embeddings.parquet"),
             pl.col("company_id") == company_id
         ),
-        (
-            RecipeNegativePreferences.location,
-            cache_dir.partitioned_parquet_at("recipe_negative_preferences", partition_keys=["portion_size"]),
-            None
-        )
     ]
 
     custom_cache = {loc for loc, _, _ in cache_sources}
@@ -249,8 +241,7 @@ async def load_cache(
         if loc not in exclude_views
     ]
 
-    store = await load_cache_for(store, load_for)
-    return store
+    return await load_cache_for(store, load_for, force_load=force_load)
 
 
 def convert_concepts_to_attributes(
@@ -405,7 +396,7 @@ async def process_stream_batch(
     progress_callback: Callable[[int, int], None] | None = None,
     progress_callback_interval: int = 5,
     write_batch_interval: int = 100,
-) -> None:
+) -> int:
     from datadog.dogstatsd.base import statsd
 
     with duration("read_batch"):
@@ -414,7 +405,7 @@ async def process_stream_batch(
     number_of_messages = len(messages)
 
     if number_of_messages == 0:
-        return
+        return number_of_messages
 
     statsd.increment("preselector.processed-requests", number_of_messages)
 
@@ -425,6 +416,7 @@ async def process_stream_batch(
     with duration("process_messages"):
         for index, message in enumerate(messages):
             raw_request = message.body
+            statsd.increment("preselector.processed_weeks", len(message.body.compute_for))
 
             with duration("process_single_message"):
                 try:
@@ -491,6 +483,29 @@ async def process_stream_batch(
         if progress_callback:
             progress_callback(number_of_messages, number_of_messages)
 
+    return number_of_messages
+
+
+async def create_service_bus_subscription(
+    subscription_name: str,
+    topic_name: str,
+    namespace: str
+) -> None:
+    from azure.identity import DefaultAzureCredential
+    from azure.servicebus.management import ServiceBusAdministrationClient
+
+    client = ServiceBusAdministrationClient(
+        fully_qualified_namespace=namespace,
+        credential=DefaultAzureCredential()
+    )
+    try:
+        subscription = client.get_subscription(topic_name, subscription_name=subscription_name)
+        logger.info(f"Found '{subscription.name}' in '{topic_name}'. Will skip creation.")
+    except ResourceNotFoundError:
+        client.create_subscription(
+            topic_name, subscription_name=subscription_name
+        )
+
 
 async def process_stream(
     settings: ProcessStreamSettings,
@@ -511,7 +526,15 @@ async def process_stream(
     setup_datadog(logging.getLogger(""), config)
 
     try:
-        store = preselector_store()
+        def use_serverless_databricks(source: DatabricksSource, location: FeatureLocation) -> None:
+            source.config = DatabricksConnectionConfig.serverless().with_auth(
+                token=settings.databricks_token.get_secret_value(),
+                host=settings.databricks_host
+            )
+
+        original_store = preselector_store()
+        original_store.sources_of_type(DatabricksSource, use_serverless_databricks)
+
         datadog_config = DataDogStatsdConfig() # type: ignore[reportGeneralTypeIssues]
         initialize(
             statsd_host=datadog_config.datadog_host,
@@ -530,18 +553,21 @@ async def process_stream(
         company_id = company_map[settings.service_bus_subscription_name]
         streams = await connect_to_streams(settings, company_id)
 
-        store = await load_cache(store, company_id)
     except Exception as error:
         logger.exception(error)
         logger.error("Exited worker before we could start processing.")
         return
+
+    store = await load_cache(original_store, company_id)
+    last_cache_load = datetime.now(tz=timezone.utc)
+    last_batch_write = datetime.now(tz=timezone.utc)
 
     try:
         logger.info(f"'{settings.service_bus_subscription_name}' ready for some cooking!")
         while True:
             batch_start = time.monotonic()
             with duration("run_full_batch"):
-                await process_stream_batch(
+                number_of_messages = await process_stream_batch(
                     store,
                     streams.request_stream,
                     streams.successful_output_stream,
@@ -554,6 +580,23 @@ async def process_stream(
             logger.debug(
                 f"Done a batch of work {batch_duration:.3f}, sleeping for {sleep_time:.3f} seconds"
             )
+
+            now = datetime.now(tz=timezone.utc)
+            if number_of_messages == 0 and (
+                (now - last_cache_load) > settings.update_data_interval
+            ):
+                # Only update the cached data if there are no messages to process
+                # And the cache is 3 hours old
+                store = await load_cache(original_store, company_id, force_load=True)
+                last_cache_load = datetime.now(tz=timezone.utc)
+
+
+            if number_of_messages == 0 and settings.write_output_interval and settings.is_batch_worker and (
+                now - last_batch_write > settings.write_output_interval
+            ):
+                await write_to_databricks(streams, original_store)
+                last_batch_write = datetime.now(tz=timezone.utc)
+
             await asyncio.sleep(sleep_time)
     except (SessionLockLostError, MessageAlreadySettled) as error:
         logger.error("Error when settling bus message")
@@ -563,6 +606,57 @@ async def process_stream(
         logger.exception(error)
         raise error
 
+
+async def write_to_databricks(
+    streams: PreselectorStreams,
+    write_store: ContractStore
+) -> None:
+
+    from pyspark.errors.exceptions.base import PySparkException
+
+    if not streams.successful_output_stream or not streams.failed_output_stream:
+        logger.info("Need both a successful and failed stream to write to Databricks")
+        return
+
+
+    success_stream = streams.successful_output_stream.reader(PreselectorSuccessfulResponse)
+    if success_stream is None:
+        logger.info("No readable success stream.")
+        return
+
+    success_messages = await success_stream.read(number_of_records=10)
+    if success_messages:
+        try:
+            await write_store.feature_view(SuccessfulPreselectorOutput).insert(
+                pl.concat([
+                    output.body.to_dataframe()
+                    for output in success_messages
+                ], how="vertical_relaxed")
+            )
+            await success_stream.mark_as_complete(success_messages)
+        except (ValueError, PySparkException) as error:
+            logger.error(f"Unable to write to databricks {error} - {[req.body for req in success_messages]}")
+            await success_stream.mark_as_uncomplete(success_messages)
+
+
+    failed_stream = streams.failed_output_stream.reader(PreselectorFailedResponse)
+    if failed_stream is None:
+        logger.info("No readable success stream.")
+        return
+
+    failed_messages = await failed_stream.read(number_of_records=10)
+    if failed_messages:
+        try:
+            await write_store.feature_view(FailedPreselectorOutput).insert(
+                pl.concat([
+                    failed_req.body.to_dataframe()
+                    for failed_req in failed_messages
+                ], how="vertical_relaxed")
+            )
+            await failed_stream.mark_as_complete(failed_messages)
+        except (ValueError, PySparkException) as error:
+            logger.error(f"Unable to write to databricks {error} - {[req.body for req in failed_messages]}")
+            await success_stream.mark_as_uncomplete(success_messages)
 
 if __name__ == "__main__":
     asyncio.run(process_stream(
