@@ -10,7 +10,7 @@ source_table = "billing_agreement_basket_scheduler"
 source_date_created_column = "created_at"
 source_date_updated_column = "updated_at"
 
-silver_table = f"dev.silver.cms__{source_table}s"
+silver_table = f"silver.cms__{source_table}s"
 silver_date_created_column = "source_created_at"
 silver_date_updated_column = "source_updated_at"
 

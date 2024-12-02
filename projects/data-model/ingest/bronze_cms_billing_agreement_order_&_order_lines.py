@@ -10,7 +10,7 @@ source_orders_table = "billing_agreement_order"
 source_orders_date_column = "created_date"
 source_orders_join_column = "id"
 
-silver_orders_table = f"dev.silver.cms__{source_orders_table}s"
+silver_orders_table = f"silver.cms__{source_orders_table}s"
 silver_orders_date_column = "source_created_at"
 
 source_order_lines_table = "billing_agreement_order_line"

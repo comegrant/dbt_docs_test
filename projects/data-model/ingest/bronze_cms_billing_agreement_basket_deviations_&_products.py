@@ -10,7 +10,7 @@ source_deviations_table = "billing_agreement_basket_deviation"
 source_deviations_date_column = "created_at"
 source_deviations_join_column = "id"
 
-silver_deviations_table = f"dev.silver.cms__{source_deviations_table}s"
+silver_deviations_table = f"silver.cms__{source_deviations_table}s"
 silver_deviations_date_column = "source_created_at"
 
 source_deviation_products_table = "billing_agreement_basket_deviation_product"

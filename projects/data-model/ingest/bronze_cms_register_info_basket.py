@@ -10,7 +10,6 @@ from coredb_connector import load_coredb_query
 
 database = "CMS"
 source_table = "register_info_basket"
-silver_table = f"dev.silver.cms__{source_table}s"
 
 # COMMAND ----------
 
