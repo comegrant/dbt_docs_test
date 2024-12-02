@@ -127,10 +127,15 @@ The following transformation steps should done in the gold layer:
 - ✅ Join silver and/or intermediate tables
 - ✅ Add primary keys
 - ✅ Add foregin keys
+  - Add foreign keys by concatenating columns and performing the needed transformations to create the key
+  - Only when needed, join in the dim table to get extract foreign key
 - ✅ Other needed calculations that does not beloing to the intermediate layer
   
 One should *not* do:
 - ❌ Join with other facts (then the needed logic should be moved to the intermediate layer)
+
+>[!NOTE]
+>Keep the id columns used to create foreign keys in the table as they are useful for QA or if doing ad hoc analysis where gold and silver tables are combined.
 
 ## 2.4 Add model configurations
 
