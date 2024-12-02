@@ -1603,8 +1603,8 @@ async def run_preselector(
 
     if recipe_features.height < customer.number_of_recipes:
         recipes_of_interest = (
-            set(recipes["main_recipe_id"].to_list())
-            - set(recipe_features["main_recipe_id"].to_list())
+            set(recipes["recipe_id"].to_list())
+            - set(recipe_features["recipe_id"].to_list())
         )
         logger.error(
             f"Number of recipes are less then expected {recipe_features.height}. "

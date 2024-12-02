@@ -4,7 +4,6 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from preselector.data.models.customer import PreselectorFailedResponse
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
@@ -35,9 +34,11 @@ assert environment != ""
 # Need to set this before importing any contracts due to env vars being accessed
 # I know this is is a shit design, but it will do for now
 os.environ["DATALAKE_ENV"] = environment
+os.environ["UC_ENV"] = environment
 
 
 from data_contracts.sources import adb, databricks_catalog
+from preselector.data.models.customer import PreselectorFailedResponse
 from preselector.process_stream import load_cache, process_stream_batch
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store

@@ -27,6 +27,7 @@ assert environment != ""
 # Need to set this before importing any contracts due to env vars being accessed
 # I know this is is a shit design, but it will do for now
 os.environ["DATALAKE_ENV"] = environment
+os.environ["UC_ENV"] = environment
 
 
 from data_contracts.materialize import materialize_data

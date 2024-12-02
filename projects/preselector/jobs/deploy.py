@@ -105,6 +105,10 @@ async def deploy_preselector(
         "test": {
             # "write_output_interval": timedelta(minutes=5),
             "update_data_interval": timedelta(hours=24)
+        },
+        "prod": {
+            # "write_output_interval": timedelta(minutes=5),
+            "update_data_interval": timedelta(hours=24 * 4)
         }
     }
 
