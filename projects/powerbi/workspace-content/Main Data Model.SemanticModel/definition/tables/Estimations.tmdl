@@ -114,7 +114,8 @@ table Estimations
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    fact_estimations_Table = gold_Schema{[Name="fact_estimations",Kind="Table"]}[Data]
+				    fact_estimations_Table = gold_Schema{[Name="fact_estimations",Kind="Table"]}[Data],
+					filtered_table = Table.SelectRows(fact_estimations_Table, each ([is_latest_estimation]=true))
 				in
-					fact_estimations_Table
+					filtered_table
 
