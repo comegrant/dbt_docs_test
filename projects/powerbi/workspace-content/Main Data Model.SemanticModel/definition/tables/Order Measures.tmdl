@@ -1112,19 +1112,6 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_mealbox
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 5c706b01-cf68-4d0a-8d45-6c0034495550
-		summarizeBy: none
-		sourceColumn: is_mealbox
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column preselected_product_variation_id
 		dataType: string
 		isHidden
