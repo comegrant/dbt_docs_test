@@ -169,6 +169,7 @@ async def run() -> None:
     LEFT JOIN taste_preferences tp on tp.agreement_id = ba.agreement_id
     WHERE ba.[status] IN (10,20)
     AND tr.weeks_since_last_delivery <= 12
+    AND tr.variation_portions != 3
     AND UPPER(ba.company_id) = '{company_id}'"""
     )
 
