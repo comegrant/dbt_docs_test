@@ -1,0 +1,120 @@
+table Estimations
+	lineageTag: 945865dc-66a2-4d6b-ba62-6f324c4bc648
+
+	measure 'Quantity of product in baskets if cutoff is now' = SUM('Estimations'[product_variation_quantity])
+		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
+
+	/// Primary key of the fact_estimations table
+	column pk_fact_estimations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4ea2e29b-1344-4b44-bf37-5b4aa0144b6b
+		summarizeBy: none
+		sourceColumn: pk_fact_estimations
+
+	/// Foreign key connecting dim_date to the day at which an estimation was generated at.
+	column fk_dim_date_estimation_generated
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7dc24bf5-481d-4c8c-b34c-8df655dcb941
+		summarizeBy: sum
+		sourceColumn: fk_dim_date_estimation_generated
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Foreign key connecting dim_time to the time at which an estimation was generated at.
+	column fk_dim_time_estimation_generated
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 566bfb59-0f5f-4c8f-823a-1ed2cbb3f9c7
+		summarizeBy: none
+		sourceColumn: fk_dim_time_estimation_generated
+
+	/// Foreign key connecting dim_time to the time at which an estimation was generated at.
+	column fk_dim_date_menu_week
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a75c6342-391c-4ccd-b7bb-ea3b85399df0
+		summarizeBy: none
+		sourceColumn: fk_dim_date_menu_week
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Foreign key connecting to Companies dimension
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: f4efb467-216a-4de9-9ebd-c8cfb778e2ac
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	/// Foreign key connecting to Products dimension
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 643a56e5-650a-4cd6-83a8-b28a880abbff
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+	/// The primary key of the basket deviation origin in the CMS database.
+	column fk_dim_basket_deviation_origins
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5faf0cd2-550d-4dd6-8487-4ca02aaa246c
+		summarizeBy: none
+		sourceColumn: fk_dim_basket_deviation_origins
+
+	/// The unique id of each row in Dim Billing Agreements
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: c873e551-b656-4ddc-86b7-eb763080e2e2
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	/// A boolean flag indicating whether this estimation is from the most recent generation.
+	column is_latest_estimation
+		dataType: boolean
+		lineageTag: 5927ed9e-e5b6-4613-87bd-b32ce9d95bb9
+		summarizeBy: none
+		sourceColumn: is_latest_estimation
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_quantity
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: acc1bf03-a2bd-4b7b-a86d-24ce8da2ba81
+		summarizeBy: sum
+		sourceColumn: product_variation_quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Timestamp of estimations
+	column 'Estimation generated at'
+		dataType: dateTime
+		formatString: 'yyyy-mm-dd hh:mm:ss'
+		lineageTag: 8cab2d83-3dd0-46e3-9631-f334a17e26b7
+		summarizeBy: none
+		sourceColumn: estimation_generated_at
+
+	partition Estimations = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_estimations_Table = gold_Schema{[Name="fact_estimations",Kind="Table"]}[Data]
+				in
+					fact_estimations_Table
+

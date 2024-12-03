@@ -3,7 +3,30 @@ table 'Order Measures'
 
 	/// MEASURES ///
 	/// Revenue
-	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
+	measure 'Sum Total Amount Ex Vat' =
+			
+			CALCULATE(
+			    SUM('Order Measures'[total_amount_ex_vat]),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			
+			)
 		isHidden
 		lineageTag: 9514c3b0-8d1c-49a4-a547-99ac13fa089d
 
@@ -11,7 +34,29 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Total Amount Inc Vat' = SUM('Order Measures'[total_amount_inc_vat])
+	measure 'Sum Total Amount Inc Vat' =
+			
+			CALCULATE(
+			    SUM('Order Measures'[total_amount_inc_vat]),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			)
 		isHidden
 		lineageTag: 5cba6729-7b7c-48ce-9c67-e695bff2c63a
 
@@ -24,8 +69,26 @@ table 'Order Measures'
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id]),
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
 				)
+			)
 		formatString: #,0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
@@ -45,7 +108,29 @@ table 'Order Measures'
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
 
 	/// Product Variation Quantity
-	measure 'Sum Total Product Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
+	measure 'Sum Total Product Variation Quantity' =
+			
+			CALCULATE(
+			    SUM('Order Measures'[product_variation_quantity]),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			)
 		formatString: #,0
 		isHidden
 		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
@@ -215,8 +300,30 @@ table 'Order Measures'
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes] <> "0",
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+			    USERELATIONSHIP(
+			        'Order Measures'[fk_dim_billing_agreements_deviations],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
 				)
+			)
 		formatString: #,0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
@@ -224,7 +331,29 @@ table 'Order Measures'
 			CALCULATE(
 				SUM('Order Measures'[is_added_dish]),
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+			    USERELATIONSHIP(
+			        'Order Measures'[fk_dim_billing_agreements_deviations],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
 			)
 		formatString: #,0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
@@ -234,9 +363,33 @@ table 'Order Measures'
 					SUM('Order Measures'[is_removed_dish]),
 					'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 					'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
-					USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
-					USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
-				)
+					USERELATIONSHIP(
+						'Order Measures'[fk_dim_recipes_preselected],
+						Recipes[pk_dim_recipes]
+					),
+					USERELATIONSHIP(
+						'Order Measures'[fk_dim_products_preselected],
+						Products[pk_dim_products]
+					),
+				   USERELATIONSHIP(
+					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					   'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				   ),
+				   USERELATIONSHIP(
+					   'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					   'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				   ),
+				   CROSSFILTER(
+					   'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					   'Billing Agreements'[pk_dim_billing_agreements],
+					   None
+				   ),
+				   CROSSFILTER(
+					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					   'Billing Agreements'[pk_dim_billing_agreements],
+					   None
+				   )
+			)
 		formatString: #,0
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
 
@@ -249,16 +402,41 @@ table 'Order Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
-	measure 'Number of Preselected Dishes' =
+	measure 'Number of Preselected Dishes' = ```
 			CALCULATE(
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes_preselected] <> "0",
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
-				USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
-				USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+				USERELATIONSHIP(
+					'Order Measures'[fk_dim_recipes_preselected],
+					Recipes[pk_dim_recipes]
+				),
+				USERELATIONSHIP('
+					Order Measures'[fk_dim_products_preselected],
+					Products[pk_dim_products]),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
 			)
+			
+			```
 		formatString: #,0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
@@ -410,18 +588,38 @@ table 'Order Measures'
 
 	measure 'Meal Adjustments' =
 			
-			IF(
-			    ISFILTERED('Recipes'),
-			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
+			CALCULATE(
+			    IF(
+			        ISFILTERED('Recipes'),
 			            BLANK(),
-			            CALCULATE(
-				            SUM('Order Measures'[meal_adjustment_subscription]),
-				            'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order",    "Campaign"},
-				            'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			            IF(
+			                ISFILTERED('Products'),
+			                BLANK(),
+			                CALCULATE(
+			    	            SUM('Order Measures'[meal_adjustment_subscription]),
+			    	            'Order Types'[Order Type Name] IN {"Recurring",     "Order After Registration", "Orders After Cutoff",  "Daily Direct Order",    "Campaign"},
+			    	            'Order Statuses'[Order Status Name] IN {"Finished",     "Processing"}
+			                )
 			            )
-			        )
+			    ),
+			    USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
 			)
 		formatString: #,0
 		lineageTag: 15fc3c41-f4e7-455c-8502-cfb16f3a92db
@@ -448,7 +646,25 @@ table 'Order Measures'
 			CALCULATE(
 				SUM('Order Measures'[portion_adjustment_subscription]),
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
 			)
 		formatString: #,0
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
@@ -460,6 +676,18 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
+
+	column ops_order_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
+		summarizeBy: sum
+		sourceColumn: ops_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
 
 	column order_status_id
 		dataType: string
@@ -790,6 +1018,18 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column fk_dim_billing_agreements_deviations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements_deviations
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column fk_dim_products_preselected
 		dataType: string
 		isHidden
@@ -872,13 +1112,14 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ops_order_id
-		dataType: int64
+	column is_mealbox
+		dataType: boolean
 		isHidden
-		formatString: 0
-		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
-		summarizeBy: sum
-		sourceColumn: ops_order_id
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 5c706b01-cf68-4d0a-8d45-6c0034495550
+		summarizeBy: none
+		sourceColumn: is_mealbox
 
 		changedProperty = IsHidden
 
@@ -938,18 +1179,6 @@ table 'Order Measures'
 		sourceColumn: portion_adjustment_subscription
 
 		changedProperty = IsHidden
-
-	column fk_dim_billing_agreements_deviations
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
-		summarizeBy: none
-		sourceColumn: fk_dim_billing_agreements_deviations
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
 
 	column fk_dim_basket_deviation_origins
 		dataType: string

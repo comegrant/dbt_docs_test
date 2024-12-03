@@ -57,5 +57,5 @@ Invoke-RestMethod -Uri "https://api.powerbi.com/v1.0/myorg/groups/${env:WORKSPAC
 Invoke-RestMethod -Uri "https://api.powerbi.com/v1.0/myorg/gateways/$gatewayId/datasources/$datasourceId" -Method Patch -Body $body -Headers $headers
 
 #Refresh semantic model
-Invoke-RestMethod -Uri "https://api.powerbi.com/v1.0/myorg/groups/${env:WORKSPACE_ID} /datasets/${env:SEMANTIC_MODEL_ID}  /refreshes" -Method Post -Headers $headers
+#Invoke-RestMethod -Uri "https://api.powerbi.com/v1.0/myorg/groups/${env:WORKSPACE_ID} /datasets/${env:SEMANTIC_MODEL_ID}  /refreshes" -Method Post -Headers $headers
 

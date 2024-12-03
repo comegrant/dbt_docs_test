@@ -88,6 +88,30 @@ relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
 	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 
+relationship 6dbc448e-9354-55d0-204d-e74d473dc80a
+	fromColumn: Estimations.fk_dim_basket_deviation_origins
+	toColumn: 'Origin of Selected Dishes in Basket'.pk_dim_basket_deviation_origins
+
+relationship 64b4455f-fee3-4a36-89da-f50bb78ef892
+	fromColumn: Estimations.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship a6aaeb11-1df1-e4bf-605e-ece62ef56e5c
+	fromColumn: Estimations.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship 1528d5c6-3e5b-dd80-431b-4877d5a445be
+	fromColumn: Estimations.fk_dim_date_menu_week
+	toColumn: Date.pk_dim_date
+
+relationship 7b9a1f7b-3301-a675-6e23-c9f8b692f47f
+	fromColumn: Estimations.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship f3a22d13-5e12-e6b2-fac3-e3a39a45f506
+	fromColumn: Estimations.fk_dim_time_estimation_generated
+	toColumn: Time.pk_dim_time
+
 relationship 63a19fc9-c4fd-4535-be80-e864e132d10e
 	fromColumn: 'Subscription Quiz Measures'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
@@ -109,11 +133,13 @@ relationship 20285513-1770-0ace-c116-8fd2fa6e064b
 	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
 
 relationship dae01af1-a97e-54b0-3730-3aaf8052dd21
+	isActive: false
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
 
 relationship 281ef7b7-e62c-fbe6-6b3e-6055fffb30e1
+	isActive: false
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Billing Agreements Subscribed Products'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
@@ -121,4 +147,14 @@ relationship 281ef7b7-e62c-fbe6-6b3e-6055fffb30e1
 relationship 357fc773-f9bb-2b75-5447-2cf80d587c7a
 	fromColumn: 'Bridge Billing Agreements Subscribed Products'.fk_dim_products
 	toColumn: 'Subscribed Products'.pk_dim_products
+
+relationship 7dbb512c-7bdb-d90a-3b76-1a1d0dd2b61f
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Billing Agreements Subscribed Products'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship daa2c4ad-90bf-e02d-ecf5-4888d1fbb509
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 

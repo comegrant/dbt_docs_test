@@ -1,0 +1,34 @@
+table Time
+	lineageTag: 0c99312c-27e7-45c7-9e1e-ee88cf5707e5
+
+	column pk_dim_time
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7ce9b3b4-e83b-4c20-912b-4571dbba9190
+		summarizeBy: none
+		sourceColumn: pk_dim_time
+
+	column Hour
+		dataType: int64
+		lineageTag: 138f402c-4123-4f1b-94b6-4172131a00cf
+		summarizeBy: none
+		sourceColumn: hour
+
+	column Minute
+		dataType: int64
+		lineageTag: 03186c3d-cbc0-4de8-aaf9-8a589234fa4d
+		summarizeBy: none
+		sourceColumn: minute
+
+	partition Time = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_time_Table = gold_Schema{[Name="dim_time",Kind="Table"]}[Data]
+				in
+					dim_time_Table
+

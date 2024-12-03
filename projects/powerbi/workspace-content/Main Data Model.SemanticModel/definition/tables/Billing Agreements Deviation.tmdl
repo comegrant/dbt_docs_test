@@ -17,7 +17,7 @@ table 'Billing Agreements Deviation'
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 5530994c-2f14-426b-8784-9bf3325d7f4e
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: billing_agreement_id
 
 		annotation SummarizationSetBy = Automatic

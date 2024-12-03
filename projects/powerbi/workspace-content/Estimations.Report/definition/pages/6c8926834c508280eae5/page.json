@@ -1,0 +1,49 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.2.0/schema.json",
+  "name": "6c8926834c508280eae5",
+  "displayName": "Variation Table",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "16ac3174e1195169ba5d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Estimations"
+              }
+            },
+            "Property": "Quantity of product in baskets if cutoff is now"
+          }
+        },
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "32a443d5e7da69408b8b",
+    "type": "Drillthrough",
+    "parameters": [
+      {
+        "name": "c473ccd0a450190061e0",
+        "boundFilter": "16ac3174e1195169ba5d",
+        "fieldExpr": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Estimations"
+              }
+            },
+            "Property": "Quantity of product in baskets if cutoff is now"
+          }
+        }
+      }
+    ],
+    "referenceScope": "CrossReport",
+    "acceptsFilterContext": "None"
+  },
+  "visibility": "HiddenInViewMode"
+}

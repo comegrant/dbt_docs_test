@@ -1,0 +1,30 @@
+table 'Origin of Selected Dishes in Basket'
+	lineageTag: 31d6e085-8ba5-4560-b085-27c6cb034f32
+
+	/// The primary key of the basket deviation origin in the CMS database.
+	column pk_dim_basket_deviation_origins
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: aacd1d19-c85e-448d-aaf3-e3201322ae01
+		summarizeBy: none
+		sourceColumn: pk_dim_basket_deviation_origins
+
+	/// The name of the origin.
+	column 'Origin Name'
+		dataType: string
+		lineageTag: b3c4b82c-7ce1-4a3a-b526-21bd6a0e6b4f
+		summarizeBy: none
+		sourceColumn: basket_deviation_origin_name
+
+	partition 'Origin of Selected Dishes in Basket' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_basket_deviation_origins_Table = gold_Schema{[Name="dim_basket_deviation_origins",Kind="Table"]}[Data]
+				in
+				dim_basket_deviation_origins_Table
+
