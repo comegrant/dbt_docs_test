@@ -45,6 +45,29 @@
           }
         }
       ]
+    },
+    {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "Share of orders with increased portions",
+          "dataType": "Double",
+          "expression": "\n([Number of Orders with Increased Portions]/[Number of Orders])\n",
+          "formatString": "General Number",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Increased Portions"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

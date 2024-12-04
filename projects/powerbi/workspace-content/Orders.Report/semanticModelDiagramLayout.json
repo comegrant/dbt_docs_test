@@ -10,8 +10,8 @@
       "nodes": [
         {
           "location": {
-            "x": 929.58527473281913,
-            "y": 53.313841271462707
+            "x": 457.24047130535928,
+            "y": 691.09387350029215
           },
           "nodeIndex": "Agreement Measures",
           "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
@@ -23,8 +23,8 @@
         },
         {
           "location": {
-            "x": 1387.93901192693,
-            "y": 846.10102053604578
+            "x": 302.86331588554094,
+            "y": 1051.8318476766085
           },
           "nodeIndex": "Agreements Weekly",
           "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
@@ -36,8 +36,8 @@
         },
         {
           "location": {
-            "x": 1276.7244895104818,
-            "y": 488.96187744212637
+            "x": 1236.7617496873297,
+            "y": 916.2108752722977
           },
           "nodeIndex": "Billing Agreements",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
@@ -49,8 +49,8 @@
         },
         {
           "location": {
-            "x": 1677.9750263178203,
-            "y": 672.71435791249951
+            "x": 1954.5764301781719,
+            "y": 1238.9339420811198
           },
           "nodeIndex": "Bridge Billing Agreements Preferences",
           "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
@@ -62,21 +62,21 @@
         },
         {
           "location": {
-            "x": 989.76712770007327,
-            "y": 845.41495311105678
+            "x": 1177.8364385383056,
+            "y": 1274.5495700829954
           },
           "nodeIndex": "Companies",
           "nodeLineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
           "size": {
-            "height": 224,
+            "height": 200,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 815.480999435664,
-            "y": 489.05123345403456
+            "x": 743.87125536141684,
+            "y": 786.505942278463
           },
           "nodeIndex": "Date",
           "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
@@ -88,8 +88,8 @@
         },
         {
           "location": {
-            "x": 576.09244453611768,
-            "y": 846.28167296083859
+            "x": 1034.3743913974431,
+            "y": 560.72362120470643
           },
           "nodeIndex": "Menu Measures",
           "nodeLineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
@@ -101,8 +101,8 @@
         },
         {
           "location": {
-            "x": 385.82052577566265,
-            "y": 489.12996086387966
+            "x": 929.71355213758193,
+            "y": 1809.8259827908387
           },
           "nodeIndex": "Order Measures",
           "nodeLineageTag": "6c298811-8ad5-482b-b89a-827db89210a3",
@@ -114,8 +114,8 @@
         },
         {
           "location": {
-            "x": 126.77576228177952,
-            "y": 258.13257164188349
+            "x": 951.74350351898215,
+            "y": 2283.1120268981913
           },
           "nodeIndex": "Order Statuses",
           "nodeLineageTag": "1328111a-5f01-4b3f-8a2c-c02c4dad327c",
@@ -127,8 +127,8 @@
         },
         {
           "location": {
-            "x": 322.48096913548113,
-            "y": 1201.9053103278588
+            "x": 658.91399230131822,
+            "y": 2169.569544060535
           },
           "nodeIndex": "Order Types",
           "nodeLineageTag": "6fa76248-580e-4a45-882f-c64c0358e75c",
@@ -140,8 +140,8 @@
         },
         {
           "location": {
-            "x": 1502.8219278411677,
-            "y": 232.78626802930921
+            "x": 10,
+            "y": 965.46567932003427
           },
           "nodeIndex": "Period Since First Order",
           "nodeLineageTag": "45e03479-e4f8-48e0-9804-190221e983b8",
@@ -153,8 +153,8 @@
         },
         {
           "location": {
-            "x": 1217.1457440612883,
-            "y": -10
+            "x": 2246.7922880121432,
+            "y": 1246.2066254945232
           },
           "nodeIndex": "Preferences",
           "nodeLineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
@@ -166,8 +166,8 @@
         },
         {
           "location": {
-            "x": 10,
-            "y": 489.14551472647793
+            "x": 885.671151943643,
+            "y": 1301.2695029654524
           },
           "nodeIndex": "Products",
           "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
@@ -179,8 +179,8 @@
         },
         {
           "location": {
-            "x": 156.47265412691343,
-            "y": 846.32888363784537
+            "x": 1222.4357530583288,
+            "y": 1537.8307101445657
           },
           "nodeIndex": "Recipes",
           "nodeLineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
@@ -192,11 +192,115 @@
         },
         {
           "location": {
-            "x": 1951.9750263178203,
-            "y": 641.95265516392942
+            "x": 2520.7922880121432,
+            "y": 1146.5560134490956
           },
           "nodeIndex": "(Param) Measures",
           "nodeLineageTag": "6249c02e-7c72-4883-8fd1-d5a33f3de090",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 593.768610430386,
+            "y": 1419.5812354439868
+          },
+          "nodeIndex": "Subscription Quiz Measures",
+          "nodeLineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1526.3594058152994,
+            "y": 1239.0061660363845
+          },
+          "nodeIndex": "Billing Agreements Deviation",
+          "nodeLineageTag": "a9dc5972-85e4-4024-983d-23afcc61bfd9",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1807.1320468186566,
+            "y": 957.78559505890439
+          },
+          "nodeIndex": "Bridge Billing Agreements Subscribed Products",
+          "nodeLineageTag": "488b18a8-7e56-41db-b1d3-d04d09d34886",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1244.4945061136057,
+            "y": 2250.2144883448868
+          },
+          "nodeIndex": "Origin of Preselected Dishes",
+          "nodeLineageTag": "5dc57e37-a162-4b62-a970-7d6cc1315f19",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2100.0634130067747,
+            "y": 767.69328175997566
+          },
+          "nodeIndex": "Subscribed Products",
+          "nodeLineageTag": "f67b9e95-b0a2-4473-b449-c15e28cd825d",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1154.6693102204572,
+            "y": 200.73316599339
+          },
+          "nodeIndex": "Estimations",
+          "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1367.6935527909964,
+            "y": 14.829474104868495
+          },
+          "nodeIndex": "Origin of Selected Dishes in Basket",
+          "nodeLineageTag": "31d6e085-8ba5-4560-b085-27c6cb034f32",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1067.4221083520965,
+            "y": -10
+          },
+          "nodeIndex": "Time",
+          "nodeLineageTag": "0c99312c-27e7-45c7-9e1e-ee88cf5707e5",
           "size": {
             "height": 152,
             "width": 234
