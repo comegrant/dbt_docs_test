@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "d433b9cde533461532d4",
   "position": {
-    "x": 33.75,
-    "y": 27.5,
-    "z": 1,
-    "height": 665,
-    "width": 1028.75,
-    "tabOrder": 1
+    "x": 17.27272727272727,
+    "y": 127.27272727272727,
+    "z": 0,
+    "height": 580,
+    "width": 1245.4545454545453,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "columnChart",
@@ -88,6 +88,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "gridlineShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -127,6 +134,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "gridlineShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -148,5 +162,54 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "1d210c8f50985411ea92",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "Year"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "6a0ebb6ee50b074c2e07",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Billing Agreements"
+              }
+            },
+            "Property": "Signup Year"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "8c557d14141e0b74079b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Sum Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
+      }
+    ]
   }
 }

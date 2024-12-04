@@ -89,6 +89,7 @@
           ]
         },
         "howCreated": "User",
+        "isHiddenInViewMode": true,
         "objects": {
           "general": [
             {
@@ -123,6 +124,13 @@
                 "Value": "false"
               }
             }
+          },
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
           }
         }
       }
@@ -148,6 +156,11 @@
           "name": "CheffeloTemplate7215786318904898.json",
           "path": "CheffeloTemplate7215786318904898.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
+          "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
+          "type": "Image"
         }
       ]
     }

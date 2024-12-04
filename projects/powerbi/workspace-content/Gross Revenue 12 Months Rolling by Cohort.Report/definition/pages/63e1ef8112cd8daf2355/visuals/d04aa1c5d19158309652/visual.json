@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "d04aa1c5d19158309652",
   "position": {
-    "x": 18.75,
-    "y": 23.75,
+    "x": 17.5609756097561,
+    "y": 127.31707317073172,
     "z": 0,
-    "height": 673.75,
-    "width": 1060,
+    "height": 580.390243902439,
+    "width": 1245.0731707317075,
     "tabOrder": 0
   },
   "visual": {
@@ -327,6 +327,8 @@
             "Property": "Year"
           }
         },
+        "type": "Advanced",
+        "isHiddenInViewMode": true,
         "objects": {
           "general": [
             {
@@ -427,6 +429,66 @@
             }
           ]
         }
+      },
+      {
+        "name": "ad9f7f0dbc038d4be4d0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "Month Name"
+          }
+        },
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "79da4a87e0d0698c2341",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Billing Agreements"
+              }
+            },
+            "Property": "First Menu Year"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "5f5ee3e8028c7870c277",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Sum Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "28308d9ec30480544060",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Schema": "extension",
+                "Entity": "Billing Agreements"
+              }
+            },
+            "Property": "Rolling Gross Revenue"
+          }
+        },
+        "type": "Advanced",
+        "isHiddenInViewMode": true
       }
     ]
   }
