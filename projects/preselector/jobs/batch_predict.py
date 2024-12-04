@@ -181,7 +181,7 @@ async def run() -> None:
 
     db_source = PreselectorResultWriter(
         company_id,
-        sink=databricks_catalog(environment).schema("mloutputs").table("preselector_batch")
+        sink=databricks_catalog.schema("mloutputs").table("preselector_batch")
     )
 
     if write_mode is None or write_mode == "dl":

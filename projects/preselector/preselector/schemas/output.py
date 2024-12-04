@@ -7,4 +7,4 @@ from preselector.data.models.customer import PreselectorPreferenceCompliancy
 class PreselectorWeekOutput:
     main_recipe_ids: list[int]
     compliancy: PreselectorPreferenceCompliancy
-    error_vector: dict[str, float] | None
+    error_vector: dict[str, float]

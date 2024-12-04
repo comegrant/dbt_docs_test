@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     tag: str
     env: Literal["test", "prod"]
-    with_additional: Annotated[bool, Field] = False
+    mode: Literal["both", "batch", "live"] = Field("both")
 
 class ScaleArgs(BaseModel):
     tag: str
@@ -103,11 +103,11 @@ async def deploy_preselector(
 
     intervals = {
         "test": {
-            # "write_output_interval": timedelta(minutes=5),
+            "write_output_interval": timedelta(minutes=5),
             "update_data_interval": timedelta(hours=24)
         },
         "prod": {
-            # "write_output_interval": timedelta(minutes=5),
+            "write_output_interval": timedelta(minutes=2),
             "update_data_interval": timedelta(hours=24 * 4)
         }
     }
@@ -163,8 +163,8 @@ async def deploy_preselector(
                 **env_specific_config
             },
             key_map={
-                "databricks_host": "databricks-workspace-url-test",
-                "databricks_token": "databricks-preselector-token-test",
+                "databricks_host": f"databricks-workspace-url-{env}",
+                "databricks_token": f"databricks-sp-bundle-pat-{env}",
                 "datalake_service_account_name": "azure-storageAccount-experimental-name",
                 "datalake_storage_account_key": "azure-storageAccount-experimental-key"
             }
@@ -280,7 +280,11 @@ async def deploy_preselector(
         container_group=group
     )
 
-async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> None:
+async def deploy_all(
+    tag: str,
+    env: str,
+    mode: Literal["both", "batch", "live"]
+) -> None:
     company_names = [
         "godtlevert",
         "adams",
@@ -302,7 +306,7 @@ async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> Non
 
 
 
-        if deploy_additional_workers:
+        if mode == "live":
             # Currently we want to have an additional scaler
             await scale_worker(
                 tag=tag,
@@ -310,7 +314,7 @@ async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> Non
                 worker_id=2,
                 company=company
             )
-        else:
+        elif mode == "both":
             name += f"-{env}"
             logger.info(name)
 
@@ -334,6 +338,32 @@ async def deploy_all(tag: str, env: str, deploy_additional_workers: bool) -> Non
                     )
                 ]
             )
+        else:
+            name += f"-batch-{env}"
+            logger.info(name)
+
+            await deploy_preselector(
+                name=name,
+                company=company,
+                service_bus_namespace=bus_namespace[env],
+                env=env,
+                image_tag=tag,
+                resource_group=f"rg-chefdp-{env}",
+                workers=[
+                    WorkerConfig(
+                        container_name=f"{name}-batch-first",
+                        batch_size=10,
+                        topic_name="deviation-request"
+                    ),
+                    # WorkerConfig(
+                    #     container_name=f"{name}-batch-second",
+                    #     batch_size=10,
+                    #     topic_name="deviation-request"
+                    # )
+                ]
+            )
+
+
 
 async def scale_worker(tag: str, env: str, worker_id: int, company: str) -> None:
 
@@ -383,24 +413,12 @@ def key_vault() -> KeyVaultInterface:
         return AzureKeyVault.from_vault_name("kv-chefdp-common")
 
 
-async def scale_main() -> None:
-    from dotenv import load_dotenv
-    load_dotenv(".env")
-
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("azure").setLevel(logging.ERROR)
-
-    args = parse_args(ScaleArgs)
-    await scale_worker(
-        tag=args.tag, env=args.env, worker_id=args.worker_id, company=args.company
-    )
-
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
     logging.getLogger("azure").setLevel(logging.ERROR)
 
     args = parse_args(RunArgs)
-    await deploy_all(tag=args.tag, env=args.env, deploy_additional_workers=args.with_additional)
+    await deploy_all(tag=args.tag, env=args.env, mode=args.mode)
 
 if __name__ == "__main__":
     with suppress(ImportError):

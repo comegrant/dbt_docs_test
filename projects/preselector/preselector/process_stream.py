@@ -527,9 +527,9 @@ async def process_stream(
 
     try:
         def use_serverless_databricks(source: DatabricksSource, location: FeatureLocation) -> None:
-            source.config = DatabricksConnectionConfig.serverless().with_auth(
-                token=settings.databricks_token.get_secret_value(),
-                host=settings.databricks_host
+            source.config = DatabricksConnectionConfig.serverless(
+                host=settings.databricks_host,
+                token=settings.databricks_token.get_secret_value()
             )
 
         original_store = preselector_store()
@@ -594,7 +594,11 @@ async def process_stream(
             if number_of_messages == 0 and settings.write_output_interval and settings.is_batch_worker and (
                 now - last_batch_write > settings.write_output_interval
             ):
-                await write_to_databricks(streams, original_store)
+                await write_to_databricks(
+                    streams,
+                    original_store,
+                    write_size=settings.write_output_max_size
+                )
                 last_batch_write = datetime.now(tz=timezone.utc)
 
             await asyncio.sleep(sleep_time)
@@ -609,7 +613,8 @@ async def process_stream(
 
 async def write_to_databricks(
     streams: PreselectorStreams,
-    write_store: ContractStore
+    write_store: ContractStore,
+    write_size: int
 ) -> None:
 
     from pyspark.errors.exceptions.base import PySparkException
@@ -624,7 +629,7 @@ async def write_to_databricks(
         logger.info("No readable success stream.")
         return
 
-    success_messages = await success_stream.read(number_of_records=10)
+    success_messages = await success_stream.read(number_of_records=write_size)
     if success_messages:
         try:
             await write_store.feature_view(SuccessfulPreselectorOutput).insert(
@@ -644,7 +649,7 @@ async def write_to_databricks(
         logger.info("No readable success stream.")
         return
 
-    failed_messages = await failed_stream.read(number_of_records=10)
+    failed_messages = await failed_stream.read(number_of_records=write_size)
     if failed_messages:
         try:
             await write_store.feature_view(FailedPreselectorOutput).insert(

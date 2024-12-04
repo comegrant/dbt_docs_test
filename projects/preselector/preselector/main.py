@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from math import log2
-from typing import Annotated, Optional
+from typing import Annotated
 
 import numpy as np
 import polars as pl
@@ -249,8 +249,7 @@ async def find_best_combination(
     number_of_recipes: int,
     preselected_recipe_ids: list[int] | None = None,
     should_explain: bool = True,
-    should_return_error: bool = False
-) -> tuple[list[int], Annotated[Optional[dict[str, float]], "Soft preference error"]]:
+) -> tuple[list[int], Annotated[dict[str, float], "Soft preference error"]]:
 
     final_combination = pl.DataFrame()
 
@@ -384,9 +383,7 @@ async def find_best_combination(
 
     # Just to fix a type error
     next_vector = pl.DataFrame()
-    error_column: str | None = None
-    if should_return_error:
-        error_column = "dim_errors"
+    error_column = "dim_errors"
 
     n_recipes_to_add, recipe_nudge = await setup_starting_state(recipes_to_choose_from)
 
@@ -470,7 +467,7 @@ async def find_best_combination(
 
     return (
         final_combination["main_recipe_id"].to_list(),
-        next_vector[error_column].to_list()[0] if error_column else None
+        next_vector[error_column].to_list()[0]
     )
 
 
@@ -1512,14 +1509,14 @@ async def run_preselector(
     logger.debug(f"Filtering based on portion size done: {recipes.height}")
 
     if recipes.is_empty():
-        return PreselectorWeekOutput([], compliance, None)
+        return PreselectorWeekOutput([], compliance, {})
 
     # Singlekassen
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
         return PreselectorWeekOutput(
             recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(),
             compliance,
-            None
+            {}
         )
 
 
@@ -1554,7 +1551,7 @@ async def run_preselector(
             return PreselectorWeekOutput(
                 filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
                 compliance,
-                None
+                {}
             )
         else:
             available_ww_recipes = filtered["main_recipe_id"].to_list()
@@ -1609,12 +1606,12 @@ async def run_preselector(
         logger.error(
             f"Number of recipes are less then expected {recipe_features.height}. "
             f"Most likely due to missing features in recipes: ({recipes_of_interest}) "
-            f"In portion size {customer.portion_size}"
+            f"In portion size {customer.portion_size} - {year}, {week}"
         )
         return PreselectorWeekOutput(
             recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
             compliance,
-            None
+            {}
         )
 
     if should_explain:
@@ -1656,7 +1653,7 @@ async def run_preselector(
         return PreselectorWeekOutput(
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
             compliance,
-            None
+            {}
         )
 
     with duration("compute-ordered-since"):
@@ -1701,7 +1698,6 @@ async def run_preselector(
             number_of_recipes=customer.number_of_recipes,
             preselected_recipe_ids=preselected_recipes,
             should_explain=should_explain,
-            should_return_error=True
         )
 
     if should_explain and error is not None:

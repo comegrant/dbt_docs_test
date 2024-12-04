@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -13,6 +15,8 @@ from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.schemas.feature import Feature
 from aligned.sources.local import FileFactualJob
 
+from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
+
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
 
@@ -22,47 +26,76 @@ def is_running_on_databricks() -> bool:
     return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
 
+
 @dataclass
 class DatabricksAuthConfig:
     token: str
     host: str
 
-@dataclass
+
+@dataclass(init=False)
 class DatabricksConnectionConfig:
 
-    cluster_id: str | None
-    auth_config: DatabricksAuthConfig | None
-    "None => reading from default databricks env files etc."
+    host: ValueRepresentable
+    cluster_id: ValueRepresentable | None
+    token: ValueRepresentable | None
 
-    def with_auth(self, token: str, host: str) -> 'DatabricksConnectionConfig':
+    def __init__(
+        self,
+        host: str | ValueRepresentable,
+        cluster_id: str | ValueRepresentable | None,
+        token: str | ValueRepresentable | None
+    ) -> None:
+        self.host = LiteralValue.from_value(host)
+        self.cluster_id = LiteralValue.from_value(cluster_id) if isinstance(cluster_id, str) else cluster_id
+        self.token = LiteralValue(token) if isinstance(token, str) else token
+
+    def with_auth(
+        self,
+        token: str | ValueRepresentable,
+        host: str | ValueRepresentable
+    ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id=self.cluster_id,
-            auth_config=DatabricksAuthConfig(token=token, host=host)
+            token=token,
+            host=host
         )
 
     @staticmethod
-    def databricks_or_serverless() -> 'DatabricksConnectionConfig':
+    def databricks_or_serverless(
+        host: str | ValueRepresentable | None = None,
+        token: str | ValueRepresentable | None = None
+    ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id=None,
-            auth_config=None
+            token=token or EnvironmentValue("DATABRICKS_TOKEN"),
+            host=host or EnvironmentValue("DATABRICKS_HOST")
         )
 
     @staticmethod
-    def serverless() -> 'DatabricksConnectionConfig':
+    def serverless(
+        host: str | ValueRepresentable | None = None,
+        token: str | ValueRepresentable | None = None
+    ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
-            cluster_id="serverless", auth_config=None
+            cluster_id="serverless",
+            token=token or EnvironmentValue("DATABRICKS_TOKEN"),
+            host=host or EnvironmentValue("DATABRICKS_HOST")
         )
 
     @staticmethod
-    def with_cluster_id(cluster_id: str) -> 'DatabricksConnectionConfig':
+    def with_cluster_id(
+        cluster_id: str | ValueRepresentable,
+        host: str | ValueRepresentable
+    ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
-            cluster_id=cluster_id, auth_config=None
+            cluster_id=cluster_id, token=None, host=host
         )
 
-    def catalog(self, catalog: str) -> 'UnityCatalog':
-        return UnityCatalog(self, catalog)
+    def catalog(self, catalog: str | ValueRepresentable) -> UnityCatalog:
+        return UnityCatalog(self, LiteralValue.from_value(catalog))
 
-    def connection(self) -> 'SparkSession':
+    def connection(self) -> SparkSession:
 
         cluster_id = self.cluster_id
 
@@ -74,35 +107,36 @@ class DatabricksConnectionConfig:
 
             # If no spark session
             # Assume that serverless is available
-            cluster_id = "serverless"
+            cluster_id = LiteralValue("serverless")
 
         from databricks.connect.session import DatabricksSession
 
-        builder = DatabricksSession.builder
+        builder = DatabricksSession.builder.host(self.host.read())
 
-        if cluster_id == "serverless":
+        cluster_id_value = cluster_id.read()
+        if cluster_id_value == "serverless":
             builder = builder.serverless()
         else:
-            builder = builder.clusterId(cluster_id)
+            builder = builder.clusterId(cluster_id_value)
 
-        if self.auth_config:
-            builder = builder.host(self.auth_config.host).token(self.auth_config.token)
+        if self.token:
+            builder = builder.token(self.token.read())
 
         return builder.getOrCreate()
 
-    def sql(self, query: str) -> 'UCSqlSource':
+    def sql(self, query: str) -> UCSqlSource:
         return UCSqlSource(self, query)
 
 @dataclass
 class UnityCatalog:
     config: DatabricksConnectionConfig
 
-    catalog: str
+    catalog: ValueRepresentable
 
-    def schema(self, schema: str) -> 'UnityCatalogSchema':
-        return UnityCatalogSchema(self.config, self.catalog, schema)
+    def schema(self, schema: str | ValueRepresentable) -> UnityCatalogSchema:
+        return UnityCatalogSchema(self.config, self.catalog, LiteralValue.from_value(schema))
 
-    def sql(self, query: str) -> 'UCSqlSource':
+    def sql(self, query: str) -> UCSqlSource:
         return UCSqlSource(self.config, query)
 
 
@@ -110,30 +144,30 @@ class UnityCatalog:
 class UnityCatalogSchema:
     config: DatabricksConnectionConfig
 
-    catalog: str
-    schema: str
+    catalog: ValueRepresentable
+    schema: ValueRepresentable
 
-    def table(self, table: str) -> 'UCTableSource':
+    def table(self, table: str | ValueRepresentable) -> UCTableSource:
         return UCTableSource(
             self.config,
-            UnityCatalogTableConfig(self.catalog, self.schema, table)
+            UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
 
-    def feature_table(self, table: str) -> 'UCFeatureTableSource':
+    def feature_table(self, table: str | ValueRepresentable) -> UCFeatureTableSource:
         return UCFeatureTableSource(
             self.config,
-            UnityCatalogTableConfig(self.catalog, self.schema, table)
+            UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
 
 
 @dataclass
 class UnityCatalogTableConfig:
-    catalog: str
-    schema: str
-    table: str
+    catalog: ValueRepresentable
+    schema: ValueRepresentable
+    table: ValueRepresentable
 
     def identifier(self) -> str:
-        return f"{self.catalog}.{self.schema}.{self.table}"
+        return f"{self.catalog.read()}.{self.schema.read()}.{self.table.read()}"
 
 
 class DatabricksSource:
@@ -169,9 +203,9 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
 
     @classmethod
     def multi_source_features_for( # type: ignore
-        cls: type['UCSqlSource'],
+        cls: type[UCSqlSource],
         facts: RetrivalJob,
-        requests: list[tuple['UCSqlSource', RetrivalRequest]]
+        requests: list[tuple[UCSqlSource, RetrivalRequest]]
     ) -> RetrivalJob:
         raise NotImplementedError(cls)
 
@@ -201,6 +235,11 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
         )
         """
         raise NotImplementedError(type(self))
+
+    def with_config(self, config: DatabricksConnectionConfig) -> UCSqlSource:
+        return UCSqlSource(
+            config, self.query
+        )
 
 
 
@@ -239,9 +278,9 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
 
     @classmethod
     def multi_source_features_for( # type: ignore
-        cls: type['UCFeatureTableSource'],
+        cls: type[UCFeatureTableSource],
         facts: RetrivalJob,
-        requests: list[tuple['UCFeatureTableSource', RetrivalRequest]]
+        requests: list[tuple[UCFeatureTableSource, RetrivalRequest]]
     ) -> RetrivalJob:
         from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
 
@@ -343,6 +382,10 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
             df=df
         )
 
+    def with_config(self, config: DatabricksConnectionConfig) -> UCFeatureTableSource:
+        return UCFeatureTableSource(config, self.table)
+
+
 
 @dataclass
 class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
@@ -378,7 +421,7 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
 
     @classmethod
     def multi_source_features_for( # type: ignore
-        cls: type['UCTableSource'], facts: RetrivalJob, requests: list[tuple['UCTableSource', RetrivalRequest]] # type: ignore
+        cls: type[UCTableSource], facts: RetrivalJob, requests: list[tuple[UCTableSource, RetrivalRequest]] # type: ignore
     ) -> RetrivalJob:
         from aligned.sources.local import DateFormatter
 
@@ -466,3 +509,6 @@ WHEN NOT MATCHED THEN
         df = conn.createDataFrame(await job.unique_entities().to_pandas())
 
         df.write.mode("overwrite").saveAsTable(self.table.identifier())
+
+    def with_config(self, config: DatabricksConnectionConfig) -> UCTableSource:
+        return UCTableSource(config, self.table)

@@ -32,6 +32,8 @@ class ProcessStreamSettings(BaseSettings):
     write_output_interval: timedelta | None = Field(None)
     "The min interval between each dump to our persistance storage. E.g. Databricks"
 
+    write_output_max_size: int = Field(1000)
+
     ideal_poll_interval: float = Field(5)
 
     @property

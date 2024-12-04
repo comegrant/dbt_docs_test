@@ -131,7 +131,7 @@ class Preselector:
 
 @feature_view(
     name="preselector_successful_live_output",
-    source=databricks_catalog().schema("mloutputs").table("preselector_successful_realtime_output")
+    source=databricks_catalog.schema("mloutputs").table("preselector_successful_realtime_output")
 
 )
 class SuccessfulPreselectorOutput:
@@ -152,20 +152,21 @@ class SuccessfulPreselectorOutput:
 
     target_cost_of_food_per_recipe = Float()
     error_vector = Json().is_optional()
+
     main_recipe_ids = List(Int32())
     variation_ids = List(String())
+    concept_preference_ids = List(String())
+
     generated_at = EventTimestamp()
     compliancy = Int32().lower_bound(0).upper_bound(4)
-    concept_preference_ids = List(String())
     taste_preferences = List(Json())
     model_version = String()
     has_data_processing_consent = Bool()
     override_deviation = Bool()
 
-
 @feature_view(
     name="preselector_failed_realtime_output",
-    source=databricks_catalog().schema("mloutputs").table("preselector_failed_realtime_output")
+    source=databricks_catalog.schema("mloutputs").table("preselector_failed_realtime_output")
 )
 class FailedPreselectorOutput:
     error_message = Int32()

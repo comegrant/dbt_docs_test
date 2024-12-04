@@ -94,7 +94,6 @@ class PreselectorSuccessfulResponse(BaseModel):
                 str(key): value
                 for key, value in mealkit.ordered_weeks_ago.items()
             } if mealkit.ordered_weeks_ago else None
-
             for old_key, new_key in renames.items():
                 mealkit_dict[new_key] = mealkit_dict[old_key]
 

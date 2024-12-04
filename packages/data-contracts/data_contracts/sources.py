@@ -1,22 +1,20 @@
-from os import getenv
-
 from aligned import PostgreSQLConfig, RedisConfig
 
 from data_contracts.azure import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
-from data_contracts.unity_catalog import DatabricksConnectionConfig, UnityCatalog, UnityCatalogSchema
+from data_contracts.unity_catalog import DatabricksConnectionConfig, EnvironmentValue
 
 azure_dl_creds = AzureBlobConfig( # type: ignore
-    account_name_env="DATALAKE_SERVICE_ACCOUNT_NAME",
-    account_id_env="DATALAKE_STORAGE_ACCOUNT_KEY",
-    tenant_id_env="AZURE_TENANT_ID",
-    client_id_env="DATALAKE_SERVICE_PRINCIPAL_CLIENT_ID",
-    client_secret_env="DATALAKE_SERVICE_PRINCIPAL_CLIENT_SECRET",
+    account_name=EnvironmentValue("DATALAKE_SERVICE_ACCOUNT_NAME"),
+    account_id=EnvironmentValue("DATALAKE_STORAGE_ACCOUNT_KEY"),
+    tenant_id=EnvironmentValue("AZURE_TENANT_ID"),
+    client_id=EnvironmentValue("DATALAKE_SERVICE_PRINCIPAL_CLIENT_ID"),
+    client_secret=EnvironmentValue("DATALAKE_SERVICE_PRINCIPAL_CLIENT_SECRET"),
 )
 
 # Azure DL Container
 data_science_data_lake = azure_dl_creds.directory("data-science").directory(
-    getenv("DATALAKE_ENV", "dev").lower() # I hate this solution, but it will have to do for now
+    EnvironmentValue("DATALAKE_ENV", default_value="test") # type: ignore
 )
 
 # Data Lake Directories
@@ -33,18 +31,9 @@ adb_ml_output = adb.with_schema("ml_output")
 
 redis_cluster = RedisConfig("REDIS_URL")
 segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
+
 databricks_config = DatabricksConnectionConfig.databricks_or_serverless()
 
-def databricks_catalog(catalog: str | None = None) -> UnityCatalog:
-    import os
-
-    if catalog is None:
-        catalog = os.getenv("UC_ENV", "dev")
-
-    return databricks_config.catalog(catalog)
-
-def ml_features(catalog: str | None = None) -> UnityCatalogSchema:
-    return databricks_catalog(catalog).schema("mlfeatures")
-
-def dbt_gold(catalog: str | None = None) -> UnityCatalogSchema:
-    return databricks_catalog(catalog).schema("gold")
+databricks_catalog = databricks_config.catalog(EnvironmentValue("UC_ENV"))
+ml_features = databricks_catalog.schema("mlfeatures")
+dbt_gold = databricks_catalog.schema("gold")
