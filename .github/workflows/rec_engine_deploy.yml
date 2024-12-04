@@ -17,7 +17,8 @@ jobs:
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: rec-engine-databricks
       dockerfile: Dockerfile.databricks
-      tag: ${{ github.sha }}
+      push-sha: true
+      tag: "main-latest"
     secrets: inherit
 
   deploy-rec-engine:

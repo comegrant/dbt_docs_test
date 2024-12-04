@@ -17,7 +17,8 @@ jobs:
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: preselector
       dockerfile: Dockerfile
-      push-latest: true
+      tag: "main-latest"
+      push-sha: true
     secrets: inherit
 
   build-preselector-databricks-image:
@@ -27,7 +28,8 @@ jobs:
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: preselector-databricks
       dockerfile: docker/Dockerfile.databricks
-      push-latest: true
+      tag: "main-latest"
+      push-sha: true
     secrets: inherit
 
   deploy-preselector:
@@ -47,4 +49,3 @@ jobs:
       extra-args: '--var="mode=production"'
       should-change-target: true
     secrets: inherit
-    
