@@ -18,6 +18,7 @@ jobs:
       image-name: attribute-scoring-databricks
       dockerfile: docker/Dockerfile.databricks
       push-latest: true
+      push-sha: true
     secrets: inherit
 
   deploy-attribute-scoring:
