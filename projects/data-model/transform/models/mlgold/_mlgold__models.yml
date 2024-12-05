@@ -184,6 +184,7 @@ models:
                 - 00000000-0000-0000-0000-000000000000 # Not deviation
               config:
                 where: 'estimation_generated_at >= current_date'
+                severity: warn
 
       - name: product_variation_quantity
         description: "{{doc('column__product_variation_quantity')}}"

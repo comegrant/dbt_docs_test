@@ -65,7 +65,7 @@ renamed as (
         end as valid_from
 
         , case
-            when dbt_valid_to is null then cast('{{ "future_proof_date" }}' as timestamp)
+            when dbt_valid_to is null then {{ get_scd_valid_to() }}
             when dbt_valid_to < '{{ UTC_start_time }}'  then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to)
             else dbt_valid_to
         end as valid_to
