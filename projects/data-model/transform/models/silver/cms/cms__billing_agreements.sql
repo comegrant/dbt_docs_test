@@ -54,32 +54,32 @@ renamed as (
 
         {# timestamp #}
         , case
-            when created_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', created_at)
+            when created_at < '{{ UTC_start_time }}' then convert_timezone('Europe/Oslo', 'UTC', created_at)
             else created_at
         end as signup_at
 
         {# scd #}
         , case
-            when dbt_valid_from < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from)
+            when dbt_valid_from < '{{ UTC_start_time }}' then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from)
             else dbt_valid_from
         end as valid_from
 
         , case
-            when dbt_valid_to is null then cast('{{ var("future_proof_date") }}' as timestamp)
-            when dbt_valid_to < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to)
+            when dbt_valid_to is null then cast('{{ "future_proof_date" }}' as timestamp)
+            when dbt_valid_to < '{{ UTC_start_time }}'  then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to)
             else dbt_valid_to
         end as valid_to
 
         {# system #}
         , case
-            when created_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', created_at)
+            when created_at < '{{ UTC_start_time }}' then convert_timezone('Europe/Oslo', 'UTC', created_at)
             else created_at
         end as source_created_at
 
         , created_by as source_created_by
 
         , case
-            when updated_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', updated_at)
+            when updated_at < '{{ UTC_start_time }}' then convert_timezone('Europe/Oslo', 'UTC', updated_at)
             else updated_at
         end as source_updated_at
 
