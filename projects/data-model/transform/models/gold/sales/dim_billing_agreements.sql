@@ -32,7 +32,7 @@ billing_agreements as (
 
 , basket_products_joined as (
 
-    select *  from {{ ref('int_basket_products_scd2') }}
+    select *  from {{ ref('int_subscribed_products_scd2') }}
 
 )
 

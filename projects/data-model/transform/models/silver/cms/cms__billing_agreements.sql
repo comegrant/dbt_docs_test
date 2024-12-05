@@ -1,3 +1,8 @@
+-- The timestamps in this table has historically been local time. 
+-- However on 2024-11-06 they updated the system registration system to use UTC. 
+-- Hence we will only convert to UTC before this change.
+{% set UTC_start_time = '2024-11-06 16:30:00' %}
+
 with 
 
 source as (
@@ -48,16 +53,36 @@ renamed as (
         , extract('YEAROFWEEK', start_date) as start_year
 
         {# timestamp #}
-        , convert_timezone('Europe/Oslo', 'UTC', created_at) as signup_at
+        , case
+            when created_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', created_at)
+            else created_at
+        end as signup_at
 
         {# scd #}
-        , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from) as valid_from
-        , coalesce(convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to), cast('{{ var("future_proof_date") }}' as timestamp)) as valid_to
+        , case
+            when dbt_valid_from < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from)
+            else dbt_valid_from
+        end as valid_from
+
+        , case
+            when dbt_valid_to is null then cast('{{ var("future_proof_date") }}' as timestamp)
+            when dbt_valid_to < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to)
+            else dbt_valid_to
+        end as valid_to
 
         {# system #}
-        , convert_timezone('Europe/Oslo', 'UTC', created_at) as source_created_at
+        , case
+            when created_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', created_at)
+            else created_at
+        end as source_created_at
+
         , created_by as source_created_by
-        , convert_timezone('Europe/Oslo', 'UTC', updated_at) source_updated_at
+
+        , case
+            when updated_at < 'UTC_start_time' then convert_timezone('Europe/Oslo', 'UTC', updated_at)
+            else updated_at
+        end as source_updated_at
+
         , updated_by as source_updated_by
 
 

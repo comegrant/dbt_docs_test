@@ -2,13 +2,13 @@ with
 
 basket_mealboxes as (
 
-    select * from {{ ref('int_basket_products_mealbox_scd2') }}
+    select * from {{ ref('int_subscribed_products_mealbox_scd2') }}
 
 )
 
 , basket_non_mealboxes as (
 
-    select * from {{ ref('int_basket_products_non_mealbox_scd2') }}
+    select * from {{ ref('int_subscribed_products_non_mealbox_scd2') }}
 
 )
 
@@ -108,7 +108,7 @@ basket_mealboxes as (
 , add_mealbox_to_product_list as (
     
     select 
-    add_scd1.*
+    add_scd1.* except(basket_products_list)
     , case
         when basket_products_list is null 
             then 
@@ -130,8 +130,19 @@ basket_mealboxes as (
                     )
                 )
             ) 
-    end as basket_products_list_with_mealbox
+    end as basket_products_list
     from add_scd1 
+
+)
+
+, remove_nulls_for_product_variation_id as (
+-- Since a basket can exist without any mealbox product, there will be periods on the 
+-- mealbox timeline where the product_variation_id is null. 
+-- These null values can be removed after we did the merge with non-mealbox products
+    select 
+    * except(basket_products_list)
+    , filter(basket_products_list,x -> x.product_variation_id is not null) as basket_products_list
+    from add_mealbox_to_product_list
 
 )
 
@@ -155,8 +166,8 @@ basket_mealboxes as (
         , basket_product_object.is_extra_product
         , valid_from
         , valid_to
-    from add_mealbox_to_product_list
-    lateral view explode(basket_products_list_with_mealbox) as basket_product_object
+    from remove_nulls_for_product_variation_id
+    lateral view outer explode(basket_products_list) as basket_product_object
 
 )
 

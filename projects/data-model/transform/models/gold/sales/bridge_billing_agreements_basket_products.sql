@@ -2,7 +2,7 @@ with
 
 basket_products as (
 
-    select * from {{ref('int_basket_products_scd2')}}
+    select * from {{ref('int_subscribed_products_scd2')}}
 
 )
 

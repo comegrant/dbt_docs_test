@@ -28,7 +28,11 @@ deviations as (
         , products.product_id
         , products.meals
         , products.portions
-        , deviations.deviation_created_at as valid_from
+        , case 
+            -- Use updated at timestamp when Tech overwrites already existing deviation products using script (e.g., in migration processes)
+            when deviation_product_updated_by like '%Tech%' then deviation_product_updated_at
+            else deviations.deviation_created_at 
+        end as valid_from
         ,deviations.billing_agreement_basket_deviation_origin_id
     from deviations
     -- only include deviations with financial products
@@ -63,6 +67,7 @@ deviations as (
         and financial_product_deviations.company_id = products.company_id
         and financial_product_deviations.meals = products.meals
         and financial_product_deviations.portions = products.portions
+    where products.product_variation_id is not null
 
 )
 

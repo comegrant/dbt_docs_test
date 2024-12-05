@@ -36,9 +36,34 @@ source as (
         , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date
         
         {# system #}
-        , created_at as source_created_at
+         
+        
+        , case
+            -- Preselector uses UTC as long as it is created by Deviation service
+            -- Manual scripts done by cms is using UTC
+            -- otherwise it is local time and must be converted to UTC 
+            when created_by = 'Deviation service'
+                then created_at
+            when created_by like '%Tech%'
+                then created_at
+            else 
+                convert_timezone('Europe/Oslo', 'UTC', created_at)
+        end as source_created_at
+
         , created_by as source_created_by
-        , updated_at as source_updated_at
+        
+        , case
+            -- Preselector uses UTC as long as it is created by Deviation service
+            -- Manual scripts done by cms is using UTC
+            -- otherwise it is local time and must be converted to UTC 
+            when updated_by = 'Deviation service'
+                then updated_at
+            when updated_by like '%Tech%'
+                then updated_at
+            else 
+                convert_timezone('Europe/Oslo', 'UTC', updated_at)
+        end as source_updated_at
+        
         , updated_by as source_updated_by
 
     from source

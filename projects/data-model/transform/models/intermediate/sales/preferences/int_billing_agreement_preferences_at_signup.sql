@@ -2,7 +2,7 @@ with
 
 register_products as (
 
-    select * from {{ref('int_basket_products_at_signup')}}
+    select * from {{ref('int_subscribed_products_at_signup')}}
 
 )
 

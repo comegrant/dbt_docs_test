@@ -34,7 +34,7 @@ vars:
  velg&vrak_product_type_id: 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
  incremental_number_of_days: 30
  full_load_first_date: '2024-01-15'
- basket_history_start_at: '2024-01-01 00:00:00'
+ basket_history_start_at: '2023-11-01 00:00:00'
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models

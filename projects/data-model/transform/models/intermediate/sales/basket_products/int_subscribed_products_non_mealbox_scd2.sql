@@ -1,8 +1,8 @@
 with 
 
-basket_products as (
+subscribed_products as (
 
-    select * from {{ ref('int_basket_products_joined') }}
+    select * from {{ ref('int_subscribed_products_joined') }}
 )
 
 , preselector_devation_products as (
@@ -26,7 +26,7 @@ basket_products as (
         , is_extra_product
         , valid_from
         , 'basket' as source
-    from basket_products
+    from subscribed_products
     where product_type_id <> '{{ var("mealbox_product_type_id") }}'
     group by all
 

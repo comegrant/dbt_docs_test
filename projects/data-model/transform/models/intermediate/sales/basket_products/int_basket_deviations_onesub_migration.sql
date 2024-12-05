@@ -38,14 +38,20 @@ deviations as (
             and deviations.company_id = products.company_id
             and product_id = '{{ var("onesub_product_id") }}'
     -- only include deviations related to the onesub migration
-    where (
-        deviations.billing_agreement_basket_deviation_origin_id = '{{ var("mealselector_origin_id") }}'
-        and deviation_created_by = 'Tech - Weekly menu'
+    where 
+    (
+        (
+            deviations.billing_agreement_basket_deviation_origin_id = '{{ var("mealselector_origin_id") }}'
+            and deviation_created_by = 'Tech - Weekly menu'
+        )
+        or 
+        (
+            deviations.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
+            and deviation_product_updated_by = 'Tech - Script'
+        )
     )
-    or (
-        deviations.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
-        and deviation_product_updated_by = 'Tech - Script'
-    )
+    and deviation_product_updated_at > '2024-09-25' 
+    and deviation_product_updated_at < '2024-11-08'
 
 )
 
