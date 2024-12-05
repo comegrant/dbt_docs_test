@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_app.helpers.data import filter_data_overview
-from streamlit_app.helpers.utils import get_weeks, user_friendly_score
+from streamlit_app.helpers.utils import get_default_week, get_weeks, user_friendly_score
 
 st.set_page_config(page_title="Attribute Scoring", page_icon=":tomato:")
 st.title("Overview")
@@ -14,7 +14,7 @@ recipe_data = st.session_state["recipe_data"]
 week_list = get_weeks()
 
 select_company = st.sidebar.selectbox("Which companies do you want to look at?", ["AMK", "GL", "LMK", "RT"])
-select_year_week = st.sidebar.multiselect("Which week do you want to look at?", week_list, default="2024-45")
+select_year_week = st.sidebar.multiselect("Which week do you want to look at?", week_list, default=get_default_week())
 selected_year_week_tuples = [(int(year), int(week)) for year, week in (yw.split("-") for yw in select_year_week)]
 
 filtered_data = filter_data_overview(df=recipe_data, company=select_company, year_week=selected_year_week_tuples)

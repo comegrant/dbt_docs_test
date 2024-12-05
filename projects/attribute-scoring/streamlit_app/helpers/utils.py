@@ -21,18 +21,25 @@ def user_friendly_score(score: float) -> str:
 
 
 def get_weeks() -> list:
-    """Generates a list of 12 weeks in 'YYYY-WW' format."""
+    """Generates a list of 7 weeks in 'YYYY-WW' format."""
     today = datetime.today()
     days_since_monday = today.weekday()
     last_monday = today - timedelta(days=days_since_monday + 7 if days_since_monday < 7 else 0)
 
     week_list = []
-    for i in range(12):  # last week + 11 weeks
+    for i in range(7):  # last week + 6 weeks
         current_week = last_monday + timedelta(weeks=i)
         year, week, _ = current_week.isocalendar()
         week_list.append(f"{year}-{week:02d}")
 
     return week_list
+
+
+def get_default_week() -> str:
+    """Returns the current ISO year and week in 'YYYY-WW' format."""
+    today = datetime.today()
+    year, week, _ = today.isocalendar()
+    return f"{year}-{week:02d}"
 
 
 def feedback_clicked(df: pd.DataFrame) -> None:

@@ -30,82 +30,88 @@ select_week = st.sidebar.selectbox(
 
 filtered_data = filter_data_feedback(df=weekly_menu_data, companies=select_company, year=select_year, week=select_week)
 
-extra_info = st.toggle("Show recipe information")
-
-if "feedback_data" not in st.session_state:
-    st.session_state["feedback_data"] = pd.DataFrame(
-        columns=[
-            "recipe_id",
-            "company_id",
-            "menu_year",
-            "menu_week",
-            "family_friendliness_feedback",
-            "chef_favoriteness_feedback",
-        ]
-    )
-
-clean_data = filter_existing_ids(filtered_data)
-st.session_state["clean_data"] = clean_data
-
-if len(clean_data) == 0:
-    st.info(
-        f"""🎉 Great job! You've already provided feedback for all recipes
-        from {select_company} in week {select_week} of {select_year}.
+if len(filtered_data) == 0:
+    st.info(f"""🚫 There are no recipes from {select_company} in week {select_week} of {select_year}.
         Feel free to explore other weeks or companies to add more feedback!
-        """
-    )
+        """)
 
-st.sidebar.write("")
-st.sidebar.write("")
-if st.sidebar.button("Send feedback!"):
-    feedback_clicked(st.session_state["feedback_data"])
+else:
+    extra_info = st.toggle("Show recipe information")
 
-for _, row in st.session_state["clean_data"].iterrows():
-    st.write(f"#### {row['recipe_name'].capitalize()}")
-    col1, col2 = st.columns([1, 2])
-
-    with col1:
-        st.image(row["recipe_image_link"], width=200, caption=f"Recipe ID: {row['recipe_id']}")
-
-    with col2:
-        family_key = f"{row['recipe_id']}_family"
-        chef_key = f"{row['recipe_id']}_chef"
-
-        family_feedback = st.radio(
-            "**Family Friendliness**", ["1", "2", "3", "4", "5"], index=None, key=family_key, horizontal=True
-        )
-        chef_feedback = st.radio(
-            "**Chef's Favoriteness**", ["1", "2", "3", "4", "5"], index=None, key=chef_key, horizontal=True
+    if "feedback_data" not in st.session_state:
+        st.session_state["feedback_data"] = pd.DataFrame(
+            columns=[
+                "recipe_id",
+                "company_id",
+                "menu_year",
+                "menu_week",
+                "family_friendliness_feedback",
+                "chef_favoriteness_feedback",
+            ]
         )
 
-        feedback_row = {
-            "recipe_id": row["recipe_id"],
-            "company_id": row["company_id"],
-            "menu_year": select_year,
-            "menu_week": select_week,
-            "family_friendliness_feedback": family_feedback,
-            "chef_favoriteness_feedback": chef_feedback,
-        }
+    clean_data = filter_existing_ids(filtered_data)
+    st.session_state["clean_data"] = clean_data
 
-        existing_feedback_index = st.session_state["feedback_data"][
-            (st.session_state["feedback_data"]["recipe_id"] == row["recipe_id"])
-            & (st.session_state["feedback_data"]["company_id"] == row["company_id"])
-            & (st.session_state["feedback_data"]["menu_year"] == select_year)
-            & (st.session_state["feedback_data"]["menu_week"] == select_week)
-        ].index
+    if len(clean_data) == 0:
+        st.info(
+            f"""🎉 Great job! You've already provided feedback for all recipes
+            from {select_company} in week {select_week} of {select_year}.
+            Feel free to explore other weeks or companies to add more feedback!
+            """
+        )
 
-        if existing_feedback_index.any():
-            st.session_state["feedback_data"].loc[
-                existing_feedback_index, ["family_friendliness_feedback", "chef_favoriteness_feedback"]
-            ] = family_feedback, chef_feedback
-        else:
-            st.session_state["feedback_data"] = pd.concat(
-                [st.session_state["feedback_data"], pd.DataFrame([feedback_row])], ignore_index=True
+    st.sidebar.write("")
+    st.sidebar.write("")
+    if st.sidebar.button("Send feedback!"):
+        feedback_clicked(st.session_state["feedback_data"])
+
+    for _, row in st.session_state["clean_data"].iterrows():
+        st.write(f"#### {row['recipe_name'].capitalize()}")
+        col1, col2 = st.columns([1, 2])
+
+        with col1:
+            st.image(row["recipe_image_link"], width=200, caption=f"Recipe ID: {row['recipe_id']}")
+
+        with col2:
+            family_key = f"{row['recipe_id']}_family"
+            chef_key = f"{row['recipe_id']}_chef"
+
+            family_feedback = st.radio(
+                "**Family Friendliness**", ["1", "2", "3", "4", "5"], index=None, key=family_key, horizontal=True
+            )
+            chef_feedback = st.radio(
+                "**Chef's Favoriteness**", ["1", "2", "3", "4", "5"], index=None, key=chef_key, horizontal=True
             )
 
-        if extra_info:
-            st.markdown(f"**Main ingredient:** {row['recipe_main_ingredient_name']}")
-            st.markdown(f"**Recipe difficulty:** {row['recipe_difficulty_name'].capitalize()}")
-            st.markdown(f"**Average cooking time:** {(row['cooking_time_from'] + row['cooking_time_to']) / 2} min")
+            feedback_row = {
+                "recipe_id": row["recipe_id"],
+                "company_id": row["company_id"],
+                "menu_year": select_year,
+                "menu_week": select_week,
+                "family_friendliness_feedback": family_feedback,
+                "chef_favoriteness_feedback": chef_feedback,
+            }
 
-    st.markdown("---")
+            existing_feedback_index = st.session_state["feedback_data"][
+                (st.session_state["feedback_data"]["recipe_id"] == row["recipe_id"])
+                & (st.session_state["feedback_data"]["company_id"] == row["company_id"])
+                & (st.session_state["feedback_data"]["menu_year"] == select_year)
+                & (st.session_state["feedback_data"]["menu_week"] == select_week)
+            ].index
+
+            if existing_feedback_index.any():
+                st.session_state["feedback_data"].loc[
+                    existing_feedback_index, ["family_friendliness_feedback", "chef_favoriteness_feedback"]
+                ] = family_feedback, chef_feedback
+            else:
+                st.session_state["feedback_data"] = pd.concat(
+                    [st.session_state["feedback_data"], pd.DataFrame([feedback_row])], ignore_index=True
+                )
+
+            if extra_info:
+                st.markdown(f"**Main ingredient:** {row['recipe_main_ingredient_name']}")
+                st.markdown(f"**Recipe difficulty:** {row['recipe_difficulty_name'].capitalize()}")
+                st.markdown(f"**Average cooking time:** {(row['cooking_time_from'] + row['cooking_time_to']) / 2} min")
+
+        st.markdown("---")
