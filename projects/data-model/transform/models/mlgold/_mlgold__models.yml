@@ -122,21 +122,27 @@ models:
 
       - name: taxonomy_list
         data_type: string
+        description: "{{ doc('column__taxonomy_list') }}"
       
       - name: number_of_taxonomies
         data_type: int
+        description: "{{ doc('column__number_of_taxonomies') }}"
       
       - name: generic_ingredient_id_list
         data_type: string
+        description: "{{ doc('column__generic_ingredient_id_list') }}"
       
       - name: number_of_ingredients
         data_type: int
+        description: "{{ doc('column__number_of_ingredients') }}"
 
       - name: recipe_step_id_list
         data_type: string
+        description: "{{ doc('column__recipe_step_id_list') }}"
       
       - name: number_of_recipe_steps
         data_type: int
+        description: "{{ doc('column__number_of_recipe_steps') }}"
 
   - name: estimations_log
     description: Showing what would have been ordered for the next 14 weeks if the cutoff was when the estimation was generated
