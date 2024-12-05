@@ -1,0 +1,40 @@
+# This is a Databricks asset bundle definition for ml-feature-store.
+# The Databricks extension requires databricks.yml configuration file.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
+bundle:
+  name: ml-example-project
+
+include:
+  - "jobs/**.yml"
+  - "jobs/**.yaml"
+  - "jobs/workflows/**.yaml"
+  - "jobs/workflows/**.yml"
+
+variables:
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+    default: bhregistry.azurecr.io/ml-example-project-databricks:dev-latest
+  mode:
+    description: The mode to deploy in
+    default: development
+  environment:
+    description: The environment to deploy to
+    default: dev
+  slack_notification_job_id:
+    description: The id of the slack notification job to call
+
+targets:
+  dev:
+    default: true
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 221967110790300
+  test:
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 823927532277018
+  prod:
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 808732355997444

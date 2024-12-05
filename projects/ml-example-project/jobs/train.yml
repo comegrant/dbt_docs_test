@@ -1,0 +1,60 @@
+resources:
+  jobs:
+    ml-example-project-train:
+      name: ml-example-project-train-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: ml-example-project-train
+          new_cluster:
+            num_workers: 1
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "ML Example Project"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      email_notifications:
+        on_failure:
+          - sylvia.liu@cheffelo.com
+
+      tasks:
+        - task_key: ml-example-project-train-gl
+          job_cluster_key: ml-example-project-train
+          notebook_task:
+            notebook_path: ./train.py
+            base_parameters:
+              env: "${var.environment}"
+              company: GL
+              is_run_on_databricks: True
+        - task_key: slack-notification-success-gl
+          depends_on:
+            - task_key: ml-example-project-train-gl
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ ML Example project train step for GL finished!
+              is_error: false
+        - task_key: slack-notification-failied-gl
+          depends_on:
+            - task_key: ml-example-project-train-gl
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              message_header: ❌ ML Example project train step for GL failed!
+              body_message: Check databricks for details...
+              is_error: true
+              relevant_people: sylvia

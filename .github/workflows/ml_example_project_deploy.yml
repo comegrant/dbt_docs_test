@@ -1,0 +1,38 @@
+name: Deploy ml-example-project
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/ml_example_project_deploy.yml'
+      - 'projects/ml-example-project/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-ml-example-project-databricks-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/ml-example-project
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: ml-example-project-databricks
+      dockerfile: docker/Dockerfile.databricks
+      push-latest: true
+    secrets: inherit
+
+  deploy-ml-example-project:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-ml-example-project-databricks-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/ml-example-project
+      target-env: ${{matrix.target}}
+      should-change-target: true
+
+      # Setting the docker image which is needed for python projects
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/ml-example-project-databricks:${{ github.sha }}" --var="mode=production"'
+    secrets: inherit

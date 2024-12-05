@@ -1,0 +1,3 @@
+FROM ml-example-project-base:latest
+
+RUN poetry install
