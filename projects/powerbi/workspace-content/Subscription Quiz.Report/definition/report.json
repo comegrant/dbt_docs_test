@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate7996759070040131.json",
+      "name": "CheffeloTemplate6331205020927864.json",
       "reportVersionAtImport": "5.60",
       "type": "RegisteredResources"
     }
@@ -151,7 +151,65 @@
             "Property": "Company Name"
           }
         },
-        "howCreated": "User"
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "c",
+              "Entity": "Companies",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "c"
+                              }
+                            },
+                            "Property": "Company Name"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User",
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
       }
     ]
   },
@@ -200,8 +258,13 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate7996759070040131.json",
-          "path": "CheffeloTemplate7996759070040131.json",
+          "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
+          "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
+          "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate6331205020927864.json",
+          "path": "CheffeloTemplate6331205020927864.json",
           "type": "CustomTheme"
         }
       ]

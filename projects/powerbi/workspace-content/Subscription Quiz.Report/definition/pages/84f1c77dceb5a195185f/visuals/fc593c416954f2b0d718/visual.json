@@ -2,12 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "fc593c416954f2b0d718",
   "position": {
-    "x": 976,
-    "y": 32,
+    "x": 974.05215165573532,
+    "y": 0,
     "z": 5000,
-    "height": 144,
-    "width": 272,
-    "tabOrder": 6000
+    "height": 130.23945437022763,
+    "width": 280.65909454487286
   },
   "visual": {
     "visualType": "card",
@@ -67,6 +66,13 @@
               "expr": {
                 "Literal": {
                   "Value": "1D"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "40D"
                 }
               }
             }
@@ -139,22 +145,9 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "feb7e07c7a658bde2600",
   "filterConfig": {
     "filters": [
-      {
-        "name": "79c91c2bc053e42cedd4",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Billing Agreements"
-              }
-            },
-            "Property": "OneSub Flag"
-          }
-        },
-        "howCreated": "User"
-      },
       {
         "name": "dbd4b4c9824064a0464e",
         "field": {

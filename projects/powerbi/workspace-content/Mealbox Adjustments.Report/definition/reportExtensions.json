@@ -1,0 +1,119 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Order Measures",
+      "measures": [
+        {
+          "name": "Share of Orders With Meal Adjustments",
+          "dataType": "Double",
+          "expression": "\n\n[Number of Orders with Adjusted Meals]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Adjusted Meals"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Share of Orders With Decreased Meals",
+          "dataType": "Double",
+          "expression": "\n\n [Number of Orders with Decreased Meals]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Decreased Meals"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Share of Orders With Increased Meals",
+          "dataType": "Double",
+          "expression": "\n\n [Number of Orders with Increased Meals]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Increased Meals"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Share of Orders With Portion Adjustments",
+          "dataType": "Double",
+          "expression": "\n\n[Number of Orders with Adjusted Portions]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Adjusted Portions"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Share of Orders With Increased Portions",
+          "dataType": "Double",
+          "expression": "\n\n[Number of Orders with Increased Portions]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Increased Portions"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Share of Orders With Decreased Portions",
+          "dataType": "Double",
+          "expression": "\n\n[Number of Orders with Decreased Portions]/[Number of Orders]",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders with Decreased Portions"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
