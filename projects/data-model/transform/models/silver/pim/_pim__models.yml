@@ -799,4 +799,57 @@ models:
       - name: status_code_description
         data_type: string
         description: "{{ doc('column__status_code_description') }}"
+      
+  - name: pim__allergy_preferences
+    description: "Table connecting allergy ids to preference ids"
 
+    columns:
+      - name: allergy_id
+        data_type: int
+        description: "{{ doc('column__allergy_id') }}" #agathe
+        data_tests:
+          - not_null
+
+      - name: preference_id
+        data_type: string
+        description: "{{ doc('column__preference_id') }}"
+        data_tests:
+          - not_null
+  
+  - name: pim__ingredient_allergies
+    description: "Table connecting ingredient ids to allergy ids"
+
+    columns:
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: allergy_id
+        data_type: int
+        description: "{{ doc('column__allergy_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: has_trace_of
+        data_type: boolean
+        description: "{{ doc('column__has_trace_of') }}" #agathe
+        data_tests:
+          - not_null
+  
+  - name: pim__ingredient_category_preferences
+    description: "Table connecting ingredient category ids to preference ids"
+
+    columns:
+      - name: ingredient_category_id
+        data_type: int
+        description: "{{ doc('column__ingredient_category_id') }}"
+        data_tests:
+          - not_null
+
+      - name: preference_id
+        data_type: string
+        description: "{{ doc('column__preference_id') }}"
+        data_tests:
+          - not_null

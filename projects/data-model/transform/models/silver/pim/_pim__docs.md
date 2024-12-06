@@ -281,15 +281,16 @@ Identifier for the recipes difficulty level
 
 {% enddocs %}
 
+{% docs column__allergy_id%}
+
+Identifier for each allergy
+
+{% enddocs %}
+
+{% docs column__has_trace_of%}
+
+If an ingredient has a trace of an allergy
+
+{% enddocs %}
+
 ## Undocumented fields
-
-
-
-
-
-
-
-
-
-
-
