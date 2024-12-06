@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "72ba904930bbc5012ae3",
   "position": {
-    "x": 1087.1797201870463,
-    "y": 18.093797921281308,
-    "z": 4000,
-    "height": 72,
-    "width": 183,
-    "tabOrder": 3000
+    "x": 0,
+    "y": 1.3865356011123287,
+    "z": 5000,
+    "height": 63.221884498480243,
+    "width": 126.44376899696049,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "slicer",
@@ -147,22 +147,9 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "3f3eff2b070e96e79227",
   "filterConfig": {
     "filters": [
-      {
-        "name": "22e57da4002372c04520",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Date"
-              }
-            },
-            "Property": "Year of Week"
-          }
-        },
-        "type": "Advanced"
-      },
       {
         "name": "89e8abf70623b750304e",
         "field": {

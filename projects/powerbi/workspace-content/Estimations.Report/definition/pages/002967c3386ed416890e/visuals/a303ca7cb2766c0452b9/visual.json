@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "a303ca7cb2766c0452b9",
   "position": {
-    "x": 23.545611015490532,
-    "y": 354.42340791738383,
+    "x": 0,
+    "y": 285.80996935212914,
     "z": 1000,
-    "height": 331.49741824440616,
-    "width": 508.7091222030981,
-    "tabOrder": 1000
+    "height": 283.18699113419314,
+    "width": 611.19715090362763,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "barChart",
@@ -108,6 +108,19 @@
             }
           }
         }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -117,7 +130,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Quantity of product in baskets if cutoff is now'"
+                  "Value": "'Quantity of Product in Baskets if Cutoff is Now'"
                 }
               }
             }
@@ -126,5 +139,6 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  }
+  },
+  "parentGroupName": "0d2a73c17a7a16e00010"
 }

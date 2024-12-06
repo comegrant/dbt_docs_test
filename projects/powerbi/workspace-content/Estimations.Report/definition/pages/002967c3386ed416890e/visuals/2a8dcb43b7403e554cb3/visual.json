@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "2a8dcb43b7403e554cb3",
   "position": {
-    "x": 1087.1797201870463,
-    "y": 290.43154237897795,
-    "z": 5000,
-    "height": 72,
-    "width": 183,
+    "x": 279.14893617021437,
+    "y": 1.3865356011123322,
+    "z": 6000,
+    "height": 65.167173252279639,
+    "width": 140.06079027355625,
     "tabOrder": 4000
   },
   "visual": {
@@ -27,8 +27,9 @@
                 }
               },
               "queryRef": "Products.Product Type Name",
-              "nativeQueryRef": "Product Type Name",
-              "active": true
+              "nativeQueryRef": "Product Type",
+              "active": true,
+              "displayName": "Product Type"
             }
           ]
         }
@@ -137,6 +138,7 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "3f3eff2b070e96e79227",
   "filterConfig": {
     "filters": [
       {
