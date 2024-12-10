@@ -34,7 +34,17 @@ vars:
  velg&vrak_product_type_id: 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
  incremental_number_of_days: 30
  full_load_first_date: '2024-01-15'
+ subscription_order_type_ids: [
+          "'1C182E51-ECFA-4119-8928-F2D9F57C5FCC'", #Orders after cutoff
+          "'5F34860B-7E61-46A0-80F7-98DCDC53BA9E'", #Recurring
+          "'C7D2684C-B715-4C6C-BF90-053757926679'"  #Order After Registration
+]
+ finished_order_status_ids: [
+          "'38A5CC25-A639-4433-A8E6-43FB35DABFD9'", #Processing
+          "'4508130E-6BA1-4C14-94A4-A56B074BB135'"  #Finished
+]
  basket_history_start_at: '2023-11-01 00:00:00'
+
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models

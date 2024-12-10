@@ -8,8 +8,7 @@ sources:
     description: "Tables from the AnalyticsDB (ADB) database"
     tables:
       - name: analyticsdb_cms__estimations_log
-
       - name: analyticsdb_cms__estimations_log_history
-
-
       - name: analyticsdb_analytics__billing_agreement_basket_product_log
+      - name: analyticsdb_orders__historical_orders_combined
+      - name: analyticsdb_orders__historical_order_lines_combined

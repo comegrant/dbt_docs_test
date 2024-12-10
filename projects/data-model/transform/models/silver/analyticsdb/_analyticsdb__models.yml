@@ -39,3 +39,6 @@ models:
         description: "{{ doc('column__source_created_at') }}"
         data_tests:
           - not_null
+
+  - name: analyticsdb_orders__historical_orders
+  - name: analyticsdb_orders__historical_order_lines
