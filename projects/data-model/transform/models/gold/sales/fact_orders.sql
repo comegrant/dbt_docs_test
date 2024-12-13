@@ -246,14 +246,13 @@ order_lines as (
             then 0
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             and ordered_and_preselected_recipes_joined.preselected_recipe_id is null
-            --TODO: Deal with this in a better way
             and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
             then 1
             else null
         end as is_added_dish
+        -- this part of the union will not consist of any removed dishes
         , case 
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            --TODO: Deal with this in a better way
             and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
             then 0
             else null
@@ -336,7 +335,7 @@ order_lines as (
         
     union all
 
-    -- Add Velg&Vrak recipes that was swapped in
+    -- Add velg&vrak recipes that was removed
     select distinct
         order_line_dimensions_joined.menu_year
         , order_line_dimensions_joined.menu_week
@@ -355,6 +354,7 @@ order_lines as (
         , 1 as is_removed_dish
         , true as is_dish
         , null as meal_adjustment_subscription
+        -- Portion adjustments are only relevant for added recipes
         , null as portion_adjustment_subscription
         , "GENERATED" as order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
@@ -412,7 +412,7 @@ order_lines as (
 
     union all 
 
-    -- (Legacy) Add recipes that belong to the mealbox product before Onesub
+    -- (Legacy) Add recipes that belong to mealbox products before Onesub
     select distinct
         order_line_dimensions_joined.menu_year
         , order_line_dimensions_joined.menu_week
@@ -429,17 +429,25 @@ order_lines as (
         , 0 as total_amount_inc_vat
         , case 
             when ordered_and_preselected_recipes_joined.preselected_recipe_id = ordered_and_preselected_recipes_joined.recipe_id
-            then 0 
-            else null 
+            then 0
+            when ordered_and_preselected_recipes_joined.preselected_recipe_id is null
+            and ordered_and_preselected_recipes_joined.recipe_id is not null
+            and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
+            then 1
+            else null
         end as is_added_dish
         , case 
             when ordered_and_preselected_recipes_joined.preselected_recipe_id = ordered_and_preselected_recipes_joined.recipe_id
-            then 0 
-            else null 
+            then 0
+            when ordered_and_preselected_recipes_joined.preselected_recipe_id is not null
+            and ordered_and_preselected_recipes_joined.recipe_id is null
+            and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
+            then 1
+            else null
         end as is_removed_dish
         , true as is_dish
         , null as meal_adjustment_subscription
-        , 0 as portion_adjustment_subscription
+        , order_line_dimensions_joined.portions - subscribed_mealbox.subscribed_portions as portion_adjustment_subscription
         , "GENERATED" as order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
@@ -450,11 +458,8 @@ order_lines as (
         , order_line_dimensions_joined.language_id
         , order_line_dimensions_joined.order_status_id
         , order_line_dimensions_joined.order_type_id
-        -- TODO: Not sure if this should be null instead
         , order_line_dimensions_joined.product_variation_id
-        -- TODO: Not sure if this should be null instead
         , ordered_and_preselected_recipes_joined.preselected_product_variation_id
-        -- TODO: Need to change from 0 to something else
         , order_line_dimensions_joined.fk_dim_basket_deviation_origins
         , order_line_dimensions_joined.fk_dim_basket_deviation_origins_preselected
         , order_line_dimensions_joined.fk_dim_billing_agreements_ordergen
@@ -495,6 +500,10 @@ order_lines as (
     from ordered_and_preselected_recipes_joined
     left join order_line_dimensions_joined
         on ordered_and_preselected_recipes_joined.billing_agreement_order_line_id = order_line_dimensions_joined.billing_agreement_order_line_id
+    -- ASSUMPTION: A customer can only have one subscribed mealbox product
+    left join subscribed_product_variations as subscribed_mealbox
+        on order_line_dimensions_joined.billing_agreement_order_id = subscribed_mealbox.billing_agreement_order_id
+        and subscribed_mealbox.subscribed_product_type_id = '{{ var("mealbox_product_type_id") }}'
     where order_line_dimensions_joined.product_type_id = '{{ var("mealbox_product_type_id") }}'
 
 )
