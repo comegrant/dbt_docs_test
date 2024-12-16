@@ -48,11 +48,15 @@ def init_dotenv(project: str) -> None:
 
 
 def root_dir() -> Path:
-    if is_root():
-        return Path()
-    if Path("../.git").is_dir():
-        return Path("../")
-    return Path("../../")
+    # Find the mono_repo directory containing the .git folder
+    current_dir = Path.cwd()
+    while not (current_dir / ".git").is_dir():
+        current_dir = current_dir.parent
+        if current_dir == Path("/"):
+            raise ValueError("Could not find sous_chef directory containing git")
+
+    # Return the packages directory within mono_repo
+    return current_dir
 
 
 def internal_package_path() -> Path:
@@ -761,22 +765,25 @@ def catalog() -> None:
     command.extend(["run", "--service-ports", "data-catalog-app"])
     subprocess.run(command, check=False)
 
+
 @cli.command()
-@click.option('--project', default=None, help='Check a specific project')
+@click.option("--project", default=None, help="Check a specific project")
 def doctor(project: str | None) -> None:
     echo_action("Checking your environment setup")
 
     sections = [
-        ("System Checks", [check_python_version,
-                           check_poetry_installation,
-                           check_pyenv_installation,
-                           check_docker_installation,
-                           check_vscode_databricks_extension,
-                           check_last_reboot]),
-        ("Git Checks", [check_git_configuration,
-                        check_last_rebase,
-                        check_git_branch_format,
-                        check_user_in_owners]),
+        (
+            "System Checks",
+            [
+                check_python_version,
+                check_poetry_installation,
+                check_pyenv_installation,
+                check_docker_installation,
+                check_vscode_databricks_extension,
+                check_last_reboot,
+            ],
+        ),
+        ("Git Checks", [check_git_configuration, check_last_rebase, check_git_branch_format, check_user_in_owners]),
     ]
 
     if project:
@@ -798,23 +805,29 @@ def doctor(project: str | None) -> None:
     else:
         click.echo(click.style("❌ Some checks failed. Please address the issues above.", fg="red"))
 
+
 def check_python_version() -> bool:
     current_version = sys.version_info[:2]
 
     if current_version >= MINIMUM_REQUIRED_PYTHON_VERSION:
-        click.echo(click.style(
-            f"✅ Python {'.'.join(map(str, current_version))} is installed "
-            f"(>={'.'.join(map(str, MINIMUM_REQUIRED_PYTHON_VERSION))})",
-            fg="green"
-        ))
+        click.echo(
+            click.style(
+                f"✅ Python {'.'.join(map(str, current_version))} is installed "
+                f"(>={'.'.join(map(str, MINIMUM_REQUIRED_PYTHON_VERSION))})",
+                fg="green",
+            )
+        )
         return True
     else:
-        click.echo(click.style(
-            f"❌ Python {'.'.join(map(str, current_version))} is installed, "
-            f"but {'.'.join(map(str, MINIMUM_REQUIRED_PYTHON_VERSION))} or higher is required",
-            fg="red"
-        ))
+        click.echo(
+            click.style(
+                f"❌ Python {'.'.join(map(str, current_version))} is installed, "
+                f"but {'.'.join(map(str, MINIMUM_REQUIRED_PYTHON_VERSION))} or higher is required",
+                fg="red",
+            )
+        )
         return False
+
 
 def check_poetry_installation() -> bool:
     if not shutil.which("poetry"):
@@ -833,16 +846,26 @@ def check_poetry_installation() -> bool:
         return False
 
     version_str = version_match.group(1)
-    version = tuple(map(int, version_str.split('.')))
+    version = tuple(map(int, version_str.split(".")))
 
     if version < MINIMUM_REQUIRED_POETRY_VERSION:
-        click.echo(click.style(f"❌ Poetry {version_str} is installed, "
-            f"but version {'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))} or higher is required", fg="red"))
+        click.echo(
+            click.style(
+                f"❌ Poetry {version_str} is installed, "
+                f"but version {'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))} or higher is required",
+                fg="red",
+            )
+        )
         return False
 
-    click.echo(click.style(f"✅ Poetry {version_str} is installed "
-        f"(>={'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))})", fg="green"))
+    click.echo(
+        click.style(
+            f"✅ Poetry {version_str} is installed " f"(>={'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))})",
+            fg="green",
+        )
+    )
     return True
+
 
 def check_docker_installation() -> bool:
     if shutil.which("docker"):
@@ -851,6 +874,7 @@ def check_docker_installation() -> bool:
     else:
         click.echo(click.style("❌ Docker is not installed", fg="red"))
         return False
+
 
 def check_git_configuration() -> bool:
     email = git_config("user.email")
@@ -862,10 +886,13 @@ def check_git_configuration() -> bool:
 
     click.echo(click.style("❌ Git is not fully configured", fg="red"))
     if not email:
-        click.echo("  - Missing user.email in git config, add it by running: git config --global user.email 'you@example.com'") #NOQA: E501
+        click.echo(
+            "  - Missing user.email in git config, add it by running: git config --global user.email 'you@example.com'"
+        )
     if not name:
         click.echo("  - Missing user.name in git config, add it by running: git config --global user.name 'Your Name'")
     return False
+
 
 def check_project(project_name: str) -> bool:
     project_path = projects_path() / project_name
@@ -888,6 +915,7 @@ def check_project(project_name: str) -> bool:
 
     return all_passed
 
+
 def check_last_rebase() -> bool:
     try:
         # Fetch the latest changes from origin
@@ -895,10 +923,7 @@ def check_last_rebase() -> bool:
 
         # Get the number of commits that origin/main is ahead of the current branch
         result = subprocess.run(
-            ["git", "rev-list", "--count", "HEAD..origin/main"],
-            check=True,
-            capture_output=True,
-            text=True
+            ["git", "rev-list", "--count", "HEAD..origin/main"], check=True, capture_output=True, text=True
         )
         commits_behind = int(result.stdout.strip())
 
@@ -906,19 +931,22 @@ def check_last_rebase() -> bool:
             click.echo(click.style("✅ Branch is up to date with origin/main", fg="green"))
             return True
         else:
-            click.echo(click.style(f"❓ Branch is behind origin/main by {commits_behind} commit(s), please consider rebasing", fg="yellow")) #NOQA: E501
+            click.echo(
+                click.style(
+                    f"❓ Branch is behind origin/main by {commits_behind} commit(s), please consider rebasing",
+                    fg="yellow",
+                )
+            )
             return False
     except subprocess.CalledProcessError:
         click.echo(click.style("❌ Unable to check if branch is up to date. Are you in a git repository?", fg="red"))
         return False
 
+
 def check_git_branch_format() -> bool:
     try:
         result = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-            check=True,
-            capture_output=True,
-            text=True
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], check=True, capture_output=True, text=True
         )
         current_branch = result.stdout.strip()
 
@@ -926,19 +954,21 @@ def check_git_branch_format() -> bool:
             click.echo(click.style(f"✅ Git branch '{current_branch}' follows the correct format", fg="green"))
             return True
         else:
-            click.echo(click.style(
-                f"❌ Git branch '{current_branch}' does not follow the format name/feature-name",
-                fg="red"
-            ))
+            click.echo(
+                click.style(f"❌ Git branch '{current_branch}' does not follow the format name/feature-name", fg="red")
+            )
             return False
     except subprocess.CalledProcessError:
         click.echo(click.style("❌ Unable to check git branch format. Are you in a git repository?", fg="red"))
         return False
 
+
 def check_user_in_owners() -> bool:
     email = git_config("user.email")
     if not email:
-        click.echo(click.style("❌ Unable to check if user is in owners package. Git email is not configured.", fg="red")) #NOQA: E501
+        click.echo(
+            click.style("❌ Unable to check if user is in owners package. Git email is not configured.", fg="red")
+        )
         return False
 
     owner = owner_for_email(email)
@@ -950,9 +980,10 @@ def check_user_in_owners() -> bool:
         click.echo("  Please add your info to the project-owners.owner:Owner.all_owners() function.")
         return False
 
+
 def check_vscode_databricks_extension() -> bool:
     if platform.system() == "Windows":
-        vscode_path = Path(os.environ.get('APPDATA', '')) / "Code" / "User" / "extensions"
+        vscode_path = Path(os.environ.get("APPDATA", "")) / "Code" / "User" / "extensions"
     else:
         vscode_path = Path.home() / ".vscode" / "extensions"
 
@@ -978,24 +1009,15 @@ def check_vscode_databricks_extension() -> bool:
         click.echo(click.style(f"✅ Databricks extension {version} is installed", fg="green"))
     return True
 
+
 def check_last_reboot() -> bool:
     try:
         if platform.system() == "Darwin":  # macOS
-            result = subprocess.run(
-                ["sysctl", "-n", "kern.boottime"],
-                check=True,
-                capture_output=True,
-                text=True
-            )
-            boot_time_str = result.stdout.split('=')[1].split(',')[0].strip()
+            result = subprocess.run(["sysctl", "-n", "kern.boottime"], check=True, capture_output=True, text=True)
+            boot_time_str = result.stdout.split("=")[1].split(",")[0].strip()
             boot_time = datetime.fromtimestamp(int(boot_time_str), tz=timezone.utc)
         elif platform.system() == "Windows":  # Windows
-            result = subprocess.run(
-                ["systeminfo"],
-                check=True,
-                capture_output=True,
-                text=True
-            )
+            result = subprocess.run(["systeminfo"], check=True, capture_output=True, text=True)
             boot_time = None
             for line in result.stdout.splitlines():
                 if "Boot Time" in line:
@@ -1009,7 +1031,12 @@ def check_last_reboot() -> bool:
             return True  # Not a failure, just not applicable
 
         if boot_time < datetime.now(tz=timezone.utc) - timedelta(days=MAX_DAYS_SINCE_REBOOT):
-            click.echo(click.style(f"❓ Last reboot time: {boot_time}, this was more than {MAX_DAYS_SINCE_REBOOT} days ago, please consider rebooting", fg="yellow")) #NOQA: E501
+            click.echo(
+                click.style(
+                    f"❓ Last reboot time: {boot_time}, this was more than {MAX_DAYS_SINCE_REBOOT} days ago, please consider rebooting",  # noqa: E501
+                    fg="yellow",
+                )
+            )
         else:
             click.echo(click.style(f"✅ Last reboot time: {boot_time}", fg="green"))
 
@@ -1017,6 +1044,7 @@ def check_last_reboot() -> bool:
     except Exception as e:
         click.echo(click.style(f"❌ Failed to get last reboot time: {e}", fg="red"))
         return False
+
 
 def run_dbt_debug() -> bool:
     click.echo(click.style("...running dbt debug...", fg="blue"))
@@ -1028,6 +1056,7 @@ def run_dbt_debug() -> bool:
     else:
         click.echo(click.style("❌ dbt debug failed, consider running dbt deps to fix", fg="red"))
         return False
+
 
 def check_pyenv_installation() -> bool:
     if not shutil.which("pyenv"):
@@ -1046,29 +1075,36 @@ def check_pyenv_installation() -> bool:
         return False
 
     version_str = version_match.group(1)
-    version = tuple(map(int, version_str.split('.')))
+    version = tuple(map(int, version_str.split(".")))
 
     if platform.system() == "Windows" and version < MINIMUM_REQUIRED_PYENV_VERSION_WINDOWS:
-        click.echo(click.style(
-            f"❌ pyenv {version_str} is installed, "
-            f"but version {'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_WINDOWS))} "
-            f"or higher is required"
-            , fg="red"
-        ))
+        click.echo(
+            click.style(
+                f"❌ pyenv {version_str} is installed, "
+                f"but version {'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_WINDOWS))} "
+                f"or higher is required",
+                fg="red",
+            )
+        )
         return False
     elif platform.system() == "Darwin" and version < MINIMUM_REQUIRED_PYENV_VERSION_MAC:
-        click.echo(click.style(
-            f"❌ pyenv {version_str} is installed, "
-            f"but version {'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_MAC))} or higher is required"
-            , fg="red"
-        ))
+        click.echo(
+            click.style(
+                f"❌ pyenv {version_str} is installed, "
+                f"but version {'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_MAC))} or higher is required",
+                fg="red",
+            )
+        )
         return False
-    click.echo(click.style(
-        f"✅ pyenv {version_str} is installed "
-        f"(>={'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_WINDOWS if platform.system() == 'Windows' else MINIMUM_REQUIRED_PYENV_VERSION_MAC))})"  #NOQA: E501
-        , fg="green"
-    ))
+    click.echo(
+        click.style(
+            f"✅ pyenv {version_str} is installed "
+            f"(>={'.'.join(map(str, MINIMUM_REQUIRED_PYENV_VERSION_WINDOWS if platform.system() == 'Windows' else MINIMUM_REQUIRED_PYENV_VERSION_MAC))})",  # NOQA: E501
+            fg="green",
+        )
+    )
     return True
+
 
 if __name__ == "__main__":
     cli()
