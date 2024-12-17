@@ -1,0 +1,13 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/source-properties
+
+version: 2
+
+sources:
+  - name: mloutputs
+    schema: mloutputs
+    description: "Tables from the mloutputs schema in Databricks"
+    tables:
+      - name: preselector_successful_realtime_output
+        description: "Table of all successful preselector outputs."
+      - name: preselector_failed_realtime_output
+        description: "Table of all failed preselector outputs."
