@@ -677,18 +677,6 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
 
-	column ops_order_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
-		summarizeBy: sum
-		sourceColumn: ops_order_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column order_status_id
 		dataType: string
 		isHidden
@@ -1018,18 +1006,6 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column fk_dim_billing_agreements_deviations
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
-		summarizeBy: none
-		sourceColumn: fk_dim_billing_agreements_deviations
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column fk_dim_products_preselected
 		dataType: string
 		isHidden
@@ -1112,6 +1088,18 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ops_order_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
+		summarizeBy: sum
+		sourceColumn: ops_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column preselected_product_variation_id
 		dataType: string
 		isHidden
@@ -1166,6 +1154,18 @@ table 'Order Measures'
 		sourceColumn: portion_adjustment_subscription
 
 		changedProperty = IsHidden
+
+	column fk_dim_billing_agreements_deviations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements_deviations
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
 
 	column fk_dim_basket_deviation_origins
 		dataType: string

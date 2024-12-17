@@ -60,19 +60,6 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_current
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 373b4a87-26fd-4e55-9118-c6d440aee6d4
-		summarizeBy: none
-		sourceColumn: is_current
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Payment Method'
 		dataType: string
 		lineageTag: a5eaf2ae-1125-44bc-99d3-59ab436653c3
@@ -231,6 +218,19 @@ table 'Billing Agreements'
 		lineageTag: b33e20b9-81e5-406e-abee-b76e87cc1c89
 		summarizeBy: sum
 		sourceColumn: first_menu_week_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_current
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 373b4a87-26fd-4e55-9118-c6d440aee6d4
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

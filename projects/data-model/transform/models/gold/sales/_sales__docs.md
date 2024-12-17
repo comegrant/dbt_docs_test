@@ -152,6 +152,69 @@ Primary key of the preferences dimension. It is a composite key of preference_id
 
 {% enddocs %}
 
+# Dim Preference Combinations
+
+{% docs column__pk_dim_preference_combinations %}
+
+Primary key of the preference combination dimension. It is the same as the primary key for the billing agreement dimension. 
+
+{% enddocs %}
+
+
+{% docs column__preference_combinations %}
+
+A list of all preference and attribute names belonging to a customer. The names in the list are general across the companies.
+
+{% enddocs %}
+
+{% docs column__preference_id_combinations %}
+
+A list of all preference ids belonging to a customer. 
+
+{% enddocs %}
+
+{% docs column__concept_combinations %}
+
+A list of concept preference names belonging to a customer. The names in the list are general across the companies.
+
+{% enddocs %}
+
+{% docs column__preference_id_combinations_concept_type %}
+
+A list of concept preference ids belonging to a customer. 
+
+{% enddocs %}
+
+{% docs column__taste_preference_combinations %}
+
+A list of taste preference names belonging to a customer. The names in the list are general across the companies.
+
+{% enddocs %}
+
+{% docs column__preference_id_combinations_taste_type %}
+
+A list of taste preference ids belonging to a customer. 
+
+{% enddocs %}
+
+{% docs column__number_of_preferences %}
+
+The number of preferences of all types in the preference combination.
+
+{% enddocs %}
+
+{% docs column__number_of_concept_preferences %}
+
+The number of concept preferences in the preference combination.
+
+{% enddocs %}
+
+{% docs column__number_of_taste_preferences %}
+
+The number of taste preferences in the preference combination.
+
+{% enddocs %}
+
 # Bridge Billing Agreements Preferences
 
 {% docs column__pk_bridge_billing_agreements_preferences %}

@@ -31,17 +31,6 @@ table 'Agreement Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 4962e557-7100-40b8-b7f6-73da7b8a7e65
 
-	column pk_fact_billing_agreements_daily
-		dataType: string
-		isHidden
-		lineageTag: d1c5e836-f16c-434a-8b81-66233110c718
-		summarizeBy: none
-		sourceColumn: pk_fact_billing_agreements_daily
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column fk_dim_date
 		dataType: int64
 		isHidden
@@ -71,6 +60,17 @@ table 'Agreement Measures'
 		lineageTag: 5025dca3-7dde-4444-a689-63c0ef2b8b54
 		summarizeBy: none
 		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column pk_fact_billing_agreements_daily
+		dataType: string
+		isHidden
+		lineageTag: d1c5e836-f16c-434a-8b81-66233110c718
+		summarizeBy: none
+		sourceColumn: pk_fact_billing_agreements_daily
 
 		changedProperty = IsHidden
 

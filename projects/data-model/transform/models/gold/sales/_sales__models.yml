@@ -678,6 +678,98 @@ models:
     versions:
       - v: 1
 
+  - name: dim_preference_combinations
+    description: "Contains all preference combinations for the agreements, as well as a list with only concept preferences and a list with only taste preferences."
+    latest_version: 1
+    config:
+      alias: dim_preference_combinations
+
+    columns:
+      - name: pk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: preference_combinations
+        data_type: string
+        description: "{{ doc('column__preference_combinations') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id_combinations
+        data_type: string
+        description: "{{ doc('column__preference_id_combinations') }}"
+
+      - name: concept_combinations
+        data_type: string
+        description: "{{ doc('column__concept_combinations') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id_combinations_concept_type
+        data_type: string
+        description: "{{ doc('column__preference_id_combinations_concept_type') }}"
+
+      - name: taste_preference_combinations
+        data_type: string
+        description: "{{ doc('column__taste_preference_combinations') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: preference_id_combinations_taste_type
+        data_type: string
+        description: "{{ doc('column__preference_id_combinations_taste_type') }}"
+
+      - name: number_of_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_preferences') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: number_of_concept_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_concept_preferences') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: number_of_taste_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_taste_preferences') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions:
+    - v: 1
+
+  
   - name: bridge_billing_agreements_preferences
     description: ""
     latest_version: 1

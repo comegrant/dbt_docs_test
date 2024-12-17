@@ -1,0 +1,67 @@
+table 'Preference Combinations'
+	lineageTag: eea593a0-57c3-4b96-bc0b-a198c99514f6
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: d6403533-6a2d-4617-b919-b978c4b18817
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	/// A list of all preferences and attributes belonging to a customer.
+	/// The names in the list are general across the companies.
+	column 'Preference Combinations'
+		dataType: string
+		lineageTag: ec8fc704-88e5-4eb2-a951-95266d6a4fca
+		summarizeBy: none
+		sourceColumn: preference_combinations
+
+	/// A list of concept preferences belonging to a customer.
+	/// The names in the list are general across the companies.
+	column 'Concept Combinations'
+		dataType: string
+		lineageTag: 3f026318-babe-4a5b-98a6-db75d01ff7d8
+		summarizeBy: none
+		sourceColumn: concept_combinations
+
+	/// A list of taste preferences belonging to a customer.
+	/// The names in the list are general across the companies.
+	column 'Taste Preference Combinations'
+		dataType: string
+		lineageTag: 2116699a-4862-4894-9f97-f17982cfce8a
+		summarizeBy: none
+		sourceColumn: taste_preference_combinations
+
+	/// Total number of preferences in the combination
+	column 'Number of Preferences'
+		dataType: int64
+		lineageTag: 3e033df9-14e8-4c7c-878a-0d94010f3d76
+		summarizeBy: none
+		sourceColumn: number_of_preferences
+
+	/// Total number of concept preferences in the combination
+	column 'Number of Concept Preferences'
+		dataType: int64
+		lineageTag: a16237cf-9681-4981-807e-a108dd35bdf5
+		summarizeBy: none
+		sourceColumn: number_of_concept_preferences
+
+	/// Total number of taste preferences in the combination
+	column 'Number of Taste Preferences'
+		dataType: int64
+		lineageTag: bd6f4b71-206c-4d87-b030-66fe7a376cab
+		summarizeBy: none
+		sourceColumn: number_of_taste_preferences
+
+	partition 'Preference Combinations' = m
+		mode: directQuery
+		source =
+				let
+					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+					dim_preferences_combinations_Table = gold_Schema{[Name="dim_preference_combinations",Kind="Table"]}[Data]
+				in
+					dim_preferences_combinations_Table
+
