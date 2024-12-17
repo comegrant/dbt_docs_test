@@ -178,13 +178,12 @@ models:
         data_tests:
           - required_values:
               value_list: 
-                - 25017D0E-F788-48D7-8DC4-62581D58B698 # Normal deviation
-                - 9E016A92-9E5C-4B5B-AC5D-739CEFD6F07B # Meal selector
-                - 6AD5DF6F-6CDA-4E45-96D0-A169B633247C # Pre selector
+                - '{{ var("normal_origin_id") }}'
+                - '{{ var("preselector_origin_id") }}'
                 - 00000000-0000-0000-0000-000000000000 # Not deviation
+                
               config:
                 where: 'estimation_generated_at >= current_date'
-                severity: warn
 
       - name: product_variation_quantity
         description: "{{doc('column__product_variation_quantity')}}"
