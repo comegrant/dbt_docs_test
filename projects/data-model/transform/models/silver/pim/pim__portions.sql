@@ -25,7 +25,6 @@ renamed as (
 
         {# not sure if this is needed
         , is_default
-        , portion_size
         #}
 
     from source

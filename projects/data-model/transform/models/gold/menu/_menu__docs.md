@@ -36,6 +36,30 @@
 
 {% enddocs %}
 
+{% docs column__recipe_difficulty_name %}
+
+...
+
+{% enddocs %}
+
+{% docs column__recipe_main_ingredient_name %}
+
+...
+
+{% enddocs %}
+
+{% docs column__main_recipe_name %}
+
+...
+
+{% enddocs %}
+
+{% docs column__is_main_recipe %}
+
+...
+
+{% enddocs %}
+
 # Dim Products
 {% docs column__pk_dim_products %}
 

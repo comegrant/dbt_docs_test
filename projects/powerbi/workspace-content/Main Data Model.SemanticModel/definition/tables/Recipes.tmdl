@@ -39,20 +39,20 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Coocking Time From'
+	column 'Cooking Time From'
 		dataType: int64
 		formatString: 0
 		lineageTag: 09163257-1ebb-4768-9c79-989c2d75f3fc
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: cooking_time_from
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Coocking Time To'
+	column 'Cooking Time To'
 		dataType: int64
 		formatString: 0
 		lineageTag: 57887c9e-bd3a-4ec3-b197-9119f93156bf
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: cooking_time_to
 
 		annotation SummarizationSetBy = Automatic
@@ -97,6 +97,142 @@ table Recipes
 		sourceColumn: is_main_recipe
 
 		annotation SummarizationSetBy = Automatic
+	
+	column recipe_metadata_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_metadata_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Main Recipe Id'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: main_recipe_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Main Recipe Variation Id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: main_recipe_variation_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Main Recipe Variation Suffix'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: main_recipe_variation_suffix
+
+		annotation SummarizationSetBy = Automatic
+
+	column recipe_main_ingredient_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_main_ingredient_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+	
+	column recipe_difficulty_level_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_difficulty_level_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column language_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: language_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cooking Time'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: cooking_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Has Recipe Photo'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: has_recipe_photo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Photo Caption'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_photo_caption
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe General Text'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_general_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Description'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is In Recipe Universe'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: is_in_recipe_universe
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Shelf Life Days'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: recipe_shelf_life_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Comment'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_comment
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Chef Tip'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_chef_tip
+
+		annotation SummarizationSetBy = Automatic
 
 	partition Recipes = m
 		mode: directQuery
@@ -110,4 +246,3 @@ table Recipes
 					dim_recipes_Table
 
 	annotation PBI_ResultType = Table
-

@@ -21,6 +21,8 @@ renamed as (
         , initcap(recipe_extra_photo_caption) as recipe_extra_photo_caption
         , initcap(general_text) as recipe_general_text
         , initcap(recipe_description) as recipe_description
+        , initcap(recipe_name_headline) as recipe_name_headline
+        , initcap(recipe_name_subheadline) as recipe_name_subheadline
         
     from source
 

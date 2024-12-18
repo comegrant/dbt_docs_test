@@ -22,10 +22,10 @@ renamed as (
         , modified_date as source_updated_at
 
         {# not sure if these are needed
+        , chef_partner_score
         , recipe_portion_cost
         , organic_pct
-        , keyhole
-        , chef_partner_score
+        , keyhole as is_keyhole
         #}
 
     from source

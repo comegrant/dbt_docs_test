@@ -15,6 +15,152 @@ models:
     latest_version: 1
     config:
       alias: dim_recipes
+      contract:
+        enforced: True
+
+    columns:
+      - name: pk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_metadata_id
+        data_type: int
+        description: "{{ doc('column__recipe_metadata_id') }}"
+
+      - name: main_recipe_id
+        data_type: int
+        description: "{{ doc('column__main_recipe_id') }}"
+
+      - name: main_recipe_variation_id
+        data_type: string
+        description: "{{ doc('column__main_recipe_variation_id') }}"
+
+      - name: main_recipe_variation_suffix
+        data_type: string
+        description: "{{ doc('column__main_recipe_variation_suffix') }}"
+
+      - name: recipe_status_code_id
+        data_type: int
+        description: "{{ doc('column__recipe_status_code_id') }}"
+
+      - name: recipe_main_ingredient_id
+        data_type: int
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"
+
+      - name: recipe_difficulty_level_id
+        data_type: int
+        description: "{{ doc('column__recipe_difficulty_level_id') }}"
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: cooking_time_from
+        data_type: int
+        description: "{{ doc('column__cooking_time_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: cooking_time_to
+        data_type: int
+        description: "{{ doc('column__cooking_time_to') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: cooking_time
+        data_type: string
+        description: "{{ doc('column__cooking_time') }}"
+
+      - name: has_recipe_photo
+        data_type: boolean
+        description: "{{ doc('column__has_recipe_photo') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_name
+        data_type: string
+        description: "{{ doc('column__recipe_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_photo_caption
+        data_type: string
+        description: "{{ doc('column__recipe_photo_caption') }}"
+
+      - name: recipe_general_text
+        data_type: string
+        description: "{{ doc('column__recipe_general_text') }}"
+
+      - name: recipe_description
+        data_type: string
+        description: "{{ doc('column__recipe_description') }}"
+
+      - name: recipe_difficulty_name
+        data_type: string
+        description: "{{ doc('column__recipe_difficulty_name') }}"
+
+      - name: recipe_main_ingredient_name
+        data_type: string
+        description: "{{ doc('column__recipe_main_ingredient_name') }}"
+
+      - name: main_recipe_name
+        data_type: string
+        description: "{{ doc('column__main_recipe_name') }}"
+
+      - name: is_main_recipe
+        data_type: boolean
+        description: "{{ doc('column__is_main_recipe') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_in_recipe_universe
+        data_type: boolean
+        description: "{{ doc('column__is_in_recipe_universe') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_shelf_life_days
+        data_type: int
+        description: "{{ doc('column__recipe_shelf_life_days') }}"
+
+      - name: recipe_comment
+        data_type: string
+        description: "{{ doc('column__recipe_comment') }}"
+
+      - name: recipe_chef_tip
+        data_type: string
+        description: "{{ doc('column__recipe_chef_tip') }}"
 
     versions:
       - v: 1

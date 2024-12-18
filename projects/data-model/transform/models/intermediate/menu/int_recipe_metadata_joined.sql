@@ -30,13 +30,15 @@ select
 
     , metadata.cooking_time_from
     , metadata.cooking_time_to
+    , metadata.cooking_time
+
+    , metadata.has_recipe_photo
 
     , metadata_translations.recipe_name
     , metadata_translations.recipe_photo_caption
-    , metadata_translations.roede_calculation_text
-    , metadata_translations.recipe_extra_photo_caption
     , metadata_translations.recipe_general_text
     , metadata_translations.recipe_description
+    
     , difficulty_levels_translations.recipe_difficulty_name
     , difficulty_levels_translations.recipe_difficulty_description
 
