@@ -1516,7 +1516,7 @@ async def run_preselector(
         return PreselectorWeekOutput(
             recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(),
             compliance,
-            {}
+            None
         )
 
 
@@ -1551,7 +1551,7 @@ async def run_preselector(
             return PreselectorWeekOutput(
                 filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
                 compliance,
-                {}
+                None
             )
         else:
             available_ww_recipes = filtered["main_recipe_id"].to_list()
@@ -1611,7 +1611,7 @@ async def run_preselector(
         return PreselectorWeekOutput(
             recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
             compliance,
-            {}
+            None
         )
 
     if should_explain:
@@ -1653,7 +1653,7 @@ async def run_preselector(
         return PreselectorWeekOutput(
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
             compliance,
-            {}
+            None
         )
 
     with duration("compute-ordered-since"):

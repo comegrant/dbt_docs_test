@@ -2,7 +2,7 @@ import asyncio
 import logging
 import uuid
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from types import ModuleType
 from typing import TypeVar
 
@@ -107,7 +107,7 @@ async def main() -> None:
         selected_attributes = st.multiselect("Attributes", options=attributes, format_func=lambda att: att.name)
         selected_prefs = st.multiselect("Negative Prefs", options=taste_prefs, format_func=lambda pref: pref.name)
         portion_size = st.number_input("Portion Size", min_value=1, max_value=6, value=4)
-        week = st.number_input("Week", min_value=1, max_value=52, value=today.isocalendar().week + 2)
+        week = st.number_input("Week", min_value=1, max_value=52, value=(today + timedelta(weeks=2)).isocalendar().week)
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
         agreement_id = st.number_input("Agreement ID", min_value=1, value=None)
@@ -116,6 +116,7 @@ async def main() -> None:
     if not selected_attributes:
         return
 
+    st.write(selected_prefs)
     st.write([
         att.id
         for att in selected_attributes

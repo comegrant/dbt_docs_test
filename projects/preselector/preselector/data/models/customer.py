@@ -3,6 +3,8 @@ from enum import IntEnum
 from typing import Annotated
 
 import polars as pl
+from aligned.schemas.feature import StaticFeatureTags
+from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import FailedPreselectorOutput, SuccessfulPreselectorOutput
 from pydantic import BaseModel, Field
 
@@ -69,6 +71,11 @@ class PreselectorSuccessfulResponse(BaseModel):
         request_values = self.model_dump(exclude={"year_weeks"})
         generated_weeks = []
 
+        error_features = [
+            feat.name for feat
+            in BasketFeatures.query().request.all_returned_features
+            if StaticFeatureTags.is_entity not in (feat.tags or [])
+        ]
         returned_features = SuccessfulPreselectorOutput.query().request.all_returned_features
         expected_columns = [
             feat.name for feat in returned_features
@@ -78,6 +85,11 @@ class PreselectorSuccessfulResponse(BaseModel):
             for feat in returned_features
             if "json" not in feat.dtype.name
         }
+        error_vector_type = pl.Struct({
+            feat: pl.Float64
+            for feat in error_features
+        })
+        expected_schema["error_vector"] = error_vector_type
         renames = {
             "agreement_id": "billing_agreement_id",
             "week": "menu_week",
@@ -97,6 +109,16 @@ class PreselectorSuccessfulResponse(BaseModel):
             for old_key, new_key in renames.items():
                 mealkit_dict[new_key] = mealkit_dict[old_key]
 
+            if mealkit.error_vector:
+                mealkit_dict["error_vector"] = {
+                    key: value
+                    for key, value
+                    in mealkit.error_vector.items()
+                    if key in error_features
+                }
+            else:
+                mealkit_dict["error_vector"] = None
+
             generated_weeks.append({
                 key: value
                 for key, value
@@ -108,7 +130,6 @@ class PreselectorSuccessfulResponse(BaseModel):
             generated_weeks,
             schema_overrides=expected_schema
         )
-
 
 class PreselectorFailedResponse(BaseModel):
     error_message: str

@@ -33,6 +33,7 @@ class ProcessStreamSettings(BaseSettings):
     "The min interval between each dump to our persistance storage. E.g. Databricks"
 
     write_output_max_size: int = Field(1000)
+    write_output_wait_time: int = Field(60)
 
     ideal_poll_interval: float = Field(5)
 

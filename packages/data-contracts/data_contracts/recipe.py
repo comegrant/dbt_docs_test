@@ -94,13 +94,15 @@ FROM (SELECT rec.recipe_id,
              rm.MODIFIED_DATE as updated_at,
              GETDATE() as loaded_at,
              ROW_NUMBER() over (PARTITION BY rec.recipe_id ORDER BY rmt.language_id) as nr
-      FROM pim.recipes rec
-        LEFT JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
+	FROM pim.weekly_menus wm
+	INNER JOIN pim.MENUS m on m.WEEKLY_MENUS_ID = wm.weekly_menus_id
+	INNER JOIN pim.MENU_RECIPES mr on mr.MENU_ID = m.MENU_ID
+	INNER JOIN pim.recipes rec on rec.recipe_id = mr.RECIPE_ID
+        INNER JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
 	INNER JOIN pim.RECIPE_COMPANIES rc ON rc.RECIPE_ID = rec.recipe_id
         INNER JOIN pim.recipes_metadata rm ON rec.recipe_metadata_id = rm.RECIPE_METADATA_ID
         INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
-        INNER JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
-        WHERE rec.is_active = 1
+        LEFT JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
 ) as recipes
 WHERE recipes.nr = 1"""
 

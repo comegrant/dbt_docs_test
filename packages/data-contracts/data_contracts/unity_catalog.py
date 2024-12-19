@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -14,23 +15,134 @@ from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.schemas.feature import Feature
 from aligned.sources.local import FileFactualJob
+from pyspark.sql.types import StructField, StructType
 
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
+    from pyspark.sql.types import DataType
 
 
 def is_running_on_databricks() -> bool:
     import os
     return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
-
+logger = logging.getLogger(__name__)
 
 @dataclass
 class DatabricksAuthConfig:
     token: str
     host: str
+
+def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
+
+    return StructType([
+        StructField(
+            name=name,
+            dataType=polars_dtype_to_spark(dtype)
+        )
+        for name, dtype in schema.items()
+    ])
+
+
+def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PLR0911
+    from pyspark.sql.types import (
+        ArrayType,
+        BooleanType,
+        ByteType,
+        DoubleType,
+        FloatType,
+        IntegerType,
+        LongType,
+        ShortType,
+        StringType,
+        StructType,
+        TimestampType,
+    )
+
+    if isinstance(data_type, pl.String):
+        return StringType()
+    if isinstance(data_type, pl.Float32):
+        return FloatType()
+    if isinstance(data_type, pl.Float64):
+        return DoubleType()
+    if isinstance(data_type, pl.Int8):
+        return ByteType()
+    if isinstance(data_type, pl.Int16):
+        return ShortType()
+    if isinstance(data_type, pl.Int32):
+        return IntegerType()
+    if isinstance(data_type, pl.Int64):
+        return LongType()
+    if isinstance(data_type, pl.Boolean):
+        return BooleanType()
+    if isinstance(data_type, pl.Datetime):
+        return TimestampType()
+    if isinstance(data_type, (pl.Array, pl.List)):
+        if data_type.inner:
+            return ArrayType(
+                polars_dtype_to_spark(data_type.inner)
+            )
+        return ArrayType(StringType())
+    if isinstance(data_type, pl.Struct):
+        return StructType([
+            StructField(
+                name=field.name,
+                dataType=polars_dtype_to_spark(field.dtype)
+            )
+            for field in data_type.fields
+        ])
+
+    raise ValueError(f"Unsupported type {data_type}")
+
+
+
+def convert_pyspark_type(data_type: DataType) -> FeatureType:  # noqa: PLR0911
+    from pyspark.sql.types import (
+        ArrayType,
+        BooleanType,
+        ByteType,
+        DoubleType,
+        FloatType,
+        IntegerType,
+        LongType,
+        MapType,
+        ShortType,
+        StringType,
+        StructType,
+        TimestampNTZType,
+        TimestampType,
+    )
+
+    if isinstance(data_type, StringType):
+        return FeatureType.string()
+    if isinstance(data_type, FloatType):
+        return FeatureType.floating_point()
+    if isinstance(data_type, DoubleType):
+        return FeatureType.double()
+    if isinstance(data_type, ByteType):
+        return FeatureType.int8()
+    if isinstance(data_type, ShortType):
+        return FeatureType.int16()
+    if isinstance(data_type, IntegerType):
+        return FeatureType.int32()
+    if isinstance(data_type, LongType):
+        return FeatureType.int64()
+    if isinstance(data_type, BooleanType):
+        return FeatureType.boolean()
+    if isinstance(data_type, (TimestampType, TimestampNTZType)):
+        return FeatureType.datetime()
+    if isinstance(data_type, ArrayType):
+        return FeatureType.array(
+            convert_pyspark_type(data_type.elementType)
+        )
+    if isinstance(data_type, StructType):
+        return FeatureType.json()
+    if isinstance(data_type, MapType):
+        return FeatureType.json()
+
+    raise ValueError(f"Unsupported type {data_type}")
 
 
 @dataclass(init=False)
@@ -180,6 +292,8 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
     config: DatabricksConnectionConfig
     query: str
 
+    type_name = "uc_sql"
+
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
         client = self.config.connection()
 
@@ -248,6 +362,8 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
+
+    type_name = "uc_feature_table"
 
     def job_group_key(self) -> str:
         return "uc_feature_table"
@@ -385,13 +501,19 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
     def with_config(self, config: DatabricksConnectionConfig) -> UCFeatureTableSource:
         return UCFeatureTableSource(config, self.table)
 
-
+def features_to_read(request: RetrivalRequest) -> list[str]:
+    columns = list(request.all_required_feature_names.union(request.entity_names))
+    if request.event_timestamp:
+        columns.append(request.event_timestamp.name)
+    return columns
 
 @dataclass
 class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
+
+    type_name = "uc_table"
 
     def job_group_key(self) -> str:
         # One fetch job per table
@@ -401,7 +523,9 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
 
         async def load() -> pl.LazyFrame:
             con = self.config.connection()
-            spark_df = con.read.table(self.table.identifier())
+            spark_df = con.read.table(self.table.identifier()).select(
+                features_to_read(request)
+            )
 
             if limit:
                 spark_df = spark_df.limit(limit)
@@ -434,7 +558,9 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         spark = source.config.connection()
 
         async def load() -> pl.LazyFrame:
-            df = spark.read.table(source.table.identifier())
+            df = spark.read.table(source.table.identifier()).select(
+                features_to_read(request)
+            )
             return pl.from_pandas(df.toPandas()).lazy()
 
         return FileFactualJob(
@@ -460,7 +586,14 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         Returns:
             dict[str, FeatureType]: A dictionary containing the column name and the feature type
         """
-        raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
+        spark = self.config.connection()
+        schema = spark.table(self.table.identifier()).schema
+
+        aligned_schema: dict[str, FeatureType] = {}
+
+        for field in schema.fields:
+            aligned_schema[field.name] = convert_pyspark_type(field.dataType)
+        return aligned_schema
 
     async def freshness(self, feature: Feature) -> datetime | None:
         """
@@ -475,15 +608,21 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         ).toPandas()[feature.name].to_list()[0]
 
     async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        conn = self.config.connection()
-        df = conn.createDataFrame(await job.to_pandas())
+        pdf = await job.to_polars()
+        schema = polars_schema_to_spark(pdf.schema)  # type: ignore
 
+        conn = self.config.connection()
+        df = conn.createDataFrame(
+            pdf.to_pandas(),
+            schema=schema # type: ignore
+        )
         df.write.mode("append").saveAsTable(self.table.identifier())
 
     async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        conn = self.config.connection()
+        pdf = await job.unique_entities().to_polars()
 
         target_table = self.table.identifier()
+        conn = self.config.connection()
 
         if not conn.catalog.tableExists(target_table):
             await self.insert(job, request)
@@ -492,7 +631,10 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
             on_statement = " AND ".join([
                 f"target.{ent} = source.{ent}" for ent in entities
             ])
-            df = conn.createDataFrame(await job.unique_entities().to_pandas())
+            df = conn.createDataFrame(
+                pdf.to_pandas(),
+                schema=polars_schema_to_spark(pdf.schema) # type: ignore
+            )
             temp_table = "new_values"
             df.createOrReplaceTempView(temp_table)
             conn.sql(f"""MERGE INTO {target_table} AS target
@@ -505,9 +647,9 @@ WHEN NOT MATCHED THEN
 
 
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+        pdf = await job.unique_entities().to_pandas()
         conn = self.config.connection()
-        df = conn.createDataFrame(await job.unique_entities().to_pandas())
-
+        df = conn.createDataFrame(pdf)
         df.write.mode("overwrite").saveAsTable(self.table.identifier())
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCTableSource:

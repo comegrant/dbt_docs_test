@@ -2,25 +2,22 @@ import asyncio
 import logging
 import time
 from collections.abc import Callable
-from dataclasses import dataclass
 from datetime import date, datetime, timezone
 
 import polars as pl
 from aligned import ContractStore
-from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.data_source.batch_data_source import BatchDataSource, DataFileReference
 from aligned.feature_source import (
     FeatureLocation,
+    WritableFeatureSource,
 )
 from aligned.sources.in_mem_source import InMemorySource
 from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import DefaultAzureCredential
-from azure.servicebus import ServiceBusClient, ServiceBusSubQueue
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
 from cheffelo_logging import DataDogConfig
 from cheffelo_logging.logging import DataDogStatsdConfig
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
-from data_contracts.preselector.store import FailedPreselectorOutput, SuccessfulPreselectorOutput
 from data_contracts.recipe import RecipeEmbedding
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.unity_catalog import DatabricksConnectionConfig, DatabricksSource
@@ -31,16 +28,14 @@ from preselector.data.models.customer import (
     PreselectorFailedResponse,
     PreselectorSuccessfulResponse,
 )
+from preselector.flush_realtime_responses import write_to_databricks
 from preselector.main import duration, run_preselector_for_request
 from preselector.process_stream_settings import ProcessStreamSettings
+from preselector.realtime_streams import connect_to_streams
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 from preselector.store import preselector_store
 from preselector.stream import (
     ReadableStream,
-    ServiceBusStream,
-    ServiceBusStreamWriter,
-    StreamlitStreamMock,
-    StreamlitWriter,
     StreamMessage,
     WritableStream,
 )
@@ -54,68 +49,6 @@ class KeyVaultSettings(BaseSettings):
     })
 
 
-@dataclass
-class PreselectorStreams:
-    request_stream: ReadableStream[GenerateMealkitRequest]
-
-    successful_output_stream: WritableStream | None
-    failed_output_stream: WritableStream | None
-
-
-async def connect_to_streams(settings: ProcessStreamSettings, company_id: str) -> PreselectorStreams:
-    if settings.service_bus_connection_string:
-        client = ServiceBusClient.from_connection_string(
-            settings.service_bus_connection_string.get_secret_value()
-        )
-    elif settings.service_bus_namespace:
-        client = ServiceBusClient(
-            fully_qualified_namespace=settings.service_bus_namespace,
-            credential=DefaultAzureCredential()
-        )
-    else:
-        logger.info("No connection string set, using Streamlit mock")
-        return PreselectorStreams(
-            request_stream=StreamlitStreamMock(GenerateMealkitRequest),
-            successful_output_stream=StreamlitWriter(),
-            failed_output_stream=StreamlitWriter(),
-        )
-
-    assert (
-        settings.service_bus_subscription_name is not None
-    ), "Subscription name is required when a connection string is set"
-
-
-    request_stream = ServiceBusStream(
-        payload=GenerateMealkitRequest,
-        client=client,
-        topic_name=settings.service_bus_request_topic_name,
-        subscription_name=settings.service_bus_subscription_name,
-        sub_queue=ServiceBusSubQueue(settings.service_bus_sub_queue) if settings.service_bus_sub_queue else None,
-        default_max_records=settings.service_bus_request_size
-    )
-
-    error_writer = ServiceBusStreamWriter(
-        client,
-        topic_name=settings.service_bus_failed_topic_name,
-        application_properties={"company": settings.service_bus_subscription_name},
-        reader_subscription=settings.service_bus_failed_subscription_name
-    )
-    success_writer = ServiceBusStreamWriter(
-        client,
-        topic_name=settings.service_bus_success_topic_name,
-        application_properties={"company": settings.service_bus_subscription_name},
-        reader_subscription=settings.service_bus_success_subscription_name
-    )
-
-    return PreselectorStreams(
-        request_stream=request_stream,
-        successful_output_stream=success_writer
-        if settings.service_bus_should_write
-        else None,
-        failed_output_stream=error_writer
-        if settings.service_bus_should_write
-        else None,
-    )
 
 async def load_cache_for(
     store: ContractStore,
@@ -123,16 +56,20 @@ async def load_cache_for(
     force_load: bool = False
 ) -> ContractStore:
     for location, source, pl_filter in loads:
+        if location.location_type == "feature_view":
+            request = store.feature_view(location.name).request
+        else:
+            request = store.model(location.name).prediction_request()
+
+        assert isinstance(source, (WritableFeatureSource, DataFileReference)), (
+            f"Expected a writable source, got '{type(source)}'"
+        )
+
         if not force_load and ((
             isinstance(source, InMemorySource) and not source.data.is_empty()
         ) or (
             not isinstance(source, InMemorySource)
         )):
-            if location.location_type == "feature_view":
-                request = store.feature_view(location.name).request
-            else:
-                request = store.model(location.name).prediction_request()
-
             try:
                 # Checking if the data exists locally already with the correct schema
                 _ = await source.all_data(request, limit=10).to_polars()
@@ -149,7 +86,6 @@ async def load_cache_for(
         else:
             job = store.model(location.name).all_predictions().remove_derived_features()
 
-
         if pl_filter is not None:
             def filter_df(df: pl.LazyFrame) -> pl.LazyFrame:
                 assert pl_filter is not None # noqa: B023
@@ -157,7 +93,11 @@ async def load_cache_for(
 
             job = job.polars_method(filter_df)
 
-        await job.write_to_source(source)  # type: ignore
+        if isinstance(source, DataFileReference):
+            await job.write_to_source(source)
+        else:
+            await source.overwrite(job, request)
+
         store = store.update_source_for(location, source)
         logger.info(f"Loaded {location.name} from cache")
 
@@ -558,9 +498,13 @@ async def process_stream(
         logger.error("Exited worker before we could start processing.")
         return
 
-    store = await load_cache(original_store, company_id)
-    last_cache_load = datetime.now(tz=timezone.utc)
-    last_batch_write = datetime.now(tz=timezone.utc)
+    try:
+        store = await load_cache(original_store, company_id)
+        last_cache_load = datetime.now(tz=timezone.utc)
+        last_batch_write = datetime.now(tz=timezone.utc)
+    except Exception as error:
+        logger.exception(error)
+        raise error
 
     try:
         logger.info(f"'{settings.service_bus_subscription_name}' ready for some cooking!")
@@ -593,11 +537,13 @@ async def process_stream(
 
             if number_of_messages == 0 and settings.write_output_interval and settings.is_batch_worker and (
                 now - last_batch_write > settings.write_output_interval
-            ):
+            ) and streams.successful_output_stream and streams.failed_output_stream:
                 await write_to_databricks(
-                    streams,
+                    streams.successful_output_stream.reader(PreselectorSuccessfulResponse),
+                    streams.failed_output_stream.reader(PreselectorFailedResponse),
                     original_store,
-                    write_size=settings.write_output_max_size
+                    write_size=settings.write_output_max_size,
+                    max_wait_time=settings.write_output_wait_time
                 )
                 last_batch_write = datetime.now(tz=timezone.utc)
 
@@ -610,58 +556,6 @@ async def process_stream(
         logger.exception(error)
         raise error
 
-
-async def write_to_databricks(
-    streams: PreselectorStreams,
-    write_store: ContractStore,
-    write_size: int
-) -> None:
-
-    from pyspark.errors.exceptions.base import PySparkException
-
-    if not streams.successful_output_stream or not streams.failed_output_stream:
-        logger.info("Need both a successful and failed stream to write to Databricks")
-        return
-
-
-    success_stream = streams.successful_output_stream.reader(PreselectorSuccessfulResponse)
-    if success_stream is None:
-        logger.info("No readable success stream.")
-        return
-
-    success_messages = await success_stream.read(number_of_records=write_size)
-    if success_messages:
-        try:
-            await write_store.feature_view(SuccessfulPreselectorOutput).insert(
-                pl.concat([
-                    output.body.to_dataframe()
-                    for output in success_messages
-                ], how="vertical_relaxed")
-            )
-            await success_stream.mark_as_complete(success_messages)
-        except (ValueError, PySparkException) as error:
-            logger.error(f"Unable to write to databricks {error} - {[req.body for req in success_messages]}")
-            await success_stream.mark_as_uncomplete(success_messages)
-
-
-    failed_stream = streams.failed_output_stream.reader(PreselectorFailedResponse)
-    if failed_stream is None:
-        logger.info("No readable success stream.")
-        return
-
-    failed_messages = await failed_stream.read(number_of_records=write_size)
-    if failed_messages:
-        try:
-            await write_store.feature_view(FailedPreselectorOutput).insert(
-                pl.concat([
-                    failed_req.body.to_dataframe()
-                    for failed_req in failed_messages
-                ], how="vertical_relaxed")
-            )
-            await failed_stream.mark_as_complete(failed_messages)
-        except (ValueError, PySparkException) as error:
-            logger.error(f"Unable to write to databricks {error} - {[req.body for req in failed_messages]}")
-            await success_stream.mark_as_uncomplete(success_messages)
 
 if __name__ == "__main__":
     asyncio.run(process_stream(
