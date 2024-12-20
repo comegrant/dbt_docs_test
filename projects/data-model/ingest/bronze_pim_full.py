@@ -14,6 +14,7 @@ tables = [
     "ingredient_categories",
     "ingredient_categories_translations",
     "ingredient_category_preference",
+    "ingredients_translations",
     "menus",
     "menu_recipes",
     "menu_variations",
