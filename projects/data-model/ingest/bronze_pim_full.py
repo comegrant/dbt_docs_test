@@ -6,6 +6,7 @@ from coredb_connector import load_coredb_full
 database = "PIM"
 tables = [
     "allergies_preference",
+    "allergies_translations",
     "chef_ingredients",
     "chef_ingredient_sections",
     "generic_ingredients_translations",
