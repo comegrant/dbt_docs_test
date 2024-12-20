@@ -156,7 +156,7 @@ Primary key of the preferences dimension. It is a composite key of preference_id
 
 {% docs column__pk_dim_preference_combinations %}
 
-Primary key of the preference combination dimension. It is the same as the primary key for the billing agreement dimension. 
+Primary key of the preference combination dimension. It is the same as the primary key for the billing agreement dimension.
 
 {% enddocs %}
 
@@ -169,7 +169,7 @@ A list of all preference and attribute names belonging to a customer. The names 
 
 {% docs column__preference_id_combinations %}
 
-A list of all preference ids belonging to a customer. 
+A list of all preference ids belonging to a customer.
 
 {% enddocs %}
 
@@ -181,7 +181,7 @@ A list of concept preference names belonging to a customer. The names in the lis
 
 {% docs column__preference_id_combinations_concept_type %}
 
-A list of concept preference ids belonging to a customer. 
+A list of concept preference ids belonging to a customer.
 
 {% enddocs %}
 
@@ -193,7 +193,7 @@ A list of taste preference names belonging to a customer. The names in the list 
 
 {% docs column__preference_id_combinations_taste_type %}
 
-A list of taste preference ids belonging to a customer. 
+A list of taste preference ids belonging to a customer.
 
 {% enddocs %}
 
@@ -258,5 +258,43 @@ The customer has started the subscription quiz to update their subscription pref
 {% docs column__has_completed_subscription_quiz %}
 
 The customer has completed the subscription quiz to update their subscription preferences, size, and portions.
+
+{% enddocs %}
+
+# Dim Preselector Versions
+
+{% docs column__pk_dim_preselector_versions %}
+
+The unique id of the rows in Dim Preselector Versions.
+
+{% enddocs %}
+
+{% docs column__full_commit_sha %}
+
+The full commit sha for the model version that was used to generate the output.
+
+{% enddocs %}
+
+{% docs column__short_commit_sha %}
+
+The short commit sha for the model version that was used to generate the output.
+
+{% enddocs %}
+
+{% docs column__source_model_version_first_used_at %}
+
+The first time the model version was used to generate the output.
+
+{% enddocs %}
+
+{% docs column__source_model_version_latest_used_at %}
+
+The latest time the model version was used to generate the output.
+
+{% enddocs %}
+
+{% docs column__preselector_version_number %}
+
+An arbitrary version number that is assigned to that commit_sha. Calculated using the row number when sorting by the source_model_version_first_used_at column in ascending order. It is therefore possible that the version numbers don't match up exactly with all commit_shas in the preselector project, especially if there are multiple commits in a single day.
 
 {% enddocs %}
