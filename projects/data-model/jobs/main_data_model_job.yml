@@ -4,7 +4,7 @@ resources:
       name: main-data-model-job
 
       max_retries: 1
-      timeout_seconds: 3000 #Timeout after 50 mins
+      timeout_seconds: 6000 #Timeout after 100 mins
       edit_mode: EDITABLE
 
       schedule:
@@ -27,6 +27,12 @@ resources:
                   environment: ${bundle.target}
                   body_message: 🚀 Main data model job has started
                   is_error: "false"
+
+        - task_key: bronze_snapshot_tables_full
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/bronze_snapshot_tables_full.py
 
         - task_key: bronze_cms_full
           depends_on:
@@ -74,6 +80,7 @@ resources:
               - 'dbt build --exclude drafts.*'
           environment_key: dbt-default
           depends_on: [
+            {task_key: bronze_snapshot_tables_full},
             {task_key: bronze_cms_full},
             {task_key: bronze_pim_full},
             {task_key: bronze_psl_full},
@@ -101,6 +108,7 @@ resources:
 
         - task_key: fail-notification
           depends_on: [
+            {task_key: bronze_snapshot_tables_full},
             {task_key: bronze_cms_full},
             {task_key: bronze_pim_full},
             {task_key: bronze_psl_full},

@@ -6,15 +6,10 @@ from coredb_connector import load_coredb_full
 database = "CMS"
 tables = [
         "addon_subscriptions",
-        "billing_agreement",
-        "billing_agreement_basket",
-        "billing_agreement_basket_product",
         "billing_agreement_basket_deviation_origin",
-        "billing_agreement_consent",
         "billing_agreement_status",
         "billing_agreement_addon_subscriptions",
         "billing_agreement_order_status",
-        "billing_agreement_preference",
         "company",
         "country",
         "consent",

@@ -18,9 +18,9 @@ resources:
               - dbt-databricks>=1.0.0,<2.0.0
 
       tasks:
-        - task_key: bronze_full_snapshot_tables
+        - task_key: bronze_snapshot_tables_full
           notebook_task:
-            notebook_path: ../ingest/bronze_full_snapshot_tables.py
+            notebook_path: ../ingest/bronze_snapshot_tables_full.py
 
         - task_key: dbt
           dbt_task:
@@ -31,12 +31,12 @@ resources:
               - 'dbt snapshot'
           environment_key: dbt-default
           depends_on: [
-            {task_key: bronze_full_snapshot_tables}
+            {task_key: bronze_snapshot_tables_full}
           ]
 
         - task_key: fail-notification
           depends_on: [
-            {task_key: bronze_full_snapshot_tables},
+            {task_key: bronze_snapshot_tables_full},
             {task_key: dbt}
           ]
           run_if: AT_LEAST_ONE_FAILED
