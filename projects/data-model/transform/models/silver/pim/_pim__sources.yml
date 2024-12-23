@@ -39,3 +39,5 @@ sources:
       - name: pim__ingredient_allergies
       - name: pim__ingredient_category_preference
       - name: pim__allergies_preference
+      - name: pim__ingredients_translations
+      - name: pim__allergies_translations

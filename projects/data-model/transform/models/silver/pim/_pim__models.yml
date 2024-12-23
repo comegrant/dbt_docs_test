@@ -1108,3 +1108,47 @@ models:
         description: "{{ doc('column__preference_id') }}"
         data_tests:
           - not_null
+
+  - name: pim__ingredient_translations
+    description: "Table mapping ingredient ids to their names in different languages"
+
+    columns:
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_name
+        data_type: string
+        description: "{{ doc('column__ingredient_name') }}"
+        data_tests:
+          - not_null
+    
+  - name: pim__allergy_translations
+    description: "Table mapping allergy ids to their names in different languages"
+
+    columns:
+      - name: allergy_id
+        data_type: int
+        description: "{{ doc('column__allergy_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: allergy_name
+        data_type: string
+        description: "{{ doc('column__allergy_name') }}"
+        data_tests:
+          - not_null

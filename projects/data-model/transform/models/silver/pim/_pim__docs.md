@@ -476,3 +476,16 @@ Identifier for each allergy
 If an ingredient has a trace of an allergy
 
 {% enddocs %}
+
+{% docs column__ingredient_name %}
+
+The name of the ingredient connected to an ingredient id
+
+{% enddocs %}
+
+{% docs column__allergy_name %}
+
+The name of an allergy connected to an allergy id
+
+{% enddocs %}
+
