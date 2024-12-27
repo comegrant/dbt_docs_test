@@ -301,6 +301,11 @@ Identifier for the ingredient category parent, indicating the hierarchy within i
 
 {% enddocs %}
 
+{% docs column__ingredient_category_description %} 
+
+Description of the ingredient category, e.g. "main group"
+
+{% enddocs %}
 # Taxonomies
 {% docs column__taxonomy_id %} 
 

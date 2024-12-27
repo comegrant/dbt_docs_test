@@ -738,6 +738,10 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_category_name') }}"
 
+      - name: ingredient_category_description
+        data_type: string
+        description: "{{ doc('column__ingredient_category_description') }}"
+
   - name: pim__ingredients
     description: "Table with ingredient information"
 

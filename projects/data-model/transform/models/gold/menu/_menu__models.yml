@@ -165,6 +165,84 @@ models:
     versions:
       - v: 1
 
+
+  - name: dim_ingredients
+    description: ""
+    latest_version: 1
+    config:
+      alias: dim_ingredients
+
+    columns:
+      - name: pk_dim_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredients') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: allergy_id
+        data_type: int
+        description: "{{ doc('column__allergy_id') }}"
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_name
+        data_type: string
+        description: "{{ doc('column__ingredient_name') }}"
+
+      - name: allergy_name
+        data_type: string
+        description: "{{ doc('column__allergy_name') }}"
+      
+      - name: main_group
+        data_type: string
+        description: "{{ doc('column__main_group') }}"
+
+      - name: category_group
+        data_type: string
+        description: "{{ doc('column__category_group') }}"
+      
+      - name: product_group
+        data_type: string
+        description: "{{ doc('column__product_group') }}"
+
+      - name: category_level1
+        data_type: int
+        description: "{{ doc('column__category_level1') }}"
+      
+      - name: category_level2
+        data_type: int
+        description: "{{ doc('column__category_level2') }}"
+
+      - name: category_level3
+        data_type: int
+        description: "{{ doc('column__category_level3') }}"
+      
+      - name: category_level4
+        data_type: int
+        description: "{{ doc('column__category_level4') }}"
+
+      - name: category_level5
+        data_type: int
+        description: "{{ doc('column__category_level5') }}"
+
+    versions:
+      - v: 1
+
   - name: dim_taxonomies
     description: "Table of all taxonomies which are used to tag recipes"
     latest_version: 1

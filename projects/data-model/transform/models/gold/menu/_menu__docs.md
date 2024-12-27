@@ -98,6 +98,64 @@ Primary key of the dim_taxonomies table.
 
 {% enddocs %}
 
+
+# Dim Ingredients
+{% docs column__pk_dim_ingredients %}
+
+Primary key of the dim_ingredients table.
+
+{% enddocs %}
+
+
+{% docs  column__main_group %}
+
+Ingredient category name of the main group of an ingredient.
+
+{% enddocs %}
+
+{% docs column__category_group%}
+
+Ingredient category name of the category group of an ingredient.
+
+{% enddocs %}
+
+{% docs column__product_group %}
+
+Ingredient category name of the product group of an ingredient.
+
+{% enddocs %}
+
+{% docs column__category_level1 %}
+
+Ingredient category id of the first level of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__category_level2 %}
+
+Ingredient category id of the second level of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__category_level3 %}
+
+Ingredient category id of the third level of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__category_level4 %}
+
+Ingredient category id of the fourth level of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__category_level5 %}
+
+Ingredient category id of the fifth level of the ingredient category hierarchy.
+
+{% enddocs %}
+
+
 # Bridge Dim Recipes Dim Taxonomies
 
 {% docs column__pk_bridge_dim_recipes_dim_taxonomies %}

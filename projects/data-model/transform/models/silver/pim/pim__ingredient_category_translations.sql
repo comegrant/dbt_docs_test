@@ -14,8 +14,8 @@ renamed as (
         , language_id
 
         {# strings #}
-        , ingredient_category_name
-        --, ingredient_category_description
+        , initcap(ingredient_category_name) as ingredient_category_name
+        , initcap(ingredient_category_description) as ingredient_category_description
         --, frontend_display_name
 
     from source
