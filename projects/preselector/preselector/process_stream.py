@@ -2,7 +2,7 @@ import asyncio
 import logging
 import time
 from collections.abc import Callable
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import polars as pl
 from aligned import ContractStore
@@ -115,7 +115,13 @@ async def load_cache(
         exclude_views = set()
 
     today = date.today()
+    five_weeks_into_the_future = today + timedelta(weeks=5)
     this_week = today.isocalendar().week
+
+    rec_partitions = (pl.col("year") >= today.year) & (pl.col("week") > this_week)
+
+    if five_weeks_into_the_future.year != today.year:
+        rec_partitions = rec_partitions | (pl.col("year") >= five_weeks_into_the_future.year)
 
     depends_on = store.feature_view("preselector_output").view.source.depends_on()
 
@@ -146,8 +152,7 @@ async def load_cache(
             RecommendatedDish.location,
             partition_recs,
             (pl.col("company_id") == company_id)
-            & (pl.col("year") >= today.year)
-            & (this_week < pl.col("week")),
+            & rec_partitions
         ),
         (
             PredefinedVectors.location,
