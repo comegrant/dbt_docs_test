@@ -117,10 +117,11 @@ async def load_cache(
     today = date.today()
     five_weeks_into_the_future = today + timedelta(weeks=5)
     this_week = today.isocalendar().week
+    this_year = today.isocalendar().year
 
-    rec_partitions = (pl.col("year") >= today.year) & (pl.col("week") > this_week)
+    rec_partitions = (pl.col("year") >= this_year) & (pl.col("week") > this_week)
 
-    if five_weeks_into_the_future.year != today.year:
+    if five_weeks_into_the_future.year != this_year:
         rec_partitions = rec_partitions | (pl.col("year") >= five_weeks_into_the_future.year)
 
     depends_on = store.feature_view("preselector_output").view.source.depends_on()
@@ -136,17 +137,17 @@ async def load_cache(
         (
             FeatureLocation.feature_view("recipe_cost"),
             cache_dir.parquet_at("recipe_cost.parquet"),
-            (pl.col("menu_year") >= today.year) & (pl.col("menu_week") > this_week),
+            (pl.col("menu_year") >= this_year) & (pl.col("menu_week") > this_week),
         ),
         (
             FeatureLocation.feature_view("preselector_year_week_menu"),
             cache_dir.parquet_at(f"{company_id}/menus.parquet"),
-            (pl.col("menu_year") >= today.year) & (pl.col("company_id") == company_id),
+            (pl.col("menu_year") >= this_year) & (pl.col("company_id") == company_id),
         ),
         (
             FeatureLocation.feature_view("normalized_recipe_features"),
             cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
-            (pl.col("year") >= today.year) & (pl.col("company_id") == company_id),
+            (pl.col("year") >= this_year) & (pl.col("company_id") == company_id),
         ),
         (
             RecommendatedDish.location,

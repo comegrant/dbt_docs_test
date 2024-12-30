@@ -133,7 +133,7 @@ async def deploy_preselector(
     )
 
     if image_tag != "":
-        image = f"bhregistry.azurecr.io/preselector:{image_tag}"
+        image = f"bhregistry.azurecr.io/preselector:{image_tag.replace('/', '-')}"
     else:
         assert deploy_settings.git_commit_hash
         image = f"bhregistry.azurecr.io/preselector:{deploy_settings.git_commit_hash}"
@@ -211,9 +211,10 @@ async def deploy_preselector(
 
 
         company_specific_memory = {
-            "linas": 6,
-            "retnemt": 3,
-            "adams": 3
+            "linas": 7,
+            "godtlevert": 7,
+            "retnemt": 4,
+            "adams": 5
         }
 
         return Container(
@@ -226,7 +227,7 @@ async def deploy_preselector(
                 requests=ResourceRequests(
                     # This is the max when having two workers and one logger container
                     # As the total sum is 16 GB
-                    memory_in_gb=company_specific_memory.get(company, 4),
+                    memory_in_gb=company_specific_memory.get(company, 6),
                     cpu=1.0,
                     gpu=None
                 )
