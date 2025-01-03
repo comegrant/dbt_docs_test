@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate6331205020927864.json",
+      "name": "CheffeloTemplate4330679440809455.json",
       "reportVersionAtImport": "5.60",
       "type": "RegisteredResources"
     }
@@ -28,62 +28,6 @@
           }
         },
         "type": "RelativeDate",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "d",
-              "Entity": "Date",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Between": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "d"
-                        }
-                      },
-                      "Property": "Date"
-                    }
-                  },
-                  "LowerBound": {
-                    "DateSpan": {
-                      "Expression": {
-                        "DateAdd": {
-                          "Expression": {
-                            "DateAdd": {
-                              "Expression": {
-                                "Now": {}
-                              },
-                              "Amount": 1,
-                              "TimeUnit": 0
-                            }
-                          },
-                          "Amount": -52,
-                          "TimeUnit": 1
-                        }
-                      },
-                      "TimeUnit": 0
-                    }
-                  },
-                  "UpperBound": {
-                    "DateSpan": {
-                      "Expression": {
-                        "Now": {}
-                      },
-                      "TimeUnit": 0
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
         "howCreated": "User"
       },
       {
@@ -163,50 +107,60 @@
           "Where": [
             {
               "Condition": {
-                "Not": {
-                  "Expression": {
-                    "In": {
-                      "Expressions": [
-                        {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "c"
-                              }
-                            },
-                            "Property": "Company Name"
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
                           }
-                        }
-                      ],
-                      "Values": [
-                        [
-                          {
-                            "Literal": {
-                              "Value": "null"
-                            }
-                          }
-                        ]
-                      ]
+                        },
+                        "Property": "Company Name"
+                      }
                     }
-                  }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Adams Matkasse'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Godtlevert'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Linas Matkasse'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'RetNemt'"
+                        }
+                      }
+                    ]
+                  ]
                 }
               }
             }
           ]
         },
         "howCreated": "User",
+        "isHiddenInViewMode": true,
         "objects": {
           "general": [
             {
-              "properties": {
-                "isInvertedSelectionMode": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "true"
-                    }
-                  }
-                }
-              }
+              "properties": {}
             }
           ]
         }
@@ -233,7 +187,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }
@@ -263,8 +217,8 @@
           "type": "Image"
         },
         {
-          "name": "CheffeloTemplate6331205020927864.json",
-          "path": "CheffeloTemplate6331205020927864.json",
+          "name": "CheffeloTemplate4330679440809455.json",
+          "path": "CheffeloTemplate4330679440809455.json",
           "type": "CustomTheme"
         }
       ]

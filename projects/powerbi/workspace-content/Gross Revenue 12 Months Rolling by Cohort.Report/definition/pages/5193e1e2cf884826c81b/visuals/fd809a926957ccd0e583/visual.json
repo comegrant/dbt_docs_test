@@ -5,9 +5,9 @@
     "x": 0,
     "y": 0,
     "z": 4500,
-    "height": 67.272727272727266,
-    "width": 172.72727272727272,
-    "tabOrder": 2005
+    "height": 56,
+    "width": 256,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "slicer",
@@ -80,27 +80,7 @@
             "relativePeriod": {
               "expr": {
                 "Literal": {
-                  "Value": "'Years'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
+                  "Value": "'Calendar Years'"
                 }
               }
             }
@@ -146,27 +126,27 @@
                             "Expression": {
                               "DateAdd": {
                                 "Expression": {
-                                  "DateAdd": {
-                                    "Expression": {
-                                      "Now": {}
-                                    },
-                                    "Amount": 1,
-                                    "TimeUnit": 0
-                                  }
+                                  "Now": {}
                                 },
                                 "Amount": -4,
                                 "TimeUnit": 3
                               }
                             },
-                            "TimeUnit": 0
+                            "TimeUnit": 3
                           }
                         },
                         "UpperBound": {
                           "DateSpan": {
                             "Expression": {
-                              "Now": {}
+                              "DateAdd": {
+                                "Expression": {
+                                  "Now": {}
+                                },
+                                "Amount": -1,
+                                "TimeUnit": 3
+                              }
                             },
-                            "TimeUnit": 0
+                            "TimeUnit": 3
                           }
                         }
                       }
@@ -198,6 +178,18 @@
               "expr": {
                 "Literal": {
                   "Value": "9D"
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }

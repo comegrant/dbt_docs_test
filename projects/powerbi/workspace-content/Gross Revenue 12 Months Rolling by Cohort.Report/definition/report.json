@@ -3,12 +3,12 @@
   "themeCollection": {
     "baseTheme": {
       "name": "CY24SU10",
-      "reportVersionAtImport": "5.59",
+      "reportVersionAtImport": "5.60",
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate7215786318904898.json",
-      "reportVersionAtImport": "5.59",
+      "name": "CheffeloTemplate627005431553417.json",
+      "reportVersionAtImport": "5.60",
       "type": "RegisteredResources"
     }
   },
@@ -121,7 +121,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           },
@@ -153,14 +153,9 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate7215786318904898.json",
-          "path": "CheffeloTemplate7215786318904898.json",
+          "name": "CheffeloTemplate627005431553417.json",
+          "path": "CheffeloTemplate627005431553417.json",
           "type": "CustomTheme"
-        },
-        {
-          "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
-          "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
-          "type": "Image"
         }
       ]
     }

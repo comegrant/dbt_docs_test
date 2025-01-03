@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "1b9e11c0012e30b555a6",
   "position": {
-    "x": 16.666666666666668,
-    "y": 124.44444444444444,
+    "x": 16,
+    "y": 88,
     "z": 0,
-    "height": 580,
-    "width": 1245.5555555555554,
+    "height": 616,
+    "width": 1248,
     "tabOrder": 0
   },
   "visual": {
@@ -505,6 +505,23 @@
               "expr": {
                 "Literal": {
                   "Value": "'Year on Year by Quarters/Months'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
                 }
               }
             }

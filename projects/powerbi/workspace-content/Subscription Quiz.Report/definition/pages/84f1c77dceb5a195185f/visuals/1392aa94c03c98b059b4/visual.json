@@ -5,8 +5,8 @@
     "x": 0,
     "y": 0,
     "z": 6000,
-    "height": 63.387978142076513,
-    "width": 165.21613832853026
+    "height": 64,
+    "width": 160
   },
   "visual": {
     "visualType": "slicer",
@@ -57,19 +57,6 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
                 }
               }
             }

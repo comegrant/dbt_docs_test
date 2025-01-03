@@ -53,7 +53,6 @@
           "name": "Share of orders with increased portions",
           "dataType": "Double",
           "expression": "\n([Number of Orders with Increased Portions]/[Number of Orders])\n",
-          "formatString": "General Number",
           "references": {
             "measures": [
               {

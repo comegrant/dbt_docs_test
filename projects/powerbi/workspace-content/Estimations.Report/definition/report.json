@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate6464280844146679.json",
+      "name": "CheffeloTemplate9151573223122647.json",
       "reportVersionAtImport": "5.60",
       "type": "RegisteredResources"
     }
@@ -275,7 +275,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }
@@ -300,14 +300,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate6464280844146679.json",
-          "path": "CheffeloTemplate6464280844146679.json",
-          "type": "CustomTheme"
-        },
-        {
           "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
           "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
           "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate9151573223122647.json",
+          "path": "CheffeloTemplate9151573223122647.json",
+          "type": "CustomTheme"
         }
       ]
     }

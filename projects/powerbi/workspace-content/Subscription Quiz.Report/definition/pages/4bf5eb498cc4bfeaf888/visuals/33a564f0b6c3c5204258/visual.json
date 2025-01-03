@@ -5,9 +5,8 @@
     "x": 0,
     "y": 0,
     "z": 6000,
-    "height": 63.387978142076513,
-    "width": 165.21613832853026,
-    "tabOrder": 0
+    "height": 64,
+    "width": 160
   },
   "visual": {
     "visualType": "slicer",
@@ -38,45 +37,6 @@
       }
     },
     "objects": {
-      "data": [
-        {
-          "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Dropdown'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "items": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "8D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            }
-          }
-        }
-      ],
       "general": [
         {
           "properties": {
@@ -140,6 +100,26 @@
                     }
                   }
                 ]
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "singleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
               }
             }
           }

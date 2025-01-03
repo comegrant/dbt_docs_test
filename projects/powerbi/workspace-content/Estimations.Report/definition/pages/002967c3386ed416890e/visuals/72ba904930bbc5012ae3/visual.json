@@ -3,10 +3,10 @@
   "name": "72ba904930bbc5012ae3",
   "position": {
     "x": 0,
-    "y": 1.3865356011123287,
+    "y": 0,
     "z": 5000,
-    "height": 63.221884498480243,
-    "width": 126.44376899696049,
+    "height": 64,
+    "width": 128,
     "tabOrder": 2000
   },
   "visual": {
@@ -100,11 +100,6 @@
           }
         }
       ],
-      "general": [
-        {
-          "properties": {}
-        }
-      ],
       "items": [
         {
           "properties": {
@@ -112,19 +107,6 @@
               "expr": {
                 "Literal": {
                   "Value": "9D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
                 }
               }
             }

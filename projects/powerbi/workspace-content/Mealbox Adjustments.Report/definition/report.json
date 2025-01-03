@@ -7,12 +7,90 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate951939995537.json",
+      "name": "CheffeloTemplate8834972406455917.json",
       "reportVersionAtImport": "5.60",
       "type": "RegisteredResources"
     }
   },
   "layoutOptimization": "None",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e16fb7b0325aad00c8da",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Companies"
+              }
+            },
+            "Property": "Company Name"
+          }
+        },
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "c",
+              "Entity": "Companies",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "Company Name"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Adams Matkasse'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Godtlevert'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Linas Matkasse'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'RetNemt'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  },
   "objects": {
     "section": [
       {
@@ -40,7 +118,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }
@@ -65,14 +143,9 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate951939995537.json",
-          "path": "CheffeloTemplate951939995537.json",
+          "name": "CheffeloTemplate8834972406455917.json",
+          "path": "CheffeloTemplate8834972406455917.json",
           "type": "CustomTheme"
-        },
-        {
-          "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
-          "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
-          "type": "Image"
         }
       ]
     }

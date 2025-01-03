@@ -3,10 +3,11 @@
   "name": "6bbdd4f3010828ba3a38",
   "position": {
     "x": 0,
-    "y": 3.4567901234567895,
+    "y": 0,
     "z": 0,
-    "height": 67.777777777777771,
-    "width": 163.33333333333334
+    "height": 64,
+    "width": 160,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -57,19 +58,6 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
                 }
               }
             }

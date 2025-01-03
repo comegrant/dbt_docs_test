@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.2.0/schema.json",
   "name": "002967c3386ed416890e",
-  "displayName": "Duplicate of Products in Basket for Upcoming Weeks",
+  "displayName": "Quantity if Cutoff Was Now",
   "displayOption": "FitToPage",
   "height": 720,
   "width": 1280,
@@ -11,5 +11,42 @@
     "parameters": [],
     "referenceScope": "CrossReport",
     "acceptsFilterContext": "None"
-  }
+  },
+  "objects": {
+    "outspacePane": [
+      {
+        "properties": {
+          "width": {
+            "expr": {
+              "Literal": {
+                "Value": "195L"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "15ccf9a11a40807075ee",
+      "target": "b8cb1b4b3695d4510781",
+      "type": "DataFilter"
+    },
+    {
+      "source": "b8cb1b4b3695d4510781",
+      "target": "15ccf9a11a40807075ee",
+      "type": "DataFilter"
+    },
+    {
+      "source": "09ee0a305cd605461a4c",
+      "target": "15ccf9a11a40807075ee",
+      "type": "DataFilter"
+    },
+    {
+      "source": "09ee0a305cd605461a4c",
+      "target": "b8cb1b4b3695d4510781",
+      "type": "DataFilter"
+    }
+  ]
 }

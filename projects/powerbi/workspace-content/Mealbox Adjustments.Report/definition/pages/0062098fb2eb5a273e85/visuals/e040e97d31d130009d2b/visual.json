@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "e040e97d31d130009d2b",
   "position": {
-    "x": 16.666666666666668,
-    "y": 128.88888888888889,
-    "z": 7001,
-    "height": 275.55555555555554,
-    "width": 1245.5555555555554,
+    "x": 16,
+    "y": 88,
+    "z": 2000,
+    "height": 296,
+    "width": 1248,
     "tabOrder": 2000
   },
   "visual": {
@@ -103,31 +103,33 @@
       }
     },
     "objects": {
-      "dataPoint": [
+      "valueAxis": [
         {
           "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 3,
-                      "Percent": 0
-                    }
-                  }
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
                 }
               }
             }
           }
         }
       ],
-      "labels": [
+      "categoryAxis": [
         {
           "properties": {
-            "show": {
+            "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "10D"
                 }
               }
             }
@@ -142,7 +144,24 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Added Dishes'"
+                  "Value": "'Number of Added Dishes'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
                 }
               }
             }

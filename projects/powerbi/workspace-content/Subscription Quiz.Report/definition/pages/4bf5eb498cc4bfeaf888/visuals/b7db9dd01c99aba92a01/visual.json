@@ -2,91 +2,23 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "b7db9dd01c99aba92a01",
   "position": {
-    "x": 1172.2222222222222,
-    "y": 22.222222222222221,
-    "z": 5004,
-    "height": 63.333333333333329,
-    "width": 107.77777777777777,
-    "tabOrder": 4
+    "x": 1152,
+    "y": 8,
+    "z": 3000,
+    "height": 56,
+    "width": 112,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "actionButton",
     "objects": {
-      "icon": [
-        {
-          "properties": {
-            "shapeType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'applyAllSlicers'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        },
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
       "text": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        },
         {
           "properties": {
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Apply Selected Filters'"
-                }
-              }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "shape": [
-        {
-          "properties": {
-            "tileShape": {
-              "expr": {
-                "Literal": {
-                  "Value": "'rectangle'"
+                  "Value": "'Apply Filters'"
                 }
               }
             }
@@ -101,6 +33,13 @@
       "visualLink": [
         {
           "properties": {
+            "tooltipPlaceholderText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Apply all slicers on this page. Hiding all buttons will cause slicers to instantly apply on this page.'"
+                }
+              }
+            },
             "show": {
               "expr": {
                 "Literal": {
@@ -112,39 +51,6 @@
               "expr": {
                 "Literal": {
                   "Value": "'ApplyAllSlicers'"
-                }
-              }
-            },
-            "tooltipPlaceholderText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Apply all slicers on this page. Hiding all buttons will cause slicers to instantly apply on this page.'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "border": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "''"
                 }
               }
             }

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "d433b9cde533461532d4",
   "position": {
-    "x": 17.27272727272727,
-    "y": 127.27272727272727,
+    "x": 16,
+    "y": 88,
     "z": 0,
-    "height": 580,
-    "width": 1245.4545454545453,
+    "height": 616,
+    "width": 1248,
     "tabOrder": 0
   },
   "visual": {
@@ -144,6 +144,19 @@
             }
           }
         }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Signup Year'"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -154,6 +167,23 @@
               "expr": {
                 "Literal": {
                   "Value": "'Total Yearly Gross Revenue Per  Cohort'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
                 }
               }
             }

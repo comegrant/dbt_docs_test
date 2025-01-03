@@ -213,6 +213,20 @@
                         [
                           {
                             "Literal": {
+                              "Value": "2019L"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
+                              "Value": "2025L"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
                               "Value": "2026L"
                             }
                           }
@@ -255,7 +269,7 @@
                         [
                           {
                             "Literal": {
-                              "Value": "2025L"
+                              "Value": "2020L"
                             }
                           }
                         ]
@@ -293,30 +307,6 @@
     "parameters": []
   },
   "objects": {
-    "background": [
-      {
-        "properties": {
-          "color": {
-            "solid": {
-              "color": {
-                "expr": {
-                  "Literal": {
-                    "Value": "'#DBD8C2'"
-                  }
-                }
-              }
-            }
-          },
-          "transparency": {
-            "expr": {
-              "Literal": {
-                "Value": "50D"
-              }
-            }
-          }
-        }
-      }
-    ],
     "outspacePane": [
       {
         "properties": {

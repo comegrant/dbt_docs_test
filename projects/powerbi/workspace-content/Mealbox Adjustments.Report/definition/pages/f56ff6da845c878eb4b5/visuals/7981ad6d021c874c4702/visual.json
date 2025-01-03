@@ -5,33 +5,13 @@
     "x": 0,
     "y": 0,
     "z": 0,
-    "height": 110.27027027027026,
+    "height": 72,
     "width": 1280,
     "tabOrder": 0
   },
   "visual": {
     "visualType": "shape",
     "objects": {
-      "shape": [
-        {
-          "properties": {
-            "tileShape": {
-              "expr": {
-                "Literal": {
-                  "Value": "'tabRoundTopCorners'"
-                }
-              }
-            },
-            "tabRoundCornerTop": {
-              "expr": {
-                "Literal": {
-                  "Value": "15L"
-                }
-              }
-            }
-          }
-        }
-      ],
       "rotation": [
         {
           "properties": {

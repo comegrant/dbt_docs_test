@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "b8e1308763b851850076",
   "position": {
-    "x": 179.090909090909,
+    "x": 256,
     "y": 0,
     "z": 5000,
-    "height": 67.272727272727266,
-    "width": 180.90909090909091,
-    "tabOrder": 2004
+    "height": 64,
+    "width": 192,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -44,6 +44,13 @@
                   "Value": "'Dropdown'"
                 }
               }
+            },
+            "isInvertedSelectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
             }
           }
         }
@@ -65,53 +72,6 @@
         {
           "properties": {
             "selectAllCheckboxEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "outlineStyle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            },
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            },
-            "showRestatement": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "pendingChangesIcon": [
-        {
-          "properties": {
-            "show": {
               "expr": {
                 "Literal": {
                   "Value": "true"

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "21fa7370b61dde862034",
   "position": {
-    "x": 16.257408975444541,
-    "y": 128.97544453852669,
+    "x": 16,
+    "y": 88,
     "z": 2000,
-    "height": 583.09906858594411,
-    "width": 1044.809483488569,
+    "height": 616,
+    "width": 1040,
     "tabOrder": 1000
   },
   "visual": {
@@ -119,33 +119,6 @@
       }
     },
     "objects": {
-      "categoryAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "innerPadding": {
-              "expr": {
-                "Literal": {
-                  "Value": "5L"
-                }
-              }
-            },
-            "maxMarginFactor": {
-              "expr": {
-                "Literal": {
-                  "Value": "25L"
-                }
-              }
-            }
-          }
-        }
-      ],
       "valueAxis": [
         {
           "properties": {
@@ -155,8 +128,14 @@
                   "Value": "false"
                 }
               }
-            },
-            "secShowAxisTitle": {
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -169,80 +148,15 @@
       "dataPoint": [
         {
           "properties": {
-            "fillTransparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "50D"
-                }
-              }
-            },
             "fill": {
               "solid": {
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                      "ColorId": 2,
+                      "Percent": 0.6
                     }
                   }
-                }
-              }
-            }
-          }
-        },
-        {
-          "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 5,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Order Measures.Number of Orders with Decreased Portions"
-          }
-        }
-      ],
-      "seriesLabels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "labels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "lineStyles": [
-        {
-          "properties": {
-            "showMarker": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
                 }
               }
             }
@@ -254,13 +168,6 @@
       "title": [
         {
           "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Number of Orders With Increased/Decreased Meals'"
-                }
-              }
-            },
             "show": {
               "expr": {
                 "Literal": {
@@ -271,13 +178,17 @@
           }
         }
       ],
-      "lockAspect": [
+      "background": [
         {
           "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
                 }
               }
             }
@@ -300,45 +211,6 @@
             },
             "Property": "Company Name"
           }
-        },
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "c",
-              "Entity": "Companies",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "c"
-                          }
-                        },
-                        "Property": "Company Name"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'Adams Matkasse'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
         },
         "howCreated": "User",
         "objects": {

@@ -5,9 +5,9 @@
     "x": 0,
     "y": 0,
     "z": 3000,
-    "height": 70,
-    "width": 184.28571428571431,
-    "tabOrder": 8001
+    "height": 56,
+    "width": 272,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,16 +20,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Order Measures"
+                      "Entity": "Date"
                     }
                   },
-                  "Property": "source_created_at"
+                  "Property": "Date"
                 }
               },
-              "queryRef": "Order Measures.source_created_at",
-              "nativeQueryRef": "Time Interval",
-              "active": true,
-              "displayName": "Time Interval"
+              "queryRef": "Date.Date",
+              "nativeQueryRef": "Date",
+              "active": true
             }
           ]
         }
@@ -41,10 +40,10 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Order Measures"
+                    "Entity": "Date"
                   }
                 },
-                "Property": "source_created_at"
+                "Property": "Date"
               }
             },
             "direction": "Ascending"
@@ -57,13 +56,6 @@
       "data": [
         {
           "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Relative'"
-                }
-              }
-            },
             "relativeRange": {
               "expr": {
                 "Literal": {
@@ -74,7 +66,7 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "6D"
+                  "Value": "12D"
                 }
               }
             },
@@ -82,6 +74,13 @@
               "expr": {
                 "Literal": {
                   "Value": "'Months'"
+                }
+              }
+            },
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Relative'"
                 }
               }
             }
@@ -96,8 +95,8 @@
                 "Version": 2,
                 "From": [
                   {
-                    "Name": "o",
-                    "Entity": "Order Measures",
+                    "Name": "d",
+                    "Entity": "Date",
                     "Type": 0
                   }
                 ],
@@ -109,10 +108,10 @@
                           "Column": {
                             "Expression": {
                               "SourceRef": {
-                                "Source": "o"
+                                "Source": "d"
                               }
                             },
-                            "Property": "source_created_at"
+                            "Property": "Date"
                           }
                         },
                         "LowerBound": {
@@ -128,7 +127,7 @@
                                     "TimeUnit": 0
                                   }
                                 },
-                                "Amount": -6,
+                                "Amount": -12,
                                 "TimeUnit": 2
                               }
                             },
@@ -152,20 +151,18 @@
           }
         }
       ],
-      "header": [
+      "numericInputStyle": [
         {
           "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -187,13 +184,13 @@
       ]
     },
     "visualContainerObjects": {
-      "title": [
+      "background": [
         {
           "properties": {
-            "text": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "''"
+                  "Value": "false"
                 }
               }
             }

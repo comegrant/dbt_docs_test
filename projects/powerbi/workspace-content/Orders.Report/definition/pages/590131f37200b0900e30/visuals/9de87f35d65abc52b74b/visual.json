@@ -2,68 +2,23 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "9de87f35d65abc52b74b",
   "position": {
-    "x": 1151.4285714285716,
-    "y": 27.142857142857146,
+    "x": 1135.7201539773168,
+    "y": 7.1428940501718037,
     "z": 3000,
-    "height": 67.142857142857153,
-    "width": 128.57142857142858,
+    "height": 55.952670059679129,
+    "width": 128.57209290309245,
     "tabOrder": 3000
   },
   "visual": {
     "visualType": "actionButton",
     "objects": {
-      "icon": [
-        {
-          "properties": {
-            "shapeType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'applyAllSlicers'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        },
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
       "text": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        },
         {
           "properties": {
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Apply Selected Filters'"
-                }
-              }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
+                  "Value": "'Apply Filters'"
                 }
               }
             }
@@ -78,6 +33,13 @@
       "visualLink": [
         {
           "properties": {
+            "tooltipPlaceholderText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Apply all slicers on this page. Hiding all buttons will cause slicers to instantly apply on this page.'"
+                }
+              }
+            },
             "show": {
               "expr": {
                 "Literal": {
@@ -89,26 +51,6 @@
               "expr": {
                 "Literal": {
                   "Value": "'ApplyAllSlicers'"
-                }
-              }
-            },
-            "tooltipPlaceholderText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Apply all slicers on this page. Hiding all buttons will cause slicers to instantly apply on this page.'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "border": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
                 }
               }
             }

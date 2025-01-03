@@ -5,9 +5,9 @@
     "x": 0,
     "y": 0,
     "z": 2000,
-    "height": 70,
-    "width": 184.28571428571431,
-    "tabOrder": 2000
+    "height": 64.340425531914889,
+    "width": 176,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "slicer",
@@ -81,7 +81,28 @@
                           [
                             {
                               "Literal": {
+                                "Value": "'Adams Matkasse'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
                                 "Value": "'Godtlevert'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'Linas Matkasse'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'RetNemt'"
                               }
                             }
                           ]

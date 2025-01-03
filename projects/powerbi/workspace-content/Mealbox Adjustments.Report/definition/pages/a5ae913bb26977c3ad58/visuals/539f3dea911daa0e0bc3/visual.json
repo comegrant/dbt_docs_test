@@ -5,8 +5,8 @@
     "x": 0,
     "y": 0,
     "z": 6000,
-    "height": 68.281117696867071,
-    "width": 166.90939881456393,
+    "height": 56,
+    "width": 160,
     "tabOrder": 0
   },
   "visual": {
@@ -58,19 +58,6 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
                 }
               }
             }

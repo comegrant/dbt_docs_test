@@ -5,8 +5,8 @@
     "x": 0,
     "y": 0,
     "z": 4500,
-    "height": 67.272727272727266,
-    "width": 172.72727272727272,
+    "height": 56,
+    "width": 256,
     "tabOrder": 2000
   },
   "visual": {
@@ -56,13 +56,6 @@
       "data": [
         {
           "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Relative'"
-                }
-              }
-            },
             "relativeRange": {
               "expr": {
                 "Literal": {
@@ -73,7 +66,7 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "4D"
+                  "Value": "2D"
                 }
               }
             },
@@ -83,24 +76,11 @@
                   "Value": "'Years'"
                 }
               }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
             },
-            "textSize": {
+            "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "'Relative'"
                 }
               }
             }
@@ -154,7 +134,7 @@
                                     "TimeUnit": 0
                                   }
                                 },
-                                "Amount": -4,
+                                "Amount": -2,
                                 "TimeUnit": 3
                               }
                             },
@@ -178,6 +158,24 @@
           }
         }
       ],
+      "numericInputStyle": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
       "dateRange": [
         {
           "properties": {
@@ -185,19 +183,6 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "numericInputStyle": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
                 }
               }
             }

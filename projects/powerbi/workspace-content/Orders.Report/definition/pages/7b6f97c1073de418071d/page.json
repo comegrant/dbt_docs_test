@@ -481,30 +481,6 @@
     ]
   },
   "objects": {
-    "background": [
-      {
-        "properties": {
-          "color": {
-            "solid": {
-              "color": {
-                "expr": {
-                  "Literal": {
-                    "Value": "'#DBD8C2'"
-                  }
-                }
-              }
-            }
-          },
-          "transparency": {
-            "expr": {
-              "Literal": {
-                "Value": "50D"
-              }
-            }
-          }
-        }
-      }
-    ],
     "outspacePane": [
       {
         "properties": {

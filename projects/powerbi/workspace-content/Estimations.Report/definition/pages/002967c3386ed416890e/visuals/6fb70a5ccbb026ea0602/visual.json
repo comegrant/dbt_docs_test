@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "6fb70a5ccbb026ea0602",
   "position": {
-    "x": 1081.9264419212684,
-    "y": 3.6451991389584331,
+    "x": 736,
+    "y": 8,
     "z": 9000,
-    "height": 53.495440729483285,
-    "width": 171.1854103343465,
+    "height": 64,
+    "width": 176,
     "tabOrder": 0
   },
   "visual": {
@@ -69,7 +69,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "9D"
                 }
               }
             },
@@ -79,7 +79,7 @@
                   "expr": {
                     "ThemeDataColor": {
                       "ColorId": 0,
-                      "Percent": -0.5
+                      "Percent": 0
                     }
                   }
                 }
@@ -89,6 +89,13 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI Semibold'', wf_segoe-ui_semibold, helvetica, arial, sans-serif'"
                 }
               }
             }
@@ -145,7 +152,7 @@
                   "expr": {
                     "ThemeDataColor": {
                       "ColorId": 0,
-                      "Percent": -0.5
+                      "Percent": 0
                     }
                   }
                 }
@@ -169,6 +176,20 @@
               "expr": {
                 "Literal": {
                   "Value": "'center'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
                 }
               }
             }
@@ -203,6 +224,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "parentGroupName": "0d2a73c17a7a16e00010"
+  }
 }

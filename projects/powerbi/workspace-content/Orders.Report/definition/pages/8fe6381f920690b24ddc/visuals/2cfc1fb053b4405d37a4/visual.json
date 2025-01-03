@@ -5,8 +5,8 @@
     "x": 0,
     "y": 0,
     "z": 1000,
-    "height": 71.111111111111114,
-    "width": 175,
+    "height": 56,
+    "width": 176,
     "tabOrder": 0
   },
   "visual": {
@@ -81,7 +81,28 @@
                           [
                             {
                               "Literal": {
+                                "Value": "'Adams Matkasse'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
                                 "Value": "'Godtlevert'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'Linas Matkasse'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'RetNemt'"
                               }
                             }
                           ]
@@ -90,26 +111,6 @@
                     }
                   }
                 ]
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
               }
             }
           }

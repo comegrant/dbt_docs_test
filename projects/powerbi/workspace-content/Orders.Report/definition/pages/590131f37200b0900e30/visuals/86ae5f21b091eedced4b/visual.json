@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "86ae5f21b091eedced4b",
   "position": {
-    "x": 194.28571428571422,
+    "x": 272,
     "y": 0,
     "z": 2000,
-    "height": 70,
-    "width": 184.28571428571431,
-    "tabOrder": 7000
+    "height": 56,
+    "width": 192,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -38,11 +38,23 @@
     "objects": {
       "data": [
         {
+          "properties": {}
+        }
+      ],
+      "selection": [
+        {
           "properties": {
-            "mode": {
+            "selectAllCheckboxEnabled": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dropdown'"
+                  "Value": "true"
+                }
+              }
+            },
+            "singleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -91,41 +103,6 @@
                     }
                   }
                 ]
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "''"
-                }
               }
             }
           }

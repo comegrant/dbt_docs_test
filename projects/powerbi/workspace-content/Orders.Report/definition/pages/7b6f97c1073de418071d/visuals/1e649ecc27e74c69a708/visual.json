@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
   "name": "1e649ecc27e74c69a708",
   "position": {
-    "x": 17.777777777777779,
-    "y": 125.55555555555556,
+    "x": 16,
+    "y": 88,
     "z": 0,
-    "height": 580,
-    "width": 1244.4444444444443,
+    "height": 616,
+    "width": 1248,
     "tabOrder": 0
   },
   "visual": {
@@ -162,7 +162,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -506,6 +506,23 @@
               "expr": {
                 "Literal": {
                   "Value": "'This graph shows the number of orders per week and per year.'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
                 }
               }
             }
