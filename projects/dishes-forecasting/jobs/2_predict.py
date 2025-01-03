@@ -9,9 +9,17 @@ logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # COMMAND ----------
-import mlflow
-from dishes_forecasting.predict.run_predict import Args, run_predict
-from dishes_forecasting.spark_context import create_spark_context
+import os  # noqa: 402
+API_ROOT = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()
+API_TOKEN = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
+
+os.environ["DATABRICKS_TOKEN"] = API_TOKEN
+os.environ["DATABRICKS_HOST"] = API_ROOT
+os.environ["MLFLOW_USE_DATABRICKS_SDK_MODEL_ARTIFACTS_REPO_FOR_UC"] = "true"
+# COMMAND ----------
+import mlflow  # noqa: 402
+from dishes_forecasting.predict.run_predict import Args, run_predict  # noqa: 402
+from dishes_forecasting.spark_context import create_spark_context  # noqa: 402
 
 spark = create_spark_context()
 is_get_params_from_workflow = True

@@ -24,6 +24,7 @@ pydantic = "^2.9.1"
 xgboost = "^2.1.1"
 optuna = "^4.0.0"
 slack-connector = {path = "../../packages/slack-connector", develop = true}
+mlflow = "2.19.0"
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"
