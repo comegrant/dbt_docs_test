@@ -13,61 +13,55 @@ Number of weeks since the first order of the billing agreement.
 
 {% docs column__preselected_product_variation_id %}
 
-The product variation of the preselected mealbox that corresponds to the customer composed mealbox (pre Onesub).
+The product variation id of the dish presented to the customer on the webpage.
 
 {% enddocs %}
 
 {% docs column__preselected_recipe_id %}
 
-The recipe is of the preselected mealbox that corresponds to the customer composed mealbox (pre Onesub).
+The recipe id of the dish preseneted to the customer on the webpage.
 
 {% enddocs %}
 
 {% docs column__has_delivery %}
 
-The order has a delivery related to it.
+1 if the order has delivery. E.g., gift card orders does not have a delivery, most other orders does.
 
 {% enddocs %}
 
 {% docs column__is_added_dish %}
 
-The recipe has been selected by the customer.
+Is 1 if the ordered dish was added by the customer and 0 if the ordered dish was preselected for the customer. For all rows that are not representing a dish the field will be null.
 
 {% enddocs %}
 
 {% docs column__is_removed_dish %}
 
-The preselected recipe has been removed by the customer.
+Is 1 if the preselected dish was removed by the customer and 0 if the preselected dish was ordered. For all rows that are not representing a dish the field will be null.
 
 {% enddocs %}
 
-{% docs column__is_generated_recipe_line %}
+{% docs column__meal_adjustment_subscription %}
 
-The row has been generated to add the recipe.
-
-{% enddocs %}
-
-{% docs column__is_chef_composed_mealbox %}
-
-The order line referes to a mealbox and its recipes that are preselected by a chef (pre Onesub).
+The difference between the ordered number of meals and the number of meals the customer subscribes to.
 
 {% enddocs %}
 
-{% docs column__is_mealbox %}
+{% docs column__portion_adjustment_subscription %}
 
-The order line is a part of an mealbox order.
+The difference between the ordered number of portions and the number of portions the customer subscribes to.
 
 {% enddocs %}
 
 {% docs column__fk_dim_products_preselected %}
 
-Foreign key that is used to relate preselected product variations to Dim Products.
+Used to fetch product information about the dishes that has been presented to the customer on the webpage before the order was placed. Is 0 for order lines that are not representing a preselected dish.
 
 {% enddocs %}
 
 {% docs column__fk_dim_recipes_preselected %}
 
-Foreign key that is used to relate preselected recipes to Dim Recipes.
+Used to fetch recipe information about the dishes that has been presented to the customer on the webpage before the order was placed. Is 0 for order lines that are not representing a preselected dish.
 
 {% enddocs %}
 

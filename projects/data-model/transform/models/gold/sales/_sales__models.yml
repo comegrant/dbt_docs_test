@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: fact_orders
-    description: "Information about what a customer ordered. For orders after 2024 the table also contains information about dish swapping. I.e. which dishes the customer swapped in and out as well as if they made any adjustments to number of portions and meals. Contains both cancelled and finished orders. "
+    description: "Information about what the customer ordered and changes made to their preselected mealbox."
     latest_version: 1
     config:
       alias: fact_orders
@@ -91,11 +91,11 @@ models:
 
       - name: meal_adjustment_subscription
         data_type: int
-        description: ""
+        description: "{{ doc('column__meal_adjustment_subscription') }}"
 
       - name: portion_adjustment_subscription
         data_type: int
-        description: ""
+        description: "{{ doc('column__portion_adjustment_subscription') }}"
 
       - name: is_added_dish
         data_type: int
