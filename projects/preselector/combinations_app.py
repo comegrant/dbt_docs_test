@@ -123,11 +123,14 @@ async def main() -> None:
     ])
 
     with st.spinner("Loading Data"):
-
         cached_store = await load_cache(
             store,
             company_id=company_id,
         )
+
+    if st.button("Force Update Cache"):
+        with st.spinner("Loading Data"):
+            cached_store = await load_cache(store, company_id=company_id, force_load=True)
 
     # Generate all combinations of selected attributes and taste preferences
     attribute_combinations = all_combinations(selected_attributes, include_empty_set=False)
@@ -168,6 +171,7 @@ async def main() -> None:
     else:
         st.error(response.failures[0].error_message)
         recipes = []
+
 
 
     # Check if session_id is in the cookie

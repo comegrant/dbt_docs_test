@@ -93,10 +93,10 @@ async def load_cache_for(
 
             job = job.polars_method(filter_df)
 
-        if isinstance(source, DataFileReference):
-            await job.write_to_source(source)
-        else:
+        if isinstance(source, WritableFeatureSource):
             await source.overwrite(job, request)
+        else:
+            await job.write_to_source(source)
 
         store = store.update_source_for(location, source)
         logger.info(f"Loaded {location.name} from cache")
