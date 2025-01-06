@@ -292,12 +292,13 @@ async def find_best_combination(
             assert isinstance(output, pl.LazyFrame)
             with_mealkit = output.collect()
 
+        similarity = with_mealkit.select([
+            pl.col("recipe_id"),
+            # Normalize [0, 1] as all features will be in this range.
+            ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity")
+        ])
         return aggregations.join(
-            with_mealkit.select([
-                pl.col("recipe_id"),
-                # Normalize [0, 1] as all features will be in this range.
-                ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity")
-            ]), left_on="basket_id", right_on="recipe_id"
+            similarity, left_on="basket_id", right_on="recipe_id"
         )
 
     def update_nudge_with_recipes(
@@ -1399,6 +1400,39 @@ async def filter_on_preferences(
     return recipes, PreselectorPreferenceCompliancy.non_preference_compliant, preselected_recipes
 
 
+async def compute_weeks_ago(
+    company_id: str,
+    agreement_id: int,
+    year_week: int,
+    main_recipe_ids: list[int],
+    store: ContractStore
+) -> pl.DataFrame:
+
+    number_of_recipes = len(main_recipe_ids)
+    req = store.feature_view(WeeksSinceRecipe).request
+    derived_feature_names = sorted([
+        feat.name for feat in req.derived_features
+    ])
+
+    job = store.feature_view(WeeksSinceRecipe).features_for({
+        "agreement_id": [agreement_id] * number_of_recipes,
+        "company_id": [company_id] * number_of_recipes,
+        # Setting the from_year_week so it will be used when computing
+        "from_year_week": [year_week] * number_of_recipes,
+        "main_recipe_id": main_recipe_ids
+    }).transform_polars(
+        # Is currently a bug where this will not be compute
+        # So need to remove it and then compute it again
+        lambda df: df.select(
+            pl.exclude(derived_feature_names)
+        ) if derived_feature_names[0] in df.columns else df
+    ).derive_features()
+
+    return  (
+        await job.to_polars()
+    ).cast({"main_recipe_id": pl.Int32})
+
+
 async def add_ordered_since_feature(
     customer: GenerateMealkitRequest,
     store: ContractStore,
@@ -1427,20 +1461,13 @@ async def add_ordered_since_feature(
         ).cast({"main_recipe_id": pl.Int32})
 
     if customer.agreement_id != 0:
-        weeks_since_recipe = (
-            await store.feature_view(WeeksSinceRecipe).features_for({
-                "agreement_id": [customer.agreement_id] * new_recipe_ids.len(),
-                "company_id": [customer.company_id] * new_recipe_ids.len(),
-                # Setting the from_year_week so it will be used when computing
-                "from_year_week": [year_week] * new_recipe_ids.len(),
-                "main_recipe_id": new_recipe_ids.to_list()
-            }).transform_polars(
-                # Is currently a bug where this will not be compute
-                # So need to remove it and then compute it again
-                lambda df: df.select(pl.exclude("ordered_weeks_ago")) if "ordered_weeks_ago" in df.columns else df
-            ).derive_features().to_polars()
-        ).cast({"main_recipe_id": pl.Int32})
-
+        weeks_since_recipe = await compute_weeks_ago(
+            company_id=customer.company_id,
+            agreement_id=customer.agreement_id,
+            year_week=year_week,
+            main_recipe_ids=new_recipe_ids.to_list(),
+            store=store
+        )
 
     return_columns = ["main_recipe_id", "ordered_weeks_ago"]
     default_value = 0
