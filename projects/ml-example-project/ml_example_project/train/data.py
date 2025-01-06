@@ -1,9 +1,9 @@
 import logging
 
-from pyspark.sql import DataFrame, SparkSession
-
 from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
 from databricks.feature_engineering.training_set import TrainingSet
+from pyspark.sql import DataFrame, SparkSession
+
 from ml_example_project.db import get_data_from_sql
 from ml_example_project.paths import TRAIN_SQL_DIR
 from ml_example_project.train.configs import CompanyTrainConfigs, FeatureLookUpConfig
@@ -16,15 +16,27 @@ def create_training_set(
     company_train_configs: CompanyTrainConfigs,
     fe: FeatureEngineeringClient | None,
 ) -> TrainingSet | DataFrame:
+    """Create training set for specific company.
 
-    feature_lookups, ignore_columns = create_feature_lookups(
-        feature_lookup_config_list=feature_lookup_config_list
-    )
+    - If feature engineering client is provided, creates the training set from FeatureLookups.
+    - If feature engineering client is not provided, creates the training set from dataframes mimicking FeatureLookups.
+
+    Parameters:
+        company_id (str): Company ID.
+        spark (SparkSession): Spark session.
+        feature_lookup_config_list (list[FeatureLookUpConfig]): List of feature lookup configurations.
+        company_train_configs (CompanyTrainConfigs): Company specific configurations.
+        fe (FeatureEngineeringClient | None): Feature engineering client.
+
+    Returns:
+        TrainingSet | DataFrame: Training set, either from FeatureEngineeringClient object or dataframe.
+    """
+    feature_lookups, ignore_columns = create_feature_lookups(feature_lookup_config_list=feature_lookup_config_list)
     df_target = get_training_target(
         spark=spark,
         train_end_yyyyww=company_train_configs.train_end_yyyyww,
         train_start_yyyyww=company_train_configs.train_start_yyyyww,
-        company_id=company_id
+        company_id=company_id,
     )
 
     if fe is not None:
@@ -38,8 +50,7 @@ def create_training_set(
         # If we do not want to use feature store,
         # For example, if we want to run locally
         df_list, ignore_columns = get_feature_dataframes(
-            spark=spark,
-            feature_lookup_config_list=feature_lookup_config_list
+            spark=spark, feature_lookup_config_list=feature_lookup_config_list
         )
         # Merge all the tables together
         training_set = df_target
@@ -59,23 +70,25 @@ def get_feature_dataframes(
     spark: SparkSession,
     feature_lookup_config_list: list[FeatureLookUpConfig],
 ) -> tuple[list[DataFrame], list]:
+    """Create list of feature dataframes and ignore columns, mimicking Databricks FeatureLookup.
+
+    Parameters:
+        spark (SparkSession): Spark session.
+        feature_lookup_config_list (list[FeatureLookUpConfig]): List of feature lookup configurations.
+
+    Returns:
+        list[DataFrame]: List of feature dataframes.
+        list[str]: List of columns to ingnore.
+    """
     df_list = []
     ignore_columns = []
     for a_feature_lookup_config in feature_lookup_config_list:
         feature_container = a_feature_lookup_config.features_container
         feature_table_name = a_feature_lookup_config.feature_table_name
-        feature_columns = (
-            a_feature_lookup_config.primary_keys
-            + a_feature_lookup_config.feature_columns
-        )
+        feature_columns = a_feature_lookup_config.primary_keys + a_feature_lookup_config.feature_columns
         table_name = f"{feature_container}.{feature_table_name}"
         logging.info(f"Downloading data from {table_name} ...")
-        df = (
-            spark
-            .read
-            .table(table_name)
-            .select(feature_columns)
-        )
+        df = spark.read.table(table_name).select(feature_columns)
         df_list.append(df)
         ignore_columns.extend(a_feature_lookup_config.exclude_in_training_set)
 
@@ -87,7 +100,15 @@ def get_feature_dataframes(
 def create_feature_lookups(
     feature_lookup_config_list: list[FeatureLookUpConfig],
 ) -> tuple[list[FeatureLookup], list[str]]:
-    """Create feature lookups for the training set. For use in databricks."""
+    """Create list of feature lookups and ignore columns.
+
+    Parameters:
+        feature_lookup_config_list (list[FeatureLookUpConfig]): List of feature lookup configurations.
+
+    Returns:
+        list[FeatureLookup]: List of feature lookups.
+        list[str]: List of columns to ingnore.
+    """
     feature_lookups = []
     ignore_columns = []
     for a_feature_lookup_config in feature_lookup_config_list:
@@ -114,19 +135,19 @@ def get_training_target(
     train_end_yyyyww: int | None,
 ) -> DataFrame:
     """
-        We want to train on all recipe_id that is part of a weekly menu
-        from the period {training_start_yyyyww} to {training_end_yyyyww}.
-        We therefore, merge the menu with the recipe_target table to get the target set.
+    We want to train on all recipe_id that is part of a weekly menu
+    from the period {training_start_yyyyww} to {training_end_yyyyww}.
+    We therefore, merge the menu with the recipe_target table to get the target set.
 
-        Note this is the target set, which requires the resulting dataframe to have
-        - the primary key of the feature table, in this case, is recipe_id
-        - the target: recipe_difficulty_level_id
+    Note this is the target set, which requires the resulting dataframe to have
+    - the primary key of the feature table, in this case, is recipe_id
+    - the target: recipe_difficulty_level_id
     """
     df = get_data_from_sql(
         spark=spark,
         sql_path=TRAIN_SQL_DIR / "training_targets.sql",
         train_start_yyyyww=train_start_yyyyww,
         train_end_yyyyww=train_end_yyyyww,
-        company_id=company_id
+        company_id=company_id,
     )
     return df

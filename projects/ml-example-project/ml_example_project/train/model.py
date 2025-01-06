@@ -1,4 +1,3 @@
-
 import mlflow
 import numpy as np
 import pandas as pd
@@ -45,8 +44,8 @@ class ClassificationPipeline(mlflow.pyfunc.PythonModel):
 
     def fit(
         self,
-        X_train: pd.DataFrame, # noqa
-        y_train: pd.Series
+        X_train: pd.DataFrame,  # noqa
+        y_train: pd.Series,
     ) -> None:
         """
         Train the model on provided data.
@@ -56,7 +55,7 @@ class ClassificationPipeline(mlflow.pyfunc.PythonModel):
             X_train (pd.DataFrame): Training features
             y_train (pd.Series): Target values
         """
-        X_train_preprocessed = self.preprocessor.fit_transform(X_train.copy()) # noqa
+        X_train_preprocessed = self.preprocessor.fit_transform(X_train.copy())  # noqa
         self.model.fit(X_train_preprocessed, y_train)
 
     def predict(
@@ -90,18 +89,14 @@ def define_model_pipeline(
     model_params: dict,
     task: str = "classify",
 ) -> ClassificationPipeline:
+    """Define model pipeline."""
     preprocessor = PreProcessor(
-        numeric_features=["number_of_ingredients",  "number_of_taxonomies"],
-        categorical_features=["cooking_time_from"]
+        numeric_features=["number_of_ingredients", "number_of_taxonomies"], categorical_features=["cooking_time_from"]
     )
 
     rf = RandomForestClassifier(
         # n_estimators=100,
         **model_params
     )
-    pipeline = ClassificationPipeline(
-        preprocessor=preprocessor,
-        model=rf,
-        task=task
-    )
+    pipeline = ClassificationPipeline(preprocessor=preprocessor, model=rf, task=task)
     return pipeline

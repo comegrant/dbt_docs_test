@@ -22,6 +22,21 @@ class Args(BaseModel):
 
 
 def make_predictions(args: Args, spark: SparkSession) -> DataFrame:
+    """Create predictions for specific company and time period.
+
+    - Gets company specific configurations and loads trained model.
+    - Creates dataframe to predict on.
+    - Generates predictions with timestamp.
+    - Saves predictions to databricks table.
+
+    Parameters:
+        args (Args): Configuration arguments.
+        spark (SparkSession): Spark session.
+
+    Returns:
+        DataFrame: Spark dataframe with timestamped predictions.
+
+    """
     company_predict_configs = get_company_predict_configs(company_code=args.company)
     company_properties = get_company_by_code(company_code=args.company)
 
@@ -47,10 +62,6 @@ def make_predictions(args: Args, spark: SparkSession) -> DataFrame:
     df_result["predicted_at"] = timestamp_now
     spark_df_result = spark.createDataFrame(df_result)
 
-    save_outputs(
-        spark_df=spark_df_result,
-        table_name="ml_example_project_predictions",
-        table_schema="mloutputs"
-    )
+    save_outputs(spark_df=spark_df_result, table_name="ml_example_project_predictions", table_schema="mloutputs")
 
     return spark_df_result
