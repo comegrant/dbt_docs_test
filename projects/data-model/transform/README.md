@@ -157,11 +157,14 @@ Each subdirectory of the silver and gold layer has a .yml-file with the suffix `
   latest_version: 1
   config:
     alias: dim_date
-
-  #column to be added here
+    contract:
+      enforced: true
     
   versions:
     - v: 1
+
+  #column to be added here
+
 ```
 
 ## 2.5 Deploy model

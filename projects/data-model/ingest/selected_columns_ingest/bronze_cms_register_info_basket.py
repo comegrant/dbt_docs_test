@@ -3,6 +3,8 @@
 # MAGIC This is not a part of the full cms ingest because we avoid including personal info.
 
 # COMMAND ----------
+import sys
+sys.path.append('../helper_functions')
 
 from coredb_connector import load_coredb_query
 

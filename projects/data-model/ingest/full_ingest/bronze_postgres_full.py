@@ -1,4 +1,7 @@
 # Databricks notebook source
+import sys
+sys.path.append('../helper_functions')
+
 from postgres_connector import load_postgres_full
 
 # COMMAND ----------

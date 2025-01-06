@@ -1,5 +1,16 @@
 # Databricks notebook source
+import sys
+sys.path.append('../helper_functions')
+
 from analyticsdb_connector import load_analyticsdb_query
+
+# COMMAND ----------
+
+# Run the relevant cell below before running this cell
+database = "AnalyticsDB"
+query = f"SELECT * FROM {schema}.{table}"
+
+load_analyticsdb_query(dbutils, database, table, schema, query)
 
 # COMMAND ----------
 
@@ -23,7 +34,10 @@ table = "agreement_status"
 
 # COMMAND ----------
 
-database = "AnalyticsDB"
-query = f"SELECT * FROM {schema}.{table}"
+schema = "cms"
+table = "estimations_log"
 
-load_analyticsdb_query(dbutils, database, table, schema, query)
+# COMMAND ----------
+
+schema = "cms"
+table = "estimations_log_history"

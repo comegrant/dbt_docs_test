@@ -1,4 +1,7 @@
 # Databricks notebook source
+import sys
+sys.path.append('../helper_functions')
+
 from datetime import datetime
 
 from coredb_connector import load_coredb_query

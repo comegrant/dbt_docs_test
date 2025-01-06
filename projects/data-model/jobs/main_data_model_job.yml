@@ -28,47 +28,47 @@ resources:
                   body_message: 🚀 Main data model job has started
                   is_error: "false"
 
-        - task_key: bronze_snapshot_tables_full
+        - task_key: bronze_coredb_snapshot_full
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_snapshot_tables_full.py
+            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_full.py
 
         - task_key: bronze_cms_full
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_cms_full.py
+            notebook_path: ../ingest/full_ingest/bronze_cms_full.py
 
         - task_key: bronze_pim_full
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_pim_full.py
+            notebook_path: ../ingest/full_ingest/bronze_pim_full.py
 
         - task_key: bronze_psl_full
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_psl_full.py
+            notebook_path: ../ingest/full_ingest/bronze_psl_full.py
 
         - task_key: bronze_cms_billing_agreement_order_and_order_lines
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_cms_billing_agreement_order_&_order_lines.py
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_order_&_order_lines.py
 
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
         - task_key: bronze_cms_register_info_basket
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/bronze_cms_register_info_basket.py
+            notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
 
         - task_key: dbt
           dbt_task:
@@ -80,7 +80,7 @@ resources:
               - 'dbt build --exclude drafts.*'
           environment_key: dbt-default
           depends_on: [
-            {task_key: bronze_snapshot_tables_full},
+            {task_key: bronze_coredb_snapshot_full},
             {task_key: bronze_cms_full},
             {task_key: bronze_pim_full},
             {task_key: bronze_psl_full},
@@ -108,7 +108,7 @@ resources:
 
         - task_key: fail-notification
           depends_on: [
-            {task_key: bronze_snapshot_tables_full},
+            {task_key: bronze_coredb_snapshot_full},
             {task_key: bronze_cms_full},
             {task_key: bronze_pim_full},
             {task_key: bronze_psl_full},

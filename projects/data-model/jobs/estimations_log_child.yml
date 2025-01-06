@@ -22,19 +22,19 @@ resources:
 
         - task_key: bronze_psl_full
           notebook_task: 
-            notebook_path: ../ingest/bronze_psl_full.py
+            notebook_path: ../ingest/full_ingest/bronze_psl_full.py
 
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
           notebook_task: 
-            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
         - task_key: bronze_cms_billing_agreement_basket_scheduler
           notebook_task: 
-            notebook_path: ../ingest/bronze_cms_billing_agreement_basket_scheduler.py
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_scheduler.py
 
         - task_key: bronze_cms_full
           notebook_task: 
-            notebook_path: ../ingest/bronze_cms_full.py
+            notebook_path: ../ingest/full_ingest/bronze_cms_full.py
           depends_on: [
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
             {task_key: bronze_cms_billing_agreement_basket_scheduler}

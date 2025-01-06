@@ -1,7 +1,4 @@
 # Databricks notebook source
-import sys
-
-
 from calendars import *
 
 # COMMAND ----------
