@@ -1,5 +1,5 @@
 import logging
-from collections.abc import Callable, Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, TypeVar
 
@@ -469,3 +469,22 @@ class MultipleWriter(WritableStream):
 
     def reader(self, model: type[T]) -> ReadableStream[T] | None:
         return None
+
+
+@dataclass
+class CustomReader(ReadableStream[T]):
+
+    method: Callable[[int | None], Awaitable[list[T]]]
+
+    async def read(self, number_of_records: int | None = None) -> list[StreamMessage[T]]:
+        messages = await self.method(number_of_records)
+        return [
+            StreamMessage(msg, raw_message=None)
+            for msg in messages
+        ]
+
+    async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
+        pass
+
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
+        pass

@@ -20,6 +20,7 @@ import logging
 import os
 from datetime import date, timedelta
 
+dbutils.widgets.text("company_id", "")
 dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
@@ -36,13 +37,13 @@ assert environment != ""
 os.environ["DATALAKE_ENV"] = environment
 os.environ["UC_ENV"] = environment
 
-
-from data_contracts.sources import adb, databricks_catalog
+# COMMAND ----------
+from data_contracts.sources import databricks_catalog
 from preselector.data.models.customer import PreselectorFailedResponse
 from preselector.process_stream import load_cache, process_stream_batch
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
-from preselector.stream import CustomWriter, MultipleWriter, PreselectorResultWriter, SqlServerStream
+from preselector.stream import CustomReader, CustomWriter, MultipleWriter, PreselectorResultWriter
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     scope="auth_common",
@@ -78,10 +79,134 @@ logging.getLogger("azure").setLevel(
     logging.ERROR
 )
 
+# COMMAND ----------
+# new sql query to replace the ADB query
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek  # noqa
 
-async def run() -> None:
-    store = preselector_store()
+async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRequest]:
+    from data_contracts.sources import databricks_config
+    query_for_batch_predict = f"""
+    with active_freeze_billing_agreements as (
+        select
+            pk_dim_billing_agreements,
+            billing_agreement_id,
+            company_id,
+            is_current
+        from gold.dim_billing_agreements
+        where billing_agreement_status_name in ('Active', 'Freezed')
+            and company_id = '{company_id}'
+    ),
 
+    billing_agreement_basket_products as (
+        select
+            fk_dim_billing_agreements,
+            fk_dim_products,
+            product_variation_id,
+            product_variation_quantity
+        from gold.bridge_billing_agreements_basket_products
+    ),
+
+    dim_products as (
+        select
+            *
+        from
+            gold.dim_products
+    ),
+
+    last_delivery_monday as (
+        select
+            billing_agreement_id,
+            max(menu_week_monday_date) as last_delivery_monday
+        from gold.fact_orders
+        where order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- finished
+        group by billing_agreement_id
+    ),
+
+    days_since_last_delivery as (
+        select
+            billing_agreement_id,
+            datediff(current_date(), last_delivery_monday) as days_since_last_delivery
+        from last_delivery_monday
+    ),
+
+    preferences as (
+    select
+        pk_dim_preference_combinations,
+        fk_dim_billing_agreements,
+        preference_id_combinations_concept_type as concept_preference_ids,
+        preference_id_combinations_taste_type as taste_preference_ids
+    from gold.dim_preference_combinations
+    ),
+
+    valid_portions as (
+        select distinct
+            portion_size
+        from gold.fact_menus
+        where
+            weekly_menu_status_code_id = 3 -- published
+            and menu_week_monday_date > current_date()
+            and is_dish
+            and has_recipe_portions
+            and portion_status_code_id = 1
+            and company_id = '{company_id}'
+
+    ),
+
+    final as (
+    select
+        active_freeze_billing_agreements.billing_agreement_id as agreement_id,
+        case
+            when concept_preference_ids is not null then
+                concat('["',
+                    concat_ws('", "',
+                                split(concept_preference_ids, ',')),
+                    '"]')
+            else
+                null
+        end as concept_preference_ids,
+        case
+            when taste_preference_ids is not null then
+                concat('["',
+                    concat_ws('", "',
+                                split(taste_preference_ids, ',')),
+                    '"]')
+            else
+                null
+        end as taste_preference_ids,
+        dim_products.meals as number_of_recipes,
+        dim_products.portions as portion_size
+    from
+        active_freeze_billing_agreements
+    left join
+        preferences
+        on active_freeze_billing_agreements.pk_dim_billing_agreements
+            = preferences.fk_dim_billing_agreements
+    left join
+        billing_agreement_basket_products
+        on active_freeze_billing_agreements.pk_dim_billing_agreements
+            = billing_agreement_basket_products.fk_dim_billing_agreements
+    left join
+        dim_products
+        on billing_agreement_basket_products.fk_dim_products = dim_products.pk_dim_products
+    inner join
+        days_since_last_delivery
+        on active_freeze_billing_agreements.billing_agreement_id
+            = days_since_last_delivery.billing_agreement_id
+    where product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
+        and days_since_last_delivery <= 12*7 -- 12 weeks
+        and is_current = true
+        and portions in (
+            select portion_size from valid_portions
+        )
+    )
+
+    select * from final where concept_preference_ids is not null
+
+    """
+
+    spark = databricks_config.connection()
+    sdf = spark.sql(query_for_batch_predict)
+    df = sdf.toPandas()
     year_week_dates = [
         from_date + timedelta(weeks=week_dif) for week_dif in range(number_of_weeks)
     ]
@@ -90,88 +215,28 @@ async def run() -> None:
         for week in year_week_dates
     ]
 
-    def init_request(*args, **kwargs) -> GenerateMealkitRequest:  # noqa: ANN002, ANN003
-        taste_ids = json.loads(kwargs["taste_preference_ids"]) if kwargs["taste_preference_ids"] else []
-
-        return GenerateMealkitRequest(
-            agreement_id=kwargs["agreement_id"],
-            concept_preference_ids=json.loads(kwargs["concept_preference_ids"]),
+    return [
+        GenerateMealkitRequest(
+            agreement_id=row["agreement_id"],
+            concept_preference_ids=json.loads(row["concept_preference_ids"]),
             taste_preferences=[
                 NegativePreference(preference_id=taste_id, is_allergy=True)
-                for taste_id in taste_ids
+                for taste_id in (json.loads(row["taste_preference_ids"]) if row["taste_preference_ids"] else [])
             ],
-            portion_size=int(kwargs["portion_size"] or 4),
-            number_of_recipes=int(kwargs["number_of_recipes"] or 4),
+            portion_size=int(row["portion_size"] or 4),
+            number_of_recipes=int(row["number_of_recipes"] or 4),
             compute_for=year_weeks,
             company_id=company_id,
             override_deviation=False,
             has_data_processing_consent=True
         )
+        for _, row in df.iterrows()
+    ]
 
-    read_stream = SqlServerStream(
-        payload=init_request,
-        config=adb,
-        sql=f"""declare @concept_preference_type_id uniqueidentifier = '009cf63e-6e84-446c-9ce4-afdbb6bb9687';
-    declare @taste_preference_type_id uniqueidentifier = '4c679266-7dc0-4a8e-b72d-e9bb8dadc7eb';
 
-    WITH concept_preferences AS (
-    SELECT
-        bap.agreement_id,
-        CONCAT(
-        CONCAT(
-            '["',
-            STRING_AGG(
-            convert(
-                nvarchar(36),
-                bap.preference_id
-            ),
-            '", "'
-            )
-        ),
-        '"]'
-        ) as concept_preference_ids
-    FROM cms.billing_agreement_preference bap
-    JOIN cms.preference pref on pref.preference_id = bap.preference_id
-    WHERE pref.preference_type_id = @concept_preference_type_id
-    GROUP BY bap.agreement_id
-    ),
-
-    taste_preferences AS (
-    SELECT
-        bap.agreement_id,
-        CONCAT(
-        CONCAT(
-            '["',
-            STRING_AGG(
-            convert(
-                nvarchar(36),
-                bap.preference_id
-            ),
-            '", "'
-            )
-        ),
-        '"]'
-        ) as taste_preference_ids
-    FROM cms.billing_agreement_preference bap
-    JOIN cms.preference pref on pref.preference_id = bap.preference_id
-    WHERE pref.preference_type_id = @taste_preference_type_id
-    GROUP BY bap.agreement_id
-    )
-
-    SELECT DISTINCT ba.agreement_id,
-        concept_preference_ids,
-        taste_preference_ids,
-        tr.variation_meals as number_of_recipes,
-        tr.variation_portions as portion_size
-    FROM cms.billing_agreement ba
-    INNER JOIN personas.agreement_traits tr ON tr.agreement_id = ba.agreement_id
-    INNER JOIN concept_preferences cp on cp.agreement_id = ba.agreement_id
-    LEFT JOIN taste_preferences tp on tp.agreement_id = ba.agreement_id
-    WHERE ba.[status] IN (10,20)
-    AND tr.weeks_since_last_delivery <= 12
-    AND tr.variation_portions != 3
-    AND UPPER(ba.company_id) = '{company_id}'"""
-    )
+# COMMAND ----------
+async def run() -> None:
+    store = preselector_store()
 
     def failed_requests(data: Sequence[BaseModel]) -> None:
         for req in data:
@@ -195,6 +260,7 @@ async def run() -> None:
         writer = PreselectorResultWriter(company_id)
 
     store = await load_cache(store, company_id=company_id)
+    read_stream = CustomReader(method=load_requests)
     await process_stream_batch(
         store,
         stream=read_stream,
@@ -202,5 +268,7 @@ async def run() -> None:
         failed_output_stream=CustomWriter(failed_requests),
         write_batch_interval=batch_write_interval,
     )
+
+# COMMAND ----------
 
 await run()
