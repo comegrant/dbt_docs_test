@@ -263,13 +263,7 @@ The unique id of the rows in Dim Preselector Versions.
 
 {% enddocs %}
 
-{% docs column__full_commit_sha %}
-
-The full commit sha for the model version that was used to generate the output.
-
-{% enddocs %}
-
-{% docs column__short_commit_sha %}
+{% docs column__model_version_short_commit_sha %}
 
 The short commit sha for the model version that was used to generate the output.
 

@@ -8,18 +8,18 @@ preselector_successful_output as (
 , grouped_by_model_version as (
 
     select
-        model_version
+        model_version_commit_sha
     , min(created_at) as source_model_version_first_used_at
     , max(created_at) as source_model_version_latest_used_at
     from preselector_successful_output
-    group by model_version
+    group by model_version_commit_sha
 )
 
 , split_sha as (
 
     select
-        model_version as full_commit_sha
-    , left(model_version, 7) as short_commit_sha
+        model_version_commit_sha as commit_sha
+    , left(model_version_commit_sha, 7) as short_commit_sha
     , source_model_version_first_used_at
     , source_model_version_latest_used_at
     from grouped_by_model_version
@@ -29,7 +29,7 @@ preselector_successful_output as (
 , add_version_number as (
 
     select
-        full_commit_sha
+        commit_sha
     , short_commit_sha
     , source_model_version_first_used_at
     , source_model_version_latest_used_at
@@ -41,8 +41,8 @@ preselector_successful_output as (
 , add_pk as (
 
     select
-        md5(full_commit_sha) as pk_dim_preselector_versions
-    , full_commit_sha
+        md5(commit_sha) as pk_dim_preselector_versions
+    , commit_sha
     , short_commit_sha
     , source_model_version_first_used_at
     , source_model_version_latest_used_at

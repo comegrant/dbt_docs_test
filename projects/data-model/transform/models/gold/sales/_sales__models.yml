@@ -963,16 +963,16 @@ models:
         data_tests:
           - unique
           - not_null
-      - name: full_commit_sha
+      - name: commit_sha
         data_type: string
-        description: "{{ doc('column__full_commit_sha') }}"
+        description: "{{ doc('column__model_version_commit_sha') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
       - name: short_commit_sha
         data_type: string
-        description: "{{ doc('column__short_commit_sha') }}"
+        description: "{{ doc('column__model_version_short_commit_sha') }}"
         constraints:
           - type: not_null
         data_tests:

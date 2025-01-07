@@ -10,15 +10,17 @@ The degree to which the preselector was able to produce a set of meals that comp
 
 {% enddocs %}
 
-{% docs column__model_version %}
+{% docs column__model_version_commit_sha %}
 
-The model version used to create the output
+The full commit SHA of the model version used to create the output
 
 {% enddocs %}
 
 {% docs column__preselector_error_vector %}
 
-The list of error values for each feature that the preselector takes into consideration
+The list of error values for each feature that the preselector takes into consideration.
+
+A measure of how much the preselector output deviates from the target value for this metric. The error is calculated as the absolute difference between the target and actual value, normalized to a 0-100 scale where 0 means no error (perfect match) and 100 means maximum possible error.
 
 {% enddocs %}
 
@@ -84,5 +86,11 @@ A dictionary argument that is used for controlling quarantining (removing them f
 {% docs column__requested_menu_year_weeks %}
 
 The weeks and years that the preselector was asked to compute for
+
+{% enddocs %}
+
+{% docs column__created_at_preselector_output %}
+
+The timestamp from when the preselected output that set of meals.
 
 {% enddocs %}

@@ -43,6 +43,7 @@ models:
 
       - name: created_at
         data_type: timestamp
+        description: "{{ doc('column__created_at_preselector_output') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -56,9 +57,9 @@ models:
         data_tests:
           - not_null
 
-      - name: model_version
+      - name: model_version_commit_sha
         data_type: string
-        description: "{{ doc('column__model_version') }}"
+        description: "{{ doc('column__model_version_commit_sha') }}"
         constraints:
           - type: not_null
         data_tests:

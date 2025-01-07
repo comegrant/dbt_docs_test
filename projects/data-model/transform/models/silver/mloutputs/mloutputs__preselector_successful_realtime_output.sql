@@ -11,7 +11,7 @@ with preselector_successful_output as (
         company_id,
         concept_preference_ids,
         taste_preferences as taste_preference_ids,
-        model_version,
+        model_version as model_version_commit_sha,
         portion_size as requested_portions,
         number_of_recipes as requested_meals,
         menu_week as requested_menu_week,
