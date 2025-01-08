@@ -41,3 +41,23 @@ table = "estimations_log"
 
 schema = "cms"
 table = "estimations_log_history"
+
+# COMMAND ----------
+
+schema = "shared"
+table = "budget"
+
+# COMMAND ----------
+
+schema = "shared"
+table = "budget_parameter"
+
+# COMMAND ----------
+
+schema = "shared"
+table = "budget_parameter_split"
+
+# COMMAND ----------
+
+schema = "shared"
+table = "budget_type"
