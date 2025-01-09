@@ -18,6 +18,8 @@ tables = [
         "consent",
         "category_consent",
         "delivery_week_type",
+        "discount",
+        "discount_category",
         "loyalty_agreement_ledger",
         "loyalty_level",
         "order_type",
