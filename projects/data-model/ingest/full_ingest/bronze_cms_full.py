@@ -20,6 +20,7 @@ tables = [
         "delivery_week_type",
         "discount",
         "discount_category",
+        "discount_coupon",
         "loyalty_agreement_ledger",
         "loyalty_level",
         "order_type",
