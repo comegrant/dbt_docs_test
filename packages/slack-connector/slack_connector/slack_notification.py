@@ -157,7 +157,7 @@ def send_slack_notification(
                         "text": (
                             "React with 👀 if you're looking into this\n"
                             "React with ✅ if you've resolved the issue\n"
-                            "Create a task for this by running `/monday-item name of the task`"
+                            "Create an issue in Linear by clicking the three dots and then `Create new issue... Linear`"
                         ),
                     }
                 ],
