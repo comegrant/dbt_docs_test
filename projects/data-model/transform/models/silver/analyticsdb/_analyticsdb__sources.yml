@@ -12,3 +12,4 @@ sources:
       - name: analyticsdb_analytics__billing_agreement_basket_product_log
       - name: analyticsdb_orders__historical_orders_combined
       - name: analyticsdb_orders__historical_order_lines_combined
+      - name: analyticsdb_snapshots__agreement_status

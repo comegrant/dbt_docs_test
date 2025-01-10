@@ -399,10 +399,6 @@ models:
         data_tests:
           - not_null
 
-      - name: sales_point_id
-        data_type: int
-        description: "{{ doc('column__sales_point_id') }}"
-
       - name: billing_agreement_preferences_updated_id
         data_type: string
         description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"

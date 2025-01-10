@@ -18,10 +18,10 @@ billing_agreements as (
 
 )
 
-, status_names as (
+, billing_agreement_statuses as (
 
-    select * from {{ ref('cms__billing_agreement_statuses') }}
-
+    select * from {{ ref('int_billing_agreements_statuses_scd2') }}
+    
 )
 
 , preferences as (
@@ -101,18 +101,20 @@ billing_agreements as (
 
 )
 
-, billing_agreements_scd2 as (
+/*
+TODO: Add sales point scd2. We exclude this for now since we don't have history for it and it is not used yet.
+
+, billing_agreements_sales_point_scd2 as (
 
     select
-        billing_agreements.billing_agreement_id
-        , status_names.billing_agreement_status_name
-        , billing_agreements.sales_point_id
-        , billing_agreements.valid_from
-        , {{ get_scd_valid_to('billing_agreements.valid_to') }} as valid_to
+        billing_agreement_id
+        , sales_point_id
+        , valid_from
+        , valid_to
     from billing_agreements
-    left join status_names
-        on billing_agreements.billing_agreement_status_id = status_names.billing_agreement_status_id
+
 )
+*/
 
 , basket_products_scd2 as (
 
@@ -141,7 +143,7 @@ billing_agreements as (
 {% set id_column = 'billing_agreement_id' %}
 {% set table_names = [
     'base_scd2' 
-    , 'billing_agreements_scd2'
+    , 'billing_agreement_statuses'
     , 'basket_products_scd2'
     , 'preferences_scd2'
     , 'preselector_agreements_scd2'
@@ -187,7 +189,6 @@ billing_agreements as (
         , first_orders.first_menu_week_quarter
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name
-        , scd2_tables_joined.sales_point_id
         , coalesce(scd2_tables_joined.preselector_flag, "Not Preselector") as preselector_flag
         , case
             when onesub_agreements.billing_agreement_basket_product_updated_id is null

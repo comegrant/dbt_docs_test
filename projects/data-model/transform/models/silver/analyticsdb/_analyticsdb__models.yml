@@ -40,5 +40,32 @@ models:
         data_tests:
           - not_null
 
+  - name: analyticsdb_snapshots__historical_billing_agreement_statuses
+    description: "A daily snapshot table of billing_agreement_ids with statuses from AnalyticsDB. Deleted agreements are not included."
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_status_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+  
   - name: analyticsdb_orders__historical_orders
   - name: analyticsdb_orders__historical_order_lines
