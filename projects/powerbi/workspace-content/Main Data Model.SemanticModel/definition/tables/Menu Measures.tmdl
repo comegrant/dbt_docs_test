@@ -61,16 +61,24 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column portion_size
+	column portion_quantity
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: bd336b8a-e970-4983-9843-81cefd77bdb3
 		summarizeBy: sum
-		sourceColumn: portion_size
+		sourceColumn: portion_quantity
 
 		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column portion_name
+		dataType: string
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: portion_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -217,50 +225,6 @@ table 'Menu Measures'
 		lineageTag: 36b478e8-619b-40b8-9a37-ff72e8d2defa
 		summarizeBy: sum
 		sourceColumn: menu_recipe_order
-
-		annotation SummarizationSetBy = Automatic
-
-	column weekly_menu_status_code_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 28e90300-073f-4c7e-a245-be552f315ef9
-		summarizeBy: sum
-		sourceColumn: weekly_menu_status_code_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_status_code_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: d9a48ed0-cfe0-4945-a6b0-f9357a7e8bcc
-		summarizeBy: sum
-		sourceColumn: menu_status_code_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column recipe_status_code_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 64f8c8c2-d042-40c6-95b1-ac6c40028e16
-		summarizeBy: sum
-		sourceColumn: recipe_status_code_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column portion_status_code_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 95448337-9047-49ea-8fb5-d306faeb4fa7
-		summarizeBy: sum
-		sourceColumn: portion_status_code_id
 
 		annotation SummarizationSetBy = Automatic
 

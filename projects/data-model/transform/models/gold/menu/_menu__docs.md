@@ -29,6 +29,12 @@
 
 {% enddocs %}
 
+{% docs column__portion_quantity %}
+
+...
+
+{% enddocs %}
+
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 

@@ -4,7 +4,7 @@ with fact_menu as (
         , fk_dim_recipes
         , menu_id
         , recipe_portion_id
-        , portion_size
+        , portion_quantity
         , portion_id
     from {{ ref('fact_menus') }}
     -- only include menu variations with recipe_id and portion_id
@@ -190,7 +190,7 @@ with fact_menu as (
             'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- single dishes
             , '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealboxes
         )
-        and fact_menu.portion_size = 4
+        and fact_menu.portion_quantity = 4
         and fact_menu.portion_id <> 15 -- plus portions for Retnemt
         and dim_companies.company_id in (
             '5E65A955-7B1A-446C-B24F-CFE576BF52D7' -- Retnemt

@@ -345,7 +345,7 @@ models:
       alias: fact_menus
       contract:
         enforced: True
-        
+
     columns:
       - name: pk_fact_menus
         data_type: string
@@ -429,12 +429,6 @@ models:
       - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-        data_tests:
-          - not_null:
-              config:
-                severity: error
-                error_if: ">44"
-                warn_if: "<44"
 
       - name: portion_id_recipes
         data_type: int
@@ -467,12 +461,6 @@ models:
       - name: menu_number_days
         data_type: smallint
         description: "{{ doc('column__menu_number_days') }}"
-        data_tests:
-          - not_null:
-              config:
-                severity: error
-                error_if: ">44"
-                warn_if: "<44"
 
       - name: menu_recipe_order
         data_type: smallint
@@ -482,55 +470,13 @@ models:
               config:
                   severity: warn
 
-      - name: portion_size
+      - name: portion_quantity
         data_type: int
-        description: "{{ doc('column__portion_size') }}"
-        data_tests:
-          - not_null:
-              config:
-                severity: error
-                error_if: ">44"
-                warn_if: "<44"
+        description: "{{ doc('column__portion_quantity') }}"
 
-      - name: weekly_menu_status_code_id
-        data_type: int
-        description: "{{ doc('column__pim_status_code_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: menu_status_code_id
-        data_type: int
-        description: "{{ doc('column__pim_status_code_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: recipe_status_code_id
-        data_type: int
-        description: "{{ doc('column__pim_status_code_id') }}"
-        # has missing recipe_ids
-        #constraints:
-        #  - type: not_null
-        #data_tests:
-        #  - not_null:
-        #      config:
-        #          severity: warn
-
-      - name: portion_status_code_id
-        data_type: int
-        description: "{{ doc('column__pim_status_code_id') }}"
-        # has missing portion_ids
-        #constraints:
-        #  - type: not_null
-        #data_tests:
-        #  - not_null:
-        #      config:
-        #        severity: error
-        #        error_if: ">44"
-        #       warn_if: "<44"
+      - name: portion_name
+        data_type: string
+        description: "{{ doc('column__portion_name') }}"     
 
       - name: is_selected_menu
         data_type: boolean

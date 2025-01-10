@@ -12,7 +12,7 @@ fact_menus as (
         , recipe_id
         , recipe_portion_id
         , portion_id
-        , portion_size
+        , portion_quantity
         , menu_recipe_order
         , menu_number_days
     from
