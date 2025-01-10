@@ -446,6 +446,13 @@ class RecipeFeatures:
         as_dtype=Bool()
     )
 
+    is_cheep = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(2195)
+        | pl.col("taxonomy_ids").list.contains(2196)
+        | pl.col("taxonomy_ids").list.contains(2197),
+        as_dtype=Bool()
+    )
+
     is_chefs_choice = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2011)
         | pl.col("taxonomy_ids").list.contains(2147)
@@ -661,7 +668,6 @@ class RecipeCost:
     price_category_level = Int32()
 
     is_premium = price_category_level >= 4  # noqa: PLR2004
-    is_cheep = price_category_level <= -1
 
     suggested_selling_price_incl_vat = Float()
 
@@ -679,7 +685,7 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
 
     nutrition = query(RecipeNutrition).all()
     cost = query(RecipeCost).select_columns([
-        "recipe_cost_whole_units", "is_plus_portion", "is_cheep"
+        "recipe_cost_whole_units", "is_plus_portion"
     ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").not_()))
 
     return (
@@ -772,7 +778,7 @@ class NormalizedRecipeFeatures:
     normalized_at = EventTimestamp()
 
     main_recipe_id = Int32()
-    main_ingredient_id = Int32()
+    main_ingredient_id = Int32().is_optional()
 
     taxonomy_ids = List(Int32())
 

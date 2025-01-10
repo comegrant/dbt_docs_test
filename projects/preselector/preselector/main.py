@@ -1664,11 +1664,16 @@ async def run_preselector(
                 "recipe_id": pl.Int32
             }).join(
                 recommendations.select(["product_id", "order_rank"]),
-                on="product_id"
-            )
+                on="product_id",
+                how="left"
+            ).unique("recipe_id")
+
             recipe_features = recipe_features.select(pl.exclude("order_rank")).join(
                 with_rank.select(["recipe_id", "order_rank"]),
-                on="recipe_id"
+                on="recipe_id",
+                how="left"
+            ).with_columns(
+                pl.col("order_rank").fill_null(pl.lit(recipe_features.height / 2))
             ).with_columns(
                 order_rank=pl.col("order_rank").log() / pl.col("order_rank").log().max().clip(lower_bound=1)
             )

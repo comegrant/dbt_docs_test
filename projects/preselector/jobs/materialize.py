@@ -69,4 +69,4 @@ store = preselector_store()
 
 locations = list(Preselector.query().view.source.depends_on())
 
-await materialize_data(store, locations, should_force_update=should_force_update)
+await materialize_data(store, locations, should_force_update=should_force_update, logger=print)

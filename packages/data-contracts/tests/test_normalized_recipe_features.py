@@ -47,7 +47,9 @@ async def test_normalize_features_logic(dummy_store: ContractStore) -> None:
             "recipe_id": [1, 2, 3],
             "year": [2024] * 3,
             "week": [1] * 3,
-            "company_id": ["test"] * 3
+            "company_id": ["test"] * 3,
+            "average_rating": [4.3, 3.2, None],
+            "number_of_ratings": [100, 5, None],
         })
     )
 

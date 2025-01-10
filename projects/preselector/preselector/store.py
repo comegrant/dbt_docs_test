@@ -4,8 +4,6 @@ from data_contracts.preselector.store import FailedPreselectorOutput, RecipePref
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from data_contracts.recommendations.store import recommendation_feature_contracts
 
-from preselector.recipe_contracts import Preselector
-
 
 def preselector_store() -> ContractStore:
     """
@@ -19,6 +17,5 @@ def preselector_store() -> ContractStore:
     store.add_feature_view(RecipePreferences)
     store.add_feature_view(PreselectorOutput)
     store.add_feature_view(CostOfFoodPerMenuWeek)
-    store.add_model(Preselector)
 
     return store
