@@ -7,9 +7,7 @@ class CompanyTrainConfigs(BaseModel):
     model_params: dict
 
 
-def get_company_train_configs(
-    company_code: str
-) -> CompanyTrainConfigs:
+def get_company_train_configs(company_code: str) -> CompanyTrainConfigs:
     if company_code == "AMK":
         return amk_train_configs
     elif company_code == "LMK":
@@ -23,35 +21,19 @@ def get_company_train_configs(
 
 
 amk_train_configs = CompanyTrainConfigs(
-    train_start_yyyyww=202301,
-    train_end_yyyyww=202451,
-    model_params={
-        "n_estimators": 100
-    }
+    train_start_yyyyww=202301, train_end_yyyyww=202451, model_params={"n_estimators": 100}
 )
 
 lmk_train_configs = CompanyTrainConfigs(
-    train_start_yyyyww=202301,
-    train_end_yyyyww=202451,
-    model_params={
-        "n_estimators": 100
-    }
+    train_start_yyyyww=202301, train_end_yyyyww=202451, model_params={"n_estimators": 100}
 )
 
 gl_train_configs = CompanyTrainConfigs(
-    train_start_yyyyww=202301,
-    train_end_yyyyww=202451,
-    model_params={
-        "n_estimators": 100
-    }
+    train_start_yyyyww=202301, train_end_yyyyww=202451, model_params={"n_estimators": 100}
 )
 
 rt_train_configs = CompanyTrainConfigs(
-    train_start_yyyyww=202401,
-    train_end_yyyyww=202451,
-    model_params={
-        "n_estimators": 100
-    }
+    train_start_yyyyww=202401, train_end_yyyyww=202451, model_params={"n_estimators": 100}
 )
 
 
@@ -73,11 +55,11 @@ recipes_lookup = FeatureLookUpConfig(
         "cooking_time_to",
         "number_of_taxonomies",
         "number_of_recipe_steps",
-        "number_of_ingredients"
+        "number_of_ingredients",
     ],
     exclude_in_training_set=[
         "recipe_id",
-    ]
+    ],
 )
 
 feature_lookup_config_list = [

@@ -51,11 +51,11 @@ company_rt = Company(
 )
 
 
-def get_all_companies() -> list[object]:
+def get_all_companies() -> list[Company]:
     return [company_amk, company_gl, company_lmk, company_rt]
 
 
-def get_company_by_id(company_id: str) -> object:
+def get_company_by_id(company_id: str) -> Company:
     all_companies = get_all_companies()
     for cls in all_companies:
         if hasattr(cls, "company_id") and cls.company_id == company_id:
@@ -63,7 +63,7 @@ def get_company_by_id(company_id: str) -> object:
     raise ValueError("No company with the given id found.")
 
 
-def get_company_by_name(company_name: str) -> object:
+def get_company_by_name(company_name: str) -> Company:
     all_companies = get_all_companies()
     for cls in all_companies:
         company_name_processed = company_name.lower().replace(" ", "")
@@ -74,7 +74,7 @@ def get_company_by_name(company_name: str) -> object:
     raise ValueError("No company with the given name found.")
 
 
-def get_company_by_code(company_code: str) -> object:
+def get_company_by_code(company_code: str) -> Company:
     all_companies = get_all_companies()
     for cls in all_companies:
         if hasattr(cls, "company_code") and cls.company_code == company_code:

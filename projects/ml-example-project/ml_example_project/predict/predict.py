@@ -47,9 +47,10 @@ def make_predictions(args: Args, spark: SparkSession) -> DataFrame:
 
     model_uri = company_predict_configs.model_uri
     loaded_model = mlflow.pyfunc.load_model(model_uri)
+    company_id = company_properties.company_id
     df_predict_pk, predict_data = create_predict_dataframe(
         spark=spark,
-        company_id=company_properties.company_id,
+        company_id=company_id,
         predict_start_yyyyww=args.predict_start_yyyyww,
         predict_end_yyyyww=args.predict_start_yyyyww,
     )

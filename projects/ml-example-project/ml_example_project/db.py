@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Any
 
 from databricks.connect import DatabricksSession
 from pyspark.sql import DataFrame, SparkSession
@@ -15,12 +16,12 @@ def get_spark_session() -> SparkSession:
         return DatabricksSession.builder.getOrCreate()
 
 
-def get_serverless_spark_session() -> DatabricksSession:
+def get_serverless_spark_session() -> SparkSession:
     """Create a serverless spark session."""
     return DatabricksSession.builder.serverless().getOrCreate()
 
 
-def get_data_from_sql(spark: SparkSession, sql_path: Path, **kwargs: dict) -> DataFrame:
+def get_data_from_sql(spark: SparkSession, sql_path: Path, **kwargs: Any) -> DataFrame:  # noqa
     """Get data from SQL query file."""
     with Path(sql_path).open() as f:
         custom_query = f.read().format(**kwargs)

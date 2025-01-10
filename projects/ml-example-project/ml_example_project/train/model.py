@@ -20,8 +20,8 @@ class ClassificationPipeline(mlflow.pyfunc.PythonModel):
 
     def __init__(
         self,
-        model: any,
-        preprocessor: any,
+        model: any,  # type: ignore
+        preprocessor: PreProcessor,
         task: str = "classify",
     ):
         """
@@ -60,7 +60,7 @@ class ClassificationPipeline(mlflow.pyfunc.PythonModel):
 
     def predict(
         self,
-        context: any,
+        context: any,  # type: ignore
         model_input: pd.DataFrame,
     ) -> np.ndarray:
         """
@@ -82,6 +82,8 @@ class ClassificationPipeline(mlflow.pyfunc.PythonModel):
             prediction = self.model.predict_proba(processed_model_input)
         elif self.task == "classify":
             prediction = self.model.predict(processed_model_input)
+        else:
+            raise ValueError(f"Invalid task: {self.task}")
         return prediction
 
 
@@ -94,9 +96,6 @@ def define_model_pipeline(
         numeric_features=["number_of_ingredients", "number_of_taxonomies"], categorical_features=["cooking_time_from"]
     )
 
-    rf = RandomForestClassifier(
-        # n_estimators=100,
-        **model_params
-    )
+    rf = RandomForestClassifier(**model_params)
     pipeline = ClassificationPipeline(preprocessor=preprocessor, model=rf, task=task)
     return pipeline

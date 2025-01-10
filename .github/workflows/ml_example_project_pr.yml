@@ -10,6 +10,13 @@
       workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
     jobs:
+      test-ml-example-project:
+        uses: ./.github/workflows/template_test_python.yml
+        with:
+          python-version: "3.11.9"
+          working-directory: projects/ml-example-project
+        secrets: inherit
+
       build-ml-example-project-databricks-image:
         uses: ./.github/workflows/cd_docker_image_template.yml
         with:

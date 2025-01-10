@@ -1,4 +1,5 @@
 import logging
+from typing import Union
 
 from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
 from databricks.feature_engineering.training_set import TrainingSet
@@ -15,7 +16,7 @@ def create_training_set(
     feature_lookup_config_list: list[FeatureLookUpConfig],
     company_train_configs: CompanyTrainConfigs,
     fe: FeatureEngineeringClient | None,
-) -> TrainingSet | DataFrame:
+) -> Union[DataFrame, TrainingSet]:
     """Create training set for specific company.
 
     - If feature engineering client is provided, creates the training set from FeatureLookups.
@@ -42,7 +43,7 @@ def create_training_set(
     if fe is not None:
         training_set = fe.create_training_set(
             df=df_target,
-            feature_lookups=feature_lookups,
+            feature_lookups=feature_lookups,  # type: ignore
             label="recipe_difficulty_level_id",
             exclude_columns=ignore_columns,
         )
@@ -132,7 +133,7 @@ def get_training_target(
     spark: SparkSession,
     company_id: str,
     train_start_yyyyww: int,
-    train_end_yyyyww: int | None,
+    train_end_yyyyww: int,
 ) -> DataFrame:
     """
     We want to train on all recipe_id that is part of a weekly menu

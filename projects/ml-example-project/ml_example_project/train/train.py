@@ -49,17 +49,19 @@ def train_model(args: Args, spark: SparkSession) -> None:
         # Override it if set to True.
         # It can't be used unless you are running on Databricks
         args.is_use_feature_store = False
+
+    company_id = company_properties.company_id
     training_set = create_training_set(
         spark=spark,
-        company_id=company_properties.company_id,
+        company_id=company_id,
         feature_lookup_config_list=feature_lookup_config_list,
         company_train_configs=company_train_configs,
         fe=fe,
     )
     if args.is_use_feature_store:
-        df_training = training_set.load_df().toPandas()
+        df_training = training_set.load_df().toPandas()  # type: ignore
     else:
-        df_training = training_set.toPandas()
+        df_training = training_set.toPandas()  # type: ignore
     target = "recipe_difficulty_level_id"
     X_train, X_val, y_train, y_val = train_test_split(  # noqa
         df_training.drop(columns=[target]), df_training[target], test_size=0.2
@@ -77,8 +79,8 @@ def train_model(args: Args, spark: SparkSession) -> None:
 
     with mlflow.start_run(run_name=run_name):
         pipeline = define_model_pipeline(task="classify", model_params=company_train_configs.model_params)
-        pipeline.fit(X_train=X_train, y_train=y_train)
-        y_pred = pipeline.predict(model_input=X_val, context=None)
+        pipeline.fit(X_train=X_train, y_train=y_train)  # type: ignore
+        y_pred = pipeline.predict(model_input=X_val, context=None)  # type: ignore
         logging.info("Inferring signature...")
         accuracy = accuracy_score(y_true=y_val, y_pred=y_pred)
         mlflow.log_metric(key="classification_accuracy", value=accuracy)
