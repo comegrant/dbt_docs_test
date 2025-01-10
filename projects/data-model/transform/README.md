@@ -34,7 +34,9 @@ This is the naming conventions that should be followed when creating models:
 - 🔙 Events dates and times should be past tense — created, updated, or deleted.
 - 🎚️ Booleans should be prefixed with `is_` or `has_` etc., e.g., `is_active_customer` and `has_admin_access`
 - 🔑 Id columns that are used as primary keys in the source system should always be called `<table_name>_id` e.g `billing_agreement_id`
+- 🤷🏻‍♀️ Avoid too generic names, e.g., use `product_name` rather than `name` or `product`.
 - 💪 Consistency is key! Use the same field names across models where possible. For example, an id to the `billing_agreement` table should be named `billing_agreement_id` everwhere rather than alternating with `customer_id`
+- 🚧 System fields from the source system should have source_ as prefix, e.g., the created_at and created_by columns should be source_created_at and source_created_by.
 
 ## 1.4 Best Practices
 Please follow these best practices when creating models:
@@ -221,7 +223,7 @@ dbt-chef generate-yaml --model-name <model_name>
 ```
 2. Copy output and add it to the `__models.yml`-file after `description:` if its in silver or before `versions:` if its in gold.
 3. Remove the generated constraints and data tests that are not appropriate fro your model.
-4. Add constraints and data tests that are needed
+4. Add constraints and data tests that are needed.
 5. Fill in accepted values when appropriate (see tip further down).
 6. Run `dbt build -s model_name` (NB! this time we use `dbt build` and not `dbt run` as this will also run the tests we have added).
 7. Now that you added constraints and tests these might fail. Debug and fix the errors if occuring.

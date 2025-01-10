@@ -26,6 +26,7 @@ tables = [
         "discount_type",
         "discount_usage_type",
         "loyalty_agreement_ledger",
+        "loyalty_event",
         "loyalty_level",
         "order_type",
         "preference",

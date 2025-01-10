@@ -3,6 +3,62 @@
 version: 2
 
 models:
+
+  - name: cms__loyalty_events
+    description: "Information about the events that affect the customers accumulated loyalty level points."
+
+    columns:
+      - name: loyalty_event_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_event_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_event_name
+        data_type: string
+        description: "{{ doc('column__loyalty_event_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
   - name: cms__companies
     description: "The companies of Cheffelo."
     columns:

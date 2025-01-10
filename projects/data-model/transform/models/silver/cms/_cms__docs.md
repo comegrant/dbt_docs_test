@@ -508,7 +508,13 @@ When the customer recieved the points.
 
 {% docs column__loyalty_event_id %}
 
-This is the primary key of the loylaty events in CMS.
+The unique id of the loyalty event in the CMS database. 
+
+{% enddocs %}
+
+{% docs column__loyalty_event_name %}
+
+The name of the loyalty event.
 
 {% enddocs %}
 

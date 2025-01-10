@@ -1,4 +1,5 @@
 version: 2
+
 data_tests:
   - name: estimations_log_valid_weeks
     description: >
