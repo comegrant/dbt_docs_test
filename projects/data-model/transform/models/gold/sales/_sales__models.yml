@@ -125,6 +125,22 @@ models:
         data_tests:
           - not_null
 
+      - name: recipe_comment
+        data_type: string
+        description: "{{ doc('column__recipe_comment') }}"
+
+      - name: recipe_rating
+        data_type: int
+        description: "{{ doc('column__recipe_rating') }}"
+
+      - name: recipe_rating_score
+        data_type: double
+        description: "{{ doc('column__recipe_rating_score') }}"
+
+      - name: is_not_cooked_dish
+        data_type: boolean
+        description: "{{ doc('column__is_not_cooked_dish') }}"
+
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"

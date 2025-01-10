@@ -47,6 +47,12 @@ order_lines as (
 
 )
 
+, recipe_feedback as (
+
+    select * from {{ ref('int_recipe_ratings_comments_joined') }}
+
+)
+
 -- TODO: This solution is a bit hacky
 , recommendations_origin as (
 
@@ -508,7 +514,22 @@ order_lines as (
 
 )
 
-, add_pk (
+, add_recipe_feedback as (
+    select 
+        add_recipes_to_orders.*
+        , recipe_feedback.recipe_rating
+        , recipe_feedback.recipe_rating_score
+        , recipe_feedback.is_not_cooked_dish
+        , recipe_feedback.recipe_comment
+    from add_recipes_to_orders
+    left join recipe_feedback
+        on add_recipes_to_orders.recipe_id = recipe_feedback.recipe_id
+        and add_recipes_to_orders.billing_agreement_id = recipe_feedback.billing_agreement_id
+
+
+)
+
+, add_pk as (
     select 
         md5(concat_ws('-'
             , menu_week_monday_date
@@ -521,8 +542,8 @@ order_lines as (
             , preselected_recipe_id
             )
         ) as pk_fact_orders
-        , add_recipes_to_orders.* 
-    from add_recipes_to_orders
+        , add_recipe_feedback.* 
+    from add_recipe_feedback
 )
 
 select * from add_pk

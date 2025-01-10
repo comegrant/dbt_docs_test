@@ -868,6 +868,9 @@ models:
 
   - name: pim__recipe_ratings
     description: "Reported ratings (1-5) by the customer on purchased recipes"
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_id || '-' || recipe_id)"
     columns:
       - name: recipe_id
         data_type: int
@@ -929,6 +932,9 @@ models:
 
   - name: pim__recipe_comments
     description: "Free text comments by the customer on purchased recipes"
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_id || '-' || recipe_id)"
     columns:
       - name: recipe_id
         data_type: int

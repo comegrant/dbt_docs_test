@@ -1155,6 +1155,54 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
+	column 'Recipe Comment'
+		dataType: string
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_comment
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+
+	column 'Recipe Rating Score'
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: sum
+		sourceColumn: recipe_rating_score
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	
+	column 'Recipe Rating'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: recipe_rating
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+	
+	column is_not_cooked_dish
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_not_cooked_dish
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+
 	column fk_dim_billing_agreements_deviations
 		dataType: string
 		isHidden
