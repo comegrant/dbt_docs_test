@@ -943,9 +943,10 @@ def cached_output(
     portion_size: int,
     number_of_recipes: int,
     taste_preference_ids: list[str],
-    company_id: str
+    company_id: str,
+    ordered_in_week: dict[int, int] | None
 ) -> PreselectorYearWeekResponse | None:
-    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}" # noqa: E501
+    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}" # noqa: E501
     return mealkit_cache.get(key)
 
 
@@ -956,9 +957,10 @@ def set_cache(
     portion_size: int,
     number_of_recipes: int,
     taste_preference_ids: list[str],
-    company_id: str
+    company_id: str,
+    ordered_in_week: dict[int, int] | None
 ) -> None:
-    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}" # noqa: E501
+    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}" # noqa: E501
     mealkit_cache[key] = result
 
 
@@ -1082,7 +1084,8 @@ async def run_preselector_for_request(
             request.portion_size,
             request.number_of_recipes,
             sorted_taste_pref,
-            request.company_id
+            request.company_id,
+            request.ordered_weeks_ago
         )
         if cached_value:
             return PreselectorResult(
@@ -1144,7 +1147,8 @@ async def run_preselector_for_request(
                 request.portion_size,
                 request.number_of_recipes,
                 sorted_taste_pref,
-                request.company_id
+                request.company_id,
+                request.ordered_weeks_ago
             )
             if cached_value:
                 results.append(cached_value)
@@ -1304,7 +1308,8 @@ async def run_preselector_for_request(
                 request.portion_size,
                 request.number_of_recipes,
                 sorted_taste_pref,
-                request.company_id
+                request.company_id,
+                request.ordered_weeks_ago
             )
 
         results.append(result)

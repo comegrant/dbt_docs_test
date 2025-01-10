@@ -98,7 +98,7 @@ FROM (SELECT rec.recipe_id,
 	INNER JOIN pim.MENUS m on m.WEEKLY_MENUS_ID = wm.weekly_menus_id
 	INNER JOIN pim.MENU_RECIPES mr on mr.MENU_ID = m.MENU_ID
 	INNER JOIN pim.recipes rec on rec.recipe_id = mr.RECIPE_ID
-        INNER JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
+        LEFT JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
 	INNER JOIN pim.RECIPE_COMPANIES rc ON rc.RECIPE_ID = rec.recipe_id
         INNER JOIN pim.recipes_metadata rm ON rec.recipe_metadata_id = rm.RECIPE_METADATA_ID
         INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
@@ -772,6 +772,7 @@ class NormalizedRecipeFeatures:
     normalized_at = EventTimestamp()
 
     main_recipe_id = Int32()
+    main_ingredient_id = Int32()
 
     taxonomy_ids = List(Int32())
 

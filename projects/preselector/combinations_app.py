@@ -1,8 +1,10 @@
 import asyncio
+import json
 import logging
 import uuid
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
+from time import monotonic
 from types import ModuleType
 from typing import TypeVar
 
@@ -111,6 +113,8 @@ async def main() -> None:
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
         agreement_id = st.number_input("Agreement ID", min_value=1, value=None)
+        ordered_weeks_ago = st.text_area("Ordered Recipe in Week")
+
         submit_button = st.form_submit_button("Generate")
 
     if not selected_attributes:
@@ -159,10 +163,15 @@ async def main() -> None:
         number_of_recipes=int(number_of_recipes),
         portion_size=int(portion_size),
         has_data_processing_consent=agreement_id is not None,
+        ordered_weeks_ago=json.loads(str(ordered_weeks_ago)) if ordered_weeks_ago else None,
         override_deviation=False,
     )
 
+    start_time = monotonic()
     response = await run_preselector_for_request(request, cached_store, should_explain=True)
+    end_time = monotonic()
+
+    st.write(f"Used {(end_time - start_time):.5f}s")
 
     if response.success:
         await display_recipes(response.success[0], st)

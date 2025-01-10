@@ -394,7 +394,7 @@ async def generate_attribut_definition_vectors(request: RetrivalRequest) -> pl.L
         "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {
             "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=1.0),
             "mean_number_of_ratings": FeatureImportance(target=0.75, importance=0.3),
-            "mean_ratings": FeatureImportance(target=0.8, importance=0.6),
+            "mean_ratings": FeatureImportance(target=0.8, importance=0.3),
         },
         # Family
         "B172864F-D58E-4395-B182-26C6A1F1C746": {
