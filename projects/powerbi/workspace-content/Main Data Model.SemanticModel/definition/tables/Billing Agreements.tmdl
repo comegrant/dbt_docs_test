@@ -244,17 +244,6 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Sales Point Id'
-		dataType: int64
-		formatString: 0
-		lineageTag: 7f1fa672-5f50-4026-8bb4-c237d13ff6be
-		summarizeBy: count
-		sourceColumn: sales_point_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Signup Date'
 		dataType: dateTime
 		isHidden
