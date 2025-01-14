@@ -140,14 +140,13 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
 
     valid_portions as (
         select distinct
-            portion_size
+            portion_quantity
         from gold.fact_menus
         where
-            weekly_menu_status_code_id = 3 -- published
+            is_locked_recipe
             and menu_week_monday_date > current_date()
             and is_dish
             and has_recipe_portions
-            and portion_status_code_id = 1
             and company_id = '{company_id}'
 
     ),
@@ -196,7 +195,7 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
         and days_since_last_delivery <= 12*7 -- 12 weeks
         and is_current = true
         and portions in (
-            select portion_size from valid_portions
+            select portion_quantity from valid_portions
         )
     )
 
