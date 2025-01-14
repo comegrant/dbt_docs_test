@@ -286,3 +286,41 @@ The latest time the model version was used to generate the output.
 An arbitrary version number that is assigned to that commit_sha. Calculated using the row number when sorting by the source_model_version_first_used_at column in ascending order. It is therefore possible that the version numbers don't match up exactly with all commit_shas in the preselector project, especially if there are multiple commits in a single day.
 
 {% enddocs %}
+
+# Fact Preselector
+
+{% docs column__pk_fact_preselector %}
+
+The unique id of each row in Fact Preselector.
+
+{% enddocs %}
+
+{% docs column__fk_dim_date_created_at_preselector_output %}
+
+Foreign key that is used to relate the created at date from the preselector output to Dim Date.
+
+{% enddocs %}
+
+{% docs column__fk_dim_time_created_at_preselector_output %}
+
+Foreign key that is used to relate the created at time from the preselector output to Dim Time.
+
+{% enddocs %}
+
+{% docs column__menu_week_output_version %}
+
+The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates which sequential version of the output it is for that menu week per billing agreement.
+
+{% enddocs %}
+
+{% docs column__is_latest_menu_week_output_version %}
+
+The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the customers sees on the frontend, because they may have made a deviation themselves.
+
+{% enddocs %}
+
+{% docs column__fk_dim_recipes_main_recipe %}
+
+Foreign key that is used to relate to the main recipe of the row's recipe.
+
+{% enddocs %}
