@@ -1,57 +1,32 @@
 
 import asyncio
 import logging
-from contextlib import suppress
 
+import polars as pl
 import streamlit as st
 from cheffelo_logging.logging import setup_streamlit
 from combinations_app import display_recipes
-from data_contracts.preselector.store import Preselector
-from preselector.data.models.customer import PreselectorFailedResponse, PreselectorSuccessfulResponse
+from data_contracts.preselector.store import SuccessfulPreselectorOutput
+from preselector.data.models.customer import (
+    PreselectorPreferenceCompliancy,
+    PreselectorSuccessfulResponse,
+    PreselectorYearWeekResponse,
+)
 from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
-from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
+from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
-from pydantic import ValidationError
 
 
 async def failure_responses_form() -> list[GenerateMealkitRequest]:
+    raise NotImplementedError(
+        "Not implemented, as the current data model for failed requests is not good enough. "
+        "We should enable to filter on users without decoding the JSON request"
+    )
 
-    stream = Preselector.metadata.stream_source
-    assert stream is not None
-
-
-    with st.form("Debug"):
-        agreement_id = st.number_input("Agreement ID", min_value=0)
-        reload = st.form_submit_button("Reload")
-
-    if agreement_id <= 0:
-        return []
-
-    if not reload and str(agreement_id) in st.session_state:
-        return st.session_state[str(agreement_id)]
-
-    reader = stream.consumer("0-0")
-    records = await reader.read()
-
-    decoded_records: list[PreselectorFailedResponse] = []
-    for record in records:
-        with suppress(ValidationError):
-            decoded_records.append(PreselectorFailedResponse.model_validate_json(record["json_data"], strict=True))
-
-    agreement_records = [
-        record.request
-        for record in decoded_records
-        if record.request.agreement_id == agreement_id
-    ]
-    st.session_state[str(agreement_id)] = agreement_records
-    return agreement_records
 
 async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
-    stream = Preselector.metadata.stream_source
-    assert stream is not None
-
 
     with st.form("Debug"):
         agreement_id = st.number_input("Agreement ID", min_value=0)
@@ -63,46 +38,92 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     if not reload and str(agreement_id) in st.session_state:
         return st.session_state[str(agreement_id)]
 
-    reader = stream.consumer("0-0")
-    records = await reader.read()
+    output = await SuccessfulPreselectorOutput.query().filter(
+        pl.col("billing_agreement_id") == agreement_id
+    ).to_polars()
 
-    decoded_records = []
-    for record in records:
-        with suppress(ValidationError):
-            decoded_records.append(PreselectorSuccessfulResponse.model_validate_json(record["json_data"], strict=True))
+    structured = output.group_by(["generated_at", "billing_agreement_id"]).agg(
+        year_weeks=pl.struct(
+            pl.col("menu_year"),
+            pl.col("menu_week"),
+            pl.col("variation_ids"),
+            pl.col("main_recipe_ids"),
+            pl.col("target_cost_of_food_per_recipe"),
+            pl.col("compliancy"),
+        )
+    ).sort("generated_at", descending=True)
 
-    agreement_records = [
-        record
-        for record in decoded_records
-        if record.agreement_id == agreement_id
-    ]
-    st.session_state[str(agreement_id)] = agreement_records
-    return agreement_records
+    responses = []
+
+    def decode_broken_taste_preferences(taste_preferences: str) -> list[NegativePreference]:
+        preferences: list[NegativePreference] = []
+
+        for preference in taste_preferences:
+            stripped = preference.removeprefix("{").removesuffix("}")
+
+            components = stripped.split(",")
+            assert len(components) == 2 # noqa
+            preferences.append(
+                NegativePreference(
+                    preference_id=components[0].strip("\""),
+                    is_allergy=components[1], # type: ignore
+                )
+            )
+        return preferences
+
+
+
+
+    for row in structured.iter_rows(named=True):
+        first_row = output.filter(
+            (pl.col("billing_agreement_id") == row["billing_agreement_id"])
+            & (pl.col("generated_at") == row["generated_at"])
+        ).rows(named=True)[0]
+
+        responses.append(
+            PreselectorSuccessfulResponse(
+                agreement_id=agreement_id,
+                company_id=first_row["company_id"],
+                correlation_id="",
+                year_weeks=[
+                    PreselectorYearWeekResponse(
+                        year=week["menu_year"],
+                        week=week["menu_week"],
+                        variation_ids=week["variation_ids"],
+                        main_recipe_ids=week["main_recipe_ids"],
+                        target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
+                        compliancy=PreselectorPreferenceCompliancy(week["compliancy"]),
+                    )
+                    for week in row["year_weeks"]
+                ],
+                concept_preference_ids=first_row["concept_preference_ids"],
+                taste_preferences=decode_broken_taste_preferences(first_row["taste_preferences"]),
+                override_deviation=False,
+                model_version=first_row["model_version"],
+                generated_at=row["generated_at"],
+                has_data_processing_consent=first_row["has_data_processing_consent"],
+                number_of_recipes=first_row["number_of_recipes"],
+                portion_size=first_row["portion_size"]
+            )
+        )
+
+    st.session_state[str(agreement_id)] = responses
+    return responses
+
 
 def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMealkitRequest, list[int]] | None:
 
-    companies = {
-        "8A613C15-35E4-471F-91CC-972F933331D7": "Adams",
-        "09ECD4F0-AE58-4539-8E8F-9275B1859A19": "Godt Levert",
-        "6A2D0B60-84D6-4830-9945-58D518D27AC2": "Linas",
-        "5E65A955-7B1A-446C-B24F-CFE576BF52D7": "RT",
-    }
     with st.form("Select Response"):
-
-        company_id = st.selectbox(
-            "Company",
-            options=companies.keys(),
-            format_func=lambda company_id: companies[company_id],
-            index=None
-        )
 
         response = st.selectbox("Response", options=responses, format_func=lambda res: res.generated_at)
 
         st.form_submit_button()
 
 
-    if not response or not company_id:
+    if not response:
         return None
+
+    company_id = response.company_id
 
     with st.form("Select Year Week"):
 
@@ -119,8 +140,6 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     st.write("Used model")
     st.write(response.model_version)
 
-    st.write("Quarentined Dishes")
-    st.write(year_week.ordered_weeks_ago)
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
@@ -132,6 +151,21 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
     st.write(year_week.compliancy)
 
     assert response.portion_size
+
+    ordered_weeks_ago = year_week.ordered_weeks_ago
+    if ordered_weeks_ago is None:
+        ordered_weeks_ago = {}
+        for week in response.year_weeks:
+            this_week = week.year * 100 + week.week
+            if this_week < year_week.year * 100 + year_week.week:
+                for recipe_id in week.main_recipe_ids:
+                    ordered_weeks_ago[recipe_id] = this_week
+
+        if not ordered_weeks_ago:
+            ordered_weeks_ago = None
+
+    st.write("Quarentined Dishes")
+    st.write(ordered_weeks_ago)
 
     return (
         GenerateMealkitRequest(
@@ -148,7 +182,7 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
             portion_size=response.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
-            ordered_weeks_ago=year_week.ordered_weeks_ago
+            ordered_weeks_ago=ordered_weeks_ago
         ),
         year_week.main_recipe_ids
     )

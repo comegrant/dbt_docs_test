@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 class RunArgs(BaseModel):
     tag: str
     env: Literal["test", "prod"]
-    mode: Literal["both", "batch", "live"] = Field("both")
+    mode: Literal["both", "batch", "live", "flush"] = Field("both")
 
 class ScaleArgs(BaseModel):
     tag: str
@@ -97,18 +97,19 @@ async def deploy_preselector(
     env: str,
     image_tag: str,
     resource_group: str,
-    workers: list[WorkerConfig]
+    workers: list[WorkerConfig],
+    write_output_interval: timedelta | None = None
 ) -> None:
     vault = key_vault()
 
     intervals = {
         "test": {
-            "write_output_interval": timedelta(hours=12),
+            "write_output_interval": write_output_interval or timedelta(hours=12),
             "write_output_max_size": 10_000,
             "update_data_interval": timedelta(hours=12)
         },
         "prod": {
-            "write_output_interval": timedelta(hours=3),
+            "write_output_interval": write_output_interval or timedelta(hours=3),
             "write_output_max_size": 10_000,
             "update_data_interval": timedelta(hours=5)
         }
@@ -211,7 +212,7 @@ async def deploy_preselector(
 
 
         company_specific_memory = {
-            "linas": 7,
+            "linas": 10,
             "godtlevert": 7,
             "retnemt": 4,
             "adams": 5
@@ -286,7 +287,7 @@ async def deploy_preselector(
 async def deploy_all(
     tag: str,
     env: str,
-    mode: Literal["both", "batch", "live"]
+    mode: Literal["both", "batch", "live", "flush"]
 ) -> None:
     company_names = [
         "godtlevert",
@@ -299,6 +300,7 @@ async def deploy_all(
         "test": "gg-deviation-service-qa.servicebus.windows.net",
         "prod": "gg-deviation-service-prod.servicebus.windows.net"
     }
+    split_workers = ["linas"]
 
     for company in company_names:
 
@@ -315,32 +317,68 @@ async def deploy_all(
                 tag=tag,
                 env=env,
                 worker_id=2,
-                company=company
+                company=company,
+                should_split=company in split_workers
             )
         elif mode == "both":
             name += f"-{env}"
             logger.info(name)
+            workers = [
+                WorkerConfig(
+                    container_name=f"{name}-live",
+                    batch_size=10,
+                    topic_name="priority-deviation-request"
+                ),
+                WorkerConfig(
+                    container_name=f"{name}-batch",
+                    batch_size=10,
+                    topic_name="deviation-request"
+                )
+            ]
 
-            await deploy_preselector(
-                name=name,
-                company=company,
-                service_bus_namespace=bus_namespace[env],
-                env=env,
-                image_tag=tag,
-                resource_group=f"rg-chefdp-{env}",
-                workers=[
-                    WorkerConfig(
-                        container_name=f"{name}-live",
-                        batch_size=10,
-                        topic_name="priority-deviation-request"
-                    ),
-                    WorkerConfig(
-                        container_name=f"{name}-batch",
-                        batch_size=10,
-                        topic_name="deviation-request"
+            if company in split_workers:
+                for index, worker in enumerate(workers):
+                    await deploy_preselector(
+                        name=name + f"-{index + 1}",
+                        company=company,
+                        service_bus_namespace=bus_namespace[env],
+                        env=env,
+                        image_tag=tag,
+                        resource_group=f"rg-chefdp-{env}",
+                        workers=[worker]
                     )
-                ]
-            )
+            else:
+                await deploy_preselector(
+                    name=name,
+                    company=company,
+                    service_bus_namespace=bus_namespace[env],
+                    env=env,
+                    image_tag=tag,
+                    resource_group=f"rg-chefdp-{env}",
+                    workers=workers
+                )
+        elif mode == "flush":
+            name += f"flush-{env}"
+            logger.info(name)
+            workers = [
+                WorkerConfig(
+                    container_name=f"{name}-flush",
+                    batch_size=10,
+                    topic_name="deviation-request"
+                ),
+            ]
+
+            if company == "retnemt":
+                await deploy_preselector(
+                    name=name,
+                    company=company,
+                    service_bus_namespace=bus_namespace[env],
+                    env=env,
+                    image_tag=tag,
+                    resource_group=f"rg-chefdp-{env}",
+                    workers=workers,
+                    write_output_interval=timedelta(seconds=1)
+                )
         else:
             name += f"-batch-{env}"
             logger.info(name)
@@ -368,7 +406,7 @@ async def deploy_all(
 
 
 
-async def scale_worker(tag: str, env: str, worker_id: int, company: str) -> None:
+async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_split: bool) -> None:
 
     logger.info(company)
     name = f"preselector-{company}-worker"
@@ -383,27 +421,41 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str) -> None
         "test": "gg-deviation-service-qa.servicebus.windows.net",
         "prod": "gg-deviation-service-prod.servicebus.windows.net"
     }
+    workers = [
+        WorkerConfig(
+            container_name=f"{name}-live-first",
+            batch_size=10,
+            topic_name="priority-deviation-request"
+        ),
+        WorkerConfig(
+            container_name=f"{name}-live-second",
+            batch_size=10,
+            topic_name="priority-deviation-request"
+        )
+    ]
 
-    await deploy_preselector(
-        name=name,
-        company=company,
-        service_bus_namespace=bus_namespace[env],
-        env=env,
-        image_tag=tag,
-        resource_group=f"rg-chefdp-{env}",
-        workers=[
-            WorkerConfig(
-                container_name=f"{name}-live-first",
-                batch_size=10,
-                topic_name="priority-deviation-request"
-            ),
-            WorkerConfig(
-                container_name=f"{name}-live-second",
-                batch_size=10,
-                topic_name="priority-deviation-request"
+    if should_split:
+        for index, worker in enumerate(workers):
+            await deploy_preselector(
+                name=name + f"-{index + 1}",
+                company=company,
+                service_bus_namespace=bus_namespace[env],
+                env=env,
+                image_tag=tag,
+                resource_group=f"rg-chefdp-{env}",
+                workers=[worker]
             )
-        ]
-    )
+    else:
+        await deploy_preselector(
+            name=name,
+            company=company,
+            service_bus_namespace=bus_namespace[env],
+            env=env,
+            image_tag=tag,
+            resource_group=f"rg-chefdp-{env}",
+            workers=workers
+        )
+
 
 def key_vault() -> KeyVaultInterface:
     try:
