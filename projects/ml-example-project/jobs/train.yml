@@ -28,7 +28,7 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
-        - task_key: ml-example-project-train-gl
+        - task_key: ml-example-project-train-company
           job_cluster_key: ml-example-project-train
           notebook_task:
             notebook_path: ./train.py
@@ -36,25 +36,25 @@ resources:
               env: "${var.environment}"
               company: GL
               is_run_on_databricks: True
-        - task_key: slack-notification-success-gl
+        - task_key: slack-notification-success
           depends_on:
-            - task_key: ml-example-project-train-gl
+            - task_key: ml-example-project-train-company
           run_if: ALL_SUCCESS
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              body_message: ✅ ML Example project train step for GL finished!
+              body_message: ✅ ML Example project train step finished!
               is_error: false
-        - task_key: slack-notification-failied-gl
+        - task_key: slack-notification-failied
           depends_on:
-            - task_key: ml-example-project-train-gl
-          run_if: ALL_FAILED
+            - task_key: ml-example-project-train-company
+          run_if: AT_LEAST_ONE_FAILED
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              message_header: ❌ ML Example project train step for GL failed!
+              message_header: ❌ ML Example project train step failed!
               body_message: Check databricks for details...
               is_error: true
               relevant_people: sylvia

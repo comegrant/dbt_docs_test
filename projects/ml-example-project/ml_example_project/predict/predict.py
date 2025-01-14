@@ -37,7 +37,7 @@ def make_predictions(args: Args, spark: SparkSession) -> DataFrame:
         DataFrame: Spark dataframe with timestamped predictions.
 
     """
-    company_predict_configs = get_company_predict_configs(company_code=args.company)
+    company_predict_configs = get_company_predict_configs(company_code=args.company, env=args.env)
     company_properties = get_company_by_code(company_code=args.company)
 
     if args.is_run_on_databricks:

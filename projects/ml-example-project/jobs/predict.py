@@ -1,5 +1,6 @@
 # Databricks notebook source
 import logging
+import os
 from typing import TYPE_CHECKING, Literal, cast
 
 from databricks_env import auto_setup_env
@@ -14,6 +15,14 @@ if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
 
     dbutils: RemoteDbUtils = ""  # type: ignore
+
+# COMMAND ----------
+API_ROOT = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()  # type: ignore
+API_TOKEN = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()  # type: ignore
+
+os.environ["DATABRICKS_TOKEN"] = API_TOKEN
+os.environ["DATABRICKS_HOST"] = API_ROOT
+os.environ["MLFLOW_USE_DATABRICKS_SDK_MODEL_ARTIFACTS_REPO_FOR_UC"] = "true"
 
 # COMMAND ----------
 from distutils.util import strtobool

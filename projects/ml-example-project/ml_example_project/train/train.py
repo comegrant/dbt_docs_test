@@ -91,3 +91,5 @@ def train_model(args: Args, spark: SparkSession) -> None:
             registered_model_name=f"mloutputs.ml_example_project_{args.company}",
             signature=signature,
         )
+
+    mlflow.end_run()
