@@ -1,0 +1,56 @@
+resources:
+  jobs:
+    ml_feature_store_ft_weekly_dishes_variation_adhoc:
+      name: ft-weekly-dishes-variation-adhoc-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: ft_weekly_dishes_variation_adhoc
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "ML feature store"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      tasks:
+        - task_key: ft-weekly-dishes-variations-adhoc
+          job_cluster_key: ft_weekly_dishes_variation_adhoc
+          notebook_task:
+            notebook_path: run_ft_weekly_dishes_variations.py
+            base_parameters:
+              env: "${var.environment}"
+              is_drop_existing: false
+        - task_key: slack-notification-success
+          depends_on:
+            - task_key: ft-weekly-dishes-variations-adhoc
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                body_message: ✅ ft_weekly_dishes_variations adhoc jobs successful!
+                is_error: false
+
+        - task_key: slack-notification-failure
+          depends_on:
+            - task_key: ft-weekly-dishes-variations-adhoc
+          run_if: ALL_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                header_message: ❌ ft_weekly dishes variations adhoc job in ML feature store failed!
+                body_message: Check databricks log for more details...
+                is_error: true
+                relevant_people: agathe, sylvia

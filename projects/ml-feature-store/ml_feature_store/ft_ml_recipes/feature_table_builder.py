@@ -15,6 +15,7 @@ from ml_feature_store.ft_ml_recipes.feature_generator import (
 
 class Args(BaseModel):
     env: Literal["dev", "test", "prod"]
+    is_drop_existing: bool = False
 
 
 def build_feature_table(args: Args, spark: SparkSession) -> None:
@@ -43,4 +44,5 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
         feature_table_name=table_config.feature_table_name,
         feature_table_schema=table_config.ml_feature_schema,
         primary_keys=table_config.primary_keys,
+        is_drop_existing=args.is_drop_existing
     )

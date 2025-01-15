@@ -10,6 +10,7 @@ from ml_feature_store.feature_tables import ft_weekly_dishes_variations_configs
 
 class Args(BaseModel):
     env: Literal["dev", "test", "prod"]
+    is_drop_existing: bool = False
 
 
 def build_feature_table(args: Args, spark: SparkSession) -> None:
@@ -35,5 +36,6 @@ def build_feature_table(args: Args, spark: SparkSession) -> None:
         env=args.env,
         feature_table_name=table_config.feature_table_name,
         feature_table_schema=table_config.ml_feature_schema,
-        primary_keys=table_config.primary_keys
+        primary_keys=table_config.primary_keys,
+        is_drop_existing=args.is_drop_existing
     )
