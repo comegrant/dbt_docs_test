@@ -26,7 +26,6 @@ resources:
       schedule:
         quartz_cron_expression: '0 0 8 ? * MON *'
         timezone_id: Europe/Amsterdam
-        pause_status: UNPAUSED
 
       email_notifications:
         on_failure:
@@ -83,3 +82,35 @@ resources:
               end_yyyyww: None
           depends_on:
             - task_key: predict-attribute-scoring-RT
+
+        - task_key: slack-notification-success
+          depends_on: [
+            {task_key: predict-attribute-scoring-AMK},
+            {task_key: predict-attribute-scoring-GL},
+            {task_key: predict-attribute-scoring-RT},
+            {task_key: predict-attribute-scoring-LMK},
+          ]
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Attribute scoring prediction successful!
+              is_error: false
+        
+        - task_key: slack-notification-failure
+          depends_on: [
+            {task_key: predict-attribute-scoring-AMK},
+            {task_key: predict-attribute-scoring-GL},
+            {task_key: predict-attribute-scoring-RT},
+            {task_key: predict-attribute-scoring-LMK},
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+                environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+                header_message: ❌ Attribute scoring prediction failed!
+                body_message: Check databricks log for more details...
+                is_error: true
+                relevant_people: agathe
