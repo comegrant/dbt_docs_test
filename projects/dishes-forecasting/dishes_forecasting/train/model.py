@@ -20,7 +20,7 @@ def define_ensemble_model(
         "cooking_time_to",
         "menu_year",
         "menu_week",
-        "portion_size",
+        "portion_quantity",
         "recipe_difficulty_level_id",
         "recipe_main_ingredient_id",
     ]

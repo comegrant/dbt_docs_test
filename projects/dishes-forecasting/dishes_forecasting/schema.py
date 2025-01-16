@@ -6,7 +6,7 @@ feature_schema = DataFrameSchema(
     {
         'menu_year': Column(pa.Int16),
         'menu_week': Column(pa.Int16),
-        'portion_size': Column(pa.Float64),
+        'portion_quantity': Column(pa.Float64),
         'cooking_time_from': Column(pa.Float64),
         'cooking_time_to': Column(pa.Float64),
         'recipe_difficulty_level_id': Column(pa.Float64),

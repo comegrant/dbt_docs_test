@@ -21,7 +21,7 @@ weekly_dishes_variations_lookup = FeatureLookUpConfig(
         "language_id",
         "recipe_id",
         "recipe_portion_id",
-        "portion_size",
+        "portion_quantity",
         "product_variation_name"
     ],
     exclude_in_training_set=[

@@ -71,7 +71,7 @@ resources:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              message_header: ❌ Dishes forecasting training step for GL failed!
+              header_message: ❌ Dishes forecasting training step for GL failed!
               body_message: Check databricks for details...
               is_error: true
               relevant_people: sylvia
@@ -83,7 +83,7 @@ resources:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              message_header: ❌ Dishes forecasting training step for AMK failed!
+              header_message: ❌ Dishes forecasting training step for AMK failed!
               body_message: Check databricks for details...
               is_error: true
               relevant_people: sylvia

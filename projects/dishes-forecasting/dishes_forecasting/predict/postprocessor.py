@@ -14,11 +14,12 @@ def save_predictions(
     env: str,
     table_name: str,
     table_schema: Optional[str] = "mloutputs",
+    write_mode: str = "append"
 ) -> None:
     full_table_name = f"{env}.{table_schema}.{table_name}"
     spark_df = spark.createDataFrame(df_to_write)
     logging.info(f"Writing into {full_table_name}...")
-    spark_df.write.mode("append").saveAsTable(full_table_name)
+    spark_df.write.mode(write_mode).saveAsTable(full_table_name)
 
 
 def postprocess_predictions(
@@ -38,7 +39,6 @@ def postprocess_predictions(
         "product_variation_id",
         "product_variation_name",
         "recipe_name",
-        "portion_size",
         "variation_ratio_prediction",
         "created_at"
     ]]

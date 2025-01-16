@@ -7,30 +7,30 @@ class PredictConfigs(BaseModel):
 
 gl_configs = PredictConfigs(
     model_uri={
-        "dev": "models:/dev.mloutputs.dishes_forecasting_gl/3",
-        "test": "models:/test.mloutputs.dishes_forecasting_gl/3",
+        "dev": "models:/dev.mloutputs.dishes_forecasting_gl/4",
+        "test": "models:/test.mloutputs.dishes_forecasting_gl/4",
     }
 )
 
 amk_configs = PredictConfigs(
     model_uri={
-        "dev": "models:/dev.mloutputs.dishes_forecasting_amk/2",
-        "test": "models:/test.mloutputs.dishes_forecasting_amk/3",
+        "dev": "models:/dev.mloutputs.dishes_forecasting_amk/3",
+        "test": "models:/test.mloutputs.dishes_forecasting_amk/4",
     }
 )
 
 
 rt_configs = PredictConfigs(
     model_uri={
-        "dev": "models:/dev.mloutputs.dishes_forecasting_rt/4",
-        "test": "models:/test.mloutputs.dishes_forecasting_rt/3",
+        "dev": "models:/dev.mloutputs.dishes_forecasting_rt/5",
+        "test": "models:/test.mloutputs.dishes_forecasting_rt/4",
     }
 )
 
 lmk_configs = PredictConfigs(
     model_uri={
-        "dev": "models:/dev.mloutputs.dishes_forecasting_lmk/3",
-        "test": "models:/test.mloutputs.dishes_forecasting_lmk/4",
+        "dev": "models:/dev.mloutputs.dishes_forecasting_lmk/4",
+        "test": "models:/test.mloutputs.dishes_forecasting_lmk/5",
     }
 )
 

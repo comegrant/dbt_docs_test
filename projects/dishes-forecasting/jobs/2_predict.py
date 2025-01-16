@@ -26,12 +26,16 @@ is_get_params_from_workflow = True
 is_running_on_databricks = True
 # COMMAND ----------
 # Getting parameters
-if is_get_params_from_workflow:
-    env = dbutils.widgets.get("env")
-    company = dbutils.widgets.get("company")
-else:
-    env = "dev"
-    company = "GL"
+
+dbutils.widgets.text(name='write_mode', defaultValue='append')
+dbutils.widgets.text(name='env', defaultValue='dev')
+dbutils.widgets.text(name='company', defaultValue='GL')
+
+
+# COMMAND ----------
+env = dbutils.widgets.get("env")
+company = dbutils.widgets.get("company")
+write_mode = dbutils.widgets.get("write_mode")
 
 # COMMAND ----------
 mlflow.set_tracking_uri("databricks")
@@ -39,6 +43,7 @@ args = Args(
     company=company,
     env=env,
     forecast_date="",
+    write_mode=write_mode,
     is_running_on_databricks=is_running_on_databricks
 )
 

@@ -39,6 +39,7 @@ resources:
             base_parameters:
               env: "${var.environment}"
               company: RT
+              write_mode: append
         - task_key: slack-notification-success
           depends_on:
             - task_key: predict-dishes-forecasting-denmark-rt

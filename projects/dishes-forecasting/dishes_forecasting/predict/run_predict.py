@@ -19,6 +19,7 @@ class Args(BaseModel):
     env: Literal["dev", "test", "prod"]
     forecast_date: str = None
     is_running_on_databricks: bool
+    write_mode: str = "append"
     profile_name: str = "sylvia-liu"
 
 
@@ -54,7 +55,8 @@ def run_predict(args: Args, spark: SparkSession) -> DataFrame:
         df_to_write=df_processed,
         env=args.env,
         table_schema="mloutputs",
-        table_name="ml_dishes_ratios"
+        table_name="ml_dishes_ratios",
+        write_mode=args.write_mode
     )
 
     return df_predictions
