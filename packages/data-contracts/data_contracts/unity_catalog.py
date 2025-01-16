@@ -15,13 +15,12 @@ from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.schemas.feature import Feature
 from aligned.sources.local import FileFactualJob
-from pyspark.sql.types import StructField, StructType
 
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
-    from pyspark.sql.types import DataType
+    from pyspark.sql.types import DataType, StructField, StructType
 
 
 def is_running_on_databricks() -> bool:
@@ -36,6 +35,7 @@ class DatabricksAuthConfig:
     host: str
 
 def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
+    from pyspark.sql.types import StructField, StructType
 
     return StructType([
         StructField(
