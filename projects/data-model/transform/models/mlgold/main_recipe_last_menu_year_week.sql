@@ -52,15 +52,16 @@ deviations as (
 
 )
 
-, deviatons_add_last_active (
+, main_recipe_last_chosen (
 
     select
         billing_agreement_id
         , company_id
         , main_recipe_id
-        , lag(menu_year_week, 1) over (partition by billing_agreement_id, main_recipe_id order by menu_year_week) as previous_menu_year_week
+        , max(menu_year_week) as most_recent_menu_year_week
     from deviations_menus_recipes_joined
+    group by all
 
 ) 
 
-select * from deviatons_add_last_active
+select * from main_recipe_last_chosen
