@@ -29,14 +29,14 @@ def get_calendar_dataframe(start_date: str, end_date: str) -> pd.DataFrame:
     date_range = pd.date_range(start=start_date, end=end_date, freq="D")
     df = pd.DataFrame({"date": date_range})
 
-    df["year_of_week"] = df["date"].dt.isocalendar().year
-    df["year"] = df["date"].dt.year
-    df["week"] = df["date"].dt.isocalendar().week
-    df["datekey"] = df["date"].astype(str).str.replace("-", "").astype(int)
-    df["day_of_week"] = df["date"].dt.dayofweek
+    df["year_of_week"] = df["date"].dt.isocalendar().year.astype('int32')
+    df["year"] = df["date"].dt.year.astype('int32')
+    df["week"] = df["date"].dt.isocalendar().week.astype('int32')
+    df["datekey"] = df["date"].astype(str).str.replace("-", "").astype('int32')
+    df["day_of_week"] = df["date"].dt.dayofweek.astype('int32') + 1
     df["weekday_name"] = df["date"].dt.day_name()
-    df["quarter"] = df["date"].dt.quarter
-    df["month_number"] = df["date"].dt.month
+    df["quarter"] = df["date"].dt.quarter.astype('int32')
+    df["month_number"] = df["date"].dt.month.astype('int32')
     df["month_name"] = df["date"].dt.month_name()
 
     return df

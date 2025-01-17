@@ -10,13 +10,13 @@ annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.138.1452.0 (24.11)
+annotation PBIDesktopVersion = 2.139.1678.0 (24.12)+2a034ab280bddf891eb7bb9ebfe6996f9c3a3196
 
 annotation PBI_ProTooling = ["DevMode","TMDL-Extension"]
 
 annotation __TEdtr = 1
 
-ref table Date
+ref table Dates
 ref table Companies
 ref table 'Order Statuses'
 ref table 'Order Types'

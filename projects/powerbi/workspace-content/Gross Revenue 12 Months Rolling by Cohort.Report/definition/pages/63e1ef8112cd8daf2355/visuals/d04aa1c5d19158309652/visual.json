@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year"
+                  "Property": "Calendar Year"
                 }
               },
-              "queryRef": "Date.Year",
-              "nativeQueryRef": "Year",
+              "queryRef": "Dates.Calendar Year",
+              "nativeQueryRef": "Calendar Year",
               "active": true
             },
             {
@@ -35,14 +35,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Month Name"
+                  "Property": "Calendar Month Name"
                 }
               },
-              "queryRef": "Date.Month Name",
-              "nativeQueryRef": "Month Name",
+              "queryRef": "Dates.Calendar Month Name",
+              "nativeQueryRef": "Calendar Month Name",
               "active": true
             },
             {
@@ -50,13 +50,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
                   "Property": "Date"
                 }
               },
-              "queryRef": "Date.Date",
+              "queryRef": "Dates.Date",
               "nativeQueryRef": "Date",
               "active": false
             }
@@ -351,10 +351,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Year"
+            "Property": "Calendar Year"
           }
         },
         "type": "Advanced",
@@ -381,7 +381,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
             "Property": "Date"
@@ -410,10 +410,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Month Name"
+            "Property": "Calendar Month Name"
           }
         },
         "isHiddenInViewMode": true

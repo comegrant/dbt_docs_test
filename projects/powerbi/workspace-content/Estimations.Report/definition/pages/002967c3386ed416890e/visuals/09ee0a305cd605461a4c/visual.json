@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "09ee0a305cd605461a4c",
   "position": {
     "x": 24,
@@ -7,7 +7,7 @@
     "z": 0,
     "height": 288,
     "width": 1232,
-    "tabOrder": 1000
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "lineChart",
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year of Week"
+                  "Property": "Year of Calendar Week"
                 }
               },
-              "queryRef": "Date.Year of Week",
-              "nativeQueryRef": "Year of Week",
+              "queryRef": "Dates.Year of Calendar Week",
+              "nativeQueryRef": "Year of Calendar Week",
               "active": true
             },
             {
@@ -35,14 +35,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Week"
+                  "Property": "Calendar Week"
                 }
               },
-              "queryRef": "Date.Week",
-              "nativeQueryRef": "Week",
+              "queryRef": "Dates.Calendar Week",
+              "nativeQueryRef": "Calendar Week",
               "active": true
             }
           ]

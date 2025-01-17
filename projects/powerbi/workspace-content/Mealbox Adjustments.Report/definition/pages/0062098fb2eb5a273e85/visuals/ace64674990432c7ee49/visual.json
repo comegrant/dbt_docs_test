@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "ace64674990432c7ee49",
   "position": {
     "x": 264,
@@ -20,15 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Week"
+                  "Property": "Calendar Week"
                 }
               },
-              "queryRef": "Date.Week",
+              "queryRef": "Dates.Calendar Week",
               "nativeQueryRef": "Week",
-              "active": true
+              "active": true,
+              "displayName": "Week"
             }
           ]
         }
@@ -98,7 +99,7 @@
                 "From": [
                   {
                     "Name": "d",
-                    "Entity": "Date",
+                    "Entity": "Dates",
                     "Type": 0
                   }
                 ],
@@ -114,7 +115,7 @@
                                   "Source": "d"
                                 }
                               },
-                              "Property": "Week"
+                              "Property": "Calendar Week"
                             }
                           }
                         ],
@@ -174,10 +175,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Year"
+            "Property": "Calendar Year"
           }
         },
         "filter": {
@@ -185,7 +186,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],
@@ -203,7 +204,7 @@
                                 "Source": "d"
                               }
                             },
-                            "Property": "Year"
+                            "Property": "Calendar Year"
                           }
                         }
                       ],
@@ -355,10 +356,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Week"
+            "Property": "Calendar Week"
           }
         },
         "type": "Advanced",
@@ -367,7 +368,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],
@@ -383,7 +384,7 @@
                           "Source": "d"
                         }
                       },
-                      "Property": "Week"
+                      "Property": "Calendar Week"
                     }
                   },
                   "Right": {

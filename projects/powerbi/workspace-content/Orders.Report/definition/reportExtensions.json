@@ -33,7 +33,7 @@
         {
           "name": "Running orders LY",
           "dataType": "Double",
-          "expression": "\n\nCALCULATE([Running orders], DATEADD('Date'[Date],-1, YEAR))",
+          "expression": "\n\nCALCULATE([Running orders], DATEADD('Dates'[Date],-1, YEAR))",
           "references": {
             "measures": [
               {

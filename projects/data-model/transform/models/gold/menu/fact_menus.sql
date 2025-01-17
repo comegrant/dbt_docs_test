@@ -22,15 +22,15 @@ menu_weeks as (
 , dates as (
 
     select *
-    from {{ ref('dim_date') }}
+    from {{ ref('dim_dates') }}
 
 )
 
 , menu_year_and_week as (
 
     select distinct 
-        year as menu_year, 
-        week as menu_week
+        year_of_calendar_week as menu_year, 
+        calendar_week as menu_week
     from dates
 
 )

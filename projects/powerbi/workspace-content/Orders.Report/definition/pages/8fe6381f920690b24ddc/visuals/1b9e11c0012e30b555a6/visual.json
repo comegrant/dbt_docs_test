@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Quarter"
+                  "Property": "Calendar Quarter"
                 }
               },
-              "queryRef": "Date.Quarter",
-              "nativeQueryRef": "Quarter",
+              "queryRef": "Dates.Calendar Quarter",
+              "nativeQueryRef": "Calendar Quarter",
               "active": false
             },
             {
@@ -35,14 +35,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Month Number"
+                  "Property": "Calendar Month Number"
                 }
               },
-              "queryRef": "Date.Month Number",
-              "nativeQueryRef": "Month Number",
+              "queryRef": "Dates.Calendar Month Number",
+              "nativeQueryRef": "Calendar Month Number",
               "active": true
             }
           ]
@@ -54,14 +54,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year"
+                  "Property": "Calendar Year"
                 }
               },
-              "queryRef": "Date.Year",
-              "nativeQueryRef": "Year"
+              "queryRef": "Dates.Calendar Year",
+              "nativeQueryRef": "Calendar Year"
             }
           ]
         },
@@ -217,10 +217,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {
@@ -259,10 +259,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {
@@ -301,10 +301,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {
@@ -343,10 +343,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {
@@ -384,10 +384,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {
@@ -425,10 +425,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Date"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     },
                     "Right": {

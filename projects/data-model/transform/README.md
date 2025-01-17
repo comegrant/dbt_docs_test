@@ -154,11 +154,11 @@ Each subdirectory of the silver and gold layer has a .yml-file with the suffix `
 
 #### Gold
 ```yml
-- name: dim_date
+- name: dim_dates
   description: ""
   latest_version: 1
   config:
-    alias: dim_date
+    alias: dim_dates
     contract:
       enforced: true
     

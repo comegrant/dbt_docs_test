@@ -60,7 +60,7 @@ table 'Subscription Quiz Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_companies
 
-	/// Foreign key that is used to relate the created at timestamp from Segment to Dim Date.
+	/// Foreign key that is used to relate the created at timestamp from Segment to Dim Dates.
 	column fk_dim_date_source_created_at_segment
 		dataType: int64
 		isHidden

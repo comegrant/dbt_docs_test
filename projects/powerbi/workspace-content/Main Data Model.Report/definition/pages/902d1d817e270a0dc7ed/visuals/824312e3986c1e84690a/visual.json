@@ -26,7 +26,7 @@
                   "Property": "Weeks Since First Order"
                 }
               },
-              "queryRef": "Period Since First Order.Weeks Since First Order",
+              "queryRef": "Period Since First Order.Calendar Weeks Since First Order",
               "nativeQueryRef": "Sum of Weeks Since First Order",
               "active": true
             }

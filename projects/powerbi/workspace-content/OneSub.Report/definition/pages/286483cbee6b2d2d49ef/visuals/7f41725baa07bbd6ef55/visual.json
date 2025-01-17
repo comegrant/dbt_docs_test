@@ -316,10 +316,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Week"
+            "Property": "Calendar Week"
           }
         },
         "type": "Advanced",

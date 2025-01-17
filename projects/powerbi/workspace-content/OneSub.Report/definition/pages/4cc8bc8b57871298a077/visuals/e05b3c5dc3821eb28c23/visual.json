@@ -26,7 +26,7 @@
                   "Property": "Weeks Since First Order"
                 }
               },
-              "queryRef": "Period Since First Order.Weeks Since First Order",
+              "queryRef": "Period Since First Order.Calendar Weeks Since First Order",
               "nativeQueryRef": "Weeks Since First Order1",
               "active": true
             }
@@ -98,10 +98,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Year"
+            "Property": "Calendar Year"
           }
         },
         "filter": {
@@ -109,7 +109,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],
@@ -125,7 +125,7 @@
                             "Source": "d"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     }
                   ],

@@ -12,7 +12,7 @@ with
 
 dates as (
     
-    select * from {{ref('dim_date')}}
+    select * from {{ref('dim_dates')}}
 
 )
 
@@ -86,8 +86,8 @@ dates as (
     select  
 
     company_id
-    , year_of_week as menu_year
-    , week as menu_week
+    , year_of_calendar_week as menu_year
+    , calendar_week as menu_week
     , date as menu_week_monday_date
 
     from dates

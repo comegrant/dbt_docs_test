@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "211e2895e24b87086c71",
   "position": {
     "x": 431.75043327556324,
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year"
+                  "Property": "Calendar Year"
                 }
               },
-              "queryRef": "Date.Year",
-              "nativeQueryRef": "Year",
+              "queryRef": "Dates.Calendar Year",
+              "nativeQueryRef": "Calendar Year",
               "active": true
             },
             {

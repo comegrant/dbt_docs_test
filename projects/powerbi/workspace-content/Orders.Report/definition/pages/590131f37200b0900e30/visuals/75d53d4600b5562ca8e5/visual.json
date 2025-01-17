@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
                   "Property": "Date"
                 }
               },
-              "queryRef": "Date.Date",
+              "queryRef": "Dates.Date",
               "nativeQueryRef": "Date",
               "active": true
             }
@@ -40,7 +40,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Date"
+                    "Entity": "Dates"
                   }
                 },
                 "Property": "Date"
@@ -96,7 +96,7 @@
                 "From": [
                   {
                     "Name": "d",
-                    "Entity": "Date",
+                    "Entity": "Dates",
                     "Type": 0
                   }
                 ],

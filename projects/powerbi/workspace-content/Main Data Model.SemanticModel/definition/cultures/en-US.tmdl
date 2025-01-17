@@ -82,7 +82,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Date",
-			          "ConceptualProperty": "Year"
+			          "ConceptualProperty": "Calendar Year"
 			        }
 			      },
 			      "State": "Generated",
@@ -109,7 +109,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Date",
-			          "ConceptualProperty": "Week"
+			          "ConceptualProperty": "Calendar Week"
 			        }
 			      },
 			      "State": "Generated",
@@ -30538,7 +30538,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.month_name": {
@@ -30571,7 +30571,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.month_number": {
@@ -30604,7 +30604,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.quarter": {
@@ -30637,7 +30637,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.weekday_name": {
@@ -30670,7 +30670,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.day_of_week": {
@@ -30703,7 +30703,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.week": {
@@ -30736,7 +30736,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.year": {
@@ -30769,7 +30769,7 @@ cultureInfo en-US
 			      "Roles": {
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        },
 			        "date.date": {
@@ -31145,7 +31145,7 @@ cultureInfo en-US
 			        },
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        }
 			      },
@@ -31619,7 +31619,7 @@ cultureInfo en-US
 			        },
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        }
 			      },
@@ -31759,7 +31759,7 @@ cultureInfo en-US
 			        },
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        }
 			      },
@@ -32009,7 +32009,7 @@ cultureInfo en-US
 			        },
 			        "date": {
 			          "Target": {
-			            "Entity": "date"
+			            "Entity": "Dates"
 			          }
 			        }
 			      }

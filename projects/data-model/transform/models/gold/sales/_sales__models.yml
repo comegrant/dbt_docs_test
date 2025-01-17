@@ -270,14 +270,14 @@ models:
 
       - name: fk_dim_date
         data_type: int
-        description: "{{ doc('column__pk_dim_date') }}"
+        description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_date')
-              field: pk_dim_date
+              to: ref('dim_dates')
+              field: pk_dim_dates
 
       - name: fk_dim_order_statuses
         data_type: string
@@ -920,8 +920,8 @@ models:
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_date')
-              field: pk_dim_date
+              to: ref('dim_dates')
+              field: pk_dim_dates
 
       - name: fk_dim_time_source_created_at_segment
         data_type: string

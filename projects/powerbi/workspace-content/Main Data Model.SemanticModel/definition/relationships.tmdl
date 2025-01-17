@@ -1,6 +1,6 @@
 relationship AutoDetected_e2743f17-0d8e-46ce-9ecc-8b3a5fa86665
 	fromColumn: 'Order Measures'.fk_dim_date
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship AutoDetected_1c6f7075-9408-4ef1-a6d6-1fcb469d6fd6
 	fromColumn: 'Order Measures'.fk_dim_companies
@@ -24,7 +24,7 @@ relationship d648b7a6-f119-c136-ba54-ac54c3f14b5f
 
 relationship a1002545-30a8-ce0e-a17d-0837e2a4454c
 	fromColumn: 'Menu Measures'.fk_dim_date
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship AutoDetected_709c4193-69a1-47d4-a268-669e1fbc9d79
 	fromColumn: 'Order Measures'.fk_dim_order_statuses
@@ -54,7 +54,7 @@ relationship 8a15615d-11fc-fbaa-2f96-ac8c881b9124
 
 relationship AutoDetected_9105416a-77e9-49ee-bf5d-c0f9cd8d2bb6
 	fromColumn: 'Agreement Measures'.fk_dim_date
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship AutoDetected_b5aa7795-c7f8-4850-9e10-f47ec3b90dc2
 	fromColumn: 'Agreement Measures'.fk_dim_billing_agreements
@@ -78,7 +78,7 @@ relationship 360d6910-73d1-7780-6386-23ba2b1cc178
 
 relationship b187097e-4edd-c2af-794c-54ec55a36dd9
 	fromColumn: 'Agreements Weekly'.fk_dim_date
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
 	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
@@ -94,7 +94,7 @@ relationship 41c64e31-dd99-14c5-70ee-9585ecb949c1
 
 relationship 68328fbb-4f22-943b-4a02-e3b0c2d5feb1
 	fromColumn: 'Subscription Quiz Measures'.fk_dim_date_source_created_at_segment
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship 705abe51-4d12-52b4-7598-2fbe420f9f2a
 	fromColumn: 'Order Measures'.fk_dim_basket_deviation_origins_preselected
@@ -134,7 +134,7 @@ relationship a6aaeb11-1df1-e4bf-605e-ece62ef56e5c
 
 relationship 1528d5c6-3e5b-dd80-431b-4877d5a445be
 	fromColumn: Estimations.fk_dim_date_menu_week
-	toColumn: Date.pk_dim_date
+	toColumn: Dates.pk_dim_dates
 
 relationship 7b9a1f7b-3301-a675-6e23-c9f8b692f47f
 	fromColumn: Estimations.fk_dim_products

@@ -19,14 +19,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Week"
+                  "Property": "Calendar Week"
                 }
               },
-              "queryRef": "Date.Week",
-              "nativeQueryRef": "Week"
+              "queryRef": "Dates.Calendar Week",
+              "nativeQueryRef": "Calendar Week"
             },
             {
               "field": {
@@ -178,10 +178,10 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Date"
+                    "Entity": "Dates"
                   }
                 },
-                "Property": "Week"
+                "Property": "Calendar Week"
               }
             },
             "direction": "Ascending"

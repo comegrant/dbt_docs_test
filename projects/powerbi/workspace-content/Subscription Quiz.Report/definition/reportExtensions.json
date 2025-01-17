@@ -8,7 +8,7 @@
         {
           "name": "Number of Customers Completed Quiz running total in Date",
           "dataType": "Double",
-          "expression": "\nCALCULATE(\n\t\t\t[Number of Customers Completed Quiz],\n\t\t\tFILTER(\n\t\t\t\tALLSELECTED('Date'),\n\t\t\t\t'Date'[Date] <= MAX('Date'[Date])\n\t\t\t)\n\t\t)",
+          "expression": "\nCALCULATE(\n\t\t\t[Number of Customers Completed Quiz],\n\t\t\tFILTER(\n\t\t\t\tALLSELECTED('Dates'),\n\t\t\t\t'Dates'[Date] <= MAX('Dates'[Date])\n\t\t\t)\n\t\t)",
           "measureTemplate": {
             "daxTemplateName": "RunningTotal",
             "version": 0

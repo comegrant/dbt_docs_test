@@ -1,0 +1,424 @@
+/// The fields in this table should be used for filtering measures on dates.
+/// There are versions of the same fields for the normal Scandinavian calendar, the Cheffelo financial calendar, and the ISO calendar.
+/// Normally one can use the fields called Date, Year, Week, and Month Name for filtering.
+table Dates
+	lineageTag: c07364ff-2124-4e7c-891b-a66b8032cb30
+
+	/// Date of year on
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6366d1c4-67b1-4a44-a7b8-c136c3f586f6
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The normal calendar year of the date.
+	column 'Calendar Year'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f38f21a9-2f3d-451d-9172-a903b146c14b
+		summarizeBy: none
+		sourceColumn: calendar_year
+		sortByColumn: 'Calendar Year - Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = User
+
+	/// The financial week number of the date. This is adjusted to align with the Monday of the corresponding week. A financial week 53 is introduced when necessary to replace ISO week 1 of the following year.
+	/// Example: Monday, December 30th, 2024, falls in ISO week 1 of 2025. Since this Monday is in 2024, we create financial week 53, and all days in ISO week 1 are assigned to it. This makes week 2 the first financial week of 2025.
+	column 'Financial Week'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a98b5055-879e-4b10-99f6-bd5edbd56c85
+		summarizeBy: none
+		sourceColumn: financial_week
+		sortByColumn: 'Financial Week - Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = User
+
+	column pk_dim_dates
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 96a4c728-cad3-4084-90bd-0ec8010c3ff4
+		summarizeBy: none
+		sourceColumn: pk_dim_dates
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day number of week. Monday = 1, Sunday = 7.
+	column 'Day of Week'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 05f108e3-a9be-4681-a618-2abffbce12df
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = User
+
+	/// Name of the weekday.
+	column 'Weekday Name'
+		dataType: string
+		isHidden
+		lineageTag: c61c59bc-19c1-44c8-b040-928bacec9496
+		summarizeBy: none
+		sourceColumn: weekday_name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The financial quarter, which is the quarter corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial quarter for January 1st, 2025, is 4, as it follows the quarter of the corresponding Monday.
+	column 'Financial Quarter'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b984b07a-925c-4bde-b6e0-16aee6062185
+		summarizeBy: none
+		sourceColumn: financial_quarter
+
+		annotation SummarizationSetBy = User
+
+	/// Month of the year (1-12). This follows the normal iso calendar which is the normal calendar in Scandinavia.
+	column 'Calendar Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 476993ff-0482-4ff8-82b3-71653f3a7b12
+		summarizeBy: none
+		sourceColumn: calendar_month_number
+
+		annotation SummarizationSetBy = User
+
+	/// Used for sorting the calendar year column.
+	column 'Calendar Year - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8d412a02-8cc9-41e4-989f-cd784229ef78
+		summarizeBy: sum
+		sourceColumn: Calendar Year - Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Used for sorting the Financial Week column.
+	column 'Financial Week - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 37faabc0-0cb3-46f1-9067-2d0182b7b298
+		summarizeBy: sum
+		sourceColumn: Financial Week - Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Full name of the month. This follows the normal calendar in Scandinavia.
+	column 'Calendar Month Name'
+		dataType: string
+		isHidden
+		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
+		summarizeBy: none
+		sourceColumn: calendar_month_name
+		sortByColumn: 'Calendar Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The year corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial year for January 1st, 2025, is 2024, as it follows the year of the corresponding Monday.
+	column 'Financial Year'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bf45c43e-90c3-48e1-9e16-caf503c02cdf
+		summarizeBy: none
+		sourceColumn: financial_year
+		sortByColumn: 'Financial Year - Sort'
+
+	/// The year corresponding to the calendar week (iso week) of the date.
+	/// Example: December 30th, 2024, falls within calendar week 1 of 2025. Therefore, this column will display 2025 for that date, as it reflects the year associated with the calendar week, even though the calendar year of the date is 2024.
+	column 'Year of Calendar Week'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8ccb7d29-9871-49ec-8a8f-8980a3c10956
+		summarizeBy: none
+		sourceColumn: year_of_calendar_week
+		sortByColumn: 'Year of Calendar Week - Sort'
+
+	/// The iso week of the year. This follows the normal calendar in Scandinavia.
+	/// For reporting in Cheffelo we should usually use the financial week instead.
+	column 'Calendar Week'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ae7c184a-35af-4cec-82ea-01e7945865ae
+		summarizeBy: none
+		sourceColumn: calendar_week
+		sortByColumn: 'Calendar Week - Sort'
+
+	/// Used for sorting the financial year column.
+	column 'Financial Year - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 51ac932e-b581-49e5-99f4-f26a6d795b45
+		summarizeBy: sum
+		sourceColumn: Financial Year - Sort
+
+	/// Used for sorting the iso year column.
+	column 'Year of Calendar Week - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 98980322-efe7-4916-8dcc-e0f6c08ec527
+		summarizeBy: sum
+		sourceColumn: Year of Calendar Week - Sort
+
+	/// Used for sorting the Calednar Week column.
+	column 'Calendar Week - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5c2d97f0-7599-4c69-b94f-fb86e2d3043a
+		summarizeBy: sum
+		sourceColumn: Calendar Week - Sort
+
+	/// The date of the Monday in the same week.
+	column 'Monday Date'
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 1d03284a-ff23-4f05-8a72-0d23b2e833e8
+		summarizeBy: none
+		sourceColumn: monday_date
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The date of the Monday in the previous week.
+	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
+	column 'Monday Date Previous Week'
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 8204083b-0edb-48bb-ac95-6d4749e4c9c7
+		summarizeBy: none
+		sourceColumn: monday_date_previous_week
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Quarter of the year (1-4), holding three calendar months each.
+	column 'Calendar Quarter'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 847c38bb-3461-46e5-9c62-8ef1340ebe83
+		summarizeBy: none
+		sourceColumn: calendar_quarter
+
+		annotation SummarizationSetBy = User
+
+	/// The number of the month corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month number for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday
+	column 'Financial Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8e0406e0-8ddc-4408-84b6-5635b2930148
+		summarizeBy: none
+		sourceColumn: financial_month_number
+
+	/// The full name of the month corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month name for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
+	column 'Financial Month Name'
+		dataType: string
+		isHidden
+		lineageTag: 93449b4a-f66b-4a2a-ace5-0cda3a386d7c
+		summarizeBy: none
+		sourceColumn: financial_month_name
+		sortByColumn: 'Financial Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// In Cheffelo we have defined a financial hiearchy that should be the default for most reports.
+	/// 
+	/// Year:
+	/// The year corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial year for January 1st, 2025, is 2024, as it follows the year of the corresponding Monday.
+	/// 
+	/// Quarter:
+	/// The financial quarter, which is the quarter corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial quarter for January 1st, 2025, is 4, as it follows the quarter of the corresponding Monday.
+	/// 
+	/// Month:
+	/// The full name of the month corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month name for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
+	/// 
+	/// Week:
+	/// The financial week number of the date. This is adjusted to align with the Monday of the corresponding week. A financial week 53 is introduced when necessary to replace ISO week 1 of the following year.
+	/// Example: Monday, December 30th, 2024, falls in ISO week 1 of 2025. Since this Monday is in 2024, we create financial week 53, and all days in ISO week 1 are assigned to it. This makes week 2 the first financial week of 2025.
+	/// 
+	/// Weekday:
+	/// Name of the weekday.
+	/// 
+	/// Monday Date:
+	/// The date of the Monday in the same week.
+	/// 
+	/// Monday Date Previous Week:
+	/// The date of the Monday in the previous week.
+	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
+	/// 
+	/// Date:
+	/// Date of year on Date format.
+	hierarchy 'Financial Date Hierarchy'
+		lineageTag: f5ba685b-9618-4140-b999-254eb5c7cf75
+
+		level Year
+			lineageTag: 78b33905-5164-4d1b-8503-5b03a4b230a5
+			column: 'Financial Year'
+
+		level Quarter
+			lineageTag: 13b9a75f-43e4-4b2e-ab6d-1967719a8eb7
+			column: 'Financial Quarter'
+
+		level Month
+			lineageTag: c72eb038-4dbc-4109-b6db-fb1d263db95b
+			column: 'Financial Month Name'
+
+		level Week
+			lineageTag: 5f257bc4-13b0-423b-a1c0-8ba418b519ba
+			column: 'Financial Week'
+
+		level Weekday
+			lineageTag: c158f07e-8290-485c-a4b4-3c3fc31b7afb
+			column: 'Weekday Name'
+
+		level 'Monday Date'
+			lineageTag: 8ccbee8e-49c2-4d59-bc32-6cfe09df325b
+			column: 'Monday Date'
+
+		level 'Monday Date Previous Week'
+			lineageTag: 57dd98c5-6846-405b-8d01-113891e0974b
+			column: 'Monday Date Previous Week'
+
+		level Date
+			lineageTag: 129eb82b-a3ea-496e-b479-d9c6e0cd8bb0
+			column: Date
+
+	/// The normal calendar hierarchy that follows the iso calendar.
+	/// When doing analysis on week level and we do not want to use the financial week, we should use this hierarchy.
+	/// Note: In most cases we should use the financial hierarchy with financial weeks instead.
+	/// 
+	/// Year:
+	/// The year corresponding to the calendar week (iso week) of the date.
+	/// Example: December 30th, 2024, falls within calendar week 1 of 2025. Therefore, this column will display 2025 for that date, as it reflects the year associated with the calendar week, even though the calendar year of the date is 2024.
+	/// 
+	/// Week:
+	/// The iso week of the year. This follows the normal calendar in Scandinavia.
+	/// For reporting in Cheffelo we should usually use the financial week instead.
+	/// 
+	/// Weekday:
+	/// Name of the weekday.
+	/// 
+	/// Monday Date:
+	/// The date of the Monday in the same week.
+	/// 
+	/// Monday Date Previous Week:
+	/// The date of the Monday in the previous week.
+	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
+	/// 
+	/// Date:
+	/// Date of year on Date format.
+	hierarchy 'Calendar Hierarchy with Week'
+		lineageTag: 79b7fcbf-49de-4c79-9834-e43a837b7e74
+
+		level Year
+			lineageTag: 4a6dae54-332d-4515-9c58-925f514aad52
+			column: 'Year of Calendar Week'
+
+		level Week
+			lineageTag: 87c0925b-8ced-4079-a2fb-705a2af66cb5
+			column: 'Calendar Week'
+
+		level Weekday
+			lineageTag: de24ad16-91bb-433b-a470-a39b73dc6f28
+			column: 'Weekday Name'
+
+		level 'Monday Date'
+			lineageTag: 468d7df5-1684-4ddb-8895-48249114fb43
+			column: 'Monday Date'
+
+		level 'Monday Date Previous Week'
+			lineageTag: 59c325c1-a71d-4036-af79-fb92df496480
+			column: 'Monday Date Previous Week'
+
+		level Date
+			lineageTag: 9f2678c6-9cf1-4329-8d4e-ab65cd12fdc0
+			column: Date
+
+	/// The normal calendar hierarchy that follows the iso calendar.
+	/// When doing analysis on quarter or month level and we do not want to use the financial months/quarters, we should use this hierarchy.
+	/// 
+	/// Year:
+	/// The normal calendar year of the date.
+	/// 
+	/// Quarter:
+	/// Quarter of the year (1-4), holding three calendar months each.
+	/// 
+	/// Month:
+	/// Full name of the month. This follows the normal calendar in Scandinavia.
+	/// 
+	/// Date:
+	/// Date of year on Date format.
+	hierarchy 'Calendar Hierarchy with Month'
+		lineageTag: 098bb7e8-2f8e-46ea-9731-285d487467bd
+
+		level Year
+			lineageTag: 0eafe3a9-ca21-48ea-bb9e-69fd5735dd0c
+			column: 'Calendar Year'
+
+		level Quarter
+			lineageTag: d09bf9f3-ba25-478e-9d89-bae6785cf240
+			column: 'Calendar Quarter'
+
+		level Month
+			lineageTag: 590bcca6-1425-4f24-9431-d1b2b753209c
+			column: 'Calendar Month Name'
+
+		level Date
+			lineageTag: 0a1922f9-70a4-477d-8555-32929a584e80
+			column: Date
+
+	partition Dates = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_calendar_Table = gold_Schema{[Name="dim_dates",Kind="Table"]}[Data],
+				    #"Added Sort Col 1" = Table.DuplicateColumn(dim_calendar_Table, "calendar_year", "Calendar Year - Sort"),
+				    #"Added Sort Col 2" = Table.DuplicateColumn(#"Added Sort Col 1", "financial_week", "Financial Week - Sort"),
+					#"Added Sort Col 3" = Table.DuplicateColumn(#"Added Sort Col 2", "financial_year", "Financial Year - Sort"),
+					#"Added Sort Col 4" = Table.DuplicateColumn(#"Added Sort Col 3", "year_of_calendar_week", "Year of Calendar Week - Sort"),
+					#"Added Sort Col 5" = Table.DuplicateColumn(#"Added Sort Col 4", "calendar_week", "Calendar Week - Sort")
+				in
+					#"Added Sort Col 5"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

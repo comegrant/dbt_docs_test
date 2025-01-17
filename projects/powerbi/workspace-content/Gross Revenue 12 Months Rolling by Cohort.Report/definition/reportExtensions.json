@@ -8,7 +8,7 @@
         {
           "name": "Rolling Gross Revenue",
           "dataType": "Double",
-          "expression": "CALCULATE([Sum Order Value Gross Ex Vat], ALL('Date'), DATESINPERIOD('Date'[Date],MAX('Date'[Date]),-12, MONTH))",
+          "expression": "CALCULATE([Sum Order Value Gross Ex Vat], ALL('Dates'), DATESINPERIOD('Dates'[Date],MAX('Dates'[Date]),-12, MONTH))",
           "measureTemplate": {
             "daxTemplateName": "RunningTotal",
             "version": 0
@@ -25,7 +25,7 @@
         {
           "name": "Total Last 12 Months Gross Revenue",
           "dataType": "Double",
-          "expression": "\nCALCULATE(\n    [Rolling Gross Revenue], \n    DATESINPERIOD(\n        'Date'[Date], \n        LASTDATE('Date'[Date]), \n        -12, \n        MONTH\n    )\n)",
+          "expression": "\nCALCULATE(\n    [Rolling Gross Revenue], \n    DATESINPERIOD(\n        'Dates'[Date], \n        LASTDATE('Dates'[Date]), \n        -12, \n        MONTH\n    )\n)",
           "references": {
             "measures": [
               {

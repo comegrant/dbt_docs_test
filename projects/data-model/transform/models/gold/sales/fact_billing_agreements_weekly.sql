@@ -18,7 +18,7 @@ with
 
 dates as (
 
-    select * from {{ref('dim_date')}}
+    select * from {{ref('dim_dates')}}
 
 )
 
@@ -73,10 +73,10 @@ dates as (
 , dates_filtered as (
 
     select 
-    pk_dim_date
+    pk_dim_dates
     , date as monday_date
-    , year
-    , week
+    , year_of_calendar_week as year
+    , calendar_week as week
     from dates
     where 
     weekday_name = 'Monday'
@@ -96,7 +96,7 @@ dates as (
             ) as string
         )
     ) as pk_fact_billing_agreements_weekly
-    , dates_filtered.pk_dim_date as fk_dim_date
+    , dates_filtered.pk_dim_dates as fk_dim_date
     , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
     , md5(billing_agreements.company_id) AS fk_dim_companies
     , dates_filtered.monday_date

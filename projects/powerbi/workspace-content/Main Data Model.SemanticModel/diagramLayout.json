@@ -100,19 +100,6 @@
         },
         {
           "location": {
-            "x": 440.19936005378554,
-            "y": 668.26962570813066
-          },
-          "nodeIndex": "Date",
-          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
-          "size": {
-            "height": 296,
-            "width": 234
-          },
-          "zIndex": 10
-        },
-        {
-          "location": {
             "x": 1898.1408557596558,
             "y": 42.748621527105513
           },
@@ -314,6 +301,19 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 440.19936005378554,
+            "y": 668.26962570813066
+          },
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 10
         }
       ],
       "name": "All tables",
@@ -342,19 +342,6 @@
             "width": 234
           },
           "zIndex": 1
-        },
-        {
-          "location": {
-            "x": 87.598599497362216,
-            "y": 1008.9217176839334
-          },
-          "nodeIndex": "Date",
-          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 2
         },
         {
           "location": {
@@ -511,6 +498,19 @@
             "width": 461.52075449882727
           },
           "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 87.598599497362216,
+            "y": 1008.9217176839334
+          },
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
         }
       ],
       "name": "Orders",
@@ -568,19 +568,6 @@
         },
         {
           "location": {
-            "x": 684.26721483211963,
-            "y": 156.12867498677781
-          },
-          "nodeIndex": "Date",
-          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 617.24351140369345,
             "y": 513.41399129337356
           },
@@ -614,6 +601,19 @@
           "nodeLineageTag": "31d6e085-8ba5-4560-b085-27c6cb034f32",
           "size": {
             "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 684.26721483211963,
+            "y": 156.12867498677781
+          },
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "size": {
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
@@ -677,7 +677,7 @@
             "x": 932.69571650466878,
             "y": 467.4688939093013
           },
-          "nodeIndex": "Date",
+          "nodeIndex": "Dates",
           "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
           "size": {
             "height": 300,
@@ -770,7 +770,7 @@
             "x": 1141.1889688537058,
             "y": 56
           },
-          "nodeIndex": "Date",
+          "nodeIndex": "Dates",
           "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
           "size": {
             "height": 300,
@@ -834,11 +834,11 @@
         },
         {
           "location": {
-            "x": 578.34340098600069,
-            "y": 90.7954596620151
+            "x": 10,
+            "y": 573.12052186369954
           },
-          "nodeIndex": "Date",
-          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "nodeIndex": "Products",
+          "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
           "size": {
             "height": 300,
             "width": 234
@@ -847,11 +847,11 @@
         },
         {
           "location": {
-            "x": 10,
-            "y": 573.12052186369954
+            "x": 578.34340098600069,
+            "y": 90.7954596620151
           },
-          "nodeIndex": "Products",
-          "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
           "size": {
             "height": 300,
             "width": 234

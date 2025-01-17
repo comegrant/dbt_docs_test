@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
                   "Property": "Date"
                 }
               },
-              "queryRef": "Date.Date",
+              "queryRef": "Dates.Date",
               "nativeQueryRef": "Date",
               "active": true
             }
@@ -78,7 +78,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Date"
+                    "Entity": "Dates"
                   }
                 },
                 "Property": "Date"
@@ -100,10 +100,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Year"
+            "Property": "Calendar Year"
           }
         },
         "filter": {
@@ -111,7 +111,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],
@@ -127,7 +127,7 @@
                             "Source": "d"
                           }
                         },
-                        "Property": "Year"
+                        "Property": "Calendar Year"
                       }
                     }
                   ],

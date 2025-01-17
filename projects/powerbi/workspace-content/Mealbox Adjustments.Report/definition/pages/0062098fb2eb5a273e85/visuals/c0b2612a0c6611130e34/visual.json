@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "c0b2612a0c6611130e34",
   "position": {
     "x": 176,
@@ -20,15 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year"
+                  "Property": "Calendar Year"
                 }
               },
-              "queryRef": "Date.Year",
+              "queryRef": "Dates.Calendar Year",
               "nativeQueryRef": "Year",
-              "active": true
+              "active": true,
+              "displayName": "Year"
             }
           ]
         }
@@ -70,7 +71,7 @@
                 "From": [
                   {
                     "Name": "d",
-                    "Entity": "Date",
+                    "Entity": "Dates",
                     "Type": 0
                   }
                 ],
@@ -86,7 +87,7 @@
                                   "Source": "d"
                                 }
                               },
-                              "Property": "Year"
+                              "Property": "Calendar Year"
                             }
                           }
                         ],
@@ -120,10 +121,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
-            "Property": "Year"
+            "Property": "Calendar Year"
           }
         },
         "type": "Advanced",
@@ -132,7 +133,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],
@@ -148,7 +149,7 @@
                           "Source": "d"
                         }
                       },
-                      "Property": "Year"
+                      "Property": "Calendar Year"
                     }
                   },
                   "Right": {
@@ -168,7 +169,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
             "Property": "Date"
@@ -180,7 +181,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],

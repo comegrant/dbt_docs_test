@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "72ba904930bbc5012ae3",
   "position": {
-    "x": 0,
+    "x": 15.476270442038908,
     "y": 0,
-    "z": 5000,
+    "z": 7000,
     "height": 64,
     "width": 128,
-    "tabOrder": 2000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year of Week"
+                  "Property": "Year of Calendar Week"
                 }
               },
-              "queryRef": "Date.Year of Week",
+              "queryRef": "Dates.Year of Calendar Week",
               "nativeQueryRef": "Year",
               "active": true,
               "displayName": "Year"
@@ -36,15 +36,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Week"
+                  "Property": "Calendar Week"
                 }
               },
-              "queryRef": "Date.Week",
+              "queryRef": "Dates.Calendar Week",
               "nativeQueryRef": "Week",
-              "active": false
+              "active": true,
+              "displayName": "Week"
             }
           ]
         }
@@ -58,7 +59,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Date.Year of Week"
+              "Dates.Year of Calendar Week"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -66,10 +67,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Date"
+                      "Entity": "Dates"
                     }
                   },
-                  "Property": "Year of Week"
+                  "Property": "Year of Calendar Week"
                 }
               }
             ],
@@ -77,13 +78,26 @@
           },
           {
             "queryRefs": [
-              "Date.Week"
+              "Dates.Calendar Week"
             ],
             "isCollapsed": true,
             "isPinned": true
           }
         ],
-        "root": {}
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "2025L"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
       }
     ],
     "objects": {
@@ -129,7 +143,6 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "parentGroupName": "3f3eff2b070e96e79227",
   "filterConfig": {
     "filters": [
       {
@@ -138,7 +151,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Date"
+                "Entity": "Dates"
               }
             },
             "Property": "Date"
@@ -150,7 +163,7 @@
           "From": [
             {
               "Name": "d",
-              "Entity": "Date",
+              "Entity": "Dates",
               "Type": 0
             }
           ],

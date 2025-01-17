@@ -52,14 +52,155 @@ models:
     versions:
       - v: 1
 
-  - name: dim_date
+  - name: dim_dates
     description: ""
     latest_version: 1
     config:
-      alias: dim_date
+      alias: dim_dates
       contract:
-        enforced: false
-          
+        enforced: true
+    
+    columns:
+
+      - name: pk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: date
+        data_type: date
+        description: "{{ doc('column__date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: calendar_year
+        data_type: int
+        description: "{{ doc('column__calendar_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: year_of_calendar_week
+        data_type: int
+        description: "{{ doc('column__year_of_calendar_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: calendar_quarter
+        data_type: int
+        description: "{{ doc('column__calendar_quarter') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: calendar_month_number
+        data_type: int
+        description: "{{ doc('column__calendar_month_number') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: calendar_month_name
+        data_type: string
+        description: "{{ doc('column__calendar_month_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: calendar_week
+        data_type: int
+        description: "{{ doc('column__calendar_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_year
+        data_type: int
+        description: "{{ doc('column__financial_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_quarter
+        data_type: int
+        description: "{{ doc('column__financial_quarter') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_month_number
+        data_type: int
+        description: "{{ doc('column__financial_month_number') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_month_name
+        data_type: string
+        description: "{{ doc('column__financial_month_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_week
+        data_type: int
+        description: "{{ doc('column__financial_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: day_of_week
+        data_type: int
+        description: "{{ doc('column__day_of_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: weekday_name
+        data_type: string
+        description: "{{ doc('column__weekday_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: monday_date
+        data_type: date
+        description: "{{ doc('column__monday_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: monday_date_previous_week
+        data_type: date
+        description: "{{ doc('column__monday_date_previous_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
     versions:
       - v: 1
     
