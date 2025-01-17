@@ -2,7 +2,9 @@ with
 
 source as (
 
-   select * from {{ ref('scd_cms__billing_agreement_baskets') }}
+    -- TODO: Use the snapshot once we can trust it with updated_at again
+    -- select * from {{ ref('scd_cms__billing_agreement_baskets') }}
+   select * from {{source('cms', 'cms__billing_agreement_basket')}}
 
 )
 
@@ -23,9 +25,14 @@ source as (
         , is_active as is_active_basket
         
         {# scd #}
+        /*
+        TODO: Uncomment when we use the snapshot table again
         , convert_timezone('Europe/Oslo', 'UTC', dbt_valid_from) as valid_from
         , coalesce(convert_timezone('Europe/Oslo', 'UTC', dbt_valid_to), cast('{{ var("future_proof_date") }}' as timestamp)) as valid_to
-        
+        */
+        , convert_timezone('Europe/Oslo', 'UTC', created_at) as valid_from
+        , {{ get_scd_valid_to() }} as valid_to
+
         {# system #}
         , convert_timezone('Europe/Oslo', 'UTC', created_at) as source_created_at
         , created_by as source_created_by
