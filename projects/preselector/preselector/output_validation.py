@@ -1,7 +1,10 @@
 import datetime as dt
+from typing import Optional
 
 import polars as pl
+from aligned import ContractStore
 from data_contracts.preselector.store import Preselector, SuccessfulPreselectorOutput
+from data_contracts.recipe import RecipeMainIngredientCategory
 from data_contracts.sources import databricks_catalog
 
 COMPLIANCY_ALLERGEN = 1
@@ -9,6 +12,7 @@ COMPLIANCY_PREFERENCE = 2
 ERROR_AVG = 0.002
 ERROR_ACC = 0.02
 ERROR_MEAN_ORDERED_AGO = 0.02
+VAR_THRESHOLD = 0.59
 
 
 async def get_output_data(start_yyyyww: int | None = None, output_type: str = "batch") -> pl.DataFrame:
@@ -26,7 +30,9 @@ async def get_output_data(start_yyyyww: int | None = None, output_type: str = "b
                     "year",
                     "week",
                     "agreement_id",
+                    "main_recipe_ids",
                     "portion_size",
+                    "number_of_recipes",
                     "compliancy",
                     "error_vector",
                 }
@@ -48,7 +54,9 @@ async def get_output_data(start_yyyyww: int | None = None, output_type: str = "b
                 "menu_year",
                 "menu_week",
                 "billing_agreement_id",
+                "main_recipe_ids",
                 "portion_size",
+                "number_of_recipes",
                 "compliancy",
                 "error_vector",
             ]
@@ -138,8 +146,95 @@ def error_metrics(df: pl.DataFrame) -> pl.DataFrame:
     return results.sort(["company_id", "portion_size"], descending=[True, True])
 
 
-def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame) -> str:
-    df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", coalesce=True)
+def count_max_repetition(column: str) -> pl.Expr:
+    return (
+        pl.col(column)
+        .list.eval(pl.element().value_counts())
+        .list.eval(pl.element().struct.field("count").max())
+        .list.first()
+    )
+
+
+def calculate_repetition_ratio(column: str) -> pl.Expr:
+    return (pl.col(column) / pl.col("number_of_recipes").cast(pl.Float32)) > VAR_THRESHOLD
+
+
+async def add_variation_warning(df: pl.DataFrame, dummy: Optional[ContractStore] = None) -> pl.DataFrame:
+    all_recipe_ids = (
+        df.select(
+            ["billing_agreement_id", "menu_week", "menu_year", "portion_size", "number_of_recipes", "main_recipe_ids"]
+        )
+        .explode("main_recipe_ids")
+        .rename({"main_recipe_ids": "recipe_id"})
+    )
+
+    store = dummy.feature_view(RecipeMainIngredientCategory) if dummy else RecipeMainIngredientCategory.query()
+    with_main_ingredient = await store.features_for(all_recipe_ids).to_polars()
+
+    grouped = with_main_ingredient.group_by(
+        ["billing_agreement_id", "menu_week", "menu_year", "portion_size", "number_of_recipes"]
+    ).agg(
+        [
+            pl.col("recipe_id").alias("main_recipe_ids"),
+            pl.col("main_protein_category_id").alias("main_protein_ids"),
+            pl.col("main_carbohydrate_category_id").alias("main_carb_ids"),
+        ]
+    )
+
+    df_final = (
+        df.join(
+            grouped,
+            on=["billing_agreement_id", "menu_week", "menu_year", "portion_size", "number_of_recipes"],
+            how="left",
+            suffix="_1",
+        )
+        .with_columns(
+            [
+                count_max_repetition("main_carb_ids").alias("max_carb_repetition"),
+                count_max_repetition("main_protein_ids").alias("max_protein_repetition"),
+            ]
+        )
+        .with_columns(
+            [
+                calculate_repetition_ratio("max_carb_repetition").alias("variation_warning_carb"),
+                calculate_repetition_ratio("max_protein_repetition").alias("variation_warning_protein"),
+            ]
+        )
+    )
+
+    return df_final
+
+
+async def variation_metrics(df: pl.DataFrame, dummy: Optional[ContractStore] = None) -> pl.DataFrame:
+    df = await add_variation_warning(df, dummy)
+    groupby_cols = ["company_id", "portion_size"]
+
+    result = df.group_by(groupby_cols).agg(
+        [
+            pl.len().alias("total_records"),
+            pl.col("variation_warning_carb").sum().alias("carb_warnings"),
+            pl.col("variation_warning_protein").sum().alias("protein_warnings"),
+            (pl.col("variation_warning_carb").sum() / pl.len() * 100).round(2).alias("percentage_carb_warnings"),
+            (pl.col("variation_warning_protein").sum() / pl.len() * 100).round(2).alias("percentage_protein_warnings"),
+            pl.col("variation_warning_carb").any().alias("has_carb_warning"),
+            pl.col("variation_warning_protein").any().alias("has_protein_warning"),
+            pl.col("billing_agreement_id")
+            .filter(pl.col("variation_warning_carb"))
+            .implode()
+            .alias("agreement_id_carb_warnings"),
+            pl.col("billing_agreement_id")
+            .filter(pl.col("variation_warning_protein"))
+            .implode()
+            .alias("agreement_id_protein_warnings"),
+        ]
+    )
+
+    return result.sort(["company_id", "portion_size"], descending=[True, True])
+
+
+def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame, df_variation: pl.DataFrame) -> str:
+    df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", suffix="_1", coalesce=True)
+    df = df.join(df_variation, on=["company_id", "portion_size"], how="left", suffix="_2", coalesce=True)
     df = df.sort(["company_id", "portion_size"])
 
     def format_group(group: pl.DataFrame, group_name: str) -> str:
@@ -158,6 +253,10 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
                 f"({row['percentage_avg_error']}%)\n"
                 f"     Acc. error warning: {row['broken_acc_error']} "
                 f"({row['percentage_acc_error']}%)\n"
+                f"     Broken carb variation: {row['carb_warnings']} "
+                f"({row['percentage_carb_warnings']}%)\n"
+                f"     Broken protein variation: {row['protein_warnings']} "
+                f"({row['percentage_protein_warnings']}%)\n"
             )
             errors_compliance = (
                 row["agreement_id_broken_allergen"][0][:10]
@@ -188,6 +287,18 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
                 else row["agreement_id_acc_error"]
             )
 
+            carb_warnings = (
+                row["agreement_id_carb_warnings"][0][:10]
+                if isinstance(row["agreement_id_carb_warnings"], list)
+                else row["agreement_id_carb_warnings"]
+            )
+
+            protein_warnings = (
+                row["agreement_id_protein_warnings"][0][:10]
+                if isinstance(row["agreement_id_protein_warnings"], list)
+                else row["agreement_id_protein_warnings"]
+            )
+
             group_str += "     ---\n"
             group_str += f"     Agreement ids with broken allergens: {errors_compliance}\n"
             group_str += f"     Agreement ids with broken preferences: {warnings_compliancy}\n"
@@ -195,6 +306,8 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
             group_str += f"     Agreement ids with error mean ordered ago: {error_dim}\n"
             group_str += f"     Agreement ids with warning avg. error: {warnings_dim_1}\n"
             group_str += f"     Agreement ids with warning acc. error: {warnings_dim_2}\n"
+            group_str += f"     Agreement ids with carb variation warning: {carb_warnings}\n"
+            group_str += f"     Agreement ids with protein variation warning: {protein_warnings}\n"
         return group_str
 
     formatted_table = "\n".join(
@@ -205,8 +318,11 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
     return formatted_table
 
 
-def validation_metrics(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame) -> dict[str, int]:
-    df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", coalesce=True)
+def validation_metrics(
+    df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame, df_variation: pl.DataFrame
+) -> dict[str, int]:
+    df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", suffix="_1", coalesce=True)
+    df = df.join(df_variation, on=["company_id", "portion_size"], how="left", suffix="_2", coalesce=True)
 
     metrics = {
         "total_checks": int(df.height),
@@ -214,6 +330,8 @@ def validation_metrics(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
         "vector_warnings": int(df["vector_warning"].sum()),
         "comliancy_errors": int(df["compliancy_error"].sum()),
         "vector_errors": int(df["vector_error"].sum()),
+        "carb_warnings": int(df["has_carb_warning"].sum()),
+        "protein_warnings": int(df["has_protein_warning"].sum()),
     }
 
     return metrics

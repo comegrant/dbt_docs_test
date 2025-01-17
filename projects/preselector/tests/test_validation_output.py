@@ -1,6 +1,18 @@
 import polars as pl
+import pytest
+from aligned import ContractStore
+from aligned.sources.random_source import RandomDataSource
+from data_contracts.recipe import RecipeMainIngredientCategory
 from polars.testing import assert_frame_equal
-from preselector.output_validation import compliancy_metrics, error_metrics, validation_metrics
+from preselector.output_validation import compliancy_metrics, error_metrics, validation_metrics, variation_metrics
+from preselector.store import preselector_store
+
+
+@pytest.fixture
+def dummy_store() -> ContractStore:
+    store = preselector_store()
+
+    return store.dummy_store()
 
 
 def test_compliancy_metrics() -> None:
@@ -62,7 +74,8 @@ def test_compliancy_metrics() -> None:
     assert_frame_equal(expected_error, result_error)
 
 
-def test_validation_metric() -> None:
+@pytest.mark.asyncio
+async def test_validation_metric(dummy_store: ContractStore) -> None:
     df = pl.DataFrame(
         {
             "company_id": ["a", "a", "a", "a"],
@@ -76,17 +89,41 @@ def test_validation_metric() -> None:
                 "is_dim2": [0.0, 0.0, 0.4, 0.0],
                 "mean_ordered_ago": [0.0, 0.0, 0.0, 0.03],
             },
+            "number_of_recipes": [4, 4, 4, 4],
+            "main_recipe_ids": [
+                ["63059", "51311", "44106", "86774"],
+                ["63059", "51311", "44106", "86774"],
+                ["63059", "51311", "44106", "86774"],
+                ["63059", "51311", "44106", "86774"],
+            ],
         }
+    )
+
+    dummy_store = dummy_store.update_source_for(
+        RecipeMainIngredientCategory.location,
+        RandomDataSource.with_values({
+            "recipe_id": [63059, 51311, 44106, 86774],
+            "main_protein_category_id": [1, 1, 3, 4],
+            "main_carbohydrate_category_id": [5, 5, 5, 6],
+        })
     )
 
     comliancy_df = compliancy_metrics(df)
     error_df = error_metrics(df)
-
-    metrics = validation_metrics(comliancy_df, error_df)
-    exp_total, exp_comp_warnings, exp_comp_errors, exp_err_warning, exp_err_error = 2, 1, 1, 2, 1
+    variation_df = await variation_metrics(df, dummy_store)
+    metrics = validation_metrics(comliancy_df, error_df, variation_df)
+    exp_total = 2
+    exp_comp_warnings = 1
+    exp_comp_errors = 1
+    exp_err_warning = 2
+    exp_err_error = 1
+    exp_carb_warnings = 2
+    exp_protein_warnings = 0
 
     assert metrics["total_checks"] == exp_total
     assert metrics["comliancy_warnings"] == exp_comp_warnings
     assert metrics["comliancy_errors"] == exp_comp_errors
     assert metrics["vector_warnings"] == exp_err_warning
     assert metrics["vector_errors"] == exp_err_error
+    assert metrics["carb_warnings"] == exp_carb_warnings
+    assert metrics["protein_warnings"] == exp_protein_warnings

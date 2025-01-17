@@ -1,6 +1,12 @@
 # Databricks notebook source
 
 # COMMAND ----------
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from databricks.sdk.dbutils import RemoteDbUtils
+
+    dbutils: RemoteDbUtils = ""  # type: ignore
 
 from databricks_env import auto_setup_env
 
@@ -16,6 +22,7 @@ from preselector.output_validation import (
     get_output_data,
     validation_metrics,
     validation_summary,
+    variation_metrics,
 )
 from slack_connector.slack_notification import send_slack_notification
 
@@ -36,6 +43,34 @@ except Exception as e:
     raise e
 
 os.environ["UC_ENV"] = env
+os.environ["DATALAKE_ENV"] = env
+
+os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
+    scope="auth_common",
+    key="azure-storageAccount-experimental-name",
+)
+os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
+    scope="auth_common",
+    key="azure-storageAccount-experimental-key",
+)
+# COMMAND ----------
+from pyspark.sql import SparkSession
+
+spark = SparkSession.getActiveSession()
+
+job_id = spark.sparkContext.getLocalProperty("spark.databricks.job.id")  # Gives JobID in the URL
+parent_run_id = spark.sparkContext.getLocalProperty("spark.databricks.job.parentRunId")  # Gives Job RunID in the URL
+
+DATABRICKS_HOSTS = {
+    "dev": "https://adb-4291784437205825.5.azuredatabricks.net",
+    "test": "https://adb-3194696976104051.11.azuredatabricks.net",
+    "prod": "https://adb-3181126873992963.3.azuredatabricks.net",
+}
+
+url_to_job = f"{DATABRICKS_HOSTS[env]}/jobs/{job_id}/runs/{parent_run_id}"
+
+
+# COMMAND ----------
 
 
 async def run() -> None:
@@ -44,17 +79,21 @@ async def run() -> None:
 
     results_comp = compliancy_metrics(df)
     results_error = error_metrics(df)
-    summary = validation_summary(results_comp, results_error)
-    metrics = validation_metrics(results_comp, results_error)
+    results_variation = await variation_metrics(df)
+    summary = validation_summary(results_comp, results_error, results_variation)
+    metrics = validation_metrics(results_comp, results_error, results_variation)
 
     total_checks = metrics["total_checks"]
     errors_compliancy = metrics["comliancy_errors"]
     warnings_compliancy = metrics["comliancy_warnings"]
     errors_error = metrics["vector_errors"]
     warnings_error = metrics["vector_warnings"]
+    carb_warnings = metrics["carb_warnings"]
+    protein_warnings = metrics["protein_warnings"]
 
     errors = errors_compliancy + errors_error
     warnings = warnings_compliancy + warnings_error
+    total_warnings = warnings + carb_warnings + protein_warnings
 
     header_message = "Preselector Validation Finished"
 
@@ -65,16 +104,20 @@ async def run() -> None:
         f"- {errors_error} out of {total_checks} datasets have broken mean ordered ago.\n"
         f"Warnings:\n"
         f"- {warnings_compliancy} out of {total_checks} datasets have broken preferences.\n"
-        f"- {warnings_error} out of {total_checks} datasets have broken aggregated error.\n\n"
-        f"See the run log for more information. "
+        f"- {warnings_error} out of {total_checks} datasets have broken aggregated errors.\n"
+        f"- {carb_warnings} out of {total_checks} datasets have too little carb variation.\n"
+        f"- {protein_warnings} out of {total_checks} datasets have too little protein variation.\n\n"
+        f"See the run log for more information: {url_to_job} "
     )
 
     body_message_warning = (
         f"Warnings Detected in Preselector Output:\n"
         f"Warnings:\n"
         f"- {warnings_compliancy} out of {total_checks} datasets have broken preferences.\n"
-        f"- {warnings_error} out of {total_checks} datasets have broken aggregated error.\n\n"
-        f"See the run log for more information. "
+        f"- {warnings_error} out of {total_checks} datasets have broken aggregated error.\n"
+        f"- {carb_warnings} out of {total_checks} datasets have too little carb variation.\n"
+        f"- {protein_warnings} out of {total_checks} datasets have too little protein variation.\n\n"
+        f"See the run log for more information: {url_to_job} "
     )
 
     if errors > 0:
@@ -87,8 +130,8 @@ async def run() -> None:
             is_error=True,
         )
 
-    if errors == 0 and warnings > 0:
-        logger.warning(f"Validation of preselector output failed with {warnings} warnings")
+    if errors == 0 and total_warnings > 0:
+        logger.warning(f"Validation of preselector output failed with {total_warnings} warnings")
         send_slack_notification(
             environment=env,
             header_message=header_message,
