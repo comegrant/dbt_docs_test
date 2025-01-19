@@ -6,6 +6,12 @@ preselector_successful_output as (
 
 )
 
+, deviations as (
+
+    select * from {{ ref('int_basket_deviation_products_joined_versions') }}
+
+)
+
 , menus as (
 
     select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
@@ -14,13 +20,13 @@ preselector_successful_output as (
 
 , agreements as (
 
-    select * from {{ref('dim_billing_agreements')}}
+    select * from {{ ref('dim_billing_agreements') }}
 
 )
 
 , companies as (
 
-    select * from {{ref('dim_companies')}}
+    select * from {{ ref('dim_companies') }}
 
 )
 
@@ -30,17 +36,25 @@ preselector_successful_output as (
 
 )
 
-, generate_keys as (
+, products as (
+
+    select * from {{ ref('dim_products') }}
+
+)
+
+, preselector_output_generate_keys as (
 
     select
         -- Primary key
-        md5(cast(concat(
-            preselector_successful_output.billing_agreement_id,
-            preselector_successful_output.output_product_variation_id,
-            preselector_successful_output.created_at,
-            preselector_successful_output.requested_menu_year,
-            preselector_successful_output.requested_menu_week
-        ) as string)) as pk_fact_preselector
+        md5(
+            cast(concat(
+                preselector_successful_output.billing_agreement_id
+                , preselector_successful_output.output_product_variation_id
+                , preselector_successful_output.created_at
+                , preselector_successful_output.requested_menu_year
+                , preselector_successful_output.requested_menu_week
+            ) as string)
+        )                                      as pk_fact_preselector
 
         -- Timestamps
         , preselector_successful_output.created_at
@@ -60,6 +74,7 @@ preselector_successful_output as (
         -- Request details
         , preselector_successful_output.requested_menu_year
         , preselector_successful_output.requested_menu_week
+        , menus.menu_week_monday_date
         , preselector_successful_output.requested_portions
         , preselector_successful_output.requested_meals
 
@@ -108,29 +123,138 @@ preselector_successful_output as (
 
         -- Foreign keys
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
-        , md5(preselector_successful_output.company_id) as fk_dim_companies
-        , md5(concat(preselector_successful_output.output_product_variation_id, preselector_successful_output.company_id)) as fk_dim_products
-        , md5(concat(menus.recipe_id, companies.language_id)) as fk_dim_recipes
-        , md5(concat(recipes.main_recipe_id, companies.language_id)) as fk_dim_recipes_main_recipe
-        , cast(date_format(preselector_successful_output.created_at, 'yyyyMMdd') as int) as fk_dim_date_created_at_preselector_output
-        , cast(date_format(preselector_successful_output.created_at, 'HHmm') as int) as fk_dim_time_created_at_preselector_output
-        , md5(preselector_successful_output.model_version_commit_sha) as fk_dim_preselector_versions
+        , md5(
+            preselector_successful_output.company_id
+        )                                      as fk_dim_companies
+        , md5(
+            concat(
+                preselector_successful_output.output_product_variation_id
+                , preselector_successful_output.company_id
+            )
+        )                                      as fk_dim_products
+        , md5(
+            concat(menus.recipe_id, companies.language_id)
+        )                                      as fk_dim_recipes
+        , md5(
+            concat(recipes.main_recipe_id, companies.language_id)
+        )                                      as fk_dim_recipes_main_recipe
+        , cast(
+            date_format(preselector_successful_output.created_at, 'yyyyMMdd') as int
+        )                                      as fk_dim_date
+        , cast(
+            date_format(preselector_successful_output.created_at, 'HHmm') as int
+        )                                      as fk_dim_time
+        , md5(
+            preselector_successful_output.model_version_commit_sha
+        )                                      as fk_dim_preselector_versions
 
     from preselector_successful_output
     left join agreements
-        on preselector_successful_output.billing_agreement_id = agreements.billing_agreement_id
-        and preselector_successful_output.created_at >= agreements.valid_from
-        and preselector_successful_output.created_at < agreements.valid_to
+        on
+            preselector_successful_output.billing_agreement_id = agreements.billing_agreement_id
+            and preselector_successful_output.created_at >= agreements.valid_from
+            and preselector_successful_output.created_at < agreements.valid_to
     left join companies
         on preselector_successful_output.company_id = companies.company_id
     left join menus
-        on preselector_successful_output.requested_menu_year = menus.menu_year
-        and preselector_successful_output.requested_menu_week = menus.menu_week
-        and preselector_successful_output.output_product_variation_id = menus.product_variation_id
-        and preselector_successful_output.company_id = menus.company_id
+        on
+            preselector_successful_output.requested_menu_year = menus.menu_year
+            and preselector_successful_output.requested_menu_week = menus.menu_week
+            and preselector_successful_output.output_product_variation_id = menus.product_variation_id
+            and preselector_successful_output.company_id = menus.company_id
     left join recipes
-        on menus.recipe_id = recipes.recipe_id
-        and companies.language_id = recipes.language_id
+        on
+            menus.recipe_id = recipes.recipe_id
+            and companies.language_id = recipes.language_id
 )
 
-select * from generate_keys
+-- TODO: add this as an intermediate table
+, join_deviations_and_recipes as (
+
+    select distinct
+        deviations.menu_week_monday_date
+        , deviations.menu_week
+        , deviations.menu_year
+        , deviations.billing_agreement_id
+        , deviations.deviation_created_at
+        , recipes.main_recipe_id
+        , deviations.deviation_version
+    from deviations
+    left join menus
+        on
+            deviations.menu_week = menus.menu_week
+            and deviations.menu_year = menus.menu_year
+            and deviations.product_variation_id = menus.product_variation_id
+            and deviations.company_id = menus.company_id
+    left join products
+        on
+            deviations.product_variation_id = products.product_variation_id
+            and deviations.company_id = products.company_id
+    left join recipes
+        on menus.recipe_id = recipes.recipe_id
+    where products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+)
+
+-- For each preselector output, find the deviations that were created at or before the time of the output for that billing agreement
+, join_deviations_and_preselector as (
+    select
+        preselector.pk_fact_preselector
+        , preselector.main_recipe_id
+        , preselector.menu_week_monday_date as preselector_menu_week_monday_date
+        , deviations.menu_week_monday_date as deviation_menu_week_monday_date
+        , deviations.main_recipe_id        as deviation_main_recipe_id
+        , deviations.deviation_version
+        -- Find the most recent deviation version per menu week at the time of the output
+        , max(deviations.deviation_version) over (
+            partition by
+                preselector.pk_fact_preselector
+                , deviations.menu_week
+                , deviations.menu_year
+        )                          as most_recent_deviation_version
+    from preselector_output_generate_keys as preselector
+    left join join_deviations_and_recipes as deviations
+        on
+            preselector.billing_agreement_id = deviations.billing_agreement_id
+            and preselector.created_at >= deviations.deviation_created_at
+)
+
+-- Filter the deviations to only include main recipes that match the output, the most recent deviation version at the time of the output, and the time period we're interested in measuring
+, deviations_and_preselector_filtered as (
+    select
+        pk_fact_preselector
+        , deviation_menu_week_monday_date
+    from join_deviations_and_preselector
+    where
+        -- Only consider the latest deviation version at the time of the output
+        deviation_version = most_recent_deviation_version
+        -- Only consider deviations with the same main recipe as the output
+        and main_recipe_id = deviation_main_recipe_id
+        -- Only consider deviations from the previous 6 menu weeks and future menu weeks
+        and deviation_menu_week_monday_date >= date_sub(preselector_menu_week_monday_date, 42)
+        -- Exclude deviations from the same week as the preselector output, as the output will overwrite the deviation for that week
+        and deviation_menu_week_monday_date != preselector_menu_week_monday_date
+)
+
+-- Calculate the number of menu weeks where the same main recipe was selected
+, repeat_selection_metrics as (
+    select
+        pk_fact_preselector
+        , count(
+            distinct deviation_menu_week_monday_date
+        ) as number_of_repeats
+    from deviations_and_preselector_filtered
+    group by pk_fact_preselector
+)
+
+-- Join the repeat selection metrics back with the preselector output
+, join_repeat_selection_metrics_with_preselector_output as (
+
+    select
+        preselector_output_generate_keys.*
+        , repeat_selection_metrics.number_of_repeats
+    from preselector_output_generate_keys
+    left join repeat_selection_metrics
+        on preselector_output_generate_keys.pk_fact_preselector = repeat_selection_metrics.pk_fact_preselector
+)
+
+select * from join_repeat_selection_metrics_with_preselector_output

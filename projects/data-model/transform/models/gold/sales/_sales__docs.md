@@ -324,3 +324,13 @@ The preselector can output and overwrite each menu week's pre-selection multiple
 Foreign key that is used to relate to the main recipe of the row's recipe.
 
 {% enddocs %}
+
+{% docs column__number_menu_weeks_selected_previous_6_weeks_and_future %}
+
+Counts how many times the main recipe which was output by the preselector has been selected for a customer in:
+- The previous 6 menu weeks
+- Any currently visible menu weeks that haven't been ordered yet
+
+This helps identify when the same recipe is being repeatedly selected ("repeat selection"). Repeat selections are undesirable since customers prefer variety in their meals.
+
+{% enddocs %}

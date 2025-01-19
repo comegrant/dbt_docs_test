@@ -1129,6 +1129,14 @@ models:
         data_tests:
           - not_null
 
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: requested_portions
         data_type: int
         description: "{{ doc('column__requested_portions') }}"
@@ -1494,6 +1502,15 @@ models:
               max_value: 100
               where: "error_mean_veg_fruit is not null"
 
+      - name: number_of_repeats
+        data_type: bigint
+        description: "{{ doc('column__number_menu_weeks_selected_previous_6_weeks_and_future') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+              where: "number_of_repeats is not null"
+
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
@@ -1549,7 +1566,7 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
-      - name: fk_dim_date_created_at_preselector_output
+      - name: fk_dim_date
         data_type: int
         description: "{{ doc('column__fk_dim_date_created_at_preselector_output') }}"
         constraints:
@@ -1560,7 +1577,7 @@ models:
               to: ref('dim_date')
               field: pk_dim_date
 
-      - name: fk_dim_time_created_at_preselector_output
+      - name: fk_dim_time
         data_type: int
         description: "{{ doc('column__fk_dim_time_created_at_preselector_output') }}"
         constraints:
