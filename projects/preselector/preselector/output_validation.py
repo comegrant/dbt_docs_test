@@ -15,7 +15,9 @@ ERROR_MEAN_ORDERED_AGO = 0.02
 VAR_THRESHOLD = 0.59
 
 
-async def get_output_data(start_yyyyww: int | None = None, output_type: str = "batch") -> pl.DataFrame:
+async def get_output_data(
+    start_yyyyww: int | None = None, output_type: str = "batch", model_version: str | None = None
+) -> pl.DataFrame:
     if start_yyyyww is None:
         start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=5)
         start_yyyyww = int(f"{start_date.year}{start_date.isocalendar()[1]:02d}")
@@ -32,15 +34,18 @@ async def get_output_data(start_yyyyww: int | None = None, output_type: str = "b
                     "agreement_id",
                     "main_recipe_ids",
                     "portion_size",
-                    "number_of_recipes",
                     "compliancy",
                     "error_vector",
+                    "model_version",
                 }
             )
             .filter(pl.col("year") * 100 + pl.col("week") >= start_yyyyww)
             .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
             .to_polars()
         )
+
+        # calculate number_of_recipes via the lenght of main_recipe_ids
+        df = df.with_columns(pl.col("main_recipe_ids").list.len().alias("number_of_recipes"))
 
     elif output_type == "realtime":
         df = (
@@ -59,11 +64,15 @@ async def get_output_data(start_yyyyww: int | None = None, output_type: str = "b
                 "number_of_recipes",
                 "compliancy",
                 "error_vector",
+                "model_version",
             ]
         )
 
     else:
         raise ValueError(f"Invalid output type: {output_type}")
+
+    if model_version is not None:
+        df = df.filter(pl.col("model_version") == model_version)
 
     return df
 

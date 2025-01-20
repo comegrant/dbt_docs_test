@@ -42,6 +42,7 @@ resources:
             base_parameters:
               start_yyyyww: None
               output_type: realtime
+              model_version: None
               env: "${var.environment}"
 
         - task_key: preselector-output-validation-notification-end-fail

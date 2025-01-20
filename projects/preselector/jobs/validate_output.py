@@ -35,6 +35,9 @@ start_yyyyww_str = dbutils.widgets.get("start_yyyyww")
 start_yyyyww = int(start_yyyyww_str) if start_yyyyww_str.lower() != "none" else None
 output_type = dbutils.widgets.get("output_type")  # batch or realtime
 env = dbutils.widgets.get("env")
+model_version_str = dbutils.widgets.get("model_version")
+model_version = model_version_str if model_version_str.lower() != "none" else None
+
 
 try:
     spark = databricks_config.connection()
@@ -74,7 +77,7 @@ url_to_job = f"{DATABRICKS_HOSTS[env]}/jobs/{job_id}/runs/{parent_run_id}"
 
 
 async def run() -> None:
-    df = await get_output_data(start_yyyyww, output_type)
+    df = await get_output_data(start_yyyyww=start_yyyyww, output_type=output_type, model_version=model_version)
     display(df)
 
     results_comp = compliancy_metrics(df)
