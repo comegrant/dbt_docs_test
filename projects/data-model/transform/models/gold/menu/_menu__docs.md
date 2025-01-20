@@ -169,3 +169,23 @@ Ingredient category id of the fifth level of the ingredient category hierarchy.
 Primary key of the bridge table which connects dim_recipes and dim_taxonomies
 
 {% enddocs %}
+
+# Bridge Recipes Ingredients
+{% docs column__pk_bridge_recipes_ingredients %}
+
+Primary key of the bridge table which connects dim_recipes and dim_ingredients
+
+{% enddocs %}
+
+{% docs column__fk_dim_recipes %}
+
+Foreign key to dim_recipes
+
+{% enddocs %}
+
+{% docs column__fk_dim_ingredients %}
+
+Foreign key to dim_ingredients
+
+{% enddocs %}
+

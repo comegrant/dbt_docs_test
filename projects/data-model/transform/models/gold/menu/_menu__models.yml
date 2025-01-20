@@ -337,6 +337,76 @@ models:
     versions:
       - v: 1
 
+  - name: bridge_recipes_ingredients
+    description: "Bridge table connecting recipes and ingredients"
+    latest_version: 1
+    config:
+      alias: bridge_recipes_ingredients
+
+    columns:
+      - name: pk_bridge_recipes_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_bridge_recipes_ingredients') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__fk_dim_recipes') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+
+      - name: fk_dim_ingredients
+        data_type: string
+        description: "{{ doc('column__fk_dim_ingredients') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredients')
+              field: pk_dim_ingredients
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_portion_id
+        data_type: int
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: allergy_id
+        data_type: int
+        description: "{{ doc('column__allergy_id') }}"
+
+    versions:
+      - v: 1
 
   - name: fact_menus
     description: ""
