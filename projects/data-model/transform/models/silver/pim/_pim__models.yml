@@ -3,6 +3,122 @@
 version: 2
 
 models:
+  - name: pim__recipe_favorite_types
+    description: "Holds information about the different types of favoriting that is possible to select on the frontend."
+    columns:
+      - name: recipe_favorite_type_id
+        data_type: int
+        description: "{{ doc('column__recipe_favorite_type_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_favorite_type_name
+        data_type: string
+        description: "{{ doc('column__recipe_favorite_type_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: pim__recipe_favorites
+    description: "Contains information about recipes that have been hearted and disliked by customers"
+    columns:
+      - name: recipe_favorite_id
+        data_type: varchar(36)
+        description: "{{ doc('column__recipe_favorite_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        data_type: int
+        description: "{{ doc('column__main_recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_favorite_type_id
+        data_type: int
+        description: "{{ doc('column__recipe_favorite_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
   - name: pim__menu_recipes
     description: "Bridge table to link menus and recipes"
     columns:

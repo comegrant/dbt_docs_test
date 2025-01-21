@@ -44,6 +44,7 @@ tables = [
     "taxonomies_translations",
     "taxonomy_types",
     "weekly_menus",
+    "recipe_favorite_types"
 ]
 for table in tables:
     load_coredb_full(dbutils, database, table)

@@ -391,6 +391,28 @@ The description of the status code.
 
 {% enddocs %}
 
+# Recipe Favorites
+{% docs column__recipe_favorite_id %}
+
+The unique id of the recipe favortie rows in the source database.
+
+The id will be regenerated for every inserted row meaning that if a customer like/dislike a recipe, then remove the like/dislike, and then like/dislike that recipe again the new row will get a new id.
+
+{% enddocs %}
+
+# Recipe Favorite Type
+
+{% docs column__recipe_favorite_type_id %}
+
+The unique id of the recipe favorite type in the source database.
+
+{% enddocs %}
+
+{% docs column__recipe_favorite_type_name %}
+
+The name of the recipe type (can be favorite or dislike).
+{% enddocs %}
+
 # Not Organized
 {% docs column__is_main_protein %} 
 
@@ -493,4 +515,5 @@ The name of the ingredient connected to an ingredient id
 The name of an allergy connected to an allergy id
 
 {% enddocs %}
+
 

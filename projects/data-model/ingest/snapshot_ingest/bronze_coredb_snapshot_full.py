@@ -16,7 +16,8 @@ table_dictionary = {
         ],
         "PIM":[
                 "recipes_taxonomies",
-                "taxonomies"
+                "taxonomies",
+                "recipe_favorites"
         ]
 }
 

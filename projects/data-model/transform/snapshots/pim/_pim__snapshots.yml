@@ -1,0 +1,14 @@
+version: 2
+
+snapshots:
+  - name: scd_pim__recipe_favorites
+    description: Track inserts and deletes performed to the recipe_favorites table in PIM.
+    config:
+      unique_key: recipe_favorite_id
+      strategy: timestamp
+      # The reason for using created_at and not updated as is because 
+      # the source table does not have updates, only inserts and deletes.
+      # The valid from will hence always be the same as created at.
+      updated_at: created_at
+      hard_deletes: 'invalidate'
+      dbt_valid_to_current: "to_date('9999-12-31')"
