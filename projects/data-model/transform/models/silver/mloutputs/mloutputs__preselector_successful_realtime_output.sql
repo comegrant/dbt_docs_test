@@ -1,6 +1,6 @@
 with preselector_successful_output as (
 
-    select * from {{ source('mloutputs', 'preselector_successful_realtime_output') }}
+    select * from {{ source('prod__mloutputs', 'preselector_successful_realtime_output') }}
 
 )
 

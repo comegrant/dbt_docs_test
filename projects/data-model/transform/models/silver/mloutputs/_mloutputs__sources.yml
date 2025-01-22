@@ -3,9 +3,10 @@
 version: 2
 
 sources:
-  - name: mloutputs
+  - name: prod__mloutputs
+    database: prod
     schema: mloutputs
-    description: "Tables from the mloutputs schema in Databricks"
+    description: "Tables from the mloutputs schema in Databricks prod workspace"
     tables:
       - name: preselector_successful_realtime_output
         description: "Table of all successful preselector outputs."

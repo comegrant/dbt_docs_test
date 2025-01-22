@@ -1,6 +1,6 @@
 with preselector_failed_output as (
 
-    select * from {{ source('mloutputs', 'preselector_failed_realtime_output') }}
+    select * from {{ source('prod__mloutputs', 'preselector_failed_realtime_output') }}
 
 )
 
