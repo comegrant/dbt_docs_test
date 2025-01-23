@@ -26,7 +26,7 @@ renamed as (
 
         {# strings #}
         , right(concat(00,recipe_variation_suffix),2) as main_recipe_variation_suffix
-        , concat(main_recipe_id,right(concat(00,recipe_variation_suffix),2)) as main_recipe_variation_id
+        , concat(main_recipe_id,'-',right(concat(00,recipe_variation_suffix),2)) as main_recipe_variation_id
 
         {# numerics #}
         , cast(rating_average as decimal(6,4)) as recipe_average_rating
