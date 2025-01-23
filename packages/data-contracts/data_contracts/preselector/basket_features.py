@@ -80,6 +80,8 @@ class InjectedFeatures:
     mean_rank = order_rank_agg.mean().default_value(0)
     mean_ordered_ago = ordered_ago_agg.mean().default_value(1)
     inter_week_similarity = Float().default_value(0)
+    repeated_proteins_percentage = Float().default_value(0)
+    repeated_carbo_percentage = Float().default_value(0)
 
 
 injected_features = InjectedFeatures()
@@ -131,6 +133,11 @@ class BasketFeatures:
 
     # Main Proteins
     # Setting default value to migrate the changes more easily
+    repeated_proteins_percentage = recipe_features.main_ingredient_id.polars_aggregation(
+        # Will always be at least one repeated protein
+        pl.col("main_ingredient_id").unique_counts().mean() / pl.count("main_ingredient_id"),
+        as_type=Float()
+    ).default_value(0)
 
     is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
     is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
@@ -165,6 +172,15 @@ class BasketFeatures:
         .default_value(0)
         .with_tag(VariationTags.carbohydrate)
     )
+
+    # Main Carbo
+    # Setting default value to migrate the changes more easily
+    repeated_carbo_percentage = recipe_main_ingredient.main_carbohydrate_category_id.polars_aggregation(
+        # Will always be at least one repeated protein
+        pl.col("main_carbohydrate_category_id").unique_counts().mean() / pl.count("main_carbohydrate_category_id"),
+        as_type=Float()
+    ).default_value(0)
+
 
 async def historical_customer_mealkit_features(
     request: RetrivalRequest,

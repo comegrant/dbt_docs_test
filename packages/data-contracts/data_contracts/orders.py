@@ -108,8 +108,7 @@ INNER JOIN gold.fact_menus menus
   AND estimations.fk_dim_date_menu_week = menus.fk_dim_date
 INNER JOIN gold.dim_recipes recipes
   ON menus.fk_dim_recipes = recipes.pk_dim_recipes
-WHERE estimations.is_latest_estimation
-  AND estimations.menu_year * 100 + estimations.menu_week >= 202446"""
+WHERE estimations.is_latest_estimation"""
 
 @feature_view(
     name="current_selected_recipes",

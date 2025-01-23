@@ -650,11 +650,11 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
         default_values: dict[str, float],
         importance: pl.DataFrame,
         target: pl.DataFrame,
-        fixed_imporatnce: float
+        fixed_importance: float
     ) -> tuple[pl.DataFrame, pl.DataFrame]:
 
         importance = importance.with_columns([
-            pl.lit(fixed_imporatnce).alias(key)
+            pl.lit(fixed_importance).alias(key)
             for key  in default_values
         ])
         target = target.with_columns([
@@ -666,7 +666,7 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
 
 
     potential_tags = {
-        VariationTags.protein: 0.2,
+        VariationTags.protein: 0.1,
         VariationTags.carbohydrate: 0.2,
         VariationTags.quality: 0.8,
         VariationTags.equal_dishes: 0.0
@@ -691,7 +691,7 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
     # Attributes = 2/3
     # Variation = 1/3
     # Since they should be summed to 1
-    total_sum = 0.25 / len(tags)
+    total_sum = 0.2 / len(tags)
 
     if not tags:
         return importance, target
@@ -772,16 +772,24 @@ async def historical_preselector_vector(
     store: ContractStore,
 ) -> tuple[pl.DataFrame, pl.DataFrame, Annotated[bool, "If the vectors is based on historical data"]]:
 
+    vector_features = [
+        feat.name for feat in store.feature_view(TargetVectors).request.features if "float" in feat.dtype.name
+    ]
+
     async def inject_importance_and_target(
         importance: pl.DataFrame, target: pl.DataFrame
     ) -> tuple[pl.DataFrame, pl.DataFrame]:
         from data_contracts.preselector.basket_features import InjectedFeatures
 
+        weighting = 0.65
+
         importance_static = (await InjectedFeatures.process_input({
             "mean_cost_of_food": [0.25],
             "mean_rank": [0.02],
-            "mean_ordered_ago": [0.3],
-            "inter_week_similarity": [0.07]
+            "mean_ordered_ago": [0.4],
+            "inter_week_similarity": [0.07],
+            "repeated_proteins_percentage": [0.05],
+            "repeated_carbo_percentage": [0.05],
         }).drop_invalid().to_polars()).to_dicts()[0]
 
         target_static = (await InjectedFeatures.process_input({
@@ -790,14 +798,33 @@ async def historical_preselector_vector(
             "mean_rank": [0],
             # aka max
             "mean_ordered_ago": [0],
-            "inter_week_similarity": [0]
+            "inter_week_similarity": [0],
+            "repeated_proteins_percentage": [0]
         }).drop_invalid().to_polars()).to_dicts()[0]
 
+        other_features = [
+            feat for feat
+            in vector_features
+            if feat not in importance_static
+        ]
+
+
+        static_vector = pl.DataFrame(
+            dict(
+                **importance_static,
+                **{
+                    key: 0 for key in other_features
+                },
+            ),
+            schema_overrides=importance.schema
+        ).select(pl.all() / pl.sum_horizontal(vector_features) * weighting).select(importance.columns)
+
+        merged_importance = importance.select(
+            pl.all() * (1 - weighting)
+        ).vstack(static_vector).sum().select(pl.all() / pl.sum_horizontal(vector_features))
+
         importance, target = (
-            importance.with_columns([
-                pl.lit(value).alias(key)
-                for key, value in importance_static.items()
-            ]),
+            merged_importance,
             target.with_columns([
                 pl.lit(value).alias(key)
                 for key, value in target_static.items()
@@ -813,9 +840,6 @@ async def historical_preselector_vector(
         )
 
 
-    vector_features = [
-        feat.name for feat in store.feature_view(TargetVectors).request.features if "float" in feat.dtype.name
-    ]
 
     logger.debug(f"No history found, using default values {request.concept_preference_ids}")
 

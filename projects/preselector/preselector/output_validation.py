@@ -22,35 +22,10 @@ async def get_output_data(
         start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=5)
         start_yyyyww = int(f"{start_date.year}{start_date.isocalendar()[1]:02d}")
 
-    if output_type == "batch":
-        df = (
-            await Preselector.query()
-            .using_source(databricks_catalog.schema("mloutputs").table("preselector_batch"))
-            .select(
-                {
-                    "company_id",
-                    "year",
-                    "week",
-                    "agreement_id",
-                    "main_recipe_ids",
-                    "portion_size",
-                    "compliancy",
-                    "error_vector",
-                    "model_version",
-                }
-            )
-            .filter(pl.col("year") * 100 + pl.col("week") >= start_yyyyww)
-            .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
-            .to_polars()
-        )
-
-        # calculate number_of_recipes via the lenght of main_recipe_ids
-        df = df.with_columns(pl.col("main_recipe_ids").list.len().alias("number_of_recipes"))
-
-    elif output_type == "realtime":
+    if output_type == "realtime":
         df = (
             await SuccessfulPreselectorOutput.query()
-            .filter(pl.col("menu_year") * 100 + pl.col("menu_week") >= start_yyyyww)
+            .filter(pl.col("menu_year").cast(pl.Int32) * 100 + pl.col("menu_week") >= start_yyyyww)
             .unique_entities()
             .to_polars()
         ).select(
@@ -67,9 +42,38 @@ async def get_output_data(
                 "model_version",
             ]
         )
-
     else:
-        raise ValueError(f"Invalid output type: {output_type}")
+        source_splits = output_type.split(".")
+
+        if len(source_splits) == 2: # noqa: PLR2004
+            schema, table = source_splits
+            source = databricks_catalog.schema(schema).table(table)
+        elif output_type == "batch":
+            source = databricks_catalog.schema("mloutputs").table("preselector_batch")
+        else:
+            raise ValueError(f"Unsupported output type: {output_type}")
+
+        df = (
+            await Preselector.query()
+            .using_source(source)
+            .select(
+                {
+                    "company_id",
+                    "year",
+                    "week",
+                    "agreement_id",
+                    "portion_size",
+                    "compliancy",
+                    "error_vector",
+                }
+            )
+            .all()
+            .filter(
+                pl.col("year").cast(pl.Int32) * 100 + pl.col("week") >= start_yyyyww
+            )
+            .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
+            .to_polars()
+        )
 
     if model_version is not None:
         df = df.filter(pl.col("model_version") == model_version)

@@ -20,7 +20,7 @@ from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRe
 
 if TYPE_CHECKING:
     from pyspark.sql import SparkSession
-    from pyspark.sql.types import DataType, StructField, StructType
+    from pyspark.sql.types import DataType, StructType
 
 
 def is_running_on_databricks() -> bool:
@@ -45,6 +45,19 @@ def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
         for name, dtype in schema.items()
     ])
 
+def raise_on_invalid_pyspark_schema(schema: DataType) -> None:
+    from pyspark.sql.types import ArrayType, NullType, StructType
+
+    if isinstance(schema, StructType):
+        for field in schema.fields:
+            raise_on_invalid_pyspark_schema(field)
+
+    if isinstance(schema, ArrayType):
+        raise_on_invalid_pyspark_schema(schema.elementType)
+
+    if isinstance(schema, NullType):
+        raise ValueError("Found a NullType in the schema. This will lead to issues.")
+
 
 def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PLR0911
     from pyspark.sql.types import (
@@ -57,6 +70,7 @@ def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PL
         LongType,
         ShortType,
         StringType,
+        StructField,
         StructType,
         TimestampType,
     )
@@ -509,9 +523,13 @@ def features_to_read(request: RetrivalRequest) -> list[str]:
 
 @dataclass
 class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
+    """
+    A source that connects to a Databricks Unity Catalog table
+    """
 
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
+    should_overwrite_schema: bool = False
 
     type_name = "uc_table"
 
@@ -519,13 +537,24 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         # One fetch job per table
         return f"uc_table-{self.table.identifier()}"
 
+
+    def overwrite_schema(self, should_overwrite_schema: bool = True) -> UCTableSource:
+        return UCTableSource(
+            config=self.config,
+            table=self.table,
+            should_overwrite_schema=should_overwrite_schema
+        )
+
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
 
         async def load() -> pl.LazyFrame:
             con = self.config.connection()
-            spark_df = con.read.table(self.table.identifier()).select(
-                features_to_read(request)
-            )
+            spark_df = con.read.table(self.table.identifier())
+
+            if request.features_to_include:
+                spark_df = spark_df.select(
+                    features_to_read(request)
+                )
 
             if limit:
                 spark_df = spark_df.limit(limit)
@@ -647,10 +676,17 @@ WHEN NOT MATCHED THEN
 
 
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        pdf = await job.unique_entities().to_pandas()
+        pdf = await job.unique_entities().to_polars()
+        schema = polars_schema_to_spark(pdf.schema) # type: ignore
+        raise_on_invalid_pyspark_schema(schema)
         conn = self.config.connection()
-        df = conn.createDataFrame(pdf)
-        df.write.mode("overwrite").saveAsTable(self.table.identifier())
+        df = conn.createDataFrame(
+            pdf.to_pandas(),
+            schema=schema
+        )
+        df.write.mode("overwrite").option(
+            "overwriteSchema", self.should_overwrite_schema
+        ).saveAsTable(self.table.identifier())
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCTableSource:
         return UCTableSource(config, self.table)

@@ -132,7 +132,6 @@ class Preselector:
 @feature_view(
     name="preselector_successful_live_output",
     source=databricks_catalog.schema("mloutputs").table("preselector_successful_realtime_output")
-
 )
 class SuccessfulPreselectorOutput:
     billing_agreement_id = Int32().lower_bound(1).as_entity()
@@ -159,7 +158,12 @@ class SuccessfulPreselectorOutput:
 
     generated_at = EventTimestamp()
     compliancy = Int32().lower_bound(0).upper_bound(4)
-    taste_preferences = List(Json())
+
+    taste_preferences = List(Json()).description(
+        "Deprecated, and will only support `taste_preference_ids` in the future."
+    )
+    taste_preference_ids = List(String())
+
     model_version = String()
     has_data_processing_consent = Bool()
     override_deviation = Bool()

@@ -24,34 +24,68 @@ resources:
                 username: "{{secrets/auth_common/docker-registry-username}}"
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-
       tasks:
+        - task_key: migrate
+          job_cluster_key: preselector
+          spark_python_task:
+            python_file: migrate.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+
         - task_key: materialization
           job_cluster_key: preselector
           notebook_task:
             notebook_path: materialize.py
             base_parameters:
               environment: "${var.environment}"
+          depends_on:
+            - task_key: migrate
 
-        - task_key: deploy
+        - task_key: batch-predict-gl
           job_cluster_key: preselector
-          spark_python_task:
-            python_file: deploy.py
-            parameters:
-              - "--tag"
-              - "{{job.parameters.tag}}"
-              - "--env"
-              - "{{job.parameters.env}}"
-          # depends_on:
-          #   - task_key: materialization
+          notebook_task:
+            notebook_path: batch_predict.py
+            base_parameters:
+              company_id: "09ECD4F0-AE58-4539-8E8F-9275B1859A19"
+              environment: "${var.environment}"
+              write_table: "mloutputs.preselector_validation"
+          depends_on:
+            - task_key: materialization
+
+        - task_key: batch-predict-rmt
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: batch_predict.py
+            base_parameters:
+              company_id: "5E65A955-7B1A-446C-B24F-CFE576BF52D7"
+              environment: "${var.environment}"
+              write_table: "mloutputs.preselector_validation"
+          depends_on:
+            - task_key: batch-predict-gl
+
+        - task_key: batch-predict-adams
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: batch_predict.py
+            base_parameters:
+              company_id: "8A613C15-35E4-471F-91CC-972F933331D7"
+              environment: "${var.environment}"
+              write_table: "mloutputs.preselector_validation"
+          depends_on:
+            - task_key: batch-predict-rmt
+
+        - task_key: batch-predict-lmk
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: batch_predict.py
+            base_parameters:
+              company_id: "6A2D0B60-84D6-4830-9945-58D518D27AC2"
+              environment: "${var.environment}"
+              write_table: "mloutputs.preselector_validation"
+          depends_on:
+            - task_key: batch-predict-adams
 
       parameters:
-        - name: tag
-          default: ""
         - name: env
           default: "${var.environment}"

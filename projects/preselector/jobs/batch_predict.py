@@ -25,7 +25,9 @@ dbutils.widgets.text("number_of_weeks", "8")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
 dbutils.widgets.text("batch_write_interval", defaultValue="1000")
+dbutils.widgets.text("predict_amount", defaultValue="")
 dbutils.widgets.text("write_mode", defaultValue="dl")
+dbutils.widgets.text("write_table", defaultValue="mloutputs.preselector_batch")
 
 environment = dbutils.widgets.get("environment")
 
@@ -60,10 +62,17 @@ os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
 )
 
 write_mode = dbutils.widgets.get("write_mode")
+write_table = dbutils.widgets.get("write_table")
 company_id = dbutils.widgets.get("company_id")
 assert company_id, "Need a company id to run"
+
+predict_amount_raw = dbutils.widgets.get("predict_amount")
 batch_write_interval = int(dbutils.widgets.get("batch_write_interval"))
 
+if predict_amount_raw:
+    predict_amount = int(predict_amount_raw)
+else:
+    predict_amount = None
 
 number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
 from_date = dbutils.widgets.get("from_date_iso_format")
@@ -200,8 +209,10 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
     )
 
     select * from final where concept_preference_ids is not null
-
     """
+
+    if predict_amount:
+        query_for_batch_predict += f" limit {predict_amount}"
 
     spark = databricks_config.connection()
     sdf = spark.sql(query_for_batch_predict)
@@ -243,9 +254,10 @@ async def run() -> None:
             if req.error_code > 100: # noqa: PLR2004
                 raise ValueError(f"The preselector failed with an unknown error code: {data}")
 
+    write_schema, write_table_name = write_table.split(".")
     db_source = PreselectorResultWriter(
         company_id,
-        sink=databricks_catalog.schema("mloutputs").table("preselector_batch")
+        sink=databricks_catalog.schema(write_schema).table(write_table_name)
     )
 
     if write_mode is None or write_mode == "dl":

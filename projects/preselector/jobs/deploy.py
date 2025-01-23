@@ -290,7 +290,7 @@ async def deploy_all(
     mode: Literal["both", "batch", "live", "flush"]
 ) -> None:
     company_names = [
-        "godtlevert",
+        # "godtlevert",
         "adams",
         "linas",
         "retnemt",
@@ -308,8 +308,6 @@ async def deploy_all(
         name = f"preselector-{company}-worker"
         if company == "godtlevert":
             name = "preselector-gl-worker"
-
-
 
         if mode == "live":
             # Currently we want to have an additional scaler

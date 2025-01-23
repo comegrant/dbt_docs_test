@@ -69,6 +69,7 @@ class PreselectorSuccessfulResponse(BaseModel):
         Returns a dataframe that conforms to the data contract `SuccessfulPreselectorOutput`.
         """
         request_values = self.model_dump(exclude={"year_weeks"})
+        request_values["taste_preference_ids"] = [ pref.preference_id for pref in self.taste_preferences ]
         generated_weeks = []
 
         error_features = [
