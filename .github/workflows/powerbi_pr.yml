@@ -10,11 +10,6 @@ on:
       - '.github/workflows/powerbi_pr.yml'
       - 'projects/powerbi**'
 
-  workflow_run:
-    workflows: ["Data Model PR"]
-    types:
-      - completed
-
   workflow_dispatch:
 
 jobs:

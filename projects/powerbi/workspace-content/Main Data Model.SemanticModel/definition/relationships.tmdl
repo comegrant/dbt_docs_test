@@ -154,13 +154,13 @@ relationship daa2c4ad-90bf-e02d-ecf5-4888d1fbb509
 	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
 
-relationship af5188ce-5759-15f0-142f-82fdeabbbcea
-	fromColumn: 'Agreements Daily'.days_since_first_order
-	toColumn: 'Period Since First Order'.'Days Since First Order'
-
 relationship ea04ed46-e5b1-3d93-7342-2ee686096142
 	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
 	toColumn: 'Preference Combinations'.fk_dim_billing_agreements
+
+relationship af5188ce-5759-15f0-142f-82fdeabbbcea
+	fromColumn: 'Agreements Daily'.days_since_first_order
+	toColumn: 'Period Since First Order'.'Days Since First Order'
 
 relationship d7c179ab-ac67-9630-d7ab-9aaa3c46a1a8
 	fromColumn: 'Customer Measures'.fk_dim_billing_agreements
@@ -176,5 +176,6 @@ relationship 17549b92-f0dd-0479-2859-58110c1dc12c
 	toColumn: Companies.pk_dim_companies
 
 relationship 4ddd3c4b-2b92-dc61-fca1-ca9175a4a760
-	fromColumn: 'Customer Measures'.fk_dim_date
+	fromColumn: 'Customer Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
+

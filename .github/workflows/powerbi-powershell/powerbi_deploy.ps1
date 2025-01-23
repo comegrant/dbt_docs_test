@@ -29,8 +29,8 @@ New-Item -ItemType Directory -Path ".\modules" -ErrorAction SilentlyContinue | O
     Invoke-WebRequest -Uri $_ -OutFile ".\modules\$(Split-Path $_ -Leaf)"
 }
 
-if(-not (Get-Module Az.Accounts -ListAvailable)) { 
-    Install-Module Az.Accounts -Scope CurrentUser -Force
+if(-not (Get-Module Az.Accounts -ListAvailable)) {
+    Install-Module Az.Accounts -Scope CurrentUser -Force -AllowClobber
 }
 
 Import-Module ".\modules\FabricPS-PBIP" -Force
