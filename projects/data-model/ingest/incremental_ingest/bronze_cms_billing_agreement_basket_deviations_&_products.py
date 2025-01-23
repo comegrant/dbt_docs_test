@@ -21,10 +21,10 @@ source_deviation_products_join_column = "billing_agreement_basket_deviation_id"
 
 # COMMAND ----------
 
-# From date is 45 days before max date of corresponding silver table
+# From date is 60 days before max date of corresponding silver table
 try: 
     spark.table(f"{silver_deviations_table}")
-    from_date_df = spark.sql(f"SELECT DATE_SUB(MAX({silver_deviations_date_column}), 45) AS 45d_before_max_date FROM {silver_deviations_table}")
+    from_date_df = spark.sql(f"SELECT DATE_SUB(MAX({silver_deviations_date_column}), 60) AS 45d_before_max_date FROM {silver_deviations_table}")
     from_date = from_date_df.collect()[0]['45d_before_max_date'].strftime('%Y-%m-%d')
 except Exception as e:
     from_date = '2015-01-01'

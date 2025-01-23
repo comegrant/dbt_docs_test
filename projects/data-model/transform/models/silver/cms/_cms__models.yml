@@ -802,6 +802,11 @@ models:
           - not_null
   - name: cms__billing_agreement_basket_deviations
     description: "All baskets that have a change for a particular menu week made by either the recommendation engine, customers or customer service"
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_basket_id || menu_year || menu_week )"
+          config:
+            where: "is_active_deviation = true"
     columns:
       - name: billing_agreement_basket_deviation_id
         data_type: varchar(36)
