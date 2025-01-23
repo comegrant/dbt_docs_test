@@ -71,12 +71,24 @@ registered as (
     )) as billing_agreement_preferences_updated_id
     , billing_agreement_id
     , company_id
-    , preference_id_list
+    , array_sort(filter(preference_id_list, x -> x is not null)) as preference_id_list
     , valid_from
     , {{ get_scd_valid_to('valid_from', 'billing_agreement_id') }} as valid_to
     , source
     from unioned
 )
 
+, preference_combination_id_added (
+    select
+        billing_agreement_preferences_updated_id
+        , billing_agreement_id
+        , company_id
+        , md5(array_join(preference_id_list, ',')) as preference_combination_id
+        , preference_id_list
+        , valid_from
+        , valid_to
+        , source
+    from updated_valid_to
+)
 
-select * from updated_valid_to
+select * from preference_combination_id_added

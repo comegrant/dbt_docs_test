@@ -44,6 +44,40 @@ vars:
           "'4508130E-6BA1-4C14-94A4-A56B074BB135'"  #Finished
 ]
  basket_history_start_at: '2023-11-01 00:00:00'
+ onesub_chefs_favorite_taxonomy_ids: [
+  2011, # Chefs choice, Norwegian
+  2147, # Chefs choice, Swedish
+  2152 #Chefs choice, Danish
+ ]
+ onesub_vegetarian_taxonomy_ids: [
+  2012, # Vegetarian, Norwegian
+  2150, # Vegetarian, Swedish
+  2155, # Vegetarian, Danish
+  2157 # Vegan, Swedish
+ ]
+ onesube_low_calorie_taxonomy_ids: [
+  2015, # Roede, Norwegian
+  2096, # Roede, Norwegian
+  2156, # Low calorie, Danish
+  2013, # Low calorie, Norwegian
+  2151 # Low calorie, Swedish
+ ]
+ onesub_quick_and_easy_taxonomy_ids: [
+  2010, # Express, Norwegian
+  2149, # Express, Swedish
+  2154 # Express, Danish
+ ]
+ onesub_family_friendly_taxonomy_ids: [
+  2148, # Family, Swedish
+  2014, # Family, Norwegian
+  2153, # Family, Danish
+  1213, # Barnevennlig, Norwegian
+  1321, # Børnevenlig, Danish
+  2095, # Barnvänligt, Swedish
+  2199, # Familievenlig, Danish
+  1148, # Familjefavoriter, Swedish
+  226 # Barnevennlig, Norwegian
+ ]
 
 
 # Configuring models
