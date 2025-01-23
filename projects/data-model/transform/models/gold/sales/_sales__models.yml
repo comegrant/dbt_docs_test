@@ -851,11 +851,139 @@ models:
     versions:
       - v: 1
 
-  - name: fact_billing_agreements_daily
-    description: "All billing agreements, except deleted once, exploded to each day."
+  - name: fact_billing_agreement_updates
+    description: "One row per billing agreement update. Contains a key to the billing agreement before and after the update."
     latest_version: 1
     config:
-      alias: fact_billing_agreements_daily
+      alias: fact_billing_agreement_updates
+
+    columns:
+      - name: pk_fact_billing_agreement_updates
+        data_type: string
+        description: "{{ doc('column__pk_fact_billing_agreement_updates') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: pk_dim_date
+
+      - name: fk_dim_time
+        data_type: string
+        description: "{{ doc('column__pk_dim_time') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_time')
+              field: pk_dim_time
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__fk_dim_billing_agreements_updated') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_billing_agreements_previous_version
+        data_type: string
+        description: "{{ doc('column__fk_dim_billing_agreements_previous_version') }}"   
+        data_tests:
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_periods_since_first_order
+        data_type: int
+        description: "dimension does not exist yet, so will add description later."
+        data_tests:
+          - relationships:
+              to: ref('dim_periods_since_first_order')
+              field: pk_dim_periods_since_first_order
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: updated_at
+        data_type: timestamp
+        description: "{{ doc('column__updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_new_agreement
+        data_type: boolean
+        description: "{{ doc('column__is_new_agreement') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_updated_preferences
+        data_type: boolean
+        description: "{{ doc('column__has_updated_preferences') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_updated_subscribed_products
+        data_type: boolean
+        description: "{{ doc('column__has_updated_subscribed_products') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_updated_status
+        data_type: boolean
+        description: "{{ doc('column__has_updated_status') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_updated_onesub_flag
+        data_type: boolean
+        description: "{{ doc('column__has_updated_onesub_flag') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
     versions:
       - v: 1

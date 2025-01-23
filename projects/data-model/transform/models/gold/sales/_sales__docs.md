@@ -334,3 +334,59 @@ Counts how many times the main recipe which was output by the preselector has be
 This helps identify when the same recipe is being repeatedly selected ("repeat selection"). Repeat selections are undesirable since customers prefer variety in their meals.
 
 {% enddocs %}
+
+# Fact Billing Agreement Updates
+
+{% docs column__pk_fact_billing_agreement_updates %}
+
+The unique key of each row in Fact Billing Agrement Updates. This is the same as the foreign key to the updated billing agreement.
+
+{% enddocs %}
+
+{% docs column__fk_dim_billing_agreements_updated %}
+
+The primary key of Dim Billing Agreements. The key is representing the version of the billing agreement after the update.
+
+{% enddocs %}
+
+{% docs column__fk_dim_billing_agreements_previous_version %}
+
+The primary key of Dim Billing Agreements. The key is representing the version of the billing agreement before the update.
+
+{% enddocs %}
+
+{% docs column__updated_at %}
+
+The timestamp of when the update of the billing agreement happened.
+
+{% enddocs %}
+
+{% docs column__is_new_agreement %}
+
+True if the billing agreement did not exist before and this is the first version of it.
+
+{% enddocs %}
+
+{% docs column__has_updated_preferences %}
+
+True if the preferences before and after the update is different.
+
+{% enddocs %}
+
+{% docs column__has_updated_subscribed_products %}
+
+True if the subscribed products before and after the update is different.
+
+{% enddocs %}
+
+{% docs column__has_updated_status %}
+
+True if the status of the billing agreement before and after the update is different.
+
+{% enddocs %}
+
+{% docs column__has_updated_onesub_flag %}
+
+True if the OneSub flag for the billing agreement before and after the update is different.
+
+{% enddocs %}

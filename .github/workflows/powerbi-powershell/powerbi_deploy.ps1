@@ -70,8 +70,6 @@ foreach ($file in $tableFiles) {
 # Add incremental load
 $ordersPath = "$($tablesPath)/Order Measures.tmdl"
 Add-RefreshPolicy -tmdlFilePath $ordersPath -sourceTableName "fact_orders" -dateFieldName "source_created_at"
-$agreementsPath = "$($tablesPath)/Agreement Measures.tmdl"
-Add-RefreshPolicy -tmdlFilePath $agreementsPath -sourceTableName "fact_billing_agreements_daily" -dateFieldName "date"
 $agreementsWeeklyPath = "$($tablesPath)/Agreements Weekly.tmdl"
 Add-RefreshPolicy -tmdlFilePath $agreementsWeeklyPath -sourceTableName "fact_billing_agreements_weekly" -dateFieldName "monday_date"
 
@@ -81,7 +79,7 @@ $semanticModelImport = Import-FabricItem -workspaceId $workspaceId -path $pbipSe
 # Get all paths ending with .Report
 $reportDirs = Get-ChildItem -Path $pbipPath -Directory -Recurse | Where-Object { $_.Name -like '*.Report' }
 
-# Itererer over hver mappe og utfører handlinger
+# Iterating over each .Report folder, connecting to correct semantic model and deploys
 foreach ($dir in $reportDirs) {
     if ($dir.Name -eq "$($modelName).Report") {
         continue

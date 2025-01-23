@@ -39,13 +39,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Agreement Measures"
+                      "Entity": "Agreements Daily"
                     }
                   },
                   "Property": "% Retention"
                 }
               },
-              "queryRef": "Agreement Measures.% Retention",
+              "queryRef": "Agreements Daily.% Retention",
               "nativeQueryRef": "% Retention"
             }
           ]

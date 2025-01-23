@@ -23432,7 +23432,7 @@ cultureInfo en-US
 			    "agreement_measure": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures"
+			          "ConceptualEntity": "Agreements Daily"
 			        }
 			      },
 			      "State": "Generated",
@@ -23553,7 +23553,7 @@ cultureInfo en-US
 			    "agreement_measure.pk_fact_billing_agreements_daily": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "pk_fact_billing_agreements_daily"
 			        }
 			      },
@@ -23661,7 +23661,7 @@ cultureInfo en-US
 			    "agreement_measure.fk_dim_date": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "fk_dim_date"
 			        }
 			      },
@@ -23733,7 +23733,7 @@ cultureInfo en-US
 			    "agreement_measure.fk_dim_billing_agreement": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "fk_dim_billing_agreements"
 			        }
 			      },
@@ -23871,7 +23871,7 @@ cultureInfo en-US
 			    "agreement_measure.fk_dim_company": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "fk_dim_companies"
 			        }
 			      },
@@ -24003,7 +24003,7 @@ cultureInfo en-US
 			    "agreement_measure.date": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "date"
 			        }
 			      },
@@ -24044,7 +24044,7 @@ cultureInfo en-US
 			    "agreement_measure.week": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "week"
 			        }
 			      },
@@ -24063,7 +24063,7 @@ cultureInfo en-US
 			    "agreement_measure.year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "year"
 			        }
 			      },
@@ -24094,7 +24094,7 @@ cultureInfo en-US
 			    "agreement_measure.billing_agreement_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "billing_agreement_id"
 			        }
 			      },
@@ -24226,7 +24226,7 @@ cultureInfo en-US
 			    "agreement_measure.valid_from_billing_agreement": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "valid_from_billing_agreements"
 			        }
 			      },
@@ -24359,7 +24359,7 @@ cultureInfo en-US
 			    "agreement_measure.company_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "company_id"
 			        }
 			      },
@@ -24485,7 +24485,7 @@ cultureInfo en-US
 			    "agreement_measure.day_since_first_order": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "days_since_first_order"
 			        }
 			      },
@@ -24511,7 +24511,7 @@ cultureInfo en-US
 			    "agreement_measure.has_order": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "has_order"
 			        }
 			      },
@@ -24637,7 +24637,7 @@ cultureInfo en-US
 			    "agreement_measure.is_paused": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "is_paused"
 			        }
 			      },
@@ -24663,7 +24663,7 @@ cultureInfo en-US
 			    "agreement_measure.is_freezed": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "is_freezed"
 			        }
 			      },
@@ -24689,7 +24689,7 @@ cultureInfo en-US
 			    "agreement_measure.first_menu_week_monday_date": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "first_menu_week_monday_date"
 			        }
 			      },
@@ -24817,7 +24817,7 @@ cultureInfo en-US
 			    "agreement_measure.number_of_customers": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "Number of Customers"
 			        }
 			      },
@@ -24883,7 +24883,7 @@ cultureInfo en-US
 			    "agreement_measure.retention_number_of_customers": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "Retention Number of Customers"
 			        }
 			      },
@@ -24968,7 +24968,7 @@ cultureInfo en-US
 			    "agreement_measure.retention_number_of_customers_with_orders": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "Retention Number of Customers with Orders"
 			        }
 			      },
@@ -24987,7 +24987,7 @@ cultureInfo en-US
 			    "agreement_measure.retention": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Agreement Measures",
+			          "ConceptualEntity": "Agreements Daily",
 			          "ConceptualProperty": "% Retention"
 			        }
 			      },
@@ -27087,7 +27087,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_number_of_customers": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -27120,7 +27120,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_first_menu_week_monday_date": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -31748,7 +31748,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_date": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -31794,7 +31794,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_billing_agreement": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -31852,7 +31852,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_company": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -31898,7 +31898,7 @@ cultureInfo en-US
 			    },
 			    "agreement_measure_has_period_since_first_order": {
 			      "Binding": {
-			        "ConceptualEntity": "Agreement Measures"
+			        "ConceptualEntity": "Agreements Daily"
 			      },
 			      "State": "Generated",
 			      "Roles": {

@@ -3,7 +3,7 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Agreement Measures",
+      "name": "Agreements Daily",
       "measures": [
         {
           "name": "Number of OneSub Customers",
@@ -12,7 +12,7 @@
           "references": {
             "measures": [
               {
-                "entity": "Agreement Measures",
+                "entity": "Agreements Daily",
                 "name": "Number of Customers"
               }
             ]
@@ -25,7 +25,7 @@
           "references": {
             "measures": [
               {
-                "entity": "Agreement Measures",
+                "entity": "Agreements Daily",
                 "name": "Number of Customers"
               }
             ]

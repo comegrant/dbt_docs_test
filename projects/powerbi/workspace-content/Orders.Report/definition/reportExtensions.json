@@ -3,7 +3,7 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Agreement Measures",
+      "name": "Agreements Daily",
       "measures": [
         {
           "name": "YTD orders",

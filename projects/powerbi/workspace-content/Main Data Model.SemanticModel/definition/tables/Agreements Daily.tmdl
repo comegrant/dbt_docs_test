@@ -1,8 +1,8 @@
-table 'Agreement Measures'
+table 'Agreements Daily'
 	isHidden
 	lineageTag: a8ab3df4-a35a-45a5-af58-17df4ee11ae8
 
-	measure 'Number of Customers' = DISTINCTCOUNT('Agreement Measures'[billing_agreement_id])
+	measure 'Number of Customers' = DISTINCTCOUNT('Agreements Daily'[billing_agreement_id])
 		formatString: #,0
 		lineageTag: 3c376a1c-10ec-4f27-a197-d2bdd9455984
 
@@ -195,7 +195,7 @@ table 'Agreement Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	partition 'Agreement Measures' = m
+	partition 'Agreements Daily' = m
 		mode: directQuery
 		source =
 				let

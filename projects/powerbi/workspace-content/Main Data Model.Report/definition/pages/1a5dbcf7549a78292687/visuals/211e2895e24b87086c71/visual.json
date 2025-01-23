@@ -35,13 +35,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Agreement Measures"
+                      "Entity": "Agreements Daily"
                     }
                   },
                   "Property": "week"
                 }
               },
-              "queryRef": "Agreement Measures.week",
+              "queryRef": "Agreements Daily.week",
               "nativeQueryRef": "Sum of week",
               "active": true
             }

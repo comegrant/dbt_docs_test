@@ -1,0 +1,110 @@
+table 'Customer Measures'
+	isHidden
+
+    column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bc7bb454-df29-4293-84f1-7f9de47e00a1
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		lineageTag: 0275368e-695f-406b-9c0a-3b08d6adf743
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		lineageTag: 5025dca3-7dde-4444-a689-63c0ef2b8b54
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	column fk_dim_periods_since_first_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 65fcf85c-40af-4abd-a020-8b76c89d0969
+		summarizeBy: none
+		sourceColumn: fk_dim_periods_since_first_order
+
+	column fk_dim_billing_agreements_previous_version
+		dataType: string
+		isHidden
+		lineageTag: b24159a6-1eb0-4ff5-acb5-694fd30a94a3
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements_previous_version
+
+	column is_new_agreement
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f7a2d512-4607-49c1-b3c0-1228274c141e
+		summarizeBy: none
+		sourceColumn: is_new_agreement
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 922e7d81-298d-4801-bc17-ba4e0bbe0ab7
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_updated_preferences
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0d1dba59-312b-43b1-8a52-9dd84c4d2387
+		summarizeBy: none
+		sourceColumn: has_updated_preferences
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_updated_subscribed_products
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 7ce6d7b7-1f10-4624-a335-67fd5a6c23fe
+		summarizeBy: none
+		sourceColumn: has_updated_subscribed_products
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_updated_status
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0e9dd4c1-5ea2-497e-aebf-c69caf0929c9
+		summarizeBy: none
+		sourceColumn: has_updated_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_updated_onesub_flag
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 22b8ce81-4c58-47e2-bb16-b68c464b9642
+		summarizeBy: none
+		sourceColumn: has_updated_onesub_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Customer Measures' = m
+		mode: directQuery
+		source =
+				let
+					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+					fact_billing_agreement_updates_Table = gold_Schema{[Name="fact_billing_agreement_updates",Kind="Table"]}[Data]
+				in
+					fact_billing_agreement_updates_Table

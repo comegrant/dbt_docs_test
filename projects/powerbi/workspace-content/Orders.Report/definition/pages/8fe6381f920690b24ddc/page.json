@@ -305,7 +305,7 @@
                         [
                           {
                             "Literal": {
-                              "Value": "'''Agreement Measures''[Number of Customers]'"
+                              "Value": "'''Agreements Daily''[Number of Customers]'"
                             }
                           }
                         ],
@@ -364,7 +364,7 @@
                           "0": [
                             {
                               "Literal": {
-                                "Value": "'''Agreement Measures''[Number of Customers]'"
+                                "Value": "'''Agreements Daily''[Number of Customers]'"
                               }
                             }
                           ]

@@ -40,13 +40,13 @@
                   "Expression": {
                     "SourceRef": {
                       "Schema": "extension",
-                      "Entity": "Agreement Measures"
+                      "Entity": "Agreements Daily"
                     }
                   },
                   "Property": "Number of Non-OneSub Customers"
                 }
               },
-              "queryRef": "Agreement Measures.Number of Non-OneSub Customers",
+              "queryRef": "Agreements Daily.Number of Non-OneSub Customers",
               "nativeQueryRef": "Non-OneSub Customers",
               "displayName": "Non-OneSub Customers"
             }
@@ -60,13 +60,13 @@
                   "Expression": {
                     "SourceRef": {
                       "Schema": "extension",
-                      "Entity": "Agreement Measures"
+                      "Entity": "Agreements Daily"
                     }
                   },
                   "Property": "Number of OneSub Customers"
                 }
               },
-              "queryRef": "Agreement Measures.Number of OneSub Customers",
+              "queryRef": "Agreements Daily.Number of OneSub Customers",
               "nativeQueryRef": "OneSub Customers",
               "displayName": "OneSub Customers"
             }

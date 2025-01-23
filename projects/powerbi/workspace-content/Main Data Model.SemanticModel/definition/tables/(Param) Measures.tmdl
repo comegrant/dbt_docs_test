@@ -44,7 +44,7 @@ table '(Param) Measures'
 				    ("Number of Orders with Swaps", NAMEOF('Order Measures'[Number of Orders with Swaps]), 1),
 				    ("Average Order Value (Gross)", NAMEOF('Order Measures'[Average Order Value Gross Ex Vat]), 2),
 				    ("Average Order Value (Net)", NAMEOF('Order Measures'[Average Order Value Net Ex Vat]), 3),
-				    ("Number of Customers", NAMEOF('Agreement Measures'[Number of Customers]), 5),
+				    ("Number of Customers", NAMEOF('Agreements Daily'[Number of Customers]), 5),
 				    ("Total Amount (Gross)", NAMEOF('Order Measures'[Sum Order Value Gross Ex Vat]), 6),
 				    ("Total Amount (Net)", NAMEOF('Order Measures'[Sum Order Value Net Ex Vat]), 7)
 				}
