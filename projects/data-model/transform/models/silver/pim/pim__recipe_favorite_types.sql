@@ -13,7 +13,7 @@ source as (
         
         {# ids #}
         recipe_favorite_type_id
-        , recipe_favorite_type_name
+        , initcap(recipe_favorite_type_name) as recipe_favorite_type_name
         
         {# system #}
         , created_by as source_created_by

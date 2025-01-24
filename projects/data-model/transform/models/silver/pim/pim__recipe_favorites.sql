@@ -17,6 +17,13 @@ source as (
         , recipe_id
         , main_recipe_id
         , recipe_favorite_type_id
+
+        {# boolean #}
+        , dbt_valid_to is null as is_active_reaction
+
+        {# scd #}
+        , dbt_valid_from as valid_from
+        , dbt_valid_to as valid_to
         
         {# system #}
         , created_at as source_created_at

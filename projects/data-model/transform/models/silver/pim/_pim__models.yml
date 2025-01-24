@@ -103,6 +103,26 @@ models:
         data_tests:
           - not_null
 
+      - name: is_active_reaction
+        data_type: boolean
+        description: "{{ doc('column__is_active_reaction') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"

@@ -10,6 +10,192 @@ models:
     versions:
       - v: 1
 
+  - name: dim_recipe_reaction_types
+    description: "When chosing dishes the customer can react with a heart or a dislike. This table holds information about the different types of reactions a customer can make."
+    latest_version: 1
+    config:
+      alias: dim_recipe_reaction_types
+      contract:
+        enforced: True
+    
+    columns:
+      - name: pk_dim_recipe_reaction_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+          
+      - name: recipe_reaction_type_id
+        data_type: int
+        description: "{{ doc('column__recipe_favorite_type_id') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_reaction_type_name
+        data_type: string
+        description: "{{ doc('column__recipe_favorite_type_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: fact_recipe_reactions
+    description: "When chosing dishes the customer can react with a heart or a dislike. The table stores the reaction made by customers."
+    latest_version: 1
+    config:
+      alias: fact_recipe_reactions
+      contract:
+        enforced: True
+    
+    columns:
+      - name: pk_fact_recipe_reactions
+        data_type: string
+        description: "{{ doc('column__pk_fact_recipe_reactions') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_reaction_id
+        data_type: varchar(36)
+        description: "{{ doc('column__recipe_favorite_id') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        data_type: int
+        description: "{{ doc('column__main_recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_reaction_type_id
+        data_type: int
+        description: "{{ doc('column__recipe_favorite_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_active_reaction
+        data_type: boolean
+        description: "{{ doc('column__is_active_reaction') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+  
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_time
+        data_type: int
+        description: "{{ doc('column__pk_dim_time') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_time')
+              field: pk_dim_time
+  
+      - name: fk_dim_recipe_reaction_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipe_reaction_types')
+              field: pk_dim_recipe_reaction_types
+
+    versions:
+      - v: 1
+
   - name: dim_recipes
     description: ""
     latest_version: 1

@@ -1,3 +1,17 @@
+# Fact Recipe Reactions
+{% docs column__pk_fact_recipe_reactions %}
+
+Primary key of the fact_recipe_reactions table.
+
+{% enddocs %}
+
+# Dim Recipe Reaction Types
+{% docs column__pk_dim_recipe_reaction_types %}
+
+Primary key of the fact_recipe_reaction_types table.
+
+{% enddocs %}
+
 # Fact Menus
 {% docs column__pk_fact_menus %}
 

@@ -400,6 +400,12 @@ The id will be regenerated for every inserted row meaning that if a customer lik
 
 {% enddocs %}
 
+{% docs column__is_active_reaction %}
+
+Is true if the reaction is still active for the recipe and false if the reaction has been removed.
+
+{% enddocs %}
+
 # Recipe Favorite Type
 
 {% docs column__recipe_favorite_type_id %}
