@@ -17,7 +17,7 @@ orders as (
         billing_agreement_id
         , min_by(source_created_at, menu_week_monday_date) as first_order_created_at
         , min(menu_week_monday_date) as first_menu_week_monday_date
-        , min_by(cast(date_format(source_created_at, 'yyyyMMdd') as int), menu_week_monday_date) as datekey
+        , min_by(cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int), menu_week_monday_date) as datekey
     from orders
     where order_type_id in ({{ var('subscription_order_type_ids') | join(', ') }})
     and order_status_id in ({{ var('finished_order_status_ids') | join(', ') }})
