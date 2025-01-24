@@ -1762,3 +1762,217 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+  - name: cms__billing_agreement_consents
+    description: "Overview of customer's consents. If a row exists it means that the customer has consented at some point in time. If a consent is removed by the customer the is_accepted flag get changed to false."
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_consent_id || '-' || valid_from)"
+    columns:
+      - name: billing_agreement_consent_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_consent_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_id
+        data_type: varchar(36)
+        description: "{{ doc('column__consent_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_accepted_consent
+        data_type: boolean
+        description: "{{ doc('column__is_accepted_consent') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp_ntz
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__consent_categories
+    description: "Holds information about the differenct categories of consents."
+    columns:
+      - name: consent_category_id
+        data_type: char(36)
+        description: "{{ doc('column__consent_category_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: consent_category_name
+        data_type: string
+        description: "{{ doc('column__consent_category_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: cms__consents
+    description: "Holds information about the different types of consents that exist."
+    columns:
+      - name: consent_id
+        data_type: char(36)
+        description: "{{ doc('column__consent_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_category_id
+        data_type: char(36)
+        description: "{{ doc('column__consent_category_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_name
+        data_type: string
+        description: "{{ doc('column__consent_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"

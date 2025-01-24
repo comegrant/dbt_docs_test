@@ -335,6 +335,22 @@ This helps identify when the same recipe is being repeatedly selected ("repeat s
 
 {% enddocs %}
 
+# Fact Billing Agreement Consents
+
+{% docs column__pk_fact_billing_agreement_consents %}
+
+The unique key of each row in Fact Billing Agreement Consents.
+
+{% enddocs %}
+
+# Dim Consents
+
+{% docs column__pk_dim_consent_types %}
+
+The unique key of each row in Dim Consents.
+
+{% enddocs %}
+
 # Fact Billing Agreement Updates
 
 {% docs column__pk_fact_billing_agreement_updates %}

@@ -20,4 +20,4 @@ select
   , source.* 
 from source
 
-{% endsnapshot %} 
+{% endsnapshot %}

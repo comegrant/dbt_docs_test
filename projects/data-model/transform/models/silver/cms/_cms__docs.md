@@ -670,3 +670,43 @@ The id of the timeblock as it would appear in the OPS system.
 True if the created schedule will make a delivery, else False. Used to handle cancelled deliveries for a menu week.
 
 {% enddocs %}
+
+# Billing Agreements Consents
+{% docs column__billing_agreement_consent_id %}
+
+A concatenation of billing_agreement_id and consent_id. Is unique for the source system data, but need to be combined with valid_from to be unique as we snapshot the table to capture history.
+
+{% enddocs %}
+
+{% docs column__is_accepted_consent %}
+
+Is true if the consent are currently accepted. Becomes false if the customer removes the consent again. If the customer has never accepted the consent a row in the table would never exist.
+
+{% enddocs %}
+
+# Consents
+{% docs column__consent_id %}
+
+The unique id of the consent in CMS.
+
+{% enddocs %}
+
+{% docs column__consent_name %}
+
+The name of the consent. E.g. "Accepted SMS communication" or "Accepted Data Retention Consent".
+
+{% enddocs %}
+
+# Consent Categories
+
+{% docs column__consent_category_id %}
+
+The unique id of the consent category in CMS.
+
+{% enddocs %}
+
+{% docs column__consent_category_name %}
+
+The name of the consent category. E.g. "Accept communication" or "Allergy".
+
+{% enddocs %}

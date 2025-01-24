@@ -1729,3 +1729,164 @@ models:
 
     versions:
       - v: 1
+
+  - name: fact_billing_agreement_consents
+    description: "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed. If no consent has ever been made no row will exist for the customer."
+    latest_version: 1
+    config:
+      alias: fact_billing_agreement_consents
+    contract:
+        enforced: True
+
+    columns:
+      - name: pk_fact_billing_agreement_consents
+        data_type: string
+        description: "{{ doc('column__pk_fact_billing_agreement_consents') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: is_accepted_consent
+        data_type: boolean
+        description: "{{ doc('column__is_accepted_consent') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_id
+        data_type: varchar(36)
+        description: "{{ doc('column__consent_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_consent_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_consent_types') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_consent_types')
+              field: pk_dim_consent_types
+
+    versions:
+      - v: 1
+
+  - name: dim_consent_types
+    description: "Different types of consents a customer can accept or reject"
+    latest_version: 1
+    config:
+      alias: dim_consent_types
+    contract:
+        enforced: True
+    columns:
+      - name: pk_dim_consent_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_consent_types') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: consent_category_name
+        data_type: string
+        description: "{{ doc('column__consent_category_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_name
+        data_type: string
+        description: "{{ doc('column__consent_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_id
+        data_type: char(36)
+        description: "{{ doc('column__consent_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: consent_category_id
+        data_type: char(36)
+        description: "{{ doc('column__consent_category_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
