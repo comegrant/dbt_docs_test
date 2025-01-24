@@ -1978,3 +1978,248 @@ models:
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+
+  - name: cms__loyalty_points
+    description: Table of all loyalty points transactions for billing agreements
+    columns:
+      - name: loyalty_points_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_points_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_points_parent_id  
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_points_parent_id') }}"
+
+      - name: billing_agreement_id
+        data_type: varchar(36) 
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_event_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_event_id') }}"
+
+      - name: loyalty_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_order_id') }}"
+
+      - name: billing_agreement_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+
+      - name: transaction_reason
+        data_type: string
+        description: "{{ doc('column__loyalty_points_transaction_reason') }}"
+
+      - name: loyalty_points_expiration_date
+        data_type: date
+        description: "{{ doc('column__loyalty_points_expiration_date') }}"
+
+      - name: transaction_loyalty_points
+        data_type: int
+        description: "{{ doc('column__transaction_loyalty_points') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: remaining_loyalty_points
+        data_type: int
+        description: "{{ doc('column__remaining_loyalty_points') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: cms__loyalty_order_statuses
+    description: "Information about the statuses a loyalty order can have."
+    columns:
+      - name: loyalty_order_status_id
+        data_type: int
+        description: "{{ doc('column__loyalty_order_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_status_name
+        data_type: string
+        description: "{{ doc('column__loyalty_order_status_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: cms__loyalty_orders
+    description: "Table of orders placed through the expenditure of loyalty points earned through the loyalty program."
+    columns:
+      - name: loyalty_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_order_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_status_id
+        data_type: int
+        description: "{{ doc('column__loyalty_order_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_year
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: order_week
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: order_week_monday_date
+        data_type: date
+        description: "{{ doc('column__order_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+
+  - name: cms__loyalty_order_lines
+    description: "Information of the line items of all loyalty orders."
+    columns:
+      - name: loyalty_order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_order_line_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_order_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: unit_point_price
+        data_type: int
+        description: "{{ doc('column__unit_point_price') }}"
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: total_point_price
+        data_type: int
+        description: "{{ doc('column__total_point_price') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"

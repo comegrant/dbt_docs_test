@@ -1,0 +1,6 @@
+version: 2
+
+data_tests:
+  - name: loyalty_order_lines_points_match_order_total
+    description: >
+      Test to ensure that all loyalty order lines points sum to the total number of points on the order

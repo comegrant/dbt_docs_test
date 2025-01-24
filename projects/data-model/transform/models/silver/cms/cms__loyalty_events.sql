@@ -26,4 +26,32 @@ source as (
 
 )
 
-select * from renamed
+, add_no_orders_previous_12_weeks_point_deduction_event as (
+
+    select 
+
+        {# ids #}
+        '10000000-0000-0000-0000-000000000000' as loyalty_event_id
+
+        {# strings #}
+        , 'No orders placed in last 12 weeks' as loyalty_event_name
+
+        {# system #}
+        , cast('2025-01-16 15:00:00' as timestamp) as source_created_at
+        , 'Analytics' as source_created_by
+        , cast('2025-01-16 15:00:00' as timestamp) as source_updated_at
+        , 'Analytics' as source_updated_by
+
+)
+
+, unioned as (
+
+    select * from renamed 
+
+    union all 
+
+    select * from add_no_orders_previous_12_weeks_point_deduction_event
+
+)
+
+select * from unioned

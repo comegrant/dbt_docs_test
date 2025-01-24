@@ -30,6 +30,10 @@ sources:
       - name: cms__loyalty_agreement_ledger
       - name: cms__loyalty_event
       - name: cms__loyalty_level
+      - name: cms__loyalty_order_line
+      - name: cms__loyalty_order_status
+      - name: cms__loyalty_order
+      - name: cms__loyalty_points
       - name: cms__onesub_beta_agreements
       - name: cms__order_type
       - name: cms__preference

@@ -406,3 +406,17 @@ True if the status of the billing agreement before and after the update is diffe
 True if the OneSub flag for the billing agreement before and after the update is different.
 
 {% enddocs %}
+
+# Fact Loyalty Orders
+{% docs column__pk_fact_loyalty_orders %}
+
+The unique key of each row in Fact Loyalty Orders.
+
+{% enddocs %}
+
+# Dim Loyalty Order Statuses
+{% docs column__pk_dim_loyalty_order_statuses %}
+
+The unique key of each row in Dim Loyalty Order Statuses.
+
+{% enddocs %}

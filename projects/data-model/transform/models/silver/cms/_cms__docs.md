@@ -508,7 +508,7 @@ When the customer recieved the points.
 
 {% docs column__loyalty_event_id %}
 
-The unique id of the loyalty event in the CMS database. 
+The unique id of the loyalty event in the CMS database. An additional ID `'10000000-0000-0000-0000-000000000000'` was created by Analytics to represent transactions triggered by an agreement having no orders placed in the last 12 weeks.
 
 {% enddocs %}
 
@@ -668,6 +668,88 @@ The id of the timeblock as it would appear in the OPS system.
 {% docs has_delivery %}
 
 True if the created schedule will make a delivery, else False. Used to handle cancelled deliveries for a menu week.
+
+{% enddocs %}
+
+## Loyalty Orders
+{% docs column__loyalty_order_id %}
+
+The primary key of the loyalty order in the CMS database.
+
+{% enddocs %}
+
+{% docs column__order_week_monday_date %}
+
+The Monday date of the week in which the loyalty order was placed.
+
+{% enddocs %}
+
+## Loyalty Order Lines
+{% docs column__loyalty_order_line_id %}
+
+The primary key of the loyalty order line in the CMS database.
+
+{% enddocs %}
+
+{% docs column__unit_point_price %}
+
+The amount of loyalty points withdrawn per ordered product variation.
+
+{% enddocs %}
+
+{% docs column__total_point_price %}
+
+The amount of loyalty points withdrawn for all ordered product variations on the order line.
+
+{% enddocs %}
+
+## Loyalty Order Statuses
+{% docs column__loyalty_order_status_id %}
+
+The primary key of the loyalty order status in the CMS database.
+
+{% enddocs %}
+
+{% docs column__loyalty_order_status_name %}
+
+The name of the loyalty order status.
+
+{% enddocs %}
+
+# Loyalty Points
+{% docs column__loyalty_points_id %}
+
+The primary key of the loyalty points transaction in the CMS database.
+
+{% enddocs %}
+
+{% docs column__loyalty_points_parent_id %}
+
+The ID of the parent loyalty points transaction, if this transaction is a child transaction.
+
+{% enddocs %}
+
+{% docs column__loyalty_points_transaction_reason %}
+
+Additional information explaining why the loyalty points transaction took place. Typically used for comments when points are added or removed by Customer Service.
+
+{% enddocs %}
+
+{% docs column__loyalty_points_expiration_date %}
+
+The date when these loyalty points will expire if not used.
+
+{% enddocs %}
+
+{% docs column__transaction_loyalty_points %}
+
+The number of points added or deducted in this transaction. Positive numbers indicate points earned, negative numbers indicate points spent or deducted.
+
+{% enddocs %}
+
+{% docs column__remaining_loyalty_points %}
+
+The remaining balance of loyalty points after this transaction.
 
 {% enddocs %}
 

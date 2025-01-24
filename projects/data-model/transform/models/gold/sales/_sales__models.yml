@@ -1890,3 +1890,213 @@ models:
 
     versions:
       - v: 1
+
+  - name: fact_loyalty_orders
+    description: "Information about loyalty orders and the associated loyalty points spent on them."
+    latest_version: 1
+    config:
+      alias: fact_loyalty_orders
+      contract:
+        enforced: true
+    
+    versions:
+      - v: 1
+    columns:
+      - name: pk_fact_loyalty_orders
+        data_type: string
+        description: "{{ doc('column__pk_fact_loyalty_orders') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_order_id
+        data_type: string
+        description: "{{ doc('column__loyalty_order_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_line_id
+        data_type: string
+        description: "{{ doc('column__loyalty_order_line_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_status_id
+        data_type: int
+        description: "{{ doc('column__loyalty_order_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_week_monday_date
+        data_type: date
+        description: "{{ doc('column__order_week_monday_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_year
+        data_type: int
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_week
+        data_type: int
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: unit_point_price
+        data_type: int
+        description: "{{ doc('column__unit_point_price') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: total_point_price
+        data_type: int
+        description: "{{ doc('column__total_point_price') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: fk_dim_loyalty_order_statuses
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_order_statuses') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_loyalty_order_statuses')
+              field: pk_dim_loyalty_order_statuses
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
+
+
+  - name: dim_loyalty_order_statuses
+    description: "Dimension table for loyalty order statuses."
+    latest_version: 1
+    config:
+      alias: dim_loyalty_order_statuses
+      contract:
+        enforced: true
+
+    versions:
+      - v: 1
+    columns:
+      - name: pk_dim_loyalty_order_statuses
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_order_statuses') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_order_status_id
+        data_type: int
+        description: "{{ doc('column__loyalty_order_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_order_status_name
+        data_type: string
+        description: "{{ doc('column__loyalty_order_status_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          
