@@ -431,6 +431,10 @@ models:
         data_tests:
           - not_null
 
+      - name: billing_agreement_status_name
+        data_type: string
+        description: "{{ doc('column__billing_agreement_status_name') }}"
+
       - name: payment_method
         data_type: string
         description: "{{ doc('column__payment_method') }}"
@@ -446,20 +450,6 @@ models:
       - name: signup_salesperson
         data_type: string
         description: "{{ doc('column__signup_salesperson') }}"
-
-      - name: billing_agreement_status_name
-        data_type: string
-        description: "{{ doc('column__billing_agreement_status_name') }}"
-      # This can be null until we have added history
-      #  constraints:
-      #    - type: not_null
-      #  data_tests:
-      #    - not_null
-
-      # Has bugs. Not needed to fix before Onesub launch.
-      #- name: loyalty_level_id
-      #  data_type: char(36)
-      #  description: "{{ doc('column__loyalty_level_id') }}"
 
       - name: signup_at
         data_type: timestamp
@@ -552,6 +542,14 @@ models:
       - name: first_menu_week_year
         data_type: int
         description: "{{ doc('column__first_menu_week_year') }}"
+
+      - name: loyalty_level_name
+        data_type: string
+        description: "{{ doc('column__loyalty_level_name') }}"
+
+      - name: loyalty_level_number
+        data_type: int
+        description: "{{ doc('column__loyalty_level_number') }}"
 
       - name: preselector_flag
         data_type: string

@@ -481,7 +481,32 @@ This is the primary key of the loyalty level in CMS.
 
 {% docs column__loyalty_level_number %}
 
-The number of the loyalty level (1-4) where by 1 is the entry level and 4 is the last obtainable level.
+The number of the loyalty level (1-4) where 1 is the entry level and 4 is the last obtainable level.
+
+{% enddocs %}
+
+# Loyalty Level Companies
+{% docs column__loyalty_level_company_id %}
+
+This is the primary key of the loyalty level company table in CMS.
+
+{% enddocs %}
+
+{% docs column__loyalty_level_name %}
+
+The name of the loyalty level in the language of the related company/brand.
+
+{% enddocs %}
+
+{% docs column__order_value_multiplier %}
+
+The multiplier used to calculate loyalty points obtained from amount of money spent by the customer.
+
+{% enddocs %}
+
+{% docs column__point_requirement %}
+
+The points required to reach the level.
 
 {% enddocs %}
 

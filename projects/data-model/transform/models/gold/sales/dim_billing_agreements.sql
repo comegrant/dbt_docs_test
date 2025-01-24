@@ -48,11 +48,11 @@ billing_agreements as (
 
 )
 
-/*, scd_loyalty_level as (
+, loyalty_levels as (
 
     select * from {{ ref('int_billing_agreements_loyalty_levels_scd2') }}
 
-) */
+)
 
 , onesub_agreements as (
     select 
@@ -139,6 +139,18 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
 
 )
 
+, loyalty_levels_scd2 as (
+
+    select
+        billing_agreement_id
+        , loyalty_level_name
+        , loyalty_level_number
+        , valid_from
+        , valid_to
+    from loyalty_levels
+
+)
+
 -- Use macro to join all scd2 tables
 {% set id_column = 'billing_agreement_id' %}
 {% set table_names = [
@@ -147,6 +159,7 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
     , 'basket_products_scd2'
     , 'preferences_scd2'
     , 'preselector_agreements_scd2'
+    , 'loyalty_levels_scd2'
     ] %}
 
 , scd2_tables_joined as (
@@ -170,6 +183,8 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , scd2_tables_joined.billing_agreement_id
         , scd2_tables_joined.billing_agreement_preferences_updated_id
         , scd2_tables_joined.billing_agreement_basket_product_updated_id
+        , scd2_tables_joined.loyalty_level_name
+        , scd2_tables_joined.loyalty_level_number
         , billing_agreements_scd1.company_id
         , billing_agreements_scd1.payment_method
         , billing_agreements_scd1.signup_source

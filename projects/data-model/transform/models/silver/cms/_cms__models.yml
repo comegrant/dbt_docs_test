@@ -4,6 +4,93 @@ version: 2
 
 models:
 
+  - name: cms__loyalty_level_companies
+    description: "Information about each loyalty level per company/brand."
+
+    columns:
+      - name: loyalty_level_company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_level_company_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_level_id
+        data_type: varchar(36)
+        description: "{{ doc('column__loyalty_level_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_level_name
+        data_type: string
+        description: "{{ doc('column__loyalty_level_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          
+      - name: order_value_multiplier
+        data_type: decimal(3,1)
+        description: "{{ doc('column__order_value_multiplier') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: point_requirement
+        data_type: int
+        description: "{{ doc('column__point_requirement') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
   - name: cms__loyalty_events
     description: "Information about the events that affect the customers accumulated loyalty level points."
 
@@ -769,9 +856,9 @@ models:
         data_tests:
           - not_null
 
-      - name: loyalty_level_id
+      - name: loyalty_level_company_id
         data_type: varchar(36)
-        description: "{{ doc('column__loyalty_level_id') }}"
+        description: "{{ doc('column__loyalty_level_company_id') }}"
         data_tests:
           - not_null
 
@@ -788,7 +875,7 @@ models:
           - not_null
     
   - name: cms__loyalty_levels
-    description: "..."
+    description: "Numerical representation of each loyalty level (1-4). Common for each company/brand."
     columns:
       - name: loyalty_level_id
         data_type: varchar(36)
@@ -802,6 +889,7 @@ models:
         description: "{{ doc('column__loyalty_level_number') }}"
         data_tests:
           - not_null
+          
   - name: cms__billing_agreement_basket_deviations
     description: "All baskets that have a change for a particular menu week made by either the recommendation engine, customers or customer service"
     data_tests:
