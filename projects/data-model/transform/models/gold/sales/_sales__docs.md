@@ -420,3 +420,102 @@ The unique key of each row in Fact Loyalty Orders.
 The unique key of each row in Dim Loyalty Order Statuses.
 
 {% enddocs %}
+
+# Dim All Preference Combinations
+
+{% docs column__pk_preference_combination_id %}
+
+Unique primary key for the preference combinations dimension.
+
+{% enddocs %}
+
+
+{% docs column__all_preference_id_list %}
+
+List of all preference ids for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__allergen_preference_id_list %}
+
+List of allergen preference ids for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__concept_preference_id_list %}
+
+List of concept preference ids for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__taste_preferences_excluding_allergens_id_list %}
+
+List of taste preference ids excluding allergens for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__taste_preferences_including_allergens_id_list %}
+
+List of taste preference ids including allergens for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__preference_name_combinations %}
+
+List of all preference names for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__allergen_name_combinations %}
+
+List of all allergen preference names for the preference combination.
+
+{% enddocs %}   
+
+
+{% docs column__concept_name_combinations %}
+
+List of all concept preference names for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__taste_name_combinations_excluding_allergens %}
+
+List of all taste preference names excluding allergens for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__taste_name_combinations_including_allergens %}
+
+List of all taste preference names including allergens for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__number_of_allergen_preferences %}
+
+The number of allergen preferences for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__number_of_taste_preferences_excluding_allergens %}
+
+The number of taste preferences excluding allergens for the preference combination.
+
+{% enddocs %}
+
+
+{% docs column__number_of_taste_preferences_including_allergens %}
+
+The number of taste preferences including allergens for the preference combination.
+
+{% enddocs %}

@@ -2100,3 +2100,82 @@ models:
         data_tests:
           - not_null
           
+
+  - name: dim_all_preference_combinations
+    description: "Contains preference combinations and their corresponding names and ids"
+    latest_version: 1
+    config:
+      alias: dim_all_preference_combinations
+      
+    versions:
+      - v: 1
+
+    columns:
+      - name: pk_preference_combination_id
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+
+      - name: all_preference_id_list
+        data_type: array
+        description: "{{ doc('column__all_preference_id_list') }}"
+
+      - name: allergen_preference_id_list
+        data_type: array
+        description: "{{ doc('column__allergen_preference_id_list') }}"
+
+      - name: concept_preference_id_list
+        data_type: array
+        description: "{{ doc('column__concept_preference_id_list') }}"
+
+      - name: taste_preferences_excluding_allergens_id_list
+        data_type: array
+        description: "{{ doc('column__taste_preferences_excluding_allergens_id_list') }}"
+
+      - name: taste_preferences_including_allergens_id_list
+        data_type: array
+        description: "{{ doc('column__taste_preferences_including_allergens_id_list') }}"
+
+      - name: preference_name_combinations
+        data_type: string
+        description: "{{ doc('column__preference_name_combinations') }}"
+
+      - name: allergen_name_combinations
+        data_type: string
+        description: "{{ doc('column__allergen_name_combinations') }}"
+
+      - name: concept_name_combinations
+        data_type: string
+        description: "{{ doc('column__concept_name_combinations') }}"
+
+      - name: taste_name_combinations_excluding_allergens
+        data_type: string
+        description: "{{ doc('column__taste_name_combinations_excluding_allergens') }}"
+
+      - name: taste_name_combinations_including_allergens
+        data_type: string
+        description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
+
+      - name: number_of_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_preferences') }}"
+
+      - name: number_of_allergen_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_allergen_preferences') }}"
+
+      - name: number_of_concept_preferences
+        data_type: int
+        description: "{{ doc('column__number_of_concept_preferences') }}"
+
+      - name: number_of_taste_preferences_excluding_allergens
+        data_type: int
+        description: "{{ doc('column__number_of_taste_preferences_excluding_allergens') }}"
+
+      - name: number_of_taste_preferences_including_allergens
+        data_type: int
+        description: "{{ doc('column__number_of_taste_preferences_including_allergens') }}"
