@@ -12,9 +12,9 @@ source as (
 
     select * from {{ source('cms', 'cms__billing_agreement_order_line') }}
 
-),
+)
 
-renamed as (
+, renamed as (
 
     select
         {# ids #}
@@ -32,9 +32,9 @@ renamed as (
 
     from source
 
-),
+)
 
-calculated_columns as (
+, calculated_columns as (
 
     select
         {# ids #}

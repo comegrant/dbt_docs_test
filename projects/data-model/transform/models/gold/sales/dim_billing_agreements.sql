@@ -76,8 +76,8 @@ billing_agreements as (
     select 
         billing_agreements_scd1.billing_agreement_id
         , case 
-            when first_orders.source_created_at < billing_agreements_scd1.signup_at
-            then first_orders.source_created_at
+            when first_orders.first_order_created_at < billing_agreements_scd1.signup_at
+            then first_orders.first_order_created_at
             else billing_agreements_scd1.signup_at 
             end as valid_from
         , {{ get_scd_valid_to() }} as valid_to

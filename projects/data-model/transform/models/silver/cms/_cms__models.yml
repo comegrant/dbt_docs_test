@@ -196,7 +196,9 @@ models:
         data_type: timestamp
         description: "{{ doc('column__source_created_at_orders') }}"
         data_tests:
-          - not_null
+          - not_null:
+              config:
+                where: "menu_year > 2021"
 
   - name: cms__billing_agreement_order_lines
     description: "Order lines of all placed orders. Gets populated at order gen and updated if the order changes."

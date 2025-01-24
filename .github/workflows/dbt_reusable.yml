@@ -38,7 +38,7 @@ jobs:
     name: 'Deploy dbt models in ${{inputs.working-directory}}'
     runs-on: ubuntu-22.04
     environment: ${{ inputs.target-env }}
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     defaults:
       run:

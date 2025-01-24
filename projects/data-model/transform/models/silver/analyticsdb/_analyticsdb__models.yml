@@ -39,7 +39,7 @@ models:
         description: "{{ doc('column__source_created_at') }}"
         data_tests:
           - not_null
-
+  
   - name: analyticsdb_snapshots__historical_billing_agreement_statuses
     description: "A daily snapshot table of billing_agreement_ids with statuses from AnalyticsDB. Deleted agreements are not included."
     columns:
@@ -56,16 +56,107 @@ models:
         description: "{{ doc('column__billing_agreement_status_id') }}"
         constraints:
           - type: not_null
+ 
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+  - name: analyticsdb_orders__historical_orders_combined
+    description: "Historical orders for Linas, GodtLevert, Adams and RetNemt stored in AnalyticsDB (previous database for analytics)."
+    columns:
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - unique
+
+      - name: order_type_id
+        data_type: varchar(36)
+        description: "{{ doc('column__order_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: order_status_id
+        data_type: varchar(36)
+        description: "{{ doc('column__order_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_date
+        data_type: date
+        description: "The delivery date of the order. Only used for debugging purposes."
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
   
-  - name: analyticsdb_orders__historical_orders
-  - name: analyticsdb_orders__historical_order_lines
+  - name: analyticsdb_orders__historical_order_lines_combined
+    description: "Historical order lines stored in AnalyticsDB (old analytics database). Not complete and needs to be combined with other tables from AnalyticsDB."
+    columns:
+      - name: billing_agreement_order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: order_line_type_name
+        data_type: string
+        description: "{{ doc('column__order_line_type_name') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [
+                  'CREDIT', 
+                  'PRP', 
+                  'P4P', 
+                  'DISCOUNT', 
+                  'DISCOUNT_GIFT', 
+                  'INVOICE', 
+                  'DEBIT', 
+                  'TRANSPORT', 
+                  'LOYALTY_CREDIT', 
+                  'DEBIT_GIFT'
+              ]
+              
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: vat
+        data_type: decimal(10,8)
+        description: "{{ doc('column__vat') }}"
+        data_tests:
+          - not_null
+          
+      - name: unit_price_ex_vat
+        data_type: decimal(20,6)
+        description: "{{ doc('column__unit_price_ex_vat') }}"
+        data_tests:
+          - not_null

@@ -12,9 +12,15 @@ source as (
 
     select * from {{ source('cms', 'cms__billing_agreement_order') }}
 
-),
+)
 
-renamed as (
+, history as (
+
+    select * from {{ ref( 'analyticsdb_orders__historical_orders_combined') }}
+
+)
+
+, renamed as (
 
     select
         {# ids #}
@@ -23,58 +29,64 @@ renamed as (
         , order_type as order_type_id
         , order_status_id
         , agreement_id as billing_agreement_id
-        {# not yet included columns
-        --shipping_address_id
-        --billing_address_id
-        --timeblock as timeblock_id
-        --original_timeblock as original_timeblock_id
-        --payment_partner_id
-        --order_campaign_id
-        --transaction_id
-        --invoice_processed as invoice_processed_id
-        #}
-
-        {# strings #}
-        {# not yet included columns
-        --payment_method
-        --invoice_status
-        --transactionnumber as transaction_number
-        #}
 
         {# numerics #}
         , year as menu_year
         , week as menu_week
-        {# not yet included columns
-        --totalamount as total_amount
-        --sumoforderlinesprice as sum_of_order_lines_price
-        --version_shippingaddress as version_billing_address
-        --version_billingaddress as version_shipping_address
-        #}
 
         {# booleans #}
         , has_recipe_leaflets
-        {# not yet included columns
-        --senttoinvoicepartner as is_sent_to_invoice_partner
-        #}
 
         {# dates #}
         , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date
-        {# not yet included columns
-        --cutoff_date
-        --delivery_date
-        --invoice_status_date.
-        #}
 
         {# timestamps #}
         , created_date as source_created_at
-        {# not yet included columns
-        --transaction_date as transaction_at
-        --invoice_data_create as invoice_data_created_at
-        --invoice_processed_at
-        #}
 
     from source
 
 )
 
-select * from renamed
+-- add order history to be able to find the first order of customers
+-- have not added history of order lines, as this is more complicated
+-- and not that pressing. 
+-- I.e., the historical orders will not be included in Fact Orders 
+-- as we only include orders with order lines.
+, union_with_history as (
+
+    select
+
+        {# ids #}
+        -- generate a billing agreement order id as it does not exist in the source table
+        md5(ops_order_id) as billing_agreement_order_id
+        , ops_order_id
+        , order_type_id
+        , order_status_id
+        , billing_agreement_id
+
+        {# numerics #}
+        -- Assumption: delivery day will never be more than 2 days before the delivery week (i.e., earliest is Saturday)
+        -- is generated from delivery_date as the delivary_week and delivery_year in the source table is adapted to
+        -- the financial calendar and hence does not fit with the code base we have
+        , extract('yearofweek', dateadd(day, 2, delivery_date)) as menu_year
+        , extract('week', dateadd(day, 2, delivery_date)) as menu_week
+
+        {# booleans #}
+        , false as has_recipe_leaflets
+
+        {# dates #}
+        , {{ get_iso_week_start_date('menu_year', 'menu_week') }} as menu_week_monday_date
+
+        {# timestamps #}
+        -- source_created_at from hisotry does not represent when the order was created, hence use null instead
+        , null as source_created_at
+    
+    from history
+
+    union
+
+    select * from renamed
+
+)
+
+select * from union_with_history
