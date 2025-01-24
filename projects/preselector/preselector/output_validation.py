@@ -65,6 +65,8 @@ async def get_output_data(
                     "portion_size",
                     "compliancy",
                     "error_vector",
+                    "main_recipe_ids",
+                    "model_version"
                 }
             )
             .all()
@@ -73,6 +75,8 @@ async def get_output_data(
             )
             .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
             .to_polars()
+        ).with_columns(
+            number_of_recipes=pl.col("main_recipe_ids").list.len()
         )
 
     if model_version is not None:
