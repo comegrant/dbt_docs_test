@@ -49,7 +49,7 @@ def init_dotenv(project: str) -> None:
 
 def root_dir() -> Path:
     # Find the mono_repo directory containing the .git folder
-    current_dir = Path.cwd()
+    current_dir = Path()
     while not (current_dir / ".git").is_dir():
         current_dir = current_dir.parent
         if current_dir == Path("/"):
