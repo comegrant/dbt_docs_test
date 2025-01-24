@@ -542,7 +542,7 @@ models:
         description: "{{ doc('column__first_menu_week_week') }}"
 
       - name: first_menu_week_month
-        data_type: int
+        data_type: string
         description: "{{ doc('column__first_menu_week_month') }}"
 
       - name: first_menu_week_quarter
