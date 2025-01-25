@@ -36,7 +36,7 @@ Whether or not the customer has consented to data processing
 
 {% enddocs %}
 
-{% docs column__requested_cost_of_food_per_meal %}
+{% docs column__target_cost_of_food_per_meal %}
 
 The target cost of food per meal that the preselector used to create the output
 
@@ -77,7 +77,7 @@ The unique ID of the request to track across microservices
 
 {% enddocs %}
 
-{% docs column__requested_main_recipe_quarantining_control %}
+{% docs column__main_recipe_quarantining_control %}
 
 A dictionary argument that is used for controlling quarantining (removing them from consideration) of main recipes. You can pass in the main_recipe_id and the yearweek of the last time it was ordered by the customer, if this yearweek is within the bounds of the quarantine period, the recipe will not be considered.
 
@@ -92,5 +92,17 @@ The weeks and years that the preselector was asked to compute for
 {% docs column__created_at_preselector_output %}
 
 The timestamp from when the preselected output that set of meals.
+
+{% enddocs %}
+
+{% docs column__menu_week_output_version %}
+
+The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates which sequential version of the output it is for that menu week per billing agreement.
+
+{% enddocs %}
+
+{% docs column__is_latest_menu_week_output_version %}
+
+The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the customers sees on the frontend, because they may have made a deviation themselves.
 
 {% enddocs %}

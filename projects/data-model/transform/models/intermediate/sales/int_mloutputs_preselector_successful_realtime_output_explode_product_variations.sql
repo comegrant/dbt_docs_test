@@ -1,8 +1,8 @@
 with
 
-preselector_successful_output_with_output_versions as (
+preselector_successful_output as (
 
-    select * from {{ ref('int_mloutputs_preselector_successful_realtime_output_add_output_versions') }}
+    select * from {{ ref('mloutputs__preselector_successful_realtime_output') }}
 )
 
 , explode_list as (
@@ -13,15 +13,16 @@ preselector_successful_output_with_output_versions as (
         concept_preference_ids,
         taste_preference_ids,
         model_version_commit_sha,
-        requested_portions,
-        requested_meals,
-        requested_menu_week,
-        requested_menu_year,
-        requested_cost_of_food_per_meal,
+        portions,
+        meals,
+        menu_week,
+        menu_year,
+        menu_week_monday_date,
+        target_cost_of_food_per_meal,
         has_data_processing_consent,
         is_override_deviation,
-        output_product_variation_id,
-        output_main_recipe_ids,
+        product_variation_id,
+        --main_recipe_ids, doesn't make sense to include once exploding the product variation ids
         taste_preference_compliancy_code,
         error_cooking_time_mean,
         error_is_beef_percentage,
@@ -59,11 +60,13 @@ preselector_successful_output_with_output_versions as (
         error_mean_rank,
         error_mean_ratings,
         error_mean_veg_fruit,
+        error_repeated_proteins_percentage,
+        error_repeated_carbohydrates_percentage,
         menu_week_output_version,
         is_latest_menu_week_output_version,
         created_at
-    from preselector_successful_output_with_output_versions
-    lateral view explode(output_product_variation_ids) as output_product_variation_id
+    from preselector_successful_output
+    lateral view explode(product_variation_ids) as product_variation_id
 
 )
 

@@ -295,7 +295,7 @@ The unique id of each row in Fact Preselector.
 
 {% enddocs %}
 
-{% docs column__fk_dim_date_created_at_preselector_output %}
+{% docs column__fk_dim_dates_created_at_preselector_output %}
 
 Foreign key that is used to relate the created at date from the preselector output to Dim Date.
 
@@ -307,31 +307,31 @@ Foreign key that is used to relate the created at time from the preselector outp
 
 {% enddocs %}
 
-{% docs column__menu_week_output_version %}
-
-The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates which sequential version of the output it is for that menu week per billing agreement.
-
-{% enddocs %}
-
-{% docs column__is_latest_menu_week_output_version %}
-
-The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the customers sees on the frontend, because they may have made a deviation themselves.
-
-{% enddocs %}
-
-{% docs column__fk_dim_recipes_main_recipe %}
-
-Foreign key that is used to relate to the main recipe of the row's recipe.
-
-{% enddocs %}
-
-{% docs column__number_menu_weeks_selected_previous_6_weeks_and_future %}
+{% docs column__number_of_weeks_with_same_recipe %}
 
 Counts how many times the main recipe which was output by the preselector has been selected for a customer in:
 - The previous 6 menu weeks
 - Any currently visible menu weeks that haven't been ordered yet
 
 This helps identify when the same recipe is being repeatedly selected ("repeat selection"). Repeat selections are undesirable since customers prefer variety in their meals.
+
+{% enddocs %}
+
+{% docs column__number_of_weeks_in_window %}
+
+The number of menu weeks that we want to compare the preselector output against can vary depending on what the week the preselector was output for.
+
+We always compare the preselector output against the previous 6 menu weeks and the current future menu weeks visible on the front-end, but the number of future weeks visible in the front-end can vary.
+
+E.g. if the preselector output was for the next visible menu week in the front-end, we will compare it against the previous 6 weeks ordered weeks and the other 3 weeks on the front-end, resulting in the number of weeks in the window being 9. But if the preselector output was for the furthest away week in the front-end, we will compare it against the previous 6 weeks, however there are no other future weeks visible on the front-end, resulting in the number of weeks in the window being 6.
+
+{% enddocs %}
+
+{% docs column__percentage_of_weeks_in_window_with_same_recipe %}
+
+The percentage of weeks in the previous 6 menu weeks, and future visible menu weeks, where this main recipe id was also selected.
+
+The reason for this calculation is that the number of weeks in the comparison window can vary, so we need to normalise the number of repeats with the number of weeks in the window.
 
 {% enddocs %}
 
@@ -476,7 +476,7 @@ List of all preference names for the preference combination.
 
 List of all allergen preference names for the preference combination.
 
-{% enddocs %}   
+{% enddocs %}
 
 
 {% docs column__concept_name_combinations %}

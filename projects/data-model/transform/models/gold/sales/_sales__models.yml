@@ -902,7 +902,7 @@ models:
 
       - name: fk_dim_billing_agreements_previous_version
         data_type: string
-        description: "{{ doc('column__fk_dim_billing_agreements_previous_version') }}"   
+        description: "{{ doc('column__fk_dim_billing_agreements_previous_version') }}"
         data_tests:
           - relationships:
               to: ref('dim_billing_agreements')
@@ -1199,7 +1199,7 @@ models:
         data_tests:
           - not_null
 
-      - name: output_product_variation_id
+      - name: product_variation_id
         data_type: string
         description: "{{ doc('column__product_variation_id') }}"
         constraints:
@@ -1239,7 +1239,7 @@ models:
         data_tests:
           - not_null
 
-      - name: requested_menu_year
+      - name: menu_year
         data_type: int
         description: "{{ doc('column__menu_year') }}"
         constraints:
@@ -1247,7 +1247,7 @@ models:
         data_tests:
           - not_null
 
-      - name: requested_menu_week
+      - name: menu_week
         data_type: int
         description: "{{ doc('column__menu_week') }}"
         constraints:
@@ -1263,7 +1263,7 @@ models:
         data_tests:
           - not_null
 
-      - name: requested_portions
+      - name: portions
         data_type: int
         description: "{{ doc('column__requested_portions') }}"
         constraints:
@@ -1274,7 +1274,7 @@ models:
               values: [1, 2, 3, 4, 5, 6]
               quote: false
 
-      - name: requested_meals
+      - name: meals
         data_type: int
         description: "{{ doc('column__requested_meals') }}"
         constraints:
@@ -1311,7 +1311,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_cooking_time_mean is not null"
 
       - name: error_is_beef_percentage
         data_type: double
@@ -1320,7 +1319,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_beef_percentage is not null"
 
       - name: error_is_chef_choice_percentage
         data_type: double
@@ -1329,7 +1327,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_chef_choice_percentage is not null"
 
       - name: error_is_chicken_percentage
         data_type: double
@@ -1338,7 +1335,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_chicken_percentage is not null"
 
       - name: error_is_cod_percentage
         data_type: double
@@ -1347,7 +1343,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_cod_percentage is not null"
 
       - name: error_is_family_friendly_percentage
         data_type: double
@@ -1356,7 +1351,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_family_friendly_percentage is not null"
 
       - name: error_is_gluten_free_percentage
         data_type: double
@@ -1365,7 +1359,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_gluten_free_percentage is not null"
 
       - name: error_is_grain_percentage
         data_type: double
@@ -1374,7 +1367,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_grain_percentage is not null"
 
       - name: error_is_lactose_percentage
         data_type: double
@@ -1383,7 +1375,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_lactose_percentage is not null"
 
       - name: error_is_lamb_percentage
         data_type: double
@@ -1392,7 +1383,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_lamb_percentage is not null"
 
       - name: error_is_low_calorie
         data_type: double
@@ -1401,7 +1391,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_low_calorie is not null"
 
       - name: error_is_mixed_meat_percentage
         data_type: double
@@ -1410,7 +1399,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_mixed_meat_percentage is not null"
 
       - name: error_is_other_carbo_percentage
         data_type: double
@@ -1419,7 +1407,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_other_carbo_percentage is not null"
 
       - name: error_is_other_protein_percentage
         data_type: double
@@ -1428,7 +1415,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_other_protein_percentage is not null"
 
       - name: error_is_pasta_percentage
         data_type: double
@@ -1437,7 +1423,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_pasta_percentage is not null"
 
       - name: error_is_pork_percentage
         data_type: double
@@ -1446,7 +1431,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_pork_percentage is not null"
 
       - name: error_is_roede_percentage
         data_type: double
@@ -1455,7 +1439,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_roede_percentage is not null"
 
       - name: error_is_salmon_percentage
         data_type: double
@@ -1464,7 +1447,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_salmon_percentage is not null"
 
       - name: error_is_seafood_percentage
         data_type: double
@@ -1473,7 +1455,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_seafood_percentage is not null"
 
       - name: error_is_shrimp_percentage
         data_type: double
@@ -1482,7 +1463,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_shrimp_percentage is not null"
 
       - name: error_is_soft_bread_percentage
         data_type: double
@@ -1491,7 +1471,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_soft_bread_percentage is not null"
 
       - name: error_is_spicy_percentage
         data_type: double
@@ -1500,7 +1479,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_spicy_percentage is not null"
 
       - name: error_is_tuna_percentage
         data_type: double
@@ -1509,7 +1487,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_tuna_percentage is not null"
 
       - name: error_is_vegan_percentage
         data_type: double
@@ -1518,7 +1495,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_vegan_percentage is not null"
 
       - name: error_is_vegetables_percentage
         data_type: double
@@ -1527,7 +1503,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_vegetables_percentage is not null"
 
       - name: error_is_vegetarian_percentage
         data_type: double
@@ -1536,7 +1511,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_is_vegetarian_percentage is not null"
 
       - name: error_mean_cost_of_food
         data_type: double
@@ -1545,7 +1519,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_cost_of_food is not null"
 
       - name: error_mean_energy
         data_type: double
@@ -1554,7 +1527,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_energy is not null"
 
       - name: error_mean_fat
         data_type: double
@@ -1563,7 +1535,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_fat is not null"
 
       - name: error_mean_fat_saturated
         data_type: double
@@ -1572,7 +1543,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_fat_saturated is not null"
 
       - name: error_mean_number_of_ratings
         data_type: double
@@ -1581,7 +1551,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_number_of_ratings is not null"
 
       - name: error_mean_ordered_ago
         data_type: double
@@ -1590,7 +1559,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_ordered_ago is not null"
 
       - name: error_mean_protein
         data_type: double
@@ -1599,7 +1567,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_protein is not null"
 
       - name: error_mean_rank
         data_type: double
@@ -1608,7 +1575,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_rank is not null"
 
       - name: error_mean_ratings
         data_type: double
@@ -1617,7 +1583,6 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_ratings is not null"
 
       - name: error_mean_veg_fruit
         data_type: double
@@ -1626,16 +1591,46 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 100
-              where: "error_mean_veg_fruit is not null"
 
-      - name: number_of_repeats
-        data_type: bigint
-        description: "{{ doc('column__number_menu_weeks_selected_previous_6_weeks_and_future') }}"
+      - name: error_repeated_proteins_percentage
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
-              max_value: 10
-              where: "number_of_repeats is not null"
+              max_value: 1
+
+      - name: error_repeated_carbohydrates_percentage
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+
+      - name: number_of_weeks_with_same_recipe
+        data_type: bigint
+        description: "{{ doc('column__number_of_weeks_with_same_recipe') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 15
+
+      - name: number_of_weeks_in_window
+        data_type: bigint
+        description: "{{ doc('column__number_of_weeks_in_window') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 15
+
+      - name: percentage_of_weeks_in_window_with_same_recipe
+        data_type: double
+        description: "{{ doc('column__percentage_of_weeks_in_window_with_same_recipe') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
 
       - name: fk_dim_billing_agreements
         data_type: string
@@ -1681,27 +1676,16 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
-      - name: fk_dim_recipes_main_recipe
-        data_type: string
-        description: "{{ doc('column__fk_dim_recipes_main_recipe') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_recipes')
-              field: pk_dim_recipes
-
-      - name: fk_dim_date
+      - name: fk_dim_dates
         data_type: int
-        description: "{{ doc('column__fk_dim_date_created_at_preselector_output') }}"
+        description: "{{ doc('column__fk_dim_dates_created_at_preselector_output') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_date')
-              field: pk_dim_date
+              to: ref('dim_dates')
+              field: pk_dim_dates
 
       - name: fk_dim_time
         data_type: int
@@ -1896,7 +1880,7 @@ models:
       alias: fact_loyalty_orders
       contract:
         enforced: true
-    
+
     versions:
       - v: 1
     columns:
@@ -2097,14 +2081,14 @@ models:
           - type: not_null
         data_tests:
           - not_null
-          
+
 
   - name: dim_all_preference_combinations
     description: "Contains preference combinations and their corresponding names and ids"
     latest_version: 1
     config:
       alias: dim_all_preference_combinations
-      
+
     versions:
       - v: 1
 
