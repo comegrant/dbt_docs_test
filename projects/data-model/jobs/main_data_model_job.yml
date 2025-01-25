@@ -77,7 +77,7 @@ resources:
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
-              - 'dbt build --exclude drafts.* fact_preselector'
+              - 'dbt build --exclude drafts.*'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_coredb_snapshot_full},
