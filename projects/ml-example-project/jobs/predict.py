@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
 
-    dbutils: RemoteDbUtils = ""  # type: ignore
+    dbutils: RemoteDbUtils = ""
 
 # COMMAND ----------
-API_ROOT = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()  # type: ignore
-API_TOKEN = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()  # type: ignore
+API_ROOT = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().get()
+API_TOKEN = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
 
 os.environ["DATABRICKS_TOKEN"] = API_TOKEN
 os.environ["DATABRICKS_HOST"] = API_ROOT
@@ -50,4 +50,5 @@ args = Args(
 from ml_example_project.predict.predict import make_predictions
 
 df_predict = make_predictions(args=args, spark=spark)
-display(df_predict)  # type: ignore
+
+display(df_predict)

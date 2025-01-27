@@ -84,12 +84,24 @@ def train_model(args: Args, spark: SparkSession) -> None:
         logging.info("Inferring signature...")
         accuracy = accuracy_score(y_true=y_val, y_pred=y_pred)
         mlflow.log_metric(key="classification_accuracy", value=accuracy)
-        signature = infer_signature(model_input=X_train, model_output=y_train)
-        mlflow.pyfunc.log_model(
-            python_model=pipeline,
-            artifact_path="test",
-            registered_model_name=f"mloutputs.ml_example_project_{args.company}",
-            signature=signature,
-        )
+
+        if args.is_run_on_databricks:
+            if fe is None:
+                raise ValueError
+            fe.log_model(
+                model=pipeline,
+                artifact_path="test",
+                training_set=training_set,  # type: ignore
+                flavor=mlflow.pyfunc,
+                registered_model_name=f"mloutputs.ml_example_project_{args.company}",
+            )
+        else:
+            signature = infer_signature(model_input=X_train, model_output=y_train)
+            mlflow.pyfunc.log_model(
+                python_model=pipeline,
+                artifact_path="test",
+                registered_model_name=f"mloutputs.ml_example_project_{args.company}",
+                signature=signature,
+            )
 
     mlflow.end_run()

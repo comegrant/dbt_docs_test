@@ -1,4 +1,9 @@
+from datetime import datetime
+from typing import Optional
+
+import pytz
 from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.functions import current_timestamp
 
 from ml_example_project.db import get_data_from_sql
 from ml_example_project.paths import PREDICT_SQL_DIR
@@ -47,3 +52,41 @@ def create_predict_dataframe(
     df_pk = df_predict[ignore_columns]
 
     return df_pk, predict_data
+
+
+def postprocess_predictions(
+    spark: SparkSession,
+    predicted_data: DataFrame,
+    is_run_on_databricks: bool = True,
+    df_predict_pk: Optional[DataFrame] = None,
+) -> DataFrame:
+    """Postprocess predictions.
+
+    Parameters:
+        spark (SparkSession): Spark session.
+        predicted_data (DataFrame): Predicted data.
+        is_run_on_databricks (bool): Whether running on Databricks.
+        df_predict_pk (Optional[DataFrame]): Primary key of data for prediction.
+
+    Returns:
+        DataFrame: Postprocessed predictions.
+    """
+    if is_run_on_databricks:
+        results = predicted_data.na.drop()
+        results = results["recipe_id", "prediction"]
+        results = results.withColumnRenamed("prediction", "recipe_difficulty_level_id_prediction")
+        results = results.withColumn(
+            "recipe_difficulty_level_id_prediction", results["recipe_difficulty_level_id_prediction"].cast("integer")
+        )
+        results = results.withColumn("predicted_at", current_timestamp())
+
+    else:
+        if df_predict_pk is None:
+            raise ValueError
+
+        results = df_predict_pk.toPandas()
+        results["recipe_difficulty_level_id_prediction"] = predicted_data
+        results["predicted_at"] = datetime.now(tz=pytz.timezone("UTC"))
+        results = spark.createDataFrame(results)
+
+    return results
