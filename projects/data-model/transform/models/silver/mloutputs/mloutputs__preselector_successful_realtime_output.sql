@@ -26,7 +26,7 @@ with preselector_successful_output as (
         billing_agreement_id,
         company_id,
         concept_preference_ids,
-        taste_preferences as taste_preference_ids,
+        taste_preference_ids,
         model_version as model_version_commit_sha,
         portion_size as portions,
         number_of_recipes as meals,
