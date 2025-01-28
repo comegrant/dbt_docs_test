@@ -452,7 +452,7 @@ table 'Order Measures'
 	/// NOTE: If a dish is removed but not replaced with another dish, it will not be counted.
 	measure 'Share of Swapped Dishes' =
 			DIVIDE(
-				[Number of Swapped Out Dishes],
+				[Number of Swapped Dishes],
 				[Number of Preselected Dishes],
 				BLANK()
 				)
@@ -534,7 +534,7 @@ table 'Order Measures'
 	measure 'Average Number of Swaps per Order' = ```
 			
 			    DIVIDE(
-			        [Number of Swapped Out Dishes],
+			        [Number of Swapped Dishes],
 			        [Number of Orders],
 			        BLANK()
 			    )
