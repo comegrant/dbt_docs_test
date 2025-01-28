@@ -37,7 +37,7 @@ class PreselectorYearWeekResponse(BaseModel):
     target_cost_of_food_per_recipe: float
     compliancy: PreselectorPreferenceCompliancy
     ordered_weeks_ago: Annotated[dict[int, int] | None, Field] = None
-    error_vector: Annotated[dict[str, float] | None, Field] = None
+    error_vector: Annotated[dict[str, float | None] | None, Field] = None
 
 
 class PreselectorSuccessfulResponse(BaseModel):

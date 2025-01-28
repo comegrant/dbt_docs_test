@@ -1318,7 +1318,7 @@ async def run_preselector_for_request(
             compliancy=output.compliancy,
             target_cost_of_food_per_recipe=cof_target_value,
             ordered_weeks_ago=generated_recipe_ids,
-            error_vector=output.error_vector
+            error_vector=output.error_vector # type: ignore
         )
 
         for main_recipe_id in selected_recipe_ids:

@@ -50,6 +50,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
             pl.col("main_recipe_ids"),
             pl.col("target_cost_of_food_per_recipe"),
             pl.col("compliancy"),
+            pl.col("error_vector"),
         )
     ).sort("generated_at", descending=True)
 
@@ -73,7 +74,6 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
 
 
-
     for row in structured.iter_rows(named=True):
         first_row = output.filter(
             (pl.col("billing_agreement_id") == row["billing_agreement_id"])
@@ -93,6 +93,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                         main_recipe_ids=week["main_recipe_ids"],
                         target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
                         compliancy=PreselectorPreferenceCompliancy(week["compliancy"]),
+                        error_vector=week["error_vector"]
                     )
                     for week in row["year_weeks"]
                 ],
@@ -103,7 +104,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                 generated_at=row["generated_at"],
                 has_data_processing_consent=first_row["has_data_processing_consent"],
                 number_of_recipes=first_row["number_of_recipes"],
-                portion_size=first_row["portion_size"]
+                portion_size=first_row["portion_size"],
             )
         )
 
@@ -149,6 +150,9 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
 
     st.write("Compliance Value")
     st.write(year_week.compliancy)
+
+    st.write("Error Vector")
+    st.write(year_week.error_vector)
 
     assert response.portion_size
 
@@ -253,14 +257,29 @@ async def debug_app() -> None:
         st.error(run_response.failures[0])
         return
 
+    success = run_response.success[0]
+
     if (set(run_response.success[0].main_recipe_ids) - set(expected_recipes)):
         st.header("Something is not right")
         st.error(
             f"You have drift in some way. Expected {expected_recipes} recipe ids, "
             f"but got {run_response.success[0].main_recipe_ids}"
         )
+        st.header("Expected the following")
+        await display_recipes(
+            PreselectorYearWeekResponse(
+                year=success.year,
+                week=success.week,
+                variation_ids=[],
+                main_recipe_ids=expected_recipes,
+                target_cost_of_food_per_recipe=0,
+                compliancy=success.compliancy
+            ),
+            st
+        )
 
 
+    st.header("Current output")
     await display_recipes(
         run_response.success[0],
         st
