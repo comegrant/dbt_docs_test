@@ -1,9 +1,8 @@
 import asyncio
-import json
 import logging
 import uuid
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from time import monotonic
 from types import ModuleType
 from typing import TypeVar
@@ -27,6 +26,7 @@ from ui.deeplinks.compare_week import cached_recipe_info
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class TastePref:
     preference_id: str
@@ -49,7 +49,6 @@ T = TypeVar("T")
 
 
 def all_combinations(ids: list[T], include_empty_set: bool) -> list[list[T]]:
-
     if not ids:
         if include_empty_set:
             return [[]]
@@ -105,15 +104,15 @@ async def main() -> None:
     today = date.today()
 
     with st.form("Attributes"):
-
         selected_attributes = st.multiselect("Attributes", options=attributes, format_func=lambda att: att.name)
         selected_prefs = st.multiselect("Negative Prefs", options=taste_prefs, format_func=lambda pref: pref.name)
         portion_size = st.number_input("Portion Size", min_value=1, max_value=6, value=4)
-        week = st.number_input("Week", min_value=1, max_value=52, value=(today + timedelta(weeks=2)).isocalendar().week)
+        # Modify week to accept multiple weeks
+        weeks = st.multiselect("Weeks", options=range(1, 53), format_func=lambda week: f"Week {week}")
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
         agreement_id = st.number_input("Agreement ID", min_value=1, value=None)
-        ordered_weeks_ago = st.text_area("Ordered Recipe in Week")
+        ordered_weeks_ago = st.text_area("Ordered Recipe in Week")  # noqa: F841
 
         submit_button = st.form_submit_button("Generate")
 
@@ -121,10 +120,7 @@ async def main() -> None:
         return
 
     st.write(selected_prefs)
-    st.write([
-        att.id
-        for att in selected_attributes
-    ])
+    st.write([att.id for att in selected_attributes])
 
     with st.spinner("Loading Data"):
         cached_store = await load_cache(
@@ -153,35 +149,35 @@ async def main() -> None:
     if prefs:
         st.write("With negative prefs: " + " and ".join([pref.name for pref in prefs]))
 
-    request = GenerateMealkitRequest(
-        # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
-        agreement_id=agreement_id or 1,
-        company_id=company_id,
-        compute_for=[YearWeek(year=int(year), week=int(week))],
-        concept_preference_ids=[attr.id for attr in atters],
-        taste_preferences=[NegativePreference(preference_id=pref.preference_id, is_allergy=True) for pref in prefs],
-        number_of_recipes=int(number_of_recipes),
-        portion_size=int(portion_size),
-        has_data_processing_consent=agreement_id is not None,
-        ordered_weeks_ago=json.loads(str(ordered_weeks_ago)) if ordered_weeks_ago else None,
-        override_deviation=False,
-    )
+    responses = []
+    for week in weeks:
+        request = GenerateMealkitRequest(
+            # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
+            agreement_id=agreement_id or 1,
+            company_id=company_id,
+            compute_for=[YearWeek(year=int(year), week=int(week))],  # Process each week individually
+            concept_preference_ids=[attr.id for attr in atters],
+            taste_preferences=[NegativePreference(preference_id=pref.preference_id, is_allergy=True) for pref in prefs],
+            number_of_recipes=int(number_of_recipes),
+            portion_size=int(portion_size),
+            has_data_processing_consent=agreement_id is not None,
+            override_deviation=False,
+        )
 
-    start_time = monotonic()
-    response = await run_preselector_for_request(request, cached_store, should_explain=True)
-    end_time = monotonic()
+        start_time = monotonic()
+        response = await run_preselector_for_request(request, cached_store, should_explain=False)
+        responses.append(response)
+        end_time = monotonic()
 
-    st.write(f"Used {(end_time - start_time):.5f}s")
+        st.write(f"Used {(end_time - start_time):.5f}s")
 
-    if response.success:
-        await display_recipes(response.success[0], st)
-        recipes = response.success[0].main_recipe_ids
+        if response.success:
+            await display_recipes(response.success[0], st)
+            recipes = response.success[0].main_recipe_ids
 
-    else:
-        st.error(response.failures[0].error_message)
-        recipes = []
-
-
+        else:
+            st.error(response.failures[0].error_message)
+            recipes = []
 
     # Check if session_id is in the cookie
     if "session_id" not in cookies:
@@ -230,8 +226,8 @@ async def main() -> None:
                 "time": [datetime.now(timezone.utc)],
                 "company_id": [company_id],
                 "year": [year],
-                "week": [week],
-                "recipes": [recipes],
+                "week": [week],  # type: ignore
+                "recipes": [recipes],  # type: ignore
                 "rating": [st.session_state.get("rating")],
                 "attributes": [[attr.name for attr in atters]],
                 "taste_preferences": [[pref.name for pref in prefs]],
@@ -245,7 +241,6 @@ async def main() -> None:
 
 
 async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGenerator | ModuleType) -> None:
-
     st.write(response.compliancy)
 
     with st.spinner("Loading recipe information..."):
@@ -254,18 +249,18 @@ async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGener
             year=response.year,
             week=response.week,
         )
-        rank = pl.DataFrame({
-            "main_recipe_id": response.main_recipe_ids,
-            "rank": range(len(response.main_recipe_ids))
-        }).to_pandas()
+        rank = pl.DataFrame(
+            {"main_recipe_id": response.main_recipe_ids, "rank": range(len(response.main_recipe_ids))}
+        ).to_pandas()
 
-        pre_selector_recipe_info = pre_selector_recipe_info.merge(
-            rank, on="main_recipe_id"
-        ).sort_values("rank", ascending=True, ignore_index=True)
+        pre_selector_recipe_info = pre_selector_recipe_info.merge(rank, on="main_recipe_id").sort_values(
+            "rank", ascending=True, ignore_index=True
+        )
 
     with st.spinner("Displaying mealkit"):
         mealkit(pre_selector_recipe_info, col)
 
 
 if __name__ == "__main__":
+    load_dotenv()
     asyncio.run(main())

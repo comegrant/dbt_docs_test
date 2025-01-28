@@ -36,35 +36,26 @@ class StreamMessage(Generic[T]):
 
 
 class ReadableStream(Protocol[T]):
-    async def read(
-        self, number_of_records: int | None = None
-    ) -> list[StreamMessage[T]]:
-        ...
+    async def read(self, number_of_records: int | None = None) -> list[StreamMessage[T]]: ...
 
-    async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
-        ...
+    async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None: ...
 
-    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None:
-        ...
+    async def mark_as_uncomplete(self, messages: list[StreamMessage[T]]) -> None: ...
 
 
 class WritableStream(Protocol):
-    async def write(self, data: BaseModel) -> None:
-        ...
+    async def write(self, data: BaseModel) -> None: ...
 
-    async def batch_write(self, data: Sequence[BaseModel]) -> None:
-        ...
+    async def batch_write(self, data: Sequence[BaseModel]) -> None: ...
 
-    def reader(self, model: type[T]) -> ReadableStream[T] | None:
-        ...
+    def reader(self, model: type[T]) -> ReadableStream[T] | None: ...
+
 
 @dataclass
 class ServiceBusStreamWriter(WritableStream):
     client: ServiceBusClient
     topic_name: str
-    application_properties: dict[str | bytes, PrimitiveTypes] = field(
-        default_factory=dict
-    )
+    application_properties: dict[str | bytes, PrimitiveTypes] = field(default_factory=dict)
     reader_subscription: str | None = field(default=None)
 
     _connection: ServiceBusSender | None = field(default=None)
@@ -79,9 +70,7 @@ class ServiceBusStreamWriter(WritableStream):
     async def write(self, data: BaseModel) -> None:
         from azure.servicebus import ServiceBusMessage
 
-        logger.info(
-            f"Writing to service bus {self.topic_name} with {self.application_properties}"
-        )
+        logger.info(f"Writing to service bus {self.topic_name} with {self.application_properties}")
         self.sender().send_messages(
             ServiceBusMessage(
                 data.model_dump_json(),
@@ -116,7 +105,7 @@ class ServiceBusStreamWriter(WritableStream):
             client=self.client,
             topic_name=self.topic_name,
             subscription_name=self.reader_subscription,
-            sub_queue=None
+            sub_queue=None,
         )
 
 
@@ -141,15 +130,13 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
                 sub_queue=self.sub_queue,
                 max_wait_time=self.max_wait_time,
                 auto_lock_renewer=renewer,
-                prefetch_count=self.default_max_records
+                prefetch_count=self.default_max_records,
             )
             self._connection = rec.__enter__()
 
         return self._connection
 
-    async def read(
-        self, number_of_records: int | None = None
-    ) -> list[StreamMessage[T]]:
+    async def read(self, number_of_records: int | None = None) -> list[StreamMessage[T]]:
         receiver = self.receiver()
         raw_messages = receiver.receive_messages(
             max_message_count=number_of_records or self.default_max_records,
@@ -159,17 +146,11 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
         messages: list[StreamMessage[T]] = []
         for msg in raw_messages:
             body = list(msg.body)
-            assert (
-                len(body) == 1
-            ), f"Expected only one message in the body, got {len(body)}"
+            assert len(body) == 1, f"Expected only one message in the body, got {len(body)}"
 
             try:
                 decoded = self.payload.model_validate_json(body[0])
-                messages.append(
-                    StreamMessage(
-                        body=decoded, raw_message=msg
-                    )
-                )
+                messages.append(StreamMessage(body=decoded, raw_message=msg))
             except ValidationError as error:
                 logger.error(f"Unable to decode {body} - {error}")
                 receiver.abandon_message(msg)
@@ -191,9 +172,7 @@ class ServiceBusStream(Generic[T], ReadableStream[T]):
                     receiver.complete_message(message.raw_message)
                 else:
                     message_type = type(message.raw_message)
-                    logger.error(
-                        f"Message is not of type ServiceBusReceivedMessage - got {message_type}"
-                    )
+                    logger.error(f"Message is not of type ServiceBusReceivedMessage - got {message_type}")
             except (SessionLockLostError, MessageAlreadySettled) as error:
                 logger.error(f"Error when marking message. Will try to abandon {error}")
                 receiver.abandon_message(message.raw_message)
@@ -235,7 +214,6 @@ class StreamlitStreamMock(Generic[T], ReadableStream[T]):
 
 @dataclass
 class CustomWriter(WritableStream):
-
     function: Callable[[Sequence[BaseModel]], None]
 
     async def write(self, data: BaseModel) -> None:
@@ -246,6 +224,7 @@ class CustomWriter(WritableStream):
 
     def reader(self, model: type[T]) -> ReadableStream[T] | None:
         return None
+
 
 @dataclass
 class LoggerWriter(WritableStream):
@@ -273,6 +252,7 @@ class LoggerWriter(WritableStream):
     def reader(self, model: type[T]) -> ReadableStream[T] | None:
         return None
 
+
 @dataclass
 class StreamlitWriter(WritableStream):
     async def write(self, data: BaseModel) -> None:
@@ -293,23 +273,17 @@ class StreamlitWriter(WritableStream):
         return None
 
 
-
 @dataclass
 class SqlServerStream(Generic[T], ReadableStream[T]):
     payload: Callable[..., T]
     config: SqlServerConfig
     sql: str
 
-    async def read(
-        self, number_of_records: int | None = None
-    ) -> list[StreamMessage[T]]:
+    async def read(self, number_of_records: int | None = None) -> list[StreamMessage[T]]:
         job = self.config.fetch(self.sql)
         df = await job.to_polars()
 
-        return [
-            StreamMessage(body=self.payload(**record), raw_message=None)
-            for record in df.to_dicts()
-        ]
+        return [StreamMessage(body=self.payload(**record), raw_message=None) for record in df.to_dicts()]
 
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         pass
@@ -318,10 +292,8 @@ class SqlServerStream(Generic[T], ReadableStream[T]):
         pass
 
 
-
 @dataclass
 class PreselectorResultWriter(WritableStream):
-
     company_id: str
 
     store: ContractStore = field(default_factory=lambda: Preselector.query().store)
@@ -337,8 +309,8 @@ class PreselectorResultWriter(WritableStream):
 
         if self.error_features is None:
             self.error_features = [
-                feat.name for feat
-                in BasketFeatures.query().request.all_returned_features
+                feat.name
+                for feat in BasketFeatures.query().request.all_returned_features
                 if StaticFeatureTags.is_entity not in (feat.tags or [])
             ]
 
@@ -348,7 +320,7 @@ class PreselectorResultWriter(WritableStream):
             row.model_dump(
                 exclude={
                     "year_weeks": {
-                        "__all__":{
+                        "__all__": {
                             "ordered_weeks_ago",
                         }
                     }
@@ -358,46 +330,33 @@ class PreselectorResultWriter(WritableStream):
             if isinstance(row, PreselectorSuccessfulResponse)
         ]
 
-        year_week_struct = pl.List(pl.Struct({
-            "year": pl.Int16,
-            "week": pl.Int16,
-            "variation_ids": pl.List(pl.String),
-            "main_recipe_ids": pl.List(pl.Int32),
-            "compliancy": pl.Int8,
-            "target_cost_of_food_per_recipe": pl.Float32,
-            "error_vector": pl.Struct({
-                feat: pl.Float32
-                for feat in self.error_features
-            })
-        }))
-        df = pl.DataFrame(
-            mapped_data,
-            schema_overrides={
-                "year_weeks": year_week_struct
-            }
+        year_week_struct = pl.List(
+            pl.Struct(
+                {
+                    "year": pl.Int16,
+                    "week": pl.Int16,
+                    "variation_ids": pl.List(pl.String),
+                    "main_recipe_ids": pl.List(pl.Int32),
+                    "compliancy": pl.Int8,
+                    "target_cost_of_food_per_recipe": pl.Float32,
+                    "error_vector": pl.Struct({feat: pl.Float32 for feat in self.error_features}),
+                }
+            )
         )
+        df = pl.DataFrame(mapped_data, schema_overrides={"year_weeks": year_week_struct})
         if df.is_empty():
             return
 
-        df = (
-            df.explode("year_weeks")
-            .unnest("year_weeks")
-            .with_columns(company_id=pl.lit(self.company_id))
-        )
+        df = df.explode("year_weeks").unnest("year_weeks").with_columns(company_id=pl.lit(self.company_id))
 
         request = self.store.feature_view(Preselector).request
         features = request.all_returned_columns
 
         if self.sink is not None:
-            self.store = self.store.update_source_for(
-                Preselector.location,
-                self.sink
-            )
+            self.store = self.store.update_source_for(Preselector.location, self.sink)
 
         try:
-            await self.store.upsert_into(
-                Preselector.location, df.select(features)
-            )
+            await self.store.upsert_into(Preselector.location, df.select(features))
         except ValueError as e:
             logger.error(f"Error when upserting {df.head()}")
             logger.exception(e)
@@ -406,10 +365,8 @@ class PreselectorResultWriter(WritableStream):
         return None
 
 
-
 @dataclass
 class PreselectorResultStreamWriter(WritableStream):
-
     company_id: str
     timestamp_columns: list[str]
     stream: SinakableStream
@@ -421,13 +378,10 @@ class PreselectorResultStreamWriter(WritableStream):
         if not data:
             return
 
-        await self.stream.sink([
-            { "json_data": row.model_dump_json() }
-            for row in data
-        ])
+        await self.stream.sink([{"json_data": row.model_dump_json()} for row in data])
 
     @staticmethod
-    async def for_company(company_id: str) -> 'PreselectorResultStreamWriter':
+    async def for_company(company_id: str) -> "PreselectorResultStreamWriter":
         from data_contracts.preselector.store import Preselector
 
         view = Preselector.query().view
@@ -435,7 +389,7 @@ class PreselectorResultStreamWriter(WritableStream):
         source = view.stream_data_source.consumer()
         assert isinstance(source, RedisStream)
 
-        await source.client.ping() # type: ignore
+        await source.client.ping()  # type: ignore
 
         assert isinstance(source, SinakableStream)
 
@@ -445,11 +399,7 @@ class PreselectorResultStreamWriter(WritableStream):
         if result.event_timestamp:
             timestamps = [result.event_timestamp]
 
-        return PreselectorResultStreamWriter(
-            company_id=company_id,
-            timestamp_columns=timestamps,
-            stream=source
-        )
+        return PreselectorResultStreamWriter(company_id=company_id, timestamp_columns=timestamps, stream=source)
 
     def reader(self, model: type[T]) -> ReadableStream[T] | None:
         return None
@@ -457,7 +407,6 @@ class PreselectorResultStreamWriter(WritableStream):
 
 @dataclass
 class MultipleWriter(WritableStream):
-
     sources: list[WritableStream]
 
     async def write(self, data: BaseModel) -> None:
@@ -472,16 +421,29 @@ class MultipleWriter(WritableStream):
 
 
 @dataclass
-class CustomReader(ReadableStream[T]):
+class InMemoryWriterReader(WritableStream):
+    def __post_init__(self):
+        # Initialise a list to store BaseModel instances
+        self.output = []
 
+    async def write(self, data: BaseModel) -> None:
+        self.output.append(data.model_dump())  # Convert BaseModel to dict and append
+
+    async def batch_write(self, data: Sequence[BaseModel]) -> None:
+        self.output.extend(item.model_dump() for item in data)  # Convert each BaseModel to dict and extend list
+
+    async def read(self) -> list[dict]:
+        """Asynchronously reads all items from the in-memory list."""
+        return self.output
+
+
+@dataclass
+class CustomReader(ReadableStream[T]):
     method: Callable[[int | None], Awaitable[list[T]]]
 
     async def read(self, number_of_records: int | None = None) -> list[StreamMessage[T]]:
         messages = await self.method(number_of_records)
-        return [
-            StreamMessage(msg, raw_message=None)
-            for msg in messages
-        ]
+        return [StreamMessage(msg, raw_message=None) for msg in messages]
 
     async def mark_as_complete(self, messages: list[StreamMessage[T]]) -> None:
         pass

@@ -42,18 +42,14 @@ from preselector.stream import (
 
 logger = logging.getLogger(__name__)
 
+
 class KeyVaultSettings(BaseSettings):
     secrets_url: str = Field("https://gg-dev-svc-bcp-qa.vault.azure.net/")
-    key_mappings: dict[str, str] = Field({
-        "service-bus-connection-string": "service_bus_connection_string".upper()
-    })
-
+    key_mappings: dict[str, str] = Field({"service-bus-connection-string": "service_bus_connection_string".upper()})
 
 
 async def load_cache_for(
-    store: ContractStore,
-    loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]],
-    force_load: bool = False
+    store: ContractStore, loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]], force_load: bool = False
 ) -> ContractStore:
     for location, source, pl_filter in loads:
         if location.location_type == "feature_view":
@@ -61,15 +57,14 @@ async def load_cache_for(
         else:
             request = store.model(location.name).prediction_request()
 
-        assert isinstance(source, (WritableFeatureSource, DataFileReference)), (
-            f"Expected a writable source, got '{type(source)}'"
-        )
+        assert isinstance(
+            source, (WritableFeatureSource, DataFileReference)
+        ), f"Expected a writable source, got '{type(source)}'"
 
-        if not force_load and ((
-            isinstance(source, InMemorySource) and not source.data.is_empty()
-        ) or (
-            not isinstance(source, InMemorySource)
-        )):
+        if not force_load and (
+            (isinstance(source, InMemorySource) and not source.data.is_empty())
+            or (not isinstance(source, InMemorySource))
+        ):
             try:
                 # Checking if the data exists locally already with the correct schema
                 _ = await source.all_data(request, limit=10).to_polars()
@@ -79,7 +74,6 @@ async def load_cache_for(
             except Exception:
                 logger.info(f"Will load data due to either missing data, or incorrect schema. for {location}")
 
-
         logger.info(f"Loading {location} to cache")
         if location.location_type == "feature_view":
             job = store.feature_view(location.name).all().remove_derived_features()
@@ -87,9 +81,10 @@ async def load_cache_for(
             job = store.model(location.name).all_predictions().remove_derived_features()
 
         if pl_filter is not None:
+
             def filter_df(df: pl.LazyFrame) -> pl.LazyFrame:
-                assert pl_filter is not None # noqa: B023
-                return df.filter(pl_filter) # noqa: B023
+                assert pl_filter is not None  # noqa: B023
+                return df.filter(pl_filter)  # noqa: B023
 
             job = job.polars_method(filter_df)
 
@@ -103,11 +98,9 @@ async def load_cache_for(
 
     return store
 
+
 async def load_cache(
-    store: ContractStore,
-    company_id: str,
-    exclude_views: set[FeatureLocation] | None = None,
-    force_load: bool = False
+    store: ContractStore, company_id: str, exclude_views: set[FeatureLocation] | None = None, force_load: bool = False
 ) -> ContractStore:
     from preselector.recipe_contracts import cache_dir
 
@@ -126,12 +119,7 @@ async def load_cache(
 
     depends_on = store.feature_view("preselector_output").view.source.depends_on()
 
-    partition_recs = cache_dir.partitioned_parquet_at(
-        f"{company_id}/recs",
-        partition_keys=[
-            "year", "week"
-        ]
-    )
+    partition_recs = cache_dir.partitioned_parquet_at(f"{company_id}/recs", partition_keys=["year", "week"])
 
     cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
         (
@@ -149,26 +137,17 @@ async def load_cache(
             cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
             (pl.col("year") >= this_year) & (pl.col("company_id") == company_id),
         ),
-        (
-            RecommendatedDish.location,
-            partition_recs,
-            (pl.col("company_id") == company_id)
-            & rec_partitions
-        ),
-        (
-            PredefinedVectors.location,
-            InMemorySource.empty(),
-            pl.col("company_id") == company_id
-        ),
+        (RecommendatedDish.location, partition_recs, (pl.col("company_id") == company_id) & rec_partitions),
+        (PredefinedVectors.location, InMemorySource.empty(), pl.col("company_id") == company_id),
         (
             WeeksSinceRecipe.location,
             cache_dir.parquet_at(f"{company_id}/weeks_since_recipe.parquet"),
-            pl.col("company_id") == company_id
+            pl.col("company_id") == company_id,
         ),
         (
             RecipeEmbedding.location,
             cache_dir.parquet_at(f"{company_id}/recipe_embeddings.parquet"),
-            pl.col("company_id") == company_id
+            pl.col("company_id") == company_id,
         ),
     ]
 
@@ -180,12 +159,7 @@ async def load_cache(
 
         cache_sources.append((dep, cache_dir.parquet_at(f"{dep.name}.parquet"), None))
 
-    load_for = [
-        (loc, source, pl_filter)
-        for loc, source, pl_filter
-        in cache_sources
-        if loc not in exclude_views
-    ]
+    load_for = [(loc, source, pl_filter) for loc, source, pl_filter in cache_sources if loc not in exclude_views]
 
     return await load_cache_for(store, load_for, force_load=force_load)
 
@@ -193,32 +167,32 @@ async def load_cache(
 def convert_concepts_to_attributes(
     request: GenerateMealkitRequest,
 ) -> GenerateMealkitRequest:
-
     if not request.concept_preference_ids:
-        request.concept_preference_ids = [ "C94BCC7E-C023-40CE-81E0-C34DA3D79545" ]
+        request.concept_preference_ids = ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"]
         return request
 
     mappings = {
         # GL
         # Ekspress GL
-         "DEF1DD75-F6EA-40F9-9FA5-B6C0583797EE": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
+        "DEF1DD75-F6EA-40F9-9FA5-B6C0583797EE": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
         # Flexitarianer GL
-         "4A3E19DF-9524-4308-B927-BD20522628B0": [
-            "C94BCC7E-C023-40CE-81E0-C34DA3D79545", "6A494593-2931-4269-80EE-470D38F04796"
+        "4A3E19DF-9524-4308-B927-BD20522628B0": [
+            "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "6A494593-2931-4269-80EE-470D38F04796",
         ],
         # Vegetar
-         "1B7DBFF1-302E-4219-8108-BB5AA5B95D06": ["6A494593-2931-4269-80EE-470D38F04796"],
+        "1B7DBFF1-302E-4219-8108-BB5AA5B95D06": ["6A494593-2931-4269-80EE-470D38F04796"],
         # Favorittkassen
-         "44AE1E54-0BC8-4501-873D-BDCE85B7D9BC": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
+        "44AE1E54-0BC8-4501-873D-BDCE85B7D9BC": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
         # Single
-         "A3523A3F-AB14-469F-ABA8-6F4938007A17": ["37CE056F-4779-4593-949A-42478734F747"],
+        "A3523A3F-AB14-469F-ABA8-6F4938007A17": ["37CE056F-4779-4593-949A-42478734F747"],
         # Roede
-         "047FB5EC-D64C-4F72-AB69-BF6171D559FC": ["DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA"],
-
+        "047FB5EC-D64C-4F72-AB69-BF6171D559FC": ["DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA"],
         # AMK
         # Anbefalt
-         "7A326879-8A74-4AA8-8EC0-00EA3BB2AB32": [
-            "C94BCC7E-C023-40CE-81E0-C34DA3D79545", "B172864F-D58E-4395-B182-26C6A1F1C746"
+        "7A326879-8A74-4AA8-8EC0-00EA3BB2AB32": [
+            "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "B172864F-D58E-4395-B182-26C6A1F1C746",
         ],
         # Insp
         "673CD4EC-F637-4D0A-908D-1291D961A21F": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
@@ -232,11 +206,11 @@ def convert_concepts_to_attributes(
         "2DEACFA4-FDC7-406A-BFC0-EBE472FCC9A0": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
         # Vegetar
         "C5E32939-0650-4666-B386-772FA1A7BDBA": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
-
         # RT:
         # Flexitari
         "1374B627-9D05-4BD9-A984-B6CEB84E55DB": [
-            "C94BCC7E-C023-40CE-81E0-C34DA3D79545", "6A494593-2931-4269-80EE-470D38F04796"
+            "C94BCC7E-C023-40CE-81E0-C34DA3D79545",
+            "6A494593-2931-4269-80EE-470D38F04796",
         ],
         # Veg
         "84809B25-13A1-4E86-935C-4347310A4D32": ["6A494593-2931-4269-80EE-470D38F04796"],
@@ -244,7 +218,6 @@ def convert_concepts_to_attributes(
         "E788CB65-286D-4C78-A0CD-434C2809C1FE": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
         # Hurtig
         "6C1EA610-872D-4EB1-B821-38AB4BB9D457": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
-
         # LMK
         # Favorit
         "594170F4-938D-4237-97A3-26FFAA261A29": ["C94BCC7E-C023-40CE-81E0-C34DA3D79545"],
@@ -261,7 +234,7 @@ def convert_concepts_to_attributes(
         # Express
         "F4C8B40C-5C86-4A4C-9B20-E62B9AE83220": ["C28F210B-427E-45FA-9150-D6344CAE669B"],
         # Vegetarisk
-        "306EEA6B-1FA5-46B4-8D30-FBEA4E9C3EE0": ["6A494593-2931-4269-80EE-470D38F04796"]
+        "306EEA6B-1FA5-46B4-8D30-FBEA4E9C3EE0": ["6A494593-2931-4269-80EE-470D38F04796"],
     }
 
     taste_preferences = {
@@ -299,7 +272,7 @@ def convert_concepts_to_attributes(
             "03D80B36-29DA-4B65-8220-75A32F419593",
             "1C936351-EB0F-4815-95F7-0C942CEA6CC3",
             "FF9F03BE-C0EB-4D79-BF40-0659AEDD3B89",
-        ]
+        ],
     }
 
     all_taste_preference = set(request.taste_preferences)
@@ -310,22 +283,17 @@ def convert_concepts_to_attributes(
         potential_attribute_ids.update(ids)
 
     for concept_id in request.concept_preference_ids:
-        all_taste_preference.update([
-            NegativePreference(
-                preference_id=pref,
-                is_allergy=True
-            )
-            for pref in taste_preferences.get(concept_id, set())
-
-        ])
-        all_attribute_ids.update(
-            mappings.get(concept_id, set())
+        all_taste_preference.update(
+            [
+                NegativePreference(preference_id=pref, is_allergy=True)
+                for pref in taste_preferences.get(concept_id, set())
+            ]
         )
+        all_attribute_ids.update(mappings.get(concept_id, set()))
 
     if not all_attribute_ids:
         all_attribute_ids = {
-            concept_id for concept_id in request.concept_preference_ids
-            if concept_id in potential_attribute_ids
+            concept_id for concept_id in request.concept_preference_ids if concept_id in potential_attribute_ids
         }
 
     assert all_attribute_ids, f"Found no attribute ids for {request.concept_preference_ids}"
@@ -333,6 +301,7 @@ def convert_concepts_to_attributes(
     request.taste_preferences = list(all_taste_preference)
     request.concept_preference_ids = list(all_attribute_ids)
     return request
+
 
 async def process_stream_batch(
     store: ContractStore,
@@ -342,6 +311,7 @@ async def process_stream_batch(
     progress_callback: Callable[[int, int], None] | None = None,
     progress_callback_interval: int = 5,
     write_batch_interval: int = 100,
+    mode: str | None = None,
 ) -> int:
     from datadog.dogstatsd.base import statsd
 
@@ -372,14 +342,12 @@ async def process_stream_batch(
                     logger.exception(e)
 
                     failed_requests.append(
-                        PreselectorFailedResponse(
-                            error_message=str(e), error_code=500, request=raw_request
-                        )
+                        PreselectorFailedResponse(error_message=str(e), error_code=500, request=raw_request)
                     )
                     continue
 
                 try:
-                    result = await run_preselector_for_request(request, store)
+                    result = await run_preselector_for_request(request, store, mode=mode)
                     success_response = result.success_response()
                     if success_response:
                         successful_responses.append(success_response)
@@ -390,9 +358,7 @@ async def process_stream_batch(
                     logger.exception(e)
 
                     failed_requests.append(
-                        PreselectorFailedResponse(
-                            error_message=str(e), error_code=500, request=request
-                        )
+                        PreselectorFailedResponse(error_message=str(e), error_code=500, request=request)
                     )
 
             completed_requests.append(message)
@@ -407,7 +373,7 @@ async def process_stream_batch(
                         successful_responses = []
 
                     if failed_output_stream and failed_requests:
-                        failed_ids = [ req.request.agreement_id for req in failed_requests ]
+                        failed_ids = [req.request.agreement_id for req in failed_requests]
                         logger.error(f"Error for user with id: {failed_ids}")
                         await failed_output_stream.batch_write(failed_requests)
                         failed_requests = []
@@ -432,32 +398,22 @@ async def process_stream_batch(
     return number_of_messages
 
 
-async def create_service_bus_subscription(
-    subscription_name: str,
-    topic_name: str,
-    namespace: str
-) -> None:
+async def create_service_bus_subscription(subscription_name: str, topic_name: str, namespace: str) -> None:
     from azure.identity import DefaultAzureCredential
     from azure.servicebus.management import ServiceBusAdministrationClient
 
-    client = ServiceBusAdministrationClient(
-        fully_qualified_namespace=namespace,
-        credential=DefaultAzureCredential()
-    )
+    client = ServiceBusAdministrationClient(fully_qualified_namespace=namespace, credential=DefaultAzureCredential())
     try:
         subscription = client.get_subscription(topic_name, subscription_name=subscription_name)
         logger.info(f"Found '{subscription.name}' in '{topic_name}'. Will skip creation.")
     except ResourceNotFoundError:
-        client.create_subscription(
-            topic_name, subscription_name=subscription_name
-        )
+        client.create_subscription(topic_name, subscription_name=subscription_name)
 
 
 async def process_stream(
     settings: ProcessStreamSettings,
     min_sleep_time: float = 0.1,
 ) -> None:
-
     from cheffelo_logging import setup_datadog
     from datadog import initialize
 
@@ -467,25 +423,25 @@ async def process_stream(
     logging.getLogger("azure").setLevel(logging.ERROR)
     logging.getLogger("aligned").setLevel(logging.ERROR)
 
-    config = DataDogConfig() # type: ignore[reportGeneralTypeIssues]
+    config = DataDogConfig()  # type: ignore[reportGeneralTypeIssues]
 
     setup_datadog(logging.getLogger(""), config)
 
     try:
+
         def use_serverless_databricks(source: DatabricksSource, location: FeatureLocation) -> None:
             source.config = DatabricksConnectionConfig.serverless(
-                host=settings.databricks_host,
-                token=settings.databricks_token.get_secret_value()
+                host=settings.databricks_host, token=settings.databricks_token.get_secret_value()
             )
 
         original_store = preselector_store()
         original_store.sources_of_type(DatabricksSource, use_serverless_databricks)
 
-        datadog_config = DataDogStatsdConfig() # type: ignore[reportGeneralTypeIssues]
+        datadog_config = DataDogStatsdConfig()  # type: ignore[reportGeneralTypeIssues]
         initialize(
             statsd_host=datadog_config.datadog_host,
             statsd_port=datadog_config.datadog_port,
-            statsd_constant_tags=config.datadog_tags.split(",")
+            statsd_constant_tags=config.datadog_tags.split(","),
         )
         logger.info(settings)
 
@@ -527,29 +483,29 @@ async def process_stream(
 
             batch_duration = batch_end - batch_start
             sleep_time = max(settings.ideal_poll_interval - batch_duration, min_sleep_time)
-            logger.debug(
-                f"Done a batch of work {batch_duration:.3f}, sleeping for {sleep_time:.3f} seconds"
-            )
+            logger.debug(f"Done a batch of work {batch_duration:.3f}, sleeping for {sleep_time:.3f} seconds")
 
             now = datetime.now(tz=timezone.utc)
-            if number_of_messages == 0 and (
-                (now - last_cache_load) > settings.update_data_interval
-            ):
+            if number_of_messages == 0 and ((now - last_cache_load) > settings.update_data_interval):
                 # Only update the cached data if there are no messages to process
                 # And the cache is 3 hours old
                 store = await load_cache(original_store, company_id, force_load=True)
                 last_cache_load = datetime.now(tz=timezone.utc)
 
-
-            if number_of_messages == 0 and settings.write_output_interval and settings.is_batch_worker and (
-                now - last_batch_write > settings.write_output_interval
-            ) and streams.successful_output_stream and streams.failed_output_stream:
+            if (
+                number_of_messages == 0
+                and settings.write_output_interval
+                and settings.is_batch_worker
+                and (now - last_batch_write > settings.write_output_interval)
+                and streams.successful_output_stream
+                and streams.failed_output_stream
+            ):
                 await write_to_databricks(
                     streams.successful_output_stream.reader(PreselectorSuccessfulResponse),
                     streams.failed_output_stream.reader(PreselectorFailedResponse),
                     original_store,
                     write_size=settings.write_output_max_size,
-                    max_wait_time=settings.write_output_wait_time
+                    max_wait_time=settings.write_output_wait_time,
                 )
                 last_batch_write = datetime.now(tz=timezone.utc)
 
@@ -564,6 +520,8 @@ async def process_stream(
 
 
 if __name__ == "__main__":
-    asyncio.run(process_stream(
-        settings=ProcessStreamSettings() # type: ignore[reportGeneralTypeIssues]
-    ))
+    asyncio.run(
+        process_stream(
+            settings=ProcessStreamSettings()  # type: ignore[reportGeneralTypeIssues]
+        )
+    )

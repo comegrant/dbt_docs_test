@@ -57,7 +57,7 @@ def select_next_vector(
     exclude_column: str = "basket_id",
     rename_column: str = "recipe_id",
     explain_based_on_current: pl.DataFrame | None = None,
-    error_column: str | None = None
+    error_column: str | None = None,
 ) -> pl.DataFrame:
     """
     Selects the vector that is closest to the target vector
@@ -113,9 +113,7 @@ def select_next_vector(
         unimportant_columns = []
         for index, is_unimportant in enumerate((importance_vector == 0).to_list()):
             if is_unimportant:
-                unimportant_columns.append(
-                    columns[index]
-                )
+                unimportant_columns.append(columns[index])
 
         top_vectors = (
             potential_vectors.select(pl.exclude(exclude_column))
@@ -126,10 +124,7 @@ def select_next_vector(
             .collect()
             .transpose()
             .rename(lambda col: columns[int(col.split("_")[1])])
-            .with_columns(
-                total_error=pl.sum_horizontal(columns),
-                recipe_id=potential_vectors[exclude_column]
-            )
+            .with_columns(total_error=pl.sum_horizontal(columns), recipe_id=potential_vectors[exclude_column])
             .sort("total_error", descending=False)
         )
 
@@ -137,11 +132,11 @@ def select_next_vector(
             top_vectors.select(columns)
             .transpose()
             .select(
-                pl.all() -
-                (
-                    (
-                        explain_based_on_current.select(columns).transpose().to_series() - target_vector
-                    ) * importance_vector * 10
+                pl.all()
+                - (
+                    (explain_based_on_current.select(columns).transpose().to_series() - target_vector)
+                    * importance_vector
+                    * 10
                 )
                 # Need to fill with 0 to avoid a nan sum
                 # Which would lead to picking the first recipe in the list
@@ -151,10 +146,7 @@ def select_next_vector(
             )
             .transpose()
             .rename(lambda col: columns[int(col.split("_")[1])])
-            .with_columns(
-                change_in_error=pl.sum_horizontal(columns),
-                recipe_id=top_vectors["recipe_id"]
-            )
+            .with_columns(change_in_error=pl.sum_horizontal(columns), recipe_id=top_vectors["recipe_id"])
             .select(pl.exclude(unimportant_columns))
         )
         st.write(explaination)
@@ -162,22 +154,21 @@ def select_next_vector(
         st.write("Main reason for recipe")
         st.write(
             explaination.head(1)
-                .select(pl.exclude(unimportant_columns))
-                .transpose(header_name="feature", include_header=True)
-                .sort("column_0", descending=False)
-                .filter(pl.col("feature").is_in(["change_in_error"]).not_())
-                .head(10)
+            .select(pl.exclude(unimportant_columns))
+            .transpose(header_name="feature", include_header=True)
+            .sort("column_0", descending=False)
+            .filter(pl.col("feature").is_in(["change_in_error"]).not_())
+            .head(10)
         )
 
         st.write("Current biggest errors")
         st.write(
             top_vectors.head(1)
-                .select(pl.exclude(unimportant_columns))
-                .transpose(header_name="feature", include_header=True)
-                .filter(pl.col("feature").is_in(["recipe_id", "total_error"]).not_())
-                .sort("column_0", descending=True)
-                .head(10)
-
+            .select(pl.exclude(unimportant_columns))
+            .transpose(header_name="feature", include_header=True)
+            .filter(pl.col("feature").is_in(["recipe_id", "total_error"]).not_())
+            .sort("column_0", descending=True)
+            .head(10)
         )
         st.write("Current basket vector")
         st.write(top_vectors.head(1))
@@ -195,7 +186,7 @@ def select_next_vector(
             .with_columns(
                 pl.sum_horizontal(columns).alias("total_error"),
                 potential_vectors[exclude_column].alias(rename_column),
-                pl.struct(pl.col(columns)).alias(error_column)
+                pl.struct(pl.col(columns)).alias(error_column),
             )
             .sort("total_error", descending=False)
             .head(1)
@@ -210,9 +201,9 @@ def select_next_vector(
             .collect()
             .transpose()
         )
-        distance = potential_vectors.with_columns(
-            distance=distance["column_0"]
-        ).sort("distance", descending=False).limit(1)
+        distance = (
+            potential_vectors.with_columns(distance=distance["column_0"]).sort("distance", descending=False).limit(1)
+        )
 
         return distance.select(
             pl.exclude(["distance", exclude_column]),
@@ -250,7 +241,6 @@ async def find_best_combination(
     preselected_recipe_ids: list[int] | None = None,
     should_explain: bool = True,
 ) -> tuple[list[int], Annotated[dict[str, float], "Soft preference error"]]:
-
     final_combination = pl.DataFrame()
 
     columns = target_combination_values.columns
@@ -272,54 +262,46 @@ async def find_best_combination(
         aggregations = await job.aggregate(basket_computations).to_polars()
 
         if mealkit_embedding is None:
-            return aggregations.with_columns(
-                inter_week_similarity=pl.lit(0)
-            )
+            return aggregations.with_columns(inter_week_similarity=pl.lit(0))
 
-        with_mealkit = recipe_embeddings.select([
-            pl.col("recipe_id"),
-            pl.col("embedding"),
-            pl.lit(mealkit_embedding).alias("mealkit_embedding")
-        ])
+        with_mealkit = recipe_embeddings.select(
+            [pl.col("recipe_id"), pl.col("embedding"), pl.lit(mealkit_embedding).alias("mealkit_embedding")]
+        )
 
         # Need to manually loop through the derived features
         # As there is a bug where polars crashes for some reason
         # May need to upgrade the major version
         for derive in simliarity_computation.derived_features:
-            output = (await derive.transformation.transform_polars(
+            output = await derive.transformation.transform_polars(
                 with_mealkit.lazy(), derive.name, ContractStore.empty()
-            ))
+            )
             assert isinstance(output, pl.LazyFrame)
             with_mealkit = output.collect()
 
-        similarity = with_mealkit.select([
-            pl.col("recipe_id"),
-            # Normalize [0, 1] as all features will be in this range.
-            ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity")
-        ])
-        return aggregations.join(
-            similarity, left_on="basket_id", right_on="recipe_id"
+        similarity = with_mealkit.select(
+            [
+                pl.col("recipe_id"),
+                # Normalize [0, 1] as all features will be in this range.
+                ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity"),
+            ]
         )
+        return aggregations.join(similarity, left_on="basket_id", right_on="recipe_id")
 
-    def update_nudge_with_recipes(
-        final_combination: pl.DataFrame,
-        raw_recipe_nudge: pl.DataFrame
-    ) -> pl.DataFrame:
+    def update_nudge_with_recipes(final_combination: pl.DataFrame, raw_recipe_nudge: pl.DataFrame) -> pl.DataFrame:
         """
         Creates a new dataframe that enables us to compute where we end up if we choose recipe x.
         """
 
         # Using numpy in order to vectorize the code and imporve the performance
         repeated_recipes = np.repeat(raw_recipe_nudge["recipe_id"].to_numpy(), final_combination.height)
-        return pl.concat(
-            [final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height,
-            how="vertical"
-        ).hstack(
-            [pl.Series(values=repeated_recipes, name="basket_id")]
-        ).vstack(
-            raw_recipe_nudge,
-        ).sort(["basket_id", "recipe_id"])
-
+        return (
+            pl.concat([final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height, how="vertical")
+            .hstack([pl.Series(values=repeated_recipes, name="basket_id")])
+            .vstack(
+                raw_recipe_nudge,
+            )
+            .sort(["basket_id", "recipe_id"])
+        )
 
     async def setup_starting_state(
         recipes_to_choose_from: pl.DataFrame,
@@ -337,9 +319,7 @@ async def find_best_combination(
         if preselected_recipe_ids is None or not preselected_recipe_ids:
             return await default_response()
 
-        final_combination = recipes_to_choose_from.filter(
-            pl.col("recipe_id").is_in(preselected_recipe_ids)
-        )
+        final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
 
         if not final_combination.is_empty():
             return await default_response()
@@ -350,13 +330,9 @@ async def find_best_combination(
 
         raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
 
-        recipe_nudge = (
-            await compute_basket(raw_recipe_nudge)
-        ).sort("basket_id", descending=False)
+        recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort("basket_id", descending=False)
 
-        recipes_to_choose_from = recipes_to_choose_from.filter(
-            pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
-        )
+        recipes_to_choose_from = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids).not_())
         if len(preselected_recipe_ids) != final_combination.height:
             found_recipe_ids = final_combination["recipe_id"].to_list()
             missing_ids = set(preselected_recipe_ids) - set(found_recipe_ids)
@@ -365,13 +341,10 @@ async def find_best_combination(
         n_recipes_to_add = number_of_recipes - final_combination.height
         return n_recipes_to_add, recipe_nudge
 
-
     current_vector: pl.DataFrame | None = None
 
     if should_explain:
-        current_vector = pl.DataFrame({
-            col: [0] for col in columns
-        })
+        current_vector = pl.DataFrame({col: [0] for col in columns})
 
     mean_target_vector = target_combination_values.select(columns).transpose().to_series()
     feature_importance = importance_vector.select(columns)
@@ -389,7 +362,6 @@ async def find_best_combination(
     n_recipes_to_add, recipe_nudge = await setup_starting_state(recipes_to_choose_from)
 
     for index in range(n_recipes_to_add):
-
         # For a five recipe selection on the first run
         # log(1.2) => 0.26
 
@@ -400,19 +372,19 @@ async def find_best_combination(
 
         if should_explain:
             import streamlit as st
+
             st.write("New candidate vectors")
             st.write(recipe_nudge)
 
         next_vector = select_next_vector(
             mean_target_vector,
             recipe_nudge,
-            feature_importance.with_columns([
-                pl.col(feat) * binary_weight
-                for feat in binary_features
-            ]).transpose().to_series(),
+            feature_importance.with_columns([pl.col(feat) * binary_weight for feat in binary_features])
+            .transpose()
+            .to_series(),
             columns,
             explain_based_on_current=current_vector,
-            error_column=error_column if index == n_recipes_to_add - 1 else None
+            error_column=error_column if index == n_recipes_to_add - 1 else None,
         )
 
         selected_recipe_id = next_vector[0, "recipe_id"]
@@ -432,9 +404,12 @@ async def find_best_combination(
         )
 
         if final_combination.height > 1:
-            mean_emb = np.mean(recipe_embeddings.filter(
-                pl.col("main_recipe_id").is_in(final_combination["main_recipe_id"])
-            )["embedding"].to_numpy(), axis=0)
+            mean_emb = np.mean(
+                recipe_embeddings.filter(pl.col("main_recipe_id").is_in(final_combination["main_recipe_id"]))[
+                    "embedding"
+                ].to_numpy(),
+                axis=0,
+            )
             mealkit_embedding = (mean_emb / np.linalg.norm(mean_emb)).tolist()
         else:
             mealkit_embedding = recipe_embeddings.filter(
@@ -457,19 +432,14 @@ async def find_best_combination(
 
         st.write("Weighted result vector")
         st.write(
-            (
-                current_vector.select(columns).transpose() * importance_vector.select(columns).transpose()
-            )
+            (current_vector.select(columns).transpose() * importance_vector.select(columns).transpose())
             .transpose()
             .rename(lambda col: columns[int(col.split("_")[1])])
         )
 
         st.write(final_combination.to_pandas())
 
-    return (
-        final_combination["main_recipe_id"].to_list(),
-        next_vector[error_column].to_list()[0]
-    )
+    return (final_combination["main_recipe_id"].to_list(), next_vector[error_column].to_list()[0])
 
 
 @feature_view(
@@ -504,14 +474,14 @@ async def load_recommendations(
     week: int,
     store: ContractStore,
 ) -> pl.DataFrame:
-    preds = await store.model("rec_engine").all_predictions().filter(
-        (pl.col("agreement_id") == agreement_id)
-        & (pl.col("year") == year)
-        & (pl.col("week") == week)
-    ).to_lazy_polars()
+    preds = (
+        await store.model("rec_engine")
+        .all_predictions()
+        .filter((pl.col("agreement_id") == agreement_id) & (pl.col("year") == year) & (pl.col("week") == week))
+        .to_lazy_polars()
+    )
     return (
-        preds.sort("predicted_at", descending=True)
-        .unique(["agreement_id", "week", "year", "product_id"], keep="first")
+        preds.sort("predicted_at", descending=True).unique(["agreement_id", "week", "year", "product_id"], keep="first")
     ).collect()
 
 
@@ -520,51 +490,34 @@ async def importance_vector_for_concept(
 ) -> tuple[pl.DataFrame, pl.DataFrame]:
     features = BasketFeatures.query().request.request_result.feature_columns
 
-    entities: dict[str, list] = {
-        "concept_id": [],
-        "company_id": [],
-        "vector_type": []
-    }
+    entities: dict[str, list] = {"concept_id": [], "company_id": [], "vector_type": []}
 
     for concept_id in concept_ids:
         entities["concept_id"].extend([concept_id, concept_id])
         entities["company_id"].extend([company_id, company_id])
         entities["vector_type"].extend(["importance", "target"])
 
-
-    predefined_vector = (
-        await store.feature_view("predefined_vectors")
-        .features_for(entities)
-        .drop_invalid()
-        .to_polars()
-    )
+    predefined_vector = await store.feature_view("predefined_vectors").features_for(entities).drop_invalid().to_polars()
 
     combined_feature = [
         pl.col(feature).where(pl.col(feature) > 0).mean().fill_nan(0).fill_null(0) for feature in features
     ]
     combined_targets: list[pl.DataFrame] = []
 
-    importances = predefined_vector.filter(
-        pl.col("vector_type") == "importance"
-    ).with_columns(
+    importances = predefined_vector.filter(pl.col("vector_type") == "importance").with_columns(
         pl.col(feat) / pl.sum_horizontal(features) for feat in features
     )
 
     # Setting the new target based on the following formula when there are multiple concepts
     # target_f = (target_1 * importance_1 + target_2 * importance_2) / sum(importance_f)
     for concept_id in concept_ids:
-        importance = importances.filter(
-            pl.col("concept_id") == concept_id
-        ).select(features)
+        importance = importances.filter(pl.col("concept_id") == concept_id).select(features)
 
         target = predefined_vector.filter(
-            (pl.col("vector_type") == "target")
-            & (pl.col("concept_id") == concept_id)
+            (pl.col("vector_type") == "target") & (pl.col("concept_id") == concept_id)
         ).select(features)
 
-        combined_targets.append(
-            (importance.transpose() * target.transpose()).transpose()
-        )
+        combined_targets.append((importance.transpose() * target.transpose()).transpose())
 
     if not combined_targets:
         raise ValueError(
@@ -572,8 +525,10 @@ async def importance_vector_for_concept(
         )
 
     target_vector = (
-        (pl.concat(combined_targets).sum().transpose() / importances.select(features).sum().transpose()).fill_nan(0)
-    ).transpose().rename(lambda col: features[int(col.split("_")[1])])
+        ((pl.concat(combined_targets).sum().transpose() / importances.select(features).sum().transpose()).fill_nan(0))
+        .transpose()
+        .rename(lambda col: features[int(col.split("_")[1])])
+    )
 
     importance_vector = importances.select(combined_feature)
 
@@ -618,9 +573,9 @@ async def normalize_cost(
         f"{request.portion_size} portions. Therefore, can not normalize the cof target"
     )
     assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
-    assert min_cof != max_cof, (
-        f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
-    )
+    assert (
+        min_cof != max_cof
+    ), f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
     cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
     logger.debug(f"Normalized value from {target_cost_of_food} to {cost_of_food_value}")
@@ -633,53 +588,35 @@ class FeatureImportance:
     target: float
     importance: float
 
-def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame]:
 
+def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame]:
     features = list(BasketFeatures.compile().request_all.needed_requests[0].all_features)
 
     def contains_features(features: list[str], importance: pl.DataFrame) -> bool:
         if not features:
             return True
-        max_imp_value = importance.select([
-            pl.col(feature) for feature in features
-        ]).max_horizontal().to_list()[0]
+        max_imp_value = importance.select([pl.col(feature) for feature in features]).max_horizontal().to_list()[0]
         return max_imp_value != 0
 
-
     def fill_when_missing(
-        default_values: dict[str, float],
-        importance: pl.DataFrame,
-        target: pl.DataFrame,
-        fixed_importance: float
+        default_values: dict[str, float], importance: pl.DataFrame, target: pl.DataFrame, fixed_importance: float
     ) -> tuple[pl.DataFrame, pl.DataFrame]:
-
-        importance = importance.with_columns([
-            pl.lit(fixed_importance).alias(key)
-            for key  in default_values
-        ])
-        target = target.with_columns([
-            pl.lit(val).alias(key)
-            for key, val in default_values.items()
-        ])
+        importance = importance.with_columns([pl.lit(fixed_importance).alias(key) for key in default_values])
+        target = target.with_columns([pl.lit(val).alias(key) for key, val in default_values.items()])
 
         return importance, target
-
 
     potential_tags = {
         VariationTags.protein: 0.1,
         VariationTags.carbohydrate: 0.2,
         VariationTags.quality: 0.8,
-        VariationTags.equal_dishes: 0.0
+        VariationTags.equal_dishes: 0.0,
     }
 
     tags = dict()
 
     for tag, value in potential_tags.items():
-        feat = [
-            feature.name
-            for feature in features
-            if feature.tags and tag in feature.tags
-        ]
+        feat = [feature.name for feature in features if feature.tags and tag in feature.tags]
 
         if not contains_features(feat, importance):
             tags[tag] = value
@@ -697,19 +634,9 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
         return importance, target
 
     for tag, value in tags.items():
+        vector = {feature.name: value for feature in features if feature.tags and tag in feature.tags}
 
-        vector = {
-            feature.name: value
-            for feature in features
-            if feature.tags and tag in feature.tags
-        }
-
-        importance, target = fill_when_missing(
-            vector,
-            importance,
-            target,
-            total_sum / len(vector)
-        )
+        importance, target = fill_when_missing(vector, importance, target, total_sum / len(vector))
 
     return importance, target
 
@@ -717,53 +644,29 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
 def handle_calorie_concept(
     target: pl.DataFrame, importance: pl.DataFrame, concept_ids: list[str]
 ) -> tuple[pl.DataFrame, pl.DataFrame]:
-
     low_cal_id = "FD661CAD-7F45-4D02-A36E-12720D5C16CA"
     vegetarian_id = "6A494593-2931-4269-80EE-470D38F04796"
     roede_id = "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA"
 
     # Roede
     if concept_ids == [low_cal_id]:
-        return (
-            target.with_columns(
-                is_low_calorie=pl.lit(1)
-            ),
-            importance.with_columns(
-                is_low_calorie=pl.lit(1)
-            )
-        )
+        return (target.with_columns(is_low_calorie=pl.lit(1)), importance.with_columns(is_low_calorie=pl.lit(1)))
     elif roede_id in concept_ids:
         # Roede can choose negative preferences, so we will not select a pre-defined mealkit
         # But rather find the most optimal selection
         # As a result will we weight the roede features above everything else.
         # But if there are no left, then they will start to get other types of dishes
-        target = target.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
-        importance = importance.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
+        target = target.with_columns(is_roede_percentage=pl.lit(1))
+        importance = importance.with_columns(is_roede_percentage=pl.lit(1))
         return target, importance
     else:
-        target = target.with_columns(
-            is_roede_percentage=pl.lit(0)
-        )
-        importance = importance.with_columns(
-            is_roede_percentage=pl.lit(1)
-        )
+        target = target.with_columns(is_roede_percentage=pl.lit(0))
+        importance = importance.with_columns(is_roede_percentage=pl.lit(1))
 
     if vegetarian_id not in concept_ids and low_cal_id not in concept_ids:
-        return (
-            target.with_columns(
-                is_low_calorie=pl.lit(0)
-            ),
-            importance.with_columns(
-                is_low_calorie=pl.lit(0.5)
-            )
-        )
+        return (target.with_columns(is_low_calorie=pl.lit(0)), importance.with_columns(is_low_calorie=pl.lit(0.5)))
     else:
         return target, importance
-
 
 
 async def historical_preselector_vector(
@@ -771,7 +674,6 @@ async def historical_preselector_vector(
     request: GenerateMealkitRequest,
     store: ContractStore,
 ) -> tuple[pl.DataFrame, pl.DataFrame, Annotated[bool, "If the vectors is based on historical data"]]:
-
     vector_features = [
         feat.name for feat in store.feature_view(TargetVectors).request.features if "float" in feat.dtype.name
     ]
@@ -783,64 +685,68 @@ async def historical_preselector_vector(
 
         weighting = 0.65
 
-        importance_static = (await InjectedFeatures.process_input({
-            "mean_cost_of_food": [0.20],
-            "mean_rank": [0.05],
-            "mean_ordered_ago": [0.4],
-            "inter_week_similarity": [0.07],
-            "repeated_proteins_percentage": [0.05],
-            "repeated_carbo_percentage": [0.05],
-        }).drop_invalid().to_polars()).to_dicts()[0]
+        importance_static = (
+            await InjectedFeatures.process_input(
+                {
+                    "mean_cost_of_food": [0.20],
+                    "mean_rank": [0.05],
+                    "mean_ordered_ago": [0.4],
+                    "inter_week_similarity": [0.07],
+                    "repeated_proteins_percentage": [0.05],
+                    "repeated_carbo_percentage": [0.05],
+                }
+            )
+            .drop_invalid()
+            .to_polars()
+        ).to_dicts()[0]
 
-        target_static = (await InjectedFeatures.process_input({
-            # Mean cost target will be set in the generate week
-            "mean_cost_of_food": [0],
-            "mean_rank": [0],
-            # aka max
-            "mean_ordered_ago": [0],
-            "inter_week_similarity": [0],
-            "repeated_proteins_percentage": [0],
-            "repeated_carbo_percentage": [0],
-        }).drop_invalid().to_polars()).to_dicts()[0]
+        target_static = (
+            await InjectedFeatures.process_input(
+                {
+                    # Mean cost target will be set in the generate week
+                    "mean_cost_of_food": [0],
+                    "mean_rank": [0],
+                    # aka max
+                    "mean_ordered_ago": [0],
+                    "inter_week_similarity": [0],
+                    "repeated_proteins_percentage": [0],
+                    "repeated_carbo_percentage": [0],
+                }
+            )
+            .drop_invalid()
+            .to_polars()
+        ).to_dicts()[0]
 
-        other_features = [
-            feat for feat
-            in vector_features
-            if feat not in importance_static
-        ]
+        other_features = [feat for feat in vector_features if feat not in importance_static]
 
+        static_vector = (
+            pl.DataFrame(
+                dict(
+                    **importance_static,
+                    **{key: 0 for key in other_features},
+                ),
+                schema_overrides=importance.schema,
+            )
+            .select(pl.all() / pl.sum_horizontal(vector_features) * weighting)
+            .select(importance.columns)
+        )
 
-        static_vector = pl.DataFrame(
-            dict(
-                **importance_static,
-                **{
-                    key: 0 for key in other_features
-                },
-            ),
-            schema_overrides=importance.schema
-        ).select(pl.all() / pl.sum_horizontal(vector_features) * weighting).select(importance.columns)
-
-        merged_importance = importance.select(
-            pl.all() * (1 - weighting)
-        ).vstack(static_vector).sum().select(pl.all() / pl.sum_horizontal(vector_features))
+        merged_importance = (
+            importance.select(pl.all() * (1 - weighting))
+            .vstack(static_vector)
+            .sum()
+            .select(pl.all() / pl.sum_horizontal(vector_features))
+        )
 
         importance, target = (
             merged_importance,
-            target.with_columns([
-                pl.lit(value).alias(key)
-                for key, value in target_static.items()
-            ])
+            target.with_columns([pl.lit(value).alias(key) for key, value in target_static.items()]),
         )
 
         return (
-            importance.with_columns([
-                pl.col(feat) / pl.sum_horizontal(vector_features)
-                for feat in importance.columns
-            ]),
-            target
+            importance.with_columns([pl.col(feat) / pl.sum_horizontal(vector_features) for feat in importance.columns]),
+            target,
         )
-
-
 
     logger.debug(f"No history found, using default values {request.concept_preference_ids}")
 
@@ -875,9 +781,7 @@ async def historical_preselector_vector(
             pl.col(feat) / pl.sum_horizontal(vector_features) for feat in vector_features
         )
 
-        default_target, default_importance = handle_calorie_concept(
-            default_target, default_importance, concept_ids
-        )
+        default_target, default_importance = handle_calorie_concept(default_target, default_importance, concept_ids)
         default_importance, default_target = await inject_importance_and_target(
             importance=default_importance, target=default_target
         )
@@ -902,32 +806,26 @@ async def historical_preselector_vector(
 
     with duration("find-attributes-to-overwrite-in-vector"):
         overwrite_columns: list[str] = [
-            key
-            for key, value in default_importance.to_dicts()[0].items()
-            if isinstance(value, float) and value > 0
+            key for key, value in default_importance.to_dicts()[0].items() if isinstance(value, float) and value > 0
         ]
         other_features = list(set(vector_features) - set(overwrite_columns))
 
-
     with duration("combine-importance-vectors"):
         combined_importance = (
-            default_importance.select(pl.col(vector_features) * attribute_vector_weight).vstack(
-                user_importance.select(pl.col(vector_features) * user_vector_weight)
-            ).sum().select(pl.all() / vector_sum)
+            default_importance.select(pl.col(vector_features) * attribute_vector_weight)
+            .vstack(user_importance.select(pl.col(vector_features) * user_vector_weight))
+            .sum()
+            .select(pl.all() / vector_sum)
         )
 
-        combined_target = pl.concat([
-            default_target.select(overwrite_columns),
-            user_target.select(other_features)
-        ], how="horizontal")
+        combined_target = pl.concat(
+            [default_target.select(overwrite_columns), user_target.select(other_features)], how="horizontal"
+        )
 
     combined_importance, combined_target = await inject_importance_and_target(
         importance=combined_importance, target=combined_target
     )
-    combined_target, combined_importance = handle_calorie_concept(
-        combined_target, combined_importance, concept_ids
-    )
-
+    combined_target, combined_importance = handle_calorie_concept(combined_target, combined_importance, concept_ids)
 
     user_importance = combined_importance
 
@@ -959,6 +857,7 @@ def duration(metric: str) -> Generator[None, None, None]:
             tags = [f"topic:{topic}"]
         statsd.histogram(metric_name, monotonic() - start_time, tags=tags)
 
+
 mealkit_cache = {}
 
 
@@ -969,9 +868,9 @@ def cached_output(
     number_of_recipes: int,
     taste_preference_ids: list[str],
     company_id: str,
-    ordered_in_week: dict[int, int] | None
+    ordered_in_week: dict[int, int] | None,
 ) -> PreselectorYearWeekResponse | None:
-    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}" # noqa: E501
+    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}"  # noqa: E501
     return mealkit_cache.get(key)
 
 
@@ -983,9 +882,9 @@ def set_cache(
     number_of_recipes: int,
     taste_preference_ids: list[str],
     company_id: str,
-    ordered_in_week: dict[int, int] | None
+    ordered_in_week: dict[int, int] | None,
 ) -> None:
-    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}" # noqa: E501
+    key = f"{year_week.year}-{year_week.week}-{concepts}-{portion_size}-{number_of_recipes}-{taste_preference_ids}-{company_id}-{ordered_in_week}"  # noqa: E501
     mealkit_cache[key] = result
 
 
@@ -1011,13 +910,10 @@ class PreselectorResult:
     def failed_responses(self) -> list[PreselectorFailedResponse]:
         return [
             PreselectorFailedResponse(
-                error_message=failure.error_message,
-                error_code=failure.error_code,
-                request=self.request
+                error_message=failure.error_message, error_code=failure.error_code, request=self.request
             )
             for failure in self.failures
         ]
-
 
     def success_response(self) -> PreselectorSuccessfulResponse | None:
         if not self.success:
@@ -1038,21 +934,21 @@ class PreselectorResult:
             portion_size=self.request.portion_size,
         )
 
-async def cost_of_food_target_for(
-    request: GenerateMealkitRequest,
-    store: ContractStore
-) -> Annotated[pl.DataFrame, CostOfFoodPerMenuWeek]:
 
+async def cost_of_food_target_for(
+    request: GenerateMealkitRequest, store: ContractStore
+) -> Annotated[pl.DataFrame, CostOfFoodPerMenuWeek]:
     with duration("load-mealkit-cof-target"):
         cof_entities = {
             "company_id": [request.company_id] * len(request.compute_for),
             "number_of_recipes": [request.number_of_recipes] * len(request.compute_for),
             "number_of_portions": [request.portion_size] * len(request.compute_for),
-            "year": [ over.year for over in request.compute_for ],
-            "week": [ over.week for over in request.compute_for ]
+            "year": [over.year for over in request.compute_for],
+            "week": [over.week for over in request.compute_for],
         }
 
-        cost_of_food = await (store.feature_view(CostOfFoodPerMenuWeek)
+        cost_of_food = await (
+            store.feature_view(CostOfFoodPerMenuWeek)
             .select({"cost_of_food_target_per_recipe"})
             .features_for(cof_entities)
             .to_polars()
@@ -1077,9 +973,7 @@ async def cost_of_food_target_for(
         )
 
         defaults = missing.join(
-            default_cof,
-            on=["company_id", "number_of_recipes", "number_of_portions"],
-            suffix="_right"
+            default_cof, on=["company_id", "number_of_recipes", "number_of_portions"], suffix="_right"
         )
         assert defaults.height == missing.height, "Filling inn default values did not go as expected"
 
@@ -1093,10 +987,9 @@ async def cost_of_food_target_for(
 
 
 async def run_preselector_for_request(
-    request: GenerateMealkitRequest, store: ContractStore, should_explain: bool = False
+    request: GenerateMealkitRequest, store: ContractStore, should_explain: bool = False, mode: str | None = None
 ) -> PreselectorResult:
     results: list[PreselectorYearWeekResponse] = []
-
 
     subscription_variation = sorted(request.concept_preference_ids)
     sorted_taste_pref = sorted(request.taste_preference_ids)
@@ -1110,7 +1003,7 @@ async def run_preselector_for_request(
             request.number_of_recipes,
             sorted_taste_pref,
             request.company_id,
-            request.ordered_weeks_ago
+            request.ordered_weeks_ago,
         )
         if cached_value:
             return PreselectorResult(
@@ -1121,12 +1014,11 @@ async def run_preselector_for_request(
                 generated_at=datetime.now(tz=timezone.utc),
             )
 
-
     cost_of_food = await cost_of_food_target_for(request, store)
 
-    assert cost_of_food.height == len(request.compute_for), (
-        f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
-    )
+    assert cost_of_food.height == len(
+        request.compute_for
+    ), f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
 
     with duration("construct-vector"):
         (
@@ -1150,22 +1042,19 @@ async def run_preselector_for_request(
         st.write(target_vector)
 
         columns = target_vector.columns
-        vals = pl.DataFrame({
-            "columns": columns
-        }).hstack([
-            importance_vector.select(columns).transpose().rename({
-                "column_0": "importance"
-            }).to_series(),
-
-            target_vector.select(columns).transpose().rename({
-                "column_0": "target"
-            }).to_series()
-        ]).sort("importance", descending=True)
+        vals = (
+            pl.DataFrame({"columns": columns})
+            .hstack(
+                [
+                    importance_vector.select(columns).transpose().rename({"column_0": "importance"}).to_series(),
+                    target_vector.select(columns).transpose().rename({"column_0": "target"}).to_series(),
+                ]
+            )
+            .sort("importance", descending=True)
+        )
 
         st.write("Most important features")
         st.write(vals)
-
-
 
     failed_weeks: list[PreselectorFailure] = []
 
@@ -1190,15 +1079,13 @@ async def run_preselector_for_request(
                 request.number_of_recipes,
                 sorted_taste_pref,
                 request.company_id,
-                request.ordered_weeks_ago
+                request.ordered_weeks_ago,
             )
             if cached_value:
                 results.append(cached_value)
                 continue
 
-        cof_target = cost_of_food.filter(
-            pl.col("year") == year, pl.col("week") == week
-        )
+        cof_target = cost_of_food.filter(pl.col("year") == year, pl.col("week") == week)
 
         if cof_target.height != 1:
             failed_weeks.append(
@@ -1209,7 +1096,7 @@ async def run_preselector_for_request(
                     ),
                     error_code=2,
                     year=yearweek.year,
-                    week=yearweek.week
+                    week=yearweek.week,
                 )
             )
             continue
@@ -1227,12 +1114,10 @@ async def run_preselector_for_request(
         except AssertionError as e:
             failed_weeks.append(
                 PreselectorFailure(
-                    error_message=(
-                        str(e) + "This is usually a sign that the menu is missing."
-                    ),
+                    error_message=(str(e) + "This is usually a sign that the menu is missing."),
                     error_code=3,
                     year=yearweek.year,
-                    week=yearweek.week
+                    week=yearweek.week,
                 )
             )
             continue
@@ -1245,12 +1130,10 @@ async def run_preselector_for_request(
         if menu.is_empty():
             failed_weeks.append(
                 PreselectorFailure(
-                    error_message=(
-                        f"Found no menu for {year}-{week} and company {request.company_id}"
-                    ),
+                    error_message=(f"Found no menu for {year}-{week} and company {request.company_id}"),
                     error_code=1,
                     year=yearweek.year,
-                    week=yearweek.week
+                    week=yearweek.week,
                 )
             )
             continue
@@ -1268,12 +1151,11 @@ async def run_preselector_for_request(
 
         # Only for Linas, Low Calorie, and if it is only week 51 that is computed.
         # Using processing concent as a proxy for "has taken quiz"
-        if not request.has_data_processing_consent and (
-            request.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2"
-        ) and (
-            request.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"]
-        ) and (
-            request.compute_for == [YearWeek(year=2024, week=51)]
+        if (
+            not request.has_data_processing_consent
+            and (request.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2")
+            and (request.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"])
+            and (request.compute_for == [YearWeek(year=2024, week=51)])
         ):
             could_be_ww = True
 
@@ -1289,18 +1171,14 @@ async def run_preselector_for_request(
                     store=store,
                     selected_recipes=generated_recipe_ids,
                     could_be_weight_watchers=could_be_ww,
-                    should_explain=should_explain
+                    should_explain=should_explain,
+                    mode=mode,
                 )
                 selected_recipe_ids = output.main_recipe_ids
         except (AssertionError, ValueError) as e:
             logger.exception(e)
             failed_weeks.append(
-                PreselectorFailure(
-                    error_message=str(e),
-                    error_code=500,
-                    year=yearweek.year,
-                    week=yearweek.week
-                )
+                PreselectorFailure(error_message=str(e), error_code=500, year=yearweek.year, week=yearweek.week)
             )
             continue
 
@@ -1313,7 +1191,7 @@ async def run_preselector_for_request(
                     ),
                     error_code=1,
                     year=yearweek.year,
-                    week=yearweek.week
+                    week=yearweek.week,
                 )
             )
             continue
@@ -1336,7 +1214,7 @@ async def run_preselector_for_request(
             compliancy=output.compliancy,
             target_cost_of_food_per_recipe=cof_target_value,
             ordered_weeks_ago=generated_recipe_ids,
-            error_vector=output.error_vector # type: ignore
+            error_vector=output.error_vector,  # type: ignore
         )
 
         for main_recipe_id in selected_recipe_ids:
@@ -1351,7 +1229,7 @@ async def run_preselector_for_request(
                 request.number_of_recipes,
                 sorted_taste_pref,
                 request.company_id,
-                request.ordered_weeks_ago
+                request.ordered_weeks_ago,
             )
 
         results.append(result)
@@ -1364,11 +1242,9 @@ async def run_preselector_for_request(
         generated_at=datetime.now(tz=timezone.utc),
     )
 
+
 async def filter_out_recipes_based_on_preference(
-    recipes: pl.DataFrame,
-    portion_size: int,
-    taste_preference_ids: list[str],
-    store: ContractStore
+    recipes: pl.DataFrame, portion_size: int, taste_preference_ids: list[str], store: ContractStore
 ) -> pl.DataFrame:
     """
     Filters out any recipes that conflict with a hard filter rule.
@@ -1410,18 +1286,15 @@ async def filter_out_recipes_based_on_preference(
             pl.col("recipe_id").is_in(acceptable_recipe_ids["recipe_id"]),
         )
 
+
 async def filter_on_preferences(
     customer: GenerateMealkitRequest, recipes: pl.DataFrame, store: ContractStore
 ) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, list[int] | None]:
-
     if not customer.taste_preferences:
         return recipes, PreselectorPreferenceCompliancy.all_compliant, None
 
     recipes_to_use = await filter_out_recipes_based_on_preference(
-        recipes,
-        portion_size=customer.portion_size,
-        taste_preference_ids=customer.taste_preference_ids,
-        store=store
+        recipes, portion_size=customer.portion_size, taste_preference_ids=customer.taste_preference_ids, store=store
     )
 
     if recipes_to_use.height >= customer.number_of_recipes:
@@ -1432,12 +1305,8 @@ async def filter_on_preferences(
     recipes_to_use = await filter_out_recipes_based_on_preference(
         recipes,
         portion_size=customer.portion_size,
-        taste_preference_ids=[
-            pref.preference_id
-            for pref in customer.taste_preferences
-            if pref.is_allergy
-        ],
-        store=store
+        taste_preference_ids=[pref.preference_id for pref in customer.taste_preferences if pref.is_allergy],
+        store=store,
     )
 
     if recipes_to_use.height >= customer.number_of_recipes:
@@ -1448,36 +1317,32 @@ async def filter_on_preferences(
 
 
 async def compute_weeks_ago(
-    company_id: str,
-    agreement_id: int,
-    year_week: int,
-    main_recipe_ids: list[int],
-    store: ContractStore
+    company_id: str, agreement_id: int, year_week: int, main_recipe_ids: list[int], store: ContractStore
 ) -> pl.DataFrame:
-
     number_of_recipes = len(main_recipe_ids)
     req = store.feature_view(WeeksSinceRecipe).request
-    derived_feature_names = sorted([
-        feat.name for feat in req.derived_features
-    ])
+    derived_feature_names = sorted([feat.name for feat in req.derived_features])
 
-    job = store.feature_view(WeeksSinceRecipe).features_for({
-        "agreement_id": [agreement_id] * number_of_recipes,
-        "company_id": [company_id] * number_of_recipes,
-        # Setting the from_year_week so it will be used when computing
-        "from_year_week": [year_week] * number_of_recipes,
-        "main_recipe_id": main_recipe_ids
-    }).transform_polars(
-        # Is currently a bug where this will not be compute
-        # So need to remove it and then compute it again
-        lambda df: df.select(
-            pl.exclude(derived_feature_names)
-        ) if derived_feature_names[0] in df.columns else df
-    ).derive_features()
+    job = (
+        store.feature_view(WeeksSinceRecipe)
+        .features_for(
+            {
+                "agreement_id": [agreement_id] * number_of_recipes,
+                "company_id": [company_id] * number_of_recipes,
+                # Setting the from_year_week so it will be used when computing
+                "from_year_week": [year_week] * number_of_recipes,
+                "main_recipe_id": main_recipe_ids,
+            }
+        )
+        .transform_polars(
+            # Is currently a bug where this will not be compute
+            # So need to remove it and then compute it again
+            lambda df: df.select(pl.exclude(derived_feature_names)) if derived_feature_names[0] in df.columns else df
+        )
+        .derive_features()
+    )
 
-    return  (
-        await job.to_polars()
-    ).cast({"main_recipe_id": pl.Int32})
+    return (await job.to_polars()).cast({"main_recipe_id": pl.Int32})
 
 
 async def add_ordered_since_feature(
@@ -1485,11 +1350,11 @@ async def add_ordered_since_feature(
     store: ContractStore,
     recipe_features: pl.DataFrame,
     year_week: int,
-    selected_recipes: dict[int, int]
+    selected_recipes: dict[int, int],
 ) -> pl.DataFrame:
-    new_recipe_ids = recipe_features.filter(
-        pl.col("main_recipe_id").is_in(selected_recipes.keys()).not_()
-    )["main_recipe_id"]
+    new_recipe_ids = recipe_features.filter(pl.col("main_recipe_id").is_in(selected_recipes.keys()).not_())[
+        "main_recipe_id"
+    ]
 
     selected_recipe_computation: pl.DataFrame | None = None
     weeks_since_recipe: pl.DataFrame | None = None
@@ -1500,11 +1365,10 @@ async def add_ordered_since_feature(
             "last_order_year_week": list(selected_recipes.values()),
             "company_id": [customer.company_id] * len(selected_recipes),
             "agreement_id": [customer.agreement_id] * len(selected_recipes),
-            "from_year_week": [year_week] * len(selected_recipes)
+            "from_year_week": [year_week] * len(selected_recipes),
         }
-        selected_recipe_computation = (await store.feature_view(WeeksSinceRecipe)
-            .process_input(manual_data)
-            .to_polars()
+        selected_recipe_computation = (
+            await store.feature_view(WeeksSinceRecipe).process_input(manual_data).to_polars()
         ).cast({"main_recipe_id": pl.Int32})
 
     if customer.agreement_id != 0:
@@ -1513,7 +1377,7 @@ async def add_ordered_since_feature(
             agreement_id=customer.agreement_id,
             year_week=year_week,
             main_recipe_ids=new_recipe_ids.to_list(),
-            store=store
+            store=store,
         )
 
     return_columns = ["main_recipe_id", "ordered_weeks_ago"]
@@ -1522,28 +1386,29 @@ async def add_ordered_since_feature(
     if selected_recipe_computation is None and weeks_since_recipe is None:
         return recipe_features.with_columns(ordered_weeks_ago=pl.lit(default_value))
     elif selected_recipe_computation is not None and weeks_since_recipe is not None:
-        return recipe_features.cast({"main_recipe_id": pl.Int32}).join(
-            weeks_since_recipe.select(return_columns).vstack(
-                selected_recipe_computation.select(return_columns)
-            ),
-            on="main_recipe_id",
-            how="left"
-        ).with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        return (
+            recipe_features.cast({"main_recipe_id": pl.Int32})
+            .join(
+                weeks_since_recipe.select(return_columns).vstack(selected_recipe_computation.select(return_columns)),
+                on="main_recipe_id",
+                how="left",
+            )
+            .with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        )
     elif selected_recipe_computation is not None:
-        return recipe_features.cast({"main_recipe_id": pl.Int32}).join(
-            selected_recipe_computation.select(return_columns),
-            on="main_recipe_id",
-            how="left"
-        ).with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        return (
+            recipe_features.cast({"main_recipe_id": pl.Int32})
+            .join(selected_recipe_computation.select(return_columns), on="main_recipe_id", how="left")
+            .with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        )
     elif weeks_since_recipe is not None:
-        return recipe_features.cast({"main_recipe_id": pl.Int32}).join(
-            weeks_since_recipe.select(return_columns),
-            on="main_recipe_id",
-            how="left"
-        ).with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        return (
+            recipe_features.cast({"main_recipe_id": pl.Int32})
+            .join(weeks_since_recipe.select(return_columns), on="main_recipe_id", how="left")
+            .with_columns(pl.col("ordered_weeks_ago").fill_null(default_value))
+        )
     else:
         raise ValueError("Should never happen")
-
 
 
 async def run_preselector(
@@ -1556,6 +1421,7 @@ async def run_preselector(
     selected_recipes: dict[int, int],
     could_be_weight_watchers: bool,
     should_explain: bool = False,
+    mode: str | None = None,
 ) -> PreselectorWeekOutput:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
@@ -1588,11 +1454,8 @@ async def run_preselector(
     # Singlekassen
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
         return PreselectorWeekOutput(
-            recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(),
-            compliance,
-            {}
+            recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance, {}
         )
-
 
     year = recipes["menu_year"].max()
     week = recipes["menu_week"].max()
@@ -1606,26 +1469,23 @@ async def run_preselector(
                 year=pl.lit(year),
                 week=pl.lit(week),
                 portion_size=customer.portion_size,
-                company_id=pl.lit(customer.company_id)
+                company_id=pl.lit(customer.company_id),
             ),
             store=store,
         )
 
     if should_explain:
         import streamlit as st
+
         st.write("Raw Recipe Features")
         st.write(normalized_recipe_features)
 
     if could_be_weight_watchers:
         # Only return weight watchers recipes up to week 51 in Linas
-        filtered = normalized_recipe_features.filter(
-            pl.col("is_weight_watchers")
-        )
+        filtered = normalized_recipe_features.filter(pl.col("is_weight_watchers"))
         if filtered.height >= customer.number_of_recipes:
             return PreselectorWeekOutput(
-                filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
-                compliance,
-                {}
+                filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance, {}
             )
         else:
             available_ww_recipes = filtered["main_recipe_id"].to_list()
@@ -1642,24 +1502,24 @@ async def run_preselector(
             pl.exclude(["is_adams_signature", "is_cheep"]),
         )
 
-    filtered, compliance, preselected_recipes = await filter_on_preferences(
-        customer, filtered, store
-    )
+    filtered, compliance, preselected_recipes = await filter_on_preferences(customer, filtered, store)
     logger.debug(f"Loading preselector recipe features: {recipes.height}")
 
     if filtered.height >= customer.number_of_recipes:
         normalized_recipe_features = filtered
 
     with duration("load-main-ingredient-catagory"):
-        normalized_recipe_features = await store.feature_view(
-            RecipeMainIngredientCategory
-        ).features_for(
-            normalized_recipe_features
-        ).filter(
-            # Only removing those without carbo.
-            # Those without protein id can be vegetarian
-            pl.col("main_carbohydrate_category_id").is_not_null()
-        ).with_subfeatures().to_polars()
+        normalized_recipe_features = (
+            await store.feature_view(RecipeMainIngredientCategory)
+            .features_for(normalized_recipe_features)
+            .filter(
+                # Only removing those without carbo.
+                # Those without protein id can be vegetarian
+                pl.col("main_carbohydrate_category_id").is_not_null()
+            )
+            .with_subfeatures()
+            .to_polars()
+        )
 
     with duration("load-recipe-cost"):
         normalized_recipe_features = (
@@ -1673,23 +1533,19 @@ async def run_preselector(
     recipe_features = normalized_recipe_features
 
     if recipe_features.height < customer.number_of_recipes:
-        recipes_of_interest = (
-            set(recipes["recipe_id"].to_list())
-            - set(recipe_features["recipe_id"].to_list())
-        )
+        recipes_of_interest = set(recipes["recipe_id"].to_list()) - set(recipe_features["recipe_id"].to_list())
         logger.error(
             f"Number of recipes are less then expected {recipe_features.height}. "
             f"Most likely due to missing features in recipes: ({recipes_of_interest}) "
             f"In portion size {customer.portion_size} - {year}, {week}"
         )
         return PreselectorWeekOutput(
-            recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(),
-            compliance,
-            {}
+            recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance, {}
         )
 
     if should_explain:
         import streamlit as st
+
         st.write("Recipe Candidates")
         st.write(recipe_features)
 
@@ -1702,22 +1558,19 @@ async def run_preselector(
 
     if not recommendations.is_empty():
         with duration("add-recommendations-data"):
-            with_rank = recipes.cast({
-                "recipe_id": pl.Int32
-            }).join(
-                recommendations.select(["product_id", "order_rank"]),
-                on="product_id",
-                how="left"
-            ).unique("recipe_id")
+            with_rank = (
+                recipes.cast({"recipe_id": pl.Int32})
+                .join(recommendations.select(["product_id", "order_rank"]), on="product_id", how="left")
+                .unique("recipe_id")
+            )
 
-            recipe_features = recipe_features.select(pl.exclude("order_rank")).join(
-                with_rank.select(["recipe_id", "order_rank"]),
-                on="recipe_id",
-                how="left"
-            ).with_columns(
-                pl.col("order_rank").fill_null(pl.lit(recipe_features.height / 2))
-            ).with_columns(
-                order_rank=pl.col("order_rank").log() / pl.col("order_rank").log().max().clip(lower_bound=1)
+            recipe_features = (
+                recipe_features.select(pl.exclude("order_rank"))
+                .join(with_rank.select(["recipe_id", "order_rank"]), on="recipe_id", how="left")
+                .with_columns(pl.col("order_rank").fill_null(pl.lit(recipe_features.height / 2)))
+                .with_columns(
+                    order_rank=pl.col("order_rank").log() / pl.col("order_rank").log().max().clip(lower_bound=1)
+                )
             )
             logger.debug(
                 f"Filtering based on recommendations done: {recipe_features.height}",
@@ -1732,7 +1585,7 @@ async def run_preselector(
         return PreselectorWeekOutput(
             recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
             compliance,
-            {}
+            {},
         )
 
     with duration("compute-ordered-since"):
@@ -1740,33 +1593,32 @@ async def run_preselector(
             customer,
             store,
             recipe_features,
-            year_week=year * 100 + week, # type: ignore
-            selected_recipes=selected_recipes
+            year_week=year * 100 + week,  # type: ignore
+            selected_recipes=selected_recipes,
         )
 
     with duration("load-recipe-embeddings"):
-        recipe_embeddings = await store.model(RecipeEmbedding).predictions_for(
-            recipe_features.select([
-                "main_recipe_id", "company_id"
-            ])
-        ).select(["embedding"]).to_polars()
+        recipe_embeddings = (
+            await store.model(RecipeEmbedding)
+            .predictions_for(recipe_features.select(["main_recipe_id", "company_id"]))
+            .select(["embedding"])
+            .to_polars()
+        )
 
         recipe_embeddings = recipe_embeddings.join(
-            recipe_features.cast({ "main_recipe_id": pl.Int32 }).select(["recipe_id", "main_recipe_id"]),
-            on="main_recipe_id"
+            recipe_features.cast({"main_recipe_id": pl.Int32}).select(["recipe_id", "main_recipe_id"]),
+            on="main_recipe_id",
         )
 
     if recipe_embeddings.height != recipe_features.height:
-        missing_recipes = set(
-            recipe_features["main_recipe_id"].to_list()
-        ) - set(recipe_embeddings["main_recipe_id"].to_list())
-        logger.error(
-            f"We are missing some embeddings for main recipe ids: {missing_recipes}"
+        missing_recipes = set(recipe_features["main_recipe_id"].to_list()) - set(
+            recipe_embeddings["main_recipe_id"].to_list()
         )
+        logger.error(f"We are missing some embeddings for main recipe ids: {missing_recipes}")
 
-    assert not recipe_features.is_empty(), (
-        f"Found no features something is very wrong for {customer.agreement_id}, {year}, {week}"
-    )
+    assert (
+        not recipe_features.is_empty()
+    ), f"Found no features something is very wrong for {customer.agreement_id}, {year}, {week}"
 
     with duration("find-best-combination"):
         best_recipe_ids, error = await find_best_combination(
@@ -1779,13 +1631,4 @@ async def run_preselector(
             should_explain=should_explain,
         )
 
-    if should_explain and error is not None:
-        import streamlit as st
-        st.write("Error Vector:")
-        st.write(error)
-
-    return PreselectorWeekOutput(
-        main_recipe_ids=best_recipe_ids,
-        compliancy=compliance,
-        error_vector=error
-    )
+        return PreselectorWeekOutput(main_recipe_ids=best_recipe_ids, compliancy=compliance, error_vector=error)
