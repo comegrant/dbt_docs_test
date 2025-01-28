@@ -195,7 +195,7 @@ table 'Billing Agreements'
 		annotation SummarizationSetBy = Automatic
 
 	column 'First Menu Month'
-		dataType: int64
+		dataType: string
 		formatString: 0
 		lineageTag: a4b5b32d-c78f-45da-9e80-5e97f3bf0d87
 		summarizeBy: sum
