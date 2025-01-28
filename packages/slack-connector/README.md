@@ -202,3 +202,28 @@ When sending notifications, please rememebr:
   - ❌: Error
   - 🚀: Started
   - 🧑‍🍳: Information
+
+## Update Jan 2025
+
+It is now possible to fetch the specific `job_url` directly through this package.
+This is helpful when sending Slack notifications from __Databricks Jobs__ and we want to quickly find the job that failed or fetch further details.
+Up until now, this has been a rather manual process of finding the specific job from the Databricks UI.
+
+```python
+from slack_connector.databricks_job_url import get_databricks_job_url
+
+job_url = get_databricks_job_url()
+
+send_slack_notification(
+    environment="dev",
+    header_message="❌ Your job failed, please check Databricks",
+    body_message=(
+        f"🙋‍♂️ Something has happened in your workflow, "
+        f"it could be bad, or good, we'll find out soon. "
+        f"The important number is {important_number} "
+        f"and the URL to check is <{job_url}|here>."
+    ),
+    relevant_people="stephen, engineering",
+    is_error=True,
+)
+```
