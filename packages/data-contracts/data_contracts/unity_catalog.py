@@ -10,6 +10,7 @@ from aligned.data_source.batch_data_source import (
     BatchDataSource,
     CodableBatchDataSource,
     FeatureType,
+    RequestResult,
 )
 from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
@@ -19,6 +20,7 @@ from aligned.sources.local import FileFactualJob
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 
 if TYPE_CHECKING:
+    import pandas as pd
     from pyspark.sql import SparkSession
     from pyspark.sql.types import DataType, StructType
 
@@ -521,6 +523,42 @@ def features_to_read(request: RetrivalRequest) -> list[str]:
         columns.append(request.event_timestamp.name)
     return columns
 
+
+@dataclass
+class UnityCatalogTableAllJob(RetrivalJob):
+
+    config: DatabricksConnectionConfig
+    table: UnityCatalogTableConfig
+    request: RetrivalRequest
+    limit: int | None
+
+    @property
+    def request_result(self) -> RequestResult:
+        return self.request.request_result
+
+    @property
+    def retrival_requests(self) -> list[RetrivalRequest]:
+        return [self.request]
+
+    async def to_pandas(self) -> pd.DataFrame:
+        con = self.config.connection()
+        spark_df = con.read.table(self.table.identifier())
+
+        if self.request.features_to_include:
+            spark_df = spark_df.select(
+                features_to_read(self.request)
+            )
+
+        if self.limit:
+            spark_df = spark_df.limit(self.limit)
+
+        return spark_df.toPandas()
+
+    async def to_lazy_polars(self) -> pl.LazyFrame:
+        return pl.from_pandas(await self.to_pandas()).lazy()
+
+
+
 @dataclass
 class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
     """
@@ -546,22 +584,9 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         )
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
-
-        async def load() -> pl.LazyFrame:
-            con = self.config.connection()
-            spark_df = con.read.table(self.table.identifier())
-
-            if request.features_to_include:
-                spark_df = spark_df.select(
-                    features_to_read(request)
-                )
-
-            if limit:
-                spark_df = spark_df.limit(limit)
-
-            return pl.from_pandas(spark_df.toPandas()).lazy()
-
-        return RetrivalJob.from_lazy_function(load, request)
+        return UnityCatalogTableAllJob(
+            self.config, self.table, request, limit
+        )
 
     def all_between_dates(
         self,

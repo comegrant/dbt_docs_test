@@ -784,8 +784,8 @@ async def historical_preselector_vector(
         weighting = 0.65
 
         importance_static = (await InjectedFeatures.process_input({
-            "mean_cost_of_food": [0.25],
-            "mean_rank": [0.02],
+            "mean_cost_of_food": [0.20],
+            "mean_rank": [0.05],
             "mean_ordered_ago": [0.4],
             "inter_week_similarity": [0.07],
             "repeated_proteins_percentage": [0.05],
@@ -799,7 +799,8 @@ async def historical_preselector_vector(
             # aka max
             "mean_ordered_ago": [0],
             "inter_week_similarity": [0],
-            "repeated_proteins_percentage": [0]
+            "repeated_proteins_percentage": [0],
+            "repeated_carbo_percentage": [0],
         }).drop_invalid().to_polars()).to_dicts()[0]
 
         other_features = [
@@ -1147,6 +1148,23 @@ async def run_preselector_for_request(
 
         st.write("Target vector")
         st.write(target_vector)
+
+        columns = target_vector.columns
+        vals = pl.DataFrame({
+            "columns": columns
+        }).hstack([
+            importance_vector.select(columns).transpose().rename({
+                "column_0": "importance"
+            }).to_series(),
+
+            target_vector.select(columns).transpose().rename({
+                "column_0": "target"
+            }).to_series()
+        ]).sort("importance", descending=True)
+
+        st.write("Most important features")
+        st.write(vals)
+
 
 
     failed_weeks: list[PreselectorFailure] = []

@@ -346,6 +346,9 @@ async def historical_preselector_vector(
         .with_columns(vector_type=pl.lit("target"))
     )
 
+    center_point = 0.25
+    buffer_range = 0.15
+
     importance = (
         basket_features.filter((pl.len() > 1).over("agreement_id"))
         .group_by("agreement_id")
@@ -354,10 +357,9 @@ async def historical_preselector_vector(
                 (
                     1 / pl.col(feat).fill_nan(0).top_k(
                         # Adding top k as noise reduction
-                        (pl.len() * 0.75).ceil()
+                        (pl.len() * 0.9).ceil()
                     ).bottom_k(
-                        # using 51 perc so we alwasy have at least 2 rows
-                        (pl.len() * 0.51).ceil()
+                        (pl.len() * 0.8).ceil()
                     ).std()
                     .clip(lower_bound=0.1)
                 ).alias(feat)
@@ -367,7 +369,7 @@ async def historical_preselector_vector(
                 (
                     (pl.col(feat).filter(
                         pl.col(feat) > 0
-                    ).len() / pl.col(feat).len() - 0.4) / 0.4
+                    ).len() / pl.col(feat).len() - center_point) / buffer_range
                 ).abs().clip(lower_bound=0, upper_bound=1).mul(10).alias(feat)
                 for feat in boolean_feature_columns
             ]
