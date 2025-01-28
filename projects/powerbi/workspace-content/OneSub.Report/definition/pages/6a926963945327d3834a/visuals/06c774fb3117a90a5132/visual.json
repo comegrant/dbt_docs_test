@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.3.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "06c774fb3117a90a5132",
   "position": {
     "x": 0,
@@ -20,29 +20,28 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Products"
                     }
                   },
                   "Property": "Meals"
                 }
               },
-              "queryRef": "Billing Agreements.Meals",
-              "nativeQueryRef": "Meals",
-              "active": false,
-              "displayName": "Meals"
+              "queryRef": "Products.Meals",
+              "nativeQueryRef": "Meals1",
+              "active": true
             },
             {
               "field": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Subscribed Products"
                     }
                   },
                   "Property": "Portions"
                 }
               },
-              "queryRef": "Billing Agreements.Portions",
+              "queryRef": "Subscribed Products.Portions",
               "nativeQueryRef": "Portions",
               "active": true
             }
@@ -55,15 +54,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Products"
                     }
                   },
                   "Property": "Meals"
                 }
               },
-              "queryRef": "Billing Agreements.Meals",
-              "nativeQueryRef": "Meals",
-              "displayName": "Meals"
+              "queryRef": "Products.Meals",
+              "nativeQueryRef": "Meals1"
             }
           ]
         },
@@ -93,7 +91,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Billing Agreements"
+                    "Entity": "Products"
                   }
                 },
                 "Property": "Meals"
@@ -106,7 +104,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Billing Agreements"
+                    "Entity": "Subscribed Products"
                   }
                 },
                 "Property": "Portions"
@@ -114,7 +112,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": true
       }
     },
     "visualContainerObjects": {
@@ -150,109 +149,67 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "ba1022a3ec8e71e562ee",
+        "name": "cc3acd32a0b6abb53733",
+        "ordinal": 0,
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Products"
               }
             },
             "Property": "Meals"
           }
         },
-        "type": "Advanced",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "b",
-              "Entity": "Billing Agreements",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Not": {
-                  "Expression": {
-                    "Comparison": {
-                      "ComparisonKind": 0,
-                      "Left": {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "b"
-                            }
-                          },
-                          "Property": "Meals"
-                        }
-                      },
-                      "Right": {
-                        "Literal": {
-                          "Value": "0L"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
+        "type": "Categorical"
       },
       {
-        "name": "daa9c963ce2848d69084",
+        "name": "13773ba16cc0b950ea2d",
+        "ordinal": 1,
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Products"
               }
             },
             "Property": "Portions"
           }
         },
-        "type": "Advanced",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "b",
-              "Entity": "Billing Agreements",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Not": {
-                  "Expression": {
-                    "Comparison": {
-                      "ComparisonKind": 0,
-                      "Left": {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "b"
-                            }
-                          },
-                          "Property": "Portions"
-                        }
-                      },
-                      "Right": {
-                        "Literal": {
-                          "Value": "0L"
-                        }
-                      }
-                    }
-                  }
-                }
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "2eb4352e9c85dac1eaa9",
+        "ordinal": 2,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Subscribed Products"
               }
-            }
-          ]
-        }
+            },
+            "Property": "Portions"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "674fe99075b230602559",
+        "ordinal": 3,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Share of Orders with Swaps"
+          }
+        },
+        "type": "Advanced"
       }
-    ]
+    ],
+    "filterSortOrder": "Custom"
   }
 }

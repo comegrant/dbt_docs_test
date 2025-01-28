@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.3.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "9b27ed9e26615ae1d201",
   "position": {
     "x": 9.829351535836178,
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Order Measures"
+                      "Entity": "Period Since First Order"
                     }
                   },
                   "Property": "Weeks Since First Order"
                 }
               },
-              "queryRef": "Order Measures.Calendar Weeks Since First Order",
-              "nativeQueryRef": "Weeks Since First Order",
+              "queryRef": "Period Since First Order.Weeks Since First Order",
+              "nativeQueryRef": "Weeks Since First Order1",
               "active": true
             }
           ]
@@ -42,39 +42,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "% Retention N Weeks Since First Order"
-                }
-              },
-              "queryRef": "Order Measures.% Retention N Weeks Since First Order",
-              "nativeQueryRef": "% Retention N Weeks Since First Order"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
                   "Property": "Number of Orders"
                 }
               },
               "queryRef": "Order Measures.Number of Orders",
               "nativeQueryRef": "Number of Orders"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Customers N Weeks Retention"
-                }
-              },
-              "queryRef": "Order Measures.Number of Customers N Weeks Retention",
-              "nativeQueryRef": "Number of Customers N Weeks Retention"
             }
           ]
         }
@@ -89,7 +61,7 @@
                     "Entity": "Order Measures"
                   }
                 },
-                "Property": "% Retention N Weeks Since First Order"
+                "Property": "Number of Orders"
               }
             },
             "direction": "Descending"
@@ -103,59 +75,6 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "caf801e66bb37e62c4f8",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Billing Agreements"
-              }
-            },
-            "Property": "Is OneSub"
-          }
-        },
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "b",
-              "Entity": "Billing Agreements",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "b"
-                          }
-                        },
-                        "Property": "Is OneSub"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "true"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User"
-      },
-      {
         "name": "d78360b40dde47402b92",
         "field": {
           "Column": {
@@ -167,6 +86,7 @@
             "Property": "Calendar Year"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [

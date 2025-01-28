@@ -2,8 +2,8 @@ table 'Order Measures'
 	lineageTag: 6c298811-8ad5-482b-b89a-827db89210a3
 
 	/// MEASURES ///
-	/// Revenue
-	measure 'Sum Total Amount Ex Vat' =
+	/// Total order value excluding vat
+	measure 'Total Order Value Ex Vat' =
 			
 			CALCULATE(
 			    SUM('Order Measures'[total_amount_ex_vat]),
@@ -34,7 +34,9 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Total Amount Inc Vat' =
+
+	/// Order value including VAT
+	measure 'Total Order Value Inc Vat' =
 			
 			CALCULATE(
 			    SUM('Order Measures'[total_amount_inc_vat]),
@@ -92,23 +94,31 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
-	/// Average Revenue per Number of Orders
-	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
+	/// Average order value
+	/// Excluding VAT
+	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
+	measure 'Average Order Value Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Orders],BLANK())
 		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
+		isHidden
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Average Total Amount Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Number of Orders],BLANK())
+	/// Average order value
+	/// Including VAT
+	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
+	measure 'Average Order Value Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Orders],BLANK())
 		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
+		isHidden
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Number of orders where the customers order included a printed recipe leaflet.
 	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
 		formatString: #,0
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
 
-	/// Product Variation Quantity
-	measure 'Sum Total Product Variation Quantity' =
+	/// Sum of Product Variation Quantity
+	measure 'Product Variation Quantity' =
 			
 			CALCULATE(
 			    SUM('Order Measures'[product_variation_quantity]),
@@ -137,18 +147,25 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
-	/// Unit Price
-	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Order Product Variation Quantity])
+	/// Average price per unit
+	/// Including VAT
+	/// Example: A person bought 2 cucumbers, 1 milk and 1 apple. If we want to 
+	/// know the average price paid per grocery item. This would give you the
+	/// order value divided by 4 (number of products)
+	measure 'Average Unit Price Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Ordered Units])
 		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Average Unit Price Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Sum Order Product Variation Quantity])
+	/// Average price per unit
+	/// Excluding VAT
+	measure 'Average Unit Price Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Ordered Units])
 		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Number of Gift Cards' =
+	/// Number of sold gift cards
+	measure 'Number of Sold Gift Cards' =
 			CALCULATE(
 				[Number of Orders],
 				'Order Types'[Order Type Name] = "Gift Card",
@@ -157,19 +174,23 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
 
-	measure 'Sum Order Value Net Ex Vat' =
+	/// Total net order value
+	/// Excluding VAT
+	measure 'Order Value Net Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		lineageTag: 94703f73-cb72-4c7c-ba82-9d480c9385ca
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Sum Order Value Net Inc Vat' =
+	
+	/// Net order value
+	/// Including VAT
+	measure 'Order Value Net Inc Vat' =
 			CALCULATE(
-				[Sum Total Amount Inc Vat],
+				[Total Order Value Inc Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
@@ -177,9 +198,11 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Order Value Gross Ex Vat' =
+	/// Gross order value
+	/// Excluding VAT
+	measure 'Order Value Gross Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"DEBIT", "TRANSPORT"}
@@ -187,44 +210,55 @@ table 'Order Measures'
 		lineageTag: 9db412c4-2ea6-4c39-81b2-c68ec727df34
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Average Order Value Net Ex Vat' = DIVIDE([Sum Order Value Net Ex Vat],[Number of Orders],BLANK())
+	
+	/// Average net order value 
+	/// Excluding VAT
+	measure 'Average Order Value Net Ex Vat' = DIVIDE([Order Value Net Ex Vat],[Number of Orders],BLANK())
 		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Sum Order Value Gross Ex Vat],[Number of Orders],BLANK())
+	/// Average gross order value
+	/// Excluding VAT
+	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Order Value Gross Ex Vat],[Number of Orders],BLANK())
 		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Average Order Value Net Inc Vat' = DIVIDE([Sum Order Value Net Inc Vat],[Number of Orders],BLANK())
+	/// Average net order value
+	/// Including VAT
+	measure 'Average Order Value Net Inc Vat' = DIVIDE([Order Value Net Inc Vat],[Number of Orders],BLANK())
 		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Order Product Variation Quantity' =
+	/// Sum of total quantity by product variation
+	measure 'Number of Ordered Units' =
 			CALCULATE(
-				[Sum Total Product Variation Quantity],
+				[Product Variation Quantity],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
 
-	measure 'Sum Gift Card Value Ex Vat' =
+	/// Sum of value of gift card
+	/// Excluding VAT
+	measure 'Gift Card Value Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] = "Gift Card",
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
 		lineageTag: 871b6c01-d9c2-4f61-a597-80dd7b6d6c3b
-
+		isHidden
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Discount Value Ex Vat' =
+	/// Sum of discount value
+	/// Excluding VAT
+	measure 'Discount Value Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
@@ -233,9 +267,11 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Transport Value Ex Vat' =
+	/// Sum of Transport value
+	/// Excluding VAT
+	measure 'Transport Value Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"TRANSPORT"}
@@ -244,9 +280,11 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Sum of PRP (credit related to order) value
+	/// Excluding VAT	
 	measure 'Sum PRP Value Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"PRP"}
@@ -255,9 +293,11 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sum Credit Value Ex Vat' =
+	/// Sum of credit value
+	/// Excluding VAT		
+	measure 'Credit Value Ex Vat' =
 			CALCULATE(
-				[Sum Total Amount Ex Vat],
+				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"Credit"}
@@ -265,8 +305,12 @@ table 'Order Measures'
 		lineageTag: 1fe11954-5b54-4c34-9abb-796297d4ecee
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Number of Swapped Out Dishes' =
+	
+	/// Number of dishes which the customer replaced with another dish.
+	/// NOTE: This measure can only be used on a mealbox level, not in dish level.
+	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X), 
+	/// use the measures for Number of added/removed dishes
+	measure 'Number of Swapped Dishes' =
 			
 			IF(
 			    ISFILTERED('Recipes'),
@@ -280,6 +324,10 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
 
+	/// Number of dishes which the customer replaced a preselector dish with
+	/// NOTE: This measure can only be used on a mealbox level, not in dish level.
+	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X), 
+	/// use the measures for Number of added/removed dishes
 	measure 'Number of Swapped In Dishes' =
 			
 			IF(
@@ -293,7 +341,9 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
+		isHidden
 
+	/// Number of dishes that have been ordered by the customers	
 	measure 'Number of Ordered Dishes' =
 			CALCULATE(
 				COUNTROWS('Order Measures'),
@@ -327,6 +377,9 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
+	/// Number of dishes added by curtomer
+	/// Includes all dishes which the customer has selected themselves 
+	/// which were not in the original weekly menu selected for them.
 	measure 'Number of Added Dishes' =
 			CALCULATE(
 				SUM('Order Measures'[is_added_dish]),
@@ -358,6 +411,8 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
 
+	/// Number of dishes removed.
+	/// Includes all dishes in the original weekly menu which the customer has chosen to remove.
 	measure 'Number of Removed Dishes' =
 			CALCULATE(
 					SUM('Order Measures'[is_removed_dish]),
@@ -393,6 +448,8 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
 
+	/// Share of dishes in order which the customer replaced with other dishes
+	/// NOTE: If a dish is removed but not replaced with another dish, it will not be counted.
 	measure 'Share of Swapped Dishes' =
 			DIVIDE(
 				[Number of Swapped Out Dishes],
@@ -402,6 +459,7 @@ table 'Order Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
+	/// Number of dishes initially presented to customer
 	measure 'Number of Preselected Dishes' = ```
 			CALCULATE(
 				COUNTROWS('Order Measures'),
@@ -439,7 +497,9 @@ table 'Order Measures'
 			```
 		formatString: #,0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
+		isHidden
 
+	/// Number of orders where the customer replaced one or more dishes with another dish
 	measure 'Number of Orders with Swaps' = ```
 			
 			IF(
@@ -458,6 +518,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
 
+	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
 			
 			    DIVIDE(
@@ -469,6 +530,7 @@ table 'Order Measures'
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
 
+	/// Average number of orders where a customer swapped one or more dishes
 	measure 'Average Number of Swaps per Order' = ```
 			
 			    DIVIDE(
@@ -481,6 +543,7 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Number of orders where the customer increased the number of portions
 	measure 'Number of Orders with Increased Portions' =
 			
 			IF(
@@ -498,6 +561,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
 
+	/// Number of orders where the customer decreased the number of portions
 	measure 'Number of Orders with Decreased Portions' =
 			
 			IF(
@@ -515,6 +579,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
 
+	/// Number of orders where the customer changed (increased/decreased) the number of portions
 	measure 'Number of Orders with Adjusted Portions' =
 			
 			IF(
@@ -532,6 +597,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
 
+	/// Number of orders where the customer increased the number of meals/days
 	measure 'Number of Orders with Increased Meals' =
 			IF(
 			    ISFILTERED('Recipes'),
@@ -548,6 +614,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
 
+	/// Number of orders where the customer decreased the number of meals/days
 	measure 'Number of Orders with Decreased Meals' =
 			
 			IF(
@@ -565,6 +632,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
 
+	/// Number of orders where the customer adjusted (increased/decreased) the number of meals/days	
 	measure 'Number of Orders with Adjusted Meals' =
 			
 			IF(
@@ -582,10 +650,14 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
 
-	measure 'Diff Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
+	/// Size of dish adjustment
+	/// Shows the "net" dish adjustment, meaning the total adjustment made after adding/removing dishes
+	/// Example: A customer removes 3 dishes and adds 2 new dishes. The adjustment size is = -1
+	measure 'Difference Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
 		formatString: #,0
 		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
 
+	/// Middle step calculation used to find the difference between orderes meals and subscribed meals
 	measure 'Meal Adjustments' =
 			
 			CALCULATE(
@@ -622,17 +694,22 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
+		isHidden
 		lineageTag: 15fc3c41-f4e7-455c-8502-cfb16f3a92db
 
+	/// Middle step calculation used to find swapped dishes
 	measure 'Decreased Meals' =
 			CALCULATE(
 				[Meal Adjustments],
 				'Order Measures'[meal_adjustment_subscription] < 0
 			
 			)
+			
 		formatString: #,0
+		isHidden
 		lineageTag: 72548e83-a743-498b-90e6-d199251b894f
 
+	/// Middle step calculation used to find swapped dishes
 	measure 'Increased Meals' =
 			CALCULATE(
 				[Meal Adjustments],
@@ -640,8 +717,10 @@ table 'Order Measures'
 			
 			)
 		formatString: #,0
+		isHidden
 		lineageTag: 721b6dae-e435-404d-b057-75831058d524
 
+	/// Difference between ordered portions and subscribed portions
 	measure 'Portion Adjustments' =
 			CALCULATE(
 				SUM('Order Measures'[portion_adjustment_subscription]),
@@ -667,14 +746,18 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
+		isHidden
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
-
+	
+	/// Mostly a middle step measure.
+	/// Nice to have for % of grand total calculations
 	measure 'Number of Orders All Recipes' =
 			CALCULATE(
 				[Number of Orders],
 				ALL(Recipes)
 			)
 		formatString: #,0
+		isHidden
 		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
 
 	column order_status_id
@@ -1178,7 +1261,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-	
+
 	column 'Recipe Rating'
 		dataType: int64
 		isHidden
@@ -1189,7 +1272,7 @@ table 'Order Measures'
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-	
+
 	column is_not_cooked_dish
 		dataType: boolean
 		isHidden
@@ -1201,7 +1284,6 @@ table 'Order Measures'
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-
 
 	column fk_dim_billing_agreements_deviations
 		dataType: string
@@ -1254,4 +1336,3 @@ table 'Order Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

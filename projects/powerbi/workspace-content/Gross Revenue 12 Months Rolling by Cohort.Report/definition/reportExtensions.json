@@ -8,7 +8,7 @@
         {
           "name": "Rolling Gross Revenue",
           "dataType": "Double",
-          "expression": "CALCULATE([Sum Order Value Gross Ex Vat], ALL('Dates'), DATESINPERIOD('Dates'[Date],MAX('Dates'[Date]),-12, MONTH))",
+          "expression": "CALCULATE([Order Value Gross Ex Vat], ALL('Dates'), DATESINPERIOD('Dates'[Date],MAX('Dates'[Date]),-12, MONTH))",
           "measureTemplate": {
             "daxTemplateName": "RunningTotal",
             "version": 0
@@ -17,7 +17,7 @@
             "measures": [
               {
                 "entity": "Order Measures",
-                "name": "Sum Order Value Gross Ex Vat"
+                "name": "Order Value Gross Ex Vat"
               }
             ]
           }

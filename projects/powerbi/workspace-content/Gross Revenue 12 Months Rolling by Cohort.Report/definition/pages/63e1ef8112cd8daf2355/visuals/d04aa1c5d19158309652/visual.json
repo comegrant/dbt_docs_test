@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "d04aa1c5d19158309652",
   "position": {
     "x": 16,
@@ -82,22 +82,6 @@
         },
         "Y": {
           "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Sum Order Value Gross Ex Vat"
-                }
-              },
-              "queryRef": "Order Measures.Sum Order Value Gross Ex Vat",
-              "nativeQueryRef": "Sum Order Value Gross Ex Vat",
-              "hidden": true,
-              "format": "#,##0,,.0M"
-            },
             {
               "field": {
                 "Measure": {
@@ -416,6 +400,7 @@
             "Property": "Calendar Month Name"
           }
         },
+        "type": "Categorical",
         "isHiddenInViewMode": true
       },
       {
@@ -428,21 +413,6 @@
               }
             },
             "Property": "First Menu Year"
-          }
-        },
-        "type": "Advanced",
-        "isHiddenInViewMode": true
-      },
-      {
-        "name": "5f5ee3e8028c7870c277",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Order Measures"
-              }
-            },
-            "Property": "Sum Order Value Gross Ex Vat"
           }
         },
         "type": "Advanced",

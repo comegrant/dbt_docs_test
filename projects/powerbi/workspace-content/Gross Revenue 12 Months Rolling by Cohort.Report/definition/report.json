@@ -28,6 +28,7 @@
             "Property": "Company Name"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [

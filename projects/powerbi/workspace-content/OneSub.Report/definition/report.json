@@ -28,6 +28,7 @@
             "Property": "Calendar Year"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [
@@ -82,6 +83,7 @@
             "Property": "Company Name"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [
