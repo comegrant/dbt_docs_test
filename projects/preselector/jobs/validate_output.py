@@ -35,6 +35,7 @@ start_yyyyww_str = dbutils.widgets.get("start_yyyyww")
 start_yyyyww = int(start_yyyyww_str) if start_yyyyww_str.lower() != "none" else None
 output_type = dbutils.widgets.get("output_type")  # batch or realtime
 env = dbutils.widgets.get("env")
+company = dbutils.widgets.get("company")
 model_version_str = dbutils.widgets.get("model_version")
 model_version = model_version_str if model_version_str.lower() != "none" else None
 
@@ -77,7 +78,9 @@ url_to_job = f"{DATABRICKS_HOSTS[env]}/jobs/{job_id}/runs/{parent_run_id}"
 
 
 async def run() -> None:
-    df = await get_output_data(start_yyyyww=start_yyyyww, output_type=output_type, model_version=model_version)
+    df = await get_output_data(
+        start_yyyyww=start_yyyyww, output_type=output_type, company=company, model_version=model_version
+    )
     display(df)
 
     results_comp = compliancy_metrics(df)
@@ -86,45 +89,49 @@ async def run() -> None:
     summary = validation_summary(results_comp, results_error, results_variation)
     metrics = validation_metrics(results_comp, results_error, results_variation)
 
-    total_checks = metrics["total_checks"]
-    errors_compliancy = metrics["comliancy_errors"]
-    warnings_compliancy = metrics["comliancy_warnings"]
-    errors_error = metrics["vector_errors"]
-    warnings_error = metrics["vector_warnings"]
-    carb_warnings = metrics["carb_warnings"]
-    protein_warnings = metrics["protein_warnings"]
+    total_records = metrics["sum_total_records"]
+    error_compliancy = metrics["perc_broken_allergen"]
+    warning_compliancy = metrics["perc_broken_preference"]
+    error_mean_ordered_ago = metrics["perc_broken_mean_ordered_ago"]
+    warning_avg_error = metrics["perc_broken_avg_error"]
+    warning_acc_error = metrics["perc_broken_acc_error"]
+    carb_warnings = metrics["perc_carb_warnings"]
+    protein_warnings = metrics["perc_protein_warnings"]
 
-    errors = errors_compliancy + errors_error
-    warnings = warnings_compliancy + warnings_error
-    total_warnings = warnings + carb_warnings + protein_warnings
+    error = error_compliancy + error_mean_ordered_ago
+    warning = warning_compliancy + warning_avg_error + warning_acc_error + carb_warnings + protein_warnings
 
-    header_message = "Preselector Validation Finished"
+    header_message = f"Preselector {company} Validation Finished"
 
     body_message_error = (
-        f"❌ Errors Detected in Preselector Output:\n"
+        f"❌ Errors Detected in Preselector Output!\n\n"
+        f"Total number of instances: {total_records}\n"
         f"Errors:\n"
-        f"- {errors_compliancy} out of {total_checks} datasets have broken allergens.\n"
-        f"- {errors_error} out of {total_checks} datasets have broken mean ordered ago.\n"
+        f"- Allergen preference broken: {error_compliancy}% of instances.\n"
+        f"- Mean ordered ago broken: {error_mean_ordered_ago}% of instances.\n"
         f"Warnings:\n"
-        f"- {warnings_compliancy} out of {total_checks} datasets have broken preferences.\n"
-        f"- {warnings_error} out of {total_checks} datasets have broken aggregated errors.\n"
-        f"- {carb_warnings} out of {total_checks} datasets have too little carb variation.\n"
-        f"- {protein_warnings} out of {total_checks} datasets have too little protein variation.\n\n"
+        f"- Taste/concept preference broken: {warning_compliancy}% of instances.\n"
+        f"- Aggregated error vector too high: {warning_avg_error}% of instances.\n"
+        f"- Accumulated error vector too high: {warning_acc_error}% of instances.\n"
+        f"- Carb variation too low: {carb_warnings}% of instances.\n"
+        f"- Protein variation too low: {protein_warnings}% of instances.\n\n"
         f"See the run log for more information: {url_to_job} "
     )
 
     body_message_warning = (
-        f"Warnings Detected in Preselector Output:\n"
+        f"Warnings Detected in Preselector Output!\n"
+        f"Total number of instances: {total_records}\n"
         f"Warnings:\n"
-        f"- {warnings_compliancy} out of {total_checks} datasets have broken preferences.\n"
-        f"- {warnings_error} out of {total_checks} datasets have broken aggregated error.\n"
-        f"- {carb_warnings} out of {total_checks} datasets have too little carb variation.\n"
-        f"- {protein_warnings} out of {total_checks} datasets have too little protein variation.\n\n"
+        f"- Taste/concept preference broken: {warning_compliancy}% of instances.\n"
+        f"- Aggregated error vector too high: {warning_avg_error}% of instances.\n"
+        f"- Accumulated error vector too high: {warning_acc_error}% of instances.\n"
+        f"- Carb variation too low: {carb_warnings}% of instances.\n"
+        f"- Protein variation too low: {protein_warnings}% of instances.\n\n"
         f"See the run log for more information: {url_to_job} "
     )
 
-    if errors > 0:
-        logger.error(f"Validation of preselector output failed with {errors} errors")
+    if error > 0:
+        logger.error("Validation of preselector output failed with errors")
         send_slack_notification(
             environment=env,
             header_message=header_message,
@@ -133,8 +140,8 @@ async def run() -> None:
             is_error=True,
         )
 
-    if errors == 0 and total_warnings > 0:
-        logger.warning(f"Validation of preselector output failed with {total_warnings} warnings")
+    if error == 0 and warning > 0:
+        logger.warning("Validation of preselector output failed with warnings")
         send_slack_notification(
             environment=env,
             header_message=header_message,

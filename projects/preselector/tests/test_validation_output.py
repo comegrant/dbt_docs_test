@@ -101,29 +101,33 @@ async def test_validation_metric(dummy_store: ContractStore) -> None:
 
     dummy_store = dummy_store.update_source_for(
         RecipeMainIngredientCategory.location,
-        RandomDataSource.with_values({
-            "recipe_id": [63059, 51311, 44106, 86774],
-            "main_protein_category_id": [1, 1, 3, 4],
-            "main_carbohydrate_category_id": [5, 5, 5, 6],
-        })
+        RandomDataSource.with_values(
+            {
+                "recipe_id": [63059, 51311, 44106, 86774],
+                "main_protein_category_id": [1, 1, 3, 4],
+                "main_carbohydrate_category_id": [5, 5, 5, 6],
+            }
+        ),
     )
 
     comliancy_df = compliancy_metrics(df)
     error_df = error_metrics(df)
     variation_df = await variation_metrics(df, dummy_store)
     metrics = validation_metrics(comliancy_df, error_df, variation_df)
-    exp_total = 2
-    exp_comp_warnings = 1
-    exp_comp_errors = 1
-    exp_err_warning = 2
-    exp_err_error = 1
-    exp_carb_warnings = 2
-    exp_protein_warnings = 0
+    exp_total = 4
+    exp_allergen_error = 50.0
+    exp_preference_error = 25.0
+    exp_mean_ordered_ago_error = 25.0
+    exp_avg_error = 50.0
+    exp_acc_error = 50.0
+    exp_carb_warnings = 100.0
+    exp_protein_warnings = 0.0
 
-    assert metrics["total_checks"] == exp_total
-    assert metrics["comliancy_warnings"] == exp_comp_warnings
-    assert metrics["comliancy_errors"] == exp_comp_errors
-    assert metrics["vector_warnings"] == exp_err_warning
-    assert metrics["vector_errors"] == exp_err_error
-    assert metrics["carb_warnings"] == exp_carb_warnings
-    assert metrics["protein_warnings"] == exp_protein_warnings
+    assert metrics["sum_total_records"] == exp_total
+    assert metrics["perc_broken_allergen"] == exp_allergen_error
+    assert metrics["perc_broken_preference"] == exp_preference_error
+    assert metrics["perc_broken_mean_ordered_ago"] == exp_mean_ordered_ago_error
+    assert metrics["perc_broken_avg_error"] == exp_avg_error
+    assert metrics["perc_broken_acc_error"] == exp_acc_error
+    assert metrics["perc_carb_warnings"] == exp_carb_warnings
+    assert metrics["perc_protein_warnings"] == exp_protein_warnings

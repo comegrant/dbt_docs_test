@@ -1,7 +1,7 @@
 resources:
   jobs:
-    preselector-output-validation:
-      name: preselector-output-validation-${bundle.target}
+    preselector-output-validation-GL:
+      name: preselector-output-validation-GL-${bundle.target}
       permissions:
         - group_name: data-scientists
           level: CAN_MANAGE_RUN
@@ -24,7 +24,7 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: "0 0 8 ? * WED *"
+        quartz_cron_expression: "0 0 20 ? * TUE *"
         timezone_id: Europe/Amsterdam
         pause_status: UNPAUSED
 
@@ -35,25 +35,203 @@ resources:
           - agathe.raaum@cheffelo.com
 
       tasks:
-        - task_key: preselector-output-validation
+        - task_key: preselector-output-validation-GL
           job_cluster_key: preselector
           notebook_task:
             notebook_path: validate_output.py
             base_parameters:
               start_yyyyww: None
               output_type: realtime
-              model_version: None
               env: "${var.environment}"
+              company: GL
+              model_version: None
 
-        - task_key: preselector-output-validation-notification-end-fail
+        - task_key: preselector-output-validation-GL-notification-end-fail
           depends_on:
-            - task_key: preselector-output-validation
+            - task_key: preselector-output-validation-GL
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: local_dev #Reads from the target environment as defined in the databricks.yml file
-              header_message: ❌ Preselector validation job failed
+              header_message: ❌ Preselector validation job failed for GL
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: agathe
+
+    preselector-output-validation-LMK:
+      name: preselector-output-validation-LMK-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: ${var.cluster_version}
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Preselector"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: "0 0 2 ? * MON *"
+        timezone_id: Europe/Amsterdam
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
+      tasks:
+        - task_key: preselector-output-validation-LMK
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: validate_output.py
+            base_parameters:
+              start_yyyyww: None
+              output_type: realtime
+              env: "${var.environment}"
+              company: LMK
+              model_version: None
+
+        - task_key: preselector-output-validation-LMK-notification-end-fail
+          depends_on:
+            - task_key: preselector-output-validation-LMK
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector validation job failed for LMK
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: agathe
+
+    preselector-output-validation-AMK:
+      name: preselector-output-validation-AMK-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: ${var.cluster_version}
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Preselector"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: "0 0 18 ? * TUE *"
+        timezone_id: Europe/Amsterdam
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
+      tasks:
+        - task_key: preselector-output-validation-AMK
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: validate_output.py
+            base_parameters:
+              start_yyyyww: None
+              output_type: realtime
+              env: "${var.environment}"
+              company: AMK
+              model_version: None
+
+        - task_key: preselector-output-validation-AMK-notification-end-fail
+          depends_on:
+            - task_key: preselector-output-validation-AMK
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector validation job failed for AMK
+              body_message: Check Databricks for more details
+              is_error: true
+              relevant_people: agathe
+
+    preselector-output-validation-RT:
+      name: preselector-output-validation-RT-${bundle.target}
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: ${var.cluster_version}
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Preselector"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: "0 0 12 ? * THU *"
+        timezone_id: Europe/Amsterdam
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
+      tasks:
+        - task_key: preselector-output-validation-RT
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: validate_output.py
+            base_parameters:
+              start_yyyyww: None
+              output_type: realtime
+              env: "${var.environment}"
+              company: RT
+              model_version: None
+
+        - task_key: preselector-output-validation-RT-notification-end-fail
+          depends_on:
+            - task_key: preselector-output-validation-RT
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              header_message: ❌ Preselector validation job failed for RT
               body_message: Check Databricks for more details
               is_error: true
               relevant_people: agathe

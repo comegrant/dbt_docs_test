@@ -3,6 +3,7 @@ from typing import Optional
 
 import polars as pl
 from aligned import ContractStore
+from constants.companies import get_company_by_code
 from data_contracts.preselector.store import Preselector, SuccessfulPreselectorOutput
 from data_contracts.recipe import RecipeMainIngredientCategory
 from data_contracts.sources import databricks_catalog
@@ -16,16 +17,22 @@ VAR_THRESHOLD = 0.59
 
 
 async def get_output_data(
-    start_yyyyww: int | None = None, output_type: str = "batch", model_version: str | None = None
+    start_yyyyww: int | None = None,
+    output_type: str = "batch",
+    company: str = "GL",
+    model_version: str | None = None,
 ) -> pl.DataFrame:
     if start_yyyyww is None:
         start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=5)
         start_yyyyww = int(f"{start_date.year}{start_date.isocalendar()[1]:02d}")
 
+    company_id = get_company_by_code(company).company_id
+
     if output_type == "realtime":
         df = (
             await SuccessfulPreselectorOutput.query()
             .filter(pl.col("menu_year").cast(pl.Int32) * 100 + pl.col("menu_week") >= start_yyyyww)
+            .filter(pl.col("company_id") == company_id)
             .unique_entities()
             .to_polars()
         ).select(
@@ -45,7 +52,7 @@ async def get_output_data(
     else:
         source_splits = output_type.split(".")
 
-        if len(source_splits) == 2: # noqa: PLR2004
+        if len(source_splits) == 2:  # noqa: PLR2004
             schema, table = source_splits
             source = databricks_catalog.schema(schema).table(table)
         elif output_type == "batch":
@@ -66,18 +73,15 @@ async def get_output_data(
                     "compliancy",
                     "error_vector",
                     "main_recipe_ids",
-                    "model_version"
+                    "model_version",
                 }
             )
             .all()
-            .filter(
-                pl.col("year").cast(pl.Int32) * 100 + pl.col("week") >= start_yyyyww
-            )
+            .filter(pl.col("year").cast(pl.Int32) * 100 + pl.col("week") >= start_yyyyww)
+            .filter(pl.col("company_id") == company_id)
             .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
             .to_polars()
-        ).with_columns(
-            number_of_recipes=pl.col("main_recipe_ids").list.len()
-        )
+        ).with_columns(number_of_recipes=pl.col("main_recipe_ids").list.len())
 
     if model_version is not None:
         df = df.filter(pl.col("model_version") == model_version)
@@ -335,20 +339,27 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
     return formatted_table
 
 
+def calc_percentage(value: int | float, total: int | float) -> float:
+    return round((value / total) * 100, 2)
+
+
 def validation_metrics(
     df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame, df_variation: pl.DataFrame
 ) -> dict[str, int]:
     df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", suffix="_1", coalesce=True)
     df = df.join(df_variation, on=["company_id", "portion_size"], how="left", suffix="_2", coalesce=True)
 
+    total_records = df["total_records"].sum()
+
     metrics = {
-        "total_checks": int(df.height),
-        "comliancy_warnings": int(df["compliancy_warning"].sum()),
-        "vector_warnings": int(df["vector_warning"].sum()),
-        "comliancy_errors": int(df["compliancy_error"].sum()),
-        "vector_errors": int(df["vector_error"].sum()),
-        "carb_warnings": int(df["has_carb_warning"].sum()),
-        "protein_warnings": int(df["has_protein_warning"].sum()),
+        "sum_total_records": int(total_records),
+        "perc_broken_allergen": calc_percentage(df["broken_allergen"].sum(), total_records),
+        "perc_broken_preference": calc_percentage(df["broken_preference"].sum(), total_records),
+        "perc_broken_mean_ordered_ago": calc_percentage(df["broken_mean_ordered_ago"].sum(), total_records),
+        "perc_broken_avg_error": calc_percentage(df["broken_avg_error"].sum(), total_records),
+        "perc_broken_acc_error": calc_percentage(df["broken_acc_error"].sum(), total_records),
+        "perc_carb_warnings": calc_percentage(df["carb_warnings"].sum(), total_records),
+        "perc_protein_warnings": calc_percentage(df["protein_warnings"].sum(), total_records),
     }
 
     return metrics
