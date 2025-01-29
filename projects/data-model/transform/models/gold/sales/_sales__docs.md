@@ -519,3 +519,17 @@ The number of taste preferences excluding allergens for the preference combinati
 The number of taste preferences including allergens for the preference combination.
 
 {% enddocs %}
+
+# Dim Loyalty Events
+{% docs column__pk_dim_loyalty_events %}
+
+The unique key of each row in Dim Loyalty Events.
+
+{% enddocs %}
+
+# Fact Loyalty Points
+{% docs column__pk_fact_loyalty_points %}
+
+The unique key of each row in Fact Loyalty Points.
+
+{% enddocs %}

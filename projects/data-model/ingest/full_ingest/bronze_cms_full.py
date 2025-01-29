@@ -31,7 +31,6 @@ tables = [
         "loyalty_order",
         "loyalty_order_line",
         "loyalty_order_status",
-        "loyalty_points",
         "order_type",
         "preference",
         "preference_company",

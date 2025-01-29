@@ -432,7 +432,7 @@ The year of the first delivery date the customer chose when signing up.
 
 {% docs column__signup_at %}
 
-The timestamp the customer signed up.
+The timestamp the customer signed up based on when the row was created in the source table (created_at). If the date part of source_created_at is greater than the date part of start_date, we use start_date as the signup timestamp instead.
 
 {% enddocs %}
 
@@ -754,25 +754,25 @@ The ID of the parent loyalty points transaction, if this transaction is a child 
 
 {% enddocs %}
 
-{% docs column__loyalty_points_transaction_reason %}
+{% docs column__transaction_reason %}
 
 Additional information explaining why the loyalty points transaction took place. Typically used for comments when points are added or removed by Customer Service.
 
 {% enddocs %}
 
-{% docs column__loyalty_points_expiration_date %}
+{% docs column__points_expiration_date %}
 
 The date when these loyalty points will expire if not used.
 
 {% enddocs %}
 
-{% docs column__transaction_loyalty_points %}
+{% docs column__transaction_points %}
 
 The number of points added or deducted in this transaction. Positive numbers indicate points earned, negative numbers indicate points spent or deducted.
 
 {% enddocs %}
 
-{% docs column__remaining_loyalty_points %}
+{% docs column__remaining_points %}
 
 The remaining balance of loyalty points after this transaction.
 

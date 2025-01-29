@@ -2104,23 +2104,23 @@ models:
 
       - name: transaction_reason
         data_type: string
-        description: "{{ doc('column__loyalty_points_transaction_reason') }}"
+        description: "{{ doc('column__transaction_reason') }}"
 
-      - name: loyalty_points_expiration_date
+      - name: points_expiration_date
         data_type: date
-        description: "{{ doc('column__loyalty_points_expiration_date') }}"
+        description: "{{ doc('column__points_expiration_date') }}"
 
-      - name: transaction_loyalty_points
+      - name: transaction_points
         data_type: int
-        description: "{{ doc('column__transaction_loyalty_points') }}"
+        description: "{{ doc('column__transaction_points') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
-      - name: remaining_loyalty_points
+      - name: remaining_points
         data_type: int
-        description: "{{ doc('column__remaining_loyalty_points') }}"
+        description: "{{ doc('column__remaining_points') }}"
         constraints:
           - type: not_null
         data_tests:

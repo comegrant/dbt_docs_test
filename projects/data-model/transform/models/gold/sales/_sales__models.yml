@@ -2080,8 +2080,7 @@ models:
         constraints:
           - type: not_null
         data_tests:
-          - not_null
-
+          - not_null        
 
   - name: dim_all_preference_combinations
     description: "Contains preference combinations and their corresponding names and ids"
@@ -2161,3 +2160,169 @@ models:
       - name: number_of_taste_preferences_including_allergens
         data_type: int
         description: "{{ doc('column__number_of_taste_preferences_including_allergens') }}"
+
+  - name: dim_loyalty_events
+    description: "Table of loyalty event names. Loyalty events explain a change to an agreement's loyalty points."
+    latest_version: 1
+    config:
+      alias: dim_loyalty_events
+      contract:
+        enforced: true
+
+    versions:
+      - v: 1
+    columns:
+      - name: pk_dim_loyalty_events
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_events') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_event_id
+        data_type: string
+        description: "{{ doc('column__loyalty_event_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_event_name
+        data_type: string
+        description: "{{ doc('column__loyalty_event_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+
+  - name: fact_loyalty_points
+    description: "Information about loyalty points transactions, explaining how customers are receiving or spending loyalty points."
+    latest_version: 1
+    config:
+      alias: fact_loyalty_points
+      contract:
+        enforced: true
+
+    versions:
+      - v: 1
+    columns:
+      - name: pk_fact_loyalty_points
+        data_type: string
+        description: "{{ doc('column__pk_fact_loyalty_points') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: loyalty_points_id
+        data_type: string
+        description: "{{ doc('column__loyalty_points_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_points_parent_id
+        data_type: string
+        description: "{{ doc('column__loyalty_points_parent_id') }}"
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+
+      - name: loyalty_event_id
+        data_type: string
+        description: "{{ doc('column__loyalty_event_id') }}"
+
+      - name: loyalty_order_id
+        data_type: string
+        description: "{{ doc('column__loyalty_order_id') }}"
+
+      - name: transaction_reason
+        data_type: string
+        description: "{{ doc('column__transaction_reason') }}"
+
+      - name: transaction_points
+        data_type: int
+        description: "{{ doc('column__transaction_points') }}"
+
+      - name: remaining_points
+        data_type: int
+        description: "{{ doc('column__remaining_points') }}"
+
+      - name: billing_agreement_order_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: points_expiration_date
+        data_type: timestamp
+        description: "{{ doc('column__points_expiration_date') }}"
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_loyalty_events
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_events') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_events')
+              field: pk_dim_loyalty_events
+
+      - name: fk_dim_dates_transaction
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_dates_points_expiration
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies

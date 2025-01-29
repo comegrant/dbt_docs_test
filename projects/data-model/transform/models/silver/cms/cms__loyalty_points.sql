@@ -43,11 +43,11 @@ source as (
         , reason as transaction_reason
         
         {# ints #}
-        , transaction_points as transaction_loyalty_points
-        , remaining_points as remaining_loyalty_points
+        , transaction_points
+        , remaining_points
         
         {# timesamps #}
-        , expiration_date as loyalty_points_expiration_date
+        , expiration_date as points_expiration_date
         , created_at as source_created_at
         , created_by as source_created_by
         , updated_at as source_updated_at
