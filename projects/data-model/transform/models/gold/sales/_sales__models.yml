@@ -975,6 +975,14 @@ models:
         data_tests:
           - not_null
 
+      - name: has_updated_loyalty_level
+        data_type: boolean
+        description: "{{ doc('column__has_updated_loyalty_level') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: has_updated_onesub_flag
         data_type: boolean
         description: "{{ doc('column__has_updated_onesub_flag') }}"

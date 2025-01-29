@@ -39,6 +39,13 @@ table 'Customer Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements_previous_version
 
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: billing_agreement_id
+
 	column is_new_agreement
 		dataType: boolean
 		isHidden
@@ -88,6 +95,13 @@ table 'Customer Measures'
 		sourceColumn: has_updated_status
 
 		annotation SummarizationSetBy = Automatic
+
+	column has_updated_loyalty_level
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: has_updated_loyalty_level
 
 	column has_updated_onesub_flag
 		dataType: boolean

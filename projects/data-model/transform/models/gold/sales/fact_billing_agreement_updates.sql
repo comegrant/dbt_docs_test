@@ -18,7 +18,23 @@ dim_billing_agreements as (
     , billing_agreement_preferences_updated_id
     , billing_agreement_basket_product_updated_id
     , billing_agreement_status_name
+    , loyalty_level_number
     , onesub_flag
+    , row_number() over (
+        partition by billing_agreement_id 
+        order by 
+            case
+                when 
+                    billing_agreement_status_name is not null
+                    and billing_agreement_basket_product_updated_id is not null
+                    and billing_agreement_preferences_updated_id is not null
+                    and loyalty_level_number is not null
+                    and onesub_flag is not null
+                then 1 --Non null values should be sorted before null values
+                else 2 --Null values should be sorted after null values
+            end asc,    
+            valid_from asc
+    ) as rank
 
     from dim_billing_agreements
     
@@ -48,30 +64,36 @@ dim_billing_agreements as (
     , agreements.valid_from as updated_at
     
     , case
-        when agreements_previous_version.fk_dim_billing_agreements is null then true
+        when agreements.rank = 1 then true
         else false
     end as is_new_agreement
 
     , case
-        when agreements_previous_version.fk_dim_billing_agreements is null then true
+        when agreements_previous_version.fk_dim_billing_agreements is null then false
         when agreements.billing_agreement_preferences_updated_id <> agreements_previous_version.billing_agreement_preferences_updated_id then true
         else false
     end as has_updated_preferences
     
     , case
-        when agreements_previous_version.fk_dim_billing_agreements is null then true
+        when agreements_previous_version.fk_dim_billing_agreements is null then false
         when agreements.billing_agreement_basket_product_updated_id <> agreements_previous_version.billing_agreement_basket_product_updated_id then true
         else false
     end as has_updated_subscribed_products
     
     , case
-        when agreements_previous_version.fk_dim_billing_agreements is null then true
+        when agreements_previous_version.fk_dim_billing_agreements is null then false
         when agreements.billing_agreement_status_name <> agreements_previous_version.billing_agreement_status_name then true
         else false
     end as has_updated_status
+
+    , case
+        when agreements_previous_version.fk_dim_billing_agreements is null then false
+        when agreements.loyalty_level_number <> agreements_previous_version.loyalty_level_number then true
+        else false
+    end as has_updated_loyalty_level
     
     , case
-        when agreements_previous_version.fk_dim_billing_agreements is null then true
+        when agreements_previous_version.fk_dim_billing_agreements is null then false
         when agreements.onesub_flag <> agreements_previous_version.onesub_flag then true
         else false
     end as has_updated_onesub_flag
