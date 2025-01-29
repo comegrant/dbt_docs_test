@@ -471,8 +471,8 @@ table 'Order Measures'
 					'Order Measures'[fk_dim_recipes_preselected],
 					Recipes[pk_dim_recipes]
 				),
-				USERELATIONSHIP('
-					Order Measures'[fk_dim_products_preselected],
+				USERELATIONSHIP(
+					'Order Measures'[fk_dim_products_preselected],
 					Products[pk_dim_products]),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
