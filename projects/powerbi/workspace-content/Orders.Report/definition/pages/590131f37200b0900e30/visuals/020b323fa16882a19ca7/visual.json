@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "020b323fa16882a19ca7",
   "position": {
-    "x": 464,
+    "x": 479.47627044203892,
     "y": 0,
-    "z": 1000,
+    "z": 3000,
     "height": 56,
     "width": 192,
-    "tabOrder": 1000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -82,14 +82,14 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Financial'"
+                                "Value": "'Mealbox'"
                               }
                             }
                           ],
                           [
                             {
                               "Literal": {
-                                "Value": "'Mealbox'"
+                                "Value": "'Financial'"
                               }
                             }
                           ]
@@ -115,6 +115,23 @@
             }
           }
         }
+      ],
+      "items": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#252423'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -133,6 +150,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "parentGroupName": "485ab852144e647c97ed"
+  }
 }

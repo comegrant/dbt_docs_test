@@ -4,10 +4,10 @@
   "position": {
     "x": 16,
     "y": 96,
-    "z": 8001,
+    "z": 2000,
     "height": 304,
     "width": 1248,
-    "tabOrder": 8001
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "lineClusteredColumnComboChart",
@@ -232,57 +232,6 @@
           ]
         }
       }
-    },
-    "objects": {
-      "valueAxis": [
-        {
-          "properties": {
-            "secShowAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "secShow": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "secTitleText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'ATV'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Number of Orders and ATV'"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "drillFilterOtherVisuals": true
   }

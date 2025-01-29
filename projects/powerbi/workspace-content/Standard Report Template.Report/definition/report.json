@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate20790398552330025.json",
+      "name": "CheffeloTemplate5991377711627663.json",
       "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
@@ -135,7 +135,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }
@@ -160,8 +160,18 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate20790398552330025.json",
-          "path": "CheffeloTemplate20790398552330025.json",
+          "name": "Cheffelo-Report-Background11889223152955908.svg",
+          "path": "Cheffelo-Report-Background11889223152955908.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background2417383144405547.svg",
+          "path": "Cheffelo-Report-Background2417383144405547.svg",
+          "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate5991377711627663.json",
+          "path": "CheffeloTemplate5991377711627663.json",
           "type": "CustomTheme"
         }
       ]

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "75d53d4600b5562ca8e5",
+  "name": "ac085c28aaa1bcd0b64a",
   "position": {
-    "x": 15.476270442038908,
+    "x": 198,
     "y": 0,
-    "z": 6000,
-    "height": 56,
-    "width": 272,
-    "tabOrder": 4000
+    "z": 7000,
+    "height": 57.333333333333336,
+    "width": 241.33333333333334,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -56,6 +56,13 @@
       "data": [
         {
           "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Relative'"
+                }
+              }
+            },
             "relativeRange": {
               "expr": {
                 "Literal": {
@@ -66,86 +73,28 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "1D"
                 }
               }
             },
             "relativePeriod": {
               "expr": {
                 "Literal": {
-                  "Value": "'Months'"
-                }
-              }
-            },
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Relative'"
+                  "Value": "'Years'"
                 }
               }
             }
           }
         }
       ],
-      "general": [
+      "items": [
         {
           "properties": {
-            "filter": {
-              "filter": {
-                "Version": 2,
-                "From": [
-                  {
-                    "Name": "d",
-                    "Entity": "Dates",
-                    "Type": 0
-                  }
-                ],
-                "Where": [
-                  {
-                    "Condition": {
-                      "Between": {
-                        "Expression": {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "d"
-                              }
-                            },
-                            "Property": "Date"
-                          }
-                        },
-                        "LowerBound": {
-                          "DateSpan": {
-                            "Expression": {
-                              "DateAdd": {
-                                "Expression": {
-                                  "DateAdd": {
-                                    "Expression": {
-                                      "Now": {}
-                                    },
-                                    "Amount": 1,
-                                    "TimeUnit": 0
-                                  }
-                                },
-                                "Amount": -12,
-                                "TimeUnit": 2
-                              }
-                            },
-                            "TimeUnit": 0
-                          }
-                        },
-                        "UpperBound": {
-                          "DateSpan": {
-                            "Expression": {
-                              "Now": {}
-                            },
-                            "TimeUnit": 0
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
               }
             }
           }
@@ -198,7 +147,89 @@
             }
           }
         }
+      ],
+      "general": [
+        {
+          "properties": {
+            "filter": {
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "d",
+                    "Entity": "Dates",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "Between": {
+                        "Expression": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "Date"
+                          }
+                        },
+                        "LowerBound": {
+                          "DateSpan": {
+                            "Expression": {
+                              "DateAdd": {
+                                "Expression": {
+                                  "DateAdd": {
+                                    "Expression": {
+                                      "Now": {}
+                                    },
+                                    "Amount": 1,
+                                    "TimeUnit": 0
+                                  }
+                                },
+                                "Amount": -1,
+                                "TimeUnit": 3
+                              }
+                            },
+                            "TimeUnit": 0
+                          }
+                        },
+                        "UpperBound": {
+                          "DateSpan": {
+                            "Expression": {
+                              "Now": {}
+                            },
+                            "TimeUnit": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
+    },
+    "syncGroup": {
+      "groupName": "Date",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }

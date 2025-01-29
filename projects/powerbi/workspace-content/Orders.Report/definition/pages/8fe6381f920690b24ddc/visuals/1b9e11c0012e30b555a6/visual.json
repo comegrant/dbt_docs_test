@@ -1,48 +1,58 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "1b9e11c0012e30b555a6",
   "position": {
-    "x": 16,
-    "y": 88,
+    "x": 32,
+    "y": 96,
     "z": 0,
-    "height": 616,
-    "width": 1248,
+    "height": 288,
+    "width": 1216,
     "tabOrder": 0
   },
   "visual": {
-    "visualType": "clusteredColumnChart",
+    "visualType": "lineChart",
     "query": {
       "queryState": {
         "Category": {
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Calendar Quarter"
+                  "Level": "Quarter"
                 }
               },
-              "queryRef": "Dates.Calendar Quarter",
-              "nativeQueryRef": "Calendar Quarter",
-              "active": false
+              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
+              "nativeQueryRef": "Financial Date Hierarchy Quarter",
+              "active": true
             },
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Calendar Month Number"
+                  "Level": "Week"
                 }
               },
-              "queryRef": "Dates.Calendar Month Number",
-              "nativeQueryRef": "Calendar Month Number",
+              "queryRef": "Dates.Financial Date Hierarchy.Week",
+              "nativeQueryRef": "Financial Date Hierarchy Week",
               "active": true
             }
           ]
@@ -51,17 +61,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Calendar Year"
+                  "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Calendar Year",
-              "nativeQueryRef": "Calendar Year"
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year"
             }
           ]
         },
@@ -109,7 +124,7 @@
             "showAxisTitle": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -136,7 +151,7 @@
             "gridlineShow": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -442,6 +457,26 @@
             ]
           }
         }
+      ],
+      "zoom": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showOnValueAxis": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -504,7 +539,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Year on Year by Quarters/Months'"
+                  "Value": "'Year Over Year'"
                 }
               }
             }
@@ -522,6 +557,19 @@
                       "Value": "'#FCFBF7'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "type": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Default'"
                 }
               }
             }

@@ -74,7 +74,7 @@
                         "show": true,
                         "fontSize": 10,
                         "showAxisTitle": false,
-                        "titleFontSize": 13
+                        "titleFontSize": 12
                     }
                 ],
                 "valueAxis": [
@@ -82,7 +82,7 @@
                         "show": true,
                         "fontSize": 10,
                         "showAxisTitle": false,
-                        "titleFontSize": 13
+                        "titleFontSize": 12
                     }
                 ],
                 "y2Axis": [
@@ -90,7 +90,7 @@
                         "show": true,
                         "secFontSize": 10,
                         "secShowAxisTitle": false,
-                        "secTitleFontSize": 13
+                        "secTitleFontSize": 12
                     }
                 ],
                 "title": [
@@ -167,7 +167,7 @@
                     {
                         "fontColor": {
                             "solid": {
-                                "color": "#000000"
+                                "color": "#252423"
                             }
                         },
                         "background": {
@@ -213,7 +213,7 @@
                         "outline": "None",
                         "textSize": 10,
                         "fontFamily": "Segoe UI",
-                        "bold": true,
+                        "bold": false,
                         "italic": false,
                         "underline": false
                     }
@@ -251,61 +251,13 @@
                 ]
             }
         },
-        "shape": {
-            "*": {
-                "position": [
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "width": 1280,
-                        "height": 72
-                    }
-                ],
-                "fill": [
-                    {
-                        "show": false
-                    }
-                ],
-                "background": [
-                    {
-                        "show": true,
-                        "color": {
-                            "solid": {
-                                "color": "#E56962"
-                            }
-                        },
-                        "transparency": 0
-                    }
-                ],
-                "border": [
-                    {
-                        "show": false
-                    }
-                ],
-                "visualHeader": [
-                    {
-                        "show": false
-                    }
-                ],
-                "title": [
-                    {
-                        "show": false
-                    }
-                ],
-                "outline": [
-                    {
-                        "show": false
-                    }
-                ]
-            }
-        },
         "actionButton": {
             "*": {
                 "shape": [
                     {
                         "$id": "default",
                         "tileShape": "rectangle",
-                        "roundEdge": 10
+                        "roundEdge": 5
                     }
                 ],
                 "text": [
@@ -314,23 +266,17 @@
                         "show": true,
                         "fontColor": {
                             "solid": {
-                                "color": "#000000"
+                                "color": "#FCFBF7"
                             }
-                        },
-                        "bold": true,
-                        "italic": false,
-                        "underline": false,
-                        "verticalAlignment": "middle",
-                        "horizontalAlignment": "center"
+                        }
                     },
                     {
-                        "show": true
-                    }
-                ],
-                "fill": [
-                    {
-                        "$id": "default",
-                        "transparency": 0
+                        "$id": "disabled",
+                        "fontColor": {
+                            "solid": {
+                                "color": "#f5c3c0"
+                            }
+                        }
                     },
                     {
                         "show": true
@@ -338,10 +284,38 @@
                 ],
                 "outline": [
                     {
+                        "$id": "default",
+                        "lineColor": {
+                            "solid": {
+                                "color": "#FCFBF7"
+                            }
+                        },
+                        "weight": 1
+                    },
+                    {
+                        "$id": "disabled",
+                        "lineColor": {
+                            "solid": {
+                                "color": "#f5c3c0"
+                            }
+                        },
+                        "weight": 1
+                    },
+                    {
+                        "show": true
+                    }
+                ],
+                "fill": [
+                    {
                         "show": false
                     }
                 ],
                 "border": [
+                    {
+                        "show": false
+                    }
+                ],
+                "background": [
                     {
                         "show": false
                     }
@@ -396,6 +370,35 @@
                         }
                     },
                     "outlineWeight": 2
+                    }
+                ]
+            }
+        },
+        "pivotTable": {
+            "*": {
+                "stylePreset": [
+                    {
+                    "name": "Minimal"
+                    }
+                ],
+                "grid": [
+                    {
+                    "rowPadding": 4,
+                    "outlineColor": {
+                        "solid": {
+                        "color": "#DAD4BF"
+                        }
+                    },
+                    "outlineWeight": 2
+                    }
+                ],
+                "values": [
+                    {
+                    "backColorSecondary": {
+                        "solid": {
+                        "color": "#F8F6EF"
+                        }
+                    }
                     }
                 ]
             }

@@ -1,16 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "30fcf3699936e093098a",
+  "name": "4bb04c729e63160e2026",
   "position": {
     "x": 32,
-    "y": 96,
-    "z": 0,
-    "height": 336,
+    "y": 400.00000000000006,
+    "z": 4000,
+    "height": 288,
     "width": 1216,
-    "tabOrder": 0
+    "tabOrder": 4000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -28,11 +28,11 @@
                       "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Level": "Year"
+                  "Level": "Quarter"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
+              "nativeQueryRef": "Financial Date Hierarchy Quarter",
               "active": true
             },
             {
@@ -61,17 +61,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Brands"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Level": "Year"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year"
             }
           ]
         },
@@ -90,40 +95,28 @@
               },
               "queryRef": "Order Measures.Number of Orders",
               "nativeQueryRef": "Number of Orders",
-              "displayName": "Number of Orders"
-            }
-          ],
-          "fieldParameters": [
+              "hidden": true
+            },
             {
-              "parameterExpr": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "(Param) Measures"
-                    }
-                  },
-                  "Property": "(Param) Order Measures"
+              "field": {
+                "NativeVisualCalculation": {
+                  "Language": "dax",
+                  "Expression": "RUNNINGSUM([Number of Orders])",
+                  "Name": "Running total"
                 }
               },
-              "index": 0,
-              "length": 1
+              "queryRef": "select",
+              "nativeQueryRef": "Running total"
             }
           ]
         }
       }
     },
     "objects": {
-      "labels": [
+      "valueAxis": [
         {
           "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "optimizeLabelDisplay": {
+            "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -132,9 +125,42 @@
             }
           }
         }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Running Order Total'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "background": [
         {
           "properties": {
@@ -146,19 +172,6 @@
                       "Value": "'#FCFBF7'"
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      ],
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Number of Orders'"
                 }
               }
             }

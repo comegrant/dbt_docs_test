@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "98ba5ab37dd3009587b9",
   "position": {
-    "x": 21.666666666666668,
-    "y": 431.66666666666669,
-    "z": 1000,
-    "height": 266.66666666666669,
-    "width": 1235,
-    "tabOrder": 1000
+    "x": 32,
+    "y": 448.00000000000006,
+    "z": 2000,
+    "height": 240,
+    "width": 1216,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -17,17 +17,42 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Calendar Week"
+                  "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Calendar Week",
-              "nativeQueryRef": "Calendar Week",
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Week"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Week",
+              "nativeQueryRef": "Financial Date Hierarchy Week",
               "active": true
             }
           ]
@@ -48,36 +73,6 @@
               "queryRef": "Brands.Brand Name",
               "nativeQueryRef": "Brand Name",
               "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Name"
-                }
-              },
-              "queryRef": "Products.Product Name",
-              "nativeQueryRef": "Product Name",
-              "active": false
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Variation Name"
-                }
-              },
-              "queryRef": "Products.Product Variation Name",
-              "nativeQueryRef": "Product Variation Name",
-              "active": false
             }
           ]
         },
@@ -131,19 +126,6 @@
               }
             },
             "direction": "Ascending"
-          },
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Products"
-                  }
-                },
-                "Property": "Product Name"
-              }
-            },
-            "direction": "Ascending"
           }
         ]
       }
@@ -158,7 +140,6 @@
             "queryRefs": [
               "Brands.Brand Name"
             ],
-            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -172,35 +153,32 @@
               }
             ],
             "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "Products.Product Name"
-            ],
-            "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Name"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "Products.Product Variation Name"
-            ],
-            "isCollapsed": true,
-            "isPinned": true
           }
         ],
-        "root": {}
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Adams Matkasse'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Godtlevert'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
       }
     ],
     "visualContainerObjects": {
@@ -357,6 +335,36 @@
             }
           ]
         }
+      },
+      {
+        "name": "a5572c62e7512e215608",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "68bfe0c007a8086ebb70",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Type Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
       }
     ]
   }

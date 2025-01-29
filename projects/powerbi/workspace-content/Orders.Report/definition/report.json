@@ -3,12 +3,12 @@
   "themeCollection": {
     "baseTheme": {
       "name": "CY24SU10",
-      "reportVersionAtImport": "5.59",
+      "reportVersionAtImport": "5.61",
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate019253040061074644.json",
-      "reportVersionAtImport": "5.60",
+      "name": "CheffeloTemplate21763670927643375.json",
+      "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
   },
@@ -36,7 +36,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
@@ -61,8 +61,18 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate019253040061074644.json",
-          "path": "CheffeloTemplate019253040061074644.json",
+          "name": "Cheffelo-Report-Background7133737335044825.svg",
+          "path": "Cheffelo-Report-Background7133737335044825.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background17826666637988886.svg",
+          "path": "Cheffelo-Report-Background17826666637988886.svg",
+          "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate21763670927643375.json",
+          "path": "CheffeloTemplate21763670927643375.json",
           "type": "CustomTheme"
         }
       ]

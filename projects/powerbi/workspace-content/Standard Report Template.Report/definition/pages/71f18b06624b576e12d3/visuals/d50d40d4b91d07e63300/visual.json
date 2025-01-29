@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "2cfc1fb053b4405d37a4",
+  "name": "d50d40d4b91d07e63300",
   "position": {
-    "x": 15.476270442038908,
+    "x": 16.267782426778243,
     "y": 0,
-    "z": 2000,
-    "height": 56,
-    "width": 176,
-    "tabOrder": 1000
+    "z": 4000,
+    "height": 57.238493723849366,
+    "width": 181.35564853556485,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -32,25 +32,22 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "isDefaultSort": true
       }
     },
     "objects": {
-      "data": [
-        {
-          "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Dropdown'"
-                }
-              }
-            }
-          }
-        }
-      ],
       "general": [
         {
           "properties": {
+            "orientation": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
             "filter": {
               "filter": {
                 "Version": 2,
@@ -81,6 +78,13 @@
                           [
                             {
                               "Literal": {
+                                "Value": "'Adams Matkasse'"
+                              }
+                            }
+                          ],
+                          [
+                            {
+                              "Literal": {
                                 "Value": "'Godtlevert'"
                               }
                             }
@@ -98,34 +102,12 @@
                                 "Value": "'RetNemt'"
                               }
                             }
-                          ],
-                          [
-                            {
-                              "Literal": {
-                                "Value": "'Adams Matkasse'"
-                              }
-                            }
                           ]
                         ]
                       }
                     }
                   }
                 ]
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "''"
-                }
               }
             }
           }

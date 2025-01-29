@@ -1,58 +1,34 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "fbf03149d940004000d6",
+  "name": "7de69051161c0a25254b",
   "position": {
-    "x": 721.53846153846155,
-    "y": 416.15384615384613,
-    "z": 1000,
-    "height": 287.69230769230768,
-    "width": 542.30769230769226,
-    "tabOrder": 1000
+    "x": 656,
+    "y": 240,
+    "z": 8000,
+    "height": 464,
+    "width": 608,
+    "tabOrder": 8000
   },
   "visual": {
-    "visualType": "pivotTable",
+    "visualType": "tableEx",
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Portions"
-                }
-              },
-              "queryRef": "Products.Portions",
-              "nativeQueryRef": "Portions",
-              "active": true
-            }
-          ]
-        },
-        "Rows": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Meals"
-                }
-              },
-              "queryRef": "Products.Meals",
-              "nativeQueryRef": "Meals",
-              "active": true
-            }
-          ]
-        },
         "Values": {
           "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Products"
+                    }
+                  },
+                  "Property": "Product Name"
+                }
+              },
+              "queryRef": "Products.Product Name",
+              "nativeQueryRef": "Product Name"
+            },
             {
               "field": {
                 "Measure": {
@@ -66,6 +42,20 @@
               },
               "queryRef": "Order Measures.Number of Orders",
               "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Net Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Net Ex Vat",
+              "nativeQueryRef": "Order Value Net Ex Vat"
             }
           ]
         }
@@ -88,13 +78,6 @@
         ]
       }
     },
-    "objects": {
-      "total": [
-        {
-          "properties": {}
-        }
-      ]
-    },
     "visualContainerObjects": {
       "title": [
         {
@@ -102,7 +85,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Orders per Meal and Portions'"
+                  "Value": "'Most Ordered Groceries'"
                 }
               }
             }
@@ -127,6 +110,45 @@
           }
         },
         "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "Products",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "p"
+                          }
+                        },
+                        "Property": "Product Type Name"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Standalone-groceries'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
         "howCreated": "User"
       }
     ]
