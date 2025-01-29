@@ -1,0 +1,104 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "2db01a10637d076e9a03",
+  "position": {
+    "x": 660.13986013986016,
+    "y": 96.969696969696969,
+    "z": 3000,
+    "height": 357.2960372960373,
+    "width": 473.65967365967367,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Recipes"
+                    }
+                  },
+                  "Property": "Recipe Main Ingredient Name"
+                }
+              },
+              "queryRef": "Recipes.Recipe Main Ingredient Name",
+              "nativeQueryRef": "Main Ingredient",
+              "displayName": "Main Ingredient"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Removed Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Number of Removed Dishes",
+              "displayName": "Number of Removed Dishes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Preselected Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Preselected Dishes",
+              "nativeQueryRef": "Number of Preselections",
+              "displayName": "Number of Preselections"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Removed Recipes per Main Ingredient'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Number of removed Recipes per Main Ingredient'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

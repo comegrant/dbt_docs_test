@@ -3,49 +3,89 @@
   "name": "extension",
   "entities": [
     {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "Number of Customers Completed Quiz running total in Date",
+          "dataType": "Double",
+          "expression": "\nCALCULATE(\n\t\t\t[Number of Customers Completed Quiz],\n\t\t\tFILTER(\n\t\t\t\tALLSELECTED('Dates'),\n\t\t\t\t'Dates'[Date] <= MAX('Dates'[Date])\n\t\t\t)\n\t\t)",
+          "measureTemplate": {
+            "daxTemplateName": "RunningTotal",
+            "version": 0
+          },
+          "references": {
+            "measures": [
+              {
+                "entity": "Subscription Quiz Measures",
+                "name": "Number of Customers Completed Quiz"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "Order Measures",
       "measures": [
         {
-          "name": "Share of Orders With Meal Adjustments",
+          "name": "_Share of Orders to Preselected Dishes",
           "dataType": "Double",
-          "expression": "\n\n[Number of Orders with Adjusted Meals]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Ordered Dishes],[Number of Preselected Dishes], BLANK())",
+          "formatString": "0",
           "references": {
             "measures": [
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders with Adjusted Meals"
+                "name": "Number of Ordered Dishes"
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Preselected Dishes"
               }
             ]
           }
         },
         {
-          "name": "Share of Orders With Decreased Meals",
+          "name": "_Share of Orders Selected by Customers",
           "dataType": "Double",
-          "expression": "\n\n [Number of Orders with Decreased Meals]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Added Dishes], [Number of Ordered Dishes], BLANK())",
+          "formatString": "0\\ %;-0\\ %;0\\ %",
           "references": {
             "measures": [
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders with Decreased Meals"
+                "name": "Number of Added Dishes"
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Ordered Dishes"
               }
             ]
           }
         },
         {
-          "name": "Share of Orders With Increased Meals",
+          "name": "_Share of Preselections Removed by Customers",
           "dataType": "Double",
-          "expression": "\n\n [Number of Orders with Increased Meals]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Removed Dishes], [Number of Preselected Dishes], BLANK())",
+          "formatString": "0\\ %;-0\\ %;0\\ %",
+          "references": {
+            "measures": [
+              {
+                "entity": "Order Measures",
+                "name": "Number of Removed Dishes"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Preselected Dishes"
+              }
+            ]
+          }
+        },
+        {
+          "name": "_Share of Orders with Increased Meals",
+          "dataType": "Double",
+          "expression": "DIVIDE([Number of Orders with Increased Meals], [Number of Ordered Dishes], BLANK())",
+          "formatString": "0.0\\ %;-0.0\\ %;0.0\\ %",
           "references": {
             "measures": [
               {
@@ -54,34 +94,34 @@
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Ordered Dishes"
               }
             ]
           }
         },
         {
-          "name": "Share of Orders With Portion Adjustments",
+          "name": "_Share of Orders with Decreased Meals",
           "dataType": "Double",
-          "expression": "\n\n[Number of Orders with Adjusted Portions]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Orders with Decreased Meals], [Number of Ordered Dishes], BLANK())",
+          "formatString": "0.0\\ %;-0.0\\ %;0.0\\ %",
           "references": {
             "measures": [
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders with Adjusted Portions"
+                "name": "Number of Orders with Decreased Meals"
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Ordered Dishes"
               }
             ]
           }
         },
         {
-          "name": "Share of Orders With Increased Portions",
+          "name": "_Share of Orders with Increased Portions",
           "dataType": "Double",
-          "expression": "\n\n[Number of Orders with Increased Portions]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Orders with Increased Portions], [Number of Ordered Dishes], BLANK())",
+          "formatString": "0.0\\ %;-0.0\\ %;0.0\\ %",
           "references": {
             "measures": [
               {
@@ -90,16 +130,16 @@
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Ordered Dishes"
               }
             ]
           }
         },
         {
-          "name": "Share of Orders With Decreased Portions",
+          "name": "_Share of Orders with Decreased Portions",
           "dataType": "Double",
-          "expression": "\n\n[Number of Orders with Decreased Portions]/[Number of Orders]",
-          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "expression": "DIVIDE([Number of Orders with Decreased Portions], [Number of Ordered Dishes], BLANK())",
+          "formatString": "0.0\\ %;-0.0\\ %;0.0\\ %",
           "references": {
             "measures": [
               {
@@ -108,7 +148,37 @@
               },
               {
                 "entity": "Order Measures",
-                "name": "Number of Orders"
+                "name": "Number of Ordered Dishes"
+              }
+            ]
+          }
+        },
+        {
+          "name": "_Bar Share of Preselections Removed by Customers",
+          "dataType": "Double",
+          "expression": "[_Share of Preselections Removed by Customers] ",
+          "formatString": "0\\ %;-0\\ %;0\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "_Share of Preselections Removed by Customers"
+              }
+            ]
+          }
+        },
+        {
+          "name": "_Bar Share of Orders Selected by Customers",
+          "dataType": "Double",
+          "expression": "[_Share of Orders Selected by Customers]",
+          "formatString": "0\\ %;-0\\ %;0\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "_Share of Orders Selected by Customers"
               }
             ]
           }
