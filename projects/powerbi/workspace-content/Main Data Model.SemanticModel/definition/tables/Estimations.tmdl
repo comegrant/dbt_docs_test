@@ -44,7 +44,7 @@ table Estimations
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Foreign key connecting to Companies dimension
+	/// Foreign key connecting to Brands dimension
 	column fk_dim_companies
 		dataType: string
 		isHidden

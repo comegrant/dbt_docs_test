@@ -14,10 +14,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Companies"
+                "Entity": "Brands"
               }
             },
-            "Property": "Company Name"
+            "Property": "Brand Name"
           }
         },
         "type": "Categorical",

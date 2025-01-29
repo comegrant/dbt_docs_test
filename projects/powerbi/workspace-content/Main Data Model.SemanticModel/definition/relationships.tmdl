@@ -4,7 +4,7 @@ relationship AutoDetected_e2743f17-0d8e-46ce-9ecc-8b3a5fa86665
 
 relationship AutoDetected_1c6f7075-9408-4ef1-a6d6-1fcb469d6fd6
 	fromColumn: 'Order Measures'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship AutoDetected_639e001b-4438-4a77-89e7-f452e3f581ab
 	fromColumn: 'Order Measures'.fk_dim_products
@@ -12,7 +12,7 @@ relationship AutoDetected_639e001b-4438-4a77-89e7-f452e3f581ab
 
 relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
 	fromColumn: 'Menu Measures'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8
 	fromColumn: 'Order Measures'.fk_dim_order_types
@@ -62,7 +62,7 @@ relationship AutoDetected_b5aa7795-c7f8-4850-9e10-f47ec3b90dc2
 
 relationship e863a9ca-e39e-3b1d-ceac-f143d8837a33
 	fromColumn: 'Agreements Daily'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship 80ad5cb7-6e7b-4f09-60ab-16f7b71c1212
 	fromColumn: 'Agreements Weekly'.days_since_first_order
@@ -74,7 +74,7 @@ relationship 34c05f4c-e1ab-3500-05fd-114e4f3ff1e5
 
 relationship 360d6910-73d1-7780-6386-23ba2b1cc178
 	fromColumn: 'Agreements Weekly'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship b187097e-4edd-c2af-794c-54ec55a36dd9
 	fromColumn: 'Agreements Weekly'.fk_dim_date
@@ -90,7 +90,7 @@ relationship 63a19fc9-c4fd-4535-be80-e864e132d10e
 
 relationship 41c64e31-dd99-14c5-70ee-9585ecb949c1
 	fromColumn: 'Subscription Quiz Measures'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship 68328fbb-4f22-943b-4a02-e3b0c2d5feb1
 	fromColumn: 'Subscription Quiz Measures'.fk_dim_date_source_created_at_segment
@@ -130,7 +130,7 @@ relationship 64b4455f-fee3-4a36-89da-f50bb78ef892
 
 relationship a6aaeb11-1df1-e4bf-605e-ece62ef56e5c
 	fromColumn: Estimations.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship 1528d5c6-3e5b-dd80-431b-4877d5a445be
 	fromColumn: Estimations.fk_dim_date_menu_week
@@ -173,7 +173,7 @@ relationship 2a9d1fab-29f1-ed92-1250-81344f605238
 
 relationship 17549b92-f0dd-0479-2859-58110c1dc12c
 	fromColumn: 'Customer Measures'.fk_dim_companies
-	toColumn: Companies.pk_dim_companies
+	toColumn: Brands.pk_dim_companies
 
 relationship 4ddd3c4b-2b92-dc61-fca1-ca9175a4a760
 	fromColumn: 'Customer Measures'.fk_dim_dates

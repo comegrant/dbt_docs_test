@@ -97,10 +97,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Companies"
+                "Entity": "Brands"
               }
             },
-            "Property": "Company Name"
+            "Property": "Brand Name"
           }
         },
         "filter": {
@@ -108,7 +108,7 @@
           "From": [
             {
               "Name": "c",
-              "Entity": "Companies",
+              "Entity": "Brands",
               "Type": 0
             }
           ],
@@ -124,7 +124,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Company Name"
+                        "Property": "Brand Name"
                       }
                     }
                   ],

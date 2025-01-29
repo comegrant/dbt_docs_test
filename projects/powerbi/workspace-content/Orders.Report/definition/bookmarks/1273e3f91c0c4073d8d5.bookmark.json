@@ -22,7 +22,7 @@
                 "From": [
                   {
                     "Name": "c",
-                    "Entity": "Companies",
+                    "Entity": "Brands",
                     "Type": 0
                   }
                 ],
@@ -38,7 +38,7 @@
                                   "Source": "c"
                                 }
                               },
-                              "Property": "Company Name"
+                              "Property": "Brand Name"
                             }
                           }
                         ],
@@ -81,10 +81,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Companies"
+                      "Entity": "Brands"
                     }
                   },
-                  "Property": "Company Name"
+                  "Property": "Brand Name"
                 }
               },
               "howCreated": 1
@@ -98,7 +98,7 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Companies"
+                      "Entity": "Brands"
                     }
                   },
                   "Property": "Country Name"
@@ -299,10 +299,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Companies"
+                      "Entity": "Brands"
                     }
                   },
-                  "Property": "Company Name"
+                  "Property": "Brand Name"
                 }
               },
               "howCreated": 1
@@ -340,10 +340,10 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Companies"
+                          "Entity": "Brands"
                         }
                       },
-                      "Property": "Company Name"
+                      "Property": "Brand Name"
                     }
                   },
                   {
@@ -378,7 +378,7 @@
                   "levels": [
                     {
                       "queryRefs": [
-                        "Companies.Company Name"
+                        "Brands.Brand Name"
                       ],
                       "isCollapsed": true,
                       "identityKeys": [
@@ -386,10 +386,10 @@
                           "Column": {
                             "Expression": {
                               "SourceRef": {
-                                "Entity": "Companies"
+                                "Entity": "Brands"
                               }
                             },
-                            "Property": "Company Name"
+                            "Property": "Brand Name"
                           }
                         }
                       ],

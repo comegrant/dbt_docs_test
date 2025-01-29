@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Companies"
+                      "Entity": "Brands"
                     }
                   },
-                  "Property": "Company Name"
+                  "Property": "Brand Name"
                 }
               },
-              "queryRef": "Companies.Company Name",
-              "nativeQueryRef": "Company Name"
+              "queryRef": "Brands.Brand Name",
+              "nativeQueryRef": "Brand Name"
             }
           ]
         },
@@ -329,10 +329,10 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Companies"
+                            "Entity": "Brands"
                           }
                         },
-                        "Property": "Company Name"
+                        "Property": "Brand Name"
                       }
                     },
                     "Right": {
@@ -665,10 +665,10 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Companies"
+                "Entity": "Brands"
               }
             },
-            "Property": "Company Name"
+            "Property": "Brand Name"
           }
         },
         "objects": {

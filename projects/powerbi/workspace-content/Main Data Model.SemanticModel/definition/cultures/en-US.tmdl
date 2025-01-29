@@ -693,7 +693,7 @@ cultureInfo en-US
 			    "company": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies"
+			          "ConceptualEntity": "Brands"
 			        }
 			      },
 			      "State": "Generated",
@@ -798,7 +798,7 @@ cultureInfo en-US
 			    "company.pk_dim_company": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
+			          "ConceptualEntity": "Brands",
 			          "ConceptualProperty": "pk_dim_companies"
 			        }
 			      },
@@ -930,8 +930,8 @@ cultureInfo en-US
 			    "company.company_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
-			          "ConceptualProperty": "Company Id"
+			          "ConceptualEntity": "Brands",
+			          "ConceptualProperty": "Brand Id"
 			        }
 			      },
 			      "State": "Generated",
@@ -1049,7 +1049,7 @@ cultureInfo en-US
 			    "company.language_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
+			          "ConceptualEntity": "Brands",
 			          "ConceptualProperty": "Language Id"
 			        }
 			      },
@@ -1174,8 +1174,8 @@ cultureInfo en-US
 			    "company.company_name": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
-			          "ConceptualProperty": "Company Name"
+			          "ConceptualEntity": "Brands",
+			          "ConceptualProperty": "Brand Name"
 			        }
 			      },
 			      "State": "Generated",
@@ -1297,7 +1297,7 @@ cultureInfo en-US
 			    "company.country_name": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
+			          "ConceptualEntity": "Brands",
 			          "ConceptualProperty": "Country Name"
 			        }
 			      },
@@ -1399,7 +1399,7 @@ cultureInfo en-US
 			    "company.country_currency": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Companies",
+			          "ConceptualEntity": "Brands",
 			          "ConceptualProperty": "Country Currency"
 			        }
 			      },
@@ -30420,7 +30420,7 @@ cultureInfo en-US
 			    },
 			    "company_has_country_currency": {
 			      "Binding": {
-			        "ConceptualEntity": "Companies"
+			        "ConceptualEntity": "Brands"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -30453,7 +30453,7 @@ cultureInfo en-US
 			    },
 			    "company_has_country_name": {
 			      "Binding": {
-			        "ConceptualEntity": "Companies"
+			        "ConceptualEntity": "Brands"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -30486,7 +30486,7 @@ cultureInfo en-US
 			    },
 			    "company_has_company_name": {
 			      "Binding": {
-			        "ConceptualEntity": "Companies"
+			        "ConceptualEntity": "Brands"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -30796,7 +30796,7 @@ cultureInfo en-US
 			    },
 			    "company_in_country_currency": {
 			      "Binding": {
-			        "ConceptualEntity": "Companies"
+			        "ConceptualEntity": "Brands"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -30841,7 +30841,7 @@ cultureInfo en-US
 			    },
 			    "company_in_country_name": {
 			      "Binding": {
-			        "ConceptualEntity": "Companies"
+			        "ConceptualEntity": "Brands"
 			      },
 			      "State": "Generated",
 			      "Roles": {

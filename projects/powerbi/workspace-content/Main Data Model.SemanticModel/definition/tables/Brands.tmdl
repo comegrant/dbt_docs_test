@@ -1,4 +1,4 @@
-table Companies
+table Brands
 	lineageTag: 3b7baf1d-beaf-4be6-98c8-8c0e917f79f1
 
 	column pk_dim_companies
@@ -13,7 +13,7 @@ table Companies
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Company Id'
+	column 'Brand Id'
 		dataType: string
 		isHidden
 		lineageTag: 2f5a893e-1f08-4b4a-bcec-9dcd7fd5eab0
@@ -24,7 +24,7 @@ table Companies
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Company Name'
+	column 'Brand Name'
 		dataType: string
 		lineageTag: 10650cc4-9738-4853-ac78-25e87facc476
 		summarizeBy: none
@@ -48,7 +48,7 @@ table Companies
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Companies = m
+	partition Brands = m
 		mode: directQuery
 		source =
 				let
