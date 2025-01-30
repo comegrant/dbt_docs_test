@@ -1,20 +1,40 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "4bb04c729e63160e2026",
+  "name": "15ffb83ca7493e22e05d",
   "position": {
-    "x": 656,
-    "y": 96,
-    "z": 4000,
-    "height": 320,
-    "width": 592,
-    "tabOrder": 4000
+    "x": 32,
+    "y": 400.00000000000006,
+    "z": 0,
+    "height": 288,
+    "width": 464,
+    "tabOrder": 0
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "hundredPercentStackedColumnChart",
     "query": {
       "queryState": {
         "Category": {
           "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Year"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": true
+            },
             {
               "field": {
                 "HierarchyLevel": {
@@ -41,22 +61,17 @@
           "projections": [
             {
               "field": {
-                "HierarchyLevel": {
+                "Column": {
                   "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
+                    "SourceRef": {
+                      "Entity": "Billing Agreements"
                     }
                   },
-                  "Level": "Year"
+                  "Property": "Signup Year"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year"
+              "queryRef": "Billing Agreements.Signup Year",
+              "nativeQueryRef": "Signup Year"
             }
           ]
         },
@@ -75,75 +90,40 @@
               },
               "queryRef": "Order Measures.Number of Orders",
               "nativeQueryRef": "Number of Orders",
-              "hidden": true
-            },
+              "displayName": "Number of Orders"
+            }
+          ],
+          "fieldParameters": [
             {
-              "field": {
-                "NativeVisualCalculation": {
-                  "Language": "dax",
-                  "Expression": "RUNNINGSUM([Number of Orders])",
-                  "Name": "Running total"
+              "parameterExpr": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "(Param) Measures"
+                    }
+                  },
+                  "Property": "(Param) Order Measures"
                 }
               },
-              "queryRef": "select",
-              "nativeQueryRef": "Running total"
+              "index": 0,
+              "length": 1
             }
           ]
         }
       }
     },
     "objects": {
-      "valueAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "categoryAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "titleFontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "12D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "zoom": [
+      "labels": [
         {
           "properties": {
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "showLabels": {
-              "expr": {
-                "Literal": {
                   "Value": "false"
                 }
               }
             },
-            "showOnValueAxis": {
+            "optimizeLabelDisplay": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -155,19 +135,6 @@
       ]
     },
     "visualContainerObjects": {
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Running Order Total'"
-                }
-              }
-            }
-          }
-        }
-      ],
       "background": [
         {
           "properties": {
@@ -179,6 +146,19 @@
                       "Value": "'#FCFBF7'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of Orders'"
                 }
               }
             }

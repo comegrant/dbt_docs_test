@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "4bb04c729e63160e2026",
+  "name": "6e2ad7bd806d063271c5",
   "position": {
-    "x": 656,
+    "x": 32,
     "y": 96,
-    "z": 4000,
-    "height": 320,
-    "width": 592,
-    "tabOrder": 4000
+    "z": 1000,
+    "height": 288,
+    "width": 560,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "lineChart",
@@ -74,85 +74,11 @@
                 }
               },
               "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders",
-              "hidden": true
-            },
-            {
-              "field": {
-                "NativeVisualCalculation": {
-                  "Language": "dax",
-                  "Expression": "RUNNINGSUM([Number of Orders])",
-                  "Name": "Running total"
-                }
-              },
-              "queryRef": "select",
-              "nativeQueryRef": "Running total"
+              "nativeQueryRef": "Number of Orders"
             }
           ]
         }
       }
-    },
-    "objects": {
-      "valueAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "categoryAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "titleFontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "12D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "zoom": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "showLabels": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "showOnValueAxis": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -161,24 +87,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Running Order Total'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "background": [
-        {
-          "properties": {
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
+                  "Value": "'Number of Orders'"
                 }
               }
             }

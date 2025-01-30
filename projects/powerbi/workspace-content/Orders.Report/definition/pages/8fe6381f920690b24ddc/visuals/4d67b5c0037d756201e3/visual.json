@@ -1,19 +1,19 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "4bb04c729e63160e2026",
+  "name": "4d67b5c0037d756201e3",
   "position": {
     "x": 656,
-    "y": 96,
-    "z": 4000,
-    "height": 320,
+    "y": 448.00000000000006,
+    "z": 7000,
+    "height": 240,
     "width": 592,
-    "tabOrder": 4000
+    "tabOrder": 7000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Category": {
+        "Rows": {
           "projections": [
             {
               "field": {
@@ -34,11 +34,7 @@
               "queryRef": "Dates.Financial Date Hierarchy.Week",
               "nativeQueryRef": "Financial Date Hierarchy Week",
               "active": true
-            }
-          ]
-        },
-        "Series": {
-          "projections": [
+            },
             {
               "field": {
                 "HierarchyLevel": {
@@ -56,11 +52,12 @@
                 }
               },
               "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year"
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": false
             }
           ]
         },
-        "Y": {
+        "Values": {
           "projections": [
             {
               "field": {
@@ -74,29 +71,105 @@
                 }
               },
               "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders",
-              "hidden": true
+              "nativeQueryRef": "Number of Orders"
             },
             {
               "field": {
-                "NativeVisualCalculation": {
-                  "Language": "dax",
-                  "Expression": "RUNNINGSUM([Number of Orders])",
-                  "Name": "Running total"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Average Order Value Gross Ex Vat"
                 }
               },
-              "queryRef": "select",
-              "nativeQueryRef": "Running total"
+              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
+              "nativeQueryRef": "Average Order Value Gross Ex Vat",
+              "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat",
+              "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Week"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
       }
     },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Week"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Week"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Year"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {}
+      }
+    ],
     "objects": {
-      "valueAxis": [
+      "blankRows": [
         {
           "properties": {
-            "showAxisTitle": {
+            "showBlankRows": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -106,44 +179,17 @@
           }
         }
       ],
-      "categoryAxis": [
+      "subTotals": [
         {
           "properties": {
-            "showAxisTitle": {
+            "columnSubtotals": {
               "expr": {
                 "Literal": {
                   "Value": "false"
                 }
               }
             },
-            "titleFontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "12D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "zoom": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "showLabels": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "showOnValueAxis": {
+            "rowSubtotals": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -161,24 +207,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Running Order Total'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "background": [
-        {
-          "properties": {
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
+                  "Value": "'Comparing a Week Across Previous Years'"
                 }
               }
             }

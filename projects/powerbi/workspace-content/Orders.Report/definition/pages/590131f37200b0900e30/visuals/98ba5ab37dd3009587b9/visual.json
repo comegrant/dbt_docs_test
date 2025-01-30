@@ -2,18 +2,18 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "98ba5ab37dd3009587b9",
   "position": {
-    "x": 24,
-    "y": 448,
+    "x": 32,
+    "y": 432,
     "z": 2000,
-    "height": 240,
-    "width": 1232,
+    "height": 272,
+    "width": 1216,
     "tabOrder": 2000
   },
   "visual": {
     "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Columns": {
+        "Rows": {
           "projections": [
             {
               "field": {
@@ -54,11 +54,7 @@
               "queryRef": "Dates.Financial Date Hierarchy.Week",
               "nativeQueryRef": "Financial Date Hierarchy Week",
               "active": true
-            }
-          ]
-        },
-        "Rows": {
-          "projections": [
+            },
             {
               "field": {
                 "Column": {
@@ -72,7 +68,7 @@
               },
               "queryRef": "Brands.Brand Name",
               "nativeQueryRef": "Brand Name",
-              "active": true
+              "active": false
             }
           ]
         },
@@ -90,24 +86,49 @@
                 }
               },
               "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders",
-              "displayName": "Number of Orders"
-            }
-          ],
-          "fieldParameters": [
+              "nativeQueryRef": "Number of Orders"
+            },
             {
-              "parameterExpr": {
-                "Column": {
+              "field": {
+                "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "(Param) Measures"
+                      "Entity": "Order Measures"
                     }
                   },
-                  "Property": "(Param) Order Measures"
+                  "Property": "Order Value Gross Ex Vat"
                 }
               },
-              "index": 0,
-              "length": 1
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Average Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
+              "nativeQueryRef": "Average Order Value Gross Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Discount Value Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Discount Value Ex Vat",
+              "nativeQueryRef": "Discount Value Ex Vat"
             }
           ]
         }
@@ -138,8 +159,47 @@
         "levels": [
           {
             "queryRefs": [
+              "Dates.Financial Date Hierarchy.Year"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Year"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Week"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Week"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
               "Brands.Brand Name"
             ],
+            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -161,17 +221,7 @@
               "identityValues": [
                 {
                   "Literal": {
-                    "Value": "'Adams Matkasse'"
-                  }
-                }
-              ],
-              "isToggled": true
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'Godtlevert'"
+                    "Value": "2025L"
                   }
                 }
               ],
@@ -181,6 +231,28 @@
         }
       }
     ],
+    "objects": {
+      "subTotals": [
+        {
+          "properties": {
+            "columnSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "visualContainerObjects": {
       "title": [
         {

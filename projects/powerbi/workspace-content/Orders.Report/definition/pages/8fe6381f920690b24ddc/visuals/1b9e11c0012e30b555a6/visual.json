@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "1b9e11c0012e30b555a6",
   "position": {
-    "x": 24,
+    "x": 32,
     "y": 96,
     "z": 0,
     "height": 592,
-    "width": 600,
+    "width": 592,
     "tabOrder": 0
   },
   "visual": {
@@ -15,26 +15,6 @@
       "queryState": {
         "Category": {
           "projections": [
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
-                    }
-                  },
-                  "Level": "Quarter"
-                }
-              },
-              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
-              "nativeQueryRef": "Financial Date Hierarchy Quarter",
-              "active": true
-            },
             {
               "field": {
                 "HierarchyLevel": {
@@ -124,7 +104,7 @@
             "showAxisTitle": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -464,7 +444,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -472,6 +452,20 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "categoryMax": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "categorySize": {
+              "expr": {
+                "Literal": {
+                  "Value": "33.55462331531867D"
                 }
               }
             }

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "0bb84d4ad9adbc68d2b7",
+  "position": {
+    "x": 528,
+    "y": 400.00000000000006,
+    "z": 4000,
+    "height": 288,
+    "width": 720,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Billing Agreements"
+                    }
+                  },
+                  "Property": "Signup Year"
+                }
+              },
+              "queryRef": "Billing Agreements.Signup Year",
+              "nativeQueryRef": "Signup Year",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Average Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
+              "nativeQueryRef": "Average Order Value Gross Ex Vat",
+              "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat",
+              "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Discount Value Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Discount Value Ex Vat",
+              "nativeQueryRef": "Discount Value Ex Vat",
+              "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Billing Agreements"
+                  }
+                },
+                "Property": "Signup Year"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Quality of Signup Cohort In Period'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

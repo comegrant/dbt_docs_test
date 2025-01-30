@@ -1,16 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "30fcf3699936e093098a",
+  "name": "32ef5d275810d651a5b0",
   "position": {
     "x": 32,
     "y": 96,
-    "z": 0,
-    "height": 320,
+    "z": 2000,
+    "height": 288,
     "width": 1216,
-    "tabOrder": 0
+    "tabOrder": 2000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "lineStackedColumnComboChart",
     "query": {
       "queryState": {
         "Category": {
@@ -84,14 +84,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Brands"
+                      "Entity": "Billing Agreements"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Payment Method"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Billing Agreements.Payment Method",
+              "nativeQueryRef": "Payment Method"
             }
           ]
         },
@@ -109,69 +109,13 @@
                 }
               },
               "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders",
-              "displayName": "Number of Orders"
-            }
-          ],
-          "fieldParameters": [
-            {
-              "parameterExpr": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "(Param) Measures"
-                    }
-                  },
-                  "Property": "(Param) Order Measures"
-                }
-              },
-              "index": 0,
-              "length": 1
+              "nativeQueryRef": "Number of Orders"
             }
           ]
         }
       }
     },
-    "objects": {
-      "labels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "optimizeLabelDisplay": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
     "visualContainerObjects": {
-      "background": [
-        {
-          "properties": {
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
       "title": [
         {
           "properties": {

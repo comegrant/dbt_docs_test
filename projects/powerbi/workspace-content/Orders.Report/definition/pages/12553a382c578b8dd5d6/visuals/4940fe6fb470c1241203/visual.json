@@ -1,16 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "4bb04c729e63160e2026",
+  "name": "4940fe6fb470c1241203",
   "position": {
-    "x": 656,
+    "x": 624,
     "y": 96,
-    "z": 4000,
-    "height": 320,
-    "width": 592,
+    "z": 5000,
+    "height": 288,
+    "width": 624,
     "tabOrder": 4000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -79,53 +79,23 @@
             },
             {
               "field": {
-                "NativeVisualCalculation": {
-                  "Language": "dax",
-                  "Expression": "RUNNINGSUM([Number of Orders])",
-                  "Name": "Running total"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Average Order Value Gross Ex Vat"
                 }
               },
-              "queryRef": "select",
-              "nativeQueryRef": "Running total"
+              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
+              "nativeQueryRef": "Average Order Value Gross Ex Vat"
             }
           ]
         }
       }
     },
     "objects": {
-      "valueAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "categoryAxis": [
-        {
-          "properties": {
-            "showAxisTitle": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "titleFontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "12D"
-                }
-              }
-            }
-          }
-        }
-      ],
       "zoom": [
         {
           "properties": {
@@ -133,13 +103,6 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            },
-            "showLabels": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
                 }
               }
             },
@@ -161,24 +124,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Running Order Total'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "background": [
-        {
-          "properties": {
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
+                  "Value": "'Average Order Value of  Add-ons'"
                 }
               }
             }
