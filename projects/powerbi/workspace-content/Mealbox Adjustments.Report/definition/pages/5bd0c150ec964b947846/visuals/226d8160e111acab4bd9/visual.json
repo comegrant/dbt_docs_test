@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "e7eb3b49ae404bebb56a",
+  "name": "226d8160e111acab4bd9",
   "position": {
     "x": 859,
-    "y": 92,
-    "z": 1000,
+    "y": 400,
+    "z": 4001,
     "height": 300,
     "width": 400,
-    "tabOrder": 1000
+    "tabOrder": 4001
   },
   "visual": {
     "visualType": "donutChart",
@@ -41,12 +41,12 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Ordered Dishes"
+                  "Property": "Number of Preselected Dishes"
                 }
               },
-              "queryRef": "Order Measures.Number of Ordered Dishes",
-              "nativeQueryRef": "Ordered",
-              "displayName": "Ordered"
+              "queryRef": "Order Measures.Number of Preselected Dishes",
+              "nativeQueryRef": "Preselected",
+              "displayName": "Preselected"
             }
           ]
         }
@@ -61,12 +61,13 @@
                     "Entity": "Order Measures"
                   }
                 },
-                "Property": "Number of Ordered Dishes"
+                "Property": "Number of Preselected Dishes"
               }
             },
             "direction": "Descending"
           }
-        ]
+        ],
+        "isDefaultSort": true
       }
     },
     "objects": {
@@ -104,7 +105,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cooking Time Distribution Orderd Dishes'"
+                  "Value": "'Cooking Time Distribution Preselected Dishes'"
                 }
               }
             },

@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate20790398552330025.json",
+      "name": "CheffeloTemplate853311664952435.json",
       "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
@@ -199,9 +199,44 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate20790398552330025.json",
-          "path": "CheffeloTemplate20790398552330025.json",
+          "name": "CheffeloTemplate853311664952435.json",
+          "path": "CheffeloTemplate853311664952435.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "Cheffelo-Report-Background02391280216763203.svg",
+          "path": "Cheffelo-Report-Background02391280216763203.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background6331524024606892.svg",
+          "path": "Cheffelo-Report-Background6331524024606892.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background9550444552757593.svg",
+          "path": "Cheffelo-Report-Background9550444552757593.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background7036167359533325.svg",
+          "path": "Cheffelo-Report-Background7036167359533325.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background2686455383525179.svg",
+          "path": "Cheffelo-Report-Background2686455383525179.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background1583405482307576.svg",
+          "path": "Cheffelo-Report-Background1583405482307576.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background8653047968134591.svg",
+          "path": "Cheffelo-Report-Background8653047968134591.svg",
+          "type": "Image"
         }
       ]
     }

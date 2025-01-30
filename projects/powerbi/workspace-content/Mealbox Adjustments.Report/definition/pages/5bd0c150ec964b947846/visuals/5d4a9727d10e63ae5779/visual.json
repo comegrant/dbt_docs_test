@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "5d4a9727d10e63ae5779",
   "position": {
-    "x": 15.664335664335665,
-    "y": 91.748251748251747,
-    "z": 1000,
-    "height": 342.3776223776224,
-    "width": 676.55011655011663,
-    "tabOrder": 1000
+    "x": 16,
+    "y": 92,
+    "z": 0,
+    "height": 608,
+    "width": 825,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "pivotTable",
@@ -135,17 +135,16 @@
         "sort": [
           {
             "field": {
-              "Measure": {
+              "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Schema": "extension",
-                    "Entity": "Order Measures"
+                    "Entity": "Recipes"
                   }
                 },
-                "Property": "_Bar Share of Preselections Removed by Customers"
+                "Property": "Cooking Time"
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
           }
         ]
       }

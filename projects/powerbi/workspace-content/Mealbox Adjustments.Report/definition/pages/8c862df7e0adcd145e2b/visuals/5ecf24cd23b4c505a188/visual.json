@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "5ecf24cd23b4c505a188",
   "position": {
-    "x": 19.023354564755838,
-    "y": 399.49044585987258,
+    "x": 19,
+    "y": 401,
     "z": 1000,
-    "height": 301.656050955414,
-    "width": 1241.9532908704882,
+    "height": 301,
+    "width": 1242,
     "tabOrder": 1000
   },
   "visual": {
@@ -67,6 +67,21 @@
                       "Entity": "Order Measures"
                     }
                   },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Ordered",
+              "displayName": "Ordered"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
                   "Property": "Number of Preselected Dishes"
                 }
               },
@@ -103,21 +118,6 @@
               "queryRef": "Order Measures.Number of Removed Dishes",
               "nativeQueryRef": "Removed",
               "displayName": "Removed"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Orders"
-                }
-              },
-              "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Ordered",
-              "displayName": "Ordered"
             }
           ]
         }
@@ -162,6 +162,28 @@
           }
         ]
       }
+    },
+    "objects": {
+      "zoom": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showOnValueAxis": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
