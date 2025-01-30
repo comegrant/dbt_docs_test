@@ -1240,6 +1240,7 @@ table 'Order Measures'
 
 	column 'Recipe Comment'
 		dataType: string
+		isHidden
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: recipe_comment
@@ -1320,6 +1321,20 @@ table 'Order Measures'
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Rating Id'
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_rating_id
+
+	column 'Recipe Comment Id'
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: recipe_comment_id
 
 	partition 'Order Measures' = m
 		mode: directQuery

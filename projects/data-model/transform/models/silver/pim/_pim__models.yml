@@ -1021,10 +1021,6 @@ models:
       - name: recipe_rating
         data_type: int
         description: "{{ doc('column__recipe_rating') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
 
       - name: recipe_rating_score
         data_type: double

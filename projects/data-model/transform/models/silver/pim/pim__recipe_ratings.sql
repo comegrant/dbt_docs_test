@@ -15,7 +15,7 @@ source as (
         , agreement_id as billing_agreement_id
 
         {# numerics #}
-        , rating as recipe_rating
+        , case when rating != 0 then rating else null end as recipe_rating
         , case when rating != 0 then 1.00 * (rating-1) * (1/4) * 100 else null end as recipe_rating_score
         , case when rating = 0 then true else false end as is_not_cooked_dish
         

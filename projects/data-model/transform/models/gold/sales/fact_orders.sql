@@ -517,6 +517,8 @@ order_lines as (
 , add_recipe_feedback as (
     select 
         add_recipes_to_orders.*
+        , recipe_feedback.recipe_rating_id
+        , recipe_feedback.recipe_comment_id
         , recipe_feedback.recipe_rating
         , recipe_feedback.recipe_rating_score
         , recipe_feedback.is_not_cooked_dish

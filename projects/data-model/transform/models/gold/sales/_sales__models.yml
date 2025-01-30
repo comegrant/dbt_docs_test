@@ -213,6 +213,14 @@ models:
         data_type: int
         description: "{{ doc('column__preselected_recipe_id') }}"
 
+      - name: recipe_rating_id
+        data_type: string
+        description: "{{ doc('column__recipe_rating_id') }}"
+      
+      - name: recipe_comment_id
+        data_type: string
+        description: "{{ doc('column__recipe_comment_id') }}"
+
       - name: fk_dim_basket_deviation_origins
         data_type: string
         description: ""

@@ -17,6 +17,8 @@ all_tables_joined as (
     select
       coalesce(recipe_ratings.recipe_id, recipe_comments.recipe_id) as recipe_id
     , coalesce(recipe_ratings.billing_agreement_id, recipe_comments.billing_agreement_id) as billing_agreement_id
+    , case when recipe_ratings.recipe_rating is not null then concat(recipe_ratings.billing_agreement_id,recipe_ratings.recipe_id) else null end as recipe_rating_id
+    , case when recipe_comments.recipe_comment is not null then concat(recipe_comments.billing_agreement_id,recipe_comments.recipe_id) else null end as recipe_comment_id
     , recipe_ratings.recipe_rating
     , recipe_ratings.recipe_rating_score
     , recipe_ratings.is_not_cooked_dish
