@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate21763670927643375.json",
+      "name": "CheffeloTemplate6957850951874267.json",
       "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
@@ -36,7 +36,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }
@@ -71,8 +71,8 @@
           "type": "Image"
         },
         {
-          "name": "CheffeloTemplate21763670927643375.json",
-          "path": "CheffeloTemplate21763670927643375.json",
+          "name": "CheffeloTemplate6957850951874267.json",
+          "path": "CheffeloTemplate6957850951874267.json",
           "type": "CustomTheme"
         }
       ]

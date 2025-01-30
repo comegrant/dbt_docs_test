@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "d433b9cde533461532d4",
   "position": {
-    "x": 16,
-    "y": 88,
+    "x": 32,
+    "y": 80,
     "z": 0,
-    "height": 616,
-    "width": 1248,
+    "height": 608,
+    "width": 1216,
     "tabOrder": 0
   },
   "visual": {
@@ -17,17 +17,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Calendar Year"
+                  "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Calendar Year",
-              "nativeQueryRef": "Calendar Year",
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year",
               "active": true
             }
           ]
@@ -207,6 +212,7 @@
           }
         },
         "type": "Advanced",
+        "howCreated": "User",
         "isHiddenInViewMode": true
       },
       {

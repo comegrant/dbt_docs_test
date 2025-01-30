@@ -7,8 +7,8 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate4330679440809455.json",
-      "reportVersionAtImport": "5.60",
+      "name": "CheffeloTemplate10241689156542266.json",
+      "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
   },
@@ -42,6 +42,7 @@
             "Property": "OneSub Flag"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [
@@ -95,6 +96,7 @@
             "Property": "Brand Name"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [
@@ -187,7 +189,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
@@ -212,13 +214,23 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
-          "path": "Yummy_Smile_Calm_Cream_sRGB_(17982809355455864.png",
+          "name": "Cheffelo-Report-Background19017046035466012.svg",
+          "path": "Cheffelo-Report-Background19017046035466012.svg",
           "type": "Image"
         },
         {
-          "name": "CheffeloTemplate4330679440809455.json",
-          "path": "CheffeloTemplate4330679440809455.json",
+          "name": "Cheffelo-Report-Background754968332981035.svg",
+          "path": "Cheffelo-Report-Background754968332981035.svg",
+          "type": "Image"
+        },
+        {
+          "name": "Cheffelo-Report-Background7999055645250852.svg",
+          "path": "Cheffelo-Report-Background7999055645250852.svg",
+          "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate10241689156542266.json",
+          "path": "CheffeloTemplate10241689156542266.json",
           "type": "CustomTheme"
         }
       ]

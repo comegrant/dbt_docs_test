@@ -469,7 +469,7 @@
               "scaling": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Normal'"
+                    "Value": "'Fit'"
                   }
                 }
               }

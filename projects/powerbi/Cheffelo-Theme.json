@@ -82,7 +82,10 @@
                         "show": true,
                         "fontSize": 10,
                         "showAxisTitle": false,
-                        "titleFontSize": 12
+                        "titleFontSize": 12,
+                        "gridlineShow": true,
+                        "gridlineThickness": 1,
+                        "gridlineStyle": "dotted"
                     }
                 ],
                 "y2Axis": [
@@ -176,7 +179,7 @@
                             }
                         },
                         "outline": "None",
-                        "textSize": 10,
+                        "textSize": 9,
                         "fontFamily": "Segoe UI",
                         "padding": 5
                     }
@@ -370,6 +373,15 @@
                         }
                     },
                     "outlineWeight": 2
+                    }
+                ],
+                "values": [
+                    {
+                    "backColorSecondary": {
+                        "solid": {
+                        "color": "#F8F6EF"
+                        }
+                    }
                     }
                 ]
             }

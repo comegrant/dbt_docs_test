@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.4.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "caf8a0074436a0403334",
   "position": {
     "x": 338.18717005279166,
@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 130.23945437022763,
     "width": 280.65909454487286,
-    "tabOrder": 2000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "card",
