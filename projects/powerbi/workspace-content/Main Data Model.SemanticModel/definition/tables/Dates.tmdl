@@ -7,7 +7,7 @@ table Dates
 	/// Date of year on
 	column Date
 		dataType: dateTime
-		formatString: General Date
+		formatString: Short Date
 		lineageTag: 6366d1c4-67b1-4a44-a7b8-c136c3f586f6
 		summarizeBy: none
 		sourceColumn: date

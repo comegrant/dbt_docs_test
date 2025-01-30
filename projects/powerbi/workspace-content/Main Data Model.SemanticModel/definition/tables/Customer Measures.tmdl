@@ -2,6 +2,192 @@ table 'Customer Measures'
 	isHidden
 	lineageTag: d05b49b2-fb42-46e1-9a85-76404c8a551e
 
+	/// This is a hidden measure that can be used to create other measures. 
+	/// It will be a count of changes related to agreements, and represent the agreements after the change.
+	/// The change could be anything, e.g. status, preferences, subscribed products, loyalty level etc.
+	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
+	measure 'Number of Agreement Changes to Filtered State' = COUNTROWS('Customer Measures')
+		isHidden
+		formatString: #,0
+
+	/// This is a hidden measure that can be used to create other measures. 
+	/// It will be a count of changes related to agreements, and represent the agreements before the change.
+	/// The change could be anything, e.g. status, preferences, subscribed products, loyalty level etc.
+	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
+	measure 'Number of Agreement Changes from Filtered State' = 
+			CALCULATE(
+				COUNTROWS('Customer Measures'),
+				USERELATIONSHIP('Customer Measures'[fk_dim_billing_agreements_previous_version],'Billing Agreements'[pk_dim_billing_agreements])
+			)
+		isHidden
+		formatString: #,0
+
+	/// Number of Customers included all statuses (also included deleted).
+	measure 'Number of Customers All Statuses' =
+			CALCULATE(
+				[Number of Agreement Changes to Filtered State] - [Number of Agreement Changes from Filtered State],
+				ALL('Dates'),
+				'Dates'[Date] <= MAX('Dates'[Date])
+			)
+		formatString: #,0
+
+	/// Number of Active Customers
+	measure 'Number of Active Customers' =
+			CALCULATE(
+				[Number of Customers All Statuses], 
+				FILTER(
+					'Dates',
+					Dates[Date]=MAX(Dates[Date])
+				), 
+				'Billing Agreements'[Billing Agreement Status]="Active"
+			)
+		formatString: #,0
+
+	/// Number of Active Customers same period last year.
+	measure 'Number of Active Customers PY' =
+			CALCULATE(
+				[Number of Active Customers],
+				SAMEPERIODLASTYEAR('Dates'[Date]), 
+				ALL('Dates')
+			)
+		formatString: #,0
+
+	/// Number of customers (included all statuses) same period last year.
+	measure 'Number of Customers All Statuses PY' =
+			CALCULATE(
+				[Number of Active Customers],
+				SAMEPERIODLASTYEAR('Dates'[Date]), 
+				ALL('Dates')
+			)
+		formatString: #,0
+
+	/// Number of new customers
+	measure 'Number of New Customers' =
+			CALCULATE(
+				COUNTROWS('Customer Measures'),
+				'Customer Measures'[is_new_agreement]=TRUE()
+			)
+		formatString: #,0
+
+	/// Number of new customers same period last year.
+	measure 'Number of New Customers PY' =
+			CALCULATE(
+				[Number of New Customers],
+				ALL('Dates'),
+				SAMEPERIODLASTYEAR('Dates'[Date])
+			)
+		formatString: #,0
+
+	/// Number of new customers Year to Date. This uses the calendar year.
+	measure 'Number of New Customers YTD' =
+			TOTALYTD(
+				[Number of New Customers],
+				Dates[Date],
+				ALL('Dates')
+			)
+		formatString: #,0
+
+	/// Number of new customers Year to Date, same period last year. This uses the calendar year.
+	measure 'Number of New Customers YTD PY' =
+			TOTALYTD(
+				[Number of New Customers PY],
+				Dates[Date],
+				ALL('Dates')
+			)
+		formatString: #,0
+
+	/// Number of customers changed from active to another status during the selected period.
+	/// It will count number of customers that was in a active state at the beginning of the selected period 
+	/// and was in another status at the end of the selected period.
+	measure	'Number of Customers Changed from Active' = 
+			SUMX(
+				VALUES('Billing Agreements'[Agreement Id]),
+
+				VAR min_updated_at = CALCULATE(
+					MIN('Customer Measures'[updated_at]),
+					'Customer Measures'[has_updated_status]=TRUE(),
+					ALL('Customer Measures'[updated_at]),
+					'Customer Measures'[updated_at]>MIN('Dates'[Date])
+				)
+
+				VAR max_updated_at = CALCULATE(
+					MAX('Customer Measures'[updated_at]),
+					'Customer Measures'[has_updated_status]=TRUE(),
+					ALL('Customer Measures'[updated_at]),
+					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
+				)
+
+				VAR CountStart =
+					CALCULATE(
+						COUNTROWS('Customer Measures'),
+						'Customer Measures'[has_updated_status]=TRUE(),
+						'Customer Measures'[updated_at] = min_updated_at,
+						USERELATIONSHIP(
+							'Customer Measures'[fk_dim_billing_agreements_previous_version],
+							'Billing Agreements'[pk_dim_billing_agreements]
+						),
+						'Billing Agreements'[Billing Agreement Status] = "Active"
+					)
+
+				VAR CountEnd =
+					CALCULATE(
+						COUNTROWS('Customer Measures'),
+						'Customer Measures'[has_updated_status]=TRUE(),
+						'Customer Measures'[updated_at] = max_updated_at,
+						'Billing Agreements'[Billing Agreement Status] <> "Active"
+					)
+
+				RETURN 
+					IF(CountStart>0 && CountEnd>0, 1, 0)
+			)
+		formatString: #,0
+
+	/// Number of customers changed to active from another status during the selected period.
+	/// It will count number of customers that was not in a active state at the beginning of the selected period 
+	/// but was active at the end of the selected period.
+	measure	'Number of Customers Changed to Active' = 
+			SUMX(
+				VALUES('Billing Agreements'[Agreement Id]),
+
+				VAR min_updated_at = CALCULATE(
+					MIN('Customer Measures'[updated_at]),
+					'Customer Measures'[has_updated_status]=TRUE(),
+					ALL('Customer Measures'[updated_at]),
+					'Customer Measures'[updated_at]>MIN('Dates'[Date])
+				)
+
+				VAR max_updated_at = CALCULATE(
+					MAX('Customer Measures'[updated_at]),
+					'Customer Measures'[has_updated_status]=TRUE(),
+					ALL('Customer Measures'[updated_at]),
+					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
+				)
+
+				VAR CountStart =
+					CALCULATE(
+						COUNTROWS('Customer Measures'),
+						'Customer Measures'[has_updated_status]=TRUE(),
+						'Customer Measures'[updated_at] = min_updated_at,
+						USERELATIONSHIP(
+							'Customer Measures'[fk_dim_billing_agreements_previous_version],
+							'Billing Agreements'[pk_dim_billing_agreements]
+						),
+						'Billing Agreements'[Billing Agreement Status] <> "Active"
+					)
+
+				VAR CountEnd =
+					CALCULATE(
+						COUNTROWS('Customer Measures'),
+						'Customer Measures'[has_updated_status]=TRUE(),
+						'Customer Measures'[updated_at] = max_updated_at,
+						'Billing Agreements'[Billing Agreement Status] = "Active"
+					)
+
+				RETURN 
+					IF(CountStart>0 && CountEnd>0, 1, 0)
+			)
+		formatString: #,0
+
 	column fk_dim_dates
 		dataType: int64
 		isHidden
