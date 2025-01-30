@@ -53,7 +53,7 @@ resources:
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               header_message: ❌ Preselector validation job failed for GL
               body_message: Check Databricks for more details
               is_error: true
@@ -112,7 +112,7 @@ resources:
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               header_message: ❌ Preselector validation job failed for LMK
               body_message: Check Databricks for more details
               is_error: true
@@ -171,7 +171,7 @@ resources:
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               header_message: ❌ Preselector validation job failed for AMK
               body_message: Check Databricks for more details
               is_error: true
@@ -230,7 +230,7 @@ resources:
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: local_dev #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
               header_message: ❌ Preselector validation job failed for RT
               body_message: Check Databricks for more details
               is_error: true
