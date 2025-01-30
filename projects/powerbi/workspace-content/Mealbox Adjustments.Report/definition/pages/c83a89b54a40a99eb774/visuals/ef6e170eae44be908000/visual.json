@@ -69,21 +69,6 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Preselected Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Preselected Dishes",
-              "nativeQueryRef": "Preselected",
-              "displayName": "Preselected"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
                   "Property": "Number of Ordered Dishes"
                 }
               },
@@ -99,12 +84,12 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Removed Dishes"
+                  "Property": "Number of Added Dishes"
                 }
               },
-              "queryRef": "Order Measures.Number of Removed Dishes",
-              "nativeQueryRef": "Removed",
-              "displayName": "Removed"
+              "queryRef": "Order Measures.Number of Added Dishes",
+              "nativeQueryRef": "Added",
+              "displayName": "Added"
             },
             {
               "field": {
@@ -114,12 +99,27 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Added Dishes"
+                  "Property": "Number of Preselected Dishes"
                 }
               },
-              "queryRef": "Order Measures.Number of Added Dishes",
-              "nativeQueryRef": "Added",
-              "displayName": "Added"
+              "queryRef": "Order Measures.Number of Preselected Dishes",
+              "nativeQueryRef": "Preselected",
+              "displayName": "Preselected"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Removed Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Removed",
+              "displayName": "Removed"
             }
           ]
         }
