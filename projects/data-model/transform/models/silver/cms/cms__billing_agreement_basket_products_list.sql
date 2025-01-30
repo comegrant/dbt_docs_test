@@ -84,11 +84,17 @@ source as (
 
 , source_history_unioned ( 
 
-    select * from history_before_source
+    select 
+        * 
+        , 'analyticsdb_log' as basket_source
+    from history_before_source
 
     union 
 
-    select * from source_renamed
+    select 
+        * 
+        , 'dbt_snapshots' as basket_source
+    from source_renamed
 
 )
 

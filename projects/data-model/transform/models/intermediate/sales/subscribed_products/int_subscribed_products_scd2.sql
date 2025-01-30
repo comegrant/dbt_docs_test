@@ -1,3 +1,8 @@
+{{ config(
+  materialized="table"
+) }}
+
+
 with 
 
 basket_mealboxes as (
@@ -63,6 +68,7 @@ basket_mealboxes as (
         , product_variation_id as mealbox_product_variation_id
         , valid_from
         , valid_to
+        , basket_source_mealbox
 
     from basket_mealboxes
 
@@ -75,6 +81,7 @@ basket_mealboxes as (
         , basket_products_list
         , valid_from
         , valid_to
+        , basket_source_groceries
 
     from basket_non_mealboxes
 
@@ -166,6 +173,8 @@ basket_mealboxes as (
         , basket_product_object.is_extra_product
         , valid_from
         , valid_to
+        , basket_source_groceries
+        , basket_source_mealbox
     from remove_nulls_for_product_variation_id
     lateral view outer explode(basket_products_list) as basket_product_object
 

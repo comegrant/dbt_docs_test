@@ -1,3 +1,7 @@
+{{ config(
+  materialized="table"
+) }}
+
 with 
 
 subscribed_products as (
@@ -59,6 +63,7 @@ subscribed_products as (
         , portions
         , product_variation_id
         , valid_from
+        , basket_source
     from subscribed_products
     where product_type_id = '{{ var("mealbox_product_type_id") }}'
 
@@ -124,43 +129,42 @@ subscribed_products as (
 , subscribed_mealboxes_unioned as (
 
     select 
-    * 
-    , 'basket' as source
+    *
     from basket_mealbox
 
     union all
 
     select 
     * 
-    , 'signup' as source
+    , 'signup' as basket_source
     from signup_mealbox
 
     union all
 
     select 
     * 
-    , 'preselector' as source
+    , 'preselector' as basket_source
     from preselector_mealbox
 
     union all
 
     select 
     * 
-    , 'mealselector' as source
+    , 'mealselector' as basket_source
     from mealselector_mealbox
 
     union all
 
     select 
     * 
-    , 'orders' as source
+    , 'orders' as basket_source
     from mealboxes_from_orders
 
     union all
 
     select 
     *
-    , 'onesub_migration' as deviation_source
+    , 'onesub_migration' as basket_source
     from onesub_migration_mealbox
 
 )
@@ -187,7 +191,7 @@ subscribed_products as (
         , subscribed_mealboxes_unioned.meals
         , subscribed_mealboxes_unioned.portions
         , to_timestamp('{{ var("basket_history_start_at") }}') as valid_from
-        , source
+        , basket_source
     from subscribed_mealboxes_unioned
     left join billing_agreements
         on subscribed_mealboxes_unioned.billing_agreement_id = billing_agreements.billing_agreement_id
@@ -207,7 +211,7 @@ subscribed_products as (
         , subscribed_mealboxes_unioned.meals
         , subscribed_mealboxes_unioned.portions
         , valid_from
-        , source
+        , basket_source
     from subscribed_mealboxes_unioned
 
 )
@@ -258,7 +262,7 @@ subscribed_products as (
         customer_deviation_select_meals_and_portions.billing_agreement_basket_id
         , products.product_variation_id
         , customer_deviation_select_meals_and_portions.valid_from
-        , 'normal' as source
+        , 'normal' as basket_source
     from customer_deviation_select_meals_and_portions
     left join products
         on  customer_deviation_select_meals_and_portions.product_id = products.product_id
@@ -274,7 +278,7 @@ subscribed_products as (
     billing_agreement_basket_id
     , product_variation_id
     , valid_from
-    , source
+    , basket_source
     from subscribed_mealbox_add_first_row
 
     union all
@@ -283,7 +287,7 @@ subscribed_products as (
     billing_agreement_basket_id
     , product_variation_id
     , valid_from
-    , source
+    , basket_source
     from customer_deviation_mealbox
 )
 
@@ -294,7 +298,7 @@ subscribed_products as (
         , product_variation_id
         , valid_from
         , {{get_scd_valid_to('valid_from', 'billing_agreement_basket_id')}} as valid_to
-        , source
+        , basket_source
     from subscribed_mealbox_customer_deviation_mealbox_unioned
 )
 
@@ -305,7 +309,7 @@ subscribed_products as (
         , product_variation_id
         , valid_from
         , valid_to
-        , source
+        , basket_source
         , row_number() over 
             (
                 partition by 
@@ -333,6 +337,7 @@ subscribed_products as (
         , group
         , min(valid_from) as valid_from
         , max(valid_to) as valid_to
+        , min_by(basket_source, valid_from) as basket_source_mealbox
     from 
         subscribed_mealbox_group_periods
     group by

@@ -53,6 +53,7 @@ subscribed_products_list as (
         , basket_product_object.is_extra as is_extra_product
         , scd2_tables_joined.valid_from
         , scd2_tables_joined.valid_to
+        , scd2_tables_joined.basket_source
     from scd2_tables_joined
         lateral view outer EXPLODE(basket_products_list) as basket_product_object
 
@@ -74,6 +75,7 @@ subscribed_products_list as (
         , subscribed_products_exploded.valid_from
         , subscribed_products_exploded.valid_to
         , billing_agreements.signup_at
+        , subscribed_products_exploded.basket_source
     from subscribed_products_exploded 
     left join baskets_scd1
         on subscribed_products_exploded.billing_agreement_basket_id = baskets_scd1.billing_agreement_basket_id
