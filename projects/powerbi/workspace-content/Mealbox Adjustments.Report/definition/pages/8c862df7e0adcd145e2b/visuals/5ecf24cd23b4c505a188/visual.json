@@ -67,42 +67,12 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Number of Orders"
-                }
-              },
-              "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Ordered",
-              "displayName": "Ordered"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Preselected Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Preselected Dishes",
-              "nativeQueryRef": "Preselected",
-              "displayName": "Preselected"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
                   "Property": "Number of Added Dishes"
                 }
               },
               "queryRef": "Order Measures.Number of Added Dishes",
-              "nativeQueryRef": "Added",
-              "displayName": "Added"
+              "nativeQueryRef": "Added Dishes",
+              "displayName": "Added Dishes"
             },
             {
               "field": {
@@ -116,8 +86,8 @@
                 }
               },
               "queryRef": "Order Measures.Number of Removed Dishes",
-              "nativeQueryRef": "Removed",
-              "displayName": "Removed"
+              "nativeQueryRef": "Removed Dishes",
+              "displayName": "Removed Dishes"
             }
           ]
         }

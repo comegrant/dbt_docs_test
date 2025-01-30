@@ -191,7 +191,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'How many dishes do customers that swap replace on average?'"
+                  "Value": "'How many dishes gets swapped on average per order?'"
                 }
               }
             }
