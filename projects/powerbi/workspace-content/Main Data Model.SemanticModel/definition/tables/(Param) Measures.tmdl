@@ -2,6 +2,7 @@ table '(Param) Measures'
 	lineageTag: 6249c02e-7c72-4883-8fd1-d5a33f3de090
 
 	column '(Param) Order Measures'
+		isHidden
 		lineageTag: 4cf21065-49e0-4c4a-9ec6-92d27bf110eb
 		summarizeBy: none
 		sourceColumn: [Value1]

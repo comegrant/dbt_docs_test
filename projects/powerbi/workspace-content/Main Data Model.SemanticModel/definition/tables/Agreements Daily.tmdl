@@ -3,6 +3,7 @@ table 'Agreements Daily'
 	lineageTag: a8ab3df4-a35a-45a5-af58-17df4ee11ae8
 
 	measure 'Number of Customers' = DISTINCTCOUNT('Agreements Daily'[billing_agreement_id])
+		isHidden
 		formatString: #,0
 		lineageTag: 3c376a1c-10ec-4f27-a197-d2bdd9455984
 
@@ -28,6 +29,7 @@ table 'Agreements Daily'
 				[Retention Number of Customers],
 				BLANK()
 			)
+		isHidden
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 4962e557-7100-40b8-b7f6-73da7b8a7e65
 

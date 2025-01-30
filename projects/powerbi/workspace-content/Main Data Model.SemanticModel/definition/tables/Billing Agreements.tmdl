@@ -139,7 +139,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: 28c5e978-6167-43f6-b71d-8c6bed7a56c0
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: signup_week
 
 		annotation SummarizationSetBy = Automatic
@@ -148,7 +148,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: 370a5d43-c083-4583-a04f-36f335bf432f
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: signup_month
 
 		annotation SummarizationSetBy = Automatic
@@ -157,7 +157,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: 798e3d8b-39a3-4b3d-96ab-ed5b5be61fe7
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: signup_quarter
 
 		annotation SummarizationSetBy = Automatic
@@ -166,7 +166,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: 6e6c84c5-1173-4d3a-a0ef-6770e432318f
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: signup_year
 
 		annotation SummarizationSetBy = Automatic
@@ -189,7 +189,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: bbce92b8-d9b0-4148-afb6-e430f1b8fcad
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: first_menu_week_week
 
 		annotation SummarizationSetBy = Automatic
@@ -198,7 +198,7 @@ table 'Billing Agreements'
 		dataType: string
 		formatString: 0
 		lineageTag: a4b5b32d-c78f-45da-9e80-5e97f3bf0d87
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: first_menu_week_month
 
 		annotation SummarizationSetBy = Automatic
@@ -207,7 +207,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: 8f0a19c5-6c68-40f7-bbdb-87ba3e6377fe
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: first_menu_week_quarter
 
 		annotation SummarizationSetBy = Automatic
@@ -216,7 +216,7 @@ table 'Billing Agreements'
 		dataType: int64
 		formatString: 0
 		lineageTag: b33e20b9-81e5-406e-abee-b76e87cc1c89
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: first_menu_week_year
 
 		annotation SummarizationSetBy = Automatic

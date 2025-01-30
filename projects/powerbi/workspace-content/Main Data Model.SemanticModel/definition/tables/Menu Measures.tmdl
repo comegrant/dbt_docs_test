@@ -76,6 +76,7 @@ table 'Menu Measures'
 
 	column portion_name
 		dataType: string
+		isHidden
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: portion_name
@@ -279,6 +280,7 @@ table 'Menu Measures'
 
 	column is_artificial_week
 		dataType: boolean
+		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 1873f07a-e127-4f1a-9b02-5bc047abbbb5
 		summarizeBy: none

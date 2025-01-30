@@ -1,3 +1,4 @@
+/// The origin of the dishes presented to the customer before potential manual deviation.
 table 'Origin of Preselected Dishes'
 	lineageTag: 5dc57e37-a162-4b62-a970-7d6cc1315f19
 
