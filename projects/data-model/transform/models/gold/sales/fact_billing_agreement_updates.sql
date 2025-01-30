@@ -20,12 +20,15 @@ dim_billing_agreements as (
     , billing_agreement_status_name
     , loyalty_level_number
     , onesub_flag
+    
+    -- Rank the rows based on criteria in order to select the version of the new agreement that has the most complete data
     , row_number() over (
         partition by billing_agreement_id 
         order by 
             case
                 when 
-                    billing_agreement_status_name is not null
+                    signup_date = date(valid_from)
+                    and billing_agreement_status_name is not null
                     and billing_agreement_basket_product_updated_id is not null
                     and billing_agreement_preferences_updated_id is not null
                     and loyalty_level_number is not null
@@ -34,7 +37,7 @@ dim_billing_agreements as (
                 else 2 --Null values should be sorted after null values
             end asc,    
             valid_from asc
-    ) as rank
+    ) as new_agreement_rank
 
     from dim_billing_agreements
     
@@ -64,7 +67,7 @@ dim_billing_agreements as (
     , agreements.valid_from as updated_at
     
     , case
-        when agreements.rank = 1 then true
+        when agreements.new_agreement_rank = 1 then true
         else false
     end as is_new_agreement
 
