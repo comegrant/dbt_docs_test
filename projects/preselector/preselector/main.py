@@ -688,7 +688,7 @@ async def historical_preselector_vector(
         importance_static = (
             await InjectedFeatures.process_input(
                 {
-                    "mean_cost_of_food": [0.20],
+                    "mean_cost_of_food": [0.1],
                     "mean_rank": [0.05],
                     "mean_ordered_ago": [0.4],
                     "inter_week_similarity": [0.07],
