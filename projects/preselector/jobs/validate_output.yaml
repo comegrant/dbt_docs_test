@@ -26,7 +26,6 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 20 ? * TUE *"
         timezone_id: Europe/Amsterdam
-        pause_status: UNPAUSED
 
       email_notifications:
         on_failure:
@@ -85,7 +84,6 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 2 ? * MON *"
         timezone_id: Europe/Amsterdam
-        pause_status: UNPAUSED
 
       email_notifications:
         on_failure:
@@ -144,7 +142,6 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 18 ? * TUE *"
         timezone_id: Europe/Amsterdam
-        pause_status: UNPAUSED
 
       email_notifications:
         on_failure:
@@ -203,7 +200,6 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 12 ? * THU *"
         timezone_id: Europe/Amsterdam
-        pause_status: UNPAUSED
 
       email_notifications:
         on_failure:
