@@ -1,0 +1,19 @@
+---
+name: Model Registry PR
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/python_reusable.yml'
+      - '.github/workflows/model_registry.yml'
+      - 'packages/model-registry/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-model-registry:
+    uses: ./.github/workflows/template_test_python.yml
+    secrets: inherit
+    with:
+      python-version: "3.10.13"
+      working-directory: packages/model-registry
+      mlflow-server-version: "2.19.0"

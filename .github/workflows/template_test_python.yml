@@ -16,6 +16,11 @@ on:
         description: "The timeout of the ci job. Default is 25min"
         default: 25
         type: number
+      mlflow-server-version:
+        required: false
+        type: string
+        default: ""
+        description: "The version of the mlflow server to use in a CI CD setup"
 
 jobs:
   test-ci:
@@ -50,6 +55,33 @@ jobs:
       - name: Type Checking
         run: pyright --pythonpath .venv/bin/python
 
+      - name: Start MLflow service
+        if: always() && ${{ inputs.mlflow-server-version != '' }}
+        run: |
+          docker network create mlflow || true
+          docker run -d --rm \
+            --name mlflow \
+            --network mlflow \
+            -p 8000:8000 \
+            ghcr.io/mlflow/mlflow:v${{ inputs.mlflow-server-version}} \
+            /bin/sh -c "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
+
+      - name: Verify MLflow server is running
+        if: always() && ${{ inputs.mlflow-server-version != '' }}
+        run: |
+          for i in {1..10}; do
+            curl -s http://localhost:8000 && break
+            echo "Waiting for MLflow server..."
+            sleep 5
+          done
+          curl http://localhost:8000
+
+          echo "MLFLOW_TRACKING_URI=http://localhost:8000" >> $GITHUB_ENV
+          echo "MLFLOW_REGISTRY_URI=http://localhost:8000" >> $GITHUB_ENV
+
       - name: Run Test
         if: always()
         run: pytest -rav tests
+        env:
+          MLFLOW_TRACKING_URI: "${{ env.MLFLOW_TRACKING_URI }}"
+          MLFLOW_REGISTRY_URI: "${{ env.MLFLOW_REGISTRY_URI }}"

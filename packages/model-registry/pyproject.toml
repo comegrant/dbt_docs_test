@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "model_registry"
+version = "0.1.0"
+description = "A package to make it easier to integrate and test model registries"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "model_registry"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mlflow = "^2.19.0"
+aligned = { git="https://github.com/MatsMoll/aligned.git", branch="matsei/big-boy", optional=true }
+databricks-feature-engineering = { version="^0.8.0", optional=true }
+databricks-connect = { version="*", optional=true }
+
+[tool.poetry.extras]
+aligned = ["aligned"]
+databricks = ["databricks-feature-engineering", "databricks-connect"]
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+pyright = "^1.1.376"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
