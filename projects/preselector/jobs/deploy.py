@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from time import sleep
 from typing import Annotated, Literal
@@ -88,7 +88,7 @@ class WorkerConfig:
     container_name: str
     batch_size: int
     topic_name: str
-
+    sub_queue_name: str | None = field(default=None)
 
 async def deploy_preselector(
     name: str,
@@ -144,7 +144,9 @@ async def deploy_preselector(
     async def process_container(
         topic_name: str,
         container_name: str,
-        batch_size: int
+        batch_size: int,
+        sub_queue_name: str | None = None
+
     ) -> Container:
 
         if env != "prod":
@@ -163,6 +165,7 @@ async def deploy_preselector(
                 "service_bus_connection_string": None,
                 "service_bus_request_topic_name": topic_name,
                 "service_bus_request_size": batch_size,
+                "service_bus_sub_queue": sub_queue_name,
                 **env_specific_config
             },
             key_map={
@@ -239,7 +242,8 @@ async def deploy_preselector(
         process_container(
             topic_name=worker.topic_name,
             container_name=worker.container_name,
-            batch_size=worker.batch_size
+            batch_size=worker.batch_size,
+            sub_queue_name=worker.sub_queue_name
         )
         for worker in workers
     ])
@@ -362,7 +366,8 @@ async def deploy_all(
                 WorkerConfig(
                     container_name=f"{name}-flush",
                     batch_size=10,
-                    topic_name="deviation-request"
+                    topic_name="deviation-request",
+                    sub_queue_name="deadletter"
                 ),
             ]
 

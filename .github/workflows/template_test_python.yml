@@ -56,7 +56,7 @@ jobs:
         run: pyright --pythonpath .venv/bin/python
 
       - name: Start MLflow service
-        if: always() && ${{ inputs.mlflow-server-version != '' }}
+        if: ${{ inputs.mlflow-server-version != '' }}
         run: |
           docker network create mlflow || true
           docker run -d --rm \
@@ -67,7 +67,7 @@ jobs:
             /bin/sh -c "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
 
       - name: Verify MLflow server is running
-        if: always() && ${{ inputs.mlflow-server-version != '' }}
+        if: ${{ inputs.mlflow-server-version != '' }}
         run: |
           for i in {1..10}; do
             curl -s http://localhost:8000 && break

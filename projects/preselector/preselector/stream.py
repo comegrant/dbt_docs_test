@@ -57,6 +57,7 @@ class ServiceBusStreamWriter(WritableStream):
     topic_name: str
     application_properties: dict[str | bytes, PrimitiveTypes] = field(default_factory=dict)
     reader_subscription: str | None = field(default=None)
+    reader_subqueue: ServiceBusSubQueue | None = field(default=None)
 
     _connection: ServiceBusSender | None = field(default=None)
 
@@ -105,7 +106,7 @@ class ServiceBusStreamWriter(WritableStream):
             client=self.client,
             topic_name=self.topic_name,
             subscription_name=self.reader_subscription,
-            sub_queue=None,
+            sub_queue=self.reader_subqueue,
         )
 
 
