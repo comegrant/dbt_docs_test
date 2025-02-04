@@ -1,50 +1,20 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "15ccf9a11a40807075ee",
+  "name": "45c5d24a3013e07e6eb8",
   "position": {
-    "x": 24,
-    "y": 400,
-    "z": 5000,
-    "height": 304,
-    "width": 592,
-    "tabOrder": 10000
+    "x": 15.153363228699551,
+    "y": 78.5219730941704,
+    "z": 0,
+    "height": 276.89327354260087,
+    "width": 1253.5964125560538,
+    "tabOrder": 1000
   },
   "visual": {
-    "visualType": "columnChart",
+    "visualType": "lineChart",
     "query": {
       "queryState": {
         "Category": {
           "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Brands"
-                    }
-                  },
-                  "Property": "Brand Name"
-                }
-              },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
-              "active": false
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Type Name"
-                }
-              },
-              "queryRef": "Products.Product Type Name",
-              "nativeQueryRef": "Product Type Name",
-              "active": false
-            },
             {
               "field": {
                 "HierarchyLevel": {
@@ -94,14 +64,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Products"
+                      "Entity": "Brands"
                     }
                   },
-                  "Property": "Meals"
+                  "Property": "Brand Name"
                 }
               },
-              "queryRef": "Products.Meals",
-              "nativeQueryRef": "Meals"
+              "queryRef": "Brands.Brand Name",
+              "nativeQueryRef": "Brand Name"
             }
           ]
         },
@@ -115,24 +85,85 @@
                       "Entity": "Estimations"
                     }
                   },
-                  "Property": "Quantity of product in baskets if cutoff is now"
+                  "Property": "Number of Units in Baskets if Cutoff is Now"
                 }
               },
-              "queryRef": "Estimations.Quantity of product in baskets if cutoff is now",
-              "nativeQueryRef": "Quantity of product in baskets if cutoff is now"
+              "queryRef": "Estimations.Number of Units in Baskets if Cutoff is Now",
+              "nativeQueryRef": "Number of Units in Baskets if Cutoff is Now"
             }
           ]
         }
       }
     },
     "objects": {
+      "lineStyles": [
+        {
+          "properties": {
+            "showMarker": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "markerShape": {
+              "expr": {
+                "Literal": {
+                  "Value": "'circle'"
+                }
+              }
+            },
+            "markerSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "optimizeLabelDisplay": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "minimumOffset": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auto'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "legend": [
         {
           "properties": {
-            "titleText": {
+            "position": {
               "expr": {
                 "Literal": {
-                  "Value": "'Meals'"
+                  "Value": "'Top'"
                 }
               }
             }
@@ -158,7 +189,7 @@
             "showAxisTitle": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -173,14 +204,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Meals'"
-                }
-              }
-            },
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
+                  "Value": "'Number of Units in Baskets'"
                 }
               }
             }
@@ -198,6 +222,26 @@
                       "Value": "'#FCFBF7'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'if cutoff is now, per week'"
                 }
               }
             }

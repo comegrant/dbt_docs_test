@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "8f5df1aca3b02200187b",
+  "name": "5e3fd399964d4c54912d",
   "position": {
-    "x": 143.4762704420389,
+    "x": 575.47627044203887,
     "y": 0,
-    "z": 3000,
+    "z": 5000,
     "height": 64,
-    "width": 144,
-    "tabOrder": 5000
+    "width": 160,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,20 +20,71 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Origin of Selected Dishes in Basket"
+                      "Entity": "Products"
                     }
                   },
-                  "Property": "Origin Name"
+                  "Property": "Meals"
                 }
               },
-              "queryRef": "Origin of Selected Dishes in Basket.Origin Name",
-              "nativeQueryRef": "Origin Name",
+              "queryRef": "Products.Meals",
+              "nativeQueryRef": "Meals",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Products"
+                    }
+                  },
+                  "Property": "Portions"
+                }
+              },
+              "queryRef": "Products.Portions",
+              "nativeQueryRef": "Portions",
+              "active": false
             }
           ]
         }
       }
     },
+    "expansionStates": [
+      {
+        "roles": [
+          "Values"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Products.Meals"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Products"
+                    }
+                  },
+                  "Property": "Meals"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Products.Portions"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {}
+      }
+    ],
     "objects": {
       "data": [
         {
@@ -80,78 +131,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "e88bdf45c45549ac1481",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Origin of Selected Dishes in Basket"
-              }
-            },
-            "Property": "Origin Name"
-          }
-        },
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "o",
-              "Entity": "Origin of Selected Dishes in Basket",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Not": {
-                  "Expression": {
-                    "In": {
-                      "Expressions": [
-                        {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "o"
-                              }
-                            },
-                            "Property": "Origin Name"
-                          }
-                        }
-                      ],
-                      "Values": [
-                        [
-                          {
-                            "Literal": {
-                              "Value": "null"
-                            }
-                          }
-                        ]
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
-        "objects": {
-          "general": [
-            {
-              "properties": {
-                "isInvertedSelectionMode": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "true"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      {
-        "name": "db5f292f32212bc0e200",
+        "name": "c98107f31e0c5470ed96",
         "field": {
           "Measure": {
             "Expression": {
@@ -159,7 +139,7 @@
                 "Entity": "Estimations"
               }
             },
-            "Property": "Quantity of product in baskets if cutoff is now"
+            "Property": "Number of Units in Baskets if Cutoff is Now"
           }
         },
         "type": "Advanced",
@@ -186,7 +166,7 @@
                               "Source": "e"
                             }
                           },
-                          "Property": "Quantity of product in baskets if cutoff is now"
+                          "Property": "Number of Units in Baskets if Cutoff is Now"
                         }
                       },
                       "Right": {

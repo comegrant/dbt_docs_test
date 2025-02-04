@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "a5b0121be8cc20e73926",
+  "name": "35ea59a335ddd3ea4138",
   "position": {
     "x": 431.47627044203892,
     "y": 0,
-    "z": 10000,
+    "z": 6000,
     "height": 64,
     "width": 144,
-    "tabOrder": 8000
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "slicer",
@@ -27,8 +27,9 @@
                 }
               },
               "queryRef": "Products.Product Name",
-              "nativeQueryRef": "Product Name",
-              "active": true
+              "nativeQueryRef": "Product",
+              "active": true,
+              "displayName": "Product"
             }
           ]
         }
@@ -73,6 +74,19 @@
             }
           }
         }
+      ],
+      "general": [
+        {
+          "properties": {
+            "selfFilterEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
@@ -88,7 +102,7 @@
                 "Entity": "Estimations"
               }
             },
-            "Property": "Quantity of product in baskets if cutoff is now"
+            "Property": "Number of Units in Baskets if Cutoff is Now"
           }
         },
         "type": "Advanced",
@@ -115,7 +129,7 @@
                               "Source": "e"
                             }
                           },
-                          "Property": "Quantity of product in baskets if cutoff is now"
+                          "Property": "Number of Units in Baskets if Cutoff is Now"
                         }
                       },
                       "Right": {

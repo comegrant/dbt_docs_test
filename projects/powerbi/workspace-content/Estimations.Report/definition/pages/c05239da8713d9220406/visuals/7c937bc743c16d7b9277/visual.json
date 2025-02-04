@@ -1,16 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "09ee0a305cd605461a4c",
+  "name": "7c937bc743c16d7b9277",
   "position": {
-    "x": 24,
-    "y": 88,
-    "z": 0,
-    "height": 288,
-    "width": 1232,
-    "tabOrder": 2000
+    "x": 957.41704035874432,
+    "y": 367.81345291479818,
+    "z": 9000,
+    "height": 165.30941704035874,
+    "width": 311.332735426009,
+    "tabOrder": 9000
   },
   "visual": {
-    "visualType": "lineChart",
+    "visualType": "columnChart",
     "query": {
       "queryState": {
         "Category": {
@@ -33,7 +33,7 @@
               },
               "queryRef": "Dates.Calendar Hierarchy with Week.Year",
               "nativeQueryRef": "Calendar Hierarchy with Week Year",
-              "active": true
+              "active": false
             },
             {
               "field": {
@@ -64,14 +64,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Brands"
+                      "Entity": "Products"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Meals"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Products.Meals",
+              "nativeQueryRef": "Meals"
             }
           ]
         },
@@ -85,44 +85,17 @@
                       "Entity": "Estimations"
                     }
                   },
-                  "Property": "Quantity of product in baskets if cutoff is now"
+                  "Property": "Number of Units in Baskets if Cutoff is Now"
                 }
               },
-              "queryRef": "Estimations.Quantity of product in baskets if cutoff is now",
-              "nativeQueryRef": "Quantity of product in baskets if cutoff is now"
+              "queryRef": "Estimations.Number of Units in Baskets if Cutoff is Now",
+              "nativeQueryRef": "Number of Units in Baskets if Cutoff is Now"
             }
           ]
         }
       }
     },
     "objects": {
-      "lineStyles": [
-        {
-          "properties": {
-            "showMarker": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "markerShape": {
-              "expr": {
-                "Literal": {
-                  "Value": "'circle'"
-                }
-              }
-            },
-            "markerSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "3D"
-                }
-              }
-            }
-          }
-        }
-      ],
       "labels": [
         {
           "properties": {
@@ -137,13 +110,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            },
-            "minimumOffset": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
                 }
               }
             },
@@ -164,6 +130,13 @@
               "expr": {
                 "Literal": {
                   "Value": "'Top'"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Meals'"
                 }
               }
             }
@@ -189,7 +162,21 @@
             "showAxisTitle": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "axisType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Categorical'"
                 }
               }
             }
@@ -204,7 +191,21 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Quantity of Product in Baskets if Cutoff is Now'"
+                  "Value": "'Distribution per meal'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "b8cb1b4b3695d4510781",
+  "name": "d8be42e0ee8818d57412",
   "position": {
-    "x": 664,
-    "y": 400,
-    "z": 6000,
-    "height": 304,
-    "width": 592,
-    "tabOrder": 11000
+    "x": 957.41704035874432,
+    "y": 545.52107623318386,
+    "z": 10000,
+    "height": 165.30941704035874,
+    "width": 311.332735426009,
+    "tabOrder": 10000
   },
   "visual": {
     "visualType": "columnChart",
@@ -15,36 +15,6 @@
       "queryState": {
         "Category": {
           "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Brands"
-                    }
-                  },
-                  "Property": "Brand Name"
-                }
-              },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
-              "active": false
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Type Name"
-                }
-              },
-              "queryRef": "Products.Product Type Name",
-              "nativeQueryRef": "Product Type Name",
-              "active": false
-            },
             {
               "field": {
                 "HierarchyLevel": {
@@ -115,20 +85,54 @@
                       "Entity": "Estimations"
                     }
                   },
-                  "Property": "Quantity of product in baskets if cutoff is now"
+                  "Property": "Number of Units in Baskets if Cutoff is Now"
                 }
               },
-              "queryRef": "Estimations.Quantity of product in baskets if cutoff is now",
-              "nativeQueryRef": "Quantity of product in baskets if cutoff is now"
+              "queryRef": "Estimations.Number of Units in Baskets if Cutoff is Now",
+              "nativeQueryRef": "Number of Units in Baskets if Cutoff is Now"
             }
           ]
         }
       }
     },
     "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "optimizeLabelDisplay": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Auto'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "legend": [
         {
           "properties": {
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            },
             "titleText": {
               "expr": {
                 "Literal": {
@@ -158,7 +162,21 @@
             "showAxisTitle": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "axisType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Categorical'"
                 }
               }
             }
@@ -173,7 +191,14 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Portions'"
+                  "Value": "'Distribution per meal'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
                 }
               }
             },
