@@ -43,3 +43,7 @@ def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: Delt
 
         col.write(row["recipe_name"])
         col.caption(row["main_recipe_id"])
+
+        if "compliancy" in row:
+            compliancy = row["compliancy"]
+            col.caption(f"Compliancy {compliancy}")

@@ -40,11 +40,12 @@ from preselector.data.models.customer import (
     PreselectorFailedResponse,
     PreselectorFailure,
     PreselectorPreferenceCompliancy,
+    PreselectorRecipeResponse,
     PreselectorSuccessfulResponse,
     PreselectorYearWeekResponse,
 )
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
-from preselector.schemas.output import PreselectorWeekOutput
+from preselector.schemas.output import PreselectorRecipe, PreselectorWeekOutput
 
 logger = logging.getLogger(__name__)
 
@@ -305,8 +306,8 @@ async def find_best_combination(
 
     async def setup_starting_state(
         recipes_to_choose_from: pl.DataFrame,
-    ) -> tuple[int, pl.DataFrame]:
-        async def default_response() -> tuple[int, pl.DataFrame]:
+    ) -> tuple[int, pl.DataFrame, pl.DataFrame]:
+        async def default_response() -> tuple[int, pl.DataFrame, pl.DataFrame]:
             n_recipes_to_add = number_of_recipes
             recipe_nudge = (
                 await compute_basket(
@@ -314,32 +315,35 @@ async def find_best_combination(
                 )
             ).sort("basket_id", descending=False)
 
-            return n_recipes_to_add, recipe_nudge
+            return n_recipes_to_add, recipe_nudge, pl.DataFrame()
 
         if preselected_recipe_ids is None or not preselected_recipe_ids:
             return await default_response()
 
-        final_combination = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids))
-
-        if not final_combination.is_empty():
+        final_combination = recipes_to_choose_from.filter(
+            pl.col("main_recipe_id").is_in(preselected_recipe_ids)
+        )
+        if final_combination.is_empty():
             return await default_response()
 
         raw_recipe_nudge = recipes_to_choose_from.filter(
-            pl.col("recipe_id").is_in(preselected_recipe_ids).not_()
+            pl.col("main_recipe_id").is_in(preselected_recipe_ids).not_()
         ).with_columns(basket_id=pl.col("recipe_id"))
 
         raw_recipe_nudge = update_nudge_with_recipes(final_combination, raw_recipe_nudge)
 
         recipe_nudge = (await compute_basket(raw_recipe_nudge)).sort("basket_id", descending=False)
 
-        recipes_to_choose_from = recipes_to_choose_from.filter(pl.col("recipe_id").is_in(preselected_recipe_ids).not_())
+        recipes_to_choose_from = recipes_to_choose_from.filter(
+            pl.col("main_recipe_id").is_in(preselected_recipe_ids).not_()
+        )
         if len(preselected_recipe_ids) != final_combination.height:
-            found_recipe_ids = final_combination["recipe_id"].to_list()
+            found_recipe_ids = final_combination["main_recipe_id"].to_list()
             missing_ids = set(preselected_recipe_ids) - set(found_recipe_ids)
             logger.error(f"We might be missing some features for ({missing_ids})")
 
         n_recipes_to_add = number_of_recipes - final_combination.height
-        return n_recipes_to_add, recipe_nudge
+        return n_recipes_to_add, recipe_nudge, final_combination
 
     current_vector: pl.DataFrame | None = None
 
@@ -359,7 +363,7 @@ async def find_best_combination(
     next_vector = pl.DataFrame()
     error_column = "dim_errors"
 
-    n_recipes_to_add, recipe_nudge = await setup_starting_state(recipes_to_choose_from)
+    n_recipes_to_add, recipe_nudge, final_combination = await setup_starting_state(recipes_to_choose_from)
 
     for index in range(n_recipes_to_add):
         # For a five recipe selection on the first run
@@ -932,6 +936,7 @@ class PreselectorResult:
             has_data_processing_consent=self.request.has_data_processing_consent,
             number_of_recipes=self.request.number_of_recipes,
             portion_size=self.request.portion_size,
+            originated_at=self.request.originated_at
         )
 
 
@@ -987,7 +992,7 @@ async def cost_of_food_target_for(
 
 
 async def run_preselector_for_request(
-    request: GenerateMealkitRequest, store: ContractStore, should_explain: bool = False, mode: str | None = None
+    request: GenerateMealkitRequest, store: ContractStore, should_explain: bool = False
 ) -> PreselectorResult:
     results: list[PreselectorYearWeekResponse] = []
 
@@ -1172,9 +1177,12 @@ async def run_preselector_for_request(
                     selected_recipes=generated_recipe_ids,
                     could_be_weight_watchers=could_be_ww,
                     should_explain=should_explain,
-                    mode=mode,
                 )
-                selected_recipe_ids = output.main_recipe_ids
+                selected_recipes = output.recipes
+                selected_recipe_ids = [
+                    rec.main_recipe_id
+                    for rec in selected_recipes
+                ]
         except (AssertionError, ValueError) as e:
             logger.exception(e)
             failed_weeks.append(
@@ -1196,6 +1204,30 @@ async def run_preselector_for_request(
             )
             continue
 
+        output_df = menu.filter(
+            pl.col("main_recipe_id").is_in(selected_recipe_ids),
+            pl.col("variation_portions") == request.portion_size,
+        ).select([
+            "main_recipe_id", "variation_id"
+        ]).join(
+            pl.DataFrame(
+                data={
+                    "main_recipe_id": [
+                        rec.main_recipe_id for rec in selected_recipes
+                    ],
+                    "compliancy": [
+                        rec.compliancy for rec in selected_recipes
+                    ]
+                },
+                schema_overrides={
+                    "main_recipe_id": pl.Int32
+                }
+            ),
+            on="main_recipe_id",
+            validate="1:1",
+            coalesce=True
+        )
+
         variation_ids = menu.filter(
             pl.col("main_recipe_id").is_in(selected_recipe_ids),
             pl.col("variation_portions") == request.portion_size,
@@ -1209,9 +1241,10 @@ async def run_preselector_for_request(
         result = PreselectorYearWeekResponse(
             year=year,
             week=week,
-            variation_ids=variation_ids,
-            main_recipe_ids=selected_recipe_ids,
-            compliancy=output.compliancy,
+            recipes_data=[
+                PreselectorRecipeResponse(**row)
+                for row in output_df.rows(named=True)
+            ],
             target_cost_of_food_per_recipe=cof_target_value,
             ordered_weeks_ago=generated_recipe_ids,
             error_vector=output.error_vector,  # type: ignore
@@ -1289,7 +1322,7 @@ async def filter_out_recipes_based_on_preference(
 
 async def filter_on_preferences(
     customer: GenerateMealkitRequest, recipes: pl.DataFrame, store: ContractStore
-) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, list[int] | None]:
+) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, pl.DataFrame | None]:
     if not customer.taste_preferences:
         return recipes, PreselectorPreferenceCompliancy.all_compliant, None
 
@@ -1300,7 +1333,9 @@ async def filter_on_preferences(
     if recipes_to_use.height >= customer.number_of_recipes:
         return recipes_to_use, PreselectorPreferenceCompliancy.all_compliant, None
 
-    preselected_recipes = recipes_to_use["recipe_id"].to_list()
+    preselected_recipe_df = recipes_to_use.select("main_recipe_id").with_columns(
+        compliancy=pl.lit(PreselectorPreferenceCompliancy.all_compliant)
+    )
 
     recipes_to_use = await filter_out_recipes_based_on_preference(
         recipes,
@@ -1310,10 +1345,16 @@ async def filter_on_preferences(
     )
 
     if recipes_to_use.height >= customer.number_of_recipes:
-        return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_compliant, preselected_recipes
+        return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_compliant, preselected_recipe_df
 
-    preselected_recipes = recipes_to_use["recipe_id"].to_list()
-    return recipes, PreselectorPreferenceCompliancy.non_preference_compliant, preselected_recipes
+    preselected_recipe_df = preselected_recipe_df.vstack(
+        recipes_to_use.filter(
+            pl.col("main_recipe_id").is_in(preselected_recipe_df["main_recipe_id"]).not_()
+        ).select("main_recipe_id").with_columns(
+            compliancy=pl.lit(PreselectorPreferenceCompliancy.allergies_only_compliant)
+        )
+    )
+    return recipes, PreselectorPreferenceCompliancy.non_preference_compliant, preselected_recipe_df
 
 
 async def compute_weeks_ago(
@@ -1421,7 +1462,6 @@ async def run_preselector(
     selected_recipes: dict[int, int],
     could_be_weight_watchers: bool,
     should_explain: bool = False,
-    mode: str | None = None,
 ) -> PreselectorWeekOutput:
     """
     Generates a combination of recipes that best fit a personalised target and importance vector.
@@ -1449,12 +1489,17 @@ async def run_preselector(
     logger.debug(f"Filtering based on portion size done: {recipes.height}")
 
     if recipes.is_empty():
-        return PreselectorWeekOutput([], compliance, {})
+        return PreselectorWeekOutput([], {})
 
     # Singlekassen
     if customer.concept_preference_ids == ["37CE056F-4779-4593-949A-42478734F747"]:
         return PreselectorWeekOutput(
-            recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list(), compliance, {}
+            recipes=[
+                PreselectorRecipe(main_recipe_id, compliance)
+                for main_recipe_id
+                in recipes["main_recipe_id"].sample(customer.number_of_recipes).to_list()
+            ],
+            error_vector={}
         )
 
     year = recipes["menu_year"].max()
@@ -1485,7 +1530,12 @@ async def run_preselector(
         filtered = normalized_recipe_features.filter(pl.col("is_weight_watchers"))
         if filtered.height >= customer.number_of_recipes:
             return PreselectorWeekOutput(
-                filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance, {}
+                recipes=[
+                    PreselectorRecipe(main_recipe_id, compliance)
+                    for main_recipe_id
+                    in filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list()
+                ],
+                error_vector={}
             )
         else:
             available_ww_recipes = filtered["main_recipe_id"].to_list()
@@ -1521,26 +1571,25 @@ async def run_preselector(
             .to_polars()
         )
 
-    with duration("load-recipe-cost"):
-        normalized_recipe_features = (
-            await store.feature_view("recipe_cost")
-            .select({"recipe_cost_whole_units"})
-            .features_for(normalized_recipe_features)
-            .with_subfeatures()
-            .to_polars()
-        )
-
     recipe_features = normalized_recipe_features
 
     if recipe_features.height < customer.number_of_recipes:
-        recipes_of_interest = set(recipes["recipe_id"].to_list()) - set(recipe_features["recipe_id"].to_list())
-        logger.error(
+        recipes_of_interest = (
+            set(recipes["recipe_id"].to_list())
+            - set(recipe_features["recipe_id"].to_list())
+        )
+        logger.warning(
             f"Number of recipes are less then expected {recipe_features.height}. "
             f"Most likely due to missing features in recipes: ({recipes_of_interest}) "
             f"In portion size {customer.portion_size} - {year}, {week}"
         )
         return PreselectorWeekOutput(
-            recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list(), compliance, {}
+            recipes=[
+                PreselectorRecipe(main_recipe_id, compliance)
+                for main_recipe_id
+                in recipes.sample(customer.number_of_recipes)["main_recipe_id"].to_list()
+            ],
+            error_vector={}
         )
 
     if should_explain:
@@ -1548,6 +1597,10 @@ async def run_preselector(
 
         st.write("Recipe Candidates")
         st.write(recipe_features)
+
+        if preselected_recipes is not None:
+            st.write("Preselected recipes")
+            st.write(preselected_recipes)
 
     if recipe_features.is_empty():
         raise ValueError(
@@ -1581,11 +1634,14 @@ async def run_preselector(
     )
 
     if recipe_features.height <= customer.number_of_recipes:
-        logger.error(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
+        logger.warning(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
         return PreselectorWeekOutput(
-            recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list(),
-            compliance,
-            {},
+            recipes=[
+                PreselectorRecipe(main_recipe_id, compliance)
+                for main_recipe_id
+                in recipes.filter(pl.col("recipe_id").is_in(recipe_features["recipe_id"]))["main_recipe_id"].to_list()
+            ],
+            error_vector={}
         )
 
     with duration("compute-ordered-since"):
@@ -1611,8 +1667,11 @@ async def run_preselector(
         )
 
     if recipe_embeddings.height != recipe_features.height:
-        missing_recipes = set(recipe_features["main_recipe_id"].to_list()) - set(
-            recipe_embeddings["main_recipe_id"].to_list()
+        missing_recipes = set(
+            recipe_features["main_recipe_id"].to_list()
+        ) - set(recipe_embeddings["main_recipe_id"].to_list())
+        logger.warning(
+            f"We are missing some embeddings for main recipe ids: {missing_recipes}"
         )
         logger.error(f"We are missing some embeddings for main recipe ids: {missing_recipes}")
 
@@ -1627,8 +1686,49 @@ async def run_preselector(
             recipe_features.unique(["main_recipe_id"]),
             recipe_embeddings=recipe_embeddings,
             number_of_recipes=customer.number_of_recipes,
-            preselected_recipe_ids=preselected_recipes,
+            preselected_recipe_ids=(
+                preselected_recipes["main_recipe_id"].to_list() if preselected_recipes is not None else None
+            ),
             should_explain=should_explain,
         )
 
-        return PreselectorWeekOutput(main_recipe_ids=best_recipe_ids, compliancy=compliance, error_vector=error)
+    if should_explain and error is not None:
+        import streamlit as st
+        st.write("Error Vector:")
+        st.write(error)
+
+    if preselected_recipes is not None:
+        recipes = [
+            PreselectorRecipe(
+                main_recipe_id=row["main_recipe_id"],
+                compliancy=row["compliancy"]
+            )
+            for row
+            in preselected_recipes.filter(
+                pl.col("main_recipe_id").is_in(best_recipe_ids)
+            ).rows(named=True)
+        ]
+
+        additional_recipes = list(set(best_recipe_ids) - set(
+            preselected_recipes["main_recipe_id"].to_list()
+        ))
+        recipes.extend([
+            PreselectorRecipe(
+                main_recipe_id=recipe_id,
+                compliancy=compliance
+            )
+            for recipe_id in additional_recipes
+        ])
+    else:
+        recipes = [
+            PreselectorRecipe(
+                main_recipe_id=recipe_id,
+                compliancy=compliance
+            )
+            for recipe_id in best_recipe_ids
+        ]
+
+    return PreselectorWeekOutput(
+        recipes=recipes,
+        error_vector=error
+    )

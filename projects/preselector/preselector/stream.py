@@ -17,7 +17,6 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.message import PrimitiveTypes
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
-from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import Preselector
 from data_contracts.sql_server import SqlServerConfig
 from pydantic import BaseModel, ValidationError
@@ -306,58 +305,24 @@ class PreselectorResultWriter(WritableStream):
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         import polars as pl
-        from aligned.schemas.feature import StaticFeatureTags
+        from data_contracts.preselector.store import Preselector
 
-        if self.error_features is None:
-            self.error_features = [
-                feat.name
-                for feat in BasketFeatures.query().request.all_returned_features
-                if StaticFeatureTags.is_entity not in (feat.tags or [])
-            ]
-
-        assert self.error_features is not None
-
-        mapped_data = [
-            row.model_dump(
-                exclude={
-                    "year_weeks": {
-                        "__all__": {
-                            "ordered_weeks_ago",
-                        }
-                    }
-                }
-            )
+        expected_features = Preselector.query().request.all_returned_columns
+        df = pl.concat([
+            row.to_dataframe()
             for row in data
             if isinstance(row, PreselectorSuccessfulResponse)
-        ]
-
-        year_week_struct = pl.List(
-            pl.Struct(
-                {
-                    "year": pl.Int16,
-                    "week": pl.Int16,
-                    "variation_ids": pl.List(pl.String),
-                    "main_recipe_ids": pl.List(pl.Int32),
-                    "compliancy": pl.Int8,
-                    "target_cost_of_food_per_recipe": pl.Float32,
-                    "error_vector": pl.Struct({feat: pl.Float32 for feat in self.error_features}),
-                }
-            )
-        )
-        df = pl.DataFrame(mapped_data, schema_overrides={"year_weeks": year_week_struct})
-        if df.is_empty():
-            return
-
-        df = df.explode("year_weeks").unnest("year_weeks").with_columns(company_id=pl.lit(self.company_id))
-
-        request = self.store.feature_view(Preselector).request
-        features = request.all_returned_columns
+        ], how="vertical_relaxed").with_columns(
+            agreement_id=pl.col("billing_agreement_id"),
+            year=pl.col("menu_year"),
+            week=pl.col("menu_week"),
+        ).select(expected_features)
 
         if self.sink is not None:
             self.store = self.store.update_source_for(Preselector.location, self.sink)
 
         try:
-            await self.store.upsert_into(Preselector.location, df.select(features))
+            await self.store.upsert_into(Preselector.location, df)
         except ValueError as e:
             logger.error(f"Error when upserting {df.head()}")
             logger.exception(e)

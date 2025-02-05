@@ -8,7 +8,7 @@ from cheffelo_logging.logging import setup_streamlit
 from combinations_app import display_recipes
 from data_contracts.preselector.store import SuccessfulPreselectorOutput
 from preselector.data.models.customer import (
-    PreselectorPreferenceCompliancy,
+    PreselectorRecipeResponse,
     PreselectorSuccessfulResponse,
     PreselectorYearWeekResponse,
 )
@@ -80,23 +80,40 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
             & (pl.col("generated_at") == row["generated_at"])
         ).rows(named=True)[0]
 
+        year_weeks = []
+
+        for week in row["year_weeks"]:
+            if "recipes" in week:
+                recipes = [
+                    PreselectorRecipeResponse(**rec)
+                    for rec in week["recipes"]
+                ]
+            else:
+                recipes = [
+                    PreselectorRecipeResponse(
+                        main_recipe_id=recipe_id,
+                        variation_id="",
+                        compliancy=week["compliancy"]
+                    )
+                    for recipe_id in week["main_recipe_ids"]
+                ]
+
+            year_weeks.append(
+                PreselectorYearWeekResponse(
+                    year=week["menu_year"],
+                    week=week["menu_week"],
+                    target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
+                    error_vector=week["error_vector"],
+                    recipes_data=recipes
+                )
+            )
+
         responses.append(
             PreselectorSuccessfulResponse(
                 agreement_id=agreement_id,
                 company_id=first_row["company_id"],
                 correlation_id="",
-                year_weeks=[
-                    PreselectorYearWeekResponse(
-                        year=week["menu_year"],
-                        week=week["menu_week"],
-                        variation_ids=week["variation_ids"],
-                        main_recipe_ids=week["main_recipe_ids"],
-                        target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
-                        compliancy=PreselectorPreferenceCompliancy(week["compliancy"]),
-                        error_vector=week["error_vector"]
-                    )
-                    for week in row["year_weeks"]
-                ],
+                year_weeks=year_weeks,
                 concept_preference_ids=first_row["concept_preference_ids"],
                 taste_preferences=decode_broken_taste_preferences(first_row["taste_preferences"]),
                 override_deviation=False,
@@ -270,10 +287,8 @@ async def debug_app() -> None:
             PreselectorYearWeekResponse(
                 year=success.year,
                 week=success.week,
-                variation_ids=[],
-                main_recipe_ids=expected_recipes,
+                recipes_data=success.recipes_data,
                 target_cost_of_food_per_recipe=0,
-                compliancy=success.compliancy
             ),
             st
         )

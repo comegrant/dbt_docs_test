@@ -311,7 +311,6 @@ async def process_stream_batch(
     progress_callback: Callable[[int, int], None] | None = None,
     progress_callback_interval: int = 5,
     write_batch_interval: int = 100,
-    mode: str | None = None,
 ) -> int:
     from datadog.dogstatsd.base import statsd
 
@@ -347,7 +346,7 @@ async def process_stream_batch(
                     continue
 
                 try:
-                    result = await run_preselector_for_request(request, store, mode=mode)
+                    result = await run_preselector_for_request(request, store)
                     success_response = result.success_response()
                     if success_response:
                         successful_responses.append(success_response)

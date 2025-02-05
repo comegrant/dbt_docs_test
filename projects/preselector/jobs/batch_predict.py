@@ -281,5 +281,4 @@ async def run() -> None:
     )
 
 # COMMAND ----------
-
 await run()

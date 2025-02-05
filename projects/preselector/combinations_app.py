@@ -1,16 +1,14 @@
 import asyncio
+import json
 import logging
-import uuid
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import date, timedelta
 from time import monotonic
 from types import ModuleType
 from typing import TypeVar
 
-import pandas as pd
 import polars as pl
 import streamlit as st
-from combinations_store_output import CombinationsAppOutput
 from concept_definition_app import load_attributes
 from data_contracts.sources import adb
 from dotenv import load_dotenv
@@ -108,13 +106,22 @@ async def main() -> None:
         selected_prefs = st.multiselect("Negative Prefs", options=taste_prefs, format_func=lambda pref: pref.name)
         portion_size = st.number_input("Portion Size", min_value=1, max_value=6, value=4)
         # Modify week to accept multiple weeks
-        weeks = st.multiselect("Weeks", options=range(1, 53), format_func=lambda week: f"Week {week}")
+        weeks = st.multiselect(
+            "Weeks",
+            options=range(1, 53),
+            format_func=lambda week: f"Week {week}",
+            default=[
+                (today + timedelta(weeks=i)).isocalendar().week
+                for i in range(5)
+            ]
+        )
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
         agreement_id = st.number_input("Agreement ID", min_value=1, value=None)
-        ordered_weeks_ago = st.text_area("Ordered Recipe in Week")  # noqa: F841
+        ordered_weeks_ago = st.text_area("Ordered Recipe in Week")
+        should_explain_internals = st.toggle("Should explain internals", value=False)
 
-        submit_button = st.form_submit_button("Generate")
+        st.form_submit_button("Generate")
 
     if not selected_attributes:
         return
@@ -132,112 +139,54 @@ async def main() -> None:
         with st.spinner("Loading Data"):
             cached_store = await load_cache(store, company_id=company_id, force_load=True)
 
-    # Generate all combinations of selected attributes and taste preferences
-    attribute_combinations = all_combinations(selected_attributes, include_empty_set=False)
-    taste_preference_combinations = all_combinations(selected_prefs, include_empty_set=True)
-
-    # Combine attribute and taste preference combinations
-    combinations = [(atters, prefs) for atters in attribute_combinations for prefs in taste_preference_combinations]
-
-    # Get the largest combination
-    largest_combination = max(combinations, key=lambda x: len(x[0]) + len(x[1]))
-
     # Extract the attributes and taste preferences from the largest combination
-    atters, prefs = largest_combination
+    atters, prefs = (selected_attributes, selected_prefs)
 
     st.subheader(" and ".join([attr.name for attr in atters]))
     if prefs:
         st.write("With negative prefs: " + " and ".join([pref.name for pref in prefs]))
 
-    responses = []
+    allergy_preferences = [
+        "fish", "gluten", "shellfish", "nuts", "egg", "lactose", "diary"
+    ]
+
+    recipes_at_week: dict[int, int] = json.loads(str(ordered_weeks_ago)) if ordered_weeks_ago else {}
+
     for week in weeks:
+
+        st.write(f"Week {week}")
         request = GenerateMealkitRequest(
             # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
             agreement_id=agreement_id or 1,
             company_id=company_id,
-            compute_for=[YearWeek(year=int(year), week=int(week))],  # Process each week individually
+            compute_for=[YearWeek(year=year, week=week)],
             concept_preference_ids=[attr.id for attr in atters],
-            taste_preferences=[NegativePreference(preference_id=pref.preference_id, is_allergy=True) for pref in prefs],
+            taste_preferences=[
+                NegativePreference(
+                    preference_id=pref.preference_id,
+                    is_allergy=pref.name.lower() in allergy_preferences
+                )
+                for pref in prefs
+            ],
             number_of_recipes=int(number_of_recipes),
             portion_size=int(portion_size),
             has_data_processing_consent=agreement_id is not None,
+            ordered_weeks_ago=recipes_at_week,
             override_deviation=False,
         )
 
         start_time = monotonic()
-        response = await run_preselector_for_request(request, cached_store, should_explain=False)
-        responses.append(response)
+        response = await run_preselector_for_request(request, cached_store, should_explain=should_explain_internals)
         end_time = monotonic()
 
         st.write(f"Used {(end_time - start_time):.5f}s")
 
         if response.success:
             await display_recipes(response.success[0], st)
-            recipes = response.success[0].main_recipe_ids
-
+            for recipe_id in response.success[0].main_recipe_ids:
+                recipes_at_week[recipe_id] = year * 100 + week
         else:
             st.error(response.failures[0].error_message)
-            recipes = []
-
-    # Check if session_id is in the cookie
-    if "session_id" not in cookies:
-        # Generate a new session_id and set it in the cookie
-        session_id = str(uuid.uuid4())
-        cookies["session_id"] = session_id
-        cookies.save()
-    else:
-        # Get the session_id from the cookie
-        session_id = cookies["session_id"]
-
-    # Display a button to rate the output
-    if "rating" not in st.session_state:
-        st.session_state["rating"] = None
-
-    # Reset the rating when Generate is clicked
-    if submit_button:
-        st.session_state["rating"] = None
-        st.session_state["comment"] = None
-
-    # Add a text input for storing comments
-    if "comment" not in st.session_state:
-        st.session_state["comment"] = None
-
-    st.session_state["comment"] = st.text_input(
-        "Write any feedback and press Enter to register it. Do rate also!", st.session_state["comment"]
-    )
-
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("👍 Good 😊"):
-            st.session_state["rating"] = "Good"
-    with col2:
-        if st.button("👎 Bad 😕"):
-            st.session_state["rating"] = "Bad"
-
-    if st.session_state["rating"]:
-        st.write(f"You rated the output as {st.session_state['rating']}.")
-
-        # Create a pandas ataframe to store the output
-
-        output_df = pd.DataFrame(
-            {
-                "identifier": str(uuid.uuid4()),
-                "session_info": [session_id],
-                "time": [datetime.now(timezone.utc)],
-                "company_id": [company_id],
-                "year": [year],
-                "week": [week],  # type: ignore
-                "recipes": [recipes],  # type: ignore
-                "rating": [st.session_state.get("rating")],
-                "attributes": [[attr.name for attr in atters]],
-                "taste_preferences": [[pref.name for pref in prefs]],
-                "number_of_recipes": [number_of_recipes],
-                "portion_size": [portion_size],
-                "comment": [st.session_state.get("comment")],
-            }
-        )
-
-        await CombinationsAppOutput.query().insert(output_df)
 
 
 async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGenerator | ModuleType) -> None:
@@ -249,9 +198,11 @@ async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGener
             year=response.year,
             week=response.week,
         )
-        rank = pl.DataFrame(
-            {"main_recipe_id": response.main_recipe_ids, "rank": range(len(response.main_recipe_ids))}
-        ).to_pandas()
+        rank = pl.DataFrame({
+            "main_recipe_id": [rec.main_recipe_id for rec in response.recipes_data],
+            "compliancy": [rec.compliancy for rec in response.recipes_data],
+            "rank": range(len(response.main_recipe_ids))
+        }).to_pandas()
 
         pre_selector_recipe_info = pre_selector_recipe_info.merge(rank, on="main_recipe_id").sort_values(
             "rank", ascending=True, ignore_index=True

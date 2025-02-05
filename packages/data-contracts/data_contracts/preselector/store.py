@@ -108,7 +108,7 @@ class Preselector:
     year = Int32().lower_bound(2024).upper_bound(2050).as_entity()
     week = Int32().upper_bound(53).lower_bound(1).as_entity()
 
-    portion_size = Int32().lower_bound(1).upper_bound(6)
+    portion_size = Int32()
     company_id = String().accepted_values(
         [
             "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
@@ -119,12 +119,15 @@ class Preselector:
     ).is_optional()
 
     error_vector = Json().is_optional()
-    main_recipe_ids = List(Int32().lower_bound(1000))
+    main_recipe_ids = List(Int32())
     variation_ids = List(String())
     generated_at = EventTimestamp()
     compliancy = Int32().lower_bound(0).upper_bound(4)
     concept_preference_ids = List(String())
-    taste_preferences = List(Json())
+
+    recipes = List(Json()).is_optional()
+
+    taste_preferences = String()
     model_version = String()
     "The git hash of the program"
 
@@ -152,14 +155,17 @@ class SuccessfulPreselectorOutput:
     target_cost_of_food_per_recipe = Float()
     error_vector = Json().is_optional()
 
-    main_recipe_ids = List(Int32())
-    variation_ids = List(String())
+    recipes = List(Json()).is_optional()
+
+    main_recipe_ids = List(Int32()).description("This will be depricated for `recipes`")
+    variation_ids = List(String()).description("This will be depricated for `recipes`")
+    compliancy = Int32().lower_bound(0).upper_bound(4).description("This will be depricated for `recipes`")
+
     concept_preference_ids = List(String())
 
     generated_at = EventTimestamp()
-    compliancy = Int32().lower_bound(0).upper_bound(4)
 
-    taste_preferences = List(Json()).description(
+    taste_preferences = String().description(
         "Deprecated, and will only support `taste_preference_ids` in the future."
     )
     taste_preference_ids = List(String())

@@ -87,7 +87,8 @@ def datadog_agent_container(config: DataDogConfig, name: str) -> Container:
 class WorkerConfig:
     container_name: str
     batch_size: int
-    topic_name: str
+    topic_request_name: str
+    topic_success_name: str
     sub_queue_name: str | None = field(default=None)
 
 async def deploy_preselector(
@@ -142,7 +143,8 @@ async def deploy_preselector(
     datadog_host = "datadog-agent"
 
     async def process_container(
-        topic_name: str,
+        topic_request_name: str,
+        topic_success_name: str,
         container_name: str,
         batch_size: int,
         sub_queue_name: str | None = None
@@ -163,8 +165,9 @@ async def deploy_preselector(
                 "service_bus_namespace": service_bus_namespace,
                 "service_bus_should_write": True,
                 "service_bus_connection_string": None,
-                "service_bus_request_topic_name": topic_name,
+                "service_bus_request_topic_name": topic_request_name,
                 "service_bus_request_size": batch_size,
+                "service_bus_success_topic_name": topic_success_name,
                 "service_bus_sub_queue": sub_queue_name,
                 **env_specific_config
             },
@@ -184,7 +187,7 @@ async def deploy_preselector(
             ),
             DataDogConfig( # type: ignore[reportGeneralTypeIssues]
                 datadog_service_name="preselector",
-                datadog_tags=dd_config.datadog_tags + f",topic:{topic_name},container:{container_name}"
+                datadog_tags=dd_config.datadog_tags + f",topic:{topic_request_name},container:{container_name}"
             ),
             RuntimeEnvs(
                 datalake_env=env,
@@ -240,7 +243,8 @@ async def deploy_preselector(
 
     worker_containers = await asyncio.gather(*[
         process_container(
-            topic_name=worker.topic_name,
+            topic_success_name=worker.topic_success_name,
+            topic_request_name=worker.topic_request_name,
             container_name=worker.container_name,
             batch_size=worker.batch_size,
             sub_queue_name=worker.sub_queue_name
@@ -294,7 +298,7 @@ async def deploy_all(
     mode: Literal["both", "batch", "live", "flush"]
 ) -> None:
     company_names = [
-        # "godtlevert",
+        "godtlevert",
         "adams",
         "linas",
         "retnemt",
@@ -329,12 +333,14 @@ async def deploy_all(
                 WorkerConfig(
                     container_name=f"{name}-live",
                     batch_size=10,
-                    topic_name="priority-deviation-request"
+                    topic_request_name="priority-deviation-request",
+                    topic_success_name="deviation-response"
                 ),
                 WorkerConfig(
                     container_name=f"{name}-batch",
                     batch_size=10,
-                    topic_name="deviation-request"
+                    topic_request_name="deviation-request",
+                    topic_success_name="deviation-response"
                 )
             ]
 
@@ -366,7 +372,8 @@ async def deploy_all(
                 WorkerConfig(
                     container_name=f"{name}-flush",
                     batch_size=10,
-                    topic_name="deviation-request",
+                    topic_request_name="deviation-request",
+                    topic_success_name="deviation-response",
                     sub_queue_name="deadletter"
                 ),
             ]
@@ -397,7 +404,8 @@ async def deploy_all(
                     WorkerConfig(
                         container_name=f"{name}-batch-first",
                         batch_size=10,
-                        topic_name="deviation-request"
+                        topic_request_name="deviation-request",
+                        topic_success_name="deviation-response"
                     ),
                     # WorkerConfig(
                     #     container_name=f"{name}-batch-second",
@@ -428,12 +436,14 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
         WorkerConfig(
             container_name=f"{name}-live-first",
             batch_size=10,
-            topic_name="priority-deviation-request"
+            topic_request_name="priority-deviation-request",
+            topic_success_name="deviation-response"
         ),
         WorkerConfig(
             container_name=f"{name}-live-second",
             batch_size=10,
-            topic_name="priority-deviation-request"
+            topic_request_name="priority-deviation-request",
+            topic_success_name="deviation-response"
         )
     ]
 
@@ -458,6 +468,7 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
             resource_group=f"rg-chefdp-{env}",
             workers=workers
         )
+
 
 
 def key_vault() -> KeyVaultInterface:

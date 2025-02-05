@@ -3,8 +3,6 @@ import logging
 from contextlib import suppress
 from typing import Literal
 
-from aligned.schemas.feature import StaticFeatureTags
-from data_contracts.preselector.basket_features import BasketFeatures
 from pydantic import BaseModel
 from pydantic_argparser import parse_args
 
@@ -15,42 +13,32 @@ class RunArgs(BaseModel):
     env: Literal["test", "prod", "dev"]
 
 
-async def migrate_batch_error() -> None:
-    import polars as pl
-    from data_contracts.preselector.store import Preselector
+async def add_recipes_column() -> None:
+    from data_contracts.preselector.store import SuccessfulPreselectorOutput
     from data_contracts.sources import databricks_catalog
+    from data_contracts.unity_catalog import UCTableSource
 
-    source = databricks_catalog.schema("mloutputs").table("preselector_batch")
-    source = source.overwrite_schema()
+    success_source = SuccessfulPreselectorOutput.metadata.source
+    assert isinstance(success_source, UCTableSource)
 
-    df = await source.all_columns().to_pandas()
-    df["taste_preferences"] = df["taste_preferences"].astype(str)
+    batch_source = databricks_catalog.schema("mloutputs").table("preselector_batch")
 
-    error_features = [
-        feat.name for feat
-        in BasketFeatures.query().request.all_returned_features
-        if StaticFeatureTags.is_entity not in (feat.tags or [])
-    ]
-    error_vector_type = pl.Struct({
-        feat: pl.Float64
-        for feat in error_features
-    })
+    spark = batch_source.config.connection()
 
-    new_df = pl.from_pandas(df).with_columns(
-        pl.col("error_vector").cast(error_vector_type)
-    )
+    recipe_schema = """recipes ARRAY<STRUCT<
+        main_recipe_id: INT,
+        variation_id: STRING,
+        compliancy: INT
+    >>"""
 
-    await Preselector.query().store.update_source_for(
-        Preselector.location,
-        source
-    ).overwrite(
-        Preselector.location,
-        new_df
-    )
+    spark.sql(f"""ALTER TABLE {batch_source.table.identifier()}
+    ADD COLUMNS ({recipe_schema});""")
+
+    spark.sql(f"""ALTER TABLE {success_source.table.identifier()}
+    ADD COLUMNS ({recipe_schema});""")
 
 async def migrate() -> None:
-    await migrate_batch_error()
-
+    await add_recipes_column()
 
 async def main() -> None:
     import os

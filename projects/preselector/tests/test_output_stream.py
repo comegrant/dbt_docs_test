@@ -9,6 +9,7 @@ from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import Preselector
 from preselector.data.models.customer import (
     PreselectorPreferenceCompliancy,
+    PreselectorRecipeResponse,
     PreselectorSuccessfulResponse,
     PreselectorYearWeekResponse,
 )
@@ -42,10 +43,19 @@ async def test_write_to_redis() -> None:
             PreselectorYearWeekResponse(
                 year=2024,
                 week=50,
-                variation_ids=["abc", "bca"],
-                main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_compliant,
-                target_cost_of_food_per_recipe=39
+                target_cost_of_food_per_recipe=39,
+                recipes_data=[
+                    PreselectorRecipeResponse(
+                        main_recipe_id=1,
+                        variation_id="abc",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    ),
+                    PreselectorRecipeResponse(
+                        main_recipe_id=2,
+                        variation_id="bca",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    )
+                ]
             )
         ],
         number_of_recipes=4,
@@ -98,21 +108,27 @@ async def test_write_to_preselector_batch_output() -> None:
             PreselectorYearWeekResponse(
                 year=2024,
                 week=50,
-                variation_ids=["abc", "bca"],
-                main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_compliant,
                 target_cost_of_food_per_recipe=39,
                 error_vector={
                     feat: 0.83
                     for feat in features[:10]
-                }
+                },
+                recipes_data=[
+                    PreselectorRecipeResponse(
+                        main_recipe_id=1,
+                        variation_id="abc",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    ),
+                    PreselectorRecipeResponse(
+                        main_recipe_id=2,
+                        variation_id="bca",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    )
+                ]
             ),
             PreselectorYearWeekResponse(
                 year=2024,
                 week=51,
-                variation_ids=["abc", "bca"],
-                main_recipe_ids=[1, 2],
-                compliancy=PreselectorPreferenceCompliancy.all_compliant,
                 target_cost_of_food_per_recipe=39,
                 error_vector={
                     feat: 0.83
@@ -121,7 +137,19 @@ async def test_write_to_preselector_batch_output() -> None:
                 ordered_weeks_ago={
                     1: 202453,
                     2: 202442,
-                }
+                },
+                recipes_data=[
+                    PreselectorRecipeResponse(
+                        main_recipe_id=1,
+                        variation_id="abc",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    ),
+                    PreselectorRecipeResponse(
+                        main_recipe_id=2,
+                        variation_id="bca",
+                        compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    )
+                ]
             )
         ],
         number_of_recipes=4,
