@@ -15,17 +15,9 @@ auto_setup_env()
 
 
 # COMMAND ----------
-from pyspark.sql import SparkSession
+from slack_connector.databricks_job_url import get_databricks_job_url
 
-spark = SparkSession.getActiveSession()
-
-job_id = spark.sparkContext.getLocalProperty("spark.databricks.job.id")  # Gives JobID in the URL
-parent_run_id = spark.sparkContext.getLocalProperty("spark.databricks.job.parentRunId")  # Gives Job RunID in the URL
-workspace_url = spark.conf.get("spark.databricks.workspaceUrl")
-
-# COMMAND ----------
-host_url = workspace_url
-url_to_job = f"{host_url}/jobs/{job_id}/runs/{parent_run_id}"
+url_to_job = get_databricks_job_url()
 
 # COMMAND ----------
 import json
