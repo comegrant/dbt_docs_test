@@ -13,16 +13,12 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
-	column recipe_id
+	column 'Recipe Id'
 		dataType: int64
-		isHidden
 		formatString: 0
-		isAvailableInMdx: false
 		lineageTag: 48e9feba-edf6-45fa-8bde-6e41295105b4
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: recipe_id
-
-		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -32,7 +28,7 @@ table Recipes
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: e1147db8-bdb8-4156-96c7-044f4d37fd63
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: recipe_status_code_id
 
 		changedProperty = IsHidden
