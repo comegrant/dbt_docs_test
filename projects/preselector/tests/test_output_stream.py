@@ -44,7 +44,7 @@ async def test_write_to_redis() -> None:
                 year=2024,
                 week=50,
                 target_cost_of_food_per_recipe=39,
-                recipes_data=[
+                recipe_data=[
                     PreselectorRecipeResponse(
                         main_recipe_id=1,
                         variation_id="abc",
@@ -113,7 +113,7 @@ async def test_write_to_preselector_batch_output() -> None:
                     feat: 0.83
                     for feat in features[:10]
                 },
-                recipes_data=[
+                recipe_data=[
                     PreselectorRecipeResponse(
                         main_recipe_id=1,
                         variation_id="abc",
@@ -138,7 +138,7 @@ async def test_write_to_preselector_batch_output() -> None:
                     1: 202453,
                     2: 202442,
                 },
-                recipes_data=[
+                recipe_data=[
                     PreselectorRecipeResponse(
                         main_recipe_id=1,
                         variation_id="abc",

@@ -1241,7 +1241,7 @@ async def run_preselector_for_request(
         result = PreselectorYearWeekResponse(
             year=year,
             week=week,
-            recipes_data=[
+            recipe_data=[
                 PreselectorRecipeResponse(**row)
                 for row in output_df.rows(named=True)
             ],

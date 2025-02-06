@@ -199,8 +199,8 @@ async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGener
             week=response.week,
         )
         rank = pl.DataFrame({
-            "main_recipe_id": [rec.main_recipe_id for rec in response.recipes_data],
-            "compliancy": [rec.compliancy for rec in response.recipes_data],
+            "main_recipe_id": [rec.main_recipe_id for rec in response.recipe_data],
+            "compliancy": [rec.compliancy for rec in response.recipe_data],
             "rank": range(len(response.main_recipe_ids))
         }).to_pandas()
 

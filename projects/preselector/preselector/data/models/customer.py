@@ -1,13 +1,13 @@
 import json
 from datetime import datetime
 from enum import IntEnum
-from typing import Annotated
+from typing import Annotated, Any
 
 import polars as pl
 from aligned.schemas.feature import StaticFeatureTags
 from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import FailedPreselectorOutput, Preselector, SuccessfulPreselectorOutput
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, model_validator
 
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
 
@@ -39,7 +39,7 @@ class PreselectorYearWeekResponse(BaseModel):
     year: int
     week: int
     target_cost_of_food_per_recipe: float
-    recipes_data: list[PreselectorRecipeResponse]
+    recipe_data: list[PreselectorRecipeResponse]
     ordered_weeks_ago: Annotated[dict[int, int] | None, Field] = None
     error_vector: Annotated[dict[str, float | None] | None, Field] = None
 
@@ -48,7 +48,7 @@ class PreselectorYearWeekResponse(BaseModel):
     def variation_ids(self) -> list[str]:
         "Is here to keep backwards compatability"
         return [
-            rec.variation_id for rec in self.recipes_data
+            rec.variation_id for rec in self.recipe_data
         ]
 
     @computed_field
@@ -56,7 +56,7 @@ class PreselectorYearWeekResponse(BaseModel):
     def main_recipe_ids(self) -> list[int]:
         "Is here to keep backwards compatability"
         return [
-            rec.main_recipe_id for rec in self.recipes_data
+            rec.main_recipe_id for rec in self.recipe_data
         ]
 
     @computed_field
@@ -64,8 +64,29 @@ class PreselectorYearWeekResponse(BaseModel):
     def compliancy(self) -> PreselectorPreferenceCompliancy:
         "Is here to keep backwards compatability"
         return PreselectorPreferenceCompliancy(min(
-            rec.compliancy.real for rec in self.recipes_data
+            rec.compliancy.real for rec in self.recipe_data
         ))
+
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_old_format(cls, data: Any): # noqa
+        if not isinstance(data, dict):
+            return data
+
+        recipes_key = "recipe_data"
+        if recipes_key in data:
+            return data
+
+        data[recipes_key] = [
+            {
+                "main_recipe_id": main_recipe_id,
+                "variation_id": variation_id,
+                "compliancy": data["compliancy"]
+            }
+            for main_recipe_id, variation_id in zip(data["main_recipe_ids"], data["variation_ids"])
+        ]
+        return data
 
 
 class PreselectorSuccessfulResponse(BaseModel):
@@ -142,7 +163,7 @@ class PreselectorSuccessfulResponse(BaseModel):
 
             mealkit_dict["recipes"] = [
                 recipe.model_dump()
-                for recipe in mealkit.recipes_data
+                for recipe in mealkit.recipe_data
             ]
 
             for old_key, new_key in renames.items():

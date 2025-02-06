@@ -104,7 +104,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                     week=week["menu_week"],
                     target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
                     error_vector=week["error_vector"],
-                    recipes_data=recipes
+                    recipe_data=recipes
                 )
             )
 
@@ -287,7 +287,7 @@ async def debug_app() -> None:
             PreselectorYearWeekResponse(
                 year=success.year,
                 week=success.week,
-                recipes_data=success.recipes_data,
+                recipe_data=success.recipe_data,
                 target_cost_of_food_per_recipe=0,
             ),
             st

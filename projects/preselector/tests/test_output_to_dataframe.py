@@ -28,7 +28,7 @@ response = PreselectorSuccessfulResponse(
                 "is_chicken_percentage": 0.334,
                 "mean_cooking_time": 0.230,
             },
-            recipes_data=[
+            recipe_data=[
                 PreselectorRecipeResponse(
                     main_recipe_id=1,
                     variation_id="Acl",
@@ -61,7 +61,7 @@ response = PreselectorSuccessfulResponse(
                 "is_chicken_percentage": 0.334,
                 "mean_cooking_time": 0.230,
             },
-            recipes_data=[
+            recipe_data=[
                 PreselectorRecipeResponse(
                     main_recipe_id=10,
                     variation_id="A",
@@ -97,6 +97,12 @@ response = PreselectorSuccessfulResponse(
     has_data_processing_consent=True
 )
 
+def test_migrate_to_new_schema() -> None:
+    import json
+    model = response.year_weeks[0].model_dump()
+    del model["recipe_data"]
+    res = PreselectorYearWeekResponse.model_validate_json(json.dumps(model))
+    assert len(res.recipe_data) == len(res.variation_ids)
 
 @pytest.mark.asyncio
 async def test_successful_output_is_valid_dataframe() -> None:
