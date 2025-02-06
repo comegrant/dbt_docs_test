@@ -478,5 +478,12 @@
         }
       }
     ]
-  }
+  },
+  "visualInteractions": [
+    {
+      "source": "75d53d4600b5562ca8e5",
+      "target": "30fcf3699936e093098a",
+      "type": "DataFilter"
+    }
+  ]
 }

@@ -3,7 +3,7 @@
   "name": "9de87f35d65abc52b74b",
   "position": {
     "x": 907.38075313807531,
-    "y": 4.2175732217573216,
+    "y": 8,
     "z": 5000,
     "height": 56.03347280334728,
     "width": 128.3347280334728,
@@ -51,6 +51,26 @@
               "expr": {
                 "Literal": {
                   "Value": "'ApplyAllSlicers'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

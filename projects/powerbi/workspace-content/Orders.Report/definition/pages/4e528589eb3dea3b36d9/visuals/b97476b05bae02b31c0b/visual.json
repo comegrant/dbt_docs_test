@@ -17,17 +17,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
                     }
                   },
-                  "Property": "Date"
+                  "Level": "Monday Date Previous Week"
                 }
               },
-              "queryRef": "Dates.Date",
-              "nativeQueryRef": "Date",
+              "queryRef": "Dates.Financial Date Hierarchy.Monday Date Previous Week",
+              "nativeQueryRef": "Financial Date Hierarchy Monday Date Previous Week",
               "active": true
             }
           ]
@@ -37,13 +42,18 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "HierarchyLevel": {
                 "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
                   }
                 },
-                "Property": "Date"
+                "Level": "Monday Date Previous Week"
               }
             },
             "direction": "Ascending"
@@ -105,13 +115,18 @@
                     "Condition": {
                       "Between": {
                         "Expression": {
-                          "Column": {
+                          "HierarchyLevel": {
                             "Expression": {
-                              "SourceRef": {
-                                "Source": "d"
+                              "Hierarchy": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "d"
+                                  }
+                                },
+                                "Hierarchy": "Financial Date Hierarchy"
                               }
                             },
-                            "Property": "Date"
+                            "Level": "Monday Date Previous Week"
                           }
                         },
                         "LowerBound": {
@@ -193,6 +208,19 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Date'"
                 }
               }
             }
