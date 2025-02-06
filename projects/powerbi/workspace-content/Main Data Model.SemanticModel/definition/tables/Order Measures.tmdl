@@ -93,7 +93,29 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
+	
+	/// Number of order that has one or more grocery purchases
+	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+		formatString: #,0
+		displayFolder: Groceries
+	
+	/// Percentage of orders that contains groceries
+	measure 'Share of Orders with Groceries' = DIVIDE([Number of Orders with Groceries],[Number of Orders], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
+	
+	/// Revenue from groceries of completed orders
+	/// Excluding VAT
+	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+		formatString: #,0
+		displayFolder: Groceries
 
+	/// Average grocery revenue per completed order with groceries
+	/// Excluding VAT
+	measure 'ATV of Groceries Ex Vat' = DIVIDE([Grocery Value Ex Vat],[Number of Orders with Groceries], BLANK())
+		formatString: #,0.00
+		displayFolder: Groceries
+		
 	/// Average order value
 	/// Excluding VAT
 	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
