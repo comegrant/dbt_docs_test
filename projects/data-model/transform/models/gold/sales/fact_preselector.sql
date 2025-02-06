@@ -165,6 +165,9 @@ preselector_successful_output as (
         on
             menus.recipe_id = recipes.recipe_id
             and companies.language_id = recipes.language_id
+    -- Only select recipes that are selected for the menu, as we are joining in future menu weeks where the recipes are not finalised yet
+    where menus.is_selected_menu = true
+    and menus.recipe_id is not null
 )
 
 -- TODO: add this as an intermediate table
