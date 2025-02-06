@@ -1,4 +1,6 @@
-with recommendations as (
+with
+
+recommendations as (
 
     select * from {{ ref('int_basket_deviation_recommendations_most_recent') }}
 )
@@ -17,7 +19,7 @@ with recommendations as (
 
 , agreements as (
 
-    select * from {{ref('cms__billing_agreements')}}
+    select * from {{ ref('cms__billing_agreements') }}
     -- are currently null for the active row, but will be changed to future proof date soon
     where valid_to is null or valid_to = '{{ var("future_proof_date") }}'
 
@@ -38,14 +40,18 @@ with recommendations as (
     left join agreements
         on recommendations.billing_agreement_id = agreements.billing_agreement_id
     left join menus
-        on recommendations.menu_week_monday_date = menus.menu_week_monday_date
-        and recommendations.product_variation_id = menus.product_variation_id
-        and agreements.company_id = menus.company_id
+        on
+            recommendations.menu_week_monday_date = menus.menu_week_monday_date
+            and recommendations.product_variation_id = menus.product_variation_id
+            and agreements.company_id = menus.company_id
     left join products
-        on recommendations.product_variation_id = products.product_variation_id
-        and agreements.company_id = products.company_id
-    where product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-    and recommendations.billing_agreement_basket_deviation_origin_id = '{{ var("preselector_origin_id") }}'
+        on
+            recommendations.product_variation_id = products.product_variation_id
+            and agreements.company_id = products.company_id
+    where
+        product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+        and recommendations.billing_agreement_basket_deviation_origin_id
+        = '{{ var("preselector_origin_id") }}'
 )
 
 select * from recommendation_engine_preselected_recipes

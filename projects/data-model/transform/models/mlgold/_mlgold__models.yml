@@ -4,13 +4,15 @@ version: 2
 
 models:
   - name: weekly_dishes_variations
-    description: ""
+    description: "Table containing information about weekly menu variations for dishes"
 
     columns:
-      - name: year
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
         data_type: int
 
-      - name: week
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
         data_type: int
         
       - name: company_id
@@ -18,45 +20,82 @@ models:
         data_type: string
 
       - name: weekly_menu_id
+        description: "{{ doc('column__weekly_menu_id') }}"
+        data_type: int
+      
+      - name: menu_id
+        description: "{{ doc('column__menu_id') }}"
+        data_type: int
+      
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: menu_recipe_id
+        description: "{{ doc('column__menu_recipe_id') }}"
         data_type: int
 
       - name: recipe_id
         description: "{{ doc('column__recipe_id') }}"
         data_type: int
+      
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
 
       - name: portion_id
+        description: "{{ doc('column__portion_id') }}"
         data_type: int
-
-      - name: recipe_portion_size
+      
+      - name: portion_quantity
+        description: "{{ doc('column__portion_quantity') }}"
         data_type: int
-
+      
       - name: menu_recipe_order
+        description: "{{ doc('column__menu_recipe_order') }}"
         data_type: int
-
-      - name: product_variation_id
-        description: "{{ doc('column__product_variation_id') }}"
-        data_type: string
-
+      
       - name: menu_number_days
+        description: "{{ doc('column__menu_number_days') }}"
         data_type: int
 
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+      
       - name: product_type_id
         description: "{{ doc('column__product_variation_id') }}"
         data_type: string
-
+      
       - name: product_variation_name
         description: "{{ doc('column__product_variation_name') }}"
         data_type: string    
     
   - name: ml_recipes
-    description: "Serve table containing recipe information with concatenated lists of taxonomies and ingredients ids"
+    description: "Table containing recipe information with concatenated lists of taxonomies, generic ingredients and recipe steps"
 
     columns:
       - name: fk_dim_companies
+        description: "{{ doc('column__pk_dim_companies') }}"
         data_type: string
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
 
       - name: fk_dim_recipes
+        description: "{{ doc('column__pk_dim_recipes') }}"
         data_type: string
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
 
       - name: company_id
         description: "{{ doc('column__company_id') }}"
@@ -96,6 +135,7 @@ models:
                   severity: warn
 
       - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
         data_type: string
 
       - name: cooking_time_from
@@ -111,6 +151,7 @@ models:
         description: "{{ doc('column__recipe_difficulty_level_id') }}"
 
       - name: recipe_difficulty_name
+        description: "{{ doc('column__recipe_difficulty_name') }}"
         data_type: string
 
       - name: recipe_main_ingredient_id
@@ -118,6 +159,7 @@ models:
         description: "{{ doc('column__recipe_main_ingredient_id') }}"
 
       - name: recipe_main_ingredient_name
+        description: "{{ doc('column__recipe_main_ingredient_name') }}"
         data_type: string
 
       - name: taxonomy_list
@@ -149,7 +191,7 @@ models:
 
     columns: 
       - name: pk_estimations_log
-        description: The unique primary key in estimations_log table|
+        description: "{{ doc('column__pk_estimations_log') }}"
         data_type: string
         data_tests:
           - not_null
@@ -190,9 +232,186 @@ models:
         data_type: int
 
       - name: estimation_generated_at
-        description: The timestamp of when the estimation was created
+        description: "{{ doc('column__estimation_generated_at') }}"
         data_type: timestamp
 
       - name: source
-        description: Indicates if the data is imported from ADB to get history, or if it is generated in the new data platform (NDP)
+        description: "{{ doc('column__source_estimations_log') }}"
         data_type: int
+  
+  - name: dishes_order_history
+    description: "Table containing aggregated information about the order history for product variations ids"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+      
+      - name: company_name
+        description: "{{ doc('column__company_name') }}"
+        data_type: string
+      
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+      
+      - name: menu_week_monday_date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_type: date
+      
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+      
+      - name: product_variation_quantity
+        description: "{{ doc('column__product_variation_quantity_order_history') }}"
+        data_type: int
+      
+      - name: total_weekly_qty
+        description: "{{ doc('column__total_weekly_qty') }}"
+        data_type: int
+
+      - name: variation_ratio
+        description: "{{ doc('column__variation_ratio') }}"
+        data_type: double
+          
+          
+  - name: ingredients_aggregated_by_recipe_portion_id
+    description: "Table with aggregated ingredient information for recipe portion ids"
+
+    columns:
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+      
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+      
+      - name: number_generic_ingredients
+        description: "{{ doc('column__number_generic_ingredients') }}"
+        data_type: int
+      
+      - name: generic_ingredient_id_list
+        description: "{{ doc('column__generic_ingredient_id_list_per_recipe_portion') }}"
+        data_type: string
+      
+      - name: generic_ingredient_name_list
+        description: "{{ doc('column__generic_ingredient_name_list_per_recipe_portion') }}"
+        data_type: string
+      
+      - name: ingredient_id_list
+        description: "{{ doc('column__ingredient_id_list_per_recipe_portion') }}"
+        data_type: string
+      
+      - name: ingredient_category_id_list
+        description: "{{ doc('column__ingredient_category_id_list_per_recipe_portion') }}"
+        data_type: string
+    
+
+
+  - name: main_recipe_last_menu_year_week
+    description: "Table containing the main recipe id and the most recent menu year, week for a billing agreement and company"
+
+    columns:
+      - name: billing_agreement_id
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_type: int
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+
+      - name: most_recent_menu_year_week
+        description: "{{ doc('column__most_recent_menu_year_week_main_recipe') }}"
+        data_type: int
+      
+  - name: preselector_recipes 
+    description: "Table containing the weekly preselected recipes for billing agreement ids"
+
+    columns:
+      - name: menu_week_monday_date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_type: date
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+
+      - name: billing_agreement_basket_id
+        description: "{{ doc('column__billing_agreement_basket_id') }}"
+        data_type: string
+
+      - name: billing_agreement_id
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_type: int
+
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: deviation_created_at
+        description: "{{ doc('column__source_created_at') }}"
+        data_type: timestamp
+
+      - name: deviation_created_by
+        description: "{{ doc('column__source_created_by') }}"
+        data_type: string
+
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+
+
+  - name: recipe_ingredients
+    description: "Table containing ingredient information for recipe portion ids"
+
+    columns:
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+      
+      - name: generic_ingredient_id
+        description: "{{ doc('column__generic_ingredient_id') }}"
+        data_type: int
+      
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+      
+      - name: generic_ingredient_name
+        description: "{{ doc('column__generic_ingredient_name') }}"
+        data_type: string
+      
+      - name: order_ingredient_id
+        description: "{{ doc('column__order_ingredient_id') }}"
+        data_type: int
+      
+      - name: ingredient_id
+        description: "{{ doc('column__ingredient_id') }}"
+        data_type: int
+      
+      - name: ingredient_category_id
+        description: "{{ doc('column__ingredient_category_id') }}"
+        data_type: int
+      
+      - name: is_main_carbohydrate
+        description: "{{ doc('column__is_main_carbohydrate') }}"
+        data_type: boolean
+      
+      - name: is_main_protein
+        description: "{{ doc('column__is_main_protein') }}"
+        data_type: boolean
+

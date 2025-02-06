@@ -1,4 +1,6 @@
-with fact_menu as (
+with
+
+fact_menu as (
     select
         fk_dim_companies
         , fk_dim_recipes
