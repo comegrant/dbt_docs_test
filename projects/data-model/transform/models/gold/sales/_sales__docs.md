@@ -440,6 +440,26 @@ The unique key of each row in Dim Loyalty Order Statuses.
 
 {% enddocs %}
 
+# Fact Recipe Billing Agreement Compliancy
+
+{% docs column__pk_fact_recipe_billing_agreement_compliancy %}
+
+The unique key of each row in Fact Recipe Billing Agreement Compliancy.
+
+{% enddocs %}
+
+{% docs column__compliancy_level %}
+
+The compliancy level between a billing agreement id and a recipe id.
+It is calculated by comparing the preference combination of the billing agreement and the recipe.
+
+- Compliancy level is 1 if the billing agreement and the recipe have mismatching allergens.
+- Compliancy level is 2 if the billing agreement and the recipe have mismatching concepts or taste preferences.
+- Compliancy level is 3 if the billing agreement and the recipe have matching taste preferences and concepts.
+
+{% enddocs %}
+
+
 # Dim All Preference Combinations
 
 {% docs column__pk_preference_combination_id %}

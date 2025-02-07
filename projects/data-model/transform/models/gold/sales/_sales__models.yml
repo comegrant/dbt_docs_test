@@ -1727,6 +1727,113 @@ models:
 
     versions:
       - v: 1
+  
+  - name: fact_recipe_billing_agreement_compliancy
+    description: "Information about the compliancy between billing agreements and recipes"
+    latest_version: 1
+    config:
+      alias: fact_recipe_billing_agreement_compliancy
+      contract:
+        enforced: true
+
+    versions:
+      - v: 1
+
+    columns:
+      - name: pk_fact_recipe_billing_agreement_compliancy
+        data_type: string
+        description: "{{ doc('column__pk_fact_recipe_billing_agreement_compliancy') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+      
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+      
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_preference_combination_id
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_preference_combination_id
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      
+      - name: compliancy_level
+        data_type: int
+        description: "{{ doc('column__compliancy_level') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
   - name: fact_billing_agreement_consents
     description: "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed. If no consent has ever been made no row will exist for the customer."

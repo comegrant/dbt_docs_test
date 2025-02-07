@@ -1195,7 +1195,7 @@ models:
     columns:
       - name: allergy_id
         data_type: int
-        description: "{{ doc('column__allergy_id') }}" #agathe
+        description: "{{ doc('column__allergy_id') }}"
         data_tests:
           - not_null
 
@@ -1223,7 +1223,7 @@ models:
       
       - name: has_trace_of
         data_type: boolean
-        description: "{{ doc('column__has_trace_of') }}" #agathe
+        description: "{{ doc('column__has_trace_of') }}"
         data_tests:
           - not_null
   
