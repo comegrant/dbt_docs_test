@@ -1,6 +1,7 @@
 # Databricks notebook source
 import sys
-sys.path.append('../helper_functions')
+
+sys.path.append("../helper_functions")
 
 from coredb_connector import load_coredb_full
 
@@ -38,13 +39,14 @@ tables = [
     "recipe_portions",
     "recipes_rating",
     "recipe_steps",
+    "recipe_steps_translations",
     "recipe_step_sections",
     "recipes_translations",
     "status_codes_translations",
     "taxonomies_translations",
     "taxonomy_types",
     "weekly_menus",
-    "recipe_favorite_types"
+    "recipe_favorite_types",
 ]
 for table in tables:
     load_coredb_full(dbutils, database, table)

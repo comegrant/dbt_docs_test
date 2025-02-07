@@ -1286,3 +1286,23 @@ models:
         description: "{{ doc('column__allergy_name') }}"
         data_tests:
           - not_null
+
+  - name: pim__recipe_step_translations
+    description: "Table mapping recipe step ids to their descriptions in different languages"
+
+    columns:
+      - name: recipe_step_id
+        data_type: int
+        description: "{{ doc('column__recipe_step_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_step_description
+        data_type: string
+        description: "{{ doc('column__recipe_step_description') }}"

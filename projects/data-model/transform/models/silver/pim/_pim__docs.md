@@ -522,4 +522,17 @@ The name of an allergy connected to an allergy id
 
 {% enddocs %}
 
+{% docs column__recipe_step_id %}
+
+The unique identifier for a recipe step in the source system
+
+{% enddocs %}
+
+{% docs column__recipe_step_description %}
+
+The description of a recipe step, i.e. "Boil the pasta"
+
+{% enddocs %}
+
+
 

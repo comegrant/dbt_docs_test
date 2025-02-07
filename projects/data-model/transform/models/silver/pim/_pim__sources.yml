@@ -43,3 +43,4 @@ sources:
       - name: pim__allergies_translations
       - name: pim__recipe_favorites
       - name: pim__recipe_favorite_types
+      - name: pim__recipe_steps_translations
