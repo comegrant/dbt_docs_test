@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Active Baskets"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "77d85b16-7ec6-4e2d-aeba-b599e3b293bd"
+  }
+}
