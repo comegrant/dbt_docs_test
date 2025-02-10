@@ -5,7 +5,7 @@ import mlflow.sklearn
 import optuna
 import pandas as pd
 from attribute_scoring.common import Args
-from attribute_scoring.train.config import DataConfig, ModelConfig
+from attribute_scoring.train.configs import DataConfig, ModelConfig
 from attribute_scoring.train.model import model
 from attribute_scoring.train.preprocessing import prepare_training_data
 from attribute_scoring.train.train import train_model
@@ -38,14 +38,13 @@ def tune_pipeline(args: Args, fe: FeatureEngineeringClient, spark: DatabricksSes
     for classifier in classifiers:
         logging.info(f"\nTraining {classifier}...\n")
         with mlflow.start_run(run_name=f"{args.company}_{classifier}_{args.target}"):
-            # log things common to all runs
             mlflow.log_param("classifier", classifier)
             mlflow.log_param("target", args.target)
             mlflow.set_tags({"company": args.company, "target": args.target})
 
             study = optuna.create_study(direction="maximize")
             study.optimize(
-                lambda trial: objective(
+                lambda trial, classifier=classifier: objective(
                     trial=trial,
                     args=args,
                     classifier_name=classifier,
@@ -54,8 +53,9 @@ def tune_pipeline(args: Args, fe: FeatureEngineeringClient, spark: DatabricksSes
                 ),
                 n_trials=n_trials,
             )
-            # log best run
             best_trial = study.best_trial
+            if best_trial.value is None:
+                raise ValueError("Optimization failed: best trial value is None")
             mlflow.log_params({f"best_{key}": value for key, value in best_trial.params.items()})
             mlflow.log_metric(f"best_{MODEL_CONFIG.evaluation_metric}", best_trial.value)
 
@@ -73,7 +73,6 @@ def objective(
     target: pd.Series,
 ) -> float:
     """Defines the objective function for hyperparameter optimization."""
-    # hyperparameter search space
     if classifier_name == "xgboost":
         param = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 200),
@@ -113,7 +112,6 @@ def objective(
 
     model_pipeline = model(args, classifier)
 
-    # child run
     with mlflow.start_run(nested=True):
         _, eval_metric = train_model(
             args=args,

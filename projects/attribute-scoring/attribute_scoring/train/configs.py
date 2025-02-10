@@ -82,7 +82,10 @@ class DataConfig(BaseModel):
         "language_id",
     ]
 
-    columns_to_encode: list[str] = ["recipe_difficulty_level_id", "recipe_main_ingredient_id"]
+    columns_to_encode: list[str] = [
+        "recipe_difficulty_level_id",
+        "recipe_main_ingredient_id",
+    ]
     columns_to_scale: list[str] = [
         "cooking_time_from",
         "cooking_time_to",
@@ -188,20 +191,37 @@ class ModelConfig:
         }
 
     @staticmethod
-    def get_random_forest_classifier(**params):
+    def get_random_forest_classifier(
+        **params,  # noqa
+    ) -> RandomForestClassifier:
         return RandomForestClassifier(**params)
 
     @staticmethod
-    def get_catboost_classifier(**params):
+    def get_catboost_classifier(
+        **params,  # noqa
+    ) -> CatBoostClassifier:
         return CatBoostClassifier(**params)
 
     @staticmethod
-    def get_xgboost_classifier(**params):
+    def get_xgboost_classifier(
+        **params,  # noqa
+    ) -> XGBClassifier:
         return XGBClassifier(**params)
 
-    def classifier(self, company, target):
-        if company not in self.classifier_mapping or target not in self.classifier_mapping[company]:
-            raise ValueError(f"No classifier found for company '{company}' and target '{target}'")
+    def classifier(self, company: str, target: str) -> any:  # type: ignore
+        if (
+            company not in self.classifier_mapping
+            or target not in self.classifier_mapping[company]
+        ):
+            raise ValueError(
+                f"No classifier found for company '{company}' and target '{target}'"
+            )
         return self.classifier_mapping[company][target]
 
     evaluation_metric = "f1"
+
+    class_imbalance_thresholds = {
+        "severe": 0.1,
+        "significant": 0.2,
+        "slight": 0.3,
+    }

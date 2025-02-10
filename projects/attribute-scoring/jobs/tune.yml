@@ -33,7 +33,7 @@ resources:
         - task_key: tune-attribute-scoring
           job_cluster_key: attribute-scoring-tune
           notebook_task:
-            notebook_path: ../0_model_tune.py
+            notebook_path: ./0_model_tune.py
             base_parameters:
               env: "${var.environment}"
               company: LMK

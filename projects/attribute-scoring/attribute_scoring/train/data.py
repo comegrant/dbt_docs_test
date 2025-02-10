@@ -1,40 +1,36 @@
 import pandas as pd
+from attribute_scoring.db import get_data_from_sql
+from attribute_scoring.paths import TRAIN_SQL_DIR
+from attribute_scoring.train.configs import FeatureLookupConfig
 from databricks.connect import DatabricksSession
 from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
-from attribute_scoring.train.config import FeatureLookupConfig
+from databricks.feature_engineering.training_set import TrainingSet
+from pyspark.sql import DataFrame
 
 
-def get_raw_data(
-    env: str,
-    target_label: str,
-    company_id: str,
+def get_training_data(
     spark: DatabricksSession,
-) -> pd.DataFrame:
-    """
-    Fetches raw target data from a Databricks SQL table.
+    company_id: str,
+    target_label: str,
+) -> DataFrame:
+    """Fetches training data from a Databricks SQL table.
 
     Args:
-        env (str): The environment (e.g., 'dev', 'prod') to fetch data from.
-        target_label (str): The name of the target column.
-        company_id (str): The ID of the company to filter data for.
         spark (DatabricksSession): The Spark session to use for querying.
+        company_id (str): The ID of the company to filter data for.
+        target_label (str): The name of the target column.
 
     Returns:
-        pd.DataFrame: A DataFrame containing the recipe_id and target label.
+        DataFrame: A DataFrame containing the recipe_id and target label.
     """
-    target_query = f"""
-        select
-            recipe_id,
-            recipe_portion_id,
-            language_id,
-            {target_label}
-        from {env}.mlfeatures.ft_ml_recipes
-        where company_id = '{company_id}'
-    """
+    df = get_data_from_sql(
+        spark=spark,
+        sql_path=TRAIN_SQL_DIR / "training_targets.sql",
+        company_id=company_id,
+        target_label=target_label,
+    )
 
-    targets = spark.sql(target_query).toPandas()
-
-    return targets
+    return df
 
 
 def get_feature_lookups(
@@ -68,13 +64,12 @@ def get_feature_lookups(
 
 
 def create_training_data(
-    data: pd.DataFrame,
+    df: DataFrame,
     fe: FeatureEngineeringClient,
     feature_lookup: list[FeatureLookup],
     target_label: str,
     excluded_columns: list[str],
-    spark: DatabricksSession,
-) -> tuple[pd.DataFrame, any]:
+) -> tuple[pd.DataFrame, TrainingSet]:
     """
     Creates a training dataset from the raw data and provided feature lookups.
 
@@ -84,14 +79,13 @@ def create_training_data(
         feature_lookup (list[FeatureLookup]): A list of FeatureLookup object(s).
         target_label (str): The target column to predict.
         excluded_columns (list[str]): Columns to exclude from the final dataset.
-        spark (DatabricksSession): A Spark session.
 
     Returns:
         tuple[pd.Dataframe, object]: A tuple containig the training data as a dataframe and the training set object.
     """
     training_set = fe.create_training_set(
-        df=spark.createDataFrame(data),
-        feature_lookups=feature_lookup,
+        df=df,
+        feature_lookups=feature_lookup,  # type: ignore
         label=target_label,
         exclude_columns=excluded_columns,
     )

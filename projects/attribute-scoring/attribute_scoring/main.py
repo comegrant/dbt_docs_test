@@ -12,4 +12,4 @@ async def run(args: RunArgs) -> None:
     Args:
         args: The arguments needed to run your code.
     """
-    print(f"Hello, {args.name}!")
+    print(f"Hello, {args.name}!")  # noqa

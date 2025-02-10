@@ -2,6 +2,7 @@
 
 # COMMAND ----------
 import logging
+
 from databricks_env import auto_setup_env
 
 auto_setup_env()
@@ -12,7 +13,8 @@ logger = logging.getLogger(__name__)
 import mlflow
 
 # import mlflow.sklearn
-from attribute_scoring.common import Args, get_spark_session
+from attribute_scoring.common import Args
+from attribute_scoring.db import get_spark_session
 from attribute_scoring.train.tune import tune_pipeline
 from databricks.feature_engineering import FeatureEngineeringClient
 

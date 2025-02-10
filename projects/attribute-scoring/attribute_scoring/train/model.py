@@ -1,7 +1,7 @@
 from typing import Optional
 
 from attribute_scoring.common import Args
-from attribute_scoring.train.config import DataConfig, ModelConfig
+from attribute_scoring.train.configs import DataConfig, ModelConfig
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -25,6 +25,8 @@ def model(args: Args, classifier: Optional[object] = None) -> Pipeline:
         columns_to_scale=DATA_CONFIG.columns_to_scale,
     )
     if classifier is None:
+        if args.target is None:
+            raise ValueError("Target must be specified when classifier is not provided")
         classifier = MODEL_CONFIG.classifier(args.company, args.target)
 
     model_pipeline = Pipeline(

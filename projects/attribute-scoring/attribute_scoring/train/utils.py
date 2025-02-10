@@ -1,12 +1,14 @@
 import logging
+from typing import Any, Union
 
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
 from attribute_scoring.common import Args
-from attribute_scoring.train.config import ModelConfig
+from attribute_scoring.train.configs import ModelConfig
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.pipeline import Pipeline
 
 MODEL_CONFIG = ModelConfig()
 
@@ -15,15 +17,15 @@ def check_target_distribution(target: pd.Series) -> None:
     """Logs warnings if there is a class imbalance in the target variable."""
     minority_class_ratio = target.value_counts().min() / len(target)
 
-    if minority_class_ratio <= 0.1:  # severe imbalance
+    if minority_class_ratio <= MODEL_CONFIG.class_imbalance_thresholds["severe"]:
         logging.error(
             f"Severe class imbalance detected: minority class is {minority_class_ratio * 100:.2f}% of the data."
         )
-    elif minority_class_ratio <= 0.2:  # significant imbalance
+    elif minority_class_ratio <= MODEL_CONFIG.class_imbalance_thresholds["significant"]:
         logging.warning(
             f"Significant class imbalance detected: minority class is {minority_class_ratio * 100:.2f}% of the data."
         )
-    elif minority_class_ratio <= 0.3:  # slight imbalance
+    elif minority_class_ratio <= MODEL_CONFIG.class_imbalance_thresholds["slight"]:
         logging.info(
             f"Slight class imbalance detected: minority class is {minority_class_ratio * 100:.2f}% of the data."
         )
@@ -32,7 +34,11 @@ def check_target_distribution(target: pd.Series) -> None:
         logging.info("No class imbalance detected.")
 
 
-def log_metrics(y_true: np.ndarray, y_pred: np.ndarray, cv_results: dict) -> float:
+def log_metrics(
+    y_true: Union[np.ndarray, list, pd.Series],
+    y_pred: Union[np.ndarray, list, pd.Series],
+    cv_results: dict,
+) -> float:
     """Logs cross-validation and test set metrics, and returns the chosen evaluation metric."""
     metrics = ["accuracy", "f1", "precision", "recall"]
 
@@ -52,9 +58,16 @@ def log_metrics(y_true: np.ndarray, y_pred: np.ndarray, cv_results: dict) -> flo
     return test_metrics[MODEL_CONFIG.evaluation_metric]
 
 
-def log_feature_importance(args: Args, feature_importance: list[float], feature_names: list[str], top_n=15) -> None:
+def log_feature_importance(
+    args: Args,
+    feature_importance: list[float],
+    feature_names: list[str],
+    top_n: int = 15,
+) -> None:
     """Logs and saves a feature importance plot."""
-    features_sorted = sorted(zip(feature_importance, feature_names), reverse=True, key=lambda x: x[0])
+    features_sorted = sorted(
+        zip(feature_importance, feature_names), reverse=True, key=lambda x: x[0]
+    )
     top_features = features_sorted[:top_n]
     top_importance, top_names = zip(*top_features)
 
@@ -72,13 +85,13 @@ def log_feature_importance(args: Args, feature_importance: list[float], feature_
 class ModelWrapper(mlflow.pyfunc.PythonModel):
     """Wrapper for a trained model to return probabilities instead of predictions."""
 
-    def __init__(self, trained_model):
+    def __init__(self, trained_model: Pipeline):
         self.model = trained_model
 
-    def preprocess_result(self, model_input):
+    def preprocess_result(self, model_input: pd.DataFrame) -> pd.DataFrame:
         return model_input
 
-    def predict(self, context, model_input):
+    def predict(self, context: Any, model_input: pd.DataFrame) -> pd.Series:  # noqa
         processed_df = self.preprocess_result(model_input.copy())
         results = self.model.predict_proba(processed_df)[:, 1]
         return results

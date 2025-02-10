@@ -1,15 +1,17 @@
 import logging
-import random
 
+import datetime as dt
 import mlflow
-
-# import mlflow.sklearn
 import pandas as pd
 from attribute_scoring.common import Args
-from attribute_scoring.train.config import DataConfig, ModelConfig
+from attribute_scoring.train.configs import DataConfig, ModelConfig
 from attribute_scoring.train.model import model
 from attribute_scoring.train.preprocessing import prepare_training_data
-from attribute_scoring.train.utils import ModelWrapper, log_feature_importance, log_metrics
+from attribute_scoring.train.utils import (
+    ModelWrapper,
+    log_feature_importance,
+    log_metrics,
+)
 from databricks.connect import DatabricksSession
 from databricks.feature_engineering import FeatureEngineeringClient
 from sklearn.model_selection import cross_validate, train_test_split
@@ -19,7 +21,9 @@ DATA_CONFIG = DataConfig()
 MODEL_CONFIG = ModelConfig()
 
 
-def train_pipeline(args: Args, fe: FeatureEngineeringClient, spark: DatabricksSession) -> None:
+def train_pipeline(
+    args: Args, fe: FeatureEngineeringClient, spark: DatabricksSession
+) -> None:
     """Executes the training pipeline for a given company and target.
 
     This function prepares the training data, trains the model pipeline, and logs the final trained model with MLflow.
@@ -29,16 +33,24 @@ def train_pipeline(args: Args, fe: FeatureEngineeringClient, spark: DatabricksSe
         fe (FeatureEngineeringClient): A feature engineering client.
         spark (DatabricksSession): A Spark session.
     """
-    external_target_name = DATA_CONFIG.target_mapped.get(args.target)
+    if args.target is None:
+        raise ValueError("Target must be specified.")
 
-    logging.info(f"\nStarting training pipeline for {args.company} ({external_target_name})\n")
+    external_target_name = DATA_CONFIG.target_mapped.get(args.target)
+    if external_target_name is None:
+        raise ValueError("No mapping found for target")
+
+    logging.info(
+        f"\nStarting training pipeline for {args.company} ({external_target_name})\n"
+    )
     logging.info("Preparing training data...")
     data, target_encoded, training_set = prepare_training_data(args, fe, spark)
-    # initializing model
     model_pipeline = model(args=args)
 
     logging.info("Training model...")
-    with mlflow.start_run(run_name=f"{args.company}_{args.target}_training_run_{random.randint(1000, 9999)}"):
+    with mlflow.start_run(
+        run_name=f"{args.company}_{args.target}_training_run_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    ):
         wrapped_model, _ = train_model(
             args=args,
             data=data,
@@ -86,7 +98,7 @@ def train_model(
     """
 
     logging.info("Fitting model...")
-    X_train, X_test, y_train, y_test = train_test_split(
+    X_train, X_test, y_train, y_test = train_test_split(  # noqa
         data, target_encoded, test_size=0.2, random_state=42, stratify=target_encoded
     )
 
@@ -99,8 +111,12 @@ def train_model(
     if not tune_model:
         log_feature_importance(
             args=args,
-            feature_importance=model_pipeline.named_steps["classifier"].feature_importances_,
-            feature_names=model_pipeline.named_steps["preprocessor"].get_feature_names_out(),
+            feature_importance=model_pipeline.named_steps[
+                "classifier"
+            ].feature_importances_,
+            feature_names=model_pipeline.named_steps[
+                "preprocessor"
+            ].get_feature_names_out(),
         )
 
     mlflow.log_params(model_pipeline.get_params(deep=True))

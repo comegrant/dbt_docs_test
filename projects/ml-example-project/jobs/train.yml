@@ -44,6 +44,7 @@ resources:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ""
               body_message: ✅ ML Example project train step finished!
               is_error: false
         - task_key: slack-notification-failied
@@ -54,7 +55,7 @@ resources:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              message_header: ❌ ML Example project train step failed!
+              header_message: ❌ ML Example project train step failed!
               body_message: Check databricks for details...
               is_error: true
               relevant_people: sylvia

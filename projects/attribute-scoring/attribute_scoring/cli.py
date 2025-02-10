@@ -1,5 +1,7 @@
 import asyncio
+
 from pydantic_argparser import parse_args
+
 from attribute_scoring.main import RunArgs, run
 
 

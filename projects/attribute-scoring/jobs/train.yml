@@ -33,7 +33,7 @@ resources:
         - task_key: train-attribute-scoring
           job_cluster_key: attribute-scoring-train
           notebook_task:
-            notebook_path: ../1_model_train.py
+            notebook_path: ./1_model_train.py
             base_parameters:
               env: "${var.environment}"
               company: LMK
@@ -47,6 +47,7 @@ resources:
             job_id: ${var.slack_notification_job_id}
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ""
               body_message: ✅ Attribute scoring training successful!
               is_error: false
 

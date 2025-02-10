@@ -37,7 +37,7 @@ resources:
         - task_key: predict-attribute-scoring-AMK
           job_cluster_key: attribute-scoring-predict-weekly
           notebook_task:
-            notebook_path: ../2_predict.py
+            notebook_path: ./2_predict.py
             base_parameters:
               env: "${var.environment}"
               company: AMK
@@ -48,7 +48,7 @@ resources:
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
           notebook_task:
-            notebook_path: ../2_predict.py
+            notebook_path: ./2_predict.py
             base_parameters:
               env: "${var.environment}"
               company: GL
@@ -61,7 +61,7 @@ resources:
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
           notebook_task:
-            notebook_path: ../2_predict.py
+            notebook_path: ./2_predict.py
             base_parameters:
               env: "${var.environment}"
               company: RT
@@ -74,7 +74,7 @@ resources:
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
           notebook_task:
-            notebook_path: ../2_predict.py
+            notebook_path: ./2_predict.py
             base_parameters:
               env: "${var.environment}"
               company: LMK
@@ -95,6 +95,7 @@ resources:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ""
               body_message: ✅ Attribute scoring prediction successful!
               is_error: false
         

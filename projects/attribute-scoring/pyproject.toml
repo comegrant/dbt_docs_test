@@ -11,9 +11,9 @@ pydantic-settings = "^2.1.0"
 streamlit = "^1.40.0"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
 databricks-connect = "15.4.3"
-databricks-feature-engineering = "^0.7.0"
+databricks-feature-engineering = "^0.8.0"
 constants = {path = "../../packages/constants", develop = true}
-scikit-learn = "^1.5.2"
+scikit-learn = "1.5.2"
 xgboost = "^2.1.1"
 seaborn = "^0.13.2"
 matplotlib = "^3.9.2"
@@ -24,6 +24,7 @@ lightgbm = "^4.5.0"
 catboost = "^1.2.7"
 imbalanced-learn = "^0.12.4"
 msal = "^1.31.0"
+pyright = "^1.1.391"
 
 slack-connector = {path = "../../packages/slack-connector", develop = true}
 [tool.poetry.group.cli.dependencies]
@@ -44,3 +45,18 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 chef = 'chef.cli:cli'
+
+[tool.pyright]
+exclude = [
+    "**/jobs/**.py",
+    ".venv",
+    "streamlit_app/**",
+]
+
+[tool.ruff]
+exclude = [
+    "**/jobs/**.py",
+    ".venv",
+    "streamlit_app/**",
+    "**/*.ipynb",
+]

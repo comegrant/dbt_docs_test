@@ -53,5 +53,5 @@ def send_feedback_to_db(df: pd.DataFrame) -> None:
     df["created_at"] = datetime.now(pytz.timezone("cet")).replace(tzinfo=None)
     df["created_by"] = st.session_state["user_name"].strip().lower().replace(" ", "_")
 
-    spark_df = spark.createDataFrame(df)
+    spark_df = spark.createDataFrame(df)  # type: ignore
     spark_df.write.mode("append").saveAsTable(OUTPUT_TABLE)
