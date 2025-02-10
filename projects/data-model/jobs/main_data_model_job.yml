@@ -3,7 +3,6 @@ resources:
     main_data_model_job:
       name: main-data-model-job
 
-      max_retries: 1
       timeout_seconds: 6000 #Timeout after 100 mins
       edit_mode: EDITABLE
 
@@ -70,14 +69,15 @@ resources:
           notebook_task:
             notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
 
-        - task_key: dbt
+        - task_key: dbt-run
           dbt_task:
             project_directory: ../transform/
             warehouse_id: ${var.warehouse_id}
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
-              - 'dbt build --exclude drafts.*'
+              - 'dbt snapshot'
+              - 'dbt run --exclude drafts.*'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_coredb_snapshot_full},
@@ -89,11 +89,23 @@ resources:
             {task_key: bronze_cms_register_info_basket}
           ]
 
+        - task_key: dbt-test
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt test --exclude drafts.*'
+          environment_key: dbt-default
+          depends_on: [
+            {task_key: dbt-run}
+          ]
+
         - task_key: refresh-powerbi
           notebook_task:
             notebook_path: ../powerbi-refresh/powerbi-refresh.py
           depends_on: [
-            {task_key: dbt}
+            {task_key: dbt-run}
           ]
 
         - task_key: success-notification
@@ -115,7 +127,8 @@ resources:
             {task_key: bronze_cms_billing_agreement_order_and_order_lines},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
             {task_key: bronze_cms_register_info_basket},
-            {task_key: dbt},
+            {task_key: dbt-run},
+            {task_key: dbt-test},
             {task_key: refresh-powerbi}
           ]
           run_if: AT_LEAST_ONE_FAILED
