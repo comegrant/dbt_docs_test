@@ -39,7 +39,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
         return st.session_state[str(agreement_id)]
 
     output = await SuccessfulPreselectorOutput.query().filter(
-        pl.col("billing_agreement_id") == agreement_id
+        f"billing_agreement_id = {agreement_id}"
     ).to_polars()
 
     structured = output.group_by(["generated_at", "billing_agreement_id"]).agg(
@@ -71,7 +71,6 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                 )
             )
         return preferences
-
 
 
     for row in structured.iter_rows(named=True):
@@ -129,7 +128,9 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     return responses
 
 
-def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMealkitRequest, list[int]] | None:
+def select(
+    responses: list[PreselectorSuccessfulResponse]
+) -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
 
     with st.form("Select Response"):
 
@@ -205,14 +206,14 @@ def select(responses: list[PreselectorSuccessfulResponse]) -> tuple[GenerateMeal
             has_data_processing_consent=True,
             ordered_weeks_ago=ordered_weeks_ago
         ),
-        year_week.main_recipe_ids
+        year_week
     )
 
 
 async def debug_app() -> None:
     store = preselector_store()
 
-    async def successful_responses() -> tuple[GenerateMealkitRequest, list[int]] | None:
+    async def successful_responses() -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
         responses = await responses_form()
 
         if not responses:
@@ -220,14 +221,19 @@ async def debug_app() -> None:
 
         return select(responses)
 
-    async def failed_responses() -> tuple[GenerateMealkitRequest, list[int]] | None:
+    async def failed_responses() -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
         failed = await failure_responses_form()
 
         if not failed:
             st.write("Found no failures")
             return None
 
-        return (failed[-1], [])
+        return (
+            failed[-1],
+            PreselectorYearWeekResponse(
+                year=0, week=0, target_cost_of_food_per_recipe=0, recipe_data=[]
+            )
+        )
 
 
     response = await successful_responses()
@@ -244,7 +250,6 @@ async def debug_app() -> None:
     cache_store = await load_cache(
         store, company_id=request.company_id
     )
-
 
     st.write(request.number_of_recipes)
 
@@ -268,37 +273,26 @@ async def debug_app() -> None:
         return
 
 
-
-
     if not run_response.success:
         st.error(run_response.failures[0])
         return
 
     success = run_response.success[0]
 
-    if (set(run_response.success[0].main_recipe_ids) - set(expected_recipes)):
+    if (set(success.main_recipe_ids) - set(expected_recipes.main_recipe_ids)):
         st.header("Something is not right")
         st.error(
-            f"You have drift in some way. Expected {expected_recipes} recipe ids, "
-            f"but got {run_response.success[0].main_recipe_ids}"
+            f"You have drift in some way. Expected {expected_recipes.main_recipe_ids} recipe ids, "
+            f"but got {success.main_recipe_ids}"
         )
         st.header("Expected the following")
-        await display_recipes(
-            PreselectorYearWeekResponse(
-                year=success.year,
-                week=success.week,
-                recipe_data=success.recipe_data,
-                target_cost_of_food_per_recipe=0,
-            ),
-            st
-        )
+        await display_recipes(expected_recipes, st)
+    else:
+        st.success("Output was reproduced")
 
 
     st.header("Current output")
-    await display_recipes(
-        run_response.success[0],
-        st
-    )
+    await display_recipes(success, st)
 
 
 if __name__ == "__main__":

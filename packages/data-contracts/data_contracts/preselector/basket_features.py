@@ -107,20 +107,7 @@ class BasketFeatures:
         pl.col("average_rating").fill_nan(0).mean(), as_type=Float()
     ).with_tag(VariationTags.quality)
 
-    # std_fat = fat_agg.std()
-    # std_protein = protein_agg.std()
-    # std_veg_fruit = veg_fruit_agg.std()
-    # std_fat_saturated = fat_saturated_agg.std()
-    # std_price_category_level = price_category_level_agg.std()
-    # std_recipe_cost_whole_units = recipe_cost_whole_units_agg.std()
-    # std_energy = energy_kcal_agg.std()
-    # std_number_of_ratings = number_of_ratings_agg.std()
-    # std_ratings = recipe_features.average_rating.polars_aggregation(
-    #     pl.col("average_rating").fill_nan(0).std(), as_type=Float()
-    # )
-
     cooking_time_mean = recipe_features.cooking_time_from.aggregate().mean().with_tag(VariationTags.time)
-    # cooking_time_std = recipe_features.cooking_time_from.aggregate().std()
 
     is_low_calorie = mean_of_bool(recipe_features.is_low_calorie)
     is_chef_choice_percentage = mean_of_bool(recipe_features.is_chefs_choice)
@@ -142,9 +129,10 @@ class BasketFeatures:
     is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
     is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
 
-    is_seafood_percentage = mean_of_bool(
-        recipe_main_ingredient.is_seafood
-    ).with_tag(VariationTags.protein).default_value(0)
+    is_seafood_percentage = Float().polars_aggregation_using_features(
+        [recipe_main_ingredient.is_seafood, recipe_features.is_fish],
+        (pl.col("is_seafood") | pl.col("is_fish")).fill_null(False).mean()
+    ).with_tag(VariationTags.protein).with_tag(PreselectorTags.binary_metric).default_value(0)
 
     for protein in recipe_main_ingredient.all_proteins:
         locals()[f"{protein.name}_percentage"] = (mean_of_bool(protein)
@@ -206,7 +194,7 @@ async def historical_customer_mealkit_features(
 
     for i in range(1, number_of_historical_orders):
         year_week = from_date - timedelta(weeks=i)
-        year_weeks.append((year_week.year, year_week.isocalendar()[1]))
+        year_weeks.append((year_week.year, year_week.isocalendar().week))
 
 
     history = query(HistoricalRecipeOrders)
@@ -346,8 +334,8 @@ async def historical_preselector_vector(
         .with_columns(vector_type=pl.lit("target"))
     )
 
-    center_point = 0.25
-    buffer_range = 0.15
+    center_point = 0.3
+    buffer_range = 0.2
 
     importance = (
         basket_features.filter((pl.len() > 1).over("agreement_id"))
@@ -355,13 +343,7 @@ async def historical_preselector_vector(
         .agg([
             *[
                 (
-                    1 / pl.col(feat).fill_nan(0).top_k(
-                        # Adding top k as noise reduction
-                        (pl.len() * 0.9).ceil()
-                    ).bottom_k(
-                        (pl.len() * 0.8).ceil()
-                    ).std()
-                    .clip(lower_bound=0.1)
+                    1 / pl.col(feat).fill_nan(0).std().clip(lower_bound=0.1)
                 ).alias(feat)
                 for feat in scalar_feature_columns
             ],
@@ -374,7 +356,7 @@ async def historical_preselector_vector(
                 for feat in boolean_feature_columns
             ]
         ])
-        .with_columns([pl.col(feat) / pl.sum_horizontal(scalar_feature_columns) for feat in feature_columns ])
+        .with_columns([pl.col(feat) / pl.sum_horizontal(feature_columns) for feat in feature_columns ])
         .with_columns(vector_type=pl.lit("importance"))
     )
     return target.vstack(

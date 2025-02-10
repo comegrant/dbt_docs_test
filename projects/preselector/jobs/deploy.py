@@ -334,7 +334,7 @@ async def deploy_all(
                     container_name=f"{name}-live",
                     batch_size=10,
                     topic_request_name="priority-deviation-request",
-                    topic_success_name="deviation-response"
+                    topic_success_name="priority-deviation-response"
                 ),
                 WorkerConfig(
                     container_name=f"{name}-batch",
@@ -437,13 +437,13 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
             container_name=f"{name}-live-first",
             batch_size=10,
             topic_request_name="priority-deviation-request",
-            topic_success_name="deviation-response"
+            topic_success_name="priority-deviation-response"
         ),
         WorkerConfig(
             container_name=f"{name}-live-second",
             batch_size=10,
             topic_request_name="priority-deviation-request",
-            topic_success_name="deviation-response"
+            topic_success_name="priority-deviation-response"
         )
     ]
 

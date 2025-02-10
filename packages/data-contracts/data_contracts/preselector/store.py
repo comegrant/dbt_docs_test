@@ -165,10 +165,7 @@ class SuccessfulPreselectorOutput:
 
     generated_at = EventTimestamp()
 
-    taste_preferences = String().description(
-        "Deprecated, and will only support `taste_preference_ids` in the future."
-    )
-    taste_preference_ids = List(String())
+    taste_preference_ids = List(String()).is_optional()
 
     model_version = String()
     has_data_processing_consent = Bool()

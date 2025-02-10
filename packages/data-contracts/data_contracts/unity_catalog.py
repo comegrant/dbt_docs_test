@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -14,10 +14,13 @@ from aligned.data_source.batch_data_source import (
 )
 from aligned.feature_source import WritableFeatureSource
 from aligned.retrival_job import RetrivalJob, RetrivalRequest
-from aligned.schemas.feature import Feature
+from aligned.schemas.constraints import MaxLength, MinLength
+from aligned.schemas.feature import Constraint, Feature
 from aligned.sources.local import FileFactualJob
+from pyspark.sql.types import CharType, DateType, VarcharType
 
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
+from data_contracts.helper import snake_to_pascal
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -113,8 +116,12 @@ def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PL
     raise ValueError(f"Unsupported type {data_type}")
 
 
+@dataclass
+class SparkDataType:
+    dtype: FeatureType
+    constraints: list[Constraint]
 
-def convert_pyspark_type(data_type: DataType) -> FeatureType:  # noqa: PLR0911
+def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
     from pyspark.sql.types import (
         ArrayType,
         BooleanType,
@@ -131,32 +138,46 @@ def convert_pyspark_type(data_type: DataType) -> FeatureType:  # noqa: PLR0911
         TimestampType,
     )
 
+    def no_constraints(dtype: FeatureType) -> SparkDataType:
+        return SparkDataType(dtype, [])
+
+    if isinstance(data_type, VarcharType):
+        return SparkDataType(FeatureType.string(), [
+            MaxLength(data_type.length),
+        ])
+    if isinstance(data_type, CharType):
+        return SparkDataType(FeatureType.string(), [
+            MinLength(data_type.length),
+            MaxLength(data_type.length),
+        ])
     if isinstance(data_type, StringType):
-        return FeatureType.string()
+        return no_constraints(FeatureType.string())
     if isinstance(data_type, FloatType):
-        return FeatureType.floating_point()
+        return no_constraints(FeatureType.floating_point())
     if isinstance(data_type, DoubleType):
-        return FeatureType.double()
+        return no_constraints(FeatureType.double())
     if isinstance(data_type, ByteType):
-        return FeatureType.int8()
+        return no_constraints(FeatureType.int8())
     if isinstance(data_type, ShortType):
-        return FeatureType.int16()
+        return no_constraints(FeatureType.int16())
     if isinstance(data_type, IntegerType):
-        return FeatureType.int32()
+        return no_constraints(FeatureType.int32())
     if isinstance(data_type, LongType):
-        return FeatureType.int64()
+        return no_constraints(FeatureType.int64())
     if isinstance(data_type, BooleanType):
-        return FeatureType.boolean()
+        return no_constraints(FeatureType.boolean())
     if isinstance(data_type, (TimestampType, TimestampNTZType)):
-        return FeatureType.datetime()
+        return no_constraints(FeatureType.datetime())
+    if isinstance(data_type, DateType):
+        return no_constraints(FeatureType.date())
     if isinstance(data_type, ArrayType):
-        return FeatureType.array(
-            convert_pyspark_type(data_type.elementType)
-        )
+        return no_constraints(FeatureType.array(
+            convert_pyspark_type(data_type.elementType).dtype
+        ))
     if isinstance(data_type, StructType):
-        return FeatureType.json()
+        return no_constraints(FeatureType.json())
     if isinstance(data_type, MapType):
-        return FeatureType.json()
+        return no_constraints(FeatureType.json())
 
     raise ValueError(f"Unsupported type {data_type}")
 
@@ -274,6 +295,11 @@ class UnityCatalogSchema:
 
     catalog: ValueRepresentable
     schema: ValueRepresentable
+
+    async def list_tables(self) -> list[str]:
+        con = self.config.connection()
+        tables = con.sql(f"SHOW TABLES {self.catalog.read()}.{self.schema.read()};").toPandas()
+        return tables["tableName"].to_list()
 
     def table(self, table: str | ValueRepresentable) -> UCTableSource:
         return UCTableSource(
@@ -531,6 +557,7 @@ class UnityCatalogTableAllJob(RetrivalJob):
     table: UnityCatalogTableConfig
     request: RetrivalRequest
     limit: int | None
+    where: str | None = field(default=None)
 
     @property
     def request_result(self) -> RequestResult:
@@ -539,6 +566,15 @@ class UnityCatalogTableAllJob(RetrivalJob):
     @property
     def retrival_requests(self) -> list[RetrivalRequest]:
         return [self.request]
+
+    def filter(self, condition: str | Feature | pl.Expr) -> RetrivalJob:
+        if isinstance(condition, Feature):
+            self.where = condition.name
+        elif isinstance(condition, str):
+            self.where = condition
+        else:
+            return RetrivalJob.filter(self, condition)
+        return self
 
     async def to_pandas(self) -> pd.DataFrame:
         con = self.config.connection()
@@ -549,13 +585,23 @@ class UnityCatalogTableAllJob(RetrivalJob):
                 features_to_read(self.request)
             )
 
+        if self.where:
+            spark_df = spark_df.filter(self.where)
+
         if self.limit:
             spark_df = spark_df.limit(self.limit)
 
         return spark_df.toPandas()
 
     async def to_lazy_polars(self) -> pl.LazyFrame:
-        return pl.from_pandas(await self.to_pandas()).lazy()
+        return pl.from_pandas(
+            await self.to_pandas(),
+            schema_overrides={
+                feat.name: feat.dtype.polars_type
+                for feat in self.retrival_requests[0].features
+                if feat.dtype != FeatureType.json()
+            }
+        ).lazy()
 
 
 
@@ -645,8 +691,8 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
 
         aligned_schema: dict[str, FeatureType] = {}
 
-        for field in schema.fields:
-            aligned_schema[field.name] = convert_pyspark_type(field.dataType)
+        for column in schema.fields:
+            aligned_schema[column.name] = convert_pyspark_type(column.dataType).dtype
         return aligned_schema
 
     async def freshness(self, feature: Feature) -> datetime | None:
@@ -715,3 +761,68 @@ WHEN NOT MATCHED THEN
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCTableSource:
         return UCTableSource(config, self.table)
+
+
+    async def feature_view_code(self, view_name: str) -> str:
+        from pyspark.sql.types import DataType
+
+        con = self.config.connection()
+        columns = con.sql(f"DESCRIBE TABLE {self.table.identifier()}").toPandas()
+
+        source = f"{self.config}"
+
+        if isinstance(self.table.catalog, LiteralValue):
+            source += f".catalog('{self.table.catalog.read()}')"
+        else:
+            source += f".catalog({self.table.catalog})"
+
+        if isinstance(self.table.schema, LiteralValue):
+            source += f".schema('{self.table.schema.read()}')"
+        else:
+            source += f".schema({self.table.schema})"
+
+        if isinstance(self.table.table, LiteralValue):
+            source += f".table('{self.table.table.read()}')"
+        else:
+            source += f".table({self.table.table})"
+
+        uppercased_name = snake_to_pascal(view_name)
+
+        data_types: set[str] = set()
+        feature_code = ''
+        for row in columns.sort_values("col_name").to_dict(orient="records"):
+            name = row["col_name"]
+            comment = row["comment"]
+
+            spark_type = convert_pyspark_type(DataType.fromDDL(row["data_type"]))
+            dtype = spark_type.dtype.feature_factory
+
+            type_name = dtype.__class__.__name__
+            data_types.add(type_name)
+            feature_code += f'{name} = {type_name}()'
+
+            for constraint in spark_type.constraints:
+                if isinstance(constraint, MaxLength):
+                    feature_code += f".max_length({constraint.value})"
+                elif isinstance(constraint, MinLength):
+                    feature_code += f".min_length({constraint.value})"
+
+            if comment:
+                formatted_comment = comment.replace("\n", "\\n")
+                feature_code += f'\n    "{formatted_comment}"\n'
+
+            feature_code += '\n    '
+
+        all_types = ', '.join(data_types)
+
+        return f"""from aligned import feature_view, {all_types}
+from data_contracts.unity_catalog import DatabricksConnectionConfig
+
+@feature_view(
+    name="{view_name}",
+    description="A databricks table containing {view_name}",
+    source={source},
+    tags=['code-generated', 'databricks']
+)
+class {uppercased_name}:
+    {feature_code}"""

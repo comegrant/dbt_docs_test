@@ -137,7 +137,7 @@ class PreselectorSuccessfulResponse(BaseModel):
         expected_schema = {
             feat.name: feat.dtype.polars_type
             for feat in returned_features
-            if "json" not in feat.dtype.name
+            if "json" not in feat.dtype.name and feat.name != "recipes"
         }
         error_vector_type = pl.Struct({
             feat: pl.Float64

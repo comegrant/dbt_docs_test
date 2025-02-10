@@ -495,9 +495,8 @@ class RecipeFeatures:
         is_fish
     ) = main_ingredient_id.one_hot_encode(
         [  # type: ignore
-            main_ingredient_ids["vegetarian"],
-            main_ingredient_ids["vegan"],
-            main_ingredient_ids["fish"],
+            main_ingredient_ids[key]
+            for key in ["vegetarian", "vegan", "fish"]
         ]
     )
     is_vegetarian = is_vegetarian_ingredient.logical_or(is_vegan)
