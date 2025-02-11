@@ -129,7 +129,7 @@ dim_billing_agreements as (
                         )
                     )
                 )
-                <> (array_size(agreement_concept_preference_id_list))
+                = 0
                 then 2
             else 3
         end as compliancy_level
