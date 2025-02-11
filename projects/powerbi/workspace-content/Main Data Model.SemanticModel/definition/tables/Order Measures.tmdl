@@ -120,6 +120,10 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
+	
+	/// Average number of orders per unique customers placing an order in the selected filtering context (i.e. time, preferences etc.)
+	measure 'Average Number of Orders per Customer' = DIVIDE(['Number of Orders'], ['Number of Ordering Customers'], BLANK())
+		formatString: #,0.00
 
 	/// Number of order that has one or more grocery purchases
 	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
