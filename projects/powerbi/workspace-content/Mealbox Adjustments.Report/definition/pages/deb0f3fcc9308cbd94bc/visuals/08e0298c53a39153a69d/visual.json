@@ -60,6 +60,13 @@
                   "Value": "true"
                 }
               }
+            },
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
             }
           }
         }
