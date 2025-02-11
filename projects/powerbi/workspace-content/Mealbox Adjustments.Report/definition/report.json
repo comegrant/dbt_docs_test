@@ -90,7 +90,7 @@
         }
       },
       {
-        "name": "dbece5dea597c08b9e36",
+        "name": "71b29ee2c96552259005",
         "ordinal": 1,
         "field": {
           "HierarchyLevel": {
@@ -101,7 +101,7 @@
                     "Entity": "Dates"
                   }
                 },
-                "Hierarchy": "Financial Date Hierarchy"
+                "Hierarchy": "Calendar Hierarchy with Week"
               }
             },
             "Level": "Year"
@@ -131,7 +131,7 @@
                               "Source": "d"
                             }
                           },
-                          "Hierarchy": "Financial Date Hierarchy"
+                          "Hierarchy": "Calendar Hierarchy with Week"
                         }
                       },
                       "Level": "Year"
@@ -172,7 +172,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "true"
+                "Value": "false"
               }
             }
           }

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "5d4a9727d10e63ae5779",
   "position": {
-    "x": 16,
-    "y": 92,
+    "x": 15.714285714285715,
+    "y": 91.428571428571431,
     "z": 0,
-    "height": 608,
-    "width": 825,
+    "height": 608.57142857142856,
+    "width": 725.71428571428578,
     "tabOrder": 0
   },
   "visual": {
@@ -54,16 +54,15 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Schema": "extension",
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "_Bar Share of Orders Selected by Customers"
+                  "Property": "Number of Added Dishes"
                 }
               },
-              "queryRef": "Order Measures._Bar Share of Orders Selected by Customers",
-              "nativeQueryRef": "Share of Orders Selected by Customers1",
-              "displayName": "Share of Orders Selected by Customers"
+              "queryRef": "Order Measures.Number of Added Dishes",
+              "nativeQueryRef": "Added by Customer",
+              "displayName": "Added by Customer"
             },
             {
               "field": {
@@ -74,12 +73,12 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "_Share of Orders Selected by Customers"
+                  "Property": "_Bar Share of Orders Selected by Customers"
                 }
               },
-              "queryRef": "Order Measures._Share of Orders Selected by Customers",
-              "nativeQueryRef": "%1",
-              "displayName": "%"
+              "queryRef": "Order Measures._Bar Share of Orders Selected by Customers",
+              "nativeQueryRef": "% Added",
+              "displayName": "% Added"
             },
             {
               "field": {
@@ -101,16 +100,15 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Schema": "extension",
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "_Bar Share of Preselections Removed by Customers"
+                  "Property": "Number of Removed Dishes"
                 }
               },
-              "queryRef": "Order Measures._Bar Share of Preselections Removed by Customers",
-              "nativeQueryRef": "Share of Preselections Removed by Customers1",
-              "displayName": "Share of Preselections Removed by Customers"
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Removed by Customer",
+              "displayName": "Removed by Customer"
             },
             {
               "field": {
@@ -121,12 +119,12 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "_Share of Preselections Removed by Customers"
+                  "Property": "_Bar Share of Preselections Removed by Customers"
                 }
               },
-              "queryRef": "Order Measures._Share of Preselections Removed by Customers",
-              "nativeQueryRef": "% ",
-              "displayName": "% "
+              "queryRef": "Order Measures._Bar Share of Preselections Removed by Customers",
+              "nativeQueryRef": "% Removed",
+              "displayName": "% Removed"
             }
           ]
         }
@@ -135,16 +133,16 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Recipes"
+                    "Entity": "Order Measures"
                   }
                 },
-                "Property": "Cooking Time"
+                "Property": "Number of Ordered Dishes"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -187,12 +185,26 @@
         {
           "properties": {
             "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
               "positiveColor": {
                 "solid": {
                   "color": {
                     "expr": {
                       "Literal": {
-                        "Value": "'#996F5C'"
+                        "Value": "'#efc2cc'"
                       }
                     }
                   }
@@ -230,7 +242,7 @@
               "hideText": {
                 "expr": {
                   "Literal": {
-                    "Value": "true"
+                    "Value": "false"
                   }
                 }
               },
@@ -250,12 +262,26 @@
         {
           "properties": {
             "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
               "positiveColor": {
                 "solid": {
                   "color": {
                     "expr": {
                       "Literal": {
-                        "Value": "'#996F5C'"
+                        "Value": "'#cfd7bb'"
                       }
                     }
                   }
@@ -293,7 +319,7 @@
               "hideText": {
                 "expr": {
                   "Literal": {
-                    "Value": "true"
+                    "Value": "false"
                   }
                 }
               },
@@ -354,7 +380,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "155.5384580087789D"
+                  "Value": "101.1093076849822D"
                 }
               }
             }
@@ -368,7 +394,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "160.49850251503292D"
+                  "Value": "100.6831839321456D"
                 }
               }
             }
@@ -382,7 +408,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "79.4009341623998D"
+                  "Value": "94.90884236271457D"
                 }
               }
             }
@@ -396,7 +422,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "71.8927751056247D"
+                  "Value": "83.44020811167802D"
                 }
               }
             }
@@ -410,13 +436,41 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "86.720285496123D"
+                  "Value": "92.51901930945739D"
                 }
               }
             }
           },
           "selector": {
             "metadata": "Order Measures.Number of Preselected Dishes"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "101.57143150228825D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Number of Removed Dishes"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "99.28570851897524D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Number of Added Dishes"
           }
         }
       ]
@@ -612,30 +666,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "e93e519ecc75c42ddee3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Cooking Time"
-          }
-        },
-        "type": "Categorical",
-        "objects": {
-          "general": [
-            {
-              "properties": {}
-            }
-          ]
-        }
-      }
-    ]
   }
 }

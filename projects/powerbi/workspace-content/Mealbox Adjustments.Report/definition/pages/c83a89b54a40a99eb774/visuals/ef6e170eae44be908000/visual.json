@@ -34,6 +34,36 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Ordered Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Ordered Dishes",
+              "nativeQueryRef": "Orders",
+              "displayName": "Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Added Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Added Dishes",
+              "nativeQueryRef": "Added by Customers",
+              "displayName": "Added by Customers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
                       "Schema": "extension",
                       "Entity": "Order Measures"
                     }
@@ -42,8 +72,38 @@
                 }
               },
               "queryRef": "Order Measures._Share of Customer Dish Selection",
-              "nativeQueryRef": "Share of Orders Selected by Customers",
-              "displayName": "Share of Orders Selected by Customers"
+              "nativeQueryRef": "% Added",
+              "displayName": "% Added"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Preselected Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Preselected Dishes",
+              "nativeQueryRef": "Preselections",
+              "displayName": "Preselections"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Removed Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Removed by Customers",
+              "displayName": "Removed by Customers"
             },
             {
               "field": {
@@ -58,68 +118,8 @@
                 }
               },
               "queryRef": "Order Measures.Share of Preselected Dish Removal",
-              "nativeQueryRef": "Share of Preselections Removed by Customers",
-              "displayName": "Share of Preselections Removed by Customers"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Ordered Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Ordered Dishes",
-              "nativeQueryRef": "Ordered",
-              "displayName": "Ordered"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Added Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Added Dishes",
-              "nativeQueryRef": "Added",
-              "displayName": "Added"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Preselected Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Preselected Dishes",
-              "nativeQueryRef": "Preselected",
-              "displayName": "Preselected"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Removed Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Removed Dishes",
-              "nativeQueryRef": "Removed",
-              "displayName": "Removed"
+              "nativeQueryRef": "% Removed",
+              "displayName": "% Removed"
             }
           ]
         }
@@ -149,7 +149,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "510.3113256359844D"
+                  "Value": "568.8616706977481D"
                 }
               }
             }
@@ -163,7 +163,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "156.07750383556615D"
+                  "Value": "71.81339269183735D"
                 }
               }
             }
@@ -177,7 +177,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "188.20165134926796D"
+                  "Value": "85.46987246662901D"
                 }
               }
             }
@@ -191,7 +191,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "82.0684167179942D"
+                  "Value": "146.18068134564976D"
                 }
               }
             }
@@ -205,7 +205,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "86.83231706544447D"
+                  "Value": "69.65551898869519D"
                 }
               }
             }
@@ -219,7 +219,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "76.46372570599888D"
+                  "Value": "163.91289570113383D"
                 }
               }
             }
@@ -233,7 +233,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "89.43705826758568D"
+                  "Value": "95.12388936315328D"
                 }
               }
             }
@@ -268,6 +268,162 @@
             }
           }
         }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
+              "positiveColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'#cfd7bb'"
+                      }
+                    }
+                  }
+                }
+              },
+              "negativeColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'minColor'"
+                      }
+                    }
+                  }
+                }
+              },
+              "axisColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'foreground'"
+                      }
+                    }
+                  }
+                }
+              },
+              "reverseDirection": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "hideText": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "totalMatchingOption": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1L"
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures._Share of Customer Dish Selection"
+          }
+        },
+        {
+          "properties": {
+            "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
+              "positiveColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'#efc2cc'"
+                      }
+                    }
+                  }
+                }
+              },
+              "negativeColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'minColor'"
+                      }
+                    }
+                  }
+                }
+              },
+              "axisColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'foreground'"
+                      }
+                    }
+                  }
+                }
+              },
+              "reverseDirection": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "hideText": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "totalMatchingOption": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1L"
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Share of Preselected Dish Removal"
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -297,7 +453,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'How often is a dish added and removed by the customer when placing an order?'"
+                  "Value": "'How often does the customer add the recipe to their order, and how often does they remove the recipe from the preselection?'"
                 }
               }
             },
@@ -313,5 +469,88 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "cd4a5ea39536610c225a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Main Recipe Name"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "r",
+              "Entity": "Recipes",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "r"
+                              }
+                            },
+                            "Property": "Main Recipe Name"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'Not relevant'"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

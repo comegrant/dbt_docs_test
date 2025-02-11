@@ -4,10 +4,10 @@
   "position": {
     "x": 19.023354564755838,
     "y": 93.757961783439484,
-    "z": 2000,
+    "z": 1000,
     "height": 287.38853503184714,
     "width": 1239.9150743099788,
-    "tabOrder": 2000
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -43,13 +43,43 @@
               },
               "queryRef": "Recipes.Recipe Main Ingredient Name",
               "nativeQueryRef": "Main Ingredient",
-              "active": false,
+              "active": true,
               "displayName": "Main Ingredient"
             }
           ]
         },
         "Values": {
           "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Ordered Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Ordered Dishes",
+              "nativeQueryRef": "Ordered Dishes",
+              "displayName": "Ordered Dishes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Added Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Added Dishes",
+              "nativeQueryRef": "Added by Customer",
+              "displayName": "Added by Customer"
+            },
             {
               "field": {
                 "Measure": {
@@ -63,8 +93,38 @@
                 }
               },
               "queryRef": "Order Measures._Share of Customer Dish Selection",
-              "nativeQueryRef": "Share of Orders Selected by Customers",
-              "displayName": "Share of Orders Selected by Customers"
+              "nativeQueryRef": "% Added",
+              "displayName": "% Added"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Preselected Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Preselected Dishes",
+              "nativeQueryRef": "Preselected Dishes",
+              "displayName": "Preselected Dishes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Removed Dishes"
+                }
+              },
+              "queryRef": "Order Measures.Number of Removed Dishes",
+              "nativeQueryRef": "Removed by Customer",
+              "displayName": "Removed by Customer"
             },
             {
               "field": {
@@ -79,68 +139,8 @@
                 }
               },
               "queryRef": "Order Measures._Share of Preselected Dish Removal",
-              "nativeQueryRef": "Share of Preselections Removed by Customers",
-              "displayName": "Share of Preselections Removed by Customers"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Preselected Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Preselected Dishes",
-              "nativeQueryRef": "Preselected",
-              "displayName": "Preselected"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Ordered Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Ordered Dishes",
-              "nativeQueryRef": "Ordered",
-              "displayName": "Ordered"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Added Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Added Dishes",
-              "nativeQueryRef": "Added",
-              "displayName": "Added"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Order Measures"
-                    }
-                  },
-                  "Property": "Number of Removed Dishes"
-                }
-              },
-              "queryRef": "Order Measures.Number of Removed Dishes",
-              "nativeQueryRef": "Removed",
-              "displayName": "Removed"
+              "nativeQueryRef": "% Removed",
+              "displayName": "% Removed"
             },
             {
               "field": {
@@ -170,7 +170,7 @@
                     "Entity": "Order Measures"
                   }
                 },
-                "Property": "Number of Ordered Dishes"
+                "Property": "Number of Added Dishes"
               }
             },
             "direction": "Descending"
@@ -211,7 +211,50 @@
             "isPinned": true
           }
         ],
-        "root": {}
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Linas Matkasse'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Godtlevert'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Adams Matkasse'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'RetNemt'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
       }
     ],
     "objects": {
@@ -221,7 +264,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "83.85399903561158D"
+                  "Value": "115.33820007192627D"
                 }
               }
             }
@@ -235,7 +278,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "86.720285496123D"
+                  "Value": "139.74885692469442D"
                 }
               }
             }
@@ -291,7 +334,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "153.30103194475512D"
+                  "Value": "77.73334456318703D"
                 }
               }
             }
@@ -305,7 +348,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "162.74285122670656D"
+                  "Value": "91.20110126943457D"
                 }
               }
             }
@@ -333,7 +376,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "78.86275044897654D"
+                  "Value": "137.53861930451694D"
                 }
               }
             }
@@ -347,13 +390,27 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "86.41025641025641D"
+                  "Value": "156.08114248620578D"
                 }
               }
             }
           },
           "selector": {
             "metadata": "Order Measures.Number of Removed Dishes"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "338.07260360414296D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Brands.Brand Name"
           }
         }
       ],
@@ -426,6 +483,182 @@
             }
           }
         }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "showExpandCollapseButtons": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "steppedLayoutIndentation": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
+              "positiveColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'#cfd7bb'"
+                      }
+                    }
+                  }
+                }
+              },
+              "negativeColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'minColor'"
+                      }
+                    }
+                  }
+                }
+              },
+              "axisColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'foreground'"
+                      }
+                    }
+                  }
+                }
+              },
+              "reverseDirection": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "hideText": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "totalMatchingOption": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1L"
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures._Share of Customer Dish Selection"
+          }
+        },
+        {
+          "properties": {
+            "dataBars": {
+              "minValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "0D"
+                  }
+                }
+              },
+              "maxValue": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1D"
+                  }
+                }
+              },
+              "positiveColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'#efc2cc'"
+                      }
+                    }
+                  }
+                }
+              },
+              "negativeColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'minColor'"
+                      }
+                    }
+                  }
+                }
+              },
+              "axisColor": {
+                "solid": {
+                  "color": {
+                    "expr": {
+                      "Literal": {
+                        "Value": "'foreground'"
+                      }
+                    }
+                  }
+                }
+              },
+              "reverseDirection": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "hideText": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              },
+              "totalMatchingOption": {
+                "expr": {
+                  "Literal": {
+                    "Value": "1L"
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures._Share of Preselected Dish Removal"
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -435,14 +668,14 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Main Ingredients'"
+                  "Value": "'Main Ingredients per Brand'"
                 }
               }
             },
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -494,7 +727,14 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'How often is a dish with the main ingredient added and removed by the customer when placing an order?'"
+                  "Value": "'Click the + sign to expand the main ingredient for each company'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -611,6 +851,26 @@
               "expr": {
                 "Literal": {
                   "Value": "'Minimal'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "showDrillDownExpandButton": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "ba3ed0cdcb09bc510829",
+  "name": "ce213c56cbdb5d9e54c6",
   "position": {
-    "x": 721.53846153846155,
-    "y": 19.23076923076923,
-    "z": 3001,
-    "height": 34.615384615384613,
-    "width": 275.38461538461536,
-    "tabOrder": 3001
+    "x": 490.53929899097193,
+    "y": 8.5714285714285712,
+    "z": 7000,
+    "height": 58.289962825278813,
+    "width": 305.72490706319707,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "slicer",
@@ -25,14 +25,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Week"
                     }
                   },
                   "Level": "Date"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Date",
-              "nativeQueryRef": "Financial Date Hierarchy Date",
+              "queryRef": "Dates.Calendar Hierarchy with Week.Date",
+              "nativeQueryRef": "Calendar Hierarchy with Week Date",
               "active": true
             }
           ]
@@ -50,7 +50,7 @@
                         "Entity": "Dates"
                       }
                     },
-                    "Hierarchy": "Financial Date Hierarchy"
+                    "Hierarchy": "Calendar Hierarchy with Week"
                   }
                 },
                 "Level": "Date"
@@ -71,69 +71,6 @@
                 "Literal": {
                   "Value": "1D"
                 }
-              }
-            },
-            "filter": {
-              "filter": {
-                "Version": 2,
-                "From": [
-                  {
-                    "Name": "d",
-                    "Entity": "Dates",
-                    "Type": 0
-                  }
-                ],
-                "Where": [
-                  {
-                    "Condition": {
-                      "Between": {
-                        "Expression": {
-                          "HierarchyLevel": {
-                            "Expression": {
-                              "Hierarchy": {
-                                "Expression": {
-                                  "SourceRef": {
-                                    "Source": "d"
-                                  }
-                                },
-                                "Hierarchy": "Financial Date Hierarchy"
-                              }
-                            },
-                            "Level": "Date"
-                          }
-                        },
-                        "LowerBound": {
-                          "DateSpan": {
-                            "Expression": {
-                              "DateAdd": {
-                                "Expression": {
-                                  "DateAdd": {
-                                    "Expression": {
-                                      "Now": {}
-                                    },
-                                    "Amount": 1,
-                                    "TimeUnit": 0
-                                  }
-                                },
-                                "Amount": -9,
-                                "TimeUnit": 1
-                              }
-                            },
-                            "TimeUnit": 0
-                          }
-                        },
-                        "UpperBound": {
-                          "DateSpan": {
-                            "Expression": {
-                              "Now": {}
-                            },
-                            "TimeUnit": 0
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
               }
             }
           }
@@ -162,24 +99,10 @@
                 }
               }
             },
-            "relativeRange": {
+            "isInvertedSelectionMode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Last'"
-                }
-              }
-            },
-            "relativeDuration": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
-                }
-              }
-            },
-            "relativePeriod": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Weeks'"
+                  "Value": "true"
                 }
               }
             }
@@ -245,30 +168,11 @@
                   }
                 }
               }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "show": {
+            },
+            "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "dateRange": [
-        {
-          "properties": {
-            "includeToday": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
+                  "Value": "10D"
                 }
               }
             }
@@ -310,23 +214,10 @@
             }
           }
         }
-      ],
-      "background": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
       ]
     },
     "syncGroup": {
-      "groupName": "Date1",
+      "groupName": "Date",
       "fieldChanges": true,
       "filterChanges": true
     },

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
   "name": "1af9d3106598a24895d0",
   "position": {
-    "x": 17,
-    "y": 88,
+    "x": 15.714285714285715,
+    "y": 88.571428571428584,
     "z": 0,
     "height": 300,
-    "width": 1247,
+    "width": 1250,
     "tabOrder": 0
   },
   "visual": {
@@ -25,14 +25,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Week"
                     }
                   },
                   "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "queryRef": "Dates.Calendar Hierarchy with Week.Year",
+              "nativeQueryRef": "Calendar Hierarchy with Week Year",
               "active": true
             },
             {
@@ -45,34 +45,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Week"
                     }
                   },
-                  "Level": "Quarter"
+                  "Level": "Week"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
-              "nativeQueryRef": "Financial Date Hierarchy Quarter",
-              "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
-                    }
-                  },
-                  "Level": "Month"
-                }
-              },
-              "queryRef": "Dates.Financial Date Hierarchy.Month",
-              "nativeQueryRef": "Financial Date Hierarchy Month",
+              "queryRef": "Dates.Calendar Hierarchy with Week.Week",
+              "nativeQueryRef": "Calendar Hierarchy with Week Week",
               "active": true
             }
           ]
@@ -135,7 +115,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -154,6 +134,26 @@
               }
             },
             "showTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "concatenateLabels": {
               "expr": {
                 "Literal": {
                   "Value": "false"

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "1506d86823e8de556bac",
+  "name": "272f42613deee8182be7",
   "position": {
-    "x": 16.153846153846153,
-    "y": 19.23076923076923,
-    "z": 2000,
-    "height": 34.615384615384613,
-    "width": 706.15384615384608,
-    "tabOrder": 2000
+    "x": 490.53929899097193,
+    "y": 8.5714285714285712,
+    "z": 7000,
+    "height": 58.289962825278813,
+    "width": 305.72490706319707,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "slicer",
@@ -17,23 +17,48 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Brands"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Calendar Hierarchy with Week"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Level": "Date"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
+              "queryRef": "Dates.Calendar Hierarchy with Week.Date",
+              "nativeQueryRef": "Calendar Hierarchy with Week Date",
               "active": true
             }
           ]
         }
       },
       "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Calendar Hierarchy with Week"
+                  }
+                },
+                "Level": "Date"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
         "isDefaultSort": true
       }
     },
@@ -70,7 +95,7 @@
             "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Basic'"
+                  "Value": "'Relative'"
                 }
               }
             },
@@ -118,6 +143,41 @@
             }
           }
         }
+      ],
+      "numericInputStyle": [
+        {
+          "properties": {
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCFBF7'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#252423'"
+                    }
+                  }
+                }
+              }
+            },
+            "textSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -157,7 +217,7 @@
       ]
     },
     "syncGroup": {
-      "groupName": "Company Name",
+      "groupName": "Date",
       "fieldChanges": true,
       "filterChanges": true
     },

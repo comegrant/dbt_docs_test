@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "eabd6dbf8d97ac3b69e8",
+  "name": "1f4f982430848565d90c",
   "position": {
-    "x": 16.153846153846153,
-    "y": 19.23076923076923,
-    "z": 1000,
-    "height": 34.615384615384613,
-    "width": 706.15384615384608,
-    "tabOrder": 1000
+    "x": 811.30111524163578,
+    "y": 8.5714285714285712,
+    "z": 3000,
+    "height": 57.1003717472119,
+    "width": 158.21561338289965,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,21 +20,19 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Brands"
+                      "Entity": "Recipes"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Recipe Main Ingredient Name"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
-              "active": true
+              "queryRef": "Recipes.Recipe Main Ingredient Name",
+              "nativeQueryRef": "Main Ingredient",
+              "active": true,
+              "displayName": "Main Ingredient"
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "isDefaultSort": true
       }
     },
     "objects": {
@@ -51,68 +49,13 @@
           }
         }
       ],
-      "selection": [
-        {
-          "properties": {
-            "selectAllCheckboxEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
       "data": [
         {
           "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Basic'"
-                }
-              }
-            },
             "isInvertedSelectionMode": {
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "items": [
-        {
-          "properties": {
-            "background": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
-                }
-              }
-            },
-            "outlineStyle": {
-              "expr": {
-                "Literal": {
-                  "Value": "15D"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#252423'"
-                    }
-                  }
                 }
               }
             }
@@ -157,7 +100,7 @@
       ]
     },
     "syncGroup": {
-      "groupName": "Company Name",
+      "groupName": "Recipe Main Ingredient Name",
       "fieldChanges": true,
       "filterChanges": true
     },
