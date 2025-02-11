@@ -4,10 +4,10 @@
   "position": {
     "x": 16.363636363636363,
     "y": 8.5714285714285712,
-    "z": 2001,
+    "z": 3000,
     "height": 56.727272727272727,
     "width": 187.63636363636365,
-    "tabOrder": 2001
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -65,6 +65,26 @@
               "expr": {
                 "Literal": {
                   "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "strictSingleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

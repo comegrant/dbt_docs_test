@@ -25,53 +25,39 @@
           }
         },
         "type": "Advanced",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "d",
-              "Entity": "Dates",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Comparison": {
-                  "ComparisonKind": 2,
-                  "Left": {
-                    "HierarchyLevel": {
-                      "Expression": {
-                        "Hierarchy": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "d"
-                            }
-                          },
-                          "Hierarchy": "Financial Date Hierarchy"
-                        }
-                      },
-                      "Level": "Year"
-                    }
-                  },
-                  "Right": {
-                    "Literal": {
-                      "Value": "2025L"
-                    }
-                  }
-                }
+        "howCreated": "User"
+      },
+      {
+        "name": "579f191dd85a15e74c2e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
               }
-            }
-          ]
+            },
+            "Property": "Recipe Id"
+          }
         },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "af2aab92d1ea8090364c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Main Recipe Id"
+          }
+        },
+        "type": "Advanced",
         "howCreated": "User"
       }
     ]
-  },
-  "pageBinding": {
-    "name": "04eec308e8c9e5e03318",
-    "type": "Default",
-    "parameters": []
   },
   "objects": {
     "background": [

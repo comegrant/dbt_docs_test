@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "48e28b66eec54c2543db",
+  "name": "0d6a9b8de3cae370ba87",
   "position": {
-    "x": 351.2166755177908,
-    "y": 8.5714285714285712,
-    "z": 7000,
-    "height": 57.142857142857146,
-    "width": 124.28571428571429,
-    "tabOrder": 7000
+    "x": 408,
+    "y": 8,
+    "z": 4000,
+    "height": 56,
+    "width": 160,
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "slicer",
@@ -17,23 +17,19 @@
           "projections": [
             {
               "field": {
-                "HierarchyLevel": {
+                "Column": {
                   "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Calendar Hierarchy with Week"
+                    "SourceRef": {
+                      "Entity": "Recipes"
                     }
                   },
-                  "Level": "Week"
+                  "Property": "Recipe Main Ingredient Name"
                 }
               },
-              "queryRef": "Dates.Calendar Hierarchy with Week.Week",
-              "nativeQueryRef": "Calendar Hierarchy with Week Week",
-              "active": true
+              "queryRef": "Recipes.Recipe Main Ingredient Name",
+              "nativeQueryRef": "Main Ingredient",
+              "active": true,
+              "displayName": "Main Ingredient"
             }
           ]
         }
@@ -57,6 +53,19 @@
         {
           "properties": {
             "isInvertedSelectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "selectAllCheckboxEnabled": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -102,11 +111,6 @@
           }
         }
       ]
-    },
-    "syncGroup": {
-      "groupName": "Week",
-      "fieldChanges": true,
-      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }
