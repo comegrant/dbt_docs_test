@@ -76,7 +76,7 @@ jobs:
       shell: bash
       run: |
         branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        branch_tag=${branch_name/\//-}
+        branch_tag=${branch_name//\//-}
         echo "branch_tag=$branch_tag" >> $GITHUB_OUTPUT
 
     - name: Setting SHA Tag

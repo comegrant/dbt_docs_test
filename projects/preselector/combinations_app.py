@@ -110,10 +110,7 @@ async def main() -> None:
             "Weeks",
             options=range(1, 53),
             format_func=lambda week: f"Week {week}",
-            default=[
-                (today + timedelta(weeks=i)).isocalendar().week
-                for i in range(5)
-            ]
+            default=[(today + timedelta(weeks=i)).isocalendar().week for i in range(5)],
         )
         year = st.number_input("Year", min_value=2024, value=today.year)
         number_of_recipes = st.number_input("Number of Recipes", min_value=2, max_value=5, value=5)
@@ -146,14 +143,11 @@ async def main() -> None:
     if prefs:
         st.write("With negative prefs: " + " and ".join([pref.name for pref in prefs]))
 
-    allergy_preferences = [
-        "fish", "gluten", "shellfish", "nuts", "egg", "lactose", "diary"
-    ]
+    allergy_preferences = ["fish", "gluten", "shellfish", "nuts", "egg", "lactose", "diary"]
 
     recipes_at_week: dict[int, int] = json.loads(str(ordered_weeks_ago)) if ordered_weeks_ago else {}
 
     for week in weeks:
-
         st.write(f"Week {week}")
         request = GenerateMealkitRequest(
             # Agreement ID is unrelevant in this scenario as `has_data_processing_concent` is False
@@ -163,8 +157,7 @@ async def main() -> None:
             concept_preference_ids=[attr.id for attr in atters],
             taste_preferences=[
                 NegativePreference(
-                    preference_id=pref.preference_id,
-                    is_allergy=pref.name.lower() in allergy_preferences
+                    preference_id=pref.preference_id, is_allergy=pref.name.lower() in allergy_preferences
                 )
                 for pref in prefs
             ],
@@ -198,11 +191,13 @@ async def display_recipes(response: PreselectorYearWeekResponse, col: DeltaGener
             year=response.year,
             week=response.week,
         )
-        rank = pl.DataFrame({
-            "main_recipe_id": [rec.main_recipe_id for rec in response.recipe_data],
-            "compliancy": [rec.compliancy for rec in response.recipe_data],
-            "rank": range(len(response.main_recipe_ids))
-        }).to_pandas()
+        rank = pl.DataFrame(
+            {
+                "main_recipe_id": [rec.main_recipe_id for rec in response.recipe_data],
+                "compliancy": [rec.compliancy for rec in response.recipe_data],
+                "rank": range(len(response.main_recipe_ids)),
+            }
+        ).to_pandas()
 
         pre_selector_recipe_info = pre_selector_recipe_info.merge(rank, on="main_recipe_id").sort_values(
             "rank", ascending=True, ignore_index=True
