@@ -37,11 +37,13 @@ class RunArgs(BaseModel):
     env: Literal["test", "prod"]
     mode: Literal["both", "batch", "live", "flush"] = Field("both")
 
+
 class ScaleArgs(BaseModel):
     tag: str
     env: Literal["test", "prod"]
     worker_id: int
     company: Literal["godtlevert", "adams", "retnemt", "linas"]
+
 
 class DeploySettings(BaseSettings):
     docker_registry_password: SecretStr
@@ -73,13 +75,7 @@ def datadog_agent_container(config: DataDogConfig, name: str) -> Container:
             EnvironmentVariable(name="DD_SERVICE", value=config.datadog_service_name),
         ],
         ports=[ContainerPort(port=8125, protocol=ContainerNetworkProtocol.UDP)],
-        resources=ResourceRequirements(
-            requests=ResourceRequests(
-                memory_in_gb=1.0,
-                cpu=1.0,
-                gpu=None
-            )
-        )
+        resources=ResourceRequirements(requests=ResourceRequests(memory_in_gb=1.0, cpu=1.0, gpu=None)),
     )
 
 
@@ -91,6 +87,7 @@ class WorkerConfig:
     topic_success_name: str
     sub_queue_name: str | None = field(default=None)
 
+
 async def deploy_preselector(
     name: str,
     company: str,
@@ -99,7 +96,7 @@ async def deploy_preselector(
     image_tag: str,
     resource_group: str,
     workers: list[WorkerConfig],
-    write_output_interval: timedelta | None = None
+    write_output_interval: timedelta | None = None,
 ) -> None:
     vault = key_vault()
 
@@ -107,31 +104,30 @@ async def deploy_preselector(
         "test": {
             "write_output_interval": write_output_interval or timedelta(hours=12),
             "write_output_max_size": 10_000,
-            "update_data_interval": timedelta(hours=12)
+            "update_data_interval": timedelta(hours=12),
         },
         "prod": {
             "write_output_interval": write_output_interval or timedelta(hours=3),
             "write_output_max_size": 10_000,
-            "update_data_interval": timedelta(hours=5)
-        }
+            "update_data_interval": timedelta(hours=2),
+        },
     }
 
     deploy_settings = await vault.load(
         DeploySettings,
-        key_map=lambda key: {
-            "user_assigned_identity_resource_id": f"preselector-userAssignedIdentity-{env}"
-        }.get(key, key.replace("_", "-"))
+        key_map=lambda key: {"user_assigned_identity_resource_id": f"preselector-userAssignedIdentity-{env}"}.get(
+            key, key.replace("_", "-")
+        ),
     )
     client = ContainerInstanceManagementClient(
-        credential=DefaultAzureCredential(),
-        subscription_id=deploy_settings.subscription_id
+        credential=DefaultAzureCredential(), subscription_id=deploy_settings.subscription_id
     )
     dd_config = await vault.load(
         DataDogConfig,
         custom_values={
             "datadog_service_name": "preselector",
             "datadog_tags": f"subscription:{company},env:{env},image-tag:{image_tag}",
-        }
+        },
     )
 
     if image_tag != "":
@@ -147,10 +143,8 @@ async def deploy_preselector(
         topic_success_name: str,
         container_name: str,
         batch_size: int,
-        sub_queue_name: str | None = None
-
+        sub_queue_name: str | None = None,
     ) -> Container:
-
         if env != "prod":
             assert env in deploy_settings.user_assigned_identity_resource_id
 
@@ -169,14 +163,14 @@ async def deploy_preselector(
                 "service_bus_request_size": batch_size,
                 "service_bus_success_topic_name": topic_success_name,
                 "service_bus_sub_queue": sub_queue_name,
-                **env_specific_config
+                **env_specific_config,
             },
             key_map={
                 "databricks_host": f"databricks-workspace-url-{env}",
                 "databricks_token": f"databricks-sp-bundle-pat-{env}",
                 "datalake_service_account_name": "azure-storageAccount-experimental-name",
-                "datalake_storage_account_key": "azure-storageAccount-experimental-key"
-            }
+                "datalake_storage_account_key": "azure-storageAccount-experimental-key",
+            },
         )
 
         settings = [
@@ -185,15 +179,11 @@ async def deploy_preselector(
                 # All containers are on localhost in the group
                 datadog_host="127.0.0.1"
             ),
-            DataDogConfig( # type: ignore[reportGeneralTypeIssues]
+            DataDogConfig(  # type: ignore[reportGeneralTypeIssues]
                 datadog_service_name="preselector",
-                datadog_tags=dd_config.datadog_tags + f",topic:{topic_request_name},container:{container_name}"
+                datadog_tags=dd_config.datadog_tags + f",topic:{topic_request_name},container:{container_name}",
             ),
-            RuntimeEnvs(
-                datalake_env=env,
-                uc_env=env,
-                env=env
-            )
+            RuntimeEnvs(datalake_env=env, uc_env=env, env=env),
         ]
 
         for setting in settings:
@@ -203,80 +193,68 @@ async def deploy_preselector(
 
                 if isinstance(value, SecretStr):
                     environment_variables.append(
-                        EnvironmentVariable(
-                            name=key.upper(),
-                            secure_value=value.get_secret_value()
-                        )
+                        EnvironmentVariable(name=key.upper(), secure_value=value.get_secret_value())
                     )
                 else:
-                    environment_variables.append(
-                        EnvironmentVariable(
-                            name=key.upper(),
-                            value=value
-                        )
-                    )
+                    environment_variables.append(EnvironmentVariable(name=key.upper(), value=value))
 
-
-        company_specific_memory = {
-            "linas": 10,
-            "godtlevert": 7,
-            "retnemt": 4,
-            "adams": 5
-        }
+        company_specific_memory = {"linas": 10, "godtlevert": 7, "retnemt": 4, "adams": 5}
 
         return Container(
             name=container_name,
             image=image,
             environment_variables=environment_variables,
             ports=[],
-            command=[ "/bin/bash", "-c", "python -m preselector.process_stream" ],
+            command=["/bin/bash", "-c", "python -m preselector.process_stream"],
             resources=ResourceRequirements(
                 requests=ResourceRequests(
                     # This is the max when having two workers and one logger container
                     # As the total sum is 16 GB
                     memory_in_gb=company_specific_memory.get(company, 6),
                     cpu=1.0,
-                    gpu=None
+                    gpu=None,
                 )
-            )
+            ),
         )
 
-    worker_containers = await asyncio.gather(*[
-        process_container(
-            topic_success_name=worker.topic_success_name,
-            topic_request_name=worker.topic_request_name,
-            container_name=worker.container_name,
-            batch_size=worker.batch_size,
-            sub_queue_name=worker.sub_queue_name
-        )
-        for worker in workers
-    ])
+    worker_containers = await asyncio.gather(
+        *[
+            process_container(
+                topic_success_name=worker.topic_success_name,
+                topic_request_name=worker.topic_request_name,
+                container_name=worker.container_name,
+                batch_size=worker.batch_size,
+                sub_queue_name=worker.sub_queue_name,
+            )
+            for worker in workers
+        ]
+    )
     group = ContainerGroup(
-        containers=[
-            datadog_agent_container(dd_config, name=datadog_host),
-            *worker_containers
-        ],
+        containers=[datadog_agent_container(dd_config, name=datadog_host), *worker_containers],
         os_type=OperatingSystemTypes.LINUX,
         restart_policy=ContainerGroupRestartPolicy.ON_FAILURE,
         identity=ContainerGroupIdentity(
             type="UserAssigned",
-            user_assigned_identities={
-                deploy_settings.user_assigned_identity_resource_id: UserAssignedIdentities()
-            }
+            user_assigned_identities={deploy_settings.user_assigned_identity_resource_id: UserAssignedIdentities()},
         ),
         image_registry_credentials=[
             ImageRegistryCredential(
                 server=deploy_settings.docker_registry_server,
                 password=deploy_settings.docker_registry_password.get_secret_value(),
-                username=deploy_settings.docker_registry_username
+                username=deploy_settings.docker_registry_username,
             )
         ],
-        location="northeurope"
+        location="northeurope",
+        tags={
+            "env": env,
+            "company": company,
+            "image_tag": image_tag,
+            "resource_group": resource_group,
+        },
     )
 
     logger.info("deleting resource")
-    poller = client.container_groups.begin_delete(
-       resource_group_name=resource_group, container_group_name=name)
+    poller = client.container_groups.begin_delete(resource_group_name=resource_group, container_group_name=name)
 
     poller.wait()
     logger.info("Waiting for 10 secs")
@@ -287,16 +265,11 @@ async def deploy_preselector(
 
     logger.info("creating resource")
     client.container_groups.begin_create_or_update(
-        resource_group_name=resource_group,
-        container_group_name=name,
-        container_group=group
+        resource_group_name=resource_group, container_group_name=name, container_group=group
     )
 
-async def deploy_all(
-    tag: str,
-    env: str,
-    mode: Literal["both", "batch", "live", "flush"]
-) -> None:
+
+async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", "flush"]) -> None:
     company_names = [
         "godtlevert",
         "adams",
@@ -306,12 +279,11 @@ async def deploy_all(
 
     bus_namespace = {
         "test": "gg-deviation-service-qa.servicebus.windows.net",
-        "prod": "gg-deviation-service-prod.servicebus.windows.net"
+        "prod": "gg-deviation-service-prod.servicebus.windows.net",
     }
     split_workers = ["linas"]
 
     for company in company_names:
-
         logger.info(company)
         name = f"preselector-{company}-worker"
         if company == "godtlevert":
@@ -319,13 +291,7 @@ async def deploy_all(
 
         if mode == "live":
             # Currently we want to have an additional scaler
-            await scale_worker(
-                tag=tag,
-                env=env,
-                worker_id=2,
-                company=company,
-                should_split=company in split_workers
-            )
+            await scale_worker(tag=tag, env=env, worker_id=2, company=company, should_split=company in split_workers)
         elif mode == "both":
             name += f"-{env}"
             logger.info(name)
@@ -334,14 +300,14 @@ async def deploy_all(
                     container_name=f"{name}-live",
                     batch_size=10,
                     topic_request_name="priority-deviation-request",
-                    topic_success_name="priority-deviation-response"
+                    topic_success_name="priority-deviation-response",
                 ),
                 WorkerConfig(
                     container_name=f"{name}-batch",
                     batch_size=10,
                     topic_request_name="deviation-request",
-                    topic_success_name="deviation-response"
-                )
+                    topic_success_name="deviation-response",
+                ),
             ]
 
             if company in split_workers:
@@ -353,7 +319,7 @@ async def deploy_all(
                         env=env,
                         image_tag=tag,
                         resource_group=f"rg-chefdp-{env}",
-                        workers=[worker]
+                        workers=[worker],
                     )
             else:
                 await deploy_preselector(
@@ -363,7 +329,7 @@ async def deploy_all(
                     env=env,
                     image_tag=tag,
                     resource_group=f"rg-chefdp-{env}",
-                    workers=workers
+                    workers=workers,
                 )
         elif mode == "flush":
             name += f"flush-{env}"
@@ -374,7 +340,7 @@ async def deploy_all(
                     batch_size=10,
                     topic_request_name="deviation-request",
                     topic_success_name="deviation-response",
-                    sub_queue_name="deadletter"
+                    sub_queue_name="deadletter",
                 ),
             ]
 
@@ -387,7 +353,7 @@ async def deploy_all(
                     image_tag=tag,
                     resource_group=f"rg-chefdp-{env}",
                     workers=workers,
-                    write_output_interval=timedelta(seconds=1)
+                    write_output_interval=timedelta(seconds=1),
                 )
         else:
             name += f"-batch-{env}"
@@ -405,46 +371,43 @@ async def deploy_all(
                         container_name=f"{name}-batch-first",
                         batch_size=10,
                         topic_request_name="deviation-request",
-                        topic_success_name="deviation-response"
+                        topic_success_name="deviation-response",
                     ),
                     # WorkerConfig(
                     #     container_name=f"{name}-batch-second",
                     #     batch_size=10,
                     #     topic_name="deviation-request"
                     # )
-                ]
+                ],
             )
 
 
-
 async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_split: bool) -> None:
-
     logger.info(company)
     name = f"preselector-{company}-worker"
     if company == "godtlevert":
         name = "preselector-gl-worker"
-
 
     name += f"-{worker_id}-{env}"
     logger.info(name)
 
     bus_namespace = {
         "test": "gg-deviation-service-qa.servicebus.windows.net",
-        "prod": "gg-deviation-service-prod.servicebus.windows.net"
+        "prod": "gg-deviation-service-prod.servicebus.windows.net",
     }
     workers = [
         WorkerConfig(
             container_name=f"{name}-live-first",
             batch_size=10,
             topic_request_name="priority-deviation-request",
-            topic_success_name="priority-deviation-response"
+            topic_success_name="priority-deviation-response",
         ),
         WorkerConfig(
             container_name=f"{name}-live-second",
             batch_size=10,
             topic_request_name="priority-deviation-request",
-            topic_success_name="priority-deviation-response"
-        )
+            topic_success_name="priority-deviation-response",
+        ),
     ]
 
     if should_split:
@@ -456,7 +419,7 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
                 env=env,
                 image_tag=tag,
                 resource_group=f"rg-chefdp-{env}",
-                workers=[worker]
+                workers=[worker],
             )
     else:
         await deploy_preselector(
@@ -466,17 +429,16 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
             env=env,
             image_tag=tag,
             resource_group=f"rg-chefdp-{env}",
-            workers=workers
+            workers=workers,
         )
-
 
 
 def key_vault() -> KeyVaultInterface:
     try:
         # Only works on the databricks runtime
         return DatabricksKeyVault(
-            dbutils=dbutils, # type: ignore
-            scope="auth_common"
+            dbutils=dbutils,  # type: ignore
+            scope="auth_common",
         )
     except NameError:
         return AzureKeyVault.from_vault_name("kv-chefdp-common")
@@ -489,9 +451,11 @@ async def main() -> None:
     args = parse_args(RunArgs)
     await deploy_all(tag=args.tag, env=args.env, mode=args.mode)
 
+
 if __name__ == "__main__":
     with suppress(ImportError):
         import nest_asyncio
+
         nest_asyncio.apply()
 
     asyncio.run(main())

@@ -1,4 +1,4 @@
-FROM matsmoll/aligned-catalog-free:experimental-latest
+FROM python:3.11-slim-buster
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -44,3 +44,11 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 # set starting command
 WORKDIR $SERVICE_HOME
+
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/catalog /app/catalog
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/app.py /app/app.py
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/mermaid /app/mermaid
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/mermiad /app/mermiad
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/tabs /app/tabs
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/src /app/src
+COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/pages /app/pages

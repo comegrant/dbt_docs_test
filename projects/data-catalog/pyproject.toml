@@ -15,6 +15,7 @@ sqlalchemy = "^2.0.29"
 fsspec = "^2024.3.1"
 adlfs = "^2024.2.0"
 numpy = "^1.0.0"
+streamlit-deeplinker = "^0.1.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
