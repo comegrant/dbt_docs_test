@@ -17,7 +17,7 @@ auto_setup_env()
 # COMMAND ----------
 from slack_connector.databricks_job_url import get_databricks_job_url
 
-url_to_job = get_databricks_job_url()
+url_to_job = get_databricks_job_url("embedded")
 
 # COMMAND ----------
 import json
