@@ -94,14 +94,12 @@ class PreselectorTestChoice:
             RecipeCost.location,
         }
     ),
-    materialized_source=data_science_data_lake.directory(
-        "preselector/latest"
-    ).partitioned_parquet_at(
+    materialized_source=data_science_data_lake.directory("preselector/latest").partitioned_parquet_at(
         directory="output",
         partition_keys=["company_id", "year", "week"],
         date_formatter=DateFormatter.unix_timestamp(time_unit="us", time_zone="UTC"),
     ),
-    stream_source=redis_cluster.stream("preselector-output")
+    stream_source=redis_cluster.stream("preselector-output"),
 )
 class Preselector:
     agreement_id = Int32().lower_bound(1).as_entity()
@@ -109,14 +107,18 @@ class Preselector:
     week = Int32().upper_bound(53).lower_bound(1).as_entity()
 
     portion_size = Int32()
-    company_id = String().accepted_values(
-        [
-            "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
-            "8A613C15-35E4-471F-91CC-972F933331D7",
-            "6A2D0B60-84D6-4830-9945-58D518D27AC2",
-            "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
-        ]
-    ).is_optional()
+    company_id = (
+        String()
+        .accepted_values(
+            [
+                "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
+                "8A613C15-35E4-471F-91CC-972F933331D7",
+                "6A2D0B60-84D6-4830-9945-58D518D27AC2",
+                "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
+            ]
+        )
+        .is_optional()
+    )
 
     error_vector = Json().is_optional()
     main_recipe_ids = List(Int32())
@@ -134,7 +136,7 @@ class Preselector:
 
 @feature_view(
     name="preselector_successful_live_output",
-    source=databricks_catalog.schema("mloutputs").table("preselector_successful_realtime_output")
+    source=databricks_catalog.schema("mloutputs").table("preselector_successful_realtime_output"),
 )
 class SuccessfulPreselectorOutput:
     billing_agreement_id = Int32().lower_bound(1).as_entity()
@@ -143,14 +145,18 @@ class SuccessfulPreselectorOutput:
 
     portion_size = Int32().is_optional()
     number_of_recipes = Int32().is_optional()
-    company_id = String().accepted_values(
-        [
-            "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
-            "8A613C15-35E4-471F-91CC-972F933331D7",
-            "6A2D0B60-84D6-4830-9945-58D518D27AC2",
-            "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
-        ]
-    ).is_optional()
+    company_id = (
+        String()
+        .accepted_values(
+            [
+                "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
+                "8A613C15-35E4-471F-91CC-972F933331D7",
+                "6A2D0B60-84D6-4830-9945-58D518D27AC2",
+                "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
+            ]
+        )
+        .is_optional()
+    )
 
     target_cost_of_food_per_recipe = Float()
     error_vector = Json().is_optional()
@@ -165,15 +171,17 @@ class SuccessfulPreselectorOutput:
 
     generated_at = EventTimestamp()
 
+    taste_preferences = List(String()).is_optional()
     taste_preference_ids = List(String()).is_optional()
 
     model_version = String()
     has_data_processing_consent = Bool()
     override_deviation = Bool()
 
+
 @feature_view(
     name="preselector_failed_realtime_output",
-    source=databricks_catalog.schema("mloutputs").table("preselector_failed_realtime_output")
+    source=databricks_catalog.schema("mloutputs").table("preselector_failed_realtime_output"),
 )
 class FailedPreselectorOutput:
     error_message = Int32()

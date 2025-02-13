@@ -30,25 +30,24 @@ if TYPE_CHECKING:
 
 def is_running_on_databricks() -> bool:
     import os
+
     return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
+
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class DatabricksAuthConfig:
     token: str
     host: str
 
+
 def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
     from pyspark.sql.types import StructField, StructType
 
-    return StructType([
-        StructField(
-            name=name,
-            dataType=polars_dtype_to_spark(dtype)
-        )
-        for name, dtype in schema.items()
-    ])
+    return StructType([StructField(name=name, dataType=polars_dtype_to_spark(dtype)) for name, dtype in schema.items()])
+
 
 def raise_on_invalid_pyspark_schema(schema: DataType) -> None:
     from pyspark.sql.types import ArrayType, NullType, StructType
@@ -100,18 +99,12 @@ def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PL
         return TimestampType()
     if isinstance(data_type, (pl.Array, pl.List)):
         if data_type.inner:
-            return ArrayType(
-                polars_dtype_to_spark(data_type.inner)
-            )
+            return ArrayType(polars_dtype_to_spark(data_type.inner))
         return ArrayType(StringType())
     if isinstance(data_type, pl.Struct):
-        return StructType([
-            StructField(
-                name=field.name,
-                dataType=polars_dtype_to_spark(field.dtype)
-            )
-            for field in data_type.fields
-        ])
+        return StructType(
+            [StructField(name=field.name, dataType=polars_dtype_to_spark(field.dtype)) for field in data_type.fields]
+        )
 
     raise ValueError(f"Unsupported type {data_type}")
 
@@ -120,6 +113,7 @@ def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PL
 class SparkDataType:
     dtype: FeatureType
     constraints: list[Constraint]
+
 
 def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
     from pyspark.sql.types import (
@@ -142,14 +136,20 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
         return SparkDataType(dtype, [])
 
     if isinstance(data_type, VarcharType):
-        return SparkDataType(FeatureType.string(), [
-            MaxLength(data_type.length),
-        ])
+        return SparkDataType(
+            FeatureType.string(),
+            [
+                MaxLength(data_type.length),
+            ],
+        )
     if isinstance(data_type, CharType):
-        return SparkDataType(FeatureType.string(), [
-            MinLength(data_type.length),
-            MaxLength(data_type.length),
-        ])
+        return SparkDataType(
+            FeatureType.string(),
+            [
+                MinLength(data_type.length),
+                MaxLength(data_type.length),
+            ],
+        )
     if isinstance(data_type, StringType):
         return no_constraints(FeatureType.string())
     if isinstance(data_type, FloatType):
@@ -171,9 +171,7 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
     if isinstance(data_type, DateType):
         return no_constraints(FeatureType.date())
     if isinstance(data_type, ArrayType):
-        return no_constraints(FeatureType.array(
-            convert_pyspark_type(data_type.elementType).dtype
-        ))
+        return no_constraints(FeatureType.array(convert_pyspark_type(data_type.elementType).dtype))
     if isinstance(data_type, StructType):
         return no_constraints(FeatureType.json())
     if isinstance(data_type, MapType):
@@ -184,7 +182,6 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
 
 @dataclass(init=False)
 class DatabricksConnectionConfig:
-
     host: ValueRepresentable
     cluster_id: ValueRepresentable | None
     token: ValueRepresentable | None
@@ -193,58 +190,46 @@ class DatabricksConnectionConfig:
         self,
         host: str | ValueRepresentable,
         cluster_id: str | ValueRepresentable | None,
-        token: str | ValueRepresentable | None
+        token: str | ValueRepresentable | None,
     ) -> None:
         self.host = LiteralValue.from_value(host)
         self.cluster_id = LiteralValue.from_value(cluster_id) if isinstance(cluster_id, str) else cluster_id
         self.token = LiteralValue(token) if isinstance(token, str) else token
 
-    def with_auth(
-        self,
-        token: str | ValueRepresentable,
-        host: str | ValueRepresentable
-    ) -> DatabricksConnectionConfig:
-        return DatabricksConnectionConfig(
-            cluster_id=self.cluster_id,
-            token=token,
-            host=host
-        )
+    def with_auth(self, token: str | ValueRepresentable, host: str | ValueRepresentable) -> DatabricksConnectionConfig:
+        return DatabricksConnectionConfig(cluster_id=self.cluster_id, token=token, host=host)
 
     @staticmethod
     def databricks_or_serverless(
-        host: str | ValueRepresentable | None = None,
-        token: str | ValueRepresentable | None = None
+        host: str | ValueRepresentable | None = None, token: str | ValueRepresentable | None = None
     ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id=None,
             token=token or EnvironmentValue("DATABRICKS_TOKEN"),
-            host=host or EnvironmentValue("DATABRICKS_HOST")
+            host=host or EnvironmentValue("DATABRICKS_HOST"),
         )
 
     @staticmethod
     def serverless(
-        host: str | ValueRepresentable | None = None,
-        token: str | ValueRepresentable | None = None
+        host: str | ValueRepresentable | None = None, token: str | ValueRepresentable | None = None
     ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id="serverless",
             token=token or EnvironmentValue("DATABRICKS_TOKEN"),
-            host=host or EnvironmentValue("DATABRICKS_HOST")
+            host=host or EnvironmentValue("DATABRICKS_HOST"),
         )
 
     @staticmethod
     def with_cluster_id(
-        cluster_id: str | ValueRepresentable,
-        host: str | ValueRepresentable
+        cluster_id: str | ValueRepresentable, host: str | ValueRepresentable
     ) -> DatabricksConnectionConfig:
-        return DatabricksConnectionConfig(
-            cluster_id=cluster_id, token=None, host=host
-        )
+        return DatabricksConnectionConfig(cluster_id=cluster_id, token=None, host=host)
 
     def catalog(self, catalog: str | ValueRepresentable) -> UnityCatalog:
         return UnityCatalog(self, LiteralValue.from_value(catalog))
 
     def connection(self) -> SparkSession:
+        from pyspark.errors import PySparkException
 
         cluster_id = self.cluster_id
 
@@ -271,10 +256,19 @@ class DatabricksConnectionConfig:
         if self.token:
             builder = builder.token(self.token.read())
 
+        if cluster_id_value == "serverless":
+            spark = builder.getOrCreate()
+            try:
+                spark.sql("SELECT 1")
+                return spark
+            except PySparkException:
+                spark.stop()
+
         return builder.getOrCreate()
 
     def sql(self, query: str) -> UCSqlSource:
         return UCSqlSource(self, query)
+
 
 @dataclass
 class UnityCatalog:
@@ -303,14 +297,12 @@ class UnityCatalogSchema:
 
     def table(self, table: str | ValueRepresentable) -> UCTableSource:
         return UCTableSource(
-            self.config,
-            UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
+            self.config, UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
 
     def feature_table(self, table: str | ValueRepresentable) -> UCFeatureTableSource:
         return UCFeatureTableSource(
-            self.config,
-            UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
+            self.config, UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
 
 
@@ -330,7 +322,6 @@ class DatabricksSource:
 
 @dataclass
 class UCSqlSource(CodableBatchDataSource, DatabricksSource):
-
     config: DatabricksConnectionConfig
     query: str
 
@@ -358,13 +349,10 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
         raise NotImplementedError(type(self))
 
     @classmethod
-    def multi_source_features_for( # type: ignore
-        cls: type[UCSqlSource],
-        facts: RetrivalJob,
-        requests: list[tuple[UCSqlSource, RetrivalRequest]]
+    def multi_source_features_for(  # type: ignore
+        cls: type[UCSqlSource], facts: RetrivalJob, requests: list[tuple[UCSqlSource, RetrivalRequest]]
     ) -> RetrivalJob:
         raise NotImplementedError(cls)
-
 
     def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
         return type(self).multi_source_features_for(facts, [(self, request)])
@@ -381,7 +369,7 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
         Returns:
             dict[str, FeatureType]: A dictionary containing the column name and the feature type
         """
-        raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
+        raise NotImplementedError(f"`schema()` is not implemented for {type(self)}.")
 
     async def freshness(self, feature: Feature) -> datetime | None:
         """
@@ -393,15 +381,11 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
         raise NotImplementedError(type(self))
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCSqlSource:
-        return UCSqlSource(
-            config, self.query
-        )
-
+        return UCSqlSource(config, self.query)
 
 
 @dataclass
 class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSource):
-
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
 
@@ -431,24 +415,19 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
         start_date: datetime,
         end_date: datetime,
     ) -> RetrivalJob:
-
         raise NotImplementedError(type(self))
 
     @classmethod
-    def multi_source_features_for( # type: ignore
+    def multi_source_features_for(  # type: ignore
         cls: type[UCFeatureTableSource],
         facts: RetrivalJob,
-        requests: list[tuple[UCFeatureTableSource, RetrivalRequest]]
+        requests: list[tuple[UCFeatureTableSource, RetrivalRequest]],
     ) -> RetrivalJob:
         from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup
 
-        keys = {
-            source.job_group_key() for source, _ in requests if isinstance(source, BatchDataSource)
-        }
+        keys = {source.job_group_key() for source, _ in requests if isinstance(source, BatchDataSource)}
         if len(keys) != 1:
-            raise NotImplementedError(
-                f'Type: {cls} have not implemented how to load fact data with multiple sources.'
-            )
+            raise NotImplementedError(f"Type: {cls} have not implemented how to load fact data with multiple sources.")
 
         client = FeatureEngineeringClient()
 
@@ -461,14 +440,14 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
                     source.table.identifier(),
                     lookup_key=list(request.entity_names),
                     feature_names=request.feature_names,
-                    timestamp_lookup_key=request.event_timestamp.name if request.event_timestamp else None
+                    timestamp_lookup_key=request.event_timestamp.name if request.event_timestamp else None,
                 )
             )
 
             if result_request is None:
                 result_request = request
             else:
-                result_request  = result_request.unsafe_combine([request])
+                result_request = result_request.unsafe_combine([request])
 
         assert lookups, "Found no lookups"
         assert result_request, "A `request_result` was supposed to be created."
@@ -479,16 +458,15 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
             df = await facts.to_pandas()
 
             dataset = client.create_training_set(
-                df=ps.from_pandas(df), # type: ignore
+                df=ps.from_pandas(df),  # type: ignore
                 feature_lookups=lookups,
                 label=None,
-                exclude_columns=None
+                exclude_columns=None,
             )
 
             return pl.from_pandas(dataset.load_df().toPandas()).lazy()
 
         return RetrivalJob.from_lazy_function(load, result_request)
-
 
     def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
         return type(self).multi_source_features_for(facts, [(self, request)])
@@ -505,7 +483,7 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
         Returns:
             dict[str, FeatureType]: A dictionary containing the column name and the feature type
         """
-        raise NotImplementedError(f'`schema()` is not implemented for {type(self)}.')
+        raise NotImplementedError(f"`schema()` is not implemented for {type(self)}.")
 
     async def freshness(self, feature: Feature) -> datetime | None:
         """
@@ -515,10 +493,11 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
         )
         """
         spark = self.config.connection()
-        return spark.sql(
-            f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}"
-        ).toPandas()[feature.name].to_list()[0]
-
+        return (
+            spark.sql(f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}")
+            .toPandas()[feature.name]
+            .to_list()[0]
+        )
 
     async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
         raise NotImplementedError(type(self))
@@ -534,14 +513,11 @@ class UCFeatureTableSource(CodableBatchDataSource, WritableFeatureSource, Databr
         conn = self.config.connection()
         df = conn.createDataFrame(await job.unique_entities().to_pandas())
 
-        client.create_table(
-            name=self.table.identifier(),
-            primary_keys=list(request.entity_names),
-            df=df
-        )
+        client.create_table(name=self.table.identifier(), primary_keys=list(request.entity_names), df=df)
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCFeatureTableSource:
         return UCFeatureTableSource(config, self.table)
+
 
 def features_to_read(request: RetrivalRequest) -> list[str]:
     columns = list(request.all_required_feature_names.union(request.entity_names))
@@ -552,7 +528,6 @@ def features_to_read(request: RetrivalRequest) -> list[str]:
 
 @dataclass
 class UnityCatalogTableAllJob(RetrivalJob):
-
     config: DatabricksConnectionConfig
     table: UnityCatalogTableConfig
     request: RetrivalRequest
@@ -581,9 +556,7 @@ class UnityCatalogTableAllJob(RetrivalJob):
         spark_df = con.read.table(self.table.identifier())
 
         if self.request.features_to_include:
-            spark_df = spark_df.select(
-                features_to_read(self.request)
-            )
+            spark_df = spark_df.select(features_to_read(self.request))
 
         if self.where:
             spark_df = spark_df.filter(self.where)
@@ -600,9 +573,8 @@ class UnityCatalogTableAllJob(RetrivalJob):
                 feat.name: feat.dtype.polars_type
                 for feat in self.retrival_requests[0].features
                 if feat.dtype != FeatureType.json()
-            }
+            },
         ).lazy()
-
 
 
 @dataclass
@@ -621,18 +593,11 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         # One fetch job per table
         return f"uc_table-{self.table.identifier()}"
 
-
     def overwrite_schema(self, should_overwrite_schema: bool = True) -> UCTableSource:
-        return UCTableSource(
-            config=self.config,
-            table=self.table,
-            should_overwrite_schema=should_overwrite_schema
-        )
+        return UCTableSource(config=self.config, table=self.table, should_overwrite_schema=should_overwrite_schema)
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
-        return UnityCatalogTableAllJob(
-            self.config, self.table, request, limit
-        )
+        return UnityCatalogTableAllJob(self.config, self.table, request, limit)
 
     def all_between_dates(
         self,
@@ -640,27 +605,24 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         start_date: datetime,
         end_date: datetime,
     ) -> RetrivalJob:
-
         raise NotImplementedError(type(self))
 
     @classmethod
-    def multi_source_features_for( # type: ignore
-        cls: type[UCTableSource], facts: RetrivalJob, requests: list[tuple[UCTableSource, RetrivalRequest]] # type: ignore
+    def multi_source_features_for(  # type: ignore
+        cls: type[UCTableSource],
+        facts: RetrivalJob,
+        requests: list[tuple[UCTableSource, RetrivalRequest]],  # type: ignore
     ) -> RetrivalJob:
         from aligned.sources.local import DateFormatter
 
         if len(requests) != 1:
-            raise NotImplementedError(
-                f'Type: {cls} have not implemented how to load fact data with multiple sources.'
-            )
+            raise NotImplementedError(f"Type: {cls} have not implemented how to load fact data with multiple sources.")
 
         source, request = requests[0]
         spark = source.config.connection()
 
         async def load() -> pl.LazyFrame:
-            df = spark.read.table(source.table.identifier()).select(
-                features_to_read(request)
-            )
+            df = spark.read.table(source.table.identifier()).select(features_to_read(request))
             return pl.from_pandas(df.toPandas()).lazy()
 
         return FileFactualJob(
@@ -669,7 +631,6 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
             requests=[request],
             facts=facts,
         )
-
 
     def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
         return type(self).multi_source_features_for(facts, [(self, request)])
@@ -703,9 +664,11 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         )
         """
         spark = self.config.connection()
-        return spark.sql(
-            f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}"
-        ).toPandas()[feature.name].to_list()[0]
+        return (
+            spark.sql(f"SELECT MAX({feature.name}) as {feature.name} FROM {self.table.identifier()}")
+            .toPandas()[feature.name]
+            .to_list()[0]
+        )
 
     async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
         pdf = await job.to_polars()
@@ -714,7 +677,7 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         conn = self.config.connection()
         df = conn.createDataFrame(
             pdf.to_pandas(),
-            schema=schema # type: ignore
+            schema=schema,  # type: ignore
         )
         df.write.mode("append").saveAsTable(self.table.identifier())
 
@@ -728,12 +691,10 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
             await self.insert(job, request)
         else:
             entities = request.entity_names
-            on_statement = " AND ".join([
-                f"target.{ent} = source.{ent}" for ent in entities
-            ])
+            on_statement = " AND ".join([f"target.{ent} = source.{ent}" for ent in entities])
             df = conn.createDataFrame(
                 pdf.to_pandas(),
-                schema=polars_schema_to_spark(pdf.schema) # type: ignore
+                schema=polars_schema_to_spark(pdf.schema),  # type: ignore
             )
             temp_table = "new_values"
             df.createOrReplaceTempView(temp_table)
@@ -745,23 +706,18 @@ WHEN MATCHED THEN
 WHEN NOT MATCHED THEN
   INSERT *""")
 
-
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
         pdf = await job.unique_entities().to_polars()
-        schema = polars_schema_to_spark(pdf.schema) # type: ignore
+        schema = polars_schema_to_spark(pdf.schema)  # type: ignore
         raise_on_invalid_pyspark_schema(schema)
         conn = self.config.connection()
-        df = conn.createDataFrame(
-            pdf.to_pandas(),
-            schema=schema
+        df = conn.createDataFrame(pdf.to_pandas(), schema=schema)
+        df.write.mode("overwrite").option("overwriteSchema", self.should_overwrite_schema).saveAsTable(
+            self.table.identifier()
         )
-        df.write.mode("overwrite").option(
-            "overwriteSchema", self.should_overwrite_schema
-        ).saveAsTable(self.table.identifier())
 
     def with_config(self, config: DatabricksConnectionConfig) -> UCTableSource:
         return UCTableSource(config, self.table)
-
 
     async def feature_view_code(self, view_name: str) -> str:
         from pyspark.sql.types import DataType
@@ -789,7 +745,7 @@ WHEN NOT MATCHED THEN
         uppercased_name = snake_to_pascal(view_name)
 
         data_types: set[str] = set()
-        feature_code = ''
+        feature_code = ""
         for row in columns.sort_values("col_name").to_dict(orient="records"):
             name = row["col_name"]
             comment = row["comment"]
@@ -799,7 +755,7 @@ WHEN NOT MATCHED THEN
 
             type_name = dtype.__class__.__name__
             data_types.add(type_name)
-            feature_code += f'{name} = {type_name}()'
+            feature_code += f"{name} = {type_name}()"
 
             for constraint in spark_type.constraints:
                 if isinstance(constraint, MaxLength):
@@ -811,9 +767,9 @@ WHEN NOT MATCHED THEN
                 formatted_comment = comment.replace("\n", "\\n")
                 feature_code += f'\n    "{formatted_comment}"\n'
 
-            feature_code += '\n    '
+            feature_code += "\n    "
 
-        all_types = ', '.join(data_types)
+        all_types = ", ".join(data_types)
 
         return f"""from aligned import feature_view, {all_types}
 from data_contracts.unity_catalog import DatabricksConnectionConfig
