@@ -1,11 +1,5 @@
 services:
 
-  # Used to test write to stream
-  redis-cluster:
-    image: redis:6-alpine3.20
-    ports:
-      - 6379:6379
-
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
   agent:
@@ -116,9 +110,6 @@ services:
       - ./../../packages:/opt/packages
     depends_on:
       - preselector
-      - redis-cluster
-    environment:
-      REDIS_URL: redis://redis-cluster:6379
 
 
   preview-server:
@@ -184,13 +175,10 @@ services:
       - ./../../packages:/opt/packages
     command: "/usr/local/bin/python -m preselector.process_stream"
     depends_on:
-      - redis-cluster
       - preselector
     env_file:
       - .env
       - ../../.env
-    environment:
-      REDIS_URL: redis://redis-cluster:6379
     deploy:
       resources:
         limits:

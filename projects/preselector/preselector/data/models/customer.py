@@ -35,6 +35,7 @@ class PreselectorRecipeResponse(BaseModel):
     variation_id: str
     compliancy: PreselectorPreferenceCompliancy
 
+
 class PreselectorYearWeekResponse(BaseModel):
     year: int
     week: int
@@ -47,30 +48,23 @@ class PreselectorYearWeekResponse(BaseModel):
     @property
     def variation_ids(self) -> list[str]:
         "Is here to keep backwards compatability"
-        return [
-            rec.variation_id for rec in self.recipe_data
-        ]
+        return [rec.variation_id for rec in self.recipe_data]
 
     @computed_field
     @property
     def main_recipe_ids(self) -> list[int]:
         "Is here to keep backwards compatability"
-        return [
-            rec.main_recipe_id for rec in self.recipe_data
-        ]
+        return [rec.main_recipe_id for rec in self.recipe_data]
 
     @computed_field
     @property
     def compliancy(self) -> PreselectorPreferenceCompliancy:
         "Is here to keep backwards compatability"
-        return PreselectorPreferenceCompliancy(min(
-            rec.compliancy.real for rec in self.recipe_data
-        ))
-
+        return PreselectorPreferenceCompliancy(min(rec.compliancy.real for rec in self.recipe_data))
 
     @model_validator(mode="before")
     @classmethod
-    def migrate_old_format(cls, data: Any): # noqa
+    def migrate_old_format(cls, data: Any):  # noqa
         if not isinstance(data, dict):
             return data
 
@@ -79,11 +73,7 @@ class PreselectorYearWeekResponse(BaseModel):
             return data
 
         data[recipes_key] = [
-            {
-                "main_recipe_id": main_recipe_id,
-                "variation_id": variation_id,
-                "compliancy": data["compliancy"]
-            }
+            {"main_recipe_id": main_recipe_id, "variation_id": variation_id, "compliancy": data["compliancy"]}
             for main_recipe_id, variation_id in zip(data["main_recipe_ids"], data["variation_ids"])
         ]
         return data
@@ -119,31 +109,35 @@ class PreselectorSuccessfulResponse(BaseModel):
         Returns a dataframe that conforms to the data contract `SuccessfulPreselectorOutput`.
         """
         request_values = self.model_dump(exclude={"year_weeks", "originated_at"})
-        request_values["taste_preferences"] = json.dumps([ pref.model_dump() for pref in self.taste_preferences ])
-        request_values["taste_preference_ids"] = [ pref.preference_id for pref in self.taste_preferences ]
+        request_values["taste_preferences"] = json.dumps([pref.model_dump() for pref in self.taste_preferences])
+        request_values["taste_preference_ids"] = [pref.preference_id for pref in self.taste_preferences]
         generated_weeks = []
 
         error_features = [
-            feat.name for feat
-            in BasketFeatures.query().request.all_returned_features
+            feat.name
+            for feat in BasketFeatures.query().request.all_returned_features
             if StaticFeatureTags.is_entity not in (feat.tags or [])
         ]
         returned_features = SuccessfulPreselectorOutput.query().request.all_returned_features
         returned_features_in_batch = Preselector.query().request.all_returned_columns
-        all_returned_feature_names = {
-            feat.name for feat in returned_features
-        }.union(returned_features_in_batch)
+        all_returned_feature_names = {feat.name for feat in returned_features}.union(returned_features_in_batch)
 
         expected_schema = {
             feat.name: feat.dtype.polars_type
             for feat in returned_features
             if "json" not in feat.dtype.name and feat.name != "recipes"
         }
-        error_vector_type = pl.Struct({
-            feat: pl.Float64
-            for feat in error_features
-        })
+        error_vector_type = pl.Struct({feat: pl.Float64 for feat in error_features})
         expected_schema["error_vector"] = error_vector_type
+        expected_schema["recipes"] = pl.List(
+            pl.Struct(
+                {
+                    "main_recipe_id": pl.Int32,
+                    "compliancy": pl.Int32,
+                    "variation_id": pl.String,
+                }
+            )
+        )
         renames = {
             "agreement_id": "billing_agreement_id",
             "week": "menu_week",
@@ -156,44 +150,35 @@ class PreselectorSuccessfulResponse(BaseModel):
 
             # Need to convert the keys to strings,
             # as polars do not support ints as the key type
-            mealkit_dict["ordered_weeks_ago"] = json.dumps({
-                str(key): value
-                for key, value in mealkit.ordered_weeks_ago.items()
-            }) if mealkit.ordered_weeks_ago else None
+            mealkit_dict["ordered_weeks_ago"] = (
+                json.dumps({str(key): value for key, value in mealkit.ordered_weeks_ago.items()})
+                if mealkit.ordered_weeks_ago
+                else None
+            )
 
-            mealkit_dict["recipes"] = [
-                recipe.model_dump()
-                for recipe in mealkit.recipe_data
-            ]
+            mealkit_dict["recipes"] = [recipe.model_dump() for recipe in mealkit.recipe_data]
 
             for old_key, new_key in renames.items():
                 mealkit_dict[new_key] = mealkit_dict[old_key]
 
             if mealkit.error_vector:
                 mealkit_dict["error_vector"] = {
-                    key: value
-                    for key, value
-                    in mealkit.error_vector.items()
-                    if key in error_features
+                    key: value for key, value in mealkit.error_vector.items() if key in error_features
                 }
             else:
                 mealkit_dict["error_vector"] = None
 
-            generated_weeks.append({
-                key: value for key, value in mealkit_dict.items()
-                if key in all_returned_feature_names
-            })
+            generated_weeks.append(
+                {key: value for key, value in mealkit_dict.items() if key in all_returned_feature_names}
+            )
 
-        return pl.DataFrame(
-            generated_weeks,
-            schema_overrides=expected_schema
-        )
+        return pl.DataFrame(generated_weeks, schema_overrides=expected_schema)
+
 
 class PreselectorFailedResponse(BaseModel):
     error_message: str
     error_code: int
     request: GenerateMealkitRequest
-
 
     def to_dataframe(self) -> Annotated[pl.DataFrame, FailedPreselectorOutput]:
         dict_values = self.model_dump(exclude={"request"})

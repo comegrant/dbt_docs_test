@@ -30,21 +30,15 @@ response = PreselectorSuccessfulResponse(
             },
             recipe_data=[
                 PreselectorRecipeResponse(
-                    main_recipe_id=1,
-                    variation_id="Acl",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    main_recipe_id=1, variation_id="Acl", compliancy=PreselectorPreferenceCompliancy.all_compliant
                 ),
                 PreselectorRecipeResponse(
-                    main_recipe_id=2,
-                    variation_id="B",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    main_recipe_id=2, variation_id="B", compliancy=PreselectorPreferenceCompliancy.all_compliant
                 ),
                 PreselectorRecipeResponse(
-                    main_recipe_id=3,
-                    variation_id="c",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
-                )
-            ]
+                    main_recipe_id=3, variation_id="c", compliancy=PreselectorPreferenceCompliancy.all_compliant
+                ),
+            ],
         ),
         PreselectorYearWeekResponse(
             year=2024,
@@ -63,30 +57,19 @@ response = PreselectorSuccessfulResponse(
             },
             recipe_data=[
                 PreselectorRecipeResponse(
-                    main_recipe_id=10,
-                    variation_id="A",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    main_recipe_id=10, variation_id="A", compliancy=PreselectorPreferenceCompliancy.all_compliant
                 ),
                 PreselectorRecipeResponse(
-                    main_recipe_id=7,
-                    variation_id="B",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
+                    main_recipe_id=7, variation_id="B", compliancy=PreselectorPreferenceCompliancy.all_compliant
                 ),
                 PreselectorRecipeResponse(
-                    main_recipe_id=4,
-                    variation_id="c",
-                    compliancy=PreselectorPreferenceCompliancy.all_compliant
-                )
-            ]
-        )
+                    main_recipe_id=4, variation_id="c", compliancy=PreselectorPreferenceCompliancy.all_compliant
+                ),
+            ],
+        ),
     ],
     concept_preference_ids=["A", "B"],
-    taste_preferences=[
-        NegativePreference(
-            preference_id="A",
-            is_allergy=False
-        )
-    ],
+    taste_preferences=[NegativePreference(preference_id="A", is_allergy=False)],
     override_deviation=True,
     model_version="version 1",
     generated_at=datetime.now(tz=timezone.utc),
@@ -94,27 +77,32 @@ response = PreselectorSuccessfulResponse(
     portion_size=2,
     version=1,
     company_id="09ECD4F0-AE58-4539-8E8F-9275B1859A19",
-    has_data_processing_consent=True
+    has_data_processing_consent=True,
 )
+
 
 def test_migrate_to_new_schema() -> None:
     import json
+
     model = response.year_weeks[0].model_dump()
     del model["recipe_data"]
     res = PreselectorYearWeekResponse.model_validate_json(json.dumps(model))
     assert len(res.recipe_data) == len(res.variation_ids)
 
+
 @pytest.mark.asyncio
 async def test_successful_output_is_valid_dataframe() -> None:
-
     df = response.to_dataframe()
 
     assert df.height == 2
 
     expected_request = SuccessfulPreselectorOutput.query().request
-    validated_df = await RetrivalJob.from_convertable(
-        df, [expected_request]
-    ).drop_invalid().select(expected_request.all_returned_columns).to_polars()
+    validated_df = (
+        await RetrivalJob.from_convertable(df, [expected_request])
+        .drop_invalid()
+        .select(expected_request.all_returned_columns)
+        .to_polars()
+    )
 
     assert "recipes" in df.columns
     assert "main_recipe_ids" in df.columns
@@ -137,7 +125,6 @@ async def test_batch_output_is_valid_dataframe() -> None:
 
 @pytest.mark.asyncio
 async def test_failed_request_to_dataframe() -> None:
-
     request = PreselectorFailedResponse(
         error_message="Unknown error",
         error_code=500,
@@ -154,8 +141,8 @@ async def test_failed_request_to_dataframe() -> None:
             number_of_recipes=3,
             override_deviation=True,
             ordered_weeks_ago={},
-            has_data_processing_consent=False
-        )
+            has_data_processing_consent=False,
+        ),
     )
 
     df = request.to_dataframe()
@@ -163,8 +150,11 @@ async def test_failed_request_to_dataframe() -> None:
     assert df.height == 1
 
     expected_request = FailedPreselectorOutput.query().request
-    validated_df = await RetrivalJob.from_convertable(
-        df, [expected_request]
-    ).drop_invalid().select(expected_request.all_returned_columns).to_polars()
+    validated_df = (
+        await RetrivalJob.from_convertable(df, [expected_request])
+        .drop_invalid()
+        .select(expected_request.all_returned_columns)
+        .to_polars()
+    )
 
     assert validated_df.height == df.height
