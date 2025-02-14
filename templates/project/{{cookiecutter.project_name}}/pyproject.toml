@@ -12,6 +12,9 @@ pydantic-settings = "^2.1.0"
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
 
+[tool.poetry.group.databricks.dependencies]
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+
 [tool.poetry.group.dev.dependencies]
 black = "*"
 pre-commit = "*"

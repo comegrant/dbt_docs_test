@@ -10,8 +10,9 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 click = "^8.1.7"
-cookiecutter = "^2.5.0"
+cookiecutter = "2.5.0"
 project-owners = {path = "../../packages/project-owners", develop = true}
+pytest-mock = "^3.14.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

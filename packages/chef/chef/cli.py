@@ -27,6 +27,7 @@ from chef.doctor_config import (
     MINIMUM_REQUIRED_PYTHON_VERSION,
     VSCODE_DATABRICKS_EXTENSION_URL,
 )
+from chef.project_workflow import deploy_project_workflow, test_project_workflow
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,8 @@ def root_dir() -> Path:
     # Return the packages directory within mono_repo
     return current_dir
 
+def workflow_dir() -> Path:
+    return root_dir() / ".github" / "workflows"
 
 def internal_package_path() -> Path:
     return root_dir() / "packages"
@@ -584,6 +587,12 @@ def read_command(command: list[str]) -> str | None:
 def git_config(key: str) -> str | None:
     return read_command(["git", "config", key])
 
+def default_create_context() -> dict[str, str]:
+    "This is only used to inject test variables"
+    return {}
+
+def should_prompt_user() -> bool:
+    return True
 
 @cli.command()
 @click.argument("type_name", type=click.Choice(["project", "package"]))
@@ -614,10 +623,8 @@ def create(type_name: str) -> None:
     if len(python_version.split(".")) >= minor_version_location:
         python_version = ".".join(python_version.split(".")[:2])
 
-    extra_context = {
-        "python_version": python_version,
-    }
-
+    extra_context = default_create_context()
+    extra_context["python_version"] = python_version
     extra_context["owner_full_name"] = info.name
     extra_context["owner_email_address"] = info.email
     extra_context["owner_slack_handle"] = info.slack_member_id
@@ -628,25 +635,49 @@ def create(type_name: str) -> None:
 
     output_dir: str | None = None
 
+    root_folder = root_dir()
+
     try:
         if type_name == "project":
             output_dir = cookiecutter(
                 (template_path() / "project").as_posix(),
                 output_dir=projects_path().as_posix(),
+                no_input=not should_prompt_user(),
                 extra_context=extra_context,
                 overwrite_if_exists=True,
                 skip_if_file_exists=True,
+                accept_hooks=False
             )
+            assert isinstance(output_dir, str)
+            project_name = output_dir.split("projects/")[-1]
+
+
+            pr_file = workflow_dir() / f"{project_name}_pr.yaml"
+            deploy_file = workflow_dir() / f"{project_name}_deploy.yaml"
+            pr_file.write_text(
+                test_project_workflow(
+                    project_name,
+                    pr_file.resolve().relative_to(root_folder.resolve()).as_posix()
+                )
+            )
+            deploy_file.write_text(
+                deploy_project_workflow(
+                    project_name,
+                    deploy_file.resolve().relative_to(root_folder.resolve()).as_posix()
+                )
+            )
+
         elif type_name == "package":
             output_dir = cookiecutter(
                 (template_path() / "package").as_posix(),
                 output_dir=internal_package_path().as_posix(),
+                no_input=not should_prompt_user(),
                 extra_context=extra_context,
                 overwrite_if_exists=True,
                 skip_if_file_exists=True,
             )
-    except Exception:
-        click.echo(f"\nAn error occured while creating the {type_name}.\n")
+    except Exception as e:
+        click.echo(f"\nAn error occured while creating the {type_name}.\n{e}")
         return
 
     subprocess.run(["poetry", "lock", f"--directory={output_dir}"], check=False)

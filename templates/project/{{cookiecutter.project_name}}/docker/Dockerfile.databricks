@@ -1,4 +1,4 @@
-FROM databricksruntime/python:14.3-LTS
+FROM databricksruntime/python:15.4-LTS
 
 SHELL ["/bin/bash", "-c"]
 
@@ -36,4 +36,4 @@ ENV PATH /databricks/python3/bin:$PATH
 COPY projects/{{cookiecutter.project_name}} .
 
 WORKDIR $SERVICE_HOME
-CMD python {{cookiecutter.module_name}}/main.py
+CMD python {{cookiecutter.module_name}}/cli.py
