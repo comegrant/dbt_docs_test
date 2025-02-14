@@ -52,15 +52,20 @@ def root_dir() -> Path:
     # Find the mono_repo directory containing the .git folder
     current_dir = Path()
     while not (current_dir / ".git").is_dir():
-        current_dir = current_dir.parent
         if current_dir == Path("/"):
             raise ValueError("Could not find sous_chef directory containing git")
+        if current_dir.as_posix().startswith("."):
+            current_dir = current_dir / ".."
+        else:
+            current_dir = current_dir.parent
 
     # Return the packages directory within mono_repo
     return current_dir
 
+
 def workflow_dir() -> Path:
     return root_dir() / ".github" / "workflows"
+
 
 def internal_package_path() -> Path:
     return root_dir() / "packages"
@@ -587,12 +592,15 @@ def read_command(command: list[str]) -> str | None:
 def git_config(key: str) -> str | None:
     return read_command(["git", "config", key])
 
+
 def default_create_context() -> dict[str, str]:
     "This is only used to inject test variables"
     return {}
 
+
 def should_prompt_user() -> bool:
     return True
+
 
 @cli.command()
 @click.argument("type_name", type=click.Choice(["project", "package"]))
@@ -639,6 +647,7 @@ def create(type_name: str) -> None:
 
     try:
         if type_name == "project":
+            click.echo("Creating project")
             output_dir = cookiecutter(
                 (template_path() / "project").as_posix(),
                 output_dir=projects_path().as_posix(),
@@ -646,24 +655,19 @@ def create(type_name: str) -> None:
                 extra_context=extra_context,
                 overwrite_if_exists=True,
                 skip_if_file_exists=True,
-                accept_hooks=False
+                accept_hooks=False,
             )
             assert isinstance(output_dir, str)
             project_name = output_dir.split("projects/")[-1]
 
-
             pr_file = workflow_dir() / f"{project_name}_pr.yaml"
             deploy_file = workflow_dir() / f"{project_name}_deploy.yaml"
             pr_file.write_text(
-                test_project_workflow(
-                    project_name,
-                    pr_file.resolve().relative_to(root_folder.resolve()).as_posix()
-                )
+                test_project_workflow(project_name, pr_file.resolve().relative_to(root_folder.resolve()).as_posix())
             )
             deploy_file.write_text(
                 deploy_project_workflow(
-                    project_name,
-                    deploy_file.resolve().relative_to(root_folder.resolve()).as_posix()
+                    project_name, deploy_file.resolve().relative_to(root_folder.resolve()).as_posix()
                 )
             )
 

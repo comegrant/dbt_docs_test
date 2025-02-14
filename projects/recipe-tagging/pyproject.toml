@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "recipe-tagging"
+version = "0.1.0"
+description = "A Python project by Cheffelo."
+authors = ["Agathe Raaum <agathe.raaum@cheffelo.com>"]
+packages = [{include = "recipe_tagging"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+slack-connector = {path = "../../packages/slack-connector", develop = true}
+
+pyright = "^1.1.394"
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.databricks.dependencies]
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
