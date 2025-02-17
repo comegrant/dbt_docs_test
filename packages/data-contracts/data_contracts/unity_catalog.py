@@ -526,6 +526,53 @@ def features_to_read(request: RetrivalRequest) -> list[str]:
     return columns
 
 
+def validate_pyspark_schema(old: StructType, new: StructType, sub_property: str = "") -> None:
+    from pyspark.sql.types import ArrayType, StructType
+
+    old_schema = {field.name: field.dataType for field in old.fields}
+    new_schema = {field.name: field.dataType for field in new.fields}
+
+    missing_fields = []
+    incorrect_schema = []
+
+    for name, dtype in old_schema.items():
+        if name not in new_schema:
+            missing_fields.append((name, dtype))
+        elif dtype != new_schema[name]:
+            new_type = new_schema[name]
+            if isinstance(dtype, StructType) and isinstance(new_type, StructType):
+                validate_pyspark_schema(dtype, new_type, f"{sub_property}.{name}." if sub_property else name)
+            elif (
+                isinstance(dtype, ArrayType)
+                and isinstance(new_type, ArrayType)
+                and isinstance(dtype.elementType, StructType)
+                and isinstance(new_type.elementType, StructType)
+            ):
+                validate_pyspark_schema(
+                    dtype.elementType, new_type.elementType, f"{sub_property}.{name}." if sub_property else name
+                )
+            else:
+                incorrect_schema.append((name, dtype, new_schema[name]))
+
+    error_message = ""
+
+    if missing_fields:
+        error_message += "\n".join(
+            [f"Missing column '{sub_property}{name}' with data type: {dtype}" for name, dtype in missing_fields]
+        )
+
+    if incorrect_schema:
+        error_message += "\n".join(
+            [
+                f"Incorrect schema for '{sub_property}{name}' got {new_dtype}, but expected {old_dtype}"
+                for name, old_dtype, new_dtype in incorrect_schema
+            ]
+        )
+
+    if error_message:
+        raise ValueError(error_message)
+
+
 @dataclass
 class UnityCatalogTableAllJob(RetrivalJob):
     config: DatabricksConnectionConfig
@@ -671,7 +718,7 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
         )
 
     async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        pdf = await job.to_polars()
+        pdf = (await job.to_polars()).select(request.all_returned_columns)
         schema = polars_schema_to_spark(pdf.schema)  # type: ignore
 
         conn = self.config.connection()
@@ -679,10 +726,12 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
             pdf.to_pandas(),
             schema=schema,  # type: ignore
         )
+        schema = conn.table(self.table.identifier()).schema
+        validate_pyspark_schema(old=schema, new=df.schema)
         df.write.mode("append").saveAsTable(self.table.identifier())
 
     async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        pdf = await job.unique_entities().to_polars()
+        pdf = (await job.unique_entities().to_polars()).select(request.all_returned_columns)
 
         target_table = self.table.identifier()
         conn = self.config.connection()
@@ -696,6 +745,9 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
                 pdf.to_pandas(),
                 schema=polars_schema_to_spark(pdf.schema),  # type: ignore
             )
+            schema = conn.table(target_table).schema
+            validate_pyspark_schema(old=schema, new=df.schema)
+
             temp_table = "new_values"
             df.createOrReplaceTempView(temp_table)
             conn.sql(f"""MERGE INTO {target_table} AS target
@@ -707,7 +759,7 @@ WHEN NOT MATCHED THEN
   INSERT *""")
 
     async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
-        pdf = await job.unique_entities().to_polars()
+        pdf = (await job.unique_entities().to_polars()).select(request.all_returned_columns)
         schema = polars_schema_to_spark(pdf.schema)  # type: ignore
         raise_on_invalid_pyspark_schema(schema)
         conn = self.config.connection()

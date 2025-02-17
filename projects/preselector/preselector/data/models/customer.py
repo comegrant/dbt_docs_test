@@ -129,13 +129,14 @@ class PreselectorSuccessfulResponse(BaseModel):
         }
         error_vector_type = pl.Struct({feat: pl.Float64 for feat in error_features})
         expected_schema["error_vector"] = error_vector_type
+
         expected_schema["recipes"] = pl.List(
             pl.Struct(
-                {
-                    "main_recipe_id": pl.Int32,
-                    "compliancy": pl.Int32,
-                    "variation_id": pl.String,
-                }
+                [
+                    pl.Field("main_recipe_id", pl.Int32),
+                    pl.Field("variation_id", pl.String),
+                    pl.Field("compliancy", pl.Int32),
+                ]
             )
         )
         renames = {

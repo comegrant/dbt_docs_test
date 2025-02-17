@@ -16,6 +16,7 @@ from preselector.stream import ReadableStream, ServiceBusStream
 
 logger = logging.getLogger(__name__)
 
+
 async def flush_deadletter(settings: ProcessStreamSettings) -> None:
     streams = await connect_to_streams(settings, company_id="")
 
@@ -36,7 +37,7 @@ async def flush_deadletter(settings: ProcessStreamSettings) -> None:
         failed_stream=failed_stream,
         write_store=preselector_store(),
         write_size=settings.write_output_max_size,
-        max_wait_time=settings.write_output_wait_time
+        max_wait_time=settings.write_output_wait_time,
     )
 
 
@@ -45,9 +46,8 @@ async def write_to_databricks(
     failed_stream: ReadableStream[PreselectorFailedResponse] | None,
     write_store: ContractStore,
     write_size: int,
-    max_wait_time: float | None
+    max_wait_time: float | None,
 ) -> None:
-
     from pyspark.errors.exceptions.base import PySparkException
 
     if success_stream is None:
@@ -63,11 +63,7 @@ async def write_to_databricks(
     while success_messages and message_count < write_size:
         message_count += len(success_messages)
         try:
-
-            df = pl.concat([
-                output.body.to_dataframe()
-                for output in success_messages
-            ], how="vertical_relaxed")
+            df = pl.concat([output.body.to_dataframe() for output in success_messages], how="vertical_relaxed")
 
             await write_store.feature_view(SuccessfulPreselectorOutput).insert(df)
             await success_stream.mark_as_complete(success_messages)
@@ -76,10 +72,9 @@ async def write_to_databricks(
                 success_messages = await success_stream.read(number_of_records=write_size)
 
         except (ValueError, PySparkException) as error:
-            logger.error(f"Unable to write to databricks {error} - {[req.body for req in success_messages]}")
+            logger.exception(f"Unable to write to databricks {error}")
             await success_stream.mark_as_uncomplete(success_messages)
             message_count = write_size
-
 
     if failed_stream is None:
         logger.info("No readable success stream.")
@@ -88,25 +83,22 @@ async def write_to_databricks(
     if isinstance(failed_stream, ServiceBusStream):
         failed_stream.max_wait_time = max_wait_time
 
-
     message_count = 0
     failed_messages = await failed_stream.read(number_of_records=write_size)
     while failed_messages and message_count < write_size:
         try:
             await write_store.feature_view(FailedPreselectorOutput).insert(
-                pl.concat([
-                    failed_req.body.to_dataframe()
-                    for failed_req in failed_messages
-                ], how="vertical_relaxed")
+                pl.concat([failed_req.body.to_dataframe() for failed_req in failed_messages], how="vertical_relaxed")
             )
             await failed_stream.mark_as_complete(failed_messages)
 
             if message_count < write_size:
                 failed_messages = await failed_stream.read(number_of_records=write_size)
         except (ValueError, PySparkException) as error:
-            logger.error(f"Unable to write to databricks {error} - {[req.body for req in failed_messages]}")
+            logger.exception(f"Unable to write to databricks {error}")
             await success_stream.mark_as_uncomplete(success_messages)
             message_count = write_size
+
 
 if __name__ == "__main__":
     pass
