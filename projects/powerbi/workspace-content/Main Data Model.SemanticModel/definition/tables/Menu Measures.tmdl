@@ -37,7 +37,7 @@ table 'Menu Measures'
 			CALCULATE(
 				[Number of Recipe Comments] / [Number of Ordered Dishes]
 			)
-		formatString: 0.00\\ %;-0.00\\ %;0.00\\ %
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 
 	/// The number of unique customers posting a rating.
 	/// Customers marking "dish not cooked" are included.
@@ -46,6 +46,7 @@ table 'Menu Measures'
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id])
 					, 'Order Measures'[Recipe Rating Id] <> BLANK()
 				)
+		formatString: #,0
 
 	/// The number of unique customer posting a rating divided by the total number of orders.
 	/// Customers marking "dish not cooked" are included.
@@ -55,7 +56,7 @@ table 'Menu Measures'
 			CALCULATE(
 				[Number of Rating Customers] / [Number of Ordering Customers]
 			)
-		formatString: 0.00\\ %;-0.00\\ %;0.00\\ %
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 
 	/// The number of dishes marked as "dish not cooked".
 	/// Counts as unique with every customer marking each dish.
@@ -74,7 +75,7 @@ table 'Menu Measures'
 			CALCULATE(
 				[Number of Dishes Not Cooked] / [Number of Ratings]
 				)
-		formatString: 0.00\\ %;-0.00\\ %;0.00\\ %
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 
 	/// The number of unique ratings posted. A unique rating is the rating of one dish by one customer.
 	/// If one customer rates 3 dishes and another rates 2 dishes, then these are 5 unique ratings regardless of which specific dishes they rated. 
@@ -93,7 +94,7 @@ table 'Menu Measures'
 			CALCULATE(
 				[Number of Ratings] / [Number of Ordered Dishes]
 			)
-		formatString: 0.00\\ %;-0.00\\ %;0.00\\ %
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 
 	/// The number of unique recipes that have received any rating.
 	/// Dish not cooked is excluded.
@@ -103,7 +104,7 @@ table 'Menu Measures'
 					, 'Order Measures'[Recipe Rating Id] <> BLANK()
 					, 'Order Measures'[is_not_cooked_dish] = FALSE() 
 				)
-		formatString: 0
+		formatString: #,0
 		
 
 
