@@ -1,4 +1,3 @@
-#TODO: Update readme based on this
 #TODO: Add a way to automatically update the docs and yaml files
 
 import subprocess
@@ -13,12 +12,17 @@ def cli() -> None:
 
 def is_in_transform_directory() -> bool:
     if Path.cwd().name != 'transform':
-        click.echo("Error: This command must be run from the 'transform' directory.")
+        click.echo("Error: This command must be run from the 'projects/data-model/transform' directory.")
         return False
     return True
 
 def create_silver_directory(source_system: str) -> None:
     Path(f"models/silver/{source_system}").mkdir(parents=True, exist_ok=True)
+
+def create_powerbi_directory() -> None:
+    Path(
+            "../../powerbi/workspace-content/Main Data Model.SemanticModel/definition/tables"
+        ).mkdir(parents=True, exist_ok=True)
 
 @cli.command()
 @click.option('--source-system', required=True, help='Name of the source system, e.g. cms')
@@ -40,7 +44,7 @@ def generate_docs(model_name: str) -> None:
     if not is_in_transform_directory():
         return
 
-    build_model(model_name)
+    run_model(model_name)
     generate_column_docs(model_name)
     click.echo(f"Column documentation for '{model_name}' generated successfully")
 
@@ -51,9 +55,20 @@ def generate_yaml(model_name: str) -> None:
     if not is_in_transform_directory():
         return
 
-    build_model(model_name)
+    run_model(model_name)
     generate_column_yaml(model_name)
     click.echo(f"Column YAML for '{model_name}' generated successfully")
+
+@cli.command()
+@click.option('--model-name', required=True, help='Name of the dbt model')
+def generate_tmdl(model_name: str) -> None:
+    """Generate column documentation for any model."""
+    if not is_in_transform_directory():
+        return
+
+    create_powerbi_directory()
+    generate_powerbi_tmdl(model_name)
+    click.echo(f"PowerBI tmdl for '{model_name}' generated successfully")
 
 def generate_silver_model_sql_file(source_system: str, source_table_name: str, model_name: str) -> None:
     click.echo(f"Generating the SQL file models/silver/{source_system}/{model_name}.sql")
@@ -65,9 +80,9 @@ def generate_silver_model_sql_file(source_system: str, source_table_name: str, m
     )
     subprocess.run(sql_command, shell=True, check=True)
 
-def build_model(model_name: str) -> None:
-    click.echo(f"Building the model {model_name}")
-    build_command = f"dbt build -s {model_name}"
+def run_model(model_name: str) -> None:
+    click.echo(f"Run the model {model_name}")
+    build_command = f"dbt run -s {model_name}"
     subprocess.run(build_command, shell=True, check=True)
 
 def generate_column_docs(model_name: str) -> None:
@@ -81,6 +96,25 @@ def generate_column_yaml(model_name: str) -> None:
     yaml_command = f'dbt run-operation generate_column_yaml --args "model_name: {model_name}"'
     subprocess.run(yaml_command, shell=True, check=True)
     click.echo("⬆️  Copy the above output and paste it into the relevant __models.yml folder ⬆️")
+
+def generate_powerbi_tmdl(model_name: str) -> None:
+    click.echo(f"Generating powerbi tmdl file for {model_name}")
+
+    if "fact" in model_name:
+        file_name = model_name.split("_", 1)[-1].replace("_", " ").title().rstrip("s") + " Measures"
+    elif "bridge" in model_name:
+        file_name = model_name.replace("_", " ").title()
+    else:
+        file_name = model_name.split("_", 1)[-1].replace("_", " ").title()
+
+    output_file = (
+        f'"../../powerbi/workspace-content/Main Data Model.SemanticModel/definition/tables/{file_name}.tmdl"'
+    )
+    tmdl_command = (
+        f'dbt run-operation generate_powerbi_tmdl --args "model_name: {model_name}"'
+        f'> {output_file}'
+    )
+    subprocess.run(tmdl_command, shell=True, check=True)
 
 if __name__ == '__main__':
     cli()
