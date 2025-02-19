@@ -110,5 +110,39 @@
     versions:
       - v: 1
       
+  - name: dim_budget_types
+    description: "Contain all ids, names and descriptions of budget attributes"
+    latest_version: 1
+    config:
+      alias: dim_budget_types
+      contract:
+        enforced: true
 
+    columns:
+      - name: pk_dim_budget_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_budget_types') }}"
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: budget_type_id
+        data_type: string
+        description: "{{ doc('column__budget_type_id') }}"
+        data_tests:
+          - not_null
 
+      - name: budget_type_name
+        data_type: string
+        description: "{{ doc('column__budget_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: budget_type_description
+        data_type: string
+        description: "{{ doc('column__budget_type_description') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
