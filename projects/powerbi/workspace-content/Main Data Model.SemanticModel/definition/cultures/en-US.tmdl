@@ -27000,16 +27000,6 @@ cultureInfo en-US
 			            },
 			            "Weight": 0.504
 			          }
-			        },
-			        {
-			          "Measure": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },

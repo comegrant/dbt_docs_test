@@ -1,0 +1,161 @@
+table 'Agreement Recipe Compliance Measures'
+	lineageTag: 6b6f33c7-a4ff-4449-a8ff-7b1ab39e43eb
+
+	/// Returns the total number of unique recipes with the selected compliance level.
+	/// Compliancy is how much the preselector output matches with the agreement's preferences.
+	measure 'Number of Recipes with Compliancy' = ```
+				CALCULATE(
+					DISTINCTCOUNT('Agreement Recipe Compliance Measures'[recipe_id]),
+					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
+				)
+			```
+		lineageTag: d4e0cd1e-43d0-49c7-8643-d3a5e21c246b
+
+	/// Returns the total number of unique billing agreements that have recipes with the selected compliance level.
+	/// Compliancy is how much the preselector output matches with the agreement's preferences.
+	measure 'Number of Agreements with Compliancy' = ```
+				CALCULATE(
+					DISTINCTCOUNT('Agreement Recipe Compliance Measures'[billing_agreement_id]),
+					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
+				)
+			```
+		lineageTag: fc73f9ca-84b6-4807-ad19-29d6d49ccc8e
+
+	/// Calculates the average number of recipes per billing agreement with the selected compliance level.
+	/// Compliancy is how much the preselector output matches with the agreement's preferences.
+	measure 'Average Number of Recipes per Agreement with Compliancy' = ```
+			    DIVIDE(
+			        [Number of Recipes with Compliancy],
+			        [Number of Agreements with Compliancy]
+			    )
+			```
+		lineageTag: a91015f4-c2b3-45f1-bd9a-7a2df87d00b4
+
+	/// Returns the number of recipes that are currently on the menu with the selected compliance level.
+	/// Compliancy is how much the preselector output matches with the agreement's preferences.
+	measure 'Number of Recipes in Menu with Compliancy' = ```
+				CALCULATE(
+					DISTINCTCOUNT('Menu Measures'[recipe_id]),
+					FILTER(
+						'Menu Measures',
+						[Number of Recipes with Compliancy] > 0
+					),
+					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
+				)
+			```
+		lineageTag: 94a351ec-9643-40c0-b5ad-aade250a4a97
+
+	/// The unique key of each row in Fact Recipe Billing Agreement Compliancy.
+	column pk_fact_recipe_billing_agreement_compliancy
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4cbeba4d-d252-49ba-9026-6bec0e9d1c3a
+		summarizeBy: none
+		sourceColumn: pk_fact_recipe_billing_agreement_compliancy
+
+	/// Primary key of the dim_companies table.
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: e99340af-e9f9-4178-9a10-c3c293e5cad5
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	/// Primary key of the dim_dates table. This is an integer on the format YYYYMMDD (e.g. 20250117).
+	column fk_dim_dates
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ff73f877-25fc-4dbc-af29-82e2c7c0b6e8
+		summarizeBy: none
+		sourceColumn: fk_dim_dates
+
+	/// Primary key of the dim_billing_agreements table.
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0393c07d-0f34-4e21-a0af-2e4392ae8310
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	/// Primary key of the dim_recipes table.
+	column fk_dim_recipes
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6ca096c6-c637-45e8-9346-97883e1744a9
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes
+
+	/// The id of a billing agreement.
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: ff870804-2edc-4ed6-8518-46d33caf7733
+		summarizeBy: sum
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Unique primary key for the preference combinations dimension.
+	column billing_agreement_preference_combination_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 8f038358-75d1-4428-aea3-4356303456c3
+		summarizeBy: none
+		sourceColumn: billing_agreement_preference_combination_id
+
+	/// The id of a recipe.
+	column recipe_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 6d3ba1e4-4800-46d3-bb27-6b5ed76b7fcb
+		summarizeBy: sum
+		sourceColumn: recipe_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Unique primary key for the preference combinations dimension.
+	column recipe_preference_combination_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ec56e292-1406-4fca-b147-3e10b1f0a9d7
+		summarizeBy: none
+		sourceColumn: recipe_preference_combination_id
+
+	/// The compliancy level between a billing agreement id and a recipe id.
+	/// It is calculated by comparing the preference combination of the billing agreement and the recipe.
+	/// Level 1: There is a mismatch between the allergy taste preferences of the billing agreement and the recipe.
+	/// Level 2: There is a mismatch between the non-allergy taste preferences of the billing agreement and the recipe,
+	/// or the billing agreement and recipe have no concept preferences in common.
+	/// Level 3: The preference combination of the billing agreement complies with the recipe.
+	column 'Compliancy Level'
+		dataType: int64
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: cc842a59-ef0b-4889-8711-ed95924aa29d
+		summarizeBy: none
+		sourceColumn: compliancy_level
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Agreement Recipe Compliance Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_recipe_billing_agreement_compliancy_Table = gold_Schema{[Name="fact_recipe_billing_agreement_compliancy",Kind="Table"]}[Data]
+				in
+					fact_recipe_billing_agreement_compliancy_Table
+

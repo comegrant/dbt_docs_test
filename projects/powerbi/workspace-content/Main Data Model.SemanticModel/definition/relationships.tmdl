@@ -179,3 +179,19 @@ relationship 4ddd3c4b-2b92-dc61-fca1-ca9175a4a760
 	fromColumn: 'Customer Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
+relationship 497d99e0-b303-8ce5-325f-8ca056c49317
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship 86ca85eb-0aac-7337-4794-885cadadd522
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 62c70c89-6d48-7a60-5d58-d48b41b3e3b1
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship c9f17f39-1bd5-a6a0-8327-76a43d68e0c6
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates
+

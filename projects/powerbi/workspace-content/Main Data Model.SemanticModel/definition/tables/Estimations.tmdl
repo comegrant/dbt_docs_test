@@ -3,11 +3,11 @@ table Estimations
 	lineageTag: 945865dc-66a2-4d6b-ba62-6f324c4bc648
 
 	/// Counting number of units of products in the customers baskets. Also called Estimations.
-	/// This is what would have been ordered if cutoff is now for the next 12 weeks. 
+	/// This is what would have been ordered if cutoff is now for the next 12 weeks.
 	/// See "Estimation generated at" for the timestamp of the estimation.
 	measure 'Number of Units in Baskets if Cutoff is Now' = SUM('Estimations'[product_variation_quantity])
-		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
 		formatString: #,0
+		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
 
 	/// Primary key of the fact_estimations table
 	column pk_fact_estimations

@@ -2,25 +2,27 @@ table 'Customer Measures'
 	isHidden
 	lineageTag: d05b49b2-fb42-46e1-9a85-76404c8a551e
 
-	/// This is a hidden measure that can be used to create other measures. 
+	/// This is a hidden measure that can be used to create other measures.
 	/// It will be a count of changes related to agreements, and represent the agreements after the change.
 	/// The change could be anything, e.g. status, preferences, subscribed products, loyalty level etc.
 	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
 	measure 'Number of Agreement Changes to Filtered State' = COUNTROWS('Customer Measures')
-		isHidden
 		formatString: #,0
+		isHidden
+		lineageTag: 098c92f8-30b6-4563-a7ec-b556839eceef
 
-	/// This is a hidden measure that can be used to create other measures. 
+	/// This is a hidden measure that can be used to create other measures.
 	/// It will be a count of changes related to agreements, and represent the agreements before the change.
 	/// The change could be anything, e.g. status, preferences, subscribed products, loyalty level etc.
 	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
-	measure 'Number of Agreement Changes from Filtered State' = 
+	measure 'Number of Agreement Changes from Filtered State' =
 			CALCULATE(
 				COUNTROWS('Customer Measures'),
 				USERELATIONSHIP('Customer Measures'[fk_dim_billing_agreements_previous_version],'Billing Agreements'[pk_dim_billing_agreements])
 			)
-		isHidden
 		formatString: #,0
+		isHidden
+		lineageTag: bb5e3faf-1d2a-4b8e-be86-438d234cebb5
 
 	/// Number of Customers included all statuses (also included deleted).
 	measure 'Number of Customers All Statuses' =
@@ -30,36 +32,40 @@ table 'Customer Measures'
 				'Dates'[Date] <= MAX('Dates'[Date])
 			)
 		formatString: #,0
+		lineageTag: fd14e082-b1f9-477a-8dfc-6ac06324ce11
 
 	/// Number of Active Customers
 	measure 'Number of Active Customers' =
 			CALCULATE(
-				[Number of Customers All Statuses], 
+				[Number of Customers All Statuses],
 				FILTER(
 					'Dates',
 					Dates[Date]=MAX(Dates[Date])
-				), 
+				),
 				'Billing Agreements'[Billing Agreement Status]="Active"
 			)
 		formatString: #,0
+		lineageTag: 97c48411-d8b8-4fa8-aa51-3eea12e119f2
 
 	/// Number of Active Customers same period last year.
 	measure 'Number of Active Customers PY' =
 			CALCULATE(
 				[Number of Active Customers],
-				SAMEPERIODLASTYEAR('Dates'[Date]), 
+				SAMEPERIODLASTYEAR('Dates'[Date]),
 				ALL('Dates')
 			)
 		formatString: #,0
+		lineageTag: 19d1851e-5f07-4655-a252-cb0338ba7fdb
 
 	/// Number of customers (included all statuses) same period last year.
 	measure 'Number of Customers All Statuses PY' =
 			CALCULATE(
 				[Number of Active Customers],
-				SAMEPERIODLASTYEAR('Dates'[Date]), 
+				SAMEPERIODLASTYEAR('Dates'[Date]),
 				ALL('Dates')
 			)
 		formatString: #,0
+		lineageTag: a840a69a-c3f1-4878-ae41-b99013d1b47d
 
 	/// Number of new customers
 	measure 'Number of New Customers' =
@@ -68,6 +74,7 @@ table 'Customer Measures'
 				'Customer Measures'[is_new_agreement]=TRUE()
 			)
 		formatString: #,0
+		lineageTag: 214a91d8-fc9a-4084-8144-625b9cb7a7f6
 
 	/// Number of new customers same period last year.
 	measure 'Number of New Customers PY' =
@@ -77,6 +84,7 @@ table 'Customer Measures'
 				SAMEPERIODLASTYEAR('Dates'[Date])
 			)
 		formatString: #,0
+		lineageTag: 801ee2fa-401a-46de-8c57-f8354b3470b4
 
 	/// Number of new customers Year to Date. This uses the calendar year.
 	measure 'Number of New Customers YTD' =
@@ -86,6 +94,7 @@ table 'Customer Measures'
 				ALL('Dates')
 			)
 		formatString: #,0
+		lineageTag: 69492a6f-2f2b-4b14-8d67-ca182e031ee0
 
 	/// Number of new customers Year to Date, same period last year. This uses the calendar year.
 	measure 'Number of New Customers YTD PY' =
@@ -95,28 +104,29 @@ table 'Customer Measures'
 				ALL('Dates')
 			)
 		formatString: #,0
+		lineageTag: c9fc05d1-f58a-46ce-a71e-b25dc72992ad
 
 	/// Number of customers changed from active to another status during the selected period.
-	/// It will count number of customers that was in a active state at the beginning of the selected period 
+	/// It will count number of customers that was in a active state at the beginning of the selected period
 	/// and was in another status at the end of the selected period.
-	measure	'Number of Customers Changed from Active' = 
+	measure 'Number of Customers Changed from Active' =
 			SUMX(
 				VALUES('Billing Agreements'[Agreement Id]),
-
+			
 				VAR min_updated_at = CALCULATE(
 					MIN('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]>MIN('Dates'[Date])
 				)
-
+			
 				VAR max_updated_at = CALCULATE(
 					MAX('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
 				)
-
+			
 				VAR CountStart =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -128,7 +138,7 @@ table 'Customer Measures'
 						),
 						'Billing Agreements'[Billing Agreement Status] = "Active"
 					)
-
+			
 				VAR CountEnd =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -136,33 +146,34 @@ table 'Customer Measures'
 						'Customer Measures'[updated_at] = max_updated_at,
 						'Billing Agreements'[Billing Agreement Status] <> "Active"
 					)
-
-				RETURN 
+			
+				RETURN
 					IF(CountStart>0 && CountEnd>0, 1, 0)
 			)
 		formatString: #,0
+		lineageTag: a950a2a5-a013-47d2-b69e-01e8337bf788
 
 	/// Number of customers changed to active from another status during the selected period.
-	/// It will count number of customers that was not in a active state at the beginning of the selected period 
+	/// It will count number of customers that was not in a active state at the beginning of the selected period
 	/// but was active at the end of the selected period.
-	measure	'Number of Customers Changed to Active' = 
+	measure 'Number of Customers Changed to Active' =
 			SUMX(
 				VALUES('Billing Agreements'[Agreement Id]),
-
+			
 				VAR min_updated_at = CALCULATE(
 					MIN('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]>MIN('Dates'[Date])
 				)
-
+			
 				VAR max_updated_at = CALCULATE(
 					MAX('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
 				)
-
+			
 				VAR CountStart =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -174,7 +185,7 @@ table 'Customer Measures'
 						),
 						'Billing Agreements'[Billing Agreement Status] <> "Active"
 					)
-
+			
 				VAR CountEnd =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -182,11 +193,12 @@ table 'Customer Measures'
 						'Customer Measures'[updated_at] = max_updated_at,
 						'Billing Agreements'[Billing Agreement Status] = "Active"
 					)
-
-				RETURN 
+			
+				RETURN
 					IF(CountStart>0 && CountEnd>0, 1, 0)
 			)
 		formatString: #,0
+		lineageTag: 60ba4403-dc9a-4221-b046-d3dea3afa7bb
 
 	column fk_dim_dates
 		dataType: int64
@@ -224,13 +236,6 @@ table 'Customer Measures'
 		lineageTag: 199a8f38-e0f7-4d40-b339-3d5614ef0303
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements_previous_version
-
-	column billing_agreement_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		summarizeBy: none
-		sourceColumn: billing_agreement_id
 
 	column is_new_agreement
 		dataType: boolean
@@ -282,13 +287,6 @@ table 'Customer Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column has_updated_loyalty_level
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		summarizeBy: none
-		sourceColumn: has_updated_loyalty_level
-
 	column has_updated_onesub_flag
 		dataType: boolean
 		isHidden
@@ -298,6 +296,22 @@ table 'Customer Measures'
 		sourceColumn: has_updated_onesub_flag
 
 		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a7cdedca-7809-42e2-b766-52f21fa31e79
+		summarizeBy: none
+		sourceColumn: billing_agreement_id
+
+	column has_updated_loyalty_level
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 7b2d0a2b-dfd4-41f1-90d2-f06ad8453859
+		summarizeBy: none
+		sourceColumn: has_updated_loyalty_level
 
 	partition 'Customer Measures' = m
 		mode: directQuery

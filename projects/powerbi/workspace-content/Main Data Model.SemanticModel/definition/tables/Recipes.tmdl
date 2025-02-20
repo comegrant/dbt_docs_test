@@ -93,12 +93,13 @@ table Recipes
 		sourceColumn: is_main_recipe
 
 		annotation SummarizationSetBy = Automatic
-	
+
 	column recipe_metadata_id
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: 04359755-28af-42dd-9175-be7ee2eea81a
 		summarizeBy: none
 		sourceColumn: recipe_metadata_id
 
@@ -109,6 +110,7 @@ table Recipes
 	column 'Main Recipe Id'
 		dataType: int64
 		formatString: 0
+		lineageTag: c3fc7509-3987-48cd-87e7-ddb502a6bc02
 		summarizeBy: none
 		sourceColumn: main_recipe_id
 
@@ -116,6 +118,7 @@ table Recipes
 
 	column 'Main Recipe Variation Id'
 		dataType: string
+		lineageTag: c5361d62-b3ca-4475-8af7-6bbe1e6a1ae4
 		summarizeBy: none
 		sourceColumn: main_recipe_variation_id
 
@@ -123,6 +126,7 @@ table Recipes
 
 	column 'Main Recipe Variation Suffix'
 		dataType: string
+		lineageTag: 5f85679f-9b62-4f58-8e95-89f670bcacdb
 		summarizeBy: none
 		sourceColumn: main_recipe_variation_suffix
 
@@ -133,18 +137,20 @@ table Recipes
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: d18ed834-b187-4ce0-8db5-e202ba1c1fcb
 		summarizeBy: none
 		sourceColumn: recipe_main_ingredient_id
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-	
+
 	column recipe_difficulty_level_id
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: e43e0fce-7388-4677-a44c-ca858eae159b
 		summarizeBy: none
 		sourceColumn: recipe_difficulty_level_id
 
@@ -157,6 +163,7 @@ table Recipes
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: 13d97f09-570e-4614-9809-b300a2cfdf25
 		summarizeBy: none
 		sourceColumn: language_id
 
@@ -166,6 +173,7 @@ table Recipes
 
 	column 'Cooking Time'
 		dataType: string
+		lineageTag: 56d08ed4-ea04-4d27-b993-640873c82ae4
 		summarizeBy: none
 		sourceColumn: cooking_time
 
@@ -174,6 +182,7 @@ table Recipes
 	column 'Has Recipe Photo'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 34503937-ad7d-4cf0-af16-2eca1da8c3f7
 		summarizeBy: none
 		sourceColumn: has_recipe_photo
 
@@ -181,6 +190,7 @@ table Recipes
 
 	column 'Recipe Photo Caption'
 		dataType: string
+		lineageTag: 8b4312df-ca77-44b4-a594-3d7f880e124d
 		summarizeBy: none
 		sourceColumn: recipe_photo_caption
 
@@ -188,6 +198,7 @@ table Recipes
 
 	column 'Recipe General Text'
 		dataType: string
+		lineageTag: 29ca386e-232e-40a5-98b8-12d0dd41828e
 		summarizeBy: none
 		sourceColumn: recipe_general_text
 
@@ -195,6 +206,7 @@ table Recipes
 
 	column 'Recipe Description'
 		dataType: string
+		lineageTag: 77cf6690-bdd2-4014-bb02-4346f9b95c58
 		summarizeBy: none
 		sourceColumn: recipe_description
 
@@ -203,6 +215,7 @@ table Recipes
 	column 'Is In Recipe Universe'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 59b8101c-0ee7-482f-89d0-2adcbc82a050
 		summarizeBy: none
 		sourceColumn: is_in_recipe_universe
 
@@ -211,6 +224,7 @@ table Recipes
 	column 'Recipe Shelf Life Days'
 		dataType: int64
 		formatString: 0
+		lineageTag: 70301a02-ea3e-4f35-b8f4-b9d0298fd476
 		summarizeBy: none
 		sourceColumn: recipe_shelf_life_days
 
@@ -218,6 +232,7 @@ table Recipes
 
 	column 'Recipe Comment'
 		dataType: string
+		lineageTag: 73348bb0-601b-4f7c-91c7-0f318fa23631
 		summarizeBy: none
 		sourceColumn: recipe_comment
 
@@ -225,6 +240,7 @@ table Recipes
 
 	column 'Recipe Chef Tip'
 		dataType: string
+		lineageTag: efe9cfc6-0711-4994-ae0e-7db32de8d2b9
 		summarizeBy: none
 		sourceColumn: recipe_chef_tip
 
@@ -242,3 +258,4 @@ table Recipes
 					dim_recipes_Table
 
 	annotation PBI_ResultType = Table
+

@@ -177,6 +177,7 @@ table 'Menu Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: 1d7fcaaf-803a-47b5-9352-22f10ca0b149
 		summarizeBy: none
 		sourceColumn: portion_name
 

@@ -4,14 +4,14 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 1590.4568058831599,
+        "x": 2603.23315290969,
         "y": 0
       },
       "nodes": [
         {
           "location": {
             "x": 748.51051978077749,
-            "y": 675.9920072021655
+            "y": 680.3670072021655
           },
           "nodeIndex": "Billing Agreements",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
@@ -24,7 +24,7 @@
         {
           "location": {
             "x": 1129.2986607733692,
-            "y": 574.92918754288735
+            "y": 579.30418754288735
           },
           "nodeIndex": "Brands",
           "nodeLineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
@@ -37,7 +37,7 @@
         {
           "location": {
             "x": 203.15686195043304,
-            "y": 30.532050205463406
+            "y": 34.907050205463406
           },
           "nodeIndex": "Order Types",
           "size": {
@@ -49,7 +49,7 @@
         {
           "location": {
             "x": 854.079183557132,
-            "y": 8.75
+            "y": 13.125
           },
           "nodeIndex": "Products",
           "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
@@ -62,7 +62,7 @@
         {
           "location": {
             "x": 1149.0786960344178,
-            "y": 56.960282658045941
+            "y": 61.335282658045941
           },
           "nodeIndex": "Recipes",
           "nodeLineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
@@ -75,7 +75,7 @@
         {
           "location": {
             "x": 393.47221153458469,
-            "y": 311.038655150865
+            "y": 315.413655150865
           },
           "nodeIndex": "Order Measures",
           "nodeLineageTag": "6c298811-8ad5-482b-b89a-827db89210a3",
@@ -88,7 +88,7 @@
         {
           "location": {
             "x": 1699.6103831829273,
-            "y": 325.00612659458807
+            "y": 329.38112659458807
           },
           "nodeIndex": "Menu Measures",
           "nodeLineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
@@ -101,7 +101,7 @@
         {
           "location": {
             "x": 1898.1408557596558,
-            "y": 42.748621527105513
+            "y": 47.123621527105513
           },
           "nodeIndex": "Order Statuses",
           "nodeLineageTag": "1328111a-5f01-4b3f-8a2c-c02c4dad327c",
@@ -114,7 +114,7 @@
         {
           "location": {
             "x": 1130.201955236231,
-            "y": 875.97567745467461
+            "y": 880.35067745467461
           },
           "nodeIndex": "Bridge Billing Agreements Preferences",
           "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
@@ -127,7 +127,7 @@
         {
           "location": {
             "x": 1489.9161616843376,
-            "y": 814.24456670112227
+            "y": 818.61956670112227
           },
           "nodeIndex": "Preferences",
           "nodeLineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
@@ -140,7 +140,7 @@
         {
           "location": {
             "x": 2061.0415257377308,
-            "y": 430.92060144268748
+            "y": 435.29560144268748
           },
           "nodeIndex": "Agreements Daily",
           "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
@@ -153,7 +153,7 @@
         {
           "location": {
             "x": 2272.2312929509767,
-            "y": 918.725640388295
+            "y": 923.100640388295
           },
           "nodeIndex": "Period Since First Order",
           "nodeLineageTag": "45e03479-e4f8-48e0-9804-190221e983b8",
@@ -166,7 +166,7 @@
         {
           "location": {
             "x": 2422.2105718703533,
-            "y": 430.92060144268748
+            "y": 435.29560144268748
           },
           "nodeIndex": "Agreements Weekly",
           "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
@@ -179,7 +179,7 @@
         {
           "location": {
             "x": 2730.5744644187475,
-            "y": 420.70021165582875
+            "y": 425.07521165582875
           },
           "nodeIndex": "(Param) Measures",
           "nodeLineageTag": "6249c02e-7c72-4883-8fd1-d5a33f3de090",
@@ -192,7 +192,7 @@
         {
           "location": {
             "x": 3104.4264218090952,
-            "y": 658.44135594151476
+            "y": 662.81635594151476
           },
           "nodeIndex": "Subscription Quiz Measures",
           "nodeLineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
@@ -205,7 +205,7 @@
         {
           "location": {
             "x": 2880.6124506488472,
-            "y": 51.356502974979094
+            "y": 55.731502974979094
           },
           "nodeIndex": "Estimations",
           "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
@@ -218,7 +218,7 @@
         {
           "location": {
             "x": 3394.619061316188,
-            "y": 63.4169408696236
+            "y": 67.7919408696236
           },
           "nodeIndex": "Time",
           "nodeLineageTag": "0c99312c-27e7-45c7-9e1e-ee88cf5707e5",
@@ -231,7 +231,7 @@
         {
           "location": {
             "x": 4053.845249380448,
-            "y": 438.43549066309004
+            "y": 442.81049066309004
           },
           "nodeIndex": "Billing Agreements Deviation",
           "nodeLineageTag": "a9dc5972-85e4-4024-983d-23afcc61bfd9",
@@ -244,7 +244,7 @@
         {
           "location": {
             "x": 3769.66376055894,
-            "y": 459.28018862293442
+            "y": 463.65518862293442
           },
           "nodeIndex": "Bridge Billing Agreements Subscribed Products",
           "nodeLineageTag": "488b18a8-7e56-41db-b1d3-d04d09d34886",
@@ -257,7 +257,7 @@
         {
           "location": {
             "x": 4327.845249380448,
-            "y": 502.42060144268748
+            "y": 506.79560144268748
           },
           "nodeIndex": "Origin of Preselected Dishes",
           "nodeLineageTag": "5dc57e37-a162-4b62-a970-7d6cc1315f19",
@@ -270,7 +270,7 @@
         {
           "location": {
             "x": 3485.4621993657547,
-            "y": 420.42060144268748
+            "y": 424.79560144268748
           },
           "nodeIndex": "Subscribed Products",
           "nodeLineageTag": "f67b9e95-b0a2-4473-b449-c15e28cd825d",
@@ -283,7 +283,7 @@
         {
           "location": {
             "x": 3162.2798979841805,
-            "y": 474.07590348284077
+            "y": 478.45090348284077
           },
           "nodeIndex": "Origin of Selected Dishes in Basket",
           "nodeLineageTag": "31d6e085-8ba5-4560-b085-27c6cb034f32",
@@ -294,7 +294,10 @@
           "zIndex": 0
         },
         {
-          "location": {},
+          "location": {
+            "x": 4408.6883874300147,
+            "y": 488.54560144268748
+          },
           "nodeIndex": "Preference Combinations",
           "size": {
             "height": 176,
@@ -305,7 +308,7 @@
         {
           "location": {
             "x": 440.19936005378554,
-            "y": 668.26962570813066
+            "y": 672.64462570813066
           },
           "nodeIndex": "Dates",
           "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
@@ -314,10 +317,36 @@
             "width": 234
           },
           "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 4692.6883874300147,
+            "y": 426.54560144268748
+          },
+          "nodeIndex": "Customer Measures",
+          "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4967.7808317314357,
+            "y": 1058.9820560417911
+          },
+          "nodeIndex": "Agreement Recipe Compliance Measures",
+          "nodeLineageTag": "6b6f33c7-a4ff-4449-a8ff-7b1ab39e43eb",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
-      "zoomValue": 28.419508051274008,
+      "zoomValue": 44.905697313104028,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -327,7 +356,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 360.76495326609626
+        "y": 0
       },
       "nodes": [
         {
@@ -514,7 +543,7 @@
         }
       ],
       "name": "Orders",
-      "zoomValue": 79.553182037699756,
+      "zoomValue": 31.863081771035645,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -867,6 +896,6 @@
       "tablesLocked": false
     }
   ],
-  "selectedDiagram": "Orders",
+  "selectedDiagram": "All tables",
   "defaultDiagram": "All tables"
 }
