@@ -155,6 +155,9 @@ dim_billing_agreements as (
         )                 as fk_dim_dates
         , fk_dim_billing_agreements
         , fk_dim_recipes
+        , menu_week_monday_date
+        , company_id
+        , language_id
         , billing_agreement_id
         , billing_agreement_preference_combination_id
         , recipe_id

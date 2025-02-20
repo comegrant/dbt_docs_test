@@ -1810,7 +1810,31 @@ models:
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
       
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"

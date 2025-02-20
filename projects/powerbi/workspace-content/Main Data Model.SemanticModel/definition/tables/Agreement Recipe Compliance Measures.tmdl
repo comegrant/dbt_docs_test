@@ -148,6 +148,14 @@ table 'Agreement Recipe Compliance Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column menu_week_monday_date
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: menu_week_monday_date
+
 	partition 'Agreement Recipe Compliance Measures' = m
 		mode: directQuery
 		source =
@@ -155,7 +163,8 @@ table 'Agreement Recipe Compliance Measures'
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    fact_recipe_billing_agreement_compliancy_Table = gold_Schema{[Name="fact_recipe_billing_agreement_compliancy",Kind="Table"]}[Data]
+				    fact_recipe_billing_agreement_compliancy_Table = gold_Schema{[Name="fact_recipe_billing_agreement_compliancy",Kind="Table"]}[Data],
+					filtered_rows = Table.SelectRows(fact_recipe_billing_agreement_compliancy_Table, each Date.IsInPreviousNDays([menu_week_monday_date], 7))
 				in
-					fact_recipe_billing_agreement_compliancy_Table
+					filtered_rows
 
