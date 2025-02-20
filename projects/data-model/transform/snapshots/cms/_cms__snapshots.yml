@@ -1,0 +1,9 @@
+snapshots:
+  - name: scd_cms__loyalty_level_companies
+    description: Tracks updates to the loyalty_level_company table in CMS.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      enabled: false

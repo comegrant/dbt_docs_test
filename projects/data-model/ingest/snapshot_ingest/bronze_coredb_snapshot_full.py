@@ -12,8 +12,8 @@ table_dictionary = {
                 "billing_agreement_basket",
                 "billing_agreement_basket_product",
                 "billing_agreement_consent",
-                "billing_agreement_preference",
-                "loyalty_level_company"
+                "billing_agreement_preference"
+                #"loyalty_level_company" # stopped until cms make planned backend changes
         ],
         "PIM":[
                 "recipes_taxonomies",
