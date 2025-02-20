@@ -15,22 +15,22 @@ Otherwise try activate the shell with `poetry shell` or run `poetry run chef <co
 
 ## Commands
 
-Bellow contains the different commands available.
+Below are the different commands available.
 
 ### Create
 Create a new project or package.
 
 `chef create <project | package>`
 
-This will start up an interactable wisard that fills in basic information.
+This will start up an interactable wizard that fills in basic information.
 
 ### Add
 Adds an internal or external package to the project.
 
 `chef add lmkgroup-ds-utils`
 
-If you define a package that matches one of the internal packages will the internal package be added.
-Otherwise will it assume it is an external package, and add that one.
+If you define a package that matches one of the internal packages, the internal package will be added.
+Otherwise it will assume it is an external package, and add that one.
 
 ### Remove
 Removes a dependency from the project.
@@ -43,8 +43,8 @@ Lists the internal packages that exists.
 `chef list-packages`
 
 ### Pin
-Pins an internal dependency to a spesified version.
-If no versions are defined, will it select the current version on origin/main.
+Pins an internal dependency to a specified version.
+If no versions are defined, it will select the current version on origin/main.
 
 `chef pin lmkgroup-ds-utils`
 
@@ -62,7 +62,7 @@ Builds a project into a Docker image. Will default to the name of the project.
 
 ### Up
 Spins up a complete environment of the project.
-This is suppose to simulate the project in it's final form.
+This is supposed to simulate the project in it's final form.
 
 `chef up`
 
