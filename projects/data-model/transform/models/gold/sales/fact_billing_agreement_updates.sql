@@ -37,7 +37,7 @@ dim_billing_agreements as (
                 else 2 --Null values should be sorted after null values
             end asc,    
             valid_from asc
-    ) as new_agreement_rank
+    ) as signup_rank
 
     from dim_billing_agreements
     
@@ -53,6 +53,7 @@ dim_billing_agreements as (
     select 
     agreements.fk_dim_billing_agreements as pk_fact_billing_agreement_updates
     , cast(date_format(agreements.valid_from, 'yyyyMMdd') as int) as fk_dim_dates
+    , cast(date_format(agreements.first_menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_dates_first_menu_week
     , cast(date_format(agreements.valid_from, 'HHmm') as string) as fk_dim_time
     , agreements.fk_dim_billing_agreements
     , agreements_previous_version.fk_dim_billing_agreements as fk_dim_billing_agreements_previous_version
@@ -67,9 +68,14 @@ dim_billing_agreements as (
     , agreements.valid_from as updated_at
     
     , case
-        when agreements.new_agreement_rank = 1 then true
+        when agreements.signup_rank = 1 then true
         else false
-    end as is_new_agreement
+    end as is_signup
+
+    , case
+        when agreements.first_menu_week_monday_date >= agreements.valid_from and agreements.first_menu_week_monday_date < agreements.valid_to then true
+        else false
+    end as has_first_delivery
 
     , case
         when agreements_previous_version.fk_dim_billing_agreements is null then false

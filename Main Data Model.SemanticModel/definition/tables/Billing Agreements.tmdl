@@ -1,0 +1,318 @@
+table 'Billing Agreements'
+	lineageTag: e9e23909-ea1a-4aa8-9c71-604cd8245dce
+
+	column pk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: d1a47928-7371-42df-a8fb-338e902f82e0
+		summarizeBy: none
+		sourceColumn: pk_dim_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Agreement Id'
+		dataType: int64
+		formatString: 0
+		lineageTag: 49bc4193-4ea4-49b5-a837-df27efae7aa9
+		summarizeBy: count
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5534c038-a78e-4770-a8ca-873f265eb447
+		summarizeBy: none
+		sourceColumn: company_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales Point Id'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7f1fa672-5f50-4026-8bb4-c237d13ff6be
+		summarizeBy: count
+		sourceColumn: sales_point_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_from
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: 50191510-b20d-491d-abae-85833eb89991
+		summarizeBy: none
+		sourceColumn: valid_from
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_to
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: 1f60e753-69d6-422c-8d2d-c53b4a3a522e
+		summarizeBy: none
+		sourceColumn: valid_to
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Payment Method'
+		dataType: string
+		lineageTag: a5eaf2ae-1125-44bc-99d3-59ab436653c3
+		summarizeBy: none
+		sourceColumn: payment_method
+
+		annotation SummarizationSetBy = Automatic
+
+	/// How the customer signed up:
+	/// * `Sales`: Joined through a sales channel.
+	/// * `Web`: Customer signed up through the website.
+	/// * `Flex`: Legacy. Belongs to Godtlevert Flex which existed in 2019 and 2020.
+	column 'Signup Source'
+		dataType: string
+		lineageTag: 1a914ada-c927-4a2b-9253-db4eec9a059b
+		summarizeBy: none
+		sourceColumn: signup_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Salesperson'
+		dataType: string
+		lineageTag: c8eb41e1-bf6e-4b16-8b7c-3314401ce778
+		summarizeBy: none
+		sourceColumn: signup_salesperson
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Agreement Status'
+		dataType: string
+		lineageTag: c8033f23-a99a-4496-9988-f77fa8cbf142
+		summarizeBy: none
+		sourceColumn: billing_agreement_status_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Date'
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		isAvailableInMdx: false
+		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
+		summarizeBy: none
+		sourceColumn: signup_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column signup_year_day
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: bcb15a6c-02f7-4707-a4e0-593046fd2ba3
+		summarizeBy: sum
+		sourceColumn: signup_year_day
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column signup_month_day
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: cd9770bc-a618-4bdf-a1a5-19e36e960b89
+		summarizeBy: sum
+		sourceColumn: signup_month_day
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column signup_week_day
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 1e190920-69de-45c4-9bb9-a7832fc222f8
+		summarizeBy: sum
+		sourceColumn: signup_week_day
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Week'
+		dataType: int64
+		formatString: 0
+		lineageTag: 28c5e978-6167-43f6-b71d-8c6bed7a56c0
+		summarizeBy: sum
+		sourceColumn: signup_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: 370a5d43-c083-4583-a04f-36f335bf432f
+		summarizeBy: sum
+		sourceColumn: signup_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Quarter'
+		dataType: int64
+		formatString: 0
+		lineageTag: 798e3d8b-39a3-4b3d-96ab-ed5b5be61fe7
+		summarizeBy: sum
+		sourceColumn: signup_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e6c84c5-1173-4d3a-a0ef-6770e432318f
+		summarizeBy: sum
+		sourceColumn: signup_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Menu Date'
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: d67151df-ae12-48b5-beb5-cf563a456e54
+		summarizeBy: none
+		sourceColumn: first_menu_week_monday_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'First Menu Week'
+		dataType: int64
+		formatString: 0
+		lineageTag: bbce92b8-d9b0-4148-afb6-e430f1b8fcad
+		summarizeBy: sum
+		sourceColumn: first_menu_week_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Menu Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: a4b5b32d-c78f-45da-9e80-5e97f3bf0d87
+		summarizeBy: sum
+		sourceColumn: first_menu_week_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Menu Quarter'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8f0a19c5-6c68-40f7-bbdb-87ba3e6377fe
+		summarizeBy: sum
+		sourceColumn: first_menu_week_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Menu Year'
+		dataType: int64
+		formatString: 0
+		lineageTag: b33e20b9-81e5-406e-abee-b76e87cc1c89
+		summarizeBy: sum
+		sourceColumn: first_menu_week_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_current
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 373b4a87-26fd-4e55-9118-c6d440aee6d4
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_preferences_updated_id
+		dataType: string
+		isHidden
+		lineageTag: fadb0409-da35-4138-b87c-dabf327fa364
+		summarizeBy: none
+		sourceColumn: billing_agreement_preferences_updated_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'OneSub Flag'
+		dataType: string
+		lineageTag: 125174ea-629c-433d-9226-9b9c2d128b84
+		summarizeBy: none
+		sourceColumn: onesub_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preselector Flag'
+		dataType: string
+		lineageTag: 7607933b-d7a4-470b-99b8-a70999c01551
+		summarizeBy: none
+		sourceColumn: preselector_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Onesub Beta Flag'
+		dataType: string
+		lineageTag: 7dbe771e-b5a8-4430-9278-da456c1c42c8
+		summarizeBy: none
+		sourceColumn: onesub_beta_flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Billing Agreements' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_billing_agreements_Table = gold_Schema{[Name="dim_billing_agreements",Kind="Table"]}[Data]
+				in
+				    #"dim_billing_agreements_Table"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

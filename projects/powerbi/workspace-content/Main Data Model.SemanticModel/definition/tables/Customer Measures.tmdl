@@ -67,39 +67,82 @@ table 'Customer Measures'
 		formatString: #,0
 		lineageTag: a840a69a-c3f1-4878-ae41-b99013d1b47d
 
-	/// Number of new customers
-	measure 'Number of New Customers' =
+	/// Number of customers having their first delivery on the corresponding menu week.
+	measure 'Number of Customers with First Delivery' =
 			CALCULATE(
 				COUNTROWS('Customer Measures'),
-				'Customer Measures'[is_new_agreement]=TRUE()
+				'Customer Measures'[has_first_delivery]=TRUE(),
+				USERELATIONSHIP(
+					'Customer Measures'[fk_dim_dates_first_menu_week],
+					'Dates'[pk_dim_dates]
+				)
+			)
+		formatString: #,0
+
+	/// Number of customers having their first delivery, same period last year. 
+	/// It compares the same dates in the previous year (not the same weeks).
+	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
+	measure 'Number of Customers with First Delivery PY' =
+			CALCULATE(
+				[Number of Customers with First Delivery],
+				ALL('Dates'),
+				SAMEPERIODLASTYEAR('Dates'[Date])
+			)
+		formatString: #,0
+
+	/// Number of customers having their first delivery, same period last year. This uses calendar year.
+	measure 'Number of Customers with First Delivery YTD' =
+			TOTALYTD(
+				[Number of Customers with First Delivery],
+				Dates[Date],
+				ALL('Dates')
+			)
+		formatString: #,0
+
+	/// Number of customers having their first delivery, year to date, same period last year. 
+	/// It compares the same dates in the previous year (not the same weeks).
+	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
+	measure 'Number of Customers with First Delivery YTD PY' =
+			TOTALYTD(
+				[Number of Customers with First Delivery PY],
+				Dates[Date],
+				ALL('Dates')
 			)
 		formatString: #,0
 		lineageTag: 214a91d8-fc9a-4084-8144-625b9cb7a7f6
 
-	/// Number of new customers same period last year.
-	measure 'Number of New Customers PY' =
+	/// Number of new registered agreements on the day they signed up. They do not need to have had a delivery.
+	measure 'Number of Sign-ups' =
 			CALCULATE(
-				[Number of New Customers],
+				COUNTROWS('Customer Measures'),
+				'Customer Measures'[is_signup]=TRUE()
+			)
+		formatString: #,0
+
+	/// Number of new sign-ups same period last year. Compares the same dates in the previous year (not the same weeks).
+	measure 'Number of Sign-ups PY' =
+			CALCULATE(
+				[Number of Sign-ups],
 				ALL('Dates'),
 				SAMEPERIODLASTYEAR('Dates'[Date])
 			)
 		formatString: #,0
 		lineageTag: 801ee2fa-401a-46de-8c57-f8354b3470b4
 
-	/// Number of new customers Year to Date. This uses the calendar year.
-	measure 'Number of New Customers YTD' =
+	/// Number of new sign-ups Year to Date. This uses the calendar year.
+	measure 'Number of Sign-ups YTD' =
 			TOTALYTD(
-				[Number of New Customers],
+				[Number of Sign-ups],
 				Dates[Date],
 				ALL('Dates')
 			)
 		formatString: #,0
 		lineageTag: 69492a6f-2f2b-4b14-8d67-ca182e031ee0
 
-	/// Number of new customers Year to Date, same period last year. This uses the calendar year.
-	measure 'Number of New Customers YTD PY' =
+	/// Number of new sign-ups Year to Date, same period last year. This uses the calendar year.
+	measure 'Number of Sign-ups YTD PY' =
 			TOTALYTD(
-				[Number of New Customers PY],
+				[Number of Sign-ups PY],
 				Dates[Date],
 				ALL('Dates')
 			)
@@ -208,6 +251,13 @@ table 'Customer Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_dates
 
+	column fk_dim_dates_first_menu_week
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: fk_dim_dates_first_menu_week
+
 	column fk_dim_billing_agreements
 		dataType: string
 		isHidden
@@ -237,15 +287,22 @@ table 'Customer Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements_previous_version
 
-	column is_new_agreement
+	column is_signup
 		dataType: boolean
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 547b23be-2626-4226-ab5a-4d1a40d602bf
 		summarizeBy: none
-		sourceColumn: is_new_agreement
+		sourceColumn: is_signup
 
 		annotation SummarizationSetBy = Automatic
+
+	column has_first_delivery
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: has_first_delivery
 
 	column updated_at
 		dataType: dateTime

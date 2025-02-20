@@ -1,0 +1,53 @@
+table 'Period Since First Order'
+	lineageTag: 45e03479-e4f8-48e0-9804-190221e983b8
+
+	column 'Days Since First Order'
+		formatString: 0
+		lineageTag: 596934c8-43ae-4a72-a155-6e94e0233dd6
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Weeks Since First Order' = 'Period Since First Order'[Days Since First Order]/7
+		dataType: int64
+		lineageTag: 844936c4-ce55-4efd-bdcb-15f707797f29
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Months Since First Order' = 'Period Since First Order'[Days Since First Order]/30
+		dataType: int64
+		lineageTag: f1dc794d-5ca4-47ae-b29a-80e1103e6bf6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Quarters Since First Order' = 'Period Since First Order'[Days Since First Order] * 4/365
+		dataType: int64
+		lineageTag: b0af34ff-18dc-4125-9b5b-d699b7cf219d
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Years Since First Order' = 'Period Since First Order'[Days Since First Order]/365
+		dataType: int64
+		lineageTag: 0eee9c66-6cc3-44fb-b01e-38e67fc279d2
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Period Since First Order' = calculated
+		mode: import
+		source = GENERATESERIES(0,2000,1)
+
+	annotation PBI_Id = b21e169e40d14c3db3b3a342557733df
+

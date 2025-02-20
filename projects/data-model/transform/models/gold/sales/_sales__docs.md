@@ -372,6 +372,13 @@ The unique key of each row in Fact Billing Agrement Updates. This is the same as
 
 {% enddocs %}
 
+{% docs column__fk_dim_dates_first_menu_week%}
+
+Foreign key to dim_dates representing the monday date of the menu week each agreement had their first delivery. 
+
+{% enddocs %}
+
+
 {% docs column__fk_dim_billing_agreements_updated %}
 
 The primary key of Dim Billing Agreements. The key is representing the version of the billing agreement after the update.
@@ -390,9 +397,15 @@ The timestamp of when the update of the billing agreement happened.
 
 {% enddocs %}
 
-{% docs column__is_new_agreement %}
+{% docs column__is_signup %}
 
-True if the billing agreement did not exist before and this is the first version of it.
+True if this is the first version of the agreement which has status, subscribed product, preferences and loyalty level. 
+
+{% enddocs %}
+
+{% docs column__has_first_delivery %}
+
+True if this version of the agreement was valid at the time the customer had their first delivery.
 
 {% enddocs %}
 

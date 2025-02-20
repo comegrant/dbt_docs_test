@@ -1,0 +1,134 @@
+table Date
+	lineageTag: c07364ff-2124-4e7c-891b-a66b8032cb30
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6366d1c4-67b1-4a44-a7b8-c136c3f586f6
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: f38f21a9-2f3d-451d-9172-a903b146c14b
+		summarizeBy: none
+		sourceColumn: year
+		sortByColumn: 'Year - Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = User
+
+	column Week
+		dataType: int64
+		formatString: 0
+		lineageTag: a98b5055-879e-4b10-99f6-bd5edbd56c85
+		summarizeBy: none
+		sourceColumn: week
+		sortByColumn: 'Week - Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = User
+
+	column pk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 96a4c728-cad3-4084-90bd-0ec8010c3ff4
+		summarizeBy: none
+		sourceColumn: pk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day of Week'
+		dataType: int64
+		formatString: 0
+		lineageTag: 05f108e3-a9be-4681-a618-2abffbce12df
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = User
+
+	column 'Weekday Name'
+		dataType: string
+		lineageTag: c61c59bc-19c1-44c8-b040-928bacec9496
+		summarizeBy: none
+		sourceColumn: weekday_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: b984b07a-925c-4bde-b6e0-16aee6062185
+		summarizeBy: none
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = User
+
+	column 'Month Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 476993ff-0482-4ff8-82b3-71653f3a7b12
+		summarizeBy: none
+		sourceColumn: month_number
+
+		annotation SummarizationSetBy = User
+
+	column 'Year - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8d412a02-8cc9-41e4-989f-cd784229ef78
+		summarizeBy: sum
+		sourceColumn: Year - Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 37faabc0-0cb3-46f1-9067-2d0182b7b298
+		summarizeBy: sum
+		sourceColumn: Week - Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_calendar_Table = gold_Schema{[Name="dim_date",Kind="Table"]}[Data],
+				    #"Added Year - Sort" = Table.DuplicateColumn(dim_calendar_Table, "year", "Year - Sort"),
+				    #"Added Week - Sort" = Table.DuplicateColumn(#"Added Year - Sort", "week", "Week - Sort")
+				in
+					#"Added Week - Sort"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

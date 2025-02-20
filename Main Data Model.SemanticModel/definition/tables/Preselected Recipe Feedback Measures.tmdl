@@ -1,0 +1,291 @@
+table 'Preselected Recipe Feedback Measures'
+	lineageTag: c8eec3f8-a5fc-4467-807f-3f3d974a5a6b
+
+	measure 'Number of Thumbs Up' = ```
+			
+			CALCULATE(
+			    [Number of Distinct Feedback], 
+			    FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[feedback] = "thumbs-up"),
+			    FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[has_ambigious_feedback] = False)
+			    )
+			```
+		formatString: 0
+		lineageTag: 30e9f651-270a-43b1-be3e-018702661956
+
+	measure 'Number of Feedback Events' = DISTINCTCOUNT('Preselected Recipe Feedback Measures'[preselected_recipe_feedback_submitted_event_id])
+		formatString: 0
+		isHidden
+		lineageTag: 9a519e6b-bee6-4c40-b491-7343696dcf5e
+
+		changedProperty = IsHidden
+
+	measure 'Number of Thumbs Down' = ```
+			
+			CALCULATE(
+			    [Number of Distinct Feedback], 
+			    FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[feedback] = "thumbs-down"),
+			    FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[has_ambigious_feedback] = False)
+			    )
+			```
+		formatString: 0
+		lineageTag: e83a6d37-61d1-4624-b477-00049a07e0d8
+
+	measure 'Number of Thumbs Up with duplicates' = ```
+				
+			CALCULATE(
+				[Number of Feedback Events], 
+				FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[feedback] = "thumbs-up"),
+				FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[has_ambigious_feedback] = False)
+				)
+			```
+		formatString: 0
+		lineageTag: 043dacef-2734-4cad-b0b0-3d429eb61191
+
+		changedProperty = IsHidden
+
+	measure 'Number of Thumbs Down with duplicates' = ```
+			
+			CALCULATE(
+				[Number of Feedback Events], 
+				FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[feedback] = "thumbs-down"),
+				FILTER('Preselected Recipe Feedback Measures', 'Preselected Recipe Feedback Measures'[has_ambigious_feedback] = False)
+				)
+			```
+		formatString: 0
+		lineageTag: d0f8c50e-b61c-410d-b633-6fe25bcff045
+
+		changedProperty = IsHidden
+
+	measure 'Number of Distinct Feedback' = DISTINCTCOUNT('Preselected Recipe Feedback Measures'[unique_respons_id])
+		formatString: 0
+		isHidden
+		lineageTag: 361a9106-0fc1-4f74-aa20-bb56f78fe534
+
+		changedProperty = IsHidden
+
+	measure 'Number of Customers giving Feedback' = DISTINCTCOUNT('Preselected Recipe Feedback Measures'[billing_agreement_id])
+		formatString: 0
+		lineageTag: 9afd1c7d-37fd-4d3a-9ccb-79c4f6a1a202
+
+	column pk_fact_preselected_recipe_feedback
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a2ee751e-80d4-482e-9283-3a9baddda68a
+		summarizeBy: none
+		sourceColumn: pk_fact_preselected_recipe_feedback
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_year
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 216493d3-314e-4a59-ae3c-ffeb225fe95a
+		summarizeBy: sum
+		sourceColumn: menu_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_week
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 0272cde2-f564-42c9-9021-4abd7446f9cf
+		summarizeBy: sum
+		sourceColumn: menu_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column feedback
+		dataType: string
+		isHidden
+		lineageTag: 90cf7b61-66a9-4d4f-a43c-f2aeeb67d19c
+		summarizeBy: none
+		sourceColumn: feedback
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_ambigious_feedback
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 24782f7c-012a-4921-8a53-c17cdf24d09b
+		summarizeBy: none
+		sourceColumn: has_ambigious_feedback
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_order
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: bbda8eea-c76d-44bf-950b-201e40526ce3
+		summarizeBy: none
+		sourceColumn: has_order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		sourceProviderType: nvarchar(65535)
+		lineageTag: 35ff3215-e010-4ee6-8785-658cf774824f
+		summarizeBy: none
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ba0be927-6bd9-4def-bbf3-b4a0153ebb5b
+		summarizeBy: none
+		sourceColumn: product_variation_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6d351ec4-a207-4d1e-b892-f8db94cf2857
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 9fa4d6d0-beb4-4d79-919d-603e9933c5d8
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		sourceProviderType: int
+		lineageTag: f2e15ba3-5537-4d9e-ae6f-ab31dbde0af8
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4b2a2fa1-d42b-4047-bdc1-72a4063b3793
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_recipes
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 21ed5762-b1ea-467d-9fb1-9110dea94312
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preselected_recipe_feedback_submitted_event_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		sourceProviderType: nvarchar(65535)
+		lineageTag: 7ee3c08c-cfae-4a57-9335-98111949bf55
+		summarizeBy: none
+		sourceColumn: preselected_recipe_feedback_submitted_event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_week_monday_date
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: date
+		lineageTag: 0906bb24-24b1-4e4a-9648-fe878f8e5fd6
+		summarizeBy: none
+		sourceColumn: menu_week_monday_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column products_list_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		sourceProviderType: nvarchar(65535)
+		lineageTag: fad2f36f-14a5-4982-9825-7b0e41e1b696
+		summarizeBy: none
+		sourceColumn: products_list_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column unique_respons_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		sourceProviderType: nvarchar(65535)
+		lineageTag: 3da7cf93-dd45-4086-918a-1a672fc0a65e
+		summarizeBy: none
+		sourceColumn: unique_respons_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_created_at
+		dataType: dateTime
+		formatString: Long Date
+		sourceProviderType: date
+		lineageTag: b67e9ab5-35f9-4787-b305-ce137495441c
+		summarizeBy: none
+		sourceColumn: source_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Preselected Recipe Feedback Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_preselected_recipe_feedback_Table = gold_Schema{[Name="fact_preselected_recipe_feedback",Kind="Table"]}[Data]
+				in
+					fact_preselected_recipe_feedback_Table
+
+	annotation PBI_ResultType = Table
+

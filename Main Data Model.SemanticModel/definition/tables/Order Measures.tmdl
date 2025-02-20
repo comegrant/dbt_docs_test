@@ -1,0 +1,1027 @@
+table 'Order Measures'
+	lineageTag: 6c298811-8ad5-482b-b89a-827db89210a3
+
+	/// MEASURES ///
+	/// Revenue
+	measure 'Sum Total Amount Ex Vat' = SUM('Order Measures'[total_amount_ex_vat])
+		isHidden
+		lineageTag: 9514c3b0-8d1c-49a4-a547-99ac13fa089d
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Total Amount Inc Vat' = SUM('Order Measures'[total_amount_inc_vat])
+		isHidden
+		lineageTag: 5cba6729-7b7c-48ce-9c67-e695bff2c63a
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Number of orders
+	measure 'Number of Orders' =
+			CALCULATE(
+				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id]),
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				)
+		formatString: #,0
+		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
+
+	/// Average Revenue per Number of Orders
+	measure 'Average Total Amount Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Number of Orders],BLANK())
+		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Total Amount Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Number of Orders],BLANK())
+		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
+		formatString: #,0
+		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
+
+	/// Product Variation Quantity
+	measure 'Sum Total Product Variation Quantity' = SUM('Order Measures'[product_variation_quantity])
+		formatString: #,0
+		isHidden
+		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
+
+		changedProperty = IsHidden
+
+	/// Unit Price
+	measure 'Average Unit Price Inc Vat' = DIVIDE([Sum Total Amount Inc Vat],[Sum Order Product Variation Quantity])
+		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Unit Price Ex Vat' = DIVIDE([Sum Total Amount Ex Vat],[Sum Order Product Variation Quantity])
+		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Gift Cards' =
+			CALCULATE(
+				[Number of Orders],
+				'Order Types'[Order Type Name] = "Gift Card",
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
+
+	measure 'Sum Order Value Net Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				)
+		lineageTag: 94703f73-cb72-4c7c-ba82-9d480c9385ca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Order Value Net Inc Vat' =
+			CALCULATE(
+				[Sum Total Amount Inc Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				)
+		lineageTag: 47be5d17-2f0a-42c6-8b21-24dea811838e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Order Value Gross Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Measures'[order_line_type_name] IN {"DEBIT", "TRANSPORT"}
+				)
+		lineageTag: 9db412c4-2ea6-4c39-81b2-c68ec727df34
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Net Ex Vat' = DIVIDE([Sum Order Value Net Ex Vat],[Number of Orders],BLANK())
+		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Sum Order Value Gross Ex Vat],[Number of Orders],BLANK())
+		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Order Value Net Inc Vat' = DIVIDE([Sum Order Value Net Inc Vat],[Number of Orders],BLANK())
+		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Order Product Variation Quantity' =
+			CALCULATE(
+				[Sum Total Product Variation Quantity],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
+
+	measure 'Sum Gift Card Value Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] = "Gift Card",
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
+		lineageTag: 871b6c01-d9c2-4f61-a597-80dd7b6d6c3b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Discount Value Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
+			)
+		lineageTag: a27fd9f8-407b-49fb-bdee-29f4121fffd5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Transport Value Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Measures'[order_line_type_name] IN {"TRANSPORT"}
+			)
+		lineageTag: eb52e954-e781-4d81-b8e0-87f5effaf6ca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum PRP Value Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Measures'[order_line_type_name] IN {"PRP"}
+			)
+		lineageTag: 7ca94156-13fd-4a37-9c34-0417bc4e5819
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sum Credit Value Ex Vat' =
+			CALCULATE(
+				[Sum Total Amount Ex Vat],
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Measures'[order_line_type_name] IN {"Credit"}
+			)
+		lineageTag: 1fe11954-5b54-4c34-9abb-796297d4ecee
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Swapped Out Dishes' =
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			        BLANK(),
+			        IF(
+			            ISFILTERED('Products'),
+			            BLANK(),
+			            [Number of Removed Dishes] - [Decreased Meals]
+			        )
+			)
+		formatString: #,0
+		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
+
+	measure 'Number of Swapped In Dishes' =
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			        BLANK(),
+			        IF(
+			            ISFILTERED('Products'),
+			            BLANK(),
+			            [Number of Added Dishes] - [Increased Meals]
+			        )
+			)
+		formatString: #,0
+		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
+
+	measure 'Number of Ordered Dishes' =
+			CALCULATE(
+				COUNTROWS('Order Measures'),
+				'Order Measures'[is_dish] = TRUE(),
+				'Order Measures'[fk_dim_recipes] <> "0",
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				)
+		formatString: #,0
+		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
+
+	measure 'Number of Added Dishes' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    CALCULATE(
+			    	SUM('Order Measures'[is_added_dish]),
+			    	'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: 7919afdd-0322-4085-9960-441805140e39
+
+	measure 'Number of Removed Dishes' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    CALCULATE(
+			    	SUM('Order Measures'[is_removed_dish]),
+			    	'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+			    	USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
+			    	USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
+
+	measure 'Share of Swapped Dishes' =
+			DIVIDE(
+				[Number of Swapped Out Dishes],
+				[Number of Preselected Dishes],
+				BLANK()
+				)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
+
+	measure 'Number of Preselected Dishes' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    CALCULATE(
+			    	COUNTROWS('Order Measures'),
+			    	'Order Measures'[is_dish] = TRUE(),
+			    	'Order Measures'[fk_dim_recipes_preselected] <> "0",
+			    	'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+			    	'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+			    	USERELATIONSHIP('Order Measures'[fk_dim_recipes_preselected],Recipes[pk_dim_recipes]),
+			    	USERELATIONSHIP('Order Measures'[fk_dim_products_preselected],Products[pk_dim_products])
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
+
+	measure 'Number of Orders with Swaps' = ```
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			        BLANK(),
+			        IF(
+			            ISFILTERED('Products'),
+			            BLANK(),
+			            CALCULATE(
+			                [Number of Orders], 
+			                'Order Measures'[is_removed_dish] = 1 || 'Order Measures'[is_added_dish] = 1
+			            )
+			        )
+			)
+			```
+		formatString: #,0
+		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
+
+	measure 'Share of Orders with Swaps' = ```
+			
+			    DIVIDE(
+			        [Number of Orders with Swaps],
+			        [Number of Orders],
+			        BLANK()
+			    )
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
+
+	measure 'Average Number of Swaps per Order' = ```
+			
+			    DIVIDE(
+			        [Number of Swapped Out Dishes],
+			        [Number of Orders],
+			        BLANK()
+			    )
+			```
+		lineageTag: 7a742dc2-ed19-4712-92c9-da29eefc46f2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Orders with Increased Portions' =
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			    BLANK(),
+			    IF(
+			        ISFILTERED('Products'),
+			        BLANK(),
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[portion_adjustment] > 0
+			        )
+			    )
+			)
+		formatString: #,0
+		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
+
+	measure 'Number of Orders with Decreased Portions' =
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			    BLANK(),
+			    IF(
+			        ISFILTERED('Products'),
+			        BLANK(),
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[portion_adjustment] < 0
+			        )
+			    )
+			)
+		formatString: #,0
+		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
+
+	measure 'Number of Orders with Adjusted Portions' =
+			
+			IF(
+			    ISFILTERED('Recipes'),
+			    BLANK(),
+			    IF(
+			        ISFILTERED('Products'),
+			        BLANK(),
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[portion_adjustment] <> 0
+			        )
+			    )
+			)
+		formatString: #,0
+		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
+
+	measure 'Number of Orders with Increased Meals' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    IF(
+			        ISFILTERED('Recipes'),
+			            BLANK(),
+			            IF(
+			                ISFILTERED('Products'),
+			                BLANK(),
+			                CALCULATE(
+			                    [Number of Orders],
+			                    'Order Measures'[meal_adjustment] > 0
+			                )
+			            )
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
+
+	measure 'Number of Orders with Decreased Meals' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    IF(
+			        ISFILTERED('Recipes'),
+			            BLANK(),
+			            IF(
+			                ISFILTERED('Products'),
+			                BLANK(),
+			                CALCULATE(
+			                    [Number of Orders],
+			                    'Order Measures'[meal_adjustment] < 0
+			                )
+			            )
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
+
+	measure 'Number of Orders with Adjusted Meals' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    IF(
+			        ISFILTERED('Recipes'),
+			            BLANK(),
+			            IF(
+			                ISFILTERED('Products'),
+			                BLANK(),
+			                CALCULATE(
+			                    [Number of Orders],
+			                    'Order Measures'[meal_adjustment] <> 0
+			                )
+			            )
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
+
+	measure 'Diff Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
+		formatString: #,0
+		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
+
+	measure 'Number of Orders All Recipes' =
+			CALCULATE(
+				[Number of Orders],
+				ALL(Recipes)
+			)
+		formatString: #,0
+		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
+
+	measure 'Meal Adjustments' =
+			
+			IF(
+			    SELECTEDVALUE('Billing Agreements'[Preselector Flag],BLANK())="Preselector",
+			    IF(
+			        ISFILTERED('Recipes'),
+			            BLANK(),
+			            IF(
+			                ISFILTERED('Products'),
+			                BLANK(),
+			                CALCULATE(
+			    	            SUM('Order Measures'[meal_adjustment]),
+			    	            'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order",    "Campaign"},
+			    	            'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			                )
+			            )
+			    ),
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: 15fc3c41-f4e7-455c-8502-cfb16f3a92db
+
+	measure 'Decreased Meals' =
+			CALCULATE(
+				[Meal Adjustments],
+				'Order Measures'[meal_adjustment] < 0
+			
+			)
+		formatString: #,0
+		lineageTag: 72548e83-a743-498b-90e6-d199251b894f
+
+	measure 'Increased Meals' =
+			CALCULATE(
+				[Meal Adjustments],
+				'Order Measures'[meal_adjustment] > 0
+			
+			)
+		formatString: #,0
+		lineageTag: 721b6dae-e435-404d-b057-75831058d524
+
+	measure 'Portion Adjustments' =
+			CALCULATE(
+				SUM('Order Measures'[meal_adjustment]),
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
+
+	column order_status_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 97d4bcb3-e53a-4277-af57-57a94757ec39
+		summarizeBy: none
+		sourceColumn: order_status_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_type_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 094f462a-d367-48ec-9a45-4eeba1a9b353
+		summarizeBy: none
+		sourceColumn: order_type_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_order_line_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0319b8db-e0ea-4266-98d5-4460f2f2825a
+		summarizeBy: none
+		sourceColumn: billing_agreement_order_line_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 64dfca24-3043-4e81-a204-f255f0399874
+		summarizeBy: none
+		sourceColumn: product_variation_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_line_type_name
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6093c33b-13e6-4718-84fa-0caeafa121df
+		summarizeBy: none
+		sourceColumn: order_line_type_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4521f41d-a9a8-484a-9159-d4046240c6ea
+		summarizeBy: sum
+		sourceColumn: vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unit_price_ex_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7f9d2ac1-3639-4135-b1dd-80415012e217
+		summarizeBy: sum
+		sourceColumn: unit_price_ex_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column unit_price_inc_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 97dc1a98-b450-4c70-b648-52f8b8697a06
+		summarizeBy: sum
+		sourceColumn: unit_price_inc_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_amount_ex_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 08f563d8-4a6b-42f1-a6a2-defc5b017a7f
+		summarizeBy: sum
+		sourceColumn: total_amount_ex_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_amount_inc_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7d29bced-8264-4b7b-ad97-48e24fed616a
+		summarizeBy: sum
+		sourceColumn: total_amount_inc_vat
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column has_delivery
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 61ef0da3-7497-4720-a9b7-cc7bffba031a
+		summarizeBy: none
+		sourceColumn: has_delivery
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_recipe_leaflets
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: ae54f7b9-96c6-45c6-8350-728a3cb4e046
+		summarizeBy: none
+		sourceColumn: has_recipe_leaflets
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_week_monday_date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		isAvailableInMdx: false
+		lineageTag: 62dff093-e3e8-4176-8b77-39772f786b2f
+		summarizeBy: none
+		sourceColumn: menu_week_monday_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column fk_dim_order_types
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5433926e-8415-406d-bcf6-50d345c90dc2
+		summarizeBy: none
+		sourceColumn: fk_dim_order_types
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 272a1795-5763-4cfd-9ac3-330f7a344bf8
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_billing_agreements_ordergen
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0becfd8d-060a-46cc-8f99-831e7bb3c105
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements_ordergen
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_billing_agreements_deviations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements_deviations
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 791ace8d-5c19-4331-ae91-56c97085cfc2
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 3f4a1497-0525-4d8c-8938-ad437ac4ef2c
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70d325d5-6b5b-4424-b033-e2139b7ba9d6
+		summarizeBy: none
+		sourceColumn: billing_agreement_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 84439a3d-2be2-48be-964d-7db562b16e3e
+		summarizeBy: sum
+		sourceColumn: billing_agreement_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_variation_quantity
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: b613ba0a-475c-451f-bff3-3cfd47ff7e11
+		summarizeBy: sum
+		sourceColumn: product_variation_quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_created_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: e99eabef-0f79-4460-9922-2e36345a8b12
+		summarizeBy: none
+		sourceColumn: source_created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_order_statuses
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 60b9f4ea-5ffd-47de-8d2a-ea17152d4334
+		summarizeBy: none
+		sourceColumn: fk_dim_order_statuses
+
+		annotation SummarizationSetBy = Automatic
+
+	column pk_fact_orders
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: c6046602-8856-4929-b847-3477e9f6da80
+		summarizeBy: none
+		sourceColumn: pk_fact_orders
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_year
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: c9673c50-5e6f-469e-8554-fbde45b0c193
+		summarizeBy: sum
+		sourceColumn: menu_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column menu_week
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 97307c94-3a2d-46bf-ba58-454db4d19551
+		summarizeBy: sum
+		sourceColumn: menu_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 2338558b-3049-4416-af88-185958bdc6e8
+		summarizeBy: none
+		sourceColumn: company_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_products_preselected
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 9ddcb8e7-5e53-41e2-8d8b-69b02321fe10
+		summarizeBy: none
+		sourceColumn: fk_dim_products_preselected
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_recipes
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 9779d293-0b93-49e8-a958-cf3094e720a4
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_recipes_preselected
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a83a42fe-d628-44f3-a944-434b8c7c3dab
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes_preselected
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_added_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: c50d60a1-08bf-4219-a72b-aa0adfe53841
+		summarizeBy: sum
+		sourceColumn: is_added_dish
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_removed_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 0bce8e48-e1a3-4ac5-96a2-0a81a4030231
+		summarizeBy: sum
+		sourceColumn: is_removed_dish
+
+		annotation SummarizationSetBy = Automatic
+
+	column language_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: dffdd704-34fa-4a27-a9e5-84cd05d151ab
+		summarizeBy: sum
+		sourceColumn: language_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_chef_composed_mealbox
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 039d4cd4-e28b-4ecf-9492-2c16adfab930
+		summarizeBy: none
+		sourceColumn: is_chef_composed_mealbox
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_dish
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: c0037b56-1a60-4707-a64a-e2906f2b493c
+		summarizeBy: none
+		sourceColumn: is_dish
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_mealbox
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 5c706b01-cf68-4d0a-8d45-6c0034495550
+		summarizeBy: none
+		sourceColumn: is_mealbox
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ops_order_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
+		summarizeBy: sum
+		sourceColumn: ops_order_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preselected_product_variation_id
+		dataType: string
+		isHidden
+		lineageTag: c1704f19-b63d-43d0-9b42-e651da388077
+		summarizeBy: none
+		sourceColumn: preselected_product_variation_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column recipe_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0704f8ef-3920-4380-a45a-e07118aaa5c8
+		summarizeBy: sum
+		sourceColumn: recipe_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preselected_recipe_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fe464424-3aec-4605-a156-127ea206aee8
+		summarizeBy: sum
+		sourceColumn: preselected_recipe_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column meal_adjustment
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9de2f151-76bb-4299-b656-b162975c6d4e
+		summarizeBy: sum
+		sourceColumn: meal_adjustment
+
+		changedProperty = IsHidden
+
+	column portion_adjustment
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 016251e9-4b56-4c8e-9bd0-a5612a033a5a
+		summarizeBy: sum
+		sourceColumn: portion_adjustment
+
+		changedProperty = IsHidden
+
+	partition 'Order Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

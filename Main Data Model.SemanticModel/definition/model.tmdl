@@ -1,0 +1,40 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: nb-NO
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Date","Companies","Order Statuses","Order Types","Recipes","Products","Order Measures","RangeStart","RangeEnd","Host","HttpPath","Menu Measures","Billing Agreements","Catalog","Schema","Bridge Billing Agreements Preferences","Preferences","Agreement Measures","Agreements Weekly","Subscription Quiz Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBIDesktopVersion = 2.138.1004.0 (24.11)
+
+annotation PBI_ProTooling = ["DevMode"]
+
+annotation __TEdtr = 1
+
+annotation __PBIService_Versioning_SaveVersion = 2024-11-21T08:45:16.4125907Z
+
+ref table Date
+ref table Companies
+ref table 'Order Statuses'
+ref table 'Order Types'
+ref table Recipes
+ref table Products
+ref table 'Order Measures'
+ref table 'Menu Measures'
+ref table 'Billing Agreements'
+ref table 'Bridge Billing Agreements Preferences'
+ref table Preferences
+ref table 'Agreement Measures'
+ref table 'Period Since First Order'
+ref table 'Agreements Weekly'
+ref table '(Param) Measures'
+ref table 'Subscription Quiz Measures'
+ref table 'Preselected Recipe Feedback Measures'
+
+ref cultureInfo en-US
+

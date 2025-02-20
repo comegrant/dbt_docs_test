@@ -179,6 +179,11 @@ relationship 4ddd3c4b-2b92-dc61-fca1-ca9175a4a760
 	fromColumn: 'Customer Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
+relationship Customer-Measures-to-Dates-first_menu_week
+	isActive: false
+	fromColumn: 'Customer Measures'.fk_dim_dates_first_menu_week
+  	toColumn: Dates.pk_dim_dates
+
 relationship 497d99e0-b303-8ce5-325f-8ca056c49317
 	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_recipes
 	toColumn: Recipes.pk_dim_recipes

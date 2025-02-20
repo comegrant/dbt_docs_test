@@ -1,0 +1,132 @@
+relationship AutoDetected_e2743f17-0d8e-46ce-9ecc-8b3a5fa86665
+	fromColumn: 'Order Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_1c6f7075-9408-4ef1-a6d6-1fcb469d6fd6
+	fromColumn: 'Order Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship AutoDetected_639e001b-4438-4a77-89e7-f452e3f581ab
+	fromColumn: 'Order Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship AutoDetected_f7f6f375-24ee-4d0d-a792-233168bf43b3
+	fromColumn: 'Menu Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship fd82fae2-3ca3-e8c0-8267-c52a3d21aab8
+	fromColumn: 'Order Measures'.fk_dim_order_types
+	toColumn: 'Order Types'.pk_dim_order_types
+
+relationship d648b7a6-f119-c136-ba54-ac54c3f14b5f
+	fromColumn: 'Menu Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship a1002545-30a8-ce0e-a17d-0837e2a4454c
+	fromColumn: 'Menu Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_709c4193-69a1-47d4-a268-669e1fbc9d79
+	fromColumn: 'Order Measures'.fk_dim_order_statuses
+	toColumn: 'Order Statuses'.pk_dim_order_statuses
+
+relationship b3b42321-b8ef-ff1c-cc69-82b30a6c553d
+	fromColumn: 'Order Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship 1ac02f48-3f59-ea62-e9cd-61120162f262
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_recipes_preselected
+	toColumn: Recipes.pk_dim_recipes
+
+relationship 0e5c479f-fe9d-63e6-2472-c54bf165f06d
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_products_preselected
+	toColumn: Products.pk_dim_products
+
+relationship e3d2c6c0-3f64-33a8-0194-761fdfb88538
+	fromColumn: 'Menu Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship 4c54f81c-59bb-7841-5609-0594142de778
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 8a15615d-11fc-fbaa-2f96-ac8c881b9124
+	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_preferences
+	toColumn: Preferences.pk_dim_preferences
+
+relationship AutoDetected_9105416a-77e9-49ee-bf5d-c0f9cd8d2bb6
+	fromColumn: 'Agreement Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship AutoDetected_b5aa7795-c7f8-4850-9e10-f47ec3b90dc2
+	fromColumn: 'Agreement Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship e863a9ca-e39e-3b1d-ceac-f143d8837a33
+	fromColumn: 'Agreement Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship af5188ce-5759-15f0-142f-82fdeabbbcea
+	fromColumn: 'Agreement Measures'.days_since_first_order
+	toColumn: 'Period Since First Order'.'Days Since First Order'
+
+relationship 80ad5cb7-6e7b-4f09-60ab-16f7b71c1212
+	fromColumn: 'Agreements Weekly'.days_since_first_order
+	toColumn: 'Period Since First Order'.'Days Since First Order'
+
+relationship 34c05f4c-e1ab-3500-05fd-114e4f3ff1e5
+	fromColumn: 'Agreements Weekly'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 360d6910-73d1-7780-6386-23ba2b1cc178
+	fromColumn: 'Agreements Weekly'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship b187097e-4edd-c2af-794c-54ec55a36dd9
+	fromColumn: 'Agreements Weekly'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship fac71034-d799-104e-1ea2-c1e73f43fb7f
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_deviations
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_ordergen
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 63a19fc9-c4fd-4535-be80-e864e132d10e
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 41c64e31-dd99-14c5-70ee-9585ecb949c1
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship 68328fbb-4f22-943b-4a02-e3b0c2d5feb1
+	fromColumn: 'Subscription Quiz Measures'.fk_dim_date_source_created_at_segment
+	toColumn: Date.pk_dim_date
+
+relationship d84fdf07-bd65-52b4-30aa-383d087e0342
+	fromColumn: 'Preselected Recipe Feedback Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship 34450f9b-e112-ac2a-d18f-17cce0d6c6af
+	fromColumn: 'Preselected Recipe Feedback Measures'.fk_dim_companies
+	toColumn: Companies.pk_dim_companies
+
+relationship 8028ac10-327e-4520-069c-bdcc30c4fd5a
+	fromColumn: 'Preselected Recipe Feedback Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship 43ba19a6-5205-8f4e-afcf-da1c7fd192b1
+	fromColumn: 'Preselected Recipe Feedback Measures'.fk_dim_date
+	toColumn: Date.pk_dim_date
+
+relationship d86d0464-f726-8b91-6481-53760d4d5b5b
+	fromColumn: 'Preselected Recipe Feedback Measures'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+

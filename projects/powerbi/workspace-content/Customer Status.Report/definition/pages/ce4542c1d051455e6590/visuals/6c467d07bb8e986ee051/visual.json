@@ -60,11 +60,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of New Customers"
+                  "Property": "Number of Sign-ups"
                 }
               },
-              "queryRef": "Customer Measures.Number of New Customers",
-              "nativeQueryRef": "Number of New Customers"
+              "queryRef": "Customer Measures.Number of Sign-ups",
+              "nativeQueryRef": "Number of Sign-ups"
             }
           ]
         }
@@ -79,7 +79,7 @@
                     "Entity": "Customer Measures"
                   }
                 },
-                "Property": "Number of New Customers"
+                "Property": "Number of Sign-ups"
               }
             },
             "direction": "Descending"
@@ -246,7 +246,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'New Customers by Concept Combinations'"
+                  "Value": "'Sign-ups by Concept Combinations'"
                 }
               }
             },

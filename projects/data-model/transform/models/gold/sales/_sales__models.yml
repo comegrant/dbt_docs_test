@@ -886,6 +886,14 @@ models:
               to: ref('dim_date')
               field: pk_dim_date
 
+      - name: fk_dim_dates_first_menu_week
+        data_type: int
+        description: "{{ doc('column__fk_dim_dates_first_menu_week') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_date')
+              field: pk_dim_date
+
       - name: fk_dim_time
         data_type: string
         description: "{{ doc('column__pk_dim_time') }}"
@@ -951,9 +959,17 @@ models:
         data_tests:
           - not_null
 
-      - name: is_new_agreement
+      - name: is_signup
         data_type: boolean
-        description: "{{ doc('column__is_new_agreement') }}"
+        description: "{{ doc('column__is_signup') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_first_delivery
+        data_type: boolean
+        description: "{{ doc('column__has_first_delivery') }}"
         constraints:
           - type: not_null
         data_tests:

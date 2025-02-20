@@ -42,11 +42,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of New Customers YTD"
+                  "Property": "Number of Sign-ups YTD"
                 }
               },
-              "queryRef": "Customer Measures.Number of New Customers YTD",
-              "nativeQueryRef": "Current Year",
+              "queryRef": "Customer Measures.Number of Sign-ups YTD",
+              "nativeQueryRef": "Current Year1",
               "displayName": "Current Year"
             },
             {
@@ -57,11 +57,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of New Customers YTD PY"
+                  "Property": "Number of Sign-ups YTD PY"
                 }
               },
-              "queryRef": "Customer Measures.Number of New Customers YTD PY",
-              "nativeQueryRef": "Previous Year",
+              "queryRef": "Customer Measures.Number of Sign-ups YTD PY",
+              "nativeQueryRef": "Previous Year1",
               "displayName": "Previous Year"
             }
           ]
@@ -237,7 +237,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'New Customers YTD'"
+                  "Value": "'Sign-ups YTD'"
                 }
               }
             },
@@ -281,7 +281,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cumulative sum of new customers in current year vs previous year'"
+                  "Value": "'Cumulative sum of sign-ups in current year vs previous year'"
                 }
               }
             }

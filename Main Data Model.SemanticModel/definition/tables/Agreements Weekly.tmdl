@@ -1,0 +1,200 @@
+table 'Agreements Weekly'
+	isHidden
+	lineageTag: 3bced9b8-db9f-4144-a9ba-6388673c1c5e
+
+	column pk_fact_billing_agreements_weekly
+		dataType: string
+		isHidden
+		lineageTag: 481052dd-9289-4e5b-89a6-c144cd25f5ca
+		summarizeBy: none
+		sourceColumn: pk_fact_billing_agreements_weekly
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_date
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 16772494-baad-47b3-8b83-f181aa993bbc
+		summarizeBy: none
+		sourceColumn: fk_dim_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		lineageTag: 2de7bae4-6c1b-4c41-aea1-220cd84647da
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		lineageTag: f5cbb24c-b91b-46a7-bcfe-84ba88781a3f
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column monday_date
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 9a8b898f-89e8-44e1-9470-6fba31e3c841
+		summarizeBy: none
+		sourceColumn: monday_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column week
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b022fc54-db9a-4d14-851b-77ff964f8535
+		summarizeBy: sum
+		sourceColumn: week
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6d13c54c-18ce-495a-b868-c46ab45746f2
+		summarizeBy: sum
+		sourceColumn: year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e6d633b9-34b8-4713-890e-2c64244b72a1
+		summarizeBy: sum
+		sourceColumn: billing_agreement_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_from_billing_agreements
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 6796b631-dcfd-4c4a-a0de-2cc80226b368
+		summarizeBy: none
+		sourceColumn: valid_from_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_id
+		dataType: string
+		isHidden
+		lineageTag: 67c8e274-2e17-4cd4-a836-2ad5c6fa37e6
+		summarizeBy: none
+		sourceColumn: company_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column days_since_first_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0cd84c31-d600-4a8c-b7e9-fa761e651cbd
+		summarizeBy: none
+		sourceColumn: days_since_first_order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b04b70da-1b32-4ad8-bf6c-f49379d49164
+		summarizeBy: sum
+		sourceColumn: has_order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_paused
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 918e69bf-a6b2-4a7f-827d-040a5b8d8b0c
+		summarizeBy: none
+		sourceColumn: is_paused
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_freezed
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: af2de60b-fc06-406e-aa7b-2e1b8825d4f0
+		summarizeBy: none
+		sourceColumn: is_freezed
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_deleted
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8d4817f8-dfd0-4ff1-aaa4-86ce65117ae6
+		summarizeBy: none
+		sourceColumn: is_deleted
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Agreements Weekly' = m
+		mode: directQuery
+		source =
+				let
+					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+					dim_preferences_Table = gold_Schema{[Name="fact_billing_agreements_weekly",Kind="Table"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(dim_preferences_Table, each [monday_date] >= RangeStart and [monday_date] < RangeEnd)
+				in
+				    #"Filtered Rows"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_IsMQueryFoldable = True
+

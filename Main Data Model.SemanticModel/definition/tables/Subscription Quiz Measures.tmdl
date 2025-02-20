@@ -1,0 +1,97 @@
+table 'Subscription Quiz Measures'
+	lineageTag: f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef
+
+	measure 'Number of Quiz Starts' = SUM('Subscription Quiz Measures'[has_started_subscription_quiz])
+		lineageTag: 044f301c-85e0-469f-bae0-c409675ba117
+
+	measure 'Number of Quiz Completions' = SUM('Subscription Quiz Measures'[has_completed_subscription_quiz])
+		lineageTag: f0fc0491-6d8f-44ef-a6b7-d66300a856cc
+
+	measure 'Completion Rate of Quiz' = DIVIDE([Number of Quiz Completions], [Number of Quiz Starts], BLANK())
+		lineageTag: ef801934-0883-4e1c-9df3-bf8f60e3386d
+
+	measure 'Number of Customers Started Quiz' =
+			CALCULATE(
+			    DISTINCTCOUNTNOBLANK('Billing Agreements'[Agreement Id]),
+			    'Subscription Quiz Measures'[has_started_subscription_quiz] = 1,
+			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
+			)
+		formatString: 0
+		lineageTag: 55670bac-cd4b-44c7-a27c-4c98f4a6dcd4
+
+	measure 'Number of Customers Completed Quiz' =
+			CALCULATE(
+			    DISTINCTCOUNTNOBLANK('Billing Agreements'[Agreement Id]),
+			    'Subscription Quiz Measures'[has_completed_subscription_quiz] = 1,
+			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
+			)
+		formatString: 0
+		lineageTag: fed60897-c1eb-41c2-b2e5-580b3ec4d7ae
+
+	column pk_fact_subscription_quiz
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: d55b0211-e413-44f6-9e2c-51f7a4f7e8ab
+		summarizeBy: none
+		sourceColumn: pk_fact_subscription_quiz
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 3730d013-e1c0-4e16-8ded-35bdf650549e
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 2f893553-9e73-4877-b3c2-9af5bdf02dc3
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	/// Foreign key that is used to relate the created at timestamp from Segment to Dim Date.
+	column fk_dim_date_source_created_at_segment
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 20a19511-d1b9-43c6-9a1f-7e7a081917ac
+		summarizeBy: none
+		sourceColumn: fk_dim_date_source_created_at_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The customer has started the subscription quiz to update their subscription preferences, size, and portions.
+	column has_started_subscription_quiz
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 9bf0f348-790c-41a0-a067-73be2e09031d
+		summarizeBy: sum
+		sourceColumn: has_started_subscription_quiz
+
+	/// The customer has completed the subscription quiz to update their subscription preferences, size, and portions.
+	column has_completed_subscription_quiz
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 6a7c51df-7724-46b8-8f99-6c38242c36ec
+		summarizeBy: sum
+		sourceColumn: has_completed_subscription_quiz
+
+	partition 'Subscription Quiz Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_subscription_quiz_Table = gold_Schema{[Name="fact_subscription_quiz",Kind="Table"]}[Data]
+				in
+				    fact_subscription_quiz_Table
+

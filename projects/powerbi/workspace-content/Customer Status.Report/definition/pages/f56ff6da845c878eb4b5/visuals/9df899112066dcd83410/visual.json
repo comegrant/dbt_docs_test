@@ -23,12 +23,12 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of New Customers"
+                  "Property": "Number of Sign-ups"
                 }
               },
-              "queryRef": "Customer Measures.Number of New Customers",
-              "nativeQueryRef": "New Customers in Period",
-              "displayName": "New Customers in Period"
+              "queryRef": "Customer Measures.Number of Sign-ups",
+              "nativeQueryRef": "Number of Sign-ups in Period",
+              "displayName": "Number of Sign-ups in Period"
             }
           ]
         }
@@ -43,7 +43,7 @@
                     "Entity": "Customer Measures"
                   }
                 },
-                "Property": "Number of New Customers"
+                "Property": "Number of Sign-ups"
               }
             },
             "direction": "Descending"
