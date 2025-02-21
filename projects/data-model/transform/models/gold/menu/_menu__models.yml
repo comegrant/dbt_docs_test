@@ -806,3 +806,88 @@ models:
 
     versions:
       - v: 1
+
+  - name: dim_portions
+    description: ""
+    latest_version: 1
+    config:
+      alias: dim_portions
+
+    columns:
+      - name: pk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: language_id_local
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portion_size') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portion_name_local
+        data_type: string
+        description: "{{ doc('column__portion_name_local') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portion_name_english
+        data_type: string
+        description: "{{ doc('column__portion_name_english') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portion_status_code_id
+        data_type: int
+        description: "{{ doc('column__portion_status_code_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portion_status_name_local
+        data_type: string
+        description: "{{ doc('column__portion_status_name_local') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: portion_status_name_english
+        data_type: string
+        description: "{{ doc('column__portion_status_name_english') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1

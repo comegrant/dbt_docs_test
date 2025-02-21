@@ -36,10 +36,10 @@ attribute_values as (
 
     select * from {{ ref('product_layer__product_variation_attribute_values')}}
     
-),
+)
 
 
-pivot_attribute_values as (
+, pivot_attribute_values as (
 
     select
         product_variation_id
@@ -56,14 +56,19 @@ pivot_attribute_values as (
 
     from attribute_values
     group by all
-),
+)
 
-cast_pivot_attribute_values as (
+, cast_pivot_attribute_values as (
     select
         product_variation_id
         , company_id
         , cast(meals as int) as meals
         , cast(portions as int) as portions
+        , case
+            when len(portions) = 2 and right(portions, 1) = '1'
+            then concat(left(portions, 1), '+')
+            else portions
+        end as portion_name
     from pivot_attribute_values
 )
 

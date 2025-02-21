@@ -12,7 +12,7 @@ renamed as (
         , language_id
         
         {# strings #}
-        , status_code_name
+        , initcap(status_code_name) as status_code_name
         , status_code_description
 
     from source

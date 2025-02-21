@@ -240,7 +240,7 @@ The primary key of the portions table in the pim database.
 
 {% docs column__portion_size %}
 
-...
+A numerical value for number of portions in a product or recipe.
 
 {% enddocs %}
 
@@ -252,7 +252,7 @@ The primary key of the portions table in the pim database.
 
 {% docs column__portion_status_code_id %}
 
-...
+The status code of the portions. 1 = Enabled, 2 = Disabled.
 
 {% enddocs %}
 

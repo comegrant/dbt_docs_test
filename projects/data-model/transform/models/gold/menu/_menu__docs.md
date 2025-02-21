@@ -203,3 +203,35 @@ Foreign key to dim_ingredients
 
 {% enddocs %}
 
+# Dim Portions
+
+{% docs column__pk_dim_portions %}
+
+Primary key of dim_portions. It is a composite o portion_id and language_id.
+
+{% enddocs %}
+
+{% docs column__portion_status_name_local %}
+
+The name of the status for each portion on the local language.
+
+{% enddocs %}
+
+{% docs column__portion_status_name_english %}
+
+The name of the status for each portion on English.
+
+{% enddocs %}
+
+{% docs column__portion_name_local %}
+
+The name of the number of portions on the local language.
+
+{% enddocs %}
+
+{% docs column__portion_name_english %}
+
+The name of the number of portions on English.
+
+{% enddocs %}
+
