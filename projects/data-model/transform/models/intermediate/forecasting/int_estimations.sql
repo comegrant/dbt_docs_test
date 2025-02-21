@@ -12,7 +12,7 @@ with
 
 dates as (
     
-    select * from {{ref('dim_dates')}}
+    select * from {{ref('int_dates_with_financial_periods')}}
 
 )
 
