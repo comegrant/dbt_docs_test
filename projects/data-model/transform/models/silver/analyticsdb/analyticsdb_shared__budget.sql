@@ -23,7 +23,7 @@ source as (
         , quarter as financial_quarter
         , month as financial_month_number
         , week as financial_week
-        , orders
+        , orders as number_of_orders
         , atv_gross
         
         {# system #}

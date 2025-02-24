@@ -32,7 +32,7 @@ budget as (
 
         --NUMBERS
         , budget.atv_gross
-        , budget.orders as number_of_orders
+        , budget.number_of_orders 
         
         --FKs
         , dates.pk_dim_dates as fk_dim_dates

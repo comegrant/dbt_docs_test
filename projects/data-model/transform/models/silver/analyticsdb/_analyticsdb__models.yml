@@ -236,9 +236,9 @@ models:
         data_tests:
           - not_null
 
-      - name: orders
+      - name: number_of_orders
         data_type: int
-        description: "{{ doc('column__orders') }}"
+        description: "{{ doc('column__number_of_orders') }}"
         constraints:
           - type: not_null
         data_tests:

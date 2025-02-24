@@ -11,7 +11,7 @@ The year in which the budget process is done (eg. F3 done in 2024, but includes 
 
 {% enddocs %}
 
-{% docs column__orders %}
+{% docs column__number_of_orders %}
 
 The number of orders per week per customer segment
 
