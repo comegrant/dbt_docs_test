@@ -122,7 +122,7 @@ table 'Order Measures'
 		formatString: #,0
 	
 	/// Average number of orders per unique customers placing an order in the selected filtering context (i.e. time, preferences etc.)
-	measure 'Average Number of Orders per Customer' = DIVIDE(['Number of Orders'], ['Number of Ordering Customers'], BLANK())
+	measure 'Average Number of Orders per Customer' = DIVIDE([Number of Orders], [Number of Ordering Customers], BLANK())
 		formatString: #,0.00
 
 	/// Number of order that has one or more grocery purchases
@@ -812,6 +812,30 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
+
+	/// Number of orders done by customers who have swapped at least once during the selected period.
+	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
+	/// Not to be confused with 'Number of Orders with Swaps', which is a different measure.
+	measure 'Number of Orders by Swapping Customers' = 
+			CALCULATE(
+    			[Number of Orders],
+    			FILTER(
+    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+    			    [Number of Orders with Swaps] > 0
+    			)
+			)
+		formatString: #,0
+
+	/// Order frequency for swapping customers, i.e. average number of orders per unique swapping customer.
+	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
+	/// To see the definition of orders by swapping customers, see the measure 'Number of Orders by Swapping Customers' in the 'Order Measures' table.
+	measure 'Average Number of Orders per Swapping Customer' = 
+			DIVIDE(
+			    [Number of Orders by Swapping Customers],
+			    [Number of Swapping Customers],
+			    BLANK()
+			)
+		formatString: #,0.00
 
 	column order_status_id
 		dataType: string

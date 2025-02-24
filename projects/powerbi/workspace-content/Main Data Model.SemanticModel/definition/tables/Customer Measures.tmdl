@@ -243,6 +243,19 @@ table 'Customer Measures'
 		formatString: #,0
 		lineageTag: 60ba4403-dc9a-4221-b046-d3dea3afa7bb
 
+	/// Number of customers who have swapped at least once during the selected period.
+	/// To see the definition of a swap, see the measure 'Number of Orders with Swaps'.
+	/// If the customer switched out dishes in a week, but never placed the order for the week, it will not be counted as a swap.
+	measure 'Number of Swapping Customers' = 
+			CALCULATE(
+    			'Order Measures'[Number of Ordering Customers],
+    			FILTER(
+    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+    			    'Order Measures'[Number of Orders with Swaps] > 0
+    			)
+			)
+		formatString: #,0
+
 	column fk_dim_dates
 		dataType: int64
 		isHidden
