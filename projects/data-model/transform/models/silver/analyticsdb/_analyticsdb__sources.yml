@@ -14,6 +14,5 @@ sources:
       - name: analyticsdb_orders__historical_order_lines_combined
       - name: analyticsdb_snapshots__agreement_status
       - name: analyticsdb_shared__budget
-      - name: analyticsdb_shared__budget_parameter
       - name: analyticsdb_shared__budget_parameter_split
       - name: analyticsdb_shared__budget_type

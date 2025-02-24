@@ -14,8 +14,7 @@ source as (
         {# ids #}
         id as budget_id
         , budget_type_id
-        , budget_parameter_id
-        , budget_parameter_split_id
+        , budget_parameter_split_id as budget_segment_id
         , company_id
 
         {# numerics #}

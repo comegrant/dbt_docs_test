@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('analyticsdb', 'analyticsdb_shared__budget_parameter') }}
+    select * from {{ source('analyticsdb', 'analyticsdb_shared__budget_parameter_split') }}
 
 )
 
@@ -12,13 +12,13 @@ source as (
 
         
         {# ids #}
-        id as budget_parameter_id
+        id as budget_segment_id
 
         {# strings #}
-        , initcap(name) as budget_parameter_name
-        , initcap(description) as budget_parameter_description
-
-        {# source #}
+        , initcap(name) as budget_segment_name
+        , initcap(description) as budget_segment_description
+        
+        {# system #}
         , created_at as source_created_at
         , created_by as source_created_by
         , updated_at as source_updated_at

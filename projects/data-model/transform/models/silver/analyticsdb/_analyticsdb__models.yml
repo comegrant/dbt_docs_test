@@ -182,17 +182,9 @@ models:
         data_tests:
           - not_null
 
-      - name: budget_parameter_id
+      - name: budget_segment_id
         data_type: varchar(36)
-        description: "{{ doc('column__budget_parameter_id') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: budget_parameter_split_id
-        data_type: varchar(36)
-        description: "{{ doc('column__budget_parameter_split_id') }}"
+        description: "{{ doc('column__budget_segment_id') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -276,7 +268,6 @@ models:
         data_tests:
           - not_null
 
-
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
@@ -318,7 +309,6 @@ models:
         data_tests:
           - not_null
 
-
       - name: budget_type_description
         data_type: string
         description: "{{ doc('column__budget_type_description') }}"
@@ -344,7 +334,6 @@ models:
         data_tests:
           - not_null
 
-
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
@@ -362,13 +351,13 @@ models:
           - not_null
 
 
-
-  - name: analyticsdb_shared__budget_parameters
-    description: "Table containing the types of budget scenarios. Currently only holds one value; Baseline scenario. Static table"
+  - name: analyticsdb_shared__budget_segments
+    description: "Table containing the types customer segments that orders/atv are split on. Static table"        
+    alias: analyticsdb_shared__budget_segments        
     columns:
-      - name: budget_parameter_id
+      - name: budget_segment_id
         data_type: varchar(36)
-        description: "{{ doc('column__budget_parameter_id') }}"
+        description: "{{ doc('column__budget_segment_id') }}"
         constraints:
           - type: unique
           - type: not_null
@@ -376,22 +365,21 @@ models:
           - unique
           - not_null
 
-      - name: budget_parameter_name
+      - name: budget_segment_name
         data_type: string
-        description: "{{ doc('column__budget_parameter_name') }}"
+        description: "{{ doc('column__budget_segment_name') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
-      - name: budget_parameter_description
+      - name: budget_segment_description
         data_type: string
-        description: "{{ doc('column__budget_parameter_description') }}"
+        description: "{{ doc('column__budget_segment_description') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
-
 
       - name: source_created_at
         data_type: timestamp
@@ -408,74 +396,6 @@ models:
           - type: not_null
         data_tests:
           - not_null
-
-
-      - name: source_updated_at
-        data_type: timestamp
-        description: "{{ doc('column__source_updated_at') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: source_updated_by
-        data_type: string
-        description: "{{ doc('column__source_updated_by') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-
-
-
-  - name: analyticsdb_shared__budget_parameter_split
-    description: "Table containing the types customer segments that orders/atv are split on. Static table"                
-    columns:
-      - name: budget_parameter_split_id
-        data_type: varchar(36)
-        description: "{{ doc('column__budget_parameter_split_id') }}"
-        constraints:
-          - type: unique
-          - type: not_null
-        data_tests:
-          - unique
-          - not_null
-
-      - name: budget_parameter_split_name
-        data_type: string
-        description: "{{ doc('column__budget_parameter_split_name') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-
-      - name: budget_parameter_split_description
-        data_type: string
-        description: "{{ doc('column__budget_parameter_split_description') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-
-      - name: source_created_at
-        data_type: timestamp
-        description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
-      - name: source_created_by
-        data_type: string
-        description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-
 
       - name: source_updated_at
         data_type: timestamp

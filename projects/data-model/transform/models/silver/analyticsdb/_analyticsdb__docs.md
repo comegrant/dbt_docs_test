@@ -1,4 +1,4 @@
-# analyticsdb_shared__budget
+# Budget
 {% docs column__budget_id %}
 
 Unique id for each entry in the budget. Granularity is company, financial week and customer segment
@@ -23,7 +23,7 @@ The gross atv per week and customer segment
 
 {% enddocs %}
 
-# analytcsdb_shared__budget_types
+# Budget Types
 
 {% docs column__budget_type_id %}
 
@@ -43,41 +43,22 @@ Describes the function of each budget type
 
 {% enddocs %}
 
-# analyticsdb_shared__budget_parameters
 
-{% docs column__budget_parameter_id %}
+# Budget Segments
 
-The corresponding id to what budget scenario is relevant. Currently only has one possible entry (Baseline)
-
-{% enddocs %}
-
-{% docs column__budget_parameter_name %}
-
-The name of the budget parameter (Baseline)
-
-{% enddocs %}
-
-{% docs column__budget_parameter_description %}
-
-Description of what the parameter function is.
-
-{% enddocs %}
-
-# analyticsdb_shared__budget_parameter_split
-
-{% docs column__budget_parameter_split_id %}
+{% docs column__budget_segment_id %}
 
 The corresponding id to which customer segment the data belongs to
 
 {% enddocs %}
 
-{% docs column__budget_parameter_split_name %}
+{% docs column__budget_segment_name %}
 
 The names of the different customer segemnts that the data is split on (New, Activated, Reactivated no code, Reactivated and Established Customers)
 
 {% enddocs %}
 
-{% docs column__budget_parameter_split_description %}
+{% docs column__budget_segment_description %}
 
 A description of what the different customer segments are and what they include
 
