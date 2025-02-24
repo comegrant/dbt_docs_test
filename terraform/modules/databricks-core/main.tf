@@ -7,7 +7,7 @@ terraform {
 
     databricks = {
       source  = "databricks/databricks"
-      version = ">= 1.45.0"
+      version = ">= 1.66.0"
     }
 
     azuread = {
@@ -128,6 +128,11 @@ resource "databricks_catalog" "segment_shared" {
   owner        = "location-owners"
 }
 
+resource "databricks_workspace_binding" "prod" {
+  securable_name = "prod"
+  workspace_id   = azurerm_databricks_workspace.this.workspace_id
+  binding_type = terraform.workspace == "prod" ? "BINDING_TYPE_READ_WRITE" : "BINDING_TYPE_READ_ONLY"
+}
 
 
 ##########################################
@@ -206,6 +211,24 @@ resource "databricks_sql_endpoint" "db_wh_explore" {
 
 resource "databricks_permissions" "db_wh_explore" {
   sql_endpoint_id = databricks_sql_endpoint.db_wh_explore.id
+  access_control {
+    group_name = "data-analysts"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-engineers"
+    permission_level = "CAN_USE"
+  }
+
+  access_control {
+    group_name = "data-scientists"
+    permission_level = "CAN_USE"
+  }
+}
+
+resource "databricks_permissions" "db_wh_powerbi" {
+  sql_endpoint_id = databricks_sql_endpoint.db_wh_powerbi.id
   access_control {
     group_name = "data-analysts"
     permission_level = "CAN_USE"
@@ -583,7 +606,7 @@ resource "databricks_grants" "catalog" {
 
   grant {
     principal  = var.azure_client_id
-    privileges = ["ALL_PRIVILEGES"]
+    privileges = ["ALL_PRIVILEGES","MANAGE"]
   }
 
   grant {
