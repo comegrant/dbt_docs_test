@@ -146,3 +146,88 @@
 
     versions:
       - v: 1
+
+
+  - name: fact_budget
+    description: "Table containing budget numbers, budget dates and id's"
+    latest_version: 1
+    config:
+      alias: fact_budget
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_budget
+        data_type: string
+        description: "{{ doc('column__pk_fact_budget') }}"
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: budget_id
+        data_type: string
+        description: "{{ doc('column__budget_id') }}"
+        data_tests:
+          - not_null
+
+      - name: budget_type_id
+        data_type: string
+        description: "{{ doc('column__budget_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: budget_segment_id
+        data_type: string
+        description: ""
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: financial_year
+        data_type: int
+        description: "{{ doc('column__financial_year') }}"
+        data_tests:
+          - not_null
+
+      - name: financial_week
+        data_type: int
+        description: "{{ doc('column__financial_week') }}"
+        data_tests:
+          - not_null
+
+      - name: atv_gross
+        data_type: decimal(19,4)
+        description: "{{ doc('column__atv_gross') }}"
+        data_tests:
+          - not_null
+
+      - name: number_of_orders
+        data_type: int
+        description: "{{ doc('column__number_of_orders') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_budget_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_budget_types') }}"
+        data_tests:
+          - not_null          
+    versions:
+      - v: 1

@@ -27,5 +27,23 @@ A boolean flag indicating whether this estimation is from the most recent genera
 # Dim Budget
 
 {% docs column__pk_dim_budget_types %}
-Primary key of the budget types table
+Primary key of the dim_budget_types table
+{% enddocs %}
+
+# Fact Budget
+
+{% docs column__pk_fact_budget %}
+Primary key of the fact_budget table
+{% enddocs %}
+
+{% docs column__fk_dim_date %}
+Foreign key connecting the budget dates to dim_date
+{% enddocs %}
+
+{% docs column__fk_dim_companies %}
+Foreign key connecting the companies table to the budget table
+{% enddocs %}
+
+{% docs column__fk_dim_budget_types %}
+Foreign key connecting the budget table to the budget_type table
 {% enddocs %}
