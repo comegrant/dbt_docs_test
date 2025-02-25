@@ -633,53 +633,14 @@ resource "databricks_grants" "catalog" {
     principal = "data-analysts"
     privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
-}
 
-data "databricks_service_principal" "bundle_sp_dev" {
-  provider     = databricks.accounts
-  display_name = "bundle_sp_dev"
-}
-
-data "databricks_service_principal" "bundle_sp_test" {
-  provider     = databricks.accounts
-  display_name = "bundle_sp_test"
-}
-
-data "databricks_service_principal" "databricks_reader_sp_dev" {
-  provider     = databricks.accounts
-  display_name = "databricks_reader_sp_dev"
-}
-
-data "databricks_service_principal" "databricks_reader_sp_test" {
-  provider     = databricks.accounts
-  display_name = "databricks_reader_sp_test"
-}
-
-resource "databricks_grants" "catalog_prod" {
-  count   = terraform.workspace == "prod" ? 1 : 0
-  catalog = terraform.workspace
-
-  grant{
-    principal = data.databricks_service_principal.bundle_sp_dev.application_id
-    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
-  }
-
-  grant{
-    principal = data.databricks_service_principal.bundle_sp_test.application_id
-    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
-  }
-
-  grant{
-    principal = data.databricks_service_principal.databricks_reader_sp_dev.application_id
-    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
-  }
-
-  grant{
-    principal = data.databricks_service_principal.databricks_reader_sp_test.application_id
-    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+  grant {
+    principal = "prod-readers"
+    privileges = terraform.workspace == "prod" ? ["SELECT", "USE_CATALOG", "USE_SCHEMA"] : []
   }
 
 }
+
 
 resource "databricks_grants" "catalog_segment" { 
   count   = terraform.workspace == "prod" ? 1 : 0
