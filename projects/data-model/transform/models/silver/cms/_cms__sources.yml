@@ -26,6 +26,7 @@ sources:
       - name: cms__company
       - name: cms__consent
       - name: cms__country
+      - name: cms__discount_channel
       - name: cms__discount_category
       - name: cms__delivery_week_type
       - name: cms__discount

@@ -972,7 +972,13 @@ The name of the category of the discount which is the second step in the discoun
 
 {% docs column__discount_channel_id %}
 
-...
+This is the primary key of the discount_channel table in CMS.
+
+{% enddocs %}
+
+{% docs column__discount_channel_name %}
+
+The name of the channel of the discount which is the first step in the discount hierarchy (Channel->Category->Sub Category)
 
 {% enddocs %}
 

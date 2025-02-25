@@ -3,6 +3,59 @@
 version: 2
 
 models:
+  - name: cms__discount_channels
+    description: "Information about discount channels which are the first step in the discount categorization hierarchy (Channel->Category->Sub Category)."
+
+    columns:
+      - name: discount_channel_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_channel_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: discount_channel_name
+        data_type: string
+        description: "{{ doc('column__discount_channel_name') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
   - name: cms__discount_categories
     description: "Information about discount categories which are the second step in the discount categorization hierarchy (Channel->Category->Sub Category)."
 
