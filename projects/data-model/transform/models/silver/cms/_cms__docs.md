@@ -950,7 +950,13 @@ Last date a customer can add the discount.
 
 {% docs column__discount_category_id %}
 
-...
+This is the primary key of the discount_category table in CMS.
+
+{% enddocs %}
+
+{% docs column__discount_category_name %}
+
+The name of the category of the discount which is the second step in the discount hierarchy (Channel->Category->Sub Category)
 
 {% enddocs %}
 
