@@ -998,7 +998,12 @@ async def run_preselector_for_request(
     subscription_variation = sorted(request.concept_preference_ids)
     sorted_taste_pref = sorted(request.taste_preference_ids)
 
-    if not request.has_data_processing_consent and request.agreement_id == 0 and len(request.compute_for) == 1:
+    if (
+        not should_explain
+        and not request.has_data_processing_consent
+        and request.agreement_id == 0
+        and len(request.compute_for) == 1
+    ):
         # Super fast cache for
         cached_value = cached_output(
             subscription_variation,
@@ -1075,7 +1080,7 @@ async def run_preselector_for_request(
 
         logger.debug(f"Running for {year} {week}")
 
-        if not contains_history:
+        if not should_explain and not contains_history:
             cached_value = cached_output(
                 subscription_variation,
                 yearweek,
@@ -1323,6 +1328,8 @@ async def filter_on_preferences(
     if recipes_to_use.height >= customer.number_of_recipes:
         return recipes_to_use, PreselectorPreferenceCompliancy.all_compliant, None
 
+    logger.debug(f"Found only {recipes_to_use.height} recipes that complied with all negative preferences")
+
     preselected_recipe_df = recipes_to_use.select("main_recipe_id").with_columns(
         compliancy=pl.lit(PreselectorPreferenceCompliancy.all_compliant)
     )
@@ -1336,6 +1343,8 @@ async def filter_on_preferences(
 
     if recipes_to_use.height >= customer.number_of_recipes:
         return recipes_to_use, PreselectorPreferenceCompliancy.allergies_only_compliant, preselected_recipe_df
+
+    logger.debug(f"Found only {recipes_to_use.height} recipes that complied with allergens")
 
     preselected_recipe_df = preselected_recipe_df.vstack(
         recipes_to_use.filter(pl.col("main_recipe_id").is_in(preselected_recipe_df["main_recipe_id"]).not_())

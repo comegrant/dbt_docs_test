@@ -24,6 +24,10 @@ resources:
                 username: "{{secrets/auth_common/docker-registry-username}}"
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
+      schedule:
+        quartz_cron_expression: '0 0 18 ? * *'
+        timezone_id: UTC
+
       email_notifications:
         on_failure:
           - mats.mollestad@cheffelo.com

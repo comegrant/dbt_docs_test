@@ -150,8 +150,8 @@ FROM (
 WHERE nr = 1
 """
 
-def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
 
+def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
     parent_cat_col = "parent_category_id"
     ingred_cat_col = "ingredient_category_id"
     inter_col = "inter_col"
@@ -161,34 +161,32 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
 
     root_col = "root_category_id"
 
-    target_group = 'CATEGORY GROUP'
+    target_group = "CATEGORY GROUP"
 
-    all_categories = df.collect().with_columns(
-        pl.col(parent_cat_col).cast(pl.Int64)
-    ).with_columns(
-        pl.when(
-            pl.col(cat_desc).is_null() | (pl.col(cat_desc) != target_group)
-        ).then(
-            pl.col(parent_cat_col)
-        ).otherwise(
-            pl.lit(None)
-        ).alias(parent_cat_col)
+    all_categories = (
+        df.collect()
+        .with_columns(pl.col(parent_cat_col).cast(pl.Int64))
+        .with_columns(
+            pl.when(pl.col(cat_desc).is_null() | (pl.col(cat_desc) != target_group))
+            .then(pl.col(parent_cat_col))
+            .otherwise(pl.lit(None))
+            .alias(parent_cat_col)
+        )
     )
 
-    root_categories = all_categories.filter(
-        pl.col(parent_cat_col).is_null()
-    ).select(
-        pl.col(ingred_cat_col),
-        pl.col(cat_name_col),
-        pl.col(cat_desc),
-        pl.col(cat_name_col).alias(root_cat_name_col),
-        pl.col(ingred_cat_col).alias(root_col),
-    ).filter(
-        pl.col(cat_desc) == target_group
+    root_categories = (
+        all_categories.filter(pl.col(parent_cat_col).is_null())
+        .select(
+            pl.col(ingred_cat_col),
+            pl.col(cat_name_col),
+            pl.col(cat_desc),
+            pl.col(cat_name_col).alias(root_cat_name_col),
+            pl.col(ingred_cat_col).alias(root_col),
+        )
+        .filter(pl.col(cat_desc) == target_group)
     )
 
     join_parents = all_categories.filter(pl.col(parent_cat_col).is_not_null())
-
 
     # Join as long as there exist a parent id
     while not join_parents.is_empty():
@@ -204,23 +202,14 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
             pl.col(parent_cat_col).alias(inter_col),
             pl.col(f"{parent_cat_col}_right").alias(parent_cat_col),
             pl.col(f"{cat_name_col}_right").alias(root_cat_name_col),
-            pl.col(f"{cat_desc}_right").alias(cat_desc)
+            pl.col(f"{cat_desc}_right").alias(cat_desc),
         )
 
-        roots = with_parent.filter(
-            pl.col(parent_cat_col).is_null()
-        ).with_columns(
-            pl.col(inter_col).alias(root_col)
-        )
+        roots = with_parent.filter(pl.col(parent_cat_col).is_null()).with_columns(pl.col(inter_col).alias(root_col))
         root_categories = root_categories.vstack(roots.select(root_categories.columns))
 
-        join_parents = with_parent.filter(
-            pl.col(parent_cat_col).is_not_null()
-        ).select(
-            pl.col(ingred_cat_col),
-            pl.col(cat_name_col),
-            pl.col(parent_cat_col),
-            pl.col(cat_desc)
+        join_parents = with_parent.filter(pl.col(parent_cat_col).is_not_null()).select(
+            pl.col(ingred_cat_col), pl.col(cat_name_col), pl.col(parent_cat_col), pl.col(cat_desc)
         )
 
     return root_categories.filter(pl.col(cat_desc) == target_group).lazy()
@@ -229,7 +218,7 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
 @feature_view(
     name="raw_ingredient_categories",
     source=adb.fetch(ingredient_categories),
-    materialized_source=materialized_data.parquet_at("raw_ingredient_categories.parquet")
+    materialized_source=materialized_data.parquet_at("raw_ingredient_categories.parquet"),
 )
 class RawIngredientCategories:
     ingredient_category_id = Int32().as_entity()
@@ -241,7 +230,7 @@ class RawIngredientCategories:
 @feature_view(
     name="ingredient_category_groups",
     source=RawIngredientCategories.as_source().transform_with_polars(join_root_ingredient_category),
-    materialized_source=materialized_data.parquet_at("ingredient_category_group.parquet")
+    materialized_source=materialized_data.parquet_at("ingredient_category_group.parquet"),
 )
 class IngredientCategories:
     ingredient_category_id = Int32().as_entity()
@@ -255,7 +244,7 @@ class IngredientCategories:
 @feature_view(
     name="main_ingredient_in_recipe",
     source=adb.fetch(main_ingredients_in_recipe),
-    materialized_source=materialized_data.parquet_at("main_ingredient_in_recipe.parquet")
+    materialized_source=materialized_data.parquet_at("main_ingredient_in_recipe.parquet"),
 )
 class MainIngredients:
     recipe_id = Int32().as_entity()
@@ -270,33 +259,41 @@ class MainIngredients:
 
 
 async def recipe_main_ingredient_category(request: RetrivalRequest) -> pl.LazyFrame:
-    df = await MainIngredients.query().all().join(
-        IngredientCategories.query().all(),
-        method="inner",
-        left_on="ingredient_category_id",
-        right_on="ingredient_category_id"
-    ).to_lazy_polars()
-
+    df = (
+        await MainIngredients.query()
+        .all()
+        .join(
+            IngredientCategories.query().all(),
+            method="inner",
+            left_on="ingredient_category_id",
+            right_on="ingredient_category_id",
+        )
+        .to_lazy_polars()
+    )
 
     recipes = df.select("recipe_id").unique()
 
     recipes = recipes.join(
-        df.filter(pl.col("is_main_protein")).select([
-            pl.col("recipe_id"),
-            pl.col("root_category_id").alias("main_protein_category_id"),
-            pl.col("root_category_name").alias("main_protein_name"),
-        ]),
+        df.filter(pl.col("is_main_protein")).select(
+            [
+                pl.col("recipe_id"),
+                pl.col("root_category_id").alias("main_protein_category_id"),
+                pl.col("root_category_name").alias("main_protein_name"),
+            ]
+        ),
         on="recipe_id",
-        how="left"
+        how="left",
     )
     recipes = recipes.join(
-        df.filter(pl.col("is_main_carbohydrate")).select([
-            pl.col("recipe_id"),
-            pl.col("root_category_id").alias("main_carbohydrate_category_id"),
-            pl.col("root_category_name").alias("main_carboydrate_name"),
-        ]),
+        df.filter(pl.col("is_main_carbohydrate")).select(
+            [
+                pl.col("recipe_id"),
+                pl.col("root_category_id").alias("main_carbohydrate_category_id"),
+                pl.col("root_category_name").alias("main_carboydrate_name"),
+            ]
+        ),
         on="recipe_id",
-        how="left"
+        how="left",
     )
 
     return recipes
@@ -314,23 +311,17 @@ def is_non_of(features: list[str]) -> pl.Expr:
 @feature_view(
     name="recipe_main_ingredient_category",
     source=CustomMethodDataSource.from_load(
-        recipe_main_ingredient_category,
-        depends_on={
-            MainIngredients.location,
-            IngredientCategories.location
-        }
+        recipe_main_ingredient_category, depends_on={MainIngredients.location, IngredientCategories.location}
     ),
-    materialized_source=materialized_data.parquet_at("recipe_main_ingredient_category.parquet")
+    materialized_source=materialized_data.parquet_at("recipe_main_ingredient_category.parquet"),
 )
 class RecipeMainIngredientCategory:
-
     recipe_id = Int32().as_entity()
 
     main_protein_category_id = Int32().is_optional()
     main_carbohydrate_category_id = Int32().is_optional()
     main_carboydrate_name = String().is_optional()
     main_protein_name = String().is_optional()
-
 
     is_salmon = main_protein_category_id == 1216  # noqa: PLR2004
     is_cod = main_protein_category_id == 1236  # noqa: PLR2004
@@ -344,23 +335,25 @@ class RecipeMainIngredientCategory:
 
     is_seafood = Bool().transformed_using_features_polars(
         [is_salmon, is_cod, is_tuna, is_shrimp],
-        pl.col("is_salmon") | pl.col("is_cod") | pl.col("is_tuna") | pl.col("is_shrimp") # type: ignore
+        pl.col("is_salmon") | pl.col("is_cod") | pl.col("is_tuna") | pl.col("is_shrimp"),  # type: ignore
     )
 
     all_proteins = [is_salmon, is_cod, is_pork, is_chicken, is_beef, is_lamb, is_shrimp, is_mixed_meat, is_tuna]
     is_other_protein = Bool().transformed_using_features_polars(
-        using_features=all_proteins, # type: ignore
-        transformation=is_non_of([
-            "is_salmon",
-            "is_cod",
-            "is_pork",
-            "is_chicken",
-            "is_beef",
-            "is_lamb",
-            "is_shrimp",
-            "is_mixed_meat",
-            "is_tuna"
-        ]) # type: ignore
+        using_features=all_proteins,  # type: ignore
+        transformation=is_non_of(
+            [
+                "is_salmon",
+                "is_cod",
+                "is_pork",
+                "is_chicken",
+                "is_beef",
+                "is_lamb",
+                "is_shrimp",
+                "is_mixed_meat",
+                "is_tuna",
+            ]
+        ),  # type: ignore
     )
 
     is_grain = main_carbohydrate_category_id == 1047  # noqa: PLR2004
@@ -370,12 +363,9 @@ class RecipeMainIngredientCategory:
 
     all_carbos = [is_grain, is_soft_bread, is_vegetables, is_pasta]
     is_other_carbo = Bool().transformed_using_features_polars(
-        using_features=all_carbos, # type: ignore
-        transformation=is_non_of([
-            "is_grain", "is_soft_bread", "is_vegetables", "is_pasta"
-        ]) # type: ignore
+        using_features=all_carbos,  # type: ignore
+        transformation=is_non_of(["is_grain", "is_soft_bread", "is_vegetables", "is_pasta"]),  # type: ignore
     )
-
 
 
 main_ingredient_ids = {
@@ -423,9 +413,9 @@ class RecipeFeatures:
     cooking_time_from = Int32()
     cooking_time_to = Int32()
 
-    is_low_cooking_time = cooking_time_from <= 15 # noqa: PLR2004
-    is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25) # noqa: PLR2004
-    is_high_cooking_time = cooking_time_from >= 30 # noqa: PLR2004
+    is_low_cooking_time = cooking_time_from <= 15  # noqa: PLR2004
+    is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25)  # noqa: PLR2004
+    is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
 
     taxonomies = List(String())
     taxonomy_ids = List(Int32())
@@ -435,43 +425,39 @@ class RecipeFeatures:
     is_weight_watchers = taxonomy_ids.contains(1878)
 
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2109)
-        | pl.col("taxonomy_ids").list.contains(2104),
-        as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
     )
 
     is_roede = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2015)
-        | pl.col("taxonomy_ids").list.contains(2096),
-        as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains(2015) | pl.col("taxonomy_ids").list.contains(2096), as_dtype=Bool()
     )
 
     is_cheep = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2195)
         | pl.col("taxonomy_ids").list.contains(2196)
         | pl.col("taxonomy_ids").list.contains(2197),
-        as_dtype=Bool()
+        as_dtype=Bool(),
     )
 
     is_chefs_choice = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2011)
         | pl.col("taxonomy_ids").list.contains(2147)
         | pl.col("taxonomy_ids").list.contains(2152),
-        as_dtype=Bool()
+        as_dtype=Bool(),
     ).description("Also known as inspirational in some places")
 
     is_family_friendly = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2148)
         | pl.col("taxonomy_ids").list.contains(2014)
         | pl.col("taxonomy_ids").list.contains(2153),
-        as_dtype=Bool()
+        as_dtype=Bool(),
     )
 
     is_low_calorie = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2156)
         | pl.col("taxonomy_ids").list.contains(2013)
         | pl.col("taxonomy_ids").list.contains(2151),
-        as_dtype=Bool()
+        as_dtype=Bool(),
     )
 
     is_kids_friendly = (
@@ -489,14 +475,9 @@ class RecipeFeatures:
     is_spicy = taxonomies.contains("Stark/Spicy").logical_or(taxonomies.contains("Stærk/krydret"))
     is_gluten_free = taxonomies.contains("Glutenfri")
 
-    (
-        is_vegetarian_ingredient,
-        is_vegan,
-        is_fish
-    ) = main_ingredient_id.one_hot_encode(
+    (is_vegetarian_ingredient, is_vegan, is_fish) = main_ingredient_id.one_hot_encode(
         [  # type: ignore
-            main_ingredient_ids[key]
-            for key in ["vegetarian", "vegan", "fish"]
+            main_ingredient_ids[key] for key in ["vegetarian", "vegan", "fish"]
         ]
     )
     is_vegetarian = is_vegetarian_ingredient.logical_or(is_vegan)
@@ -504,13 +485,13 @@ class RecipeFeatures:
 
 @feature_view(
     name="main_recipe_features",
-    source=RecipeFeatures.metadata.materialized_source.transform_with_polars( # type: ignore
+    source=RecipeFeatures.metadata.materialized_source.transform_with_polars(  # type: ignore
         lambda df: df.filter(
-            pl.col("year") * 100 + pl.col("week") >= 202430 # noqa: PLR2004
-        ).sort("recipe_id").unique(
-            "main_recipe_id", keep="first", maintain_order=True
+            pl.col("year") * 100 + pl.col("week") >= 202430  # noqa: PLR2004
         )
-    )
+        .sort("recipe_id")
+        .unique("main_recipe_id", keep="first", maintain_order=True)
+    ),
 )
 class MainRecipeFeature:
     """
@@ -532,11 +513,8 @@ class MainRecipeFeature:
     name="recipe_embedding",
     input_features=[MainRecipeFeature().recipe_name],
     exposed_model=openai_embedding("text-embedding-3-small", batch_on_n_chunks=100),
-    output_source=materialized_data.partitioned_parquet_at(
-        "recipe_embeddings",
-        partition_keys=["company_id"]
-    ),
-    acceptable_freshness=timedelta(hours=6)
+    output_source=materialized_data.partitioned_parquet_at("recipe_embeddings", partition_keys=["company_id"]),
+    acceptable_freshness=timedelta(hours=6),
 )
 class RecipeEmbedding:
     main_recipe_id = Int32().as_entity()
@@ -550,15 +528,11 @@ class RecipeEmbedding:
 @feature_view(
     name="mealkit_recipe_similarity",
     source=InMemorySource.empty(),
-    description="Computes the mealkit recipe similarity given a mealkit embedding."
+    description="Computes the mealkit recipe similarity given a mealkit embedding.",
 )
 class MealkitRecipeSimilarity:
-    mealkit_embedding = Embedding(1536).description(
-        "Assumes that it is normalized to 1 so we can use the dot product"
-    )
-    similarity = mealkit_embedding.dot_product(
-        RecipeEmbedding().embedding
-    )
+    mealkit_embedding = Embedding(1536).description("Assumes that it is normalized to 1 so we can use the dot product")
+    similarity = mealkit_embedding.dot_product(RecipeEmbedding().embedding)
 
 
 @feature_view(
@@ -575,7 +549,7 @@ class RecipeTaxonomies:
     loaded_at = EventTimestamp()
 
     recipe_taxonomies = String().description(
-        "All the taxonomies seperated by a ',' char.",
+        "All the taxonomies separated by a ',' char.",
     )
 
 
@@ -593,7 +567,7 @@ class RecipeIngredient:
     loaded_at = EventTimestamp()
 
     all_ingredients = String().description(
-        "All the ingredients seperated by a ',' char.",
+        "All the ingredients separated by a ',' char.",
     )
 
     contains_salmon = all_ingredients.contains("laks")
@@ -659,9 +633,7 @@ class RecipeCost:
     )
     is_plus_portion = portions.contains("\\+")
 
-    recipe_cost_whole_units = Float().description(
-        "Also known as the Cost of Food. The planed summed ingredient cost"
-    )
+    recipe_cost_whole_units = Float().description("Also known as the Cost of Food. The planned summed ingredient cost")
 
     price_category_max_price = Int32()
     price_category_level = Int32()
@@ -672,7 +644,6 @@ class RecipeCost:
 
 
 def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
-
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
         """
         Makes it easier to swap between prod, and manually defined data for testing.
@@ -683,12 +654,15 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
             return view_wrapper.query()
 
     nutrition = query(RecipeNutrition).all()
-    cost = query(RecipeCost).select_columns([
-        "recipe_cost_whole_units", "is_plus_portion"
-    ]).transform_polars(lambda df: df.filter(pl.col("is_plus_portion").not_()))
+    cost = (
+        query(RecipeCost)
+        .select_columns(["recipe_cost_whole_units", "is_plus_portion"])
+        .transform_polars(lambda df: df.filter(pl.col("is_plus_portion").not_()))
+    )
 
     return (
-        query(RecipeFeatures).all()
+        query(RecipeFeatures)
+        .all()
         .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").not_()))
         .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
         .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
@@ -705,7 +679,6 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
 async def compute_normalized_features(
     request: RetrivalRequest, limit: int | None, store: ContractStore | None = None
 ) -> pl.LazyFrame:
-
     menu_recipe_features = await compute_recipe_features(store).derive_features([request]).to_polars()
 
     needed_features = [(feature.name, feature.dtype) for feature in request.returned_features.union(request.entities)]
@@ -761,7 +734,7 @@ async def compute_normalized_features(
             RecipeFeatures.location,
             RecipeNutrition.location,
             RecipeMainIngredientCategory.location,
-            RecipeCost.location
+            RecipeCost.location,
         },
     ).with_loaded_at(),
     materialized_source=materialized_data.partitioned_parquet_at(
@@ -792,9 +765,7 @@ class NormalizedRecipeFeatures:
     cooking_time_from = Float()
 
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2109)
-        | pl.col("taxonomy_ids").list.contains(2104),
-        as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
     )
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
@@ -850,10 +821,11 @@ FROM (
 WHERE allergies.nr = 1
         """
 
+
 @feature_view(
     name="ingredient_allergy_preferences",
     source=pim_core.fetch(ingredient_allergy_preferences_sql),
-    materialized_source=materialized_data.parquet_at("ingredient_allergy_preferences.parquet")
+    materialized_source=materialized_data.parquet_at("ingredient_allergy_preferences.parquet"),
 )
 class IngredientAllergiesPreferences:
     ingredient_id = Int32().as_entity()
@@ -889,10 +861,11 @@ FROM (
 WHERE ingredients.nr = 1
 """
 
+
 @feature_view(
     name="all_recipe_ingredients",
     source=adb.fetch(all_recipe_ingredients_sql),
-    materialized_source=materialized_data.parquet_at("all_recipe_ingredients.parquet")
+    materialized_source=materialized_data.parquet_at("all_recipe_ingredients.parquet"),
 )
 class AllRecipeIngredients:
     recipe_id = Int32().as_entity()
@@ -986,10 +959,7 @@ class RecipePreferences:
     preferences = List(String())
 
 
-async def join_recipe_and_allergies(
-    request: RetrivalRequest, store: ContractStore | None = None
-) -> pl.LazyFrame:
-
+async def join_recipe_and_allergies(request: RetrivalRequest, store: ContractStore | None = None) -> pl.LazyFrame:
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
         """
         Makes it easier to swap between prod, and manually defined data for testing.
@@ -999,34 +969,42 @@ async def join_recipe_and_allergies(
         else:
             return view_wrapper.query()
 
+    allergy_preferences = (
+        await query(IngredientAllergiesPreferences)
+        .filter(
+            pl.col("preference_id").is_not_null()
+            & (
+                pl.col("has_trace_of") == False  # noqa: E712
+            )
+        )
+        .to_polars()
+    )
 
-    allergy_preferences = await query(IngredientAllergiesPreferences).filter(
-        pl.col("preference_id").is_not_null()
-    ).to_polars()
+    recipes_with_allergies = (
+        await query(AllRecipeIngredients)
+        .filter(pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"]))
+        .to_lazy_polars()
+    )
 
-    recipes_with_allergies = await query(AllRecipeIngredients).filter(
-        pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"])
-    ).to_lazy_polars()
-
-    recipe_with_preferences = recipes_with_allergies.join(
-        allergy_preferences.lazy(),
-        on="ingredient_id"
-    ).group_by(["recipe_id", "portion_id", "portion_size"]).agg(
-        allergy_preference_ids=pl.col("preference_id")
+    recipe_with_preferences = (
+        recipes_with_allergies.join(allergy_preferences.lazy(), on="ingredient_id")
+        .group_by(["recipe_id", "portion_id", "portion_size"])
+        .agg(allergy_preference_ids=pl.col("preference_id"))
     )
     recipe_preferences = await query(RecipePreferences).all().to_lazy_polars()
 
-    all_preferences = recipe_with_preferences.cast({"portion_id": pl.Int32}).join(
-        recipe_preferences.cast({"portion_id": pl.Int32}),
-        on=["recipe_id", "portion_id"],
-        how="full"
-    ).with_columns(
-        preference_ids=pl.col("preference_ids").fill_null(["870C7CEA-9D06-4F3E-9C9B-C2C395F5E4F5"]).list.concat(
-            pl.col("allergy_preference_ids").fill_null([])
-        ).list.unique(),
-        recipe_id=pl.col("recipe_id").fill_null(pl.col("recipe_id_right")),
-        portion_size=pl.col("portion_size").fill_null(pl.col("portion_size_right")),
-        portion_id=pl.col("portion_id").fill_null(pl.col("portion_id_right"))
+    all_preferences = (
+        recipe_with_preferences.cast({"portion_id": pl.Int32})
+        .join(recipe_preferences.cast({"portion_id": pl.Int32}), on=["recipe_id", "portion_id"], how="full")
+        .with_columns(
+            preference_ids=pl.col("preference_ids")
+            .fill_null(["870C7CEA-9D06-4F3E-9C9B-C2C395F5E4F5"])
+            .list.concat(pl.col("allergy_preference_ids").fill_null([]))
+            .list.unique(),
+            recipe_id=pl.col("recipe_id").fill_null(pl.col("recipe_id_right")),
+            portion_size=pl.col("portion_size").fill_null(pl.col("portion_size_right")),
+            portion_id=pl.col("portion_id").fill_null(pl.col("portion_id_right")),
+        )
     )
     return all_preferences
 
@@ -1039,10 +1017,10 @@ async def join_recipe_and_allergies(
             RecipePreferences.location,
             IngredientAllergiesPreferences.location,
             AllRecipeIngredients.location,
-        }
+        },
     ),
     materialized_source=materialized_data.parquet_at("recipe_negative_preferences.parquet"),
-    acceptable_freshness=timedelta(days=5)
+    acceptable_freshness=timedelta(days=5),
 )
 class RecipeNegativePreferences:
     recipe_id = Int32().as_entity()

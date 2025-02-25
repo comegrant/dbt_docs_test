@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import polars as pl
@@ -17,7 +18,6 @@ from aligned.retrival_job import RetrivalJob, RetrivalRequest
 from aligned.schemas.constraints import MaxLength, MinLength
 from aligned.schemas.feature import Constraint, Feature
 from aligned.sources.local import FileFactualJob
-from pyspark.sql.types import CharType, DateType, VarcharType
 
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 from data_contracts.helper import snake_to_pascal
@@ -120,6 +120,8 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
         ArrayType,
         BooleanType,
         ByteType,
+        CharType,
+        DateType,
         DoubleType,
         FloatType,
         IntegerType,
@@ -130,6 +132,7 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
         StructType,
         TimestampNTZType,
         TimestampType,
+        VarcharType,
     )
 
     def no_constraints(dtype: FeatureType) -> SparkDataType:
@@ -227,6 +230,21 @@ class DatabricksConnectionConfig:
 
     def catalog(self, catalog: str | ValueRepresentable) -> UnityCatalog:
         return UnityCatalog(self, LiteralValue.from_value(catalog))
+
+    def sql_file(self, file_path: str | Path) -> UCSqlSource:
+        """
+        Creates a source that runs a sql query based on a file path.
+
+        Args:
+            file_path (str | Path): The path to read the sql from
+
+        Returns:
+            UCSqlSource: A source that runs an sql file
+        """
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
+
+        return UCSqlSource(self, file_path.read_text())
 
     def connection(self) -> SparkSession:
         from pyspark.errors import PySparkException

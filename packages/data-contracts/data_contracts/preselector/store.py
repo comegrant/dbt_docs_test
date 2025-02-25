@@ -29,7 +29,7 @@ from data_contracts.recipe import (
     RecipePreferences,
 )
 from data_contracts.recommendations.recommendations import RecommendatedDish
-from data_contracts.sources import data_science_data_lake, databricks_catalog, redis_cluster
+from data_contracts.sources import data_science_data_lake, databricks_catalog
 
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
@@ -99,7 +99,6 @@ class PreselectorTestChoice:
         partition_keys=["company_id", "year", "week"],
         date_formatter=DateFormatter.unix_timestamp(time_unit="us", time_zone="UTC"),
     ),
-    stream_source=redis_cluster.stream("preselector-output"),
 )
 class Preselector:
     agreement_id = Int32().lower_bound(1).as_entity()
@@ -163,9 +162,9 @@ class SuccessfulPreselectorOutput:
 
     recipes = List(Json()).is_optional()
 
-    main_recipe_ids = List(Int32()).description("This will be depricated for `recipes`")
-    variation_ids = List(String()).description("This will be depricated for `recipes`")
-    compliancy = Int32().lower_bound(0).upper_bound(4).description("This will be depricated for `recipes`")
+    main_recipe_ids = List(Int32()).description("This will be deprecated for `recipes`")
+    variation_ids = List(String()).description("This will be deprecated for `recipes`")
+    compliancy = Int32().lower_bound(0).upper_bound(4).description("This will be deprecated for `recipes`")
 
     concept_preference_ids = List(String())
 
