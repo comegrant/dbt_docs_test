@@ -19,9 +19,11 @@ databricks-env = {path = "../../packages/databricks-env", develop = true}
 black = "*"
 pre-commit = "*"
 pytest = "*"
+pytest-mock = "*"
 pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
+pyright = "*"
 
 [build-system]
 requires = ["poetry-core"]

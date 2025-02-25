@@ -1,6 +1,6 @@
 resources:
   jobs:
-    {{cookiecutter.project_name}}-run
+    {{cookiecutter.project_name}}-run:
       name: {{cookiecutter.project_name}}-run-${bundle.target}
 
       permissions:
@@ -15,7 +15,7 @@ resources:
             node_type_id: Standard_DS4_v2
             custom_tags:
               user: "Data scientists"
-              tool: "Preselector"
+              tool: "{{cookiecutter.project_name}}"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:
@@ -41,9 +41,9 @@ resources:
           - task_key: run
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
-            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_id: ${var.slack_notification_job_id} # Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} # Reads from the target environment as defined in the databricks.yml file
               header_message: ❌ {{cookiecutter.project_name}} job failed
               body_message: Check Databricks for more details
               is_error: true
@@ -54,8 +54,8 @@ resources:
           - task_key: run
           run_if: NONE_FAILED
           run_job_task:
-            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_id: ${var.slack_notification_job_id} # Reads from the variable defined in the databricks.yml file
             job_parameters:
-              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              environment: ${bundle.target} # Reads from the target environment as defined in the databricks.yml file
               body_message: ✅ {{cookiecutter.project_name}} job succeeded
               is_error: false

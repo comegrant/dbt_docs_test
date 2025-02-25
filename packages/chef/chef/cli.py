@@ -27,6 +27,7 @@ from chef.doctor_config import (
     MINIMUM_REQUIRED_PYTHON_VERSION,
     VSCODE_DATABRICKS_EXTENSION_URL,
 )
+from chef.package_workflow import write_package_workflow
 from chef.project_workflow import deploy_project_workflow, test_project_workflow
 
 logger = logging.getLogger(__name__)
@@ -663,7 +664,11 @@ def create(type_name: str) -> None:
             pr_file = workflow_dir() / f"{project_name}_pr.yaml"
             deploy_file = workflow_dir() / f"{project_name}_deploy.yaml"
             pr_file.write_text(
-                test_project_workflow(project_name, pr_file.resolve().relative_to(root_folder.resolve()).as_posix())
+                test_project_workflow(
+                    project_name,
+                    pr_file.resolve().relative_to(root_folder.resolve()).as_posix(),
+                    python_version=extra_context["python_version"],
+                )
             )
             deploy_file.write_text(
                 deploy_project_workflow(
@@ -680,6 +685,12 @@ def create(type_name: str) -> None:
                 overwrite_if_exists=True,
                 skip_if_file_exists=True,
             )
+            assert isinstance(output_dir, str)
+            package_name = output_dir.split("packages/")[-1]
+
+            pr_file = workflow_dir() / f"{package_name}_pr.yaml"
+            write_package_workflow(pr_file, root_folder, package_name, extra_context["python_version"])
+
     except Exception as e:
         click.echo(f"\nAn error occured while creating the {type_name}.\n{e}")
         return

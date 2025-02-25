@@ -1,5 +1,5 @@
-def test_project_workflow(project_name: str, file_name: str) -> str:
-    return f"""name: {project_name} PR
+def test_project_workflow(project_name: str, file_name: str, python_version: str) -> str:
+    return f"""name: {project_name} - Project PR
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ jobs:
     uses:
       ./.github/workflows/template_test_python.yml
     with:
-      python-version: "3.10.13"
+      python-version: "{python_version}"
       working-directory: projects/{project_name}
     secrets: inherit
 
