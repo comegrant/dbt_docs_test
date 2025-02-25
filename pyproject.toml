@@ -102,3 +102,6 @@ extend-exclude = ["**/*.ipynb"]
     # Sort import
     "I001"
 ]
+
+[tool.codespell]
+ignore-words-list = "compliancy"

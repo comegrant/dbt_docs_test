@@ -494,7 +494,6 @@ async def process_stream(
             if (
                 number_of_messages == 0
                 and settings.write_output_interval
-                and settings.is_batch_worker
                 and (now - last_batch_write > settings.write_output_interval)
                 and streams.successful_output_stream
                 and streams.failed_output_stream

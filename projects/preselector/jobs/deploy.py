@@ -338,9 +338,9 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                 WorkerConfig(
                     container_name=f"{name}-flush",
                     batch_size=10,
-                    topic_request_name="deviation-request",
-                    topic_success_name="deviation-response",
-                    sub_queue_name="deadletter",
+                    topic_request_name="priority-deviation-request",
+                    topic_success_name="priority-deviation-response",
+                    # sub_queue_name="deadletter",
                 ),
             ]
 

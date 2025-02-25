@@ -1,4 +1,3 @@
-
 import asyncio
 import logging
 
@@ -26,8 +25,6 @@ async def failure_responses_form() -> list[GenerateMealkitRequest]:
 
 
 async def responses_form() -> list[PreselectorSuccessfulResponse]:
-
-
     with st.form("Debug"):
         agreement_id = st.number_input("Agreement ID", min_value=0)
         reload = st.form_submit_button("Reload")
@@ -38,40 +35,46 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     if not reload and str(agreement_id) in st.session_state:
         return st.session_state[str(agreement_id)]
 
-    output = await SuccessfulPreselectorOutput.query().filter(
-        f"billing_agreement_id = {agreement_id}"
-    ).to_polars()
+    output = await SuccessfulPreselectorOutput.query().filter(f"billing_agreement_id = {agreement_id}").to_polars()
 
-    structured = output.group_by(["generated_at", "billing_agreement_id"]).agg(
-        year_weeks=pl.struct(
-            pl.col("menu_year"),
-            pl.col("menu_week"),
-            pl.col("variation_ids"),
-            pl.col("main_recipe_ids"),
-            pl.col("target_cost_of_food_per_recipe"),
-            pl.col("compliancy"),
-            pl.col("error_vector"),
+    structured = (
+        output.group_by(["generated_at", "billing_agreement_id"])
+        .agg(
+            year_weeks=pl.struct(
+                pl.col("menu_year"),
+                pl.col("menu_week"),
+                pl.col("variation_ids"),
+                pl.col("main_recipe_ids"),
+                pl.col("target_cost_of_food_per_recipe"),
+                pl.col("compliancy"),
+                pl.col("error_vector"),
+            )
         )
-    ).sort("generated_at", descending=True)
+        .sort("generated_at", descending=True)
+    )
 
     responses = []
 
-    def decode_broken_taste_preferences(taste_preferences: str) -> list[NegativePreference]:
+    def decode_broken_taste_preferences(taste_preferences: list[str] | None) -> list[NegativePreference]:
         preferences: list[NegativePreference] = []
+        if taste_preferences is None:
+            return []
 
         for preference in taste_preferences:
             stripped = preference.removeprefix("{").removesuffix("}")
 
             components = stripped.split(",")
-            assert len(components) == 2 # noqa
-            preferences.append(
-                NegativePreference(
-                    preference_id=components[0].strip("\""),
-                    is_allergy=components[1], # type: ignore
+            if len(components) == 1:
+                preferences.append(NegativePreference(preference_id=components[0], is_allergy=True))
+            else:
+                assert len(components) == 2  # noqa
+                preferences.append(
+                    NegativePreference(
+                        preference_id=components[0].strip('"'),
+                        is_allergy=components[1],  # type: ignore
+                    )
                 )
-            )
         return preferences
-
 
     for row in structured.iter_rows(named=True):
         first_row = output.filter(
@@ -83,18 +86,13 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
         for week in row["year_weeks"]:
             if "recipes" in week:
-                recipes = [
-                    PreselectorRecipeResponse(**rec)
-                    for rec in week["recipes"]
-                ]
+                recipes = [PreselectorRecipeResponse(**rec) for rec in week["recipes"]]
             else:
                 recipes = [
                     PreselectorRecipeResponse(
-                        main_recipe_id=recipe_id,
-                        variation_id="",
-                        compliancy=week["compliancy"]
+                        main_recipe_id=recipe_id, variation_id=variation_id, compliancy=week["compliancy"]
                     )
-                    for recipe_id in week["main_recipe_ids"]
+                    for recipe_id, variation_id in zip(week["main_recipe_ids"], week["variation_ids"])
                 ]
 
             year_weeks.append(
@@ -103,7 +101,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                     week=week["menu_week"],
                     target_cost_of_food_per_recipe=week["target_cost_of_food_per_recipe"],
                     error_vector=week["error_vector"],
-                    recipe_data=recipes
+                    recipe_data=recipes,
                 )
             )
 
@@ -114,7 +112,9 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                 correlation_id="",
                 year_weeks=year_weeks,
                 concept_preference_ids=first_row["concept_preference_ids"],
-                taste_preferences=decode_broken_taste_preferences(first_row["taste_preferences"]),
+                taste_preferences=decode_broken_taste_preferences(
+                    first_row.get("taste_preferences") or first_row.get("taste_preference_ids")
+                ),
                 override_deviation=False,
                 model_version=first_row["model_version"],
                 generated_at=row["generated_at"],
@@ -129,15 +129,12 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
 
 def select(
-    responses: list[PreselectorSuccessfulResponse]
+    responses: list[PreselectorSuccessfulResponse],
 ) -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
-
     with st.form("Select Response"):
-
         response = st.selectbox("Response", options=responses, format_func=lambda res: res.generated_at)
 
         st.form_submit_button()
-
 
     if not response:
         return None
@@ -145,11 +142,8 @@ def select(
     company_id = response.company_id
 
     with st.form("Select Year Week"):
-
         year_week = st.selectbox(
-            "Year Week",
-            options=response.year_weeks,
-            format_func=lambda yw: f"{yw.year}-{yw.week}"
+            "Year Week", options=response.year_weeks, format_func=lambda yw: f"{yw.year}-{yw.week}"
         )
         st.form_submit_button()
 
@@ -159,7 +153,6 @@ def select(
     st.write("Used model")
     st.write(response.model_version)
 
-
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
 
@@ -168,6 +161,12 @@ def select(
 
     st.write("Compliance Value")
     st.write(year_week.compliancy)
+
+    st.write("Variation Id")
+    st.write(year_week.variation_ids)
+
+    st.write("Recipes")
+    st.write(year_week.main_recipe_ids)
 
     st.write("Error Vector")
     st.write(year_week.error_vector)
@@ -193,10 +192,8 @@ def select(
         GenerateMealkitRequest(
             agreement_id=response.agreement_id,
             company_id=company_id,
-            compute_for=[
-                YearWeek(year=year_week.year, week=year_week.week)
-            ],
-            taste_preferences=[ # type: ignore
+            compute_for=[YearWeek(year=year_week.year, week=year_week.week)],
+            taste_preferences=[  # type: ignore
                 pref.model_dump() for pref in response.taste_preferences
             ],
             concept_preference_ids=response.concept_preference_ids,
@@ -204,9 +201,9 @@ def select(
             portion_size=response.portion_size,
             override_deviation=response.override_deviation,
             has_data_processing_consent=True,
-            ordered_weeks_ago=ordered_weeks_ago
+            ordered_weeks_ago=ordered_weeks_ago,
         ),
-        year_week
+        year_week,
     )
 
 
@@ -230,39 +227,28 @@ async def debug_app() -> None:
 
         return (
             failed[-1],
-            PreselectorYearWeekResponse(
-                year=0, week=0, target_cost_of_food_per_recipe=0, recipe_data=[]
-            )
+            PreselectorYearWeekResponse(year=0, week=0, target_cost_of_food_per_recipe=0, recipe_data=[]),
         )
-
 
     response = await successful_responses()
     if response is None:
         st.write("Found no results")
         return
 
-
     request, expected_recipes = response
 
     st.write(request)
     st.write(expected_recipes)
 
-    cache_store = await load_cache(
-        store, company_id=request.company_id
-    )
+    cache_store = await load_cache(store, company_id=request.company_id)
 
     st.write(request.number_of_recipes)
 
-    run_response = await run_preselector_for_request(
-        request=request, store=cache_store, should_explain=True
-    )
+    run_response = await run_preselector_for_request(request=request, store=cache_store, should_explain=True)
 
     if run_response.failures and run_response.success:
         failed_request = request.copy()
-        failed_request.compute_for = [
-            YearWeek(year=res.year, week=res.week)
-            for res in run_response.failures
-        ]
+        failed_request.compute_for = [YearWeek(year=res.year, week=res.week) for res in run_response.failures]
         st.write("Failed Requests")
         st.write(failed_request)
         new_run_response = await run_preselector_for_request(
@@ -272,14 +258,13 @@ async def debug_app() -> None:
         st.write(new_run_response.success)
         return
 
-
     if not run_response.success:
         st.error(run_response.failures[0])
         return
 
     success = run_response.success[0]
 
-    if (set(success.main_recipe_ids) - set(expected_recipes.main_recipe_ids)):
+    if set(success.main_recipe_ids) - set(expected_recipes.main_recipe_ids):
         st.header("Something is not right")
         st.error(
             f"You have drift in some way. Expected {expected_recipes.main_recipe_ids} recipe ids, "
@@ -289,7 +274,6 @@ async def debug_app() -> None:
         await display_recipes(expected_recipes, st)
     else:
         st.success("Output was reproduced")
-
 
     st.header("Current output")
     await display_recipes(success, st)

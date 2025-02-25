@@ -1,7 +1,7 @@
 import polars as pl
 import pytest
 from aligned import ContractStore
-from aligned.sources.random_source import RandomDataSource
+from aligned.sources.in_mem_source import InMemorySource
 from preselector.main import filter_out_recipes_based_on_preference
 
 
@@ -14,20 +14,22 @@ def model_contracts() -> ContractStore:
     store.add_view(RecipeNegativePreferences)
 
     locations = {
-        RecipeNegativePreferences.location: RandomDataSource.with_values({
-            "recipe_id":    [1, 2, 3, 4, 5, 6, 7],
-            "portion_size": [2, 2, 2, 2, 2, 2, 2],
-            "preference_ids": [["a", "b"], [], [], [], ["b"], ["a"], ["c"]],
-            "loaded_at": [
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11",
-                "2024-10-11T11:11:11"
-            ]
-        })
+        RecipeNegativePreferences.location: InMemorySource.from_values(
+            {
+                "recipe_id": [1, 2, 3, 4, 5, 6, 7],
+                "portion_size": [2, 2, 2, 2, 2, 2, 2],
+                "preference_ids": [["a", "b"], [], [], [], ["b"], ["a"], ["c"]],
+                "loaded_at": [
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                    "2024-10-11T11:11:11",
+                ],
+            }
+        )
     }
 
     assert isinstance(store.feature_source, BatchFeatureSource)
@@ -41,31 +43,27 @@ def model_contracts() -> ContractStore:
 
 @pytest.mark.asyncio()
 async def test_remove_recipes_with_taste_preferences(model_contracts: ContractStore) -> None:
-
-    original_recipes = pl.DataFrame({
-        "recipe_id": [1, 2, 3, 4, 5, 6, 7],
-    })
+    original_recipes = pl.DataFrame(
+        {
+            "recipe_id": [1, 2, 3, 4, 5, 6, 7, 19999],
+        }
+    )
     filtered = await filter_out_recipes_based_on_preference(
-        original_recipes,
-        portion_size=2,
-        taste_preference_ids=["a"],
-        store=model_contracts
+        original_recipes, portion_size=2, taste_preference_ids=["a"], store=model_contracts
     )
 
-    assert filtered.height == 5
+    assert filtered.height == 6
 
 
 @pytest.mark.asyncio()
 async def test_remove_recipes_with_taste_preferences_uppercase(model_contracts: ContractStore) -> None:
-
-    original_recipes = pl.DataFrame({
-        "recipe_id": [1, 2, 3, 4, 5, 6, 7],
-    })
+    original_recipes = pl.DataFrame(
+        {
+            "recipe_id": [1, 2, 3, 4, 5, 6, 7],
+        }
+    )
     filtered = await filter_out_recipes_based_on_preference(
-        original_recipes,
-        portion_size=2,
-        taste_preference_ids=["B"],
-        store=model_contracts
+        original_recipes, portion_size=2, taste_preference_ids=["B"], store=model_contracts
     )
 
     assert filtered.height == 5
@@ -83,7 +81,7 @@ def test_convert_concept() -> None:
         portion_size=4,
         number_of_recipes=4,
         override_deviation=False,
-        has_data_processing_consent=False
+        has_data_processing_consent=False,
     )
 
     new_request = convert_concepts_to_attributes(original_request)

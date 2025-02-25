@@ -93,7 +93,7 @@ def select_next_vector(
         columns (list[str]): The feature located at the vector indexes
         exclude_column (str): The column to exclude in the computations. E.g. IDs
         rename_column (str): What to name the exclude column in the response
-        error_column (str | None): The colum where we return all the errors for each dim
+        error_column (str | None): The column where we return all the errors for each dim
 
     Returns:
         pl.DataFrame: The vector that is closes to the target.
@@ -129,7 +129,7 @@ def select_next_vector(
             .sort("total_error", descending=False)
         )
 
-        explaination = (
+        explanation = (
             top_vectors.select(columns)
             .transpose()
             .select(
@@ -150,11 +150,11 @@ def select_next_vector(
             .with_columns(change_in_error=pl.sum_horizontal(columns), recipe_id=top_vectors["recipe_id"])
             .select(pl.exclude(unimportant_columns))
         )
-        st.write(explaination)
+        st.write(explanation)
 
         st.write("Main reason for recipe")
         st.write(
-            explaination.head(1)
+            explanation.head(1)
             .select(pl.exclude(unimportant_columns))
             .transpose(header_name="feature", include_header=True)
             .sort("column_0", descending=False)
@@ -257,7 +257,7 @@ async def find_best_combination(
         """
         Computes the basket features for a group of recipes.
 
-        e.g. recipe a and b -> 1 chicken, 0.2 similary, 0.5 CoF, etc.
+        e.g. recipe a and b -> 1 chicken, 0.2 similarity, 0.5 CoF, etc.
         """
         job = RetrivalJob.from_polars_df(df, [basket_computations])
         aggregations = await job.aggregate(basket_computations).to_polars()
@@ -293,7 +293,7 @@ async def find_best_combination(
         Creates a new dataframe that enables us to compute where we end up if we choose recipe x.
         """
 
-        # Using numpy in order to vectorize the code and imporve the performance
+        # Using numpy in order to vectorize the code and improve the performance
         repeated_recipes = np.repeat(raw_recipe_nudge["recipe_id"].to_numpy(), final_combination.height)
         return (
             pl.concat([final_combination.select(pl.exclude("basket_id"))] * raw_recipe_nudge.height, how="vertical")
@@ -1455,7 +1455,7 @@ async def run_preselector(
     Generates a combination of recipes that best fit a personalised target and importance vector.
 
     Arguments:
-        customer (GenerateMealkitRequest): The request defining contraints about the mealkit
+        customer (GenerateMealkitRequest): The request defining constraints about the mealkit
         available_recipes (pl.DataFrame): The Available recipes that can be chosen
         recommendations (pl.DataFrame): The recommendations for a user
         target_vector (pl.DataFrame): The target vector to hit
@@ -1532,7 +1532,6 @@ async def run_preselector(
         filtered = normalized_recipe_features.filter(
             pl.col("is_adams_signature").is_not()
             & pl.col("is_cheep").is_not()
-            & pl.col("is_weight_watchers").is_not()
             & pl.col("is_slow_grown_chicken").is_not()
         ).select(
             pl.exclude(["is_adams_signature", "is_cheep"]),
