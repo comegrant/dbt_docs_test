@@ -3,7 +3,225 @@
 version: 2
 
 models:
+  - name: cms__discounts
+    description: "All created discounts. Only discount information, not connected to customers."
 
+    columns:
+      - name: discount_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: discount_usage_type_id
+        data_type: int
+        description: "{{ doc('column__discount_usage_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_type_id
+        data_type: int
+        description: "{{ doc('column__discount_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_amount_type_id
+        data_type: int
+        description: "{{ doc('column__discount_amount_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+
+      - name: discount_category_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_category_id') }}" 
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+
+      - name: discount_channel_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_channel_id') }}"   
+
+      - name: discount_sub_category_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_sub_category_id') }}"
+
+      - name: discount_coupon_type_id
+        data_type: int
+        description: "{{ doc('column__discount_coupon_type_id') }}"
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+
+      - name: discount_title
+        data_type: string
+        description: "{{ doc('column__discount_title') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_partner_invoice_reference
+        data_type: string
+        description: "{{ doc('column__discount_partner_invoice_reference') }}"
+
+      - name: customer_usage_limit
+        data_type: int
+        description: "{{ doc('column__customer_usage_limit') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_amount
+        data_type: decimal(20,10)
+        description: "{{ doc('column__discount_amount') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_partner_price
+        data_type: decimal(20,10)
+        description: "{{ doc('column__discount_partner_price') }}"
+
+      - name: is_active_discount
+        data_type: boolean
+        description: "{{ doc('column__is_active_discount') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_coupon_code_required
+        data_type: boolean
+        description: "{{ doc('column__is_coupon_code_required') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_cumulative_discount
+        data_type: boolean
+        description: "{{ doc('column__is_cumulative_discount') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_valid_on_direct_order
+        data_type: boolean
+        description: "{{ doc('column__is_valid_on_direct_order') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_registration_discount
+        data_type: boolean
+        description: "{{ doc('column__is_registration_discount') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_disabled_on_freeze
+        data_type: boolean
+        description: "{{ doc('column__is_disabled_on_freeze') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: is_highest_price_discount
+        data_type: boolean
+        description: "{{ doc('column__is_highest_price_discount') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_valid_from
+        data_type: date
+        description: "{{ doc('column__discount_valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_valid_to
+        data_type: date
+        description: "{{ doc('column__discount_valid_to') }}"
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+
+      - name: discount_registration_valid_from
+        data_type: date
+        description: "{{ doc('column__discount_registration_valid_from') }}"
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+
+      - name: discount_registration_valid_to
+        data_type: date
+        description: "{{ doc('column__discount_registration_valid_to') }}"
+        data_tests:
+          - not_null:
+              where: "source_created_at>'2023-01-01'"
+              
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: error
+                error_if:  ">153"
+                warn_if: ">153"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          
   - name: cms__loyalty_level_companies
     description: "Information about each loyalty level per company/brand."
 

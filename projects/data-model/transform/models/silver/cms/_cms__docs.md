@@ -817,3 +817,163 @@ The unique id of the consent category in CMS.
 The name of the consent category. E.g. "Accept communication" or "Allergy".
 
 {% enddocs %}
+
+# Discounts
+
+{% docs column__discount_id %}
+
+This is the primary key of the discount table in CMS.
+
+{% enddocs %}
+
+{% docs column__discount_title %}
+
+The title of the discount.
+
+{% enddocs %}
+
+{% docs column__discount_partner_invoice_reference %}
+
+We have partners who purchase discounts to share with third parties such as customers end employees and are invoiced for the discount. This is the reference for invoicing those partners.
+
+{% enddocs %}
+
+{% docs column__customer_usage_limit %}
+
+Indicates the maximum number of times a customer can use a discount.
+
+{% enddocs %}
+
+{% docs column__discount_amount %}
+
+The size of the discount. Can be either in money(kr) or % based on discount_amount_type_id.
+
+{% enddocs %}
+
+{% docs column__discount_partner_price %}
+
+We have partners who purchase discounts to share with third parties such as customers and employees and are invoiced for the discount. This is the price they pay for each discount.
+
+{% enddocs %}
+
+{% docs column__is_active_discount %}
+
+True if discount is active. If a discount isn't active, it cannot be added to an account or applied to an order.
+
+{% enddocs %}
+
+{% docs column__is_coupon_code_required %}
+
+True if coupon code is required for discount.
+
+{% enddocs %}
+
+{% docs column__is_cumulative_discount %}
+
+True if discount can be combined with other discounts.
+
+{% enddocs %}
+
+{% docs column__is_valid_on_direct_order %}
+
+True if discount can be used on direct order (products outside of subscription such as seasonal products).
+
+{% enddocs %}
+
+{% docs column__is_registration_discount %}
+
+True if discount can only be used by new customers.
+
+{% enddocs %}
+
+{% docs column__is_disabled_on_freeze %}
+
+True if discount is inactivated when a customer freezes their account (status change).
+
+{% enddocs %}
+
+{% docs column__is_highest_price_discount %}
+
+True if discount should only be applied to the product with the highest price on the order. The highest priced product will normally be the mealbox.
+
+{% enddocs %}
+
+{% docs column__discount_valid_from %}
+
+First date when the discount can be applied to an order. If cut-off is before this date, the discount won't be added on the order.
+
+{% enddocs %}
+
+{% docs column__discount_valid_to %}
+
+Last date when the discount can be applied to an order. If cut-off is after this date, the discount won't be added on the order.
+
+{% enddocs %}
+
+{% docs column__discount_registration_valid_from %}
+
+Date from which a customer can add the discount.
+
+{% enddocs %}
+
+{% docs column__discount_registration_valid_to %}
+
+Last date a customer can add the discount.
+
+{% enddocs %}
+
+# Discount Usage Types
+
+{% docs column__discount_usage_type_id %}
+
+...
+
+{% enddocs %}
+
+# Discount Amount Types
+
+{% docs column__discount_amount_type_id %}
+
+...
+
+{% enddocs %}
+
+# Discount Types
+
+{% docs column__discount_type_id %}
+
+...
+
+{% enddocs %}
+
+# Discount Categories
+
+{% docs column__discount_category_id %}
+
+...
+
+{% enddocs %}
+
+# Discount Sub Categories
+
+{% docs column__discount_sub_category_id %}
+
+...
+
+{% enddocs %}
+
+# Discount Channels
+
+{% docs column__discount_channel_id %}
+
+...
+
+{% enddocs %}
+
+# Coupon Code Type
+
+{% docs column__discount_coupon_type_id %}
+
+...
+
+{% enddocs %}
