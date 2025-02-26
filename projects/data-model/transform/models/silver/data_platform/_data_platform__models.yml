@@ -4,7 +4,7 @@ version: 2
 
 models:
 
-  - name: databricks__dates
+  - name: data_platform__dates
     description: "Date table generated in a notebook using a python script. Must be updated manually if needed." 
     columns:
 
