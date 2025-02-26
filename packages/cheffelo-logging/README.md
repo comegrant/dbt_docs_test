@@ -33,7 +33,7 @@ Therefore, we can log to DataDog by using the following source.
 > logger = logging.getLogger(__name__)
 >
 > def setup_logger():
->     logger.basicConfig(logging.INFO)
+>     logging.basicConfig(logging.INFO)
 > ```
 
 The code below showcases how to setup DataDog logging for a whole project.
@@ -50,7 +50,7 @@ def main():
     config = DataDogConfig(
         datadog_service_name="preselector",
         datadog_tags="env:testing",
-        datadog_app_key="app_key"
+        datadog_api_key="app_key"
     )
     setup_datadog(logger, config)
 
