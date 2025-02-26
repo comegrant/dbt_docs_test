@@ -6,7 +6,7 @@ A package to simplify logging for local and production environments
 Run the following command to install this package:
 
 ```bash
-chef add cheffelo_logging
+chef add cheffelo-logging
 ```
 
 ### Push logs to DataDog
@@ -36,7 +36,7 @@ Therefore, we can log to DataDog by using the following source.
 >     logger.basicConfig(logging.INFO)
 > ```
 
-The code bellow showcases how to setup DataDog logging for a whole project.
+The code below showcases how to setup DataDog logging for a whole project.
 
 ```python
 import logging
