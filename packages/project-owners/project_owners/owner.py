@@ -52,7 +52,7 @@ class Owner:
     @staticmethod
     def stephen() -> Owner:
         return Owner(
-            name="Stephen ALlwright",
+            name="Stephen Allwright",
             slack_member_id="U05PZG6ED27",
             email="stephen.allwright@cheffelo.com",
         )

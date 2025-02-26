@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 from databricks_env import auto_setup_env
 
 auto_setup_env()
-# NB!!! Do not import project spesific dependencies above this line!
+# NB!!! Do not import project specific dependencies above this line!
 
 # COMMAND ----------
 from {{cookiecutter.module_name}}.main import run, RunArgs
