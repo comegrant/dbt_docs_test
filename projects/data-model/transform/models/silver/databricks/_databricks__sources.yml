@@ -1,0 +1,10 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/source-properties
+
+version: 2
+
+sources:
+  - name: databricks
+    schema: bronze
+    description: "Tables that have been created by running scripts in Databricks"
+    tables:
+      - name: databricks__dates
