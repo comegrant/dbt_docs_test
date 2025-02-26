@@ -1,7 +1,7 @@
 with 
 
 dates as (
-    select * from {{ source('data_platforms', 'data_platform__dates') }}
+    select * from {{ source('data_platform', 'data_platform__dates') }}
 )
 
 , renamed as (
