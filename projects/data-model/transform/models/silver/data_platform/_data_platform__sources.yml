@@ -3,8 +3,8 @@
 version: 2
 
 sources:
-  - name: databricks
+  - name: data_platform
     schema: bronze
     description: "Tables that have been created by running scripts in Databricks"
     tables:
-      - name: databricks__dates
+      - name: data_platform__dates

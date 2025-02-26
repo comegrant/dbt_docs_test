@@ -12,7 +12,7 @@ with
 
 dates as (
     
-    select * from {{ref('databricks__dates')}}
+    select * from {{ref('data_platform__dates')}}
 
 )
 

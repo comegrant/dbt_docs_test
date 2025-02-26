@@ -19,14 +19,14 @@ dates = dates \
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC DROP TABLE IF EXISTS bronze.databricks__dates
+# MAGIC DROP TABLE IF EXISTS bronze.data_platform__dates
 
 # COMMAND ----------
 
-dates.write.mode("overwrite").saveAsTable("bronze.databricks__dates")
+dates.write.mode("overwrite").saveAsTable("bronze.data_platform__dates")
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC
-# MAGIC COMMENT ON TABLE bronze.databricks__dates IS 'This is a table generated in the Databricks data platform. The table will be used to create gold.dim_dates that contains the date information in the data model';
+# MAGIC COMMENT ON TABLE bronze.data_platform__dates IS 'This is a table generated in the Databricks data platform. The table will be used to create gold.dim_dates that contains the date information in the data model';
