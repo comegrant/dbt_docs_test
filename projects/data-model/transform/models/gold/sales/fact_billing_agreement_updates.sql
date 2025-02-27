@@ -66,6 +66,7 @@ dim_billing_agreements as (
 
     , agreements.billing_agreement_id
     , agreements.valid_from as updated_at
+    , agreements.first_menu_week_monday_date
     
     , case
         when agreements.signup_rank = 1 then true

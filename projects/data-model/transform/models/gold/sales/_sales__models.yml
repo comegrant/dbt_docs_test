@@ -862,6 +862,8 @@ models:
     latest_version: 1
     config:
       alias: fact_billing_agreement_updates
+      contract:
+        enforced: true
 
     columns:
       - name: pk_fact_billing_agreement_updates
@@ -878,8 +880,6 @@ models:
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -893,12 +893,13 @@ models:
           - relationships:
               to: ref('dim_dates')
               field: pk_dim_dates
+              config: 
+                ## This agreement has records from 1970 before we have any rows on dim_dates. 
+                where: "billing_agreement_id <> 528003"
 
       - name: fk_dim_time
         data_type: string
         description: "{{ doc('column__pk_dim_time') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -908,8 +909,6 @@ models:
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__fk_dim_billing_agreements_updated') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -927,8 +926,6 @@ models:
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -946,72 +943,58 @@ models:
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: updated_at
         data_type: timestamp
         description: "{{ doc('column__updated_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
+
+      - name: first_menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
 
       - name: is_signup
         data_type: boolean
         description: "{{ doc('column__is_signup') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_first_delivery
         data_type: boolean
         description: "{{ doc('column__has_first_delivery') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_updated_preferences
         data_type: boolean
         description: "{{ doc('column__has_updated_preferences') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_updated_subscribed_products
         data_type: boolean
         description: "{{ doc('column__has_updated_subscribed_products') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_updated_status
         data_type: boolean
         description: "{{ doc('column__has_updated_status') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_updated_loyalty_level
         data_type: boolean
         description: "{{ doc('column__has_updated_loyalty_level') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_updated_onesub_flag
         data_type: boolean
         description: "{{ doc('column__has_updated_onesub_flag') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
