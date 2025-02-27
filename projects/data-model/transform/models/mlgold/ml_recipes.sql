@@ -35,7 +35,7 @@ fact_menu as (
         , recipe_difficulty_level_id
         , recipe_difficulty_name
         , recipe_main_ingredient_id
-        , recipe_main_ingredient_name
+        , recipe_main_ingredient_name_local
     from {{ ref('dim_recipes') }}
 )
 
@@ -165,7 +165,7 @@ fact_menu as (
         , dim_recipes.recipe_difficulty_level_id
         , dim_recipes.recipe_difficulty_name
         , dim_recipes.recipe_main_ingredient_id
-        , dim_recipes.recipe_main_ingredient_name
+        , dim_recipes.recipe_main_ingredient_name_local
         , taxonomies_list.taxonomy_list
         , taxonomies_list.number_of_taxonomies
         , generic_ingredients_list.generic_ingredient_id_list

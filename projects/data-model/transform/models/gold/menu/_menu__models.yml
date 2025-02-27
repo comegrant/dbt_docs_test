@@ -312,9 +312,13 @@ models:
         data_type: string
         description: "{{ doc('column__recipe_difficulty_name') }}"
 
-      - name: recipe_main_ingredient_name
+      - name: recipe_main_ingredient_name_local
         data_type: string
-        description: "{{ doc('column__recipe_main_ingredient_name') }}"
+        description: "{{ doc('column__recipe_main_ingredient_name_local') }}"
+
+      - name: recipe_main_ingredient_name_english
+        data_type: string
+        description: "{{ doc('column__recipe_main_ingredient_name_english') }}"
 
       - name: main_recipe_name
         data_type: string

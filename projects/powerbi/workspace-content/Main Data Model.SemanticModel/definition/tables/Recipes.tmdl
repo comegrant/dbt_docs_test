@@ -73,7 +73,14 @@ table Recipes
 		dataType: string
 		lineageTag: 74688ed6-412e-4ef6-9858-c508efec0bc7
 		summarizeBy: none
-		sourceColumn: recipe_main_ingredient_name
+		sourceColumn: recipe_main_ingredient_name_local
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Main Ingredient Name (Eng)'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: recipe_main_ingredient_name_english
 
 		annotation SummarizationSetBy = Automatic
 

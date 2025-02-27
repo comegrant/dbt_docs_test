@@ -62,9 +62,15 @@ Primary key of the fact_recipe_reaction_types table.
 
 {% enddocs %}
 
-{% docs column__recipe_main_ingredient_name %}
+{% docs column__recipe_main_ingredient_name_local %}
 
-...
+The main ingredient of the recipe in the local language.
+
+{% enddocs %}
+
+{% docs column__recipe_main_ingredient_name_english %}
+
+The main ingredient of the recipe in english language.
 
 {% enddocs %}
 

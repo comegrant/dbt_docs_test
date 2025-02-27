@@ -158,8 +158,8 @@ models:
         data_type: int
         description: "{{ doc('column__recipe_main_ingredient_id') }}"
 
-      - name: recipe_main_ingredient_name
-        description: "{{ doc('column__recipe_main_ingredient_name') }}"
+      - name: recipe_main_ingredient_name_local
+        description: "{{ doc('column__recipe_main_ingredient_name_local') }}"
         data_type: string
 
       - name: taxonomy_list
