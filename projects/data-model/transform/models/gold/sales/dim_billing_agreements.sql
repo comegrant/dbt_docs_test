@@ -54,6 +54,12 @@ billing_agreements as (
 
 )
 
+, agreements_to_include as (
+    
+    select distinct billing_agreement_id from billing_agreements
+
+)
+
 , onesub_agreements as (
     select 
     basket_products_joined.billing_agreement_basket_product_updated_id
@@ -224,6 +230,12 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         on scd2_tables_joined.billing_agreement_basket_product_updated_id = onesub_agreements.billing_agreement_basket_product_updated_id
     left join onesub_beta_agreements
         on scd2_tables_joined.billing_agreement_id = onesub_beta_agreements.billing_agreement_id
+    
+    -- when customers signup during the ingestion in the ETL pipeline, billing agreements that does not yet exist in 
+    -- cms__billing_agreements, might exist in other tables. We want to exclude all billing agreements from 
+    -- dim_billling_agreements that does not exist in cms__billing_agreements yet.
+    inner join agreements_to_include
+        on scd2_tables_joined.billing_agreement_id = agreements_to_include.billing_agreement_id
 
 )
 
