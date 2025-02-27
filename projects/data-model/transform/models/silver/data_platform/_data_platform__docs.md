@@ -119,3 +119,9 @@ Counts the number of days since the beginning of the financial quarter
 Counts the number of days since the beginning of the financial month.
 
 {% enddocs %}
+
+{% docs column__is_future  %}
+
+Is true if date is in the future, else false.
+
+{% enddocs %}
