@@ -42,14 +42,6 @@ class Owner:
         )
 
     @staticmethod
-    def thomassve() -> Owner:
-        return Owner(
-            name="Thomas Sve",
-            slack_member_id="U03EC1FF10T",
-            email="thomas.sve@cheffelo.com",
-        )
-
-    @staticmethod
     def stephen() -> Owner:
         return Owner(
             name="Stephen Allwright",
@@ -98,18 +90,44 @@ class Owner:
         )
 
     @staticmethod
+    def daniel() -> Owner:
+        return Owner(
+            name="Daniel Gebäck",
+            slack_member_id="UCJ8E7KE3",
+            email="daniel.geback@cheffelo.com",
+        )
+
+    @staticmethod
+    def synne() -> Owner:
+        return Owner(
+            name="Synne Andersen",
+            slack_member_id="U04E4HBEEHZ",
+            email="synne.andersen@cheffelo.com",
+        )
+
+    @staticmethod
+    def lina() -> Owner:
+        return Owner(
+            name="Lina Sjölin",
+            slack_member_id="UF7UCANTC",
+            email="lina.sjolin@cheffelo.com",
+        )
+
+    @staticmethod
     def all_owners() -> list[Owner]:
         return [
             Owner.matsmoll(),
             Owner.jose(),
             Owner.niladri(),
-            Owner.thomassve(),
             Owner.stephen(),
             Owner.sylvia(),
             Owner.grant(),
             Owner.marie(),
             Owner.anna(),
             Owner.agathe(),
+            Owner.daniel(),
+            Owner.synne(),
+            Owner.lina(),
         ]
 
 
