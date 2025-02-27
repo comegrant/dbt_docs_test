@@ -21,19 +21,18 @@ dates as (
 
 )
 
-, add_extra_columns as (
+, find_monday_date_of_week as (
     
     select 
         renamed.*
         , {{ get_iso_week_start_date('year_of_calendar_week', 'calendar_week') }} as monday_date
-        , date > current_date() as is_future
     from renamed
 )
 
 , add_financial_periods as (
 
     select 
-        add_extra_columns.*
+        find_monday_date_of_week.*
         , year(monday_date) as financial_year
         , quarter(monday_date) as financial_quarter
         , month(monday_date) as financial_month_number
@@ -45,7 +44,7 @@ dates as (
 
         , monday_date - interval 1 week as monday_date_previous_week
 
-    from add_extra_columns 
+    from find_monday_date_of_week
 
 )
 
@@ -84,7 +83,7 @@ dates as (
 
 )
 
-, add_day_indexes as (
+, add_calculated_columns as (
     select 
         *
         -- add index to all the days of the financial year
@@ -97,7 +96,8 @@ dates as (
         -- add index to all the days of each month of the financial year
         -- makes it possible to compare with the same month n periods away
         , row_number() over (partition by financial_year, financial_month_number order by date) as day_of_financial_month_number
+        , date > current_date() as is_future
     from moving_specific_financial_weeks
 )
 
-select * from add_day_indexes
+select * from add_calculated_columns
