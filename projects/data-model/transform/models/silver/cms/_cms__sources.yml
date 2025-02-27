@@ -28,6 +28,9 @@ sources:
       - name: cms__country
       - name: cms__discount_channel
       - name: cms__discount_category
+      - name: cms__discount_category_mapping_discount_sub_category
+      - name: cms__discount_mapping_channel_category
+      - name: cms__discount_sub_category
       - name: cms__delivery_week_type
       - name: cms__discount
       - name: cms__loyalty_agreement_ledger
