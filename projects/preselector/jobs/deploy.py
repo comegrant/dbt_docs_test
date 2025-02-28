@@ -23,7 +23,7 @@ from azure.mgmt.containerinstance.models import (
     UserAssignedIdentities,
 )
 from cheffelo_logging.logging import DataDogConfig, DataDogStatsdConfig
-from keyvault import AzureKeyVault, DatabricksKeyVault, KeyVaultInterface
+from key_vault import AzureKeyVault, DatabricksKeyVault, KeyVaultInterface
 from preselector.process_stream_settings import ProcessStreamSettings
 from pydantic import BaseModel, Field, SecretStr
 from pydantic_argparser import parse_args
@@ -102,12 +102,12 @@ async def deploy_preselector(
 
     intervals = {
         "test": {
-            "write_output_interval": write_output_interval or timedelta(hours=12),
+            "write_output_interval": write_output_interval,
             "write_output_max_size": 10_000,
             "update_data_interval": timedelta(hours=12),
         },
         "prod": {
-            "write_output_interval": write_output_interval or timedelta(hours=3),
+            "write_output_interval": write_output_interval,
             "write_output_max_size": 10_000,
             "update_data_interval": timedelta(hours=2),
         },
@@ -310,6 +310,8 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                 ),
             ]
 
+            write_interval = timedelta(hours=5)
+
             if company in split_workers:
                 for index, worker in enumerate(workers):
                     await deploy_preselector(
@@ -320,6 +322,7 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                         image_tag=tag,
                         resource_group=f"rg-chefdp-{env}",
                         workers=[worker],
+                        write_output_interval=write_interval,
                     )
             else:
                 await deploy_preselector(
@@ -330,6 +333,7 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                     image_tag=tag,
                     resource_group=f"rg-chefdp-{env}",
                     workers=workers,
+                    write_output_interval=write_interval,
                 )
         elif mode == "flush":
             name += f"flush-{env}"

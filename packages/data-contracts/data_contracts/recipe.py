@@ -837,6 +837,16 @@ class IngredientAllergiesPreferences:
     allergy_name = String()
 
 
+async def map_preferences(df: pl.LazyFrame) -> pl.LazyFrame:
+    return df.unique(["preference_id", "allergy_name"])
+
+
+@feature_view(source=IngredientAllergiesPreferences.as_source().transform_with_polars(map_preferences))
+class AllergyPreferences:
+    preference_id = String().as_entity()
+    allergy_name = String()
+
+
 all_recipe_ingredients_sql = """
 SELECT *
 FROM (

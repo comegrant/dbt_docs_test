@@ -6,6 +6,7 @@ import streamlit as st
 from cheffelo_logging.logging import setup_streamlit
 from combinations_app import display_recipes
 from data_contracts.preselector.store import SuccessfulPreselectorOutput
+from data_contracts.recipe import AllergyPreferences
 from preselector.data.models.customer import (
     PreselectorRecipeResponse,
     PreselectorSuccessfulResponse,
@@ -22,6 +23,11 @@ async def failure_responses_form() -> list[GenerateMealkitRequest]:
         "Not implemented, as the current data model for failed requests is not good enough. "
         "We should enable to filter on users without decoding the JSON request"
     )
+
+
+async def load_allergens() -> dict[str, str]:
+    allergens = await AllergyPreferences.query().all().cached_at("data/allergy_preferences.parquet").to_polars()
+    return {row["preference_id"]: row["allergy_name"] for row in allergens.to_dicts()}
 
 
 async def responses_form() -> list[PreselectorSuccessfulResponse]:
@@ -53,6 +59,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
         .sort("generated_at", descending=True)
     )
 
+    allergens = await load_allergens()
     responses = []
 
     def decode_broken_taste_preferences(taste_preferences: list[str] | None) -> list[NegativePreference]:
@@ -65,7 +72,9 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
 
             components = stripped.split(",")
             if len(components) == 1:
-                preferences.append(NegativePreference(preference_id=components[0], is_allergy=True))
+                preferences.append(
+                    NegativePreference(preference_id=components[0], is_allergy=components[0] in allergens)
+                )
             else:
                 assert len(components) == 2  # noqa
                 preferences.append(
@@ -128,7 +137,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
     return responses
 
 
-def select(
+async def select(
     responses: list[PreselectorSuccessfulResponse],
 ) -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
     with st.form("Select Response"):
@@ -155,6 +164,10 @@ def select(
 
     st.write("Negative Preferences")
     st.write(response.taste_preferences)
+
+    allergens = await load_allergens()
+    st.write("Negative allergens names")
+    st.write([allergens.get(pref.preference_id) for pref in response.taste_preferences])
 
     st.write("Concept Preferences")
     st.write(response.concept_preference_ids)
@@ -216,7 +229,7 @@ async def debug_app() -> None:
         if not responses:
             return None
 
-        return select(responses)
+        return await select(responses)
 
     async def failed_responses() -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
         failed = await failure_responses_form()

@@ -1318,6 +1318,20 @@ async def filter_out_recipes_based_on_preference(
 async def filter_on_preferences(
     customer: GenerateMealkitRequest, recipes: pl.DataFrame, store: ContractStore
 ) -> tuple[pl.DataFrame, PreselectorPreferenceCompliancy, pl.DataFrame | None]:
+    """
+    Filters out all recipes that a customer do not want based on their negative preferences
+
+    This also makes sure that if there is too few recipes will it loosen the preferences and change the compliancy.
+
+    Args:
+        customer (GenerateMealkitRequest): The customer requests which contains the negative prefs
+        recipes (pl.DataFrame): All the recipes that we could potentially select for a week
+        store (ContractStore): A store with all other sources
+
+    Returns:
+        A tuple containing the available recipes to choose from, a compliancy value,
+        and preselected recipes if we loosen up the preferences.
+    """
     if not customer.taste_preferences:
         return recipes, PreselectorPreferenceCompliancy.all_compliant, None
 
@@ -1357,6 +1371,42 @@ async def filter_on_preferences(
 async def compute_weeks_ago(
     company_id: str, agreement_id: int, year_week: int, main_recipe_ids: list[int], store: ContractStore
 ) -> pl.DataFrame:
+    """
+    Computes the weeks ago based on the batch sources that exists.
+
+    Args:
+        company_id (str): The company id of the user
+        agreement_id (int): The id of the user
+        year_week (int): The week to generate the quarantining penalty for
+        main_recipe_ids (list[int]): The recipes to fetch a value for
+        store (ContractStore): The store containing the source to use
+
+    Returns:
+        pl.DataFrame: The dataframe containing the penalty data
+
+    ```python
+    store = ...
+
+    df = await compute_weeks_ago(
+        company_id="...",
+        agreement_id=1312653,
+        year_week=202514,
+        main_recipe_ids=[1, 2, 3, ...],
+        store=store
+    )
+    print(df)
+    ```
+    ┌──────────────┬──────────────┬─────────────┬─────────────┬─────────────┬────────────┬─────────────┐
+    │ from_year_we ┆ last_order_y ┆ main_recipe ┆ company_id  ┆ agreement_i ┆ order_diff ┆ ordered_wee │
+    │ ek           ┆ ear_week     ┆ _id         ┆ ---         ┆ d           ┆ ---        ┆ ks_ago      │
+    │ ---          ┆ ---          ┆ ---         ┆ str         ┆ ---         ┆ f64        ┆ ---         │
+    │ i64          ┆ i32          ┆ i32         ┆             ┆ i32         ┆            ┆ f64         │
+    ╞══════════════╪══════════════╪═════════════╪═════════════╪═════════════╪════════════╪═════════════╡
+    │ 202508       ┆ 202506       ┆ 51930       ┆ 8A613C15-35 ┆ 1312653     ┆ 2.0        ┆ 0.861654    │
+    │              ┆              ┆             ┆ E4-471F-91C ┆             ┆            ┆             │
+    │              ┆              ┆             ┆ C-972F93…   ┆             ┆            ┆             │
+    └──────────────┴──────────────┴─────────────┴─────────────┴─────────────┴────────────┴─────────────┘
+    """
     number_of_recipes = len(main_recipe_ids)
     req = store.feature_view(WeeksSinceRecipe).request
     derived_feature_names = sorted([feat.name for feat in req.derived_features])
@@ -1390,6 +1440,22 @@ async def add_ordered_since_feature(
     year_week: int,
     selected_recipes: dict[int, int],
 ) -> pl.DataFrame:
+    """
+    Adds the recipe quarantining data.
+
+    This means both historical orders, but also expected recipes in the customers selection.
+
+    Args:
+        customer (GenerateMealkitRequest): The customers generation request
+        store (ContractStore): The store containing all the data sources
+        recipe_features (pl.DataFrame): A dataframe containing all recipes candidates
+        year_week (int): The year week to load the quarantining data based on. 1 week into the future?
+        selected_recipes (dict[int, int]): A realtime input which defines when a recipes was selected
+
+    Returns:
+        pl.DataFrame: The recipe_features data frame with a new column containing the quarantining data for each recipe.
+    """
+
     new_recipe_ids = recipe_features.filter(pl.col("main_recipe_id").is_in(selected_recipes.keys()).not_())[
         "main_recipe_id"
     ]

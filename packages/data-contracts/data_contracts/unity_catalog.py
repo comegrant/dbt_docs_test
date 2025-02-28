@@ -231,7 +231,7 @@ class DatabricksConnectionConfig:
     def catalog(self, catalog: str | ValueRepresentable) -> UnityCatalog:
         return UnityCatalog(self, LiteralValue.from_value(catalog))
 
-    def sql_file(self, file_path: str | Path) -> UCSqlSource:
+    def sql_file(self, file_path: str | Path, format_values: dict[str, str] | None = None) -> UCSqlSource:
         """
         Creates a source that runs a sql query based on a file path.
 
@@ -244,7 +244,12 @@ class DatabricksConnectionConfig:
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
-        return UCSqlSource(self, file_path.read_text())
+        content = file_path.read_text()
+
+        if format_values:
+            content = content.format(**format_values)
+
+        return UCSqlSource(self, content)
 
     def connection(self) -> SparkSession:
         from pyspark.errors import PySparkException
@@ -344,6 +349,12 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
     query: str
 
     type_name = "uc_sql"
+
+    async def to_pandas(self) -> pd.DataFrame:
+        return await self.all_columns().to_pandas()
+
+    async def to_polars(self) -> pl.DataFrame:
+        return await self.all_columns().to_polars()
 
     def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
         client = self.config.connection()
@@ -744,7 +755,8 @@ class UCTableSource(CodableBatchDataSource, WritableFeatureSource, DatabricksSou
             pdf.to_pandas(),
             schema=schema,  # type: ignore
         )
-        schema = conn.table(self.table.identifier()).schema
+        if conn.catalog.tableExists(self.table.identifier()):
+            schema = conn.table(self.table.identifier()).schema
         validate_pyspark_schema(old=schema, new=df.schema)
         df.write.mode("append").saveAsTable(self.table.identifier())
 

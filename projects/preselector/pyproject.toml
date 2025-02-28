@@ -29,6 +29,7 @@ datadog = "^0.50.1"
 virtualenv = "20.24.2"
 slack-connector = {path = "../../packages/slack-connector", develop = true}
 constants = {path = "../../packages/constants", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
 
 [tool.poetry.group.worker.dependencies]
 azure-servicebus = "^7.12.2"

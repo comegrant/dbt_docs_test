@@ -56,6 +56,14 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+    - name: Setting SHA
+      if: github.event_name == 'pull_request'
+      run: echo "GIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+
+    - name: Setting SHA
+      if: github.event_name == 'push'
+      run: echo "GIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
     - name: Setting target
       if: ${{ inputs.should-change-target }}
       run: echo "DATABRICKS_TARGET=${{ vars.ENVIRONMENT_VARIABLE }}" >> $GITHUB_ENV
@@ -85,6 +93,7 @@ jobs:
         # Sets some default variables for dab input vars
         BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{  inputs.docker-image-tag }}
         BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
+        BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc
 
     - name: Deploy DABs
       run: databricks bundle deploy ${{inputs.extra-args}}
@@ -96,3 +105,4 @@ jobs:
         # Sets some default variables for dab input vars
         BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
         BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
+        BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc

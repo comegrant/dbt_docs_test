@@ -103,6 +103,9 @@ async def run() -> None:
 
     header_message = f"Preselector {company} Validation Finished"
 
+    if model_version:
+        header_message += f" for model version {model_version}"
+
     body_message_error = (
         f"❌ Errors Detected in Preselector Output!\n\n"
         f"Total number of instances: {total_records}\n"
