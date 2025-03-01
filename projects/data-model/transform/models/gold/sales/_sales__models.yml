@@ -53,6 +53,14 @@ models:
         data_tests:
           - not_null
 
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: product_variation_quantity
         data_type: int
         description: "{{ doc('column__product_variation_quantity') }}"

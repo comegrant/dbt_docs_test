@@ -523,6 +523,10 @@ order_lines as (
         , recipe_feedback.recipe_rating_score
         , recipe_feedback.is_not_cooked_dish
         , recipe_feedback.recipe_comment
+        , greatest(
+            add_recipes_to_orders.source_created_at
+            , recipe_feedback.source_updated_at
+        ) as source_updated_at
     from add_recipes_to_orders
     left join recipe_feedback
         on add_recipes_to_orders.recipe_id = recipe_feedback.recipe_id

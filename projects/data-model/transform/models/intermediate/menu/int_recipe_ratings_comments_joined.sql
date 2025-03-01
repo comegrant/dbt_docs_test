@@ -23,6 +23,12 @@ all_tables_joined as (
     , recipe_ratings.recipe_rating_score
     , recipe_ratings.is_not_cooked_dish
     , recipe_comments.recipe_comment
+    , greatest(
+        recipe_ratings.source_created_at
+        , recipe_ratings.source_updated_at
+        , recipe_comments.source_created_at
+        , recipe_comments.source_updated_at
+    ) as source_updated_at
 
     from recipe_ratings
     
