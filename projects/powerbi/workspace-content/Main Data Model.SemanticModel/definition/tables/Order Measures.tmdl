@@ -1114,6 +1114,14 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column source_updated_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: source_updated_at
+
 	column fk_dim_order_statuses
 		dataType: string
 		isHidden
@@ -1421,7 +1429,7 @@ table 'Order Measures'
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    fact_orders_Table = gold_Schema{[Name="fact_orders",Kind="Table"]}[Data],
-				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_created_at] >= RangeStart and [source_created_at] < RangeEnd)
+				    #"Filtered Rows" = Table.SelectRows(fact_orders_Table, each [source_updated_at] >= RangeStart and [source_updated_at] < RangeEnd)
 				in
 				    #"Filtered Rows"
 
