@@ -186,7 +186,7 @@ table 'Agreements Weekly'
 					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 					dim_preferences_Table = gold_Schema{[Name="fact_billing_agreements_weekly",Kind="Table"]}[Data],
-				    #"Filtered Rows" = Table.SelectRows(dim_preferences_Table, each [monday_date] >= RangeStart and [monday_date] < RangeEnd)
+				    #"Filtered Rows" = Table.SelectRows(dim_preferences_Table, each Date.IsInPreviousNDays([monday_date], 7))
 				in
 				    #"Filtered Rows"
 
