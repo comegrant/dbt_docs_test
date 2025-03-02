@@ -42,6 +42,8 @@ ref table 'Preference Combinations'
 ref table 'Agreements Daily'
 ref table 'Customer Measures'
 ref table 'Agreement Recipe Compliance Measures'
+ref table 'Budget Types'
+ref table 'Budget Measures'
 
 ref cultureInfo en-US
 

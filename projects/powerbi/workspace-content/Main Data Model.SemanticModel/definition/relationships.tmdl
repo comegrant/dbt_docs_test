@@ -200,3 +200,14 @@ relationship c9f17f39-1bd5-a6a0-8327-76a43d68e0c6
 	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
+relationship fact_budget_to_dim_budget_types
+	fromColumn: 'Budget Measures'.fk_dim_budget_types
+	toColumn: 'Budget Types'.pk_dim_budget_types
+
+relationship fact_budget_to_dim_companies
+	fromColumn: 'Budget Measures'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_budget_to_dim_dates
+	fromColumn: 'Budget Measures'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates

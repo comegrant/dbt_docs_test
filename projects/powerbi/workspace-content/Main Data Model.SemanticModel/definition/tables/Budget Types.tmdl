@@ -1,0 +1,44 @@
+table 'Budget Types'
+    lineageTag: Budget-Types-Table
+
+    /// Primary key of the dim_budget_types table
+    column pk_dim_budget_types
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_budget_types
+
+    /// The corresponding id to which type of budget process the data belongs to (F1, F2, F3, Budget)
+    column budget_type_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: budget_type_id
+
+    /// The name of the budget type (F1, F2, F3, Budget)        
+    column 'Budget Type'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: budget_type_name
+
+    /// Describes the function of each budget type    
+    column 'Budget Type Description'
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: budget_type_description
+
+    partition 'Budget Types' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_budget_types_Table = gold_Schema{[Name="dim_budget_types",Kind="Table"]}[Data]
+                in
+                    dim_budget_types_Table
