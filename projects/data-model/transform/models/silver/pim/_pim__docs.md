@@ -534,5 +534,31 @@ The description of a recipe step, i.e. "Boil the pasta"
 
 {% enddocs %}
 
+---------
+{% docs column__ingredient_nutrient_fact_id %}
 
+The identifier for an ingredient's nutritional fact in the source system.
+
+Values:
+* `2`: Fat
+* `3`: Protein
+* `5`: Carbohydrates
+* `6`: Salt
+* `7`: Energy (kJ)
+* `8`: Fat (saturated)
+* `9`: Carbohydrates (sugar)
+* `10`: Fiber
+* `11`: Energy (kcal)
+* `12`: Fresh fruit and vegetables
+* `13`: Processed fruit and vegetables
+* `14`: Added sugars
+* `15`: Added salt
+
+{% enddocs %}
+
+{% docs column__ingredient_nutritional_value %}
+
+The nutritional value of an ingredient's nutritional fact id per 100g of ingredient.
+
+{% enddocs %}
 

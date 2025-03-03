@@ -44,3 +44,4 @@ sources:
       - name: pim__recipe_favorites
       - name: pim__recipe_favorite_types
       - name: pim__recipe_steps_translations
+      - name: pim__ingredient_nutrient_facts

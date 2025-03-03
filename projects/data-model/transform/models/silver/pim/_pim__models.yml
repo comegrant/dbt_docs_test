@@ -1306,3 +1306,45 @@ models:
       - name: recipe_step_description
         data_type: string
         description: "{{ doc('column__recipe_step_description') }}"
+
+  - name: pim__ingredient_nutrient_facts
+    description: "Table mapping ingredient ids to their nutritional values"
+
+    columns:
+      - name: ingredient_nutrient_fact_id
+        data_type: int
+        description: "{{ doc('column__ingredient_nutrient_fact_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_nutritional_value
+        data_type: double
+        description: "{{ doc('column__ingredient_nutritional_value') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
