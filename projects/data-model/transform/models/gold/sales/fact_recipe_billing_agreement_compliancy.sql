@@ -1,3 +1,11 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='pk_fact_recipe_billing_agreement_compliancy',
+        on_schema_change='append_new_columns'
+    )
+}}
+
 with
 
 dim_billing_agreements as (
