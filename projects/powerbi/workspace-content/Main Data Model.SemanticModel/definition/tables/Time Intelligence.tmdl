@@ -5,51 +5,11 @@ table 'Time Intelligence'
         calculationItem Current = SELECTEDMEASURE()
 
         calculationItem 'PY' = 
-
-			VAR CurrentFinancialYear = SELECTEDVALUE('Dates'[Financial Year])
-			VAR CurrentFinancialQuarter = SELECTEDVALUE('Dates'[Financial Quarter])
-			VAR CurrentFinancialMonth = SELECTEDVALUE('Dates'[Financial Month Number])
-			VAR CurrentFinancialWeek = SELECTEDVALUE('Dates'[Financial Week])
-
-			RETURN
-				SWITCH(
-					TRUE(),
-
-					ISINSCOPE('Dates'[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), CALCULATE(
-						SELECTEDMEASURE(),
-						DATEADD('Dates'[Date], -1, YEAR),
-						REMOVEFILTERS(Dates)
-					),
-
-					ISINSCOPE('Dates'[Financial Week]), CALCULATE(
-						SELECTEDMEASURE(),
-						'Dates'[Financial Year] = CurrentFinancialYear - 1,
-						'Dates'[Financial Week] = CurrentFinancialWeek,
-						REMOVEFILTERS(Dates)
-					),
-
-					ISINSCOPE('Dates'[Financial Month Name]), CALCULATE(
-						SELECTEDMEASURE(),
-						'Dates'[Financial Year] = CurrentFinancialYear - 1,
-						'Dates'[Financial Month Number] = CurrentFinancialMonth,
-						REMOVEFILTERS(Dates)
-					),
-
-					ISINSCOPE('Dates'[Financial Quarter]), CALCULATE(
-						SELECTEDMEASURE(),
-						'Dates'[Financial Year] = CurrentFinancialYear - 1,
-						'Dates'[Financial Quarter] = CurrentFinancialQuarter,
-						REMOVEFILTERS(Dates)
-					),
-
-					ISINSCOPE('Dates'[Financial Year]), CALCULATE(
-						SELECTEDMEASURE(),
-						'Dates'[Financial Year] = CurrentFinancialYear - 1,
-						REMOVEFILTERS(Dates)
-					),
-
-					BLANK()
-				)
+			CALCULATE(
+				SELECTEDMEASURE(),
+				DATEADD('Dates'[Date], -1, YEAR),
+				REMOVEFILTERS(Dates)
+			)
         
         calculationItem 'YOY' = 
             SELECTEDMEASURE() -

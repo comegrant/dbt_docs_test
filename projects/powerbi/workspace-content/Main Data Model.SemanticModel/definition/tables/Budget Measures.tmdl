@@ -15,36 +15,31 @@ table 'Budget Measures'
     /// Is calculated by multiplying Number of Orders with ATV.
     /// The number is gross, meaning that it only includes order lines of type 
     /// debit and transportation and not order lines such as discount or credit.
-    measure 'Order Value Gross Ex Vat (Budget)' = 'Budget Measures'[ATV Gross Budget (Budget)] * 'Budget Measures'[Number Of Budget Orders (Budget)]
+    measure 'Order Value Gross Ex Vat (Budget)' = [ATV Gross Budget (Budget)] * [Number Of Budget Orders (Budget)]
         formatString: #,0
 
     /// Absolute increase/decrease in sales compared to budgeted sales
-    measure 'Number of Orders (vs Budget)' = 'Budget Measures'[Number of Orders (Budget)] - 'Order Measures'[Number of Orders]
-        formatString: #,0.00
-        isHidden
+    measure 'Number of Orders (vs Budget)' = [Number of Orders (Budget)] - [Number of Orders]
+        formatString: #,0
 
     /// Relative increase/decrease in sales compared to budgeted sales
-    measure 'Number of Orders (vs Budget %)' = DIVIDE('Budget Measures'[Number of Orders (vs Budget)],'Budget Measures'[Number of Orders (Budget)])
+    measure 'Number of Orders (vs Budget %)' = DIVIDE([Number of Orders (vs Budget)],[Number of Orders (Budget)])
         formatString: 0.00%;-0.00%;0.00%
-        isHidden
 
     /// Absolute increase/decrease in sales revenue compared to budgeted sales revenue
-    measure 'Order Value Gross Ex Vat (vs Budget)' = 'Budget Measures'[Order Value Gross Ex Vat (Budget)] - 'Order Measures'[Order Value Gross Ex Vat]
-        formatString: #,0.00
-        isHidden
+    measure 'Order Value Gross Ex Vat (vs Budget)' = [Order Value Gross Ex Vat (Budget)] - [Order Value Gross Ex Vat]
+        formatString: #,0
 
     /// Relative increase/decrease in sales revenue compared to budgeted sales revenue
-    measure 'Order Value Gross Ex Vat (vs Budget %)' = DIVIDE('Budget Measures'[Order Value Gross Ex Vat (vs Budget)],'Budget Measures'[Order Value Gross Ex Vat (Budget)])
+    measure 'Order Value Gross Ex Vat (vs Budget %)' = DIVIDE(Order Value Gross Ex Vat (vs Budget),'[Order Value Gross Ex Vat (Budget)])
         formatString: 0.00%;-0.00%;0.00%
-        isHidden
 
     /// Absolute increase/decrease in ATV compared to budgeted ATV
-    measure 'ATV Gross Ex Vat Ex Vat (vs Budget)' = 'Budget Measures'[ATV Gross Ex Vat (Budget)] - 'Order Measures'[ATV Gross Ex Vat]
-        formatString: #,0.00
-        isHidden
+    measure 'ATV Gross Ex Vat Ex Vat (vs Budget)' = [ATV Gross Ex Vat (Budget)] - [ATV Gross Ex Vat]
+        formatString: #,0
 
     /// Relative increase/decrease in ATV compared to budgeted ATV
-    measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE('Budget Measures'[ATV Gross Ex Vat (vs Budget)],'Budget Measures'[ATV Gross Ex Vat (Budget)])
+    measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE([ATV Gross Ex Vat (vs Budget)],[ATV Gross Ex Vat (Budget)])
         formatString: 0.00%;-0.00%;0.00%
         isHidden
 
