@@ -4,18 +4,18 @@ table 'Budget Measures'
     /// Budgeted Average Transaction Value for Orders Ex Vat. 
     /// The number is gross, meaning that it only includes order lines of type 
     /// debit and transportation and not order lines such as discount or credit.
-    measure 'ATV Gross Ex Vat (Budget)' = AVERAGE('Budget Measures'['ATV Gross'])
+    measure 'ATV Gross Ex Vat (Budget)' = AVERAGE('Budget Measures'[ATV Gross])
         formatString: #,0
   
     /// The number of budgeted orders.
-    measure 'Number of Orders (Budget)' = SUM('Budget Measures'['Number Of Orders'])
+    measure 'Number of Orders (Budget)' = SUM('Budget Measures'[Number Of Orders])
         formatString: #,0
 
     /// Budgeted gross revenue from orders ex vat.
     /// Is calculated by multiplying Number of Orders with ATV.
     /// The number is gross, meaning that it only includes order lines of type 
     /// debit and transportation and not order lines such as discount or credit.
-    measure 'Order Value Gross Ex Vat (Budget)' = [ATV Gross Budget (Budget)] * [Number Of Budget Orders (Budget)]
+    measure 'Order Value Gross Ex Vat (Budget)' = 'Budget Measures'[ATV Gross Budget (Budget)] * 'Budget Measures'[Number Of Budget Orders (Budget)]
         formatString: #,0
 
     /// Absolute increase/decrease in sales compared to budgeted sales
