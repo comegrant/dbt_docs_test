@@ -84,6 +84,7 @@ dates as (
 )
 
 , add_calculated_columns as (
+
     select 
         *
         -- add index to all the days of the financial year
@@ -91,13 +92,14 @@ dates as (
         -- since some financial years does not have week 1 we cannot use row_number()
         , 7 * (financial_week - 1) + (day_of_week) as day_of_financial_year_number
         -- add index to all the days of each quarter the financial year
-        -- makes it possible to compare with the same quarter n periods away
         , row_number() over (partition by financial_year, financial_quarter order by date) as day_of_financial_quarter_number
         -- add index to all the days of each month of the financial year
-        -- makes it possible to compare with the same month n periods away
         , row_number() over (partition by financial_year, financial_month_number order by date) as day_of_financial_month_number
-        , date > current_date() as is_future
+        , date > current_date() as is_future_date
+        , monday_date_previous_week > current_date() as is_future_menu_week
+    
     from moving_specific_financial_weeks
+
 )
 
 select * from add_calculated_columns

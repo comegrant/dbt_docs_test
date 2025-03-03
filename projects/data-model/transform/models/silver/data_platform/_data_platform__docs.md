@@ -120,8 +120,14 @@ Counts the number of days since the beginning of the financial month.
 
 {% enddocs %}
 
-{% docs column__is_future  %}
+{% docs column__is_future_date  %}
 
 Is true if date is in the future, else false.
+
+{% enddocs %}
+
+{% docs column__is_future_menu_week  %}
+
+Is true if the menu week the ordering week of the menu week has not started yet. The ordering week of the menu week is the week where orders are placed for an upcoming menu week. This is currently in the week before the menu week.
 
 {% enddocs %}

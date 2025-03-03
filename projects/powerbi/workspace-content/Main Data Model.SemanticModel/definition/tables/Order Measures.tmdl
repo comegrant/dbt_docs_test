@@ -1,7 +1,6 @@
 table 'Order Measures'
 	lineageTag: 6c298811-8ad5-482b-b89a-827db89210a3
 
-	/// MEASURES ///
 	/// Total order value excluding vat
 	measure 'Total Order Value Ex Vat' =
 			
@@ -93,6 +92,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
+		displayFolder: Orders
 	
 	/// The number of customers with an order
 	measure 'Number of Ordering Customers' =
@@ -120,10 +120,12 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
+		displayFolder: Customers
 	
 	/// Average number of orders per unique customers placing an order in the selected filtering context (i.e. time, preferences etc.)
 	measure 'Average Number of Orders per Customer' = DIVIDE([Number of Orders], [Number of Ordering Customers], BLANK())
 		formatString: #,0.00
+		displayFolder: Customers
 
 	/// Number of order that has one or more grocery purchases
 	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
@@ -146,7 +148,7 @@ table 'Order Measures'
 	measure 'ATV of Groceries Ex Vat' = DIVIDE([Grocery Value Ex Vat],[Number of Orders with Groceries], BLANK())
 		formatString: #,0.00
 		displayFolder: Groceries
-		
+
 	/// Average order value
 	/// Excluding VAT
 	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
@@ -164,11 +166,12 @@ table 'Order Measures'
 		isHidden
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
+		
 	/// Number of orders where the customers order included a printed recipe leaflet.
 	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
 		formatString: #,0
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
+		displayFolder: Digital Recipes
 
 	/// Sum of Product Variation Quantity
 	measure 'Product Variation Quantity' =
@@ -197,6 +200,7 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: 6da36c65-3977-4355-9613-98ce2076a5ba
+		displayFolder: Orders
 
 		changedProperty = IsHidden
 
@@ -207,6 +211,7 @@ table 'Order Measures'
 	/// order value divided by 4 (number of products)
 	measure 'Average Unit Price Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Ordered Units])
 		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -214,6 +219,7 @@ table 'Order Measures'
 	/// Excluding VAT
 	measure 'Average Unit Price Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Ordered Units])
 		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -226,6 +232,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 1b7a5c95-92ad-44ef-b403-00fd4b24f4af
+		displayFolder: Gift Cards
 
 	/// Total net order value
 	/// Excluding VAT
@@ -236,6 +243,7 @@ table 'Order Measures'
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		lineageTag: 94703f73-cb72-4c7c-ba82-9d480c9385ca
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 	
@@ -248,6 +256,7 @@ table 'Order Measures'
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 				)
 		lineageTag: 47be5d17-2f0a-42c6-8b21-24dea811838e
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -261,6 +270,7 @@ table 'Order Measures'
 				'Order Measures'[order_line_type_name] IN {"DEBIT", "TRANSPORT"}
 				)
 		lineageTag: 9db412c4-2ea6-4c39-81b2-c68ec727df34
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 	
@@ -268,6 +278,7 @@ table 'Order Measures'
 	/// Excluding VAT
 	measure 'Average Order Value Net Ex Vat' = DIVIDE([Order Value Net Ex Vat],[Number of Orders],BLANK())
 		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -275,6 +286,7 @@ table 'Order Measures'
 	/// Excluding VAT
 	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Order Value Gross Ex Vat],[Number of Orders],BLANK())
 		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -282,6 +294,7 @@ table 'Order Measures'
 	/// Including VAT
 	measure 'Average Order Value Net Inc Vat' = DIVIDE([Order Value Net Inc Vat],[Number of Orders],BLANK())
 		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
+		displayFolder: Orders
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -294,6 +307,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
+		displayFolder: Orders
 
 	/// Sum of value of gift card
 	/// Excluding VAT
@@ -305,6 +319,8 @@ table 'Order Measures'
 			)
 		lineageTag: 871b6c01-d9c2-4f61-a597-80dd7b6d6c3b
 		isHidden
+		displayFolder: Gift Cards
+
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	/// Sum of discount value
@@ -317,6 +333,7 @@ table 'Order Measures'
 				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
 			)
 		lineageTag: a27fd9f8-407b-49fb-bdee-29f4121fffd5
+		displayFolder: Discount
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -330,6 +347,7 @@ table 'Order Measures'
 				'Order Measures'[order_line_type_name] IN {"TRANSPORT"}
 			)
 		lineageTag: eb52e954-e781-4d81-b8e0-87f5effaf6ca
+		displayFolder: Transport
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -343,6 +361,7 @@ table 'Order Measures'
 				'Order Measures'[order_line_type_name] IN {"PRP"}
 			)
 		lineageTag: 7ca94156-13fd-4a37-9c34-0417bc4e5819
+		displayFolder: Credit and PRP
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -356,6 +375,7 @@ table 'Order Measures'
 				'Order Measures'[order_line_type_name] IN {"Credit"}
 			)
 		lineageTag: 1fe11954-5b54-4c34-9abb-796297d4ecee
+		displayFolder: Credit and PRP
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 	
@@ -376,6 +396,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
+		displayFolder: Swapped Dishes
 
 	/// Number of dishes which the customer replaced a preselector dish with
 	/// NOTE: This measure can only be used on a mealbox level, not in dish level.
@@ -395,6 +416,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
 		isHidden
+		displayFolder: Swapped Dishes
 
 	/// Number of dishes that have been ordered by the customers	
 	measure 'Number of Ordered Dishes' =
@@ -429,6 +451,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
+		displayFolder: Orders
 
 	/// Number of dishes added by curtomer
 	/// Includes all dishes which the customer has selected themselves 
@@ -463,6 +486,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
+		displayFolder: Meal Adjustments
 
 	/// Number of dishes removed.
 	/// Includes all dishes in the original weekly menu which the customer has chosen to remove.
@@ -500,6 +524,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
+		displayFolder: Meal Adjustments
 
 	/// Share of dishes in order which the customer replaced with other dishes
 	/// NOTE: If a dish is removed but not replaced with another dish, it will not be counted.
@@ -511,6 +536,7 @@ table 'Order Measures'
 				)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
+		displayFolder: Meal Adjustments
 
 	/// Number of dishes initially presented to customer
 	measure 'Number of Preselected Dishes' = ```
@@ -551,6 +577,7 @@ table 'Order Measures'
 		formatString: #,0
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 		isHidden
+		displayFolder: Swapped Dishes
 
 	/// Number of orders where the customer replaced one or more dishes with another dish
 	measure 'Number of Orders with Swaps' = ```
@@ -570,6 +597,7 @@ table 'Order Measures'
 			```
 		formatString: #,0
 		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
+		displayFolder: Swapped Dishes
 
 	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
@@ -582,6 +610,7 @@ table 'Order Measures'
 			```
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
+		displayFolder: Swapped Dishes
 
 	/// Average number of orders where a customer swapped one or more dishes
 	measure 'Average Number of Swaps per Order' = ```
@@ -593,6 +622,7 @@ table 'Order Measures'
 			    )
 			```
 		lineageTag: 7a742dc2-ed19-4712-92c9-da29eefc46f2
+		displayFolder: Swapped Dishes
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -613,6 +643,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
+		displayFolder: Portion Adjustments
 
 	/// Number of orders where the customer decreased the number of portions
 	measure 'Number of Orders with Decreased Portions' =
@@ -631,6 +662,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
+		displayFolder: Portion Adjustments
 
 	/// Number of orders where the customer changed (increased/decreased) the number of portions
 	measure 'Number of Orders with Adjusted Portions' =
@@ -649,6 +681,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
+		displayFolder: Portion Adjustments
 
 	/// Number of orders where the customer increased the number of meals/days
 	measure 'Number of Orders with Increased Meals' =
@@ -666,6 +699,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
+		displayFolder: Meal Adjustments
 
 	/// Number of orders where the customer decreased the number of meals/days
 	measure 'Number of Orders with Decreased Meals' =
@@ -684,6 +718,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
+		displayFolder: Meal Adjustments
 
 	/// Number of orders where the customer adjusted (increased/decreased) the number of meals/days	
 	measure 'Number of Orders with Adjusted Meals' =
@@ -702,6 +737,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
+		displayFolder: Meal Adjustments
 
 	/// Size of dish adjustment
 	/// Shows the "net" dish adjustment, meaning the total adjustment made after adding/removing dishes
@@ -709,6 +745,7 @@ table 'Order Measures'
 	measure 'Difference Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
 		formatString: #,0
 		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
+		displayFolder: Meal Adjustments
 
 	/// Middle step calculation used to find the difference between orderes meals and subscribed meals
 	measure 'Meal Adjustments' =
@@ -749,6 +786,7 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: 15fc3c41-f4e7-455c-8502-cfb16f3a92db
+		displayFolder: Meal Adjustments
 
 	/// Middle step calculation used to find swapped dishes
 	measure 'Decreased Meals' =
@@ -761,6 +799,7 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: 72548e83-a743-498b-90e6-d199251b894f
+		displayFolder: Meal Adjustments
 
 	/// Middle step calculation used to find swapped dishes
 	measure 'Increased Meals' =
@@ -772,6 +811,7 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: 721b6dae-e435-404d-b057-75831058d524
+		displayFolder: Meal Adjustments
 
 	/// Difference between ordered portions and subscribed portions
 	measure 'Portion Adjustments' =
@@ -801,7 +841,8 @@ table 'Order Measures'
 		formatString: #,0
 		isHidden
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
-	
+		displayFolder: Portion Adjustments
+
 	/// Mostly a middle step measure.
 	/// Nice to have for % of grand total calculations
 	measure 'Number of Orders All Recipes' =
@@ -825,6 +866,7 @@ table 'Order Measures'
     			)
 			)
 		formatString: #,0
+		displayFolder: Swapped Dishes
 
 	/// Order frequency for swapping customers, i.e. average number of orders per unique swapping customer.
 	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
@@ -836,6 +878,189 @@ table 'Order Measures'
 			    BLANK()
 			)
 		formatString: #,0.00
+		displayFolder: Swapped Dishes
+
+	/// Sales in the same period of the previous year
+	measure 'Number of Orders (PY)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Absolute increase/decrease in sales from previous year
+	measure 'Number of Orders (YOY)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="YOY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Relative increase/decrease in sales from previous year
+	measure 'Number of Orders (YOY%)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: Orders
+
+	/// Average Transaction Value of orders in the same period of the previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'ATV Gross Ex Vat (PY)' =
+			CALCULATE(
+				[ATV Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Absolute increase/decrease in average transaction value from previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'ATV Gross Ex Vat (YOY)' =
+			CALCULATE(
+				[ATV Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Relative increase/decrease in average transaction value from previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'ATV Gross Ex Vat (YOY%)' =
+			CALCULATE(
+				[ATV Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: Orders
+
+	/// Average Transaction Value of orders in the same period of the previous year
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'ATV Net Ex Vat (PY)' =
+			CALCULATE(
+				[ATV Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Absolute increase/decrease in average transaction value from previous year
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'ATV Orders Net Ex Vat (YOY)' =
+			CALCULATE(
+				[ATV Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Relative increase/decrease in average transaction value from previous year
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'ATV Net Ex Vat (YOY%)' =
+			CALCULATE(
+				[ATV Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: Orders
+
+
+	/// Revenue from orders in the same period of the previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Gross Ex Vat (PY)' =
+			CALCULATE(
+				[Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Absolute increase/decrease in revenue from orders in the same period previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Gross Ex Vat (YOY)' =
+			CALCULATE(
+				[Order Value Net Gross Vat],
+				'Time Intelligence'[Time Calculation]="YOY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Relative increase/decrease in revenue from orders in the same period previous year
+	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Net Gross Vat (YOY%)' =
+			CALCULATE(
+				[Order Value Net Gross Vat],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: Orders
+
+	/// Revenue from orders in the same period of the previous year
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Net Ex Vat (PY)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Absolute increase/decrease in revenue from orders in the same period 
+	/// of the previous year from previous year
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Net Ex Vat (YOY)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY"
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	measure '(YOY) Order Value Net Ex Vat' = 10000
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+	/// Relative increase/decrease in revenue from orders in the same period 
+	/// including all order lines (i.e. include discounts and credit)
+	/// exlucding vat
+	measure 'Order Value Net Ex Vat (YOY%)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		isHidden
+		displayFolder: Orders
+
 
 	column order_status_id
 		dataType: string

@@ -1,6 +1,7 @@
 model Model
 	culture: en-US
 	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
 	sourceQueryCulture: nb-NO
 	dataAccessOptions
 		legacyRedirects
@@ -12,7 +13,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBIDesktopVersion = 2.139.2054.0 (24.12)+334ca1c95b576cc53924655643b0d36f21caac55
 
-annotation PBI_ProTooling = ["DevMode","TMDL-Extension"]
+annotation PBI_ProTooling = ["DevMode","TMDL-Extension","CalcGroup"]
 
 annotation __TEdtr = 1
 
@@ -44,6 +45,7 @@ ref table 'Customer Measures'
 ref table 'Agreement Recipe Compliance Measures'
 ref table 'Budget Types'
 ref table 'Budget Measures'
+ref table 'Time Intelligence'
 
 ref cultureInfo en-US
 

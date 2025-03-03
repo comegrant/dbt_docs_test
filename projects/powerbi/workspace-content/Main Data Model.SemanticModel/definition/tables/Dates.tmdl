@@ -253,6 +253,45 @@ table Dates
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Counts the number of days since the first day of the financial year. 
+	/// Some years the financial year starts on week two instead of week one, 
+	/// when this occurs the counter will start counting on day 8 instead of 1.
+	column day_of_financial_year_number
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: day_of_financial_year_number
+	
+	/// Counts the number of days since the beginning of the financial quarter
+	column day_of_financial_quarter_number
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: day_of_financial_quarter_number
+
+	/// Counts the number of days since the beginning of the financial month.
+	column day_of_financial_month_number
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: day_of_financial_month_number
+
+	/// Is true if date is in the future
+	column is_future_date
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		sourceColumn: is_future_date
+
+	/// Is true if the menu week the ordering week of the menu week has not started yet. 
+	/// The ordering week of the menu week is the week where orders are placed for an upcoming menu week. 
+	/// This is currently in the week before the menu week.
+	column is_future_menu_week
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		sourceColumn: is_future_menu_week
+
 	/// In Cheffelo we have defined a financial hiearchy that should be the default for most reports.
 	/// 
 	/// Year:

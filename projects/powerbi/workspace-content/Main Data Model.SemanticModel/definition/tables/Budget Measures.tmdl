@@ -1,6 +1,53 @@
 table 'Budget Measures'
     lineageTag: Budget-Measures-Table
 
+    /// Budgeted Average Transaction Value for Orders Ex Vat. 
+    /// The number is gross, meaning that it only includes order lines of type 
+    /// debit and transportation and not order lines such as discount or credit.
+    measure 'ATV Gross Ex Vat (Budget)' = AVERAGE('Budget Measures'['ATV Gross'])
+        formatString: #,0
+  
+    /// The number of budgeted orders.
+    measure 'Number of Orders (Budget)' = SUM('Budget Measures'['Number Of Orders'])
+        formatString: #,0
+
+    /// Budgeted gross revenue from orders ex vat.
+    /// Is calculated by multiplying Number of Orders with ATV.
+    /// The number is gross, meaning that it only includes order lines of type 
+    /// debit and transportation and not order lines such as discount or credit.
+    measure 'Order Value Gross Ex Vat (Budget)' = [ATV Gross Budget (Budget)] * [Number Of Budget Orders (Budget)]
+        formatString: #,0
+
+    /// Absolute increase/decrease in sales compared to budgeted sales
+    measure 'Number of Orders (vs Budget)' = 'Budget Measures'[Number of Orders (Budget)] - 'Order Measures'[Number of Orders]
+        formatString: #,0.00
+        isHidden
+
+    /// Relative increase/decrease in sales compared to budgeted sales
+    measure 'Number of Orders (vs Budget %)' = DIVIDE('Budget Measures'[Number of Orders (vs Budget)],'Budget Measures'[Number of Orders (Budget)])
+        formatString: 0.00%;-0.00%;0.00%
+        isHidden
+
+    /// Absolute increase/decrease in sales revenue compared to budgeted sales revenue
+    measure 'Order Value Gross Ex Vat (vs Budget)' = 'Budget Measures'[Order Value Gross Ex Vat (Budget)] - 'Order Measures'[Order Value Gross Ex Vat]
+        formatString: #,0.00
+        isHidden
+
+    /// Relative increase/decrease in sales revenue compared to budgeted sales revenue
+    measure 'Order Value Gross Ex Vat (vs Budget %)' = DIVIDE('Budget Measures'[Order Value Gross Ex Vat (vs Budget)],'Budget Measures'[Order Value Gross Ex Vat (Budget)])
+        formatString: 0.00%;-0.00%;0.00%
+        isHidden
+
+    /// Absolute increase/decrease in ATV compared to budgeted ATV
+    measure 'ATV Gross Ex Vat Ex Vat (vs Budget)' = 'Budget Measures'[ATV Gross Ex Vat (Budget)] - 'Order Measures'[ATV Gross Ex Vat]
+        formatString: #,0.00
+        isHidden
+
+    /// Relative increase/decrease in ATV compared to budgeted ATV
+    measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE('Budget Measures'[ATV Gross Ex Vat (vs Budget)],'Budget Measures'[ATV Gross Ex Vat (Budget)])
+        formatString: 0.00%;-0.00%;0.00%
+        isHidden
+
     /// The primary key of the fact_budget table
     column pk_fact_budget
         dataType: string

@@ -225,13 +225,19 @@ models:
         data_tests:
           - not_null
 
-      - name: is_future
+      - name: is_future_date
         data_type: boolean
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
+      - name: is_future_menu_week
+        data_type: boolean
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
     versions:
       - v: 1

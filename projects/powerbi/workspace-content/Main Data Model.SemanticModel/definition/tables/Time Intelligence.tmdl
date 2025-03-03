@@ -1,0 +1,87 @@
+table 'Time Intelligence'
+
+	calculationGroup
+
+        calculationItem Current = SELECTEDMEASURE()
+
+        calculationItem 'PY' = 
+
+			VAR CurrentFinancialYear = SELECTEDVALUE('Dates'[Financial Year])
+			VAR CurrentFinancialQuarter = SELECTEDVALUE('Dates'[Financial Quarter])
+			VAR CurrentFinancialMonth = SELECTEDVALUE('Dates'[Financial Month Number])
+			VAR CurrentFinancialWeek = SELECTEDVALUE('Dates'[Financial Week])
+
+			RETURN
+				SWITCH(
+					TRUE(),
+
+					ISINSCOPE('Dates'[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), CALCULATE(
+						[Number of Orders],
+						DATEADD('Dates'[Date], -1, YEAR),
+						REMOVEFILTERS(Dates)
+					),
+
+					ISINSCOPE('Dates'[Financial Week]), CALCULATE(
+						[Number of Orders],
+						'Dates'[Financial Year] = CurrentFinancialYear - 1,
+						'Dates'[Financial Week] = CurrentFinancialWeek,
+						REMOVEFILTERS(Dates)
+					),
+
+					ISINSCOPE('Dates'[Financial Month Name]), CALCULATE(
+						[Number of Orders],
+						'Dates'[Financial Year] = CurrentFinancialYear - 1,
+						'Dates'[Financial Month Number] = CurrentFinancialMonth,
+						REMOVEFILTERS(Dates)
+					),
+
+					ISINSCOPE('Dates'[Financial Quarter]), CALCULATE(
+						[Number of Orders],
+						'Dates'[Financial Year] = CurrentFinancialYear - 1,
+						'Dates'[Financial Quarter] = CurrentFinancialQuarter,
+						REMOVEFILTERS(Dates)
+					),
+
+					ISINSCOPE('Dates'[Financial Year]), CALCULATE(
+						[Number of Orders],
+						'Dates'[Financial Year] = CurrentFinancialYear - 1,
+						REMOVEFILTERS(Dates)
+					),
+
+					BLANK()
+				)
+        
+        calculationItem 'YOY' = 
+            SELECTEDMEASURE() -
+                CALCULATE(
+                    SELECTEDMEASURE(),
+                    'Time Intelligence'[Time Calculation] = "PY"
+                )
+                    
+        calculationItem 'YOY%' =
+            DIVIDE(
+                CALCULATE(
+                    SELECTEDMEASURE(),
+                    'Time Intelligence'[Time Calculation]="YOY"
+                ),
+                CALCULATE(
+                    SELECTEDMEASURE(),
+                    'Time Intelligence'[Time Calculation]="PY"
+                )
+            )
+
+	column 'Time Calculation'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
