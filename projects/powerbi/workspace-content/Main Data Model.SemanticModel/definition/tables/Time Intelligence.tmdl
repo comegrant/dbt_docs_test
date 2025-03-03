@@ -16,34 +16,34 @@ table 'Time Intelligence'
 					TRUE(),
 
 					ISINSCOPE('Dates'[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), CALCULATE(
-						[Number of Orders],
+						SELECTEDMEASURE(),
 						DATEADD('Dates'[Date], -1, YEAR),
 						REMOVEFILTERS(Dates)
 					),
 
 					ISINSCOPE('Dates'[Financial Week]), CALCULATE(
-						[Number of Orders],
+						SELECTEDMEASURE(),
 						'Dates'[Financial Year] = CurrentFinancialYear - 1,
 						'Dates'[Financial Week] = CurrentFinancialWeek,
 						REMOVEFILTERS(Dates)
 					),
 
 					ISINSCOPE('Dates'[Financial Month Name]), CALCULATE(
-						[Number of Orders],
+						SELECTEDMEASURE(),
 						'Dates'[Financial Year] = CurrentFinancialYear - 1,
 						'Dates'[Financial Month Number] = CurrentFinancialMonth,
 						REMOVEFILTERS(Dates)
 					),
 
 					ISINSCOPE('Dates'[Financial Quarter]), CALCULATE(
-						[Number of Orders],
+						SELECTEDMEASURE(),
 						'Dates'[Financial Year] = CurrentFinancialYear - 1,
 						'Dates'[Financial Quarter] = CurrentFinancialQuarter,
 						REMOVEFILTERS(Dates)
 					),
 
 					ISINSCOPE('Dates'[Financial Year]), CALCULATE(
-						[Number of Orders],
+						SELECTEDMEASURE(),
 						'Dates'[Financial Year] = CurrentFinancialYear - 1,
 						REMOVEFILTERS(Dates)
 					),

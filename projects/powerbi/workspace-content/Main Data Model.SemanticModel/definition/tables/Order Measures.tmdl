@@ -886,7 +886,7 @@ table 'Order Measures'
 				[Number of Orders],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
-		formatString: #,0.00
+		formatString: #,0
 		isHidden
 		displayFolder: Orders
 
@@ -896,7 +896,7 @@ table 'Order Measures'
 				[Number of Orders],
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
-		formatString: #,0.00
+		formatString: #,0
 		isHidden
 		displayFolder: Orders
 
@@ -915,7 +915,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (PY)' =
 			CALCULATE(
-				[ATV Gross Ex Vat],
+				[Average Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
@@ -927,7 +927,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (YOY)' =
 			CALCULATE(
-				[ATV Gross Ex Vat],
+				[Average Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
@@ -939,7 +939,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (YOY%)' =
 			CALCULATE(
-				[ATV Gross Ex Vat],
+				[Average Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -951,7 +951,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Net Ex Vat (PY)' =
 			CALCULATE(
-				[ATV Net Ex Vat],
+				[Average Order Value Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
@@ -961,9 +961,9 @@ table 'Order Measures'
 	/// Absolute increase/decrease in average transaction value from previous year
 	/// including all order lines (i.e. include discounts and credit)
 	/// exlucding vat
-	measure 'ATV Orders Net Ex Vat (YOY)' =
+	measure 'ATV Net Ex Vat (YOY)' =
 			CALCULATE(
-				[ATV Net Ex Vat],
+				[Average Order Value Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
@@ -975,7 +975,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Net Ex Vat (YOY%)' =
 			CALCULATE(
-				[ATV Net Ex Vat],
+				[Average Order Value Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -1000,7 +1000,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'Order Value Gross Ex Vat (YOY)' =
 			CALCULATE(
-				[Order Value Net Gross Vat],
+				[Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
@@ -1010,9 +1010,9 @@ table 'Order Measures'
 	/// Relative increase/decrease in revenue from orders in the same period previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
-	measure 'Order Value Net Gross Vat (YOY%)' =
+	measure 'Order Value Gross Vat (YOY%)' =
 			CALCULATE(
-				[Order Value Net Gross Vat],
+				[Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -1040,11 +1040,6 @@ table 'Order Measures'
 				[Order Value Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
-		formatString: #,0.00
-		isHidden
-		displayFolder: Orders
-
-	measure '(YOY) Order Value Net Ex Vat' = 10000
 		formatString: #,0.00
 		isHidden
 		displayFolder: Orders
