@@ -110,7 +110,7 @@ else:
                 )
 
             if extra_info:
-                st.markdown(f"**Main ingredient:** {row['recipe_main_ingredient_name']}")
+                st.markdown(f"**Main ingredient:** {row['recipe_main_ingredient_name_local']}")
                 st.markdown(f"**Recipe difficulty:** {row['recipe_difficulty_name'].capitalize()}")
                 st.markdown(f"**Average cooking time:** {(row['cooking_time_from'] + row['cooking_time_to']) / 2} min")
 

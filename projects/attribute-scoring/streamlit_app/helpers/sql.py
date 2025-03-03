@@ -14,7 +14,7 @@ weekly_menu_query = """
         fm.menu_week,
         dr.recipe_name,
         dr.recipe_difficulty_name,
-        dr.recipe_main_ingredient_name,
+        dr.recipe_main_ingredient_name_local,
         dr.cooking_time_to,
         dr.cooking_time_from,
         recipe_photo
