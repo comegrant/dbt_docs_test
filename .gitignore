@@ -191,3 +191,5 @@ crash.*.log
 .databricks
 databricks/*
 mlruns/*
+
+CLAUDE.md

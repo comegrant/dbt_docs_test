@@ -1,0 +1,3 @@
+# This file is used to tell dbt-checkpoint pre-commit where the dbt project directory is
+version: 1
+dbt-project-dir: ./projects/data-model/transform

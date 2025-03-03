@@ -74,7 +74,7 @@ The benefit of cursor is that it is very good at understanding our code base, of
 <summary>VSCode</summary>
 
 1. Go to https://code.visualstudio.com/download and install the version for your machine.
-2. We will now install a few extensions to help with development. Open up a termianl in VSCode and run the following:
+2. We will now install a few extensions to help with development. Open up a terminal in VSCode and run the following:
   ```bash
   code --install-extension innoverio.vscode-dbt-power-user && \
   code --install-extension databricks.databricks && \
@@ -183,6 +183,16 @@ Output: `<version> (set by \path\to\.pyenv\pyenv-win\.python-version)`
 python -c "import sys; print(sys.executable)"
 ```
 Output: `\path\to\.pyenv\pyenv-win\versions\<version>\python.exe`
+
+12. Install pip such that we can install packages later
+```
+python -m ensurepip --upgrade
+```
+
+13. Check that pip is working
+```
+pip --version
+```
 
 </details>
 
@@ -298,7 +308,7 @@ poetry --version
 
 _It should return something like `Poetry version 1.8.X`_
 
-If you get an access denied error, then you may need to add `%APPDATA%\Python\Scripts` to the excemptions:
+If you get an `access denied` error, then you may need to add `%APPDATA%\Python\Scripts` to the exemptions:
 - Go to Settings > Security > Virus & threat protection
 - Under Virus & threat protection settings select Manage settings
 - Under Exclusions select Add or remove exclusions
@@ -389,7 +399,7 @@ brew install gh
 
 </details>
 
-#### Confugring git
+#### Configuring git
 Once git is installed, we should provide git with our full name and email address.
 
 1. Start by setting your full name.
@@ -479,12 +489,19 @@ We use pre-commit hooks to ensure code quality and consistency across the monore
 
 1. Install pre-commit
 ```
-pipx install pre-commit
+pip install pre-commit
 ```
+If pip is not installed, then go to the `Install Python` section to install this
+
 2. Install the pre-commit hooks
 ```
 cd cheffelo/sous-chef
 pre-commit install
+```
+
+3. Update the pre-commit hooks
+```
+pre-commit autoupdate
 ```
 
 </details>
@@ -501,6 +518,12 @@ brew install pre-commit
 cd cheffelo/sous-chef
 pre-commit install
 ```
+
+3. Update the pre-commit hooks
+```
+pre-commit autoupdate
+```
+
 </details>
 
 ### 8. Activate the `chef` cli
@@ -517,7 +540,7 @@ poetry install
 This will spin up a new Python virtualenv, and activate the venv in a new shell.
 It will also install the core utils (`chef`) to manage the monorepo.
 
-If this was succesful, then you're fully set-up in sous-chef and can start working on projects.
+If this was successful, then you're fully set up in sous-chef and can start working on projects.
 
 To check that the `chef` cli is working, run the following command:
 ```bash
@@ -625,7 +648,7 @@ For more information about the `chef` cli, view [packages/`chef`/README.md](pack
 **Module** name is the python package name which needs underscores. *E.g: analytics_api*
 
 ## Use Cases 💡
-In this secion will you find a few use-cases to describe how to develop different projects.
+In this section, you will find a few use cases to describe how to develop different projects.
 
 ### Python Project
 In this section will we showcase how to setup a simple ML application that.
@@ -646,7 +669,7 @@ With the chef cli activated, run the following to create a new project:
 chef create project
 ```
 
-This will prompt you for different questions. However, it is mainly the `Project Name` that needs to be inputted. For the rest can you press `Enter`, unless you want to customise it futher.
+This will prompt you for different questions. However, it is mainly the `Project Name` that needs to be inputted. For the remaining prompts, simply press `Enter`, unless you want to customise it further.
 
 The command will add a basic project structure needed for Python development, and a few files for basic development locally, and on Databricks.
 
@@ -734,7 +757,7 @@ if __name__ == "__main__":
 ```
 
 #### Run the project
-With a small application can we run the project locally through docker. Howerver, we need to add the startup command to the `docker-compose.yaml` file first.
+You can run the project locally through Docker with a small application. Ensure that the startup command is added to the `docker-compose.yaml` file first.
 
 ```yaml
 services:
@@ -770,18 +793,18 @@ This will build the project, install everything that is needed and start up the 
 Data science applications are a subtype of a Python project. Meaning you can use everything described in the Python Project use-case.
 However, to manage the unpredicability of data and ML could the following also be needed:
 
- - Experiment tracking
- - Model versioning - through a model registry
- - Feature store - to load offline point-in-time data, and low latency online data.
- - Big Brain compute - aka. extra RAM / disk
- - Out of memory compute - through Spark / distributed processing
- - Job orchestration
- - Model serving enpoint
- - Monitor and validate data - either data drift or semantic expectations
- - Evaluate model online performance
- - Explain model outputs
+- Experiment tracking
+- Model versioning - through a model registry
+- Feature store - to load offline point-in-time data, and low latency online data.
+- Big Brain compute - aka. extra RAM / disk
+- Out of memory compute - through Spark / distributed processing
+- Job orchestration
+- Model serving endpoint
+- Monitor and validate data - either data drift or semantic expectations
+- Evaluate model online performance
+- Explain model outputs
 
 For all of this do we default to the Databricks' components.
 
 Meaning `MLFlow`, `Spark`, Databricks' `feature-engineering` package, `Databricks Asset Bundles`.
-However, we still use `Docker` to controll the dependencies through the `docker/Dockerfile.databricks` file. See the [databricks-env README](https://github.com/cheffelo/sous-chef/tree/main/packages/databricks-env) for a more details.
+However, we still use `Docker` to control the dependencies through the `docker/Dockerfile.databricks` file. See the [databricks-env README](https://github.com/cheffelo/sous-chef/tree/main/packages/databricks-env) for more details.

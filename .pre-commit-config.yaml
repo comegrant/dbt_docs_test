@@ -1,37 +1,131 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
-  hooks:
-  - id: trailing-whitespace
-  - id: end-of-file-fixer
-  - id: check-yaml
-  - id: check-added-large-files
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
 
-- repo: https://github.com/codespell-project/codespell
-  rev: v2.2.4
-  hooks:
-  - id: codespell
-    additional_dependencies:
-      - tomli
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
 
-- repo: local
-  hooks:
-  - id: ruff format
-    name: "Ruff Format"
-    language: system
-    types: [python]
-    entry: ruff format
+  - repo: local
+    hooks:
+      - id: ruff format
+        name: "Ruff Format"
+        language: system
+        types: [python]
+        entry: ruff format
 
-  - id: ruff lint
-    name: "Ruff Lint"
-    language: system
-    types: [python]
-    entry: ruff check --fix
+      - id: ruff lint
+        name: "Ruff Lint"
+        language: system
+        types: [python]
+        entry: ruff check --fix
 
-  - id: typecheck
-    name: "Pyright Type Checking"
-    language: system
-    types: [python]
-    entry: pyright
+      - id: typecheck
+        name: "Pyright Type Checking"
+        language: system
+        types: [python]
+        entry: pyright
+
+  # YAML formatting
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.3
+    hooks:
+      - id: yamlfmt
+        name: YAML formatting
+        args: [--mapping, '2', --sequence, '4', --offset, '2', --width, '120', --preserve-quotes, --implicit_start, --implicit_end]
+
+  # dbt specific hooks - only run on data-model project files
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    rev: v2.0.6
+    hooks:
+      - id: dbt-parse
+        files: ^projects/data-model/
+      - id: dbt-docs-generate
+        args: [--cmd-flags, "++no-compile"]
+        files: ^projects/data-model/
+
+      # Documentation checks
+      - id: check-model-has-description
+        name: Check model has description
+        exclude: ^projects/data-model/transform/models/intermediate/.*\.sql$
+        files: ^projects/data-model/
+
+      - id: check-column-desc-are-same
+        name: Check column descriptions are consistent
+        exclude: ^projects/data-model/transform/models/intermediate/.*\.sql$
+        files: ^projects/data-model/
+
+      - id: check-model-columns-have-desc
+        name: Check columns have description
+        exclude: ^projects/data-model/transform/models/intermediate/.*\.sql$
+        files: ^projects/data-model/
+
+      # YAML file validation
+      - id: check-model-has-all-columns
+        name: Check models have all columns
+        exclude: ^projects/data-model/transform/models/intermediate/.*\.sql$
+        files: ^projects/data-model/
+
+      # Check model and column naming conventions
+      - id: check-model-name-contract
+        name: Check gold model naming (dim_ or fact_ prefix)
+        files: ^projects/data-model/transform/models/gold/
+        args: [--pattern, "(dim|fact)_[a-z0-9_]+", "--"]
+
+      - id: check-model-name-contract
+        name: Check intermediate model naming (int_ prefix)
+        files: ^projects/data-model/transform/models/intermediate/
+        args: [--pattern, "int_[a-z0-9_]+", "--"]
+
+      # Column naming conventions based on README.md guidelines
+      - id: check-column-name-contract
+        name: Check date columns end with _date
+        args: [--pattern, ".*_date", --dtypes, date, "--"]
+        files: ^projects/data-model/
+
+      - id: check-column-name-contract
+        name: Check timestamp columns end with _at
+        args: [--pattern, ".*_at$", --dtypes, timestamp, "--"]
+        files: ^projects/data-model/
+
+      - id: check-column-name-contract
+        name: Check boolean columns start with is_ or has_
+        args: [--pattern, "(is|has)_.*", --dtypes, boolean, "--"]
+        files: ^projects/data-model/
+
+      # Check tests and contract
+      - id: check-model-has-contract
+        name: Check the model has contract enforced
+        exclude: ^projects/data-model/transform/models/intermediate/
+        files: ^projects/data-model/
+
+      - id: check-model-has-tests
+        name: Check the model has a number of tests
+        args: [--test-cnt, "2"]
+        exclude: ^projects/data-model/transform/models/intermediate/
+        files: ^projects/data-model/
+
+      # Check parent model naming conventions
+      - id: check-model-parents-name-prefix
+        name: Check silver/intermediate models don't have dim/fact parents
+        files: ^projects/data-model/transform/models/(silver|intermediate)/
+        args: [--blacklist, "dim_", "fact_", "--"]
+
+      # Checking model references
+      - id: check-script-ref-and-source
+        name: Check refs and sources exist
+        files: ^projects/data-model/
+
+      - id: check-script-has-no-table-name
+        name: Check SQL uses ref() and source() macros
+        files: ^projects/data-model/
