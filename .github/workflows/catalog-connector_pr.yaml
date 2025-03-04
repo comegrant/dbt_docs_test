@@ -1,0 +1,16 @@
+name: catalog-connector - Package PR
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/catalog-connector_pr.yaml'
+      - 'packages/catalog-connector/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-catalog-connector:
+    uses:
+      ./.github/workflows/template_test_python.yml
+    with:
+      python-version: "3.10"
+      working-directory: packages/catalog-connector
+    secrets: inherit

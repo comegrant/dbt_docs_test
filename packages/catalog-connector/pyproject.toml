@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "databricks_connector"
+version = "0.1.0"
+description = "A package that makes it easy to connect to databricks"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "catalog_connector"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+databricks-connect = ">=15.4.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pyright = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
