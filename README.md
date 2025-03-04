@@ -504,6 +504,15 @@ pre-commit install
 pre-commit autoupdate
 ```
 
+If you get a `Permission denied` error when trying to run pre-commit, then it's probably because it's being blocked by Windows Defender. To fix this, do the following:
+
+1. Go to Settings > Security > Virus & threat protection
+2. Under Virus & threat protection settings select Manage settings
+3. Under Exclusions select Add or remove exclusions
+4. Select Add an exclusion
+5. Choose Folder
+6. Add the folder outlined in the error, typically: `Users\your.name\.cache\pre-commit`
+
 </details>
 
 <details>
