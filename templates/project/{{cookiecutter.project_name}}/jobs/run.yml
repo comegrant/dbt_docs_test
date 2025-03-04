@@ -21,8 +21,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "{{ "{{" }} secrets/auth_common/docker-registry-username {{ "}}" }}"
-                password: "{{ "{{" }} secrets/auth_common/docker-registry-password {{ "}}" }}"
+                username: "{{ "{{" }}secrets/auth_common/docker-registry-username{{ "}}" }}"
+                password: "{{ "{{" }}secrets/auth_common/docker-registry-password{{ "}}" }}"
 
       schedule:
         quartz_cron_expression: '0 0 2 ? * MON'
