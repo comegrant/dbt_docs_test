@@ -78,8 +78,9 @@ table 'Customer Measures'
 				)
 			)
 		formatString: #,0
+		lineageTag: 6ab987c5-f8dc-4b42-97cd-427d7b732eb6
 
-	/// Number of customers having their first delivery, same period last year. 
+	/// Number of customers having their first delivery, same period last year.
 	/// It compares the same dates in the previous year (not the same weeks).
 	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
 	measure 'Number of Customers with First Delivery PY' =
@@ -89,6 +90,7 @@ table 'Customer Measures'
 				SAMEPERIODLASTYEAR('Dates'[Date])
 			)
 		formatString: #,0
+		lineageTag: bca7b0e3-22e6-492d-972f-1a0edd49f9f8
 
 	/// Number of customers having their first delivery, same period last year. This uses calendar year.
 	measure 'Number of Customers with First Delivery YTD' =
@@ -98,8 +100,9 @@ table 'Customer Measures'
 				ALL('Dates')
 			)
 		formatString: #,0
+		lineageTag: 359e8c41-e175-4c30-bb88-eb271fba3181
 
-	/// Number of customers having their first delivery, year to date, same period last year. 
+	/// Number of customers having their first delivery, year to date, same period last year.
 	/// It compares the same dates in the previous year (not the same weeks).
 	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
 	measure 'Number of Customers with First Delivery YTD PY' =
@@ -118,6 +121,7 @@ table 'Customer Measures'
 				'Customer Measures'[is_signup]=TRUE()
 			)
 		formatString: #,0
+		lineageTag: 7cdf8cd7-4766-4a7c-acf8-d5b435ac1b1e
 
 	/// Number of new sign-ups same period last year. Compares the same dates in the previous year (not the same weeks).
 	measure 'Number of Sign-ups PY' =
@@ -246,15 +250,16 @@ table 'Customer Measures'
 	/// Number of customers who have swapped at least once during the selected period.
 	/// To see the definition of a swap, see the measure 'Number of Orders with Swaps'.
 	/// If the customer switched out dishes in a week, but never placed the order for the week, it will not be counted as a swap.
-	measure 'Number of Swapping Customers' = 
-			CALCULATE(
-    			'Order Measures'[Number of Ordering Customers],
-    			FILTER(
-    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
-    			    'Order Measures'[Number of Orders with Swaps] > 0
-    			)
-			)
+	measure 'Number of Swapping Customers' =
+						CALCULATE(
+			    			'Order Measures'[Number of Ordering Customers],
+			    			FILTER(
+			    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+			    			    'Order Measures'[Number of Orders with Swaps] > 0
+			    			)
+						)
 		formatString: #,0
+		lineageTag: ea08cc3e-e123-4ca0-bdca-efbdee4c4503
 
 	column fk_dim_dates
 		dataType: int64
@@ -268,6 +273,7 @@ table 'Customer Measures'
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 4604683a-76ce-46e0-aa4e-0e209dce255a
 		summarizeBy: none
 		sourceColumn: fk_dim_dates_first_menu_week
 
@@ -314,6 +320,7 @@ table 'Customer Measures'
 		dataType: boolean
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d2254bd2-67d7-4983-a45b-a51d1bb81f99
 		summarizeBy: none
 		sourceColumn: has_first_delivery
 

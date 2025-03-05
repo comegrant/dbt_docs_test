@@ -95,6 +95,18 @@ table 'Agreements Weekly'
 
 		annotation SummarizationSetBy = Automatic
 
+	column valid_from_billing_agreements
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 6796b631-dcfd-4c4a-a0de-2cc80226b368
+		summarizeBy: none
+		sourceColumn: valid_from_billing_agreements
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column company_id
 		dataType: string
 		isHidden
@@ -161,18 +173,6 @@ table 'Agreements Weekly'
 		lineageTag: 8d4817f8-dfd0-4ff1-aaa4-86ce65117ae6
 		summarizeBy: none
 		sourceColumn: is_deleted
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column valid_from_billing_agreements
-		dataType: dateTime
-		isHidden
-		formatString: General Date
-		lineageTag: 6796b631-dcfd-4c4a-a0de-2cc80226b368
-		summarizeBy: none
-		sourceColumn: valid_from_billing_agreements
 
 		changedProperty = IsHidden
 

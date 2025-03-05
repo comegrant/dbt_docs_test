@@ -10,103 +10,111 @@ table 'Menu Measures'
 	/// The number of unique menu ids.
 	measure 'Number of Menus' = DISTINCTCOUNTNOBLANK('Menu Measures'[menu_id])
 		formatString: #,0
-		lineageTag: 1f670f36-e0c8-4565-acf8-ba11a315573d
 		isHidden
+		lineageTag: 1f670f36-e0c8-4565-acf8-ba11a315573d
 
 	/// The average value of the rating score.
 	/// The rating score is the original rating 1-5 recalculated to a 0-100 scale.
-	measure 'Average Recipe Rating Score' = 
+	measure 'Average Recipe Rating Score' =
 			CALCULATE(
 				AVERAGE('Order Measures'[Recipe Rating Score])
 				)
 		formatString: 0.0
+		lineageTag: dc8be7f2-eb6c-4959-84f1-088adf406654
 
 	/// The number of unique comments posted.
 	/// A unique comments means one customer commenting on one recipe.
 	/// Even if the actual text is the same it will count as different if the customer or the recipe is different.
-	measure 'Number of Recipe Comments' = 
+	measure 'Number of Recipe Comments' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[Recipe Comment Id])
 				)
 		formatString: #,0
+		lineageTag: bc6fcdf9-e3b7-431c-b52f-47695eb1dd7e
 
 	/// The number of unique comments divided by the total number of dishes.
 	/// The purpose of this measure is to be able to compare the number of comments between weeks when the number of dishes ordered varies.
 	/// When more dishes are sold there will generally be more comments.
-	measure 'Share of Ordered Dishes with Comment' = 
+	measure 'Share of Ordered Dishes with Comment' =
 			CALCULATE(
 				[Number of Recipe Comments] / [Number of Ordered Dishes]
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 54e62f69-6bfa-4999-a6e9-2ad5846b25f0
 
 	/// The number of unique customers posting a rating.
 	/// Customers marking "dish not cooked" are included.
-	measure 'Number of Rating Customers' = 
+	measure 'Number of Rating Customers' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id])
 					, 'Order Measures'[Recipe Rating Id] <> BLANK()
 				)
 		formatString: #,0
+		lineageTag: 370a5c81-d627-4103-9363-0f25903eeeb0
 
 	/// The number of unique customer posting a rating divided by the total number of orders.
 	/// Customers marking "dish not cooked" are included.
 	/// The purpose of this measure is to be able to compare the number of customers posting a rating between weeks when the number of ordering customers varies.
 	/// When more customers are ordering the number of customers posting a rating will also be higher.
-	measure 'Share of Ordering Customers with Dish Rating' = 
+	measure 'Share of Ordering Customers with Dish Rating' =
 			CALCULATE(
 				[Number of Rating Customers] / [Number of Ordering Customers]
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 30040681-4c5e-4a2f-88eb-7648269b6b95
 
 	/// The number of dishes marked as "dish not cooked".
 	/// Counts as unique with every customer marking each dish.
 	/// Two customers marking the same dish as "not cooked" will count as 2.
-	measure 'Number of Dishes Not Cooked' = 
+	measure 'Number of Dishes Not Cooked' =
 			CALCULATE(
 				DISTINCTCOUNT('Order Measures'[Recipe Rating Id])
 					, 'Order Measures'[is_not_cooked_dish] = TRUE()
 				)+0
 		formatString: 0
+		lineageTag: ca52eb56-1016-4b87-b59c-4804b629d3ef
 
 	/// The number of dishes marked as "dish not cooked" divided by the total number of ratings.
 	/// The purpose of this measure is to be able to compare the number of dishes not cooked between weeks when the number of ratings varies.
 	/// When the general attention to rating dishes is lower the number of dishes marked as not cooked will also be lower.
-	measure 'Share of Rated Dishes not Cooked' = 
+	measure 'Share of Rated Dishes not Cooked' =
 			CALCULATE(
 				[Number of Dishes Not Cooked] / [Number of Ratings]
 				)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 39c7a96b-50ad-446b-a6b9-d5ea1670e2a2
 
 	/// The number of unique ratings posted. A unique rating is the rating of one dish by one customer.
-	/// If one customer rates 3 dishes and another rates 2 dishes, then these are 5 unique ratings regardless of which specific dishes they rated. 
+	/// If one customer rates 3 dishes and another rates 2 dishes, then these are 5 unique ratings regardless of which specific dishes they rated.
 	/// Dish not cooked is excluded.
-	measure 'Number of Ratings' = 
+	measure 'Number of Ratings' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[Recipe Rating Id])
-					, 'Order Measures'[is_not_cooked_dish] = FALSE() 
+					, 'Order Measures'[is_not_cooked_dish] = FALSE()
 				)
 		formatString: #,0
+		lineageTag: c056ab91-83d4-4db3-aa8d-fb27ac10e9c2
 
 	/// The number of unique ratings posted divided by the total number of dishes sold.
 	/// The purpose of this measure is to be able to compare the number of ratings between weeks when the number of dishes sold varies.
 	/// If fewer dishes are sold the number of ratings will also be lower.
-	measure 'Share of Ordered Dishes with Rating' = 
+	measure 'Share of Ordered Dishes with Rating' =
 			CALCULATE(
 				[Number of Ratings] / [Number of Ordered Dishes]
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: bc329d84-dd32-46c0-9dd6-21157b306135
 
 	/// The number of unique recipes that have received any rating.
 	/// Dish not cooked is excluded.
-	measure 'Number of Recipes with Rating' = 
+	measure 'Number of Recipes with Rating' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[recipe_id])
 					, 'Order Measures'[Recipe Rating Id] <> BLANK()
-					, 'Order Measures'[is_not_cooked_dish] = FALSE() 
+					, 'Order Measures'[is_not_cooked_dish] = FALSE()
 				)
 		formatString: #,0
-		
-
+		lineageTag: 27195082-227f-4e26-8144-68af06a5c82b
 
 	column weekly_menu_id
 		dataType: int64
@@ -170,16 +178,6 @@ table 'Menu Measures'
 		sourceColumn: portion_quantity
 
 		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column portion_name
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 1d7fcaaf-803a-47b5-9352-22f10ca0b149
-		summarizeBy: none
-		sourceColumn: portion_name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -385,6 +383,16 @@ table 'Menu Measures'
 		lineageTag: 1873f07a-e127-4f1a-9b02-5bc047abbbb5
 		summarizeBy: none
 		sourceColumn: is_artificial_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column portion_name
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 1d7fcaaf-803a-47b5-9352-22f10ca0b149
+		summarizeBy: none
+		sourceColumn: portion_name
 
 		annotation SummarizationSetBy = Automatic
 

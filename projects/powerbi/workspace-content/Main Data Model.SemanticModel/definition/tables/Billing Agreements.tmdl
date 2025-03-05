@@ -60,6 +60,19 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
+	column is_current
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 373b4a87-26fd-4e55-9118-c6d440aee6d4
+		summarizeBy: none
+		sourceColumn: is_current
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column 'Payment Method'
 		dataType: string
 		lineageTag: a5eaf2ae-1125-44bc-99d3-59ab436653c3
@@ -95,6 +108,21 @@ table 'Billing Agreements'
 		sourceColumn: billing_agreement_status_name
 
 		annotation SummarizationSetBy = Automatic
+
+	column 'Signup Date'
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		isAvailableInMdx: false
+		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
+		summarizeBy: none
+		sourceColumn: signup_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column signup_year_day
 		dataType: int64
@@ -221,14 +249,12 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_current
-		dataType: boolean
+	column billing_agreement_preferences_updated_id
+		dataType: string
 		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 373b4a87-26fd-4e55-9118-c6d440aee6d4
+		lineageTag: fadb0409-da35-4138-b87c-dabf327fa364
 		summarizeBy: none
-		sourceColumn: is_current
+		sourceColumn: billing_agreement_preferences_updated_id
 
 		changedProperty = IsHidden
 
@@ -244,32 +270,6 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Signup Date'
-		dataType: dateTime
-		isHidden
-		formatString: Long Date
-		isAvailableInMdx: false
-		lineageTag: ce6f42f3-ecda-4f0c-8eb8-39efffc10c03
-		summarizeBy: none
-		sourceColumn: signup_date
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column billing_agreement_preferences_updated_id
-		dataType: string
-		isHidden
-		lineageTag: fadb0409-da35-4138-b87c-dabf327fa364
-		summarizeBy: none
-		sourceColumn: billing_agreement_preferences_updated_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Onesub Beta Flag'
 		dataType: string
 		lineageTag: d3091add-fecf-47e4-913e-ece695213054
@@ -279,6 +279,13 @@ table 'Billing Agreements'
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
+
+	column 'Loyalty Level Number'
+		dataType: int64
+		isHidden
+		lineageTag: 4b84a78f-80ea-4c7d-8bac-f2f17734ce40
+		summarizeBy: none
+		sourceColumn: loyalty_level_number
 
 	partition 'Billing Agreements' = m
 		mode: directQuery

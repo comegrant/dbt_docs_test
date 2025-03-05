@@ -11,7 +11,7 @@ annotation PBI_QueryOrder = ["Date","Brands","Order Statuses","Order Types","Rec
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.139.2054.0 (24.12)+334ca1c95b576cc53924655643b0d36f21caac55
+annotation PBIDesktopVersion = 2.140.1205.0 (25.02)+2ab3defe107764e1cf486b42122d9362df7f34ea
 
 annotation PBI_ProTooling = ["DevMode","TMDL-Extension","CalcGroup"]
 
@@ -28,19 +28,19 @@ ref table 'Menu Measures'
 ref table 'Billing Agreements'
 ref table 'Bridge Billing Agreements Preferences'
 ref table Preferences
+ref table 'Agreements Daily'
 ref table 'Period Since First Order'
 ref table 'Agreements Weekly'
 ref table '(Param) Measures'
+ref table 'Origin of Selected Dishes in Basket'
+ref table Estimations
+ref table Time
 ref table 'Subscription Quiz Measures'
 ref table 'Origin of Preselected Dishes'
 ref table 'Billing Agreements Deviation'
 ref table 'Subscribed Products'
 ref table 'Bridge Billing Agreements Subscribed Products'
-ref table 'Origin of Selected Dishes in Basket'
-ref table Estimations
-ref table Time
 ref table 'Preference Combinations'
-ref table 'Agreements Daily'
 ref table 'Customer Measures'
 ref table 'Agreement Recipe Compliance Measures'
 ref table 'Budget Types'

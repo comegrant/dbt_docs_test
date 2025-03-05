@@ -100,6 +100,17 @@ table Dates
 
 		annotation SummarizationSetBy = User
 
+	/// Full name of the month. This follows the normal calendar in Scandinavia.
+	column 'Calendar Month Name'
+		dataType: string
+		isHidden
+		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
+		summarizeBy: none
+		sourceColumn: calendar_month_name
+		sortByColumn: 'Calendar Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
 	/// Used for sorting the calendar year column.
 	column 'Calendar Year - Sort'
 		dataType: int64
@@ -123,17 +134,6 @@ table Dates
 		sourceColumn: Financial Week - Sort
 
 		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	/// Full name of the month. This follows the normal calendar in Scandinavia.
-	column 'Calendar Month Name'
-		dataType: string
-		isHidden
-		lineageTag: 0f120b2b-2095-4749-84c3-61c285f69bc8
-		summarizeBy: none
-		sourceColumn: calendar_month_name
-		sortByColumn: 'Calendar Month Number'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -253,19 +253,21 @@ table Dates
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Counts the number of days since the first day of the financial year. 
-	/// Some years the financial year starts on week two instead of week one, 
+	/// Counts the number of days since the first day of the financial year.
+	/// Some years the financial year starts on week two instead of week one,
 	/// when this occurs the counter will start counting on day 8 instead of 1.
 	column day_of_financial_year_number
 		dataType: int64
 		isHidden
+		lineageTag: 9b74dbb7-b515-4f38-91b6-90192fcf1e71
 		summarizeBy: none
 		sourceColumn: day_of_financial_year_number
-	
+
 	/// Counts the number of days since the beginning of the financial quarter
 	column day_of_financial_quarter_number
 		dataType: int64
 		isHidden
+		lineageTag: c29cd344-f5d2-4202-a2e7-2512a0085b13
 		summarizeBy: none
 		sourceColumn: day_of_financial_quarter_number
 
@@ -273,6 +275,7 @@ table Dates
 	column day_of_financial_month_number
 		dataType: int64
 		isHidden
+		lineageTag: e32218df-3496-4679-835b-e2e6e25b7ebd
 		summarizeBy: none
 		sourceColumn: day_of_financial_month_number
 
@@ -281,16 +284,24 @@ table Dates
 		dataType: boolean
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: db99ae45-6d5c-4a91-a5e1-14c47f56ba65
+		summarizeBy: none
 		sourceColumn: is_future_date
 
-	/// Is true if the menu week the ordering week of the menu week has not started yet. 
-	/// The ordering week of the menu week is the week where orders are placed for an upcoming menu week. 
+		annotation SummarizationSetBy = Automatic
+
+	/// Is true if the menu week the ordering week of the menu week has not started yet.
+	/// The ordering week of the menu week is the week where orders are placed for an upcoming menu week.
 	/// This is currently in the week before the menu week.
 	column is_future_menu_week
 		dataType: boolean
 		isHidden
 		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ea1d1355-4002-4439-89e6-e020a39d6fd2
+		summarizeBy: none
 		sourceColumn: is_future_menu_week
+
+		annotation SummarizationSetBy = Automatic
 
 	/// In Cheffelo we have defined a financial hiearchy that should be the default for most reports.
 	/// 

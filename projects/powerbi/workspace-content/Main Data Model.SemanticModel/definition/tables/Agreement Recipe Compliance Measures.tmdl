@@ -153,6 +153,7 @@ table 'Agreement Recipe Compliance Measures'
 		isHidden
 		formatString: General Date
 		isAvailableInMdx: false
+		lineageTag: 7f02cd45-327e-476d-9153-2570daf9b285
 		summarizeBy: none
 		sourceColumn: menu_week_monday_date
 

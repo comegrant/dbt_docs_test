@@ -77,13 +77,6 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Recipe Main Ingredient Name (Eng)'
-		dataType: string
-		summarizeBy: none
-		sourceColumn: recipe_main_ingredient_name_english
-
-		annotation SummarizationSetBy = Automatic
-
 	column 'Main Recipe Name'
 		dataType: string
 		lineageTag: 7f2798ef-8885-4969-8934-2c2be899d39b
@@ -98,6 +91,14 @@ table Recipes
 		lineageTag: 77300f20-5de9-4d3b-8988-a7fe5ccc64c3
 		summarizeBy: none
 		sourceColumn: is_main_recipe
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Recipe Main Ingredient Name (Eng)'
+		dataType: string
+		lineageTag: d066e4c4-028f-444b-92cd-3f2edaaa867c
+		summarizeBy: none
+		sourceColumn: recipe_main_ingredient_name_english
 
 		annotation SummarizationSetBy = Automatic
 

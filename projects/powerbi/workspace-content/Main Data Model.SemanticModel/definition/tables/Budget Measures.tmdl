@@ -6,10 +6,12 @@ table 'Budget Measures'
 	/// debit and transportation and not order lines such as discount or credit.
 	measure 'ATV Gross Ex Vat (Budget)' = AVERAGE('Budget Measures'[ATV Gross])
 		formatString: #,0
+		lineageTag: 5d95c771-f00a-4315-9e5b-5d1b1b93ce9a
 
 	/// The number of budgeted orders.
 	measure 'Number of Orders (Budget)' = SUM('Budget Measures'[Number Of Orders])
 		formatString: #,0
+		lineageTag: 80f5fa4e-3b75-499c-89e6-ebd0ce415a49
 
 	/// Budgeted gross revenue from orders ex vat.
 	/// Is calculated by multiplying Number of Orders with ATV.
@@ -17,36 +19,44 @@ table 'Budget Measures'
 	/// debit and transportation and not order lines such as discount or credit.
 	measure 'Order Value Gross Ex Vat (Budget)' = [ATV Gross Ex Vat (Budget)] * [Number Of Orders (Budget)]
 		formatString: #,0
+		lineageTag: 9d9f5379-7bf6-4875-976a-a8ee35413e53
 
 	/// Absolute increase/decrease in sales compared to budgeted sales
 	measure 'Number of Orders (vs Budget)' = [Number of Orders (Budget)] - [Number of Orders]
 		formatString: #,0
+		lineageTag: 1a1cb7c8-c237-498e-8813-41698ec8fb36
 
 	/// Relative increase/decrease in sales compared to budgeted sales
 	measure 'Number of Orders (vs Budget %)' = DIVIDE([Number of Orders (vs Budget)],[Number of Orders (Budget)])
 		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 5f4dd8ba-14ea-45ce-81e0-11c1a0f690f7
 
 	/// Absolute increase/decrease in sales revenue compared to budgeted sales revenue
 	measure 'Order Value Gross Ex Vat (vs Budget)' = [Order Value Gross Ex Vat (Budget)] - [Order Value Gross Ex Vat]
 		formatString: #,0
+		lineageTag: 107c94d0-7512-4623-9c3f-1abcfbdc4804
 
 	/// Relative increase/decrease in sales revenue compared to budgeted sales revenue
 	measure 'Order Value Gross Ex Vat (vs Budget %)' = DIVIDE([Order Value Gross Ex Vat (vs Budget)],[Order Value Gross Ex Vat (Budget)])
 		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f6e96297-0348-4c8e-b56d-eb9ec130f3d7
 
 	/// Relative increase/decrease in ATV compared to budgeted ATV
 	measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE([ATV Gross Ex Vat (vs Budget)],[ATV Gross Ex Vat (Budget)])
 		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 3818d45c-f8bb-4c79-a3ef-2446c5471a7c
 
 	/// Absolute increase/decrease in ATV compared to budgeted ATV
 	measure 'ATV Gross Ex Vat (vs Budget)' = [ATV Gross Ex Vat (Budget)] - [Average Order Value Gross Ex Vat]
 		formatString: #,0
+		lineageTag: cfec4b82-0efc-4c0e-a713-72a9e2257465
 
 	/// The primary key of the fact_budget table
 	column pk_fact_budget
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: 62644411-c04e-4180-a1a3-dd64e4d61411
 		summarizeBy: none
 		sourceColumn: pk_fact_budget
 
@@ -56,6 +66,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: 5d3d4f4a-e7dc-49e9-af24-0c3416274358
 		summarizeBy: none
 		sourceColumn: budget_id
 
@@ -64,6 +75,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: e2240562-3a76-4c1b-bb31-aae1b351845e
 		summarizeBy: none
 		sourceColumn: budget_type_id
 
@@ -72,6 +84,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: 5571dee3-782b-4bb6-af77-f3fe746cb455
 		summarizeBy: none
 		sourceColumn: budget_segment_id
 
@@ -80,6 +93,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: 98bf45cf-ca2e-4bb1-a3ad-2d3c3220e4f2
 		summarizeBy: none
 		sourceColumn: company_id
 
@@ -93,6 +107,7 @@ table 'Budget Measures'
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: 3ea65108-9538-4961-9d41-f69566a39a01
 		summarizeBy: none
 		sourceColumn: financial_year
 
@@ -103,6 +118,7 @@ table 'Budget Measures'
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: 5ce5fe10-9a3e-4424-b44c-432962d1d10d
 		summarizeBy: none
 		sourceColumn: financial_week
 
@@ -111,6 +127,7 @@ table 'Budget Measures'
 		dataType: double
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: dc3a98f8-4c48-4381-8960-e4b7457105c3
 		summarizeBy: none
 		sourceColumn: atv_gross
 
@@ -130,6 +147,7 @@ table 'Budget Measures'
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
+		lineageTag: 5ead1f23-cfa8-4b46-8f83-6f9f008c6114
 		summarizeBy: none
 		sourceColumn: fk_dim_dates
 
@@ -138,6 +156,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: d481adee-fe49-4c20-9ce8-16c20625ba92
 		summarizeBy: none
 		sourceColumn: fk_dim_companies
 
@@ -146,6 +165,7 @@ table 'Budget Measures'
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
+		lineageTag: c93f2181-7a4c-4c5c-b4a1-09e053a31d86
 		summarizeBy: none
 		sourceColumn: fk_dim_budget_types
 
