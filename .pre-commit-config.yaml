@@ -78,9 +78,9 @@ repos:
 
       # Check model and column naming conventions
       - id: check-model-name-contract
-        name: Check gold model naming (dim_ or fact_ prefix)
+        name: Check gold model naming (dim_, fact_, or bridge_ prefix)
         files: ^projects/data-model/transform/models/gold/
-        args: [--pattern, "(dim|fact)_[a-z0-9_]+", "--"]
+        args: [--pattern, "(dim|fact|bridge)_[a-z0-9_]+", "--"]
 
       - id: check-model-name-contract
         name: Check intermediate model naming (int_ prefix)
