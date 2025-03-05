@@ -149,3 +149,11 @@ models:
           - type: not_null
         data_tests:
           - not_null
+      
+      - name: weeks_offset_from_current_monday
+        data_type: bigint
+        description: "{{ doc('column__weeks_offset_from_current_monday') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null

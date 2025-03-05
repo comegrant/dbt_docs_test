@@ -29,10 +29,27 @@ dates as (
     from renamed
 )
 
+, get_the_current_year_and_week as (
+
+    select
+        find_monday_date_of_week.*
+        , date_part('year',current_timestamp()) as current_year
+        , date_part('week',current_timestamp()) as current_week
+    from find_monday_date_of_week
+)
+
+, get_the_current_week_monday_date as (
+
+    select
+        get_the_current_year_and_week.*
+        , {{ get_iso_week_start_date('current_year', 'current_week') }} as current_week_monday_date
+    from get_the_current_year_and_week
+)
+
 , add_financial_periods as (
 
     select 
-        find_monday_date_of_week.*
+        get_the_current_week_monday_date.*
         , year(monday_date) as financial_year
         , quarter(monday_date) as financial_quarter
         , month(monday_date) as financial_month_number
@@ -44,7 +61,7 @@ dates as (
 
         , monday_date - interval 1 week as monday_date_previous_week
 
-    from find_monday_date_of_week
+    from get_the_current_week_monday_date
 
 )
 
@@ -78,6 +95,7 @@ dates as (
         , weekday_name
         , monday_date
         , monday_date_previous_week
+        , current_week_monday_date
 
     from add_financial_periods
 
@@ -85,8 +103,23 @@ dates as (
 
 , add_calculated_columns as (
 
-    select 
-        *
+    select
+        date
+        , calendar_year
+        , year_of_calendar_week
+        , calendar_quarter
+        , calendar_month_number
+        , calendar_month_name
+        , calendar_week
+        , financial_year
+        , financial_quarter
+        , financial_month_number
+        , financial_month_name
+        , financial_week
+        , day_of_week
+        , weekday_name
+        , monday_date
+        , monday_date_previous_week
         -- add index to all the days of the financial year
         -- makes it possible to compare with the same day in other years
         -- since some financial years does not have week 1 we cannot use row_number()
@@ -97,6 +130,7 @@ dates as (
         , row_number() over (partition by financial_year, financial_month_number order by date) as day_of_financial_month_number
         , date > current_date() as is_future_date
         , monday_date_previous_week > current_date() as is_future_menu_week
+        , date_diff(week, current_week_monday_date, monday_date) as weeks_offset_from_current_monday
     
     from moving_specific_financial_weeks
 

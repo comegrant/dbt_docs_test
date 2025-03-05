@@ -131,3 +131,9 @@ Is true if date is in the future, else false.
 Is true if the menu week the ordering week of the menu week has not started yet. The ordering week of the menu week is the week where orders are placed for an upcoming menu week. This is currently in the week before the menu week.
 
 {% enddocs %}
+
+{% docs column__weeks_offset_from_current_monday %}
+
+The difference in number of weeks between the monday date of the current week and the monday date of the actual week. A historical week will have a negative number, a future week a positive number, and the current week will be 0.
+
+{% enddocs %}
