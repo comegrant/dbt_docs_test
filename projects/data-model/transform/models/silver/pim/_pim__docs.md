@@ -562,3 +562,24 @@ The nutritional value of an ingredient's nutritional fact id per 100g of ingredi
 
 {% enddocs %}
 
+{% docs column__nutrition_calculation %}
+
+Indicates if the ingredient has nutrition calculation
+
+{% enddocs %}
+
+{% docs column__ingredient_nutrient_fact_name %}
+
+The name of the ingredient's nutritional fact id, e.g. "Fat"
+
+{% enddocs %}
+
+{% docs column__nutrition_units %}
+{% enddocs %}
+
+{% docs column__netto_weight %}
+
+The netto weight of an ingredient.
+
+{% enddocs %}
+

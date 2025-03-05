@@ -79,6 +79,20 @@ vars:
   226 # Barnevennlig, Norwegian
  ]
 
+ nutrient_id_fat: 2
+ nutrient_id_protein: 3
+ nutrient_id_carbs: 5
+ nutrient_id_salt: 6
+ nutrient_id_kJ: 7
+ nutrient_id_saturated_fat: 8
+ nutrient_id_sugar: 9
+ nutrient_id_fiber: 10
+ nutrient_id_kcal: 11
+ nutrient_id_fresh_fruit_veg: 12
+ nutrient_id_processed_fruit_veg: 13
+ nutrient_id_added_sugars: 14
+ nutrient_id_added_salt: 15
+
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 

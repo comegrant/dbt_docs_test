@@ -31,7 +31,7 @@ renamed as (
             
         --{# numerics #}
         --, order_ingredient_qty
-        --, nutrition_units
+        , nutrition_units
         
     from source
 

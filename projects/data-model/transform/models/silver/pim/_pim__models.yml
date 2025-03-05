@@ -922,6 +922,10 @@ models:
         data_type: boolean
         description: ""
 
+      - name: netto_weight
+        data_type: float
+        description: "{{ doc('column__netto_weight') }}"
+
   - name: pim__order_ingredients
     description: "Table connecting ingredient to a specific recipe variation"
 
@@ -957,6 +961,10 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+
+      - name: nutrition_units
+        data_type: float
+        description: "{{ doc('column__nutrition_units') }}"
 
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"
@@ -1348,3 +1356,65 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
+
+  - name: pim__generic_ingredients
+    description: "Table of generic ingredients information"
+
+    columns:
+      - name: generic_ingredient_id
+        data_type: int
+        description: "{{ doc('column__generic_ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: generic_ingredient_status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: nutrition_calculation
+        data_type: boolean
+        description: "{{ doc('column__nutrition_calculation') }}"
+        data_tests:
+          - not_null
+      
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+      
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+      
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+  
+  - name: pim__nutrient_fact_translations
+    description: "Table mapping nutrient fact ids to their names in different languages"
+
+    columns:
+      - name: ingredient_nutrient_fact_id
+        data_type: int
+        description: "{{ doc('column__ingredient_nutrient_fact_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_nutrient_fact_name
+        data_type: string
+        description: "{{ doc('column__ingredient_nutrient_fact_name') }}"
+        data_tests:
+          - not_null
+

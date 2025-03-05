@@ -48,7 +48,7 @@ renamed as (
         --, ingredient_cost_unit
         --, supplier_pack_size
         --, shelf_life
-        --, netto_weight
+        , netto_weight
         --, brutto_weight
         --, sales_price
         --, marketing_price --mainly nan

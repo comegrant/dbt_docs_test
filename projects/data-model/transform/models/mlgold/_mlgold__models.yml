@@ -414,4 +414,77 @@ models:
       - name: is_main_protein
         description: "{{ doc('column__is_main_protein') }}"
         data_type: boolean
+  
+  - name: ml_recipe_nutritional_facts
+    description: "Table containing nutritional facts for recipes"
 
+    columns:
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+        tests:
+          - not_null
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+
+      - name: portion_size
+        description: "{{ doc('column__portion_size') }}"
+        data_type: int
+
+      - name: protein_gram_per_portion
+        description: "{{ doc('column__protein_gram_per_portion') }}"
+        data_type: float
+
+      - name: carbs_gram_per_portion
+        description: "{{ doc('column__carbs_gram_per_portion') }}"
+        data_type: float
+
+      - name: fat_gram_per_portion
+        description: "{{ doc('column__fat_gram_per_portion') }}"
+        data_type: float
+
+      - name: sat_fat_gram_per_portion
+        description: "{{ doc('column__sat_fat_gram_per_portion') }}"
+        data_type: float
+
+      - name: sugar_gram_per_portion
+        description: "{{ doc('column__sugar_gram_per_portion') }}"
+        data_type: float
+
+      - name: sugar_added_gram_per_portion
+        description: "{{ doc('column__sugar_added_gram_per_portion') }}"
+        data_type: float
+
+      - name: fiber_gram_per_portion
+        description: "{{ doc('column__fiber_gram_per_portion') }}"
+        data_type: float
+
+      - name: salt_gram_per_portion
+        description: "{{ doc('column__salt_gram_per_portion') }}"
+        data_type: float
+
+      - name: salt_added_gram_per_portion
+        description: "{{ doc('column__salt_added_gram_per_portion') }}"
+        data_type: float
+
+      - name: fg_fresh_gram_per_portion
+        description: "{{ doc('column__fg_fresh_gram_per_portion') }}"
+        data_type: float
+
+      - name: fg_proc_gram_per_portion
+        description: "{{ doc('column__fg_proc_gram_per_portion') }}"
+        data_type: float
+
+      - name: total_kcal_per_portion
+        description: "{{ doc('column__total_kcal_per_portion') }}"
+        data_type: float

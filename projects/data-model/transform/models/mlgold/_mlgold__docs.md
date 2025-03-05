@@ -106,3 +106,75 @@ Aggregated list of ingredient category ids for a recipe portion id
 Most recent menu year, week for a main recipe id and per billing agreement, company (YYYYWW)
 
 {% enddocs %}
+
+{% docs column__protein_gram_per_portion %}
+
+Protein per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__carbs_gram_per_portion %}
+
+Carbohydrates per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__fat_gram_per_portion %}
+
+Fat per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__sat_fat_gram_per_portion %}
+
+Saturated fat per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__sugar_gram_per_portion %}
+
+Sugar per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__sugar_added_gram_per_portion %}
+
+Added sugar per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__fiber_gram_per_portion %}
+
+Fiber per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__salt_gram_per_portion %}
+
+Salt per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__salt_added_gram_per_portion %}
+
+Added salt per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__fg_fresh_gram_per_portion %}
+
+Fresh fruit and vegetables per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__fg_proc_gram_per_portion %}
+
+Processed fruit and vegetables per portion in grams for a recipe portion id.
+
+{% enddocs %}
+
+{% docs column__total_kcal_per_portion %}
+
+Total calories per portion for a recipe portion id.
+
+{% enddocs %}
