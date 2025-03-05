@@ -113,29 +113,17 @@ class DatabricksConnectionConfig:
         Returns:
             DataFrame: A spark dataframe containing the sql output
         """
-        spark = self.connection()
+        spark = self.spark()
         return spark.sql(query)
 
-    def table(self, table: str) -> DataFrame:
+    def table(self, table: str) -> TableConfig:
         """
-        Returns a dataframe containing ready to load the provided table.
-
-        ```python
-        from catalog_connector import session_or_serverless
-
-        df = session_or_serverless.table("mloutputs.preselector_batch")
-        df.show()
-        ```
+        Returns a table that you can read and write to
 
         Args:
-            table (str): The table identifier to load
-
-        Returns:
-            DataFrame: A spark dataframe containing the output
+            table (str): The table to read and write to
         """
-
-        spark = self.connection()
-        return spark.table(table)
+        return TableConfig(table, self)
 
     def append_to(self, table: str, dataframe: DataFrame) -> None:
         """
@@ -194,7 +182,7 @@ class DatabricksConnectionConfig:
             table (str): The table to upsert into
             dataframe (DataFrame): The dataframe to upsert
         """
-        conn = self.connection()
+        conn = self.spark()
 
         if not conn.catalog.tableExists(table):
             self.append_to(table, dataframe)
@@ -211,7 +199,7 @@ WHEN MATCHED THEN
 WHEN NOT MATCHED THEN
   INSERT *""")
 
-    def connection(self) -> SparkSession:
+    def spark(self) -> SparkSession:
         "Creates a spark session"
         from pyspark.errors import PySparkException
 
@@ -249,3 +237,35 @@ WHEN NOT MATCHED THEN
                 spark.stop()
 
         return builder.getOrCreate()
+
+
+@dataclass
+class TableConfig:
+    identifier: str
+    config: DatabricksConnectionConfig
+
+    def read(self) -> DataFrame:
+        """
+        Returns a dataframe containing ready to load the provided table.
+
+        ```python
+        from catalog_connector import connection
+
+        df = connection.table("mloutputs.preselector_batch").read()
+        df.show()
+        ```
+
+        Returns:
+            DataFrame: A spark dataframe containing the output
+        """
+        spark = self.config.spark()
+        return spark.table(self.identifier)
+
+    def append(self, dataframe: DataFrame) -> None:
+        self.config.append_to(self.identifier, dataframe)
+
+    def upsert_on(self, columns: list[str], dataframe: DataFrame) -> None:
+        self.config.upsert_on(columns, self.identifier, dataframe)
+
+    def overwrite(self, dataframe: DataFrame) -> None:
+        self.config.overwrite(self.identifier, dataframe)

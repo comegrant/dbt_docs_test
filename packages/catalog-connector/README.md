@@ -22,9 +22,9 @@ This assumes that you have a Databricks auth token set in an environment variabl
 
 
 ```python
-from catalog_connector import session_or_serverless
+from catalog_connector import connection
 
-df = session_or_serverless.sql("SELECT * FROM dev.mloutputs.preselector_batch WHERE ...")
+df = connection.sql("SELECT * FROM dev.mloutputs.preselector_batch WHERE ...")
 df.show()
 ```
 
@@ -33,9 +33,9 @@ df.show()
 You can also use `.table()`, if you rather want to read on specific table.
 
 ```python
-from catalog_connector import session_or_serverless
+from catalog_connector import connection
 
-df = session_or_serverless.table("dev.mloutputs.preselector_batch")
+df = connection.table("dev.mloutputs.preselector_batch").read()
 df.show()
 ```
 
@@ -46,35 +46,34 @@ Below are the different ways to write data.
 To append rows to a table use the following.
 
 ```python
-from catalog_connector import session_or_serverless
+from catalog_connector import connection
 
 df: spark.DataFrame = ...
 
-session_or_serverless.append_to("mloutputs.some_table", df)
+connection.table("mloutputs.some_table").append(df)
 ```
 
 ### Overwrite
 To overwrite the whole table use the following.
 
 ```python
-from catalog_connector import session_or_serverless
+from catalog_connector import connection
 
 df: spark.DataFrame = ...
 
-session_or_serverless.overwrite("mloutputs.some_table", df)
+connection.table("mloutputs.some_table").overwrite(df)
 ```
 
 ### Upsert / Merge
 To do an upsert, or sometimes called a merge use the following.
 
 ```python
-from catalog_connector import session_or_serverless
+from catalog_connector import connection
 
 df: spark.DataFrame = ...
 
-session_or_serverless.upsert_on(
+connection.table("mloutputs.some_table").upsert_on(
     columns=["recipe_id", "portion_id"],
-    table="mloutputs.some_table",
     dataframe=df
 )
 ```
@@ -84,7 +83,7 @@ session_or_serverless.upsert_on(
 If you want to configure your Spark session in another way than the default spark session or a serverless compute, then you have a few options.
 
 ```python
-from catalog_connector import session_or_serverless, DatabricksConnectionConfig, EnvironmentValue
+from catalog_connector import connection, DatabricksConnectionConfig, EnvironmentValue
 
 # Needs to provide the cluster id, but workspace and token are optional
 specific_cluster = DatabricksConnectionConfig.with_cluster_id(
