@@ -1,4 +1,4 @@
-with 
+with
 
 recipes as (
     select * from {{ ref('dim_recipes') }}
@@ -20,6 +20,7 @@ add_fks as (
 
     from recipe_taxonomies
     left join recipes on recipes.recipe_id = recipe_taxonomies.recipe_id
+    -- ASSUMPTION: Recipes are only written in local language and won't have a language_id = 4 (English)
     left join taxonomies on taxonomies.taxonomy_id = recipe_taxonomies.taxonomy_id and taxonomies.language_id = recipes.language_id
     where taxonomies.language_id is not null -- not all taxonomies have a translation for all languages. There are cases where a recipe has several translations
 )

@@ -124,6 +124,30 @@ Primary key of the dim_taxonomies table.
 
 {% enddocs %}
 
+{% docs column__taxonomy_name_local %}
+
+The name of the taxonomy in the local language.
+
+{% enddocs %}
+
+{% docs column__taxonomy_name_english %}
+
+The name of the taxonomy in English.
+
+{% enddocs %}
+
+{% docs column__taxonomy_status_name_local %}
+
+The name of the status for each taxonomy in the local language.
+
+{% enddocs %}
+
+{% docs column__taxonomy_status_name_english %}
+
+The name of the status for each taxonomy in English.
+
+{% enddocs %}
+
 
 # Dim Ingredients
 {% docs column__pk_dim_ingredients %}
@@ -240,4 +264,3 @@ The name of the number of portions on the local language.
 The name of the number of portions on English.
 
 {% enddocs %}
-

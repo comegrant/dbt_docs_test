@@ -22,6 +22,10 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "dbt_packages"
 
 vars:
+ english_language_id: 4
+ norwegian_language_id: 1
+ swedish_language_id: 5
+ danish_language_id: 6
  future_proof_date: '9999-12-31'
  onesub_beta_launch_date: '2024-10-14'
  onesub_full_launch_date: '2024-11-18'

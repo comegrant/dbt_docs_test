@@ -1,4 +1,4 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
@@ -207,7 +207,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_created_at
@@ -216,7 +216,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_updated_by
@@ -225,7 +225,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_updated_at
@@ -234,10 +234,10 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
   - name: pim__menus
-    description: "All menus per weekly menu. Each menu realtes to a product."
+    description: "All menus per weekly menu. Each menu relates to a product."
     columns:
       - name: menu_id
         data_type: int
@@ -270,7 +270,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_created_at
@@ -279,7 +279,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_updated_by
@@ -288,7 +288,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
 
       - name: source_updated_at
@@ -297,7 +297,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: is_selected_menu
         data_type: boolean
@@ -425,7 +425,8 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__weekly_menus
-    description: "This table holds information about each menu week (delivery week). There is one row per company per week of the year."
+    description: "This table holds information about each menu week (delivery week). There is one row per company per week\
+      \ of the year."
     columns:
       - name: weekly_menu_id
         data_type: int
@@ -741,14 +742,22 @@ models:
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
+        data_tests:
+          - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 4, 5, 6]
 
       - name: taxonomy_name
         data_type: string
         description: "{{ doc('column__taxonomy_name') }}"
+        data_tests:
+          - not_null
 
   - name: pim__taxonomies
     description: "Table with taxonomy information"
@@ -757,14 +766,25 @@ models:
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
 
       - name: taxonomy_status_code_id
         data_type: int
         description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
 
       - name: country_id
         data_type: int
         description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
 
       - name: source_created_by
         data_type: string
@@ -785,6 +805,8 @@ models:
       - name: is_external_taxonomy
         data_type: boolean
         description: "{{ doc('column__is_external_taxonomy') }}"
+        data_tests:
+          - not_null
 
   - name: pim__recipe_taxonomies
     description: "Table mapping a recipe id to its taxonomy ids"
@@ -1152,7 +1174,7 @@ models:
         constraints:
           - type: foreign_key
           - type: not_null
-  
+
   - name: pim__taxonomy_types
     description: "Table of taxonomy type information"
     columns:
@@ -1196,7 +1218,7 @@ models:
       - name: status_code_description
         data_type: string
         description: "{{ doc('column__status_code_description') }}"
-      
+
   - name: pim__allergy_preferences
     description: "Table connecting allergy ids to preference ids"
 
@@ -1212,7 +1234,7 @@ models:
         description: "{{ doc('column__preference_id') }}"
         data_tests:
           - not_null
-  
+
   - name: pim__ingredient_allergies
     description: "Table connecting ingredient ids to allergy ids"
 
@@ -1228,13 +1250,13 @@ models:
         description: "{{ doc('column__allergy_id') }}"
         data_tests:
           - not_null
-      
+
       - name: has_trace_of
         data_type: boolean
         description: "{{ doc('column__has_trace_of') }}"
         data_tests:
           - not_null
-  
+
   - name: pim__ingredient_category_preferences
     description: "Table connecting ingredient category ids to preference ids"
 
@@ -1272,7 +1294,7 @@ models:
         description: "{{ doc('column__ingredient_name') }}"
         data_tests:
           - not_null
-    
+
   - name: pim__allergy_translations
     description: "Table mapping allergy ids to their names in different languages"
 
@@ -1288,7 +1310,7 @@ models:
         description: "{{ doc('column__language_id') }}"
         data_tests:
           - not_null
-      
+
       - name: allergy_name
         data_type: string
         description: "{{ doc('column__allergy_name') }}"
@@ -1378,24 +1400,24 @@ models:
         description: "{{ doc('column__nutrition_calculation') }}"
         data_tests:
           - not_null
-      
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-      
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-      
+
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
 
-      
+
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
-  
+
   - name: pim__nutrient_fact_translations
     description: "Table mapping nutrient fact ids to their names in different languages"
 
@@ -1405,7 +1427,7 @@ models:
         description: "{{ doc('column__ingredient_nutrient_fact_id') }}"
         data_tests:
           - not_null
-      
+
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
@@ -1417,4 +1439,3 @@ models:
         description: "{{ doc('column__ingredient_nutrient_fact_name') }}"
         data_tests:
           - not_null
-

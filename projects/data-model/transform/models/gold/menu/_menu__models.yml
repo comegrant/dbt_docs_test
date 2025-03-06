@@ -11,13 +11,14 @@ models:
       - v: 1
 
   - name: dim_recipe_reaction_types
-    description: "When chosing dishes the customer can react with a heart or a dislike. This table holds information about the different types of reactions a customer can make."
+    description: "When choosing dishes the customer can react with a heart or a dislike. This table holds information about\
+      \ the different types of reactions a customer can make."
     latest_version: 1
     config:
       alias: dim_recipe_reaction_types
       contract:
-        enforced: True
-    
+        enforced: true
+
     columns:
       - name: pk_dim_recipe_reaction_types
         data_type: string
@@ -29,7 +30,7 @@ models:
         data_tests:
           - unique
           - not_null
-          
+
       - name: recipe_reaction_type_id
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
@@ -52,13 +53,14 @@ models:
       - v: 1
 
   - name: fact_recipe_reactions
-    description: "When chosing dishes the customer can react with a heart or a dislike. The table stores the reaction made by customers."
+    description: "When choosing dishes the customer can react with a heart or a dislike. The table stores the reaction made\
+      \ by customers."
     latest_version: 1
     config:
       alias: fact_recipe_reactions
       contract:
-        enforced: True
-    
+        enforced: true
+
     columns:
       - name: pk_fact_recipe_reactions
         data_type: string
@@ -126,7 +128,7 @@ models:
         description: "{{ doc('column__source_created_at') }}"
         data_tests:
           - not_null
-  
+
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
@@ -181,7 +183,7 @@ models:
           - relationships:
               to: ref('dim_time')
               field: pk_dim_time
-  
+
       - name: fk_dim_recipe_reaction_types
         data_type: string
         description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
@@ -202,7 +204,7 @@ models:
     config:
       alias: dim_recipes
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_dim_recipes
@@ -397,7 +399,7 @@ models:
       - name: allergy_name
         data_type: string
         description: "{{ doc('column__allergy_name') }}"
-      
+
       - name: main_group
         data_type: string
         description: "{{ doc('column__main_group') }}"
@@ -405,7 +407,7 @@ models:
       - name: category_group
         data_type: string
         description: "{{ doc('column__category_group') }}"
-      
+
       - name: product_group
         data_type: string
         description: "{{ doc('column__product_group') }}"
@@ -413,7 +415,7 @@ models:
       - name: category_level1
         data_type: int
         description: "{{ doc('column__category_level1') }}"
-      
+
       - name: category_level2
         data_type: int
         description: "{{ doc('column__category_level2') }}"
@@ -421,7 +423,7 @@ models:
       - name: category_level3
         data_type: int
         description: "{{ doc('column__category_level3') }}"
-      
+
       - name: category_level4
         data_type: int
         description: "{{ doc('column__category_level4') }}"
@@ -438,6 +440,8 @@ models:
     latest_version: 1
     config:
       alias: dim_taxonomies
+      contract:
+        enforced: true
 
     columns:
       - name: pk_dim_taxonomies
@@ -463,15 +467,25 @@ models:
         data_tests:
           - not_null
 
-      - name: taxonomy_name
+      - name: taxonomy_name_local
         data_type: string
-        description: "{{ doc('column__taxonomy_name') }}"
+        description: "{{ doc('column__taxonomy_name_local') }}"
         data_tests:
           - not_null
 
-      - name: taxonomy_status_code_name
+      - name: taxonomy_name_english
         data_type: string
-        description: "{{ doc('column__status_code_name') }}"
+        description: "{{ doc('column__taxonomy_name_english') }}"
+
+      - name: taxonomy_status_name_local
+        data_type: string
+        description: "{{ doc('column__taxonomy_status_name_local') }}"
+        data_tests:
+          - not_null
+
+      - name: taxonomy_status_name_english
+        data_type: string
+        description: "{{ doc('column__taxonomy_status_name_english') }}"
         data_tests:
           - not_null
 
@@ -578,7 +592,7 @@ models:
         description: "{{ doc('column__recipe_portion_id') }}"
         data_tests:
           - not_null
-      
+
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
@@ -604,7 +618,7 @@ models:
     config:
       alias: fact_menus
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_fact_menus
@@ -643,10 +657,10 @@ models:
         data_type: int
         description: "{{ doc('column__menu_id') }}"
         constraints:
-          - type: not_null        
+          - type: not_null
         data_tests:
           - not_null
-  
+
       - name: menu_variation_id
         data_type: int
         description: "{{ doc('column__menu_variation_id') }}"
@@ -668,7 +682,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: recipe_id
         data_type: int
@@ -676,7 +690,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: recipe_portion_id
         data_type: int
@@ -684,7 +698,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: portion_id
         data_type: int
@@ -728,7 +742,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: portion_quantity
         data_type: int
@@ -736,15 +750,15 @@ models:
 
       - name: portion_name
         data_type: string
-        description: "{{ doc('column__portion_name') }}"     
+        description: "{{ doc('column__portion_name') }}"
 
       - name: is_selected_menu
         data_type: boolean
-        description: ""     
+        description: ""
 
       - name: is_locked_recipe
         data_type: boolean
-        description: ""        
+        description: ""
 
       - name: is_artificial_week
         data_type: boolean

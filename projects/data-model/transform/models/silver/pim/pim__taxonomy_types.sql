@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -13,7 +13,7 @@ renamed as (
         id as taxonomy_type_id
 
         {# strings #}
-        , name as taxonomy_type_name
+        , lower(name) as taxonomy_type_name
 
 
     from source

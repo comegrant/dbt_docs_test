@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -14,7 +14,7 @@ renamed as (
         , language_id
 
         {# strings #}
-        , taxonomies_name as taxonomy_name
+        , initcap(taxonomies_name) as taxonomy_name
 
     from source
 
