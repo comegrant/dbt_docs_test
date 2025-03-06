@@ -69,7 +69,7 @@ order_lines as (
     select
         order_lines.*
         , deviations_order_mapping.is_onesub_migration
-        , case when is_onesub_migration = 0
+        , case when deviations_order_mapping.is_onesub_migration = 0
             and order_lines.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
             and recommendations_origin.billing_agreement_basket_deviation_origin_id is null
             then 1
@@ -476,10 +476,10 @@ order_lines as (
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
         , order_line_dimensions_joined.has_recipe_leaflets
-        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
-        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.is_onesub_migration
         , order_line_dimensions_joined.is_missing_preselector_output
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
