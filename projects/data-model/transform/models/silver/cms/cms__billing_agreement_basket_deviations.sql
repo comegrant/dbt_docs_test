@@ -70,4 +70,23 @@ source as (
 
 )
 
-select * from renamed
+, add_onesub_migration_flag as (
+
+    select
+        renamed.*
+        , case when
+            source_created_by = 'Tech - Weekly menu'
+            -- onesub migration timestamps
+            and date_trunc('second', source_created_at) in (
+                cast('2024-09-26T10:19:04+00:00' as timestamp)
+                , cast('2024-10-10T10:18:26+00:00' as timestamp)
+                , cast('2024-11-07T02:32:16+00:00' as timestamp)
+            )
+        then 1
+        else 0
+        end as is_onesub_migration
+    from renamed
+
+)
+
+select * from add_onesub_migration_flag

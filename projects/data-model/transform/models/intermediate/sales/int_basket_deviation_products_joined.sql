@@ -43,6 +43,7 @@ baskets as (
         , deviation_products.product_variation_quantity
         , deviations.is_active_deviation
         , deviation_products.is_extra_product
+        , coalesce(deviations.is_onesub_migration, deviation_products.is_onesub_migration) as is_onesub_migration
         , deviations.source_created_at as deviation_created_at
         , deviations.source_created_by as deviation_created_by
         , deviations.source_updated_at as deviation_updated_at

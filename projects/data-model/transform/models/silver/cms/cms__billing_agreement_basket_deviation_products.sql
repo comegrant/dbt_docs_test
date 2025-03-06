@@ -53,8 +53,31 @@ source as (
                 convert_timezone('Europe/Oslo', 'UTC', updated_at)
         end as source_updated_at
 
+        , updated_by as source_updated_by
+
     from source
 
 )
 
-select * from renamed
+, add_onesub_migration_flag as (
+
+    select
+        renamed.*
+        , case when
+            source_updated_by = 'Tech - Script'
+            -- onesub migration timestamps
+            and date_trunc('second', source_updated_at) in (
+                cast('2024-09-26T11:01:03+00:00' as timestamp)
+                ,cast('2024-10-10T10:27:55+00:00' as timestamp)
+                ,cast('2024-10-10T10:36:10+00:00' as timestamp)
+                ,cast('2024-11-07T02:58:46+00:00' as timestamp)
+                ,cast('2024-11-07T03:06:26+00:00' as timestamp)
+            )
+        then 1
+        else 0
+        end as is_onesub_migration
+    from renamed
+
+)
+
+select * from add_onesub_migration_flag

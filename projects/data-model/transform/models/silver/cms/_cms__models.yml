@@ -1387,15 +1387,12 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                  # known null values before this date
+                  where: "menu_week_monday_date > '2021-09-27'"
 
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
 
   - name: cms__billing_agreement_basket_deviation_products
     description: "Holds information about the products in a billing agreements basket deviation. Links to `cms__billing_agreement_basket_deviations`."
@@ -1441,7 +1438,8 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                  # known null values before this
+                  where: "source_created_at>='2019-01-01'"
 
       - name: source_updated_at
         data_type: string
@@ -1449,16 +1447,13 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
-
+                  # known null values before this
+                  where: "source_created_at>='2022-01-01'"
 
       - name: source_updated_by
         data_type: timestamp
         description: "{{ doc('column__source_updated_by') }}"
-        data_tests:
-          - not_null:
-              config:
-                  severity: warn
+
   - name: cms__billing_agreement_baskets
     description: "The basket related to a billing agreement. Each billing agreement can only have one basket."
     data_tests:
