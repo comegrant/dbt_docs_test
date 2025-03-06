@@ -40,7 +40,16 @@ def main() -> None:
         choices=["true", "false"],
         help="Whether the notification is an error (true, false)",
     )
+    # Add an argument to accept multiple URL results from upstream tasks
+    parser.add_argument("--urls", type=str, nargs="+", help="The URL values passed from upstream tasks")
+
     args = parser.parse_args()
+
+    url_list = []
+    if args.urls:
+        # Process each result
+        for _, url in enumerate(args.urls, start=1):
+            url_list.append(url)
 
     # Convert is_error string 'true'/'false' to boolean
     is_error = args.is_error.lower() == "true" if args.is_error is not None else False
@@ -51,6 +60,7 @@ def main() -> None:
         relevant_people=args.relevant_people,
         environment=args.environment,
         is_error=is_error,
+        urls=url_list,
     )
 
 

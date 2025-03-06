@@ -1,4 +1,9 @@
-def get_databricks_job_url(mode: str = "workflow_job") -> str:
+
+from typing import Literal
+
+
+def get_databricks_job_url(mode: Literal["embedded", "workflow_job"] = "workflow_job") -> str:
+
     """
     Constructs and returns the URL for the current Databricks job run.
 
@@ -7,7 +12,10 @@ def get_databricks_job_url(mode: str = "workflow_job") -> str:
     If running in a workflow job where DABs are used, use "workflow_job".
 
     Args:
-        mode (str): The mode of the job run. Accepts "workflow_job" or "embedded". Default is "workflow_job".
+
+        mode (Literal["embedded", "workflow_job"]): The mode of the job run. Must be either "embedded" or "workflow_job"
+        Default is "workflow_job".
+
 
     Returns:
         str: The URL to the Databricks job run.
@@ -19,13 +27,15 @@ def get_databricks_job_url(mode: str = "workflow_job") -> str:
 
     job_id = spark.sparkContext.getLocalProperty("spark.databricks.job.id")
     host_url = spark.conf.get("spark.databricks.workspaceUrl")
-    if mode != "embedded":
+
+
+    if mode == "embedded":
+        parent_run_id = spark.sparkContext.getLocalProperty("spark.databricks.job.parentRunId")
+        url_to_job = f"{host_url}/jobs/{job_id}/runs/{parent_run_id}"
+    elif mode == "workflow_job":
         run_id = spark.sparkContext.getLocalProperty("spark.databricks.job.runId")  # Gives Task runID
         url_to_job = f"{host_url}/jobs/{job_id}/runs/{run_id}"
 
-    else:  # Default case is "workflow_job"
-        parent_run_id = spark.sparkContext.getLocalProperty("spark.databricks.job.parentRunId")
-        url_to_job = f"{host_url}/jobs/{job_id}/runs/{parent_run_id}"
 
     return url_to_job
 

@@ -24,6 +24,8 @@ resources:
               - "{{job.parameters.environment}}"
               - --is_error
               - "{{job.parameters.is_error}}"
+              - --urls
+              - "{{job.parameters.urls}}"
           environment_key: notification-default
 
       edit_mode: EDITABLE
@@ -38,3 +40,5 @@ resources:
           default: local_dev
         - name: is_error
           default: false
+        - name: urls
+          default: ""

@@ -30,12 +30,27 @@ except ModuleNotFoundError:  # Needed when running from serverless compute in Da
     )
 
 
+def ensure_https(url: str) -> str:
+    """
+    Ensures the given URL starts with https:// instead of http://
+
+    Args:
+        url: The URL to be checked
+
+    Returns:
+        A URL with https:// as the scheme if the given URL does not have it
+
+    """
+    return "https://" + url if not url.startswith("http") else url
+
+
 def send_slack_notification(
     environment: Literal["local_dev", "dev", "test", "prod"],
     header_message: str | None = None,
     body_message: str | None = None,
     relevant_people: list[str] | str | None = None,
     is_error: bool = False,
+    urls: list[str] | None = None,
 ) -> None:
     """
     Sends a Slack notification with the given message and optional owner mentions.
@@ -46,6 +61,7 @@ def send_slack_notification(
         body_message: The body message content to send.
         relevant_people: A comma-separated string or list of relevant people short names or group names.
         is_error: Whether the notification is an error (True or False).
+        urls: The task url of the job that failed
     Raises:
         ValueError: If the environment is not one of the expected values.
     """
@@ -87,6 +103,22 @@ def send_slack_notification(
                 "text": {
                     "type": "mrkdwn",
                     "text": body_message,
+                },
+            }
+        )
+
+    # Add task url section only if it's provided and not blank
+    if urls and any(urls):
+        urls_with_https = [
+            ensure_https(url.strip()) for sublist in urls for url in sublist.split(",")
+        ]  # list comprehension ensures all elements are iterated over
+        url_text = "\n".join(f"<{url}|Link_{i}>" for i, url in enumerate(urls_with_https))
+        blocks.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*🔗 URLs:*\n {url_text}",
                 },
             }
         )
