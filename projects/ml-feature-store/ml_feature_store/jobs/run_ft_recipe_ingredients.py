@@ -16,6 +16,6 @@ logger.setLevel(logging.INFO)
 # COMMAND ----------
 spark = create_spark_context()
 env = dbutils.widgets.get("env")
-is_drop_existing = dbutils.widgets.get("is_drop_existing")
+is_drop_existing = dbutils.widgets.get("is_drop_existing").lower() == "true"
 args = Args(env=env, is_drop_existing=is_drop_existing)
 build_feature_table(args=args, spark=spark)
