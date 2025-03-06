@@ -92,6 +92,7 @@ deviations as (
         , deviations_find_valid_at.first_customer_deviation_created_at
         , deviations_find_valid_at.last_recommendation_deviation_created_at
         , deviations_find_valid_at.billing_agreement_valid_at
+        , deviations_find_valid_at.is_onesub_migration
     from deviations_find_related_order
     left join billing_agreements
         on deviations_find_related_order.billing_agreement_id = billing_agreements.billing_agreement_id
