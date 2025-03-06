@@ -240,7 +240,7 @@ models:
       - name: recipe_rating_id
         data_type: string
         description: "{{ doc('column__recipe_rating_id') }}"
-      
+
       - name: recipe_comment_id
         data_type: string
         description: "{{ doc('column__recipe_comment_id') }}"
@@ -1212,9 +1212,9 @@ models:
         data_tests:
           - not_null
 
-      - name: is_latest_menu_week_output_version
+      - name: is_most_recent_output
         data_type: int
-        description: "{{ doc('column__is_latest_menu_week_output_version') }}"
+        description: "{{ doc('column__is_most_recent_output') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -1647,25 +1647,25 @@ models:
               min_value: 0
               max_value: 1
 
-      - name: number_of_weeks_with_same_recipe
+      - name: repeat_weeks
         data_type: bigint
-        description: "{{ doc('column__number_of_weeks_with_same_recipe') }}"
+        description: "{{ doc('column__repeat_weeks') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 15
 
-      - name: number_of_weeks_in_window
+      - name: menu_week_window
         data_type: bigint
-        description: "{{ doc('column__number_of_weeks_in_window') }}"
+        description: "{{ doc('column__menu_week_window') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 15
 
-      - name: percentage_of_weeks_in_window_with_same_recipe
+      - name: repeat_weeks_percentage
         data_type: double
-        description: "{{ doc('column__percentage_of_weeks_in_window_with_same_recipe') }}"
+        description: "{{ doc('column__repeat_weeks_percentage') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
@@ -1750,7 +1750,7 @@ models:
 
     versions:
       - v: 1
-  
+
   - name: fact_recipe_billing_agreement_compliancy
     description: "Information about the compliancy between billing agreements and recipes"
     latest_version: 1
@@ -1773,7 +1773,7 @@ models:
         data_tests:
           - unique
           - not_null
-      
+
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
@@ -1806,7 +1806,7 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
-      
+
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
@@ -1825,7 +1825,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-      
+
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
@@ -1857,7 +1857,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-      
+
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
@@ -1873,7 +1873,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-      
+
       - name: compliancy_level
         data_type: int
         description: "{{ doc('column__compliancy_level') }}"
@@ -2250,7 +2250,7 @@ models:
         constraints:
           - type: not_null
         data_tests:
-          - not_null        
+          - not_null
 
   - name: dim_all_preference_combinations
     description: "Contains preference combinations and their corresponding names and ids"

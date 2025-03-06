@@ -443,9 +443,9 @@ models:
         data_tests:
           - not_null
 
-      - name: is_latest_menu_week_output_version
+      - name: is_most_recent_output
         data_type: int
-        description: "{{ doc('column__is_latest_menu_week_output_version') }}"
+        description: "{{ doc('column__is_most_recent_output') }}"
         constraints:
           - type: not_null
         data_tests:

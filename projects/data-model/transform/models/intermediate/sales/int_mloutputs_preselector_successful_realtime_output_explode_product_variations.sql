@@ -3,8 +3,10 @@ with
 preselector_successful_output as (
 
     select * from {{ ref('mloutputs__preselector_successful_realtime_output') }}
+
 )
 
+-- Explode the product_variation_ids array into individual rows
 , explode_list as (
 
     select
@@ -22,7 +24,7 @@ preselector_successful_output as (
         has_data_processing_consent,
         is_override_deviation,
         product_variation_id,
-        --main_recipe_ids, doesn't make sense to include once exploding the product variation ids
+        -- main_recipe_ids is excluded as it doesn't make sense to include after exploding product_variation_ids
         taste_preference_compliancy_code,
         error_cooking_time_mean,
         error_is_beef_percentage,
@@ -63,7 +65,7 @@ preselector_successful_output as (
         error_repeated_proteins_percentage,
         error_repeated_carbohydrates_percentage,
         menu_week_output_version,
-        is_latest_menu_week_output_version,
+        is_most_recent_output,
         created_at
     from preselector_successful_output
     lateral view explode(product_variation_ids) as product_variation_id

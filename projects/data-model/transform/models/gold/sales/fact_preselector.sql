@@ -69,7 +69,7 @@ preselector_successful_output as (
 
         -- Versioning
         , preselector_successful_output.menu_week_output_version
-        , preselector_successful_output.is_latest_menu_week_output_version
+        , preselector_successful_output.is_most_recent_output
 
         -- Request details
         , preselector_successful_output.menu_year
@@ -197,7 +197,9 @@ preselector_successful_output as (
     where products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
 )
 
--- For each preselector output, find the deviations that were created at or before the time of the output for that billing agreement
+-- For each preselector output, find the most recent deviations that were created at or before the time of the output for that billing agreement
+-- The reason for doing this is because for each preselector output, we want to compare this output with the deviations that were available at the time of the output.
+-- This way we can then calculate how many times a recipe output by the preselector was currently visible to the customer in either future or past menu weeks.
 , join_deviations_and_preselector as (
     select
         preselector.pk_fact_preselector
@@ -206,59 +208,49 @@ preselector_successful_output as (
         , deviations.menu_week_monday_date as deviation_menu_week_monday_date
         , deviations.main_recipe_id        as deviation_main_recipe_id
         , deviations.deviation_version
-        -- Find the most recent deviation version per menu week at the time of the output
-        , max(deviations.deviation_version) over (
-            partition by
-                preselector.pk_fact_preselector
-                , deviations.menu_week
-                , deviations.menu_year
-        )                          as most_recent_deviation_version
+        -- Rank the deviation versions per menu week at the time of the output
+        -- The reason for doing this is because we want to later filter on the most recent deviation version that was available at the time of the preselector output
+        , dense_rank() over (
+            partition by preselector.pk_fact_preselector, deviations.menu_week_monday_date
+            order by deviations.deviation_version desc
+        ) as deviation_rank
     from preselector_output_generate_keys as preselector
     left join join_deviations_and_recipes as deviations
         on
             preselector.billing_agreement_id = deviations.billing_agreement_id
             -- Add 1 minute to the preselector created_at to account for the fact that the deviation is created slightly after the preselector output
             and dateadd(minute, 1, preselector.created_at) >= deviations.deviation_created_at
-)
-
--- Filter the deviations to only include main recipes that match the output, the most recent deviation version at the time of the output, and the time period we're interested in measuring
-, deviations_and_preselector_filtered as (
-    select
-        pk_fact_preselector
-        , main_recipe_id
-        , deviation_main_recipe_id
-        , deviation_menu_week_monday_date
-    from join_deviations_and_preselector
     where
-        -- Only consider the latest deviation version at the time of the output
-        deviation_version = most_recent_deviation_version
         -- Only consider deviations from the previous 6 menu weeks and future menu weeks
-        and deviation_menu_week_monday_date >= date_sub(preselector_menu_week_monday_date, 42)
+        deviations.menu_week_monday_date >= date_sub(preselector.menu_week_monday_date, 42)
         -- Exclude deviations from the same week as the preselector output, as the output will overwrite the deviation for that week
-        and deviation_menu_week_monday_date != preselector_menu_week_monday_date
+        and deviations.menu_week_monday_date != preselector.menu_week_monday_date
+    -- Only consider the latest deviation version at the time of the output
+    qualify deviation_rank = 1
 )
 
--- Calculate the number of menu weeks where the same main recipe was selected
+-- Calculate the metrics for repeat selection
 , repeat_selection_metrics as (
     select
         pk_fact_preselector
+        -- Calculate the number of menu weeks in the window we are comparing against,
+        -- this is because it can change based on the week the preselector was outputting for
         , count(
             distinct deviation_menu_week_monday_date
-        ) as number_of_weeks_with_same_recipe
-    from deviations_and_preselector_filtered
-    -- Only consider deviations with the same main recipe as the output
-    where main_recipe_id = deviation_main_recipe_id
-    group by pk_fact_preselector
-)
-
--- Calculate the number of menu weeks where the same main recipe was selected
-, menu_weeks_in_window as (
-    select
-        pk_fact_preselector
+        ) as menu_week_window
+        -- Calculate the number of distinct deviation_menu_week_monday_date where the main recipe that the preselector output
+        -- is the same as the main recipe that was in the latest deviation at the time, meaning a repeat selection.
+        -- We are calculating the number of distinct deviation_menu_week_monday_date because we want to know how many times the same recipe was already present in
+        -- other menu weeks at that time. If we counted the preselector_menu_week_monday_date we would only count a recipe once
+        -- for each preselector output, even if it was present in other menu weeks at that time as well.
         , count(
-            distinct deviation_menu_week_monday_date
-        ) as number_of_weeks_in_window
-    from deviations_and_preselector_filtered
+            distinct
+            case
+                when main_recipe_id = deviation_main_recipe_id
+                then deviation_menu_week_monday_date
+            end
+        ) as repeat_weeks
+    from join_deviations_and_preselector
     group by pk_fact_preselector
 )
 
@@ -267,14 +259,12 @@ preselector_successful_output as (
 
     select
         preselector_output_generate_keys.*
-        , coalesce(repeat_selection_metrics.number_of_weeks_with_same_recipe, 0) as number_of_weeks_with_same_recipe
-        , coalesce(menu_weeks_in_window.number_of_weeks_in_window, 0) as number_of_weeks_in_window
-        , coalesce(try_divide(repeat_selection_metrics.number_of_weeks_with_same_recipe,menu_weeks_in_window.number_of_weeks_in_window),0) as percentage_of_weeks_in_window_with_same_recipe
+        , coalesce(repeat_selection_metrics.repeat_weeks, 0) as repeat_weeks
+        , coalesce(repeat_selection_metrics.menu_week_window, 0) as menu_week_window
+        , coalesce(try_divide(repeat_selection_metrics.repeat_weeks, repeat_selection_metrics.menu_week_window), 0) as repeat_weeks_percentage
     from preselector_output_generate_keys
     left join repeat_selection_metrics
         on preselector_output_generate_keys.pk_fact_preselector = repeat_selection_metrics.pk_fact_preselector
-    left join menu_weeks_in_window
-        on preselector_output_generate_keys.pk_fact_preselector = menu_weeks_in_window.pk_fact_preselector
 )
 
 select * from join_repeat_selection_metrics_with_preselector_output

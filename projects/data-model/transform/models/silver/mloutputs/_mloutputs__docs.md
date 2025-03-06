@@ -101,7 +101,7 @@ The preselector can output and overwrite each menu week's pre-selection multiple
 
 {% enddocs %}
 
-{% docs column__is_latest_menu_week_output_version %}
+{% docs column__is_most_recent_output %}
 
 The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the customers sees on the frontend, because they may have made a deviation themselves.
 

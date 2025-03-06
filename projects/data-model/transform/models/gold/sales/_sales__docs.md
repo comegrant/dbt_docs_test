@@ -320,7 +320,7 @@ Foreign key that is used to relate the created at time from the preselector outp
 
 {% enddocs %}
 
-{% docs column__number_of_weeks_with_same_recipe %}
+{% docs column__repeat_weeks %}
 
 Counts how many times the main recipe which was output by the preselector has been selected for a customer in:
 - The previous 6 menu weeks
@@ -330,7 +330,7 @@ This helps identify when the same recipe is being repeatedly selected ("repeat s
 
 {% enddocs %}
 
-{% docs column__number_of_weeks_in_window %}
+{% docs column__menu_week_window %}
 
 The number of menu weeks that we want to compare the preselector output against can vary depending on what the week the preselector was output for.
 
@@ -340,7 +340,7 @@ E.g. if the preselector output was for the next visible menu week in the front-e
 
 {% enddocs %}
 
-{% docs column__percentage_of_weeks_in_window_with_same_recipe %}
+{% docs column__repeat_weeks_percentage %}
 
 The percentage of weeks in the previous 6 menu weeks, and future visible menu weeks, where this main recipe id was also selected.
 

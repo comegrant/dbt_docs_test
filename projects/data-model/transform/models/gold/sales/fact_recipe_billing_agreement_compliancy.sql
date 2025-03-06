@@ -77,7 +77,7 @@ dim_billing_agreements as (
             = preference_combinations.pk_preference_combination_id
     where
         dim_billing_agreements.billing_agreement_preferences_updated_id is not null
-        and preselector_output.is_latest_menu_week_output_version is true
+        and preselector_output.is_most_recent_output = 1
 )
 
 , recipe_week as (

@@ -4,7 +4,7 @@ with preselector_successful_output as (
 
 )
 
--- Deplucating due to bug in the output, see issue data-536
+-- Deduplicating due to bug in the output, see issue data-536
 , rename_and_distinct as (
 
     select distinct
@@ -70,16 +70,16 @@ with preselector_successful_output as (
 , add_output_version as (
     select *
     , row_number() over (
-        partition by billing_agreement_id, menu_week, menu_year
+        partition by billing_agreement_id, menu_week_monday_date
         order by created_at asc
     ) as menu_week_output_version
     , case
     when 1 = row_number() over (
-        partition by billing_agreement_id, menu_week, menu_year
+        partition by billing_agreement_id, menu_week_monday_date
         order by created_at desc
     ) then 1
     else 0
-    end as is_latest_menu_week_output_version
+    end as is_most_recent_output
     from rename_and_distinct
 )
 
