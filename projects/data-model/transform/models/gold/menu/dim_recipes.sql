@@ -24,10 +24,35 @@ recipes as (
 
 )
 
--- ASSUMPTION: Only local languages for the brands we delivery to is found in this table
+, companies as (
+
+    select * from {{ ref('dim_companies') }}
+
+)
+
+, recipe_companies as (
+    
+    select * from {{ ref('pim__recipe_companies') }}
+
+)
+
+-- ASSUMPTION: Only local languages for the brands we deliver to is found in this table
 , local_languages as (
 
     select distinct language_id from {{ ref('cms__countries') }}
+
+)
+
+, recipe_companies_find_local_language_id as (
+
+    select distinct
+        recipe_id
+        , companies.language_id
+    
+    from recipe_companies
+
+    left join companies
+        on recipe_companies.company_id = companies.company_id
 
 )
 
@@ -103,15 +128,25 @@ recipes as (
 
 )
 
+-- Filter to keep only language_ids which are used as brand language
+-- and to keep only language_ids for companies connected to recipes in recipe_companies
 , recipe_tables_filtered_to_only_keep_brand_language as (
-
+    
     select recipe_tables_joined.*
+    
     from recipe_tables_joined
+
+    left join recipe_companies_find_local_language_id
+        on recipe_tables_joined.recipe_id = recipe_companies_find_local_language_id.recipe_id
 
     left join local_languages
         on recipe_tables_joined.language_id = local_languages.language_id
-    where local_languages.language_id is not null
 
+    where local_languages.language_id is not null
+        and (
+            recipe_companies_find_local_language_id.recipe_id is null
+            or recipe_companies_find_local_language_id.language_id = local_languages.language_id
+        )
 )
 
 , add_unknown_row as (
