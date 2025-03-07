@@ -3,7 +3,7 @@ resources:
     main_data_model_job:
       name: main-data-model-job
 
-      timeout_seconds: 6000 #Timeout after 100 mins
+      timeout_seconds: 12000 #Timeout after 100 mins
       edit_mode: EDITABLE
 
       schedule:
