@@ -149,14 +149,6 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
 
-      - name: billing_agreement_basket_deviation_origin_id
-        data_type: varchar(36)
-        description: "..."
-
-      - name: billing_agreement_basket_deviation_origin_id_preselected
-        data_type: varchar(36)
-        description: "..."
-
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
