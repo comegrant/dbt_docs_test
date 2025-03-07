@@ -1,0 +1,145 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Menu Measures",
+      "measures": [
+        {
+          "name": "daniel_Number of Customers Rating inc Not Cooked",
+          "dataType": "Integer",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id])\n            , 'Order Measures'[Recipe Rating] > 0\n        )",
+          "formatString": "#,0"
+        },
+        {
+          "name": "daniel_Number of Recipes with Rating",
+          "dataType": "Integer",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNTNOBLANK('Order Measures'[recipe_id])\n            , 'Order Measures'[Recipe Rating Id] <> BLANK()\n        )",
+          "formatString": "0"
+        },
+        {
+          "name": "daniel_Number of Ratings",
+          "dataType": "Integer",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNTNOBLANK('Order Measures'[Recipe Rating Id])\n        )",
+          "formatString": "#,0"
+        },
+        {
+          "name": "daniel_Number of Comments",
+          "dataType": "Integer",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNTNOBLANK('Order Measures'[Recipe Comment Id])\n        )",
+          "formatString": "#,0"
+        },
+        {
+          "name": "daniel_Average Rating Score",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        AVERAGE('Order Measures'[Recipe Rating Score])\n            , 'Order Measures'[Recipe Rating] > 0\n        )",
+          "formatString": "0.0"
+        },
+        {
+          "name": "daniel_Number of Not Cooked",
+          "dataType": "Integer",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNT('Order Measures'[billing_agreement_order_line_id])\n            , 'Order Measures'[is_not_cooked_dish] = TRUE()\n        )+0",
+          "formatString": "0"
+        },
+        {
+          "name": "daniel_Number of Ratings per Number of Dishes",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        [daniel_Number of Ratings] / [Number of Ordered Dishes]\n    )",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Menu Measures",
+                "name": "daniel_Number of Ratings"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Ordered Dishes"
+              }
+            ]
+          }
+        },
+        {
+          "name": "daniel_Number of Customers Rating per Number of Orders",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        [daniel_Number of Customers Rating] / [Number of Orders]\n    )",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Menu Measures",
+                "name": "daniel_Number of Customers Rating"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "daniel_Number of Comments per Number of Dishes",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        [daniel_Number of Comments] / [Number of Ordered Dishes]\n    )",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Menu Measures",
+                "name": "daniel_Number of Comments"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Ordered Dishes"
+              }
+            ]
+          }
+        },
+        {
+          "name": "daniel_Number of Customers Rating",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id])\n            , 'Order Measures'[Recipe Rating Id] <> BLANK()\n        )"
+        },
+        {
+          "name": "daniel_Number of Ratings ex Not Cooked",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        DISTINCTCOUNT('Order Measures'[billing_agreement_order_line_id])\n            , 'Order Measures'[Recipe Rating] <> BLANK()\n            , 'Order Measures'[is_not_cooked_dish] = FALSE()\n            , 'Order Measures'[is_dish] = TRUE()\n        )"
+        },
+        {
+          "name": "daniel_Number of Dishes Not Cooked_test",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        [daniel_Number of Not Cooked] / [daniel_Number of Ratings]\n        )",
+          "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Menu Measures",
+                "name": "daniel_Number of Not Cooked"
+              },
+              {
+                "schema": "extension",
+                "entity": "Menu Measures",
+                "name": "daniel_Number of Ratings"
+              }
+            ]
+          }
+        },
+        {
+          "name": "daniel_Number of Main Recipe Ratings",
+          "dataType": "Double",
+          "expression": "\n                                CALCULATE(\n                                )"
+        },
+        {
+          "name": "daniel_Average Main Recipe Rating Score",
+          "dataType": "Double",
+          "expression": "\n    CALCULATE(\n        AVERAGE('Order Measures'[Recipe Rating Score])\n            , 'Order Measures'[Recipe Rating] > 0\n            , ALL('Recipes'[Main Recipe Id]) = SELECTEDVALUE('Recipes'[Main Recipe Id])\n        )",
+          "formatString": "0.0"
+        }
+      ]
+    }
+  ]
+}

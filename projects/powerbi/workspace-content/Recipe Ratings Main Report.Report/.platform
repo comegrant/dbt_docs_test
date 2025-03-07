@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Recipe Ratings Main Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1fd33c59-d7c0-4b46-ba6f-76a6e11cfa37"
+  }
+}

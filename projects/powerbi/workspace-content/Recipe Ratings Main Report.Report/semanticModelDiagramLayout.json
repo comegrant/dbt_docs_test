@@ -1,0 +1,398 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1363.2511583859607,
+            "y": 423.79212767961963
+          },
+          "nodeIndex": "Order Measures",
+          "nodeLineageTag": "6c298811-8ad5-482b-b89a-827db89210a3",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1165.2133089284841,
+            "y": 783.75587013371637
+          },
+          "nodeIndex": "Subscription Quiz Measures",
+          "nodeLineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2767.5723418083689,
+            "y": 794.81727377568268
+          },
+          "nodeIndex": "(Param) Measures",
+          "nodeLineageTag": "6249c02e-7c72-4883-8fd1-d5a33f3de090",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1507.0031234553487,
+            "y": 832.60038424730612
+          },
+          "nodeIndex": "Billing Agreements",
+          "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1798.2154580334004,
+            "y": 806.903914310145
+          },
+          "nodeIndex": "Billing Agreements Deviation",
+          "nodeLineageTag": "a9dc5972-85e4-4024-983d-23afcc61bfd9",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2202.03282378071,
+            "y": 844.33831578228046
+          },
+          "nodeIndex": "Bridge Billing Agreements Preferences",
+          "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1939.1869970046037,
+            "y": 1126.9113605857358
+          },
+          "nodeIndex": "Bridge Billing Agreements Subscribed Products",
+          "nodeLineageTag": "488b18a8-7e56-41db-b1d3-d04d09d34886",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 874.83426994090917,
+            "y": 891.84547594195669
+          },
+          "nodeIndex": "Brands",
+          "nodeLineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 594.9215611276552,
+            "y": 535.90336060299433
+          },
+          "nodeIndex": "Dates",
+          "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 302.9726156781569,
+            "y": 854.34317085272585
+          },
+          "nodeIndex": "Estimations",
+          "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 304.26047273675897,
+            "y": 191.41490743181976
+          },
+          "nodeIndex": "Menu Measures",
+          "nodeLineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 805.426032135657,
+            "y": 64.86249024363633
+          },
+          "nodeIndex": "Order Statuses",
+          "nodeLineageTag": "1328111a-5f01-4b3f-8a2c-c02c4dad327c",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1419.4318632925861,
+            "y": 15
+          },
+          "nodeIndex": "Order Types",
+          "nodeLineageTag": "6fa76248-580e-4a45-882f-c64c0358e75c",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1656.1534426781382,
+            "y": 296.38597901324079
+          },
+          "nodeIndex": "Origin of Preselected Dishes",
+          "nodeLineageTag": "5dc57e37-a162-4b62-a970-7d6cc1315f19",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10,
+            "y": 1024.5424660598237
+          },
+          "nodeIndex": "Origin of Selected Dishes in Basket",
+          "nodeLineageTag": "31d6e085-8ba5-4560-b085-27c6cb034f32",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1057.2675783047662,
+            "y": 1499.6602703924268
+          },
+          "nodeIndex": "Period Since First Order",
+          "nodeLineageTag": "45e03479-e4f8-48e0-9804-190221e983b8",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2391.4841381927172,
+            "y": 1127.4726262816891
+          },
+          "nodeIndex": "Preferences",
+          "nodeLineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 885.316386319346,
+            "y": 415.0037621607421
+          },
+          "nodeIndex": "Products",
+          "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1105.2900007041083,
+            "y": 61.518400091905733
+          },
+          "nodeIndex": "Recipes",
+          "nodeLineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2079.5804603813413,
+            "y": 1410.6345475513654
+          },
+          "nodeIndex": "Subscribed Products",
+          "nodeLineageTag": "f67b9e95-b0a2-4473-b449-c15e28cd825d",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 110.34953003062515,
+            "y": 644.41667138809487
+          },
+          "nodeIndex": "Time",
+          "nodeLineageTag": "0c99312c-27e7-45c7-9e1e-ee88cf5707e5",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2493.5723418083689,
+            "y": 761.6907487063088
+          },
+          "nodeIndex": "Preference Combinations",
+          "nodeLineageTag": "eea593a0-57c3-4b96-bc0b-a198c99514f6",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1214.2228019178988,
+            "y": 1140.3076811742094
+          },
+          "nodeIndex": "Agreements Daily",
+          "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3041.5723418083689,
+            "y": 720.81727377568268
+          },
+          "nodeIndex": "Customer Measures",
+          "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 529.25427831442209,
+            "y": 1215.2154757820181
+          },
+          "nodeIndex": "Agreements Weekly",
+          "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3315.5723418083689,
+            "y": 720.81727377568268
+          },
+          "nodeIndex": "Agreement Recipe Compliance Measures",
+          "nodeLineageTag": "6b6f33c7-a4ff-4449-a8ff-7b1ab39e43eb",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3923.5723418083689,
+            "y": 670.81727377568268
+          },
+          "nodeIndex": "Budget Measures",
+          "nodeLineageTag": "Budget-Measures-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3639.5723418083689,
+            "y": 732.81727377568268
+          },
+          "nodeIndex": "Budget Types",
+          "nodeLineageTag": "Budget-Types-Table",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4197.5723418083689,
+            "y": 786.81727377568268
+          },
+          "nodeIndex": "Time Intelligence",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Alla tabeller",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Alla tabeller",
+  "defaultDiagram": "Alla tabeller"
+}
