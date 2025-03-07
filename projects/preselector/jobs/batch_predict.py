@@ -24,6 +24,7 @@ from datetime import date, timedelta
 
 dbutils.widgets.text("company_id", "")
 dbutils.widgets.text("number_of_weeks", "8")
+dbutils.widgets.text("number_of_weeks_from_now", "6")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
 dbutils.widgets.text("strategies_size", defaultValue="")
@@ -86,12 +87,13 @@ else:
     strategies_size = None
 
 number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
+number_of_weeks_from_now = int(dbutils.widgets.get("number_of_weeks"))
 from_date = dbutils.widgets.get("from_date_iso_format")
 
 if from_date:
     from_date = date.fromisoformat(from_date)
 else:
-    from_date = date.today() + timedelta(weeks=6)
+    from_date = date.today() + timedelta(weeks=number_of_weeks_from_now)
 
 
 logging.basicConfig(level=logging.INFO)

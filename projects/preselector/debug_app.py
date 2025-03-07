@@ -198,7 +198,7 @@ async def select(
         if not ordered_weeks_ago:
             ordered_weeks_ago = None
 
-    st.write("Quarentined Dishes")
+    st.write("Quarantined Dishes")
     st.write(ordered_weeks_ago)
 
     return (
@@ -276,6 +276,9 @@ async def debug_app() -> None:
         return
 
     success = run_response.success[0]
+
+    st.write("Ordered weeks ago:")
+    st.write(success.ordered_weeks_ago)
 
     if set(success.main_recipe_ids) - set(expected_recipes.main_recipe_ids):
         st.header("Something is not right")

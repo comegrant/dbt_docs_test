@@ -44,6 +44,8 @@ resources:
               strategies_size: "{{job.parameters.strategies_size}}"
               write_mode: db
               batch_write_interval: "{{job.parameters.batch_write_interval}}"
+              number_of_weeks: "{{job.parameters.number_of_weeks}}"
+              number_of_weeks_from_now: "{{job.parameters.number_of_weeks_from_now}}"
           depends_on:
             - task_key: materialization
 
@@ -59,8 +61,6 @@ resources:
               model_version: "${var.git_sha}"
           depends_on:
             - task_key: batch-predict-gl
-
-
 
         - task_key: batch-predict-lmk
           job_cluster_key: preselector
@@ -101,6 +101,8 @@ resources:
               strategies_size: "{{job.parameters.strategies_size}}"
               write_mode: db
               batch_write_interval: "{{job.parameters.batch_write_interval}}"
+              number_of_weeks: "{{job.parameters.number_of_weeks}}"
+              number_of_weeks_from_now: "{{job.parameters.number_of_weeks_from_now}}"
           depends_on:
             - task_key: batch-predict-lmk
 
@@ -129,6 +131,8 @@ resources:
               strategies_size: "{{job.parameters.strategies_size}}"
               write_mode: db
               batch_write_interval: "{{job.parameters.batch_write_interval}}"
+              number_of_weeks: "{{job.parameters.number_of_weeks}}"
+              number_of_weeks_from_now: "{{job.parameters.number_of_weeks_from_now}}"
           depends_on:
             - task_key: batch-predict-adams
 
@@ -149,6 +153,10 @@ resources:
         - name: env
           default: "${var.environment}"
         - name: strategies_size
-          default: "10"
+          default: "20"
         - name: batch_write_interval
           default: "100"
+        - name: number_of_weeks
+          default: "4"
+        - name: number_of_weeks_from_now
+          default: "2"

@@ -1068,7 +1068,21 @@ async def run_preselector_for_request(
     failed_weeks: list[PreselectorFailure] = []
 
     # main_recipe_id: year_week it was last ordered
-    generated_recipe_ids: dict[int, int] = request.ordered_weeks_ago or {}
+    generated_recipe_ids: dict[int, int] = {}
+    quarantining_data = (
+        await store.feature_view(WeeksSinceRecipe)
+        .select({"last_order_year_week"})
+        .filter(pl.col("agreement_id") == request.agreement_id)
+        .to_polars()
+    )
+
+    if not quarantining_data.is_empty():
+        for row in quarantining_data.iter_rows(named=True):
+            generated_recipe_ids[row["main_recipe_id"]] = row["last_order_year_week"]
+
+    if request.ordered_weeks_ago:
+        for main_recipe_id, yearweek in request.ordered_weeks_ago.items():
+            generated_recipe_ids[main_recipe_id] = yearweek
 
     for yearweek in request.compute_for:
         year = yearweek.year
@@ -1156,18 +1170,6 @@ async def run_preselector_for_request(
         else:
             recommendations = pl.DataFrame()
 
-        could_be_ww = False
-
-        # Only for Linas, Low Calorie, and if it is only week 51 that is computed.
-        # Using processing concent as a proxy for "has taken quiz"
-        if (
-            not request.has_data_processing_consent
-            and (request.company_id == "6A2D0B60-84D6-4830-9945-58D518D27AC2")
-            and (request.concept_preference_ids == ["FD661CAD-7F45-4D02-A36E-12720D5C16CA"])
-            and (request.compute_for == [YearWeek(year=2024, week=51)])
-        ):
-            could_be_ww = True
-
         logger.debug("Running preselector")
         try:
             with duration("running-preselector"):
@@ -1179,7 +1181,6 @@ async def run_preselector_for_request(
                     importance_vector=importance_vector,
                     store=store,
                     selected_recipes=generated_recipe_ids,
-                    could_be_weight_watchers=could_be_ww,
                     should_explain=should_explain,
                 )
                 selected_recipes = output.recipes
@@ -1523,7 +1524,6 @@ async def run_preselector(
     importance_vector: pl.DataFrame,
     store: ContractStore,
     selected_recipes: dict[int, int],
-    could_be_weight_watchers: bool,
     should_explain: bool = False,
 ) -> PreselectorWeekOutput:
     """
@@ -1587,30 +1587,12 @@ async def run_preselector(
         st.write("Raw Recipe Features")
         st.write(normalized_recipe_features)
 
-    if could_be_weight_watchers:
-        # Only return weight watchers recipes up to week 51 in Linas
-        filtered = normalized_recipe_features.filter(pl.col("is_weight_watchers"))
-        if filtered.height >= customer.number_of_recipes:
-            return PreselectorWeekOutput(
-                recipes=[
-                    PreselectorRecipe(main_recipe_id, compliance)
-                    for main_recipe_id in filtered.sample(customer.number_of_recipes)["main_recipe_id"].to_list()
-                ],
-                error_vector={},
-            )
-        else:
-            available_ww_recipes = filtered["main_recipe_id"].to_list()
-            logger.error(
-                f"Should have returned a mealkit for WW, but it did not. Available recipes:{available_ww_recipes}"
-            )
-    else:
-        filtered = normalized_recipe_features.filter(
-            pl.col("is_adams_signature").is_not()
-            & pl.col("is_cheep").is_not()
-            & pl.col("is_slow_grown_chicken").is_not()
-        ).select(
-            pl.exclude(["is_adams_signature", "is_cheep"]),
-        )
+    filtered = normalized_recipe_features.filter(
+        pl.col("is_adams_signature").is_not() & pl.col("is_cheep").is_not()
+        # & pl.col("is_slow_grown_chicken").is_not()
+    ).select(
+        pl.exclude(["is_adams_signature", "is_cheep"]),
+    )
 
     filtered, compliance, preselected_recipes = await filter_on_preferences(customer, filtered, store)
     logger.debug(f"Loading preselector recipe features: {recipes.height}")

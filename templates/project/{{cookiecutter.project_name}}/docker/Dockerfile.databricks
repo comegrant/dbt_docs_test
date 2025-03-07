@@ -26,7 +26,7 @@ RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/
 RUN source /databricks/python3/bin/activate \
 	&& echo "$(which poetry)" \
 	&& poetry config virtualenvs.create false \
-	&& poetry install --without=dev
+	&& poetry install --without=dev && rm -rf ~/.cache/pypoetry
 
 
 ENV PYTHONPATH /databricks/python3/bin

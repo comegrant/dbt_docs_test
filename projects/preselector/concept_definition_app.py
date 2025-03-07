@@ -346,7 +346,7 @@ async def view_mealkit(
         portion_size=portion_size,
         number_of_recipes=number_of_recipes,
         override_deviation=False,
-        has_data_processing_consent=False
+        has_data_processing_consent=False,
     )
 
     st.write(
@@ -377,8 +377,7 @@ async def view_mealkit(
 
     raw_cost_of_food_value = cost_of_food["cost_of_food_target_per_recipe"].to_list()[0]
     assert raw_cost_of_food_value, (
-        f"Missing cost_of_food target for {company_id},"
-        f" n recipes: {number_of_recipes}, n portions: {portion_size}"
+        f"Missing cost_of_food target for {company_id}," f" n recipes: {number_of_recipes}, n portions: {portion_size}"
     )
 
     target_vector = await normalize_cost(
@@ -398,24 +397,24 @@ async def view_mealkit(
             importance_vector=normalized_importance,
             store=cache_store,
             selected_recipes={},
-            could_be_weight_watchers=False
         )
 
     with st.spinner("Loading recipe info"):
         recipe_info = await cached_recipe_info(output.main_recipe_ids, year=year, week=week)
 
-    mealkit(recipe_info, st) # type: ignore
+    mealkit(recipe_info, st)  # type: ignore
+
 
 async def cache_normalized_recipes(year: int, week: int, store: ContractStore) -> ContractStore:
     cache = FileSource.parquet_at(f"data/norm_recipe_features/{year}/{week}.parquet")
 
-    await store.feature_view("normalized_recipe_features").all().filter(
-        (pl.col("week") == week) & (pl.col("year") == year)
-    ).write_to_source(cache)
-    return store.update_source_for(
-        FeatureLocation.feature_view("normalized_recipe_features"),
-        cache
+    await (
+        store.feature_view("normalized_recipe_features")
+        .all()
+        .filter((pl.col("week") == week) & (pl.col("year") == year))
+        .write_to_source(cache)
     )
+    return store.update_source_for(FeatureLocation.feature_view("normalized_recipe_features"), cache)
 
 
 def plot_importance_graph(data: pl.DataFrame) -> None:
@@ -465,7 +464,7 @@ async def missing_attributes() -> pl.DataFrame:
         "B172864F-D58E-4395-B182-26C6A1F1C746": {
             "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=1.0),
         },
-        # Vegetarion
+        # Vegetarian
         "6A494593-2931-4269-80EE-470D38F04796": {
             "is_vegetarian_percentage": FeatureImportance(target=1.0, importance=1.0),
         },
@@ -477,7 +476,7 @@ async def missing_attributes() -> pl.DataFrame:
         "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA": {
             "is_roede_percentage": FeatureImportance(target=1.0, importance=1.0),
         },
-        # Singel
+        # Single
         "37CE056F-4779-4593-949A-42478734F747": {},
     }
 
@@ -522,15 +521,13 @@ async def missing_attributes() -> pl.DataFrame:
     for company_name, comp_id in companies.items():
         for vector_type in vector_types:
             for concept_name, concept_id in preferences[company_name].items():
-
                 default_concept_values = default_values[concept_id]
 
                 row: dict = {
                     # Select either importance or target
                     # From the defaults, either set it to 0.0
                     feature.name: getattr(
-                        default_concept_values.get(feature.name, FeatureImportance(0.0, 0.0)),
-                        vector_type
+                        default_concept_values.get(feature.name, FeatureImportance(0.0, 0.0)), vector_type
                     )
                     for feature in features
                 }
@@ -549,8 +546,9 @@ async def missing_attributes() -> pl.DataFrame:
         return df.join(existing, how="left", on=["company_id", "concept_id"]).filter(
             pl.col("vector_type_right").is_null()
         )
-    except: # noqa: E722
+    except:  # noqa: E722
         return df
+
 
 async def main() -> None:
     from aligned import FeatureLocation
@@ -567,9 +565,7 @@ async def main() -> None:
     async def _generate() -> None:
         await genreate_mealkit(store)
 
-
     async def _fill_concepts() -> None:
-
         missing = await missing_attributes()
         st.write(missing.to_pandas())
 
@@ -587,22 +583,14 @@ async def main() -> None:
             locations = locations - {ignore}
 
         with st.spinner("Materializing data"):
-            await materialize_data(
-                store,
-                list(locations),
-                logger=st.write,
-                should_force_update=False
-            )
+            await materialize_data(store, list(locations), logger=st.write, should_force_update=False)
             st.success("Updated all data")
 
     async def _migrate_to_new_features() -> None:
-
         if st.button("Migrate"):
             with st.spinner("Migrating"):
-
                 df = await PredefinedVectors.query().all().to_polars()
                 await store.overwrite(PredefinedVectors.location, df)
-
 
     await run_active_tab(
         [

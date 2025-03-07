@@ -27,11 +27,12 @@ def dummy_store() -> ContractStore:
 
     return store.dummy_store()
 
+
 @pytest.mark.asyncio()
 async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> None:
     """
     Tests that all data is processed in the expected way.
-    Therefore, we expecte a successful response, but a not a meaningful response.
+    Therefore, we expect a successful response, but a not a meaningful response.
     """
     seed(1)
     np_seed(1)
@@ -57,7 +58,6 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
         if "agreement_id" in request.entity_names:
             del dummy_store.feature_source.sources[loc.identifier]
 
-
     output = await run_preselector(
         customer=GenerateMealkitRequest(
             agreement_id=0,
@@ -68,31 +68,24 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
             portion_size=portion_size,
             number_of_recipes=number_of_recipes,
             override_deviation=False,
-            has_data_processing_consent=False
+            has_data_processing_consent=False,
         ),
-        available_recipes=pl.DataFrame({
-            "recipe_id": list(range(recipe_pool)),
-            "menu_week": [week] * recipe_pool,
-            "menu_year": [year] * recipe_pool,
-            "main_recipe_id": list(range(recipe_pool)),
-            "variation_id": ["a"] * recipe_pool,
-            "product_id": ["a"] * recipe_pool,
-            "variation_portions": [4] * recipe_pool
-        }),
-        target_vector=pl.DataFrame({
-            feat.name: 0.5
-            for feat in features
-        }),
-        importance_vector=pl.DataFrame({
-            feat.name: 0.5
-            for feat in features
-        }),
+        available_recipes=pl.DataFrame(
+            {
+                "recipe_id": list(range(recipe_pool)),
+                "menu_week": [week] * recipe_pool,
+                "menu_year": [year] * recipe_pool,
+                "main_recipe_id": list(range(recipe_pool)),
+                "variation_id": ["a"] * recipe_pool,
+                "product_id": ["a"] * recipe_pool,
+                "variation_portions": [4] * recipe_pool,
+            }
+        ),
+        target_vector=pl.DataFrame({feat.name: 0.5 for feat in features}),
+        importance_vector=pl.DataFrame({feat.name: 0.5 for feat in features}),
         recommendations=pl.DataFrame(),
-        selected_recipes={
-            1: year * 100 + week - 3
-        },
+        selected_recipes={1: year * 100 + week - 3},
         store=dummy_store,
-        could_be_weight_watchers=False
     )
 
     assert len(output.main_recipe_ids) == number_of_recipes
@@ -102,7 +95,7 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
 async def test_preselector_run(dummy_store: ContractStore) -> None:
     """
     Tests that all data is processed in the expected way.
-    Therefore, we expecte a successful response, but a not a meaningful response.
+    Therefore, we expect a successful response, but a not a meaningful response.
     """
     seed(1)
     np_seed(1)
@@ -129,9 +122,8 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
                     "from_year_week": [year * 100 + week - 3] * recipe_pool,
                 }
             )
-        )
+        ),
     )
-
 
     output = await run_preselector(
         customer=GenerateMealkitRequest(
@@ -143,40 +135,34 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
             portion_size=portion_size,
             number_of_recipes=number_of_recipes,
             override_deviation=False,
-            has_data_processing_consent=False
+            has_data_processing_consent=False,
         ),
-        available_recipes=pl.DataFrame({
-            "recipe_id": list(range(recipe_pool)),
-            "menu_week": [week] * recipe_pool,
-            "menu_year": [year] * recipe_pool,
-            "main_recipe_id": list(range(recipe_pool)),
-            "variation_id": ["a"] * recipe_pool,
-            "product_id": ["a"] * recipe_pool,
-            "variation_portions": [4] * recipe_pool
-        }),
-        target_vector=pl.DataFrame({
-            feat.name: 0.5
-            for feat in features
-        }),
-        importance_vector=pl.DataFrame({
-            feat.name: 0.5
-            for feat in features
-        }),
+        available_recipes=pl.DataFrame(
+            {
+                "recipe_id": list(range(recipe_pool)),
+                "menu_week": [week] * recipe_pool,
+                "menu_year": [year] * recipe_pool,
+                "main_recipe_id": list(range(recipe_pool)),
+                "variation_id": ["a"] * recipe_pool,
+                "product_id": ["a"] * recipe_pool,
+                "variation_portions": [4] * recipe_pool,
+            }
+        ),
+        target_vector=pl.DataFrame({feat.name: 0.5 for feat in features}),
+        importance_vector=pl.DataFrame({feat.name: 0.5 for feat in features}),
         recommendations=pl.DataFrame(),
-        selected_recipes={
-            1: year * 100 + week - 3
-        },
+        selected_recipes={1: year * 100 + week - 3},
         store=dummy_store,
-        could_be_weight_watchers=False
     )
 
     assert len(output.main_recipe_ids) == number_of_recipes
+
 
 @pytest.mark.asyncio()
 async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     """
     Tests that all data is processed in the expected way.
-    Therefore, we expecte a successful response, but a not a meaningful response.
+    Therefore, we expect a successful response, but a not a meaningful response.
     """
     from data_contracts.preselector.menu import PreselectorYearWeekMenu
 
@@ -187,19 +173,16 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
     week = 10
     year = 2024
     portion_size = 4
-    iso_now = datetime.now().isoformat() # noqa: DTZ005
+    iso_now = datetime.now().isoformat()  # noqa: DTZ005
     agreement_id = 100
     concept_id = "my-concept-id".upper()
     company_id = "some-company_id".upper()
     recipe_pool = 100
 
-
     # Removing the sources that the pre-selector source have not defined
     # Would be nice for something with better support for this.
     source = dummy_store.feature_source
-    preselector_deps = Preselector.metadata.source.depends_on().union({
-        FeatureLocation.model("rec_engine")
-    })
+    preselector_deps = Preselector.metadata.source.depends_on().union({FeatureLocation.model("rec_engine")})
 
     assert isinstance(source, BatchFeatureSource)
     assert isinstance(source.sources, dict)
@@ -222,70 +205,59 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
         portion_size=portion_size,
         number_of_recipes=number_of_recipes,
         override_deviation=False,
-        has_data_processing_consent=True
+        has_data_processing_consent=True,
     )
 
-    target_data = (await data_for_request(
-        TargetVectors.query().request,
-        size=1
-    )).with_columns(
+    target_data = (await data_for_request(TargetVectors.query().request, size=1)).with_columns(
         agreement_id=pl.lit(agreement_id)
     )
 
-    predefined_sample = await data_for_request(
-        PredefinedVectors.query().request,
-        size=1
-    )
+    predefined_sample = await data_for_request(PredefinedVectors.query().request, size=1)
 
     defined_vectors = predefined_sample.with_columns(
-        vector_type=pl.lit("importance"),
-        concept_id=pl.lit(concept_id),
-        company_id=pl.lit(company_id)
+        vector_type=pl.lit("importance"), concept_id=pl.lit(concept_id), company_id=pl.lit(company_id)
     ).vstack(
         predefined_sample.with_columns(
-            vector_type=pl.lit("target"),
-            concept_id=pl.lit(concept_id),
-            company_id=pl.lit(company_id)
+            vector_type=pl.lit("target"), concept_id=pl.lit(concept_id), company_id=pl.lit(company_id)
         )
     )
 
-    store = dummy_store.update_source_for(
-        PreselectorYearWeekMenu.location,
-        RandomDataSource.with_values({
-            "recipe_id": list(range(recipe_pool)),
-            "portion_id": [1] * recipe_pool,
-            "loaded_at": [iso_now] * recipe_pool,
-            "menu_week": [week] * recipe_pool,
-            "menu_year": [year] * recipe_pool,
-            "menu_recipe_order": list(range(recipe_pool)),
-            "main_recipe_id": list(range(recipe_pool)),
-            "variation_id": ["some-id"] * recipe_pool,
-            "product_id": ["some_id"] * recipe_pool,
-            "variation_portions": [portion_size] * recipe_pool,
-            "company_id": [company_id] * recipe_pool,
-        })
-    ).update_source_for(
-        TargetVectors.location,
-        RandomDataSource(partial_data=target_data)
-    ).update_source_for(
-        ImportanceVector.location,
-        RandomDataSource(partial_data=target_data)
-    ).update_source_for(
-        PredefinedVectors.location,
-        RandomDataSource(partial_data=defined_vectors)
-    ).update_source_for(
-        WeeksSinceRecipe.location,
-        InMemorySource(
-            pl.DataFrame(
-                data={
-                    "agreement_id": list(range(recipe_pool)),
+    store = (
+        dummy_store.update_source_for(
+            PreselectorYearWeekMenu.location,
+            RandomDataSource.with_values(
+                {
                     "recipe_id": list(range(recipe_pool)),
-                    "company_id": ["dd"] * recipe_pool,
-                    "main_recipe_id": [1] * recipe_pool,
-                    "last_order_year_week": [year * 100 + week - 3] * recipe_pool,
-                    "from_year_week": [year * 100 + week - 3] * recipe_pool,
+                    "portion_id": [1] * recipe_pool,
+                    "loaded_at": [iso_now] * recipe_pool,
+                    "menu_week": [week] * recipe_pool,
+                    "menu_year": [year] * recipe_pool,
+                    "menu_recipe_order": list(range(recipe_pool)),
+                    "main_recipe_id": list(range(recipe_pool)),
+                    "variation_id": ["some-id"] * recipe_pool,
+                    "product_id": ["some_id"] * recipe_pool,
+                    "variation_portions": [portion_size] * recipe_pool,
+                    "company_id": [company_id] * recipe_pool,
                 }
-            )
+            ),
+        )
+        .update_source_for(TargetVectors.location, RandomDataSource(partial_data=target_data))
+        .update_source_for(ImportanceVector.location, RandomDataSource(partial_data=target_data))
+        .update_source_for(PredefinedVectors.location, RandomDataSource(partial_data=defined_vectors))
+        .update_source_for(
+            WeeksSinceRecipe.location,
+            InMemorySource(
+                pl.DataFrame(
+                    data={
+                        "agreement_id": list(range(recipe_pool)),
+                        "recipe_id": list(range(recipe_pool)),
+                        "company_id": ["dd"] * recipe_pool,
+                        "main_recipe_id": [1] * recipe_pool,
+                        "last_order_year_week": [year * 100 + week - 3] * recipe_pool,
+                        "from_year_week": [year * 100 + week - 3] * recipe_pool,
+                    }
+                )
+            ),
         )
     )
 
