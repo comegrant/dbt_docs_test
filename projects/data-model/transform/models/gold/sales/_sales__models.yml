@@ -116,14 +116,6 @@ models:
       - name: is_dish
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
-      
-      - name: is_onesub_migration
-        data_type: int
-        description: "..."
-
-      - name: is_missing_preselector_output
-        data_type: int
-        description: "..."
 
       - name: has_recipe_leaflets
         data_type: boolean
