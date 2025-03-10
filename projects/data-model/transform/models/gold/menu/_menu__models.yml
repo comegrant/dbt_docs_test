@@ -111,7 +111,7 @@ models:
     config:
       alias: dim_recipe_reaction_types
       contract:
-        enforced: true
+        enforced: True
 
     columns:
       - name: pk_dim_recipe_reaction_types
@@ -153,7 +153,7 @@ models:
     config:
       alias: fact_recipe_reactions
       contract:
-        enforced: true
+        enforced: True
 
     columns:
       - name: pk_fact_recipe_reactions
@@ -655,7 +655,7 @@ models:
 
       - name: fk_dim_recipes
         data_type: string
-        description: "{{ doc('column__fk_dim_recipes') }}"
+        description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -796,11 +796,27 @@ models:
 
       - name: portion_id
         data_type: int
-        description: "{{ doc('column__portion_id') }}"
+        description: "{{ doc('column__portion_id_menu_variations') }}"
+        data_tests:
+          - not_null:
+              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+          - equal_to_column:
+              value: portion_id_recipes
+              config:
+                where: 'portion_id_recipes is not null and menu_year >= 2019' # the menu_year >= 2019 can be removed after filter to fact menus is added
+          - equal_to_column:
+              value: portion_id_products
+              config:
+                # There are known issues before 2023-05-08
+                where: 'portion_id_products is not null and menu_week_monday_date > DATE("2023-05-08")'
 
       - name: portion_id_recipes
         data_type: int
-        description: "{{ doc('column__portion_id') }}"
+        description: "{{ doc('column__portion_id_recipes') }}"
+
+      - name: portion_id_products
+        data_type: int
+        description: "{{ doc('column__portion_id_products') }}"
 
       - name: menu_year
         data_type: smallint
@@ -893,6 +909,16 @@ models:
         #  - relationships:
         #      to: ref('dim_products')
         #      field: pk_dim_products
+
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - not_null:
+              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
 
       - name: fk_dim_date
         data_type: int

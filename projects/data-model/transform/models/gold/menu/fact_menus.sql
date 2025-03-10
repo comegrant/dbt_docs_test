@@ -1,4 +1,4 @@
-with 
+with
 
 menu_weeks as (
 
@@ -19,6 +19,12 @@ menu_weeks as (
 
 )
 
+, portions as (
+
+    select * from {{ ref('dim_portions') }}
+
+)
+
 , dates as (
 
     select *
@@ -28,28 +34,28 @@ menu_weeks as (
 
 , menu_year_and_week as (
 
-    select distinct 
-        year_of_calendar_week as menu_year, 
+    select distinct
+        year_of_calendar_week as menu_year,
         calendar_week as menu_week
     from dates
 
 )
 
 , menu_weeks_with_flags as (
-    select 
+    select
         menu_weeks.*
-        , case 
-            when menu_year_and_week.menu_week is null 
-            then true else false 
+        , case
+            when menu_year_and_week.menu_week is null
+            then true else false
             end as is_artificial_week
-        , case 
-            when menu_weeks.recipe_id is not null 
+        , case
+            when menu_weeks.recipe_id is not null
             then true
             else false
             end as has_menu_recipes
         , case
             when products.product_type_id in (
-                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3', 
+                    '2F163D69-8AC1-6E0C-8793-FF0000804EB3',
                     'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
                 )
             then true
@@ -60,6 +66,8 @@ menu_weeks as (
             then true
             else false
             end as has_recipe_portions
+
+        , products.portion_name as portion_name_products
     from menu_weeks
     left join menu_year_and_week
         on menu_weeks.menu_year = menu_year_and_week.menu_year
@@ -91,10 +99,11 @@ menu_weeks as (
         , menu_weeks_with_flags.product_variation_id
         , menu_weeks_with_flags.menu_recipe_id
         , menu_weeks_with_flags.recipe_id
-        
+
         , menu_weeks_with_flags.recipe_portion_id
         , menu_weeks_with_flags.portion_id
         , menu_weeks_with_flags.portion_id_recipes
+        , portions.portion_id as portion_id_products
         , menu_weeks_with_flags.portion_quantity
         , menu_weeks_with_flags.portion_name
 
@@ -115,12 +124,17 @@ menu_weeks as (
         {# FKS #}
         , md5(cast(concat(menu_weeks_with_flags.recipe_id, companies.language_id) as string)) as fk_dim_recipes
         , md5(concat(menu_weeks_with_flags.product_variation_id, companies.company_id)) as fk_dim_products
+        , md5(concat(menu_weeks_with_flags.portion_id, companies.language_id)) as fk_dim_portions
         , cast(date_format(menu_weeks_with_flags.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(menu_weeks_with_flags.company_id) as fk_dim_companies
 
     from menu_weeks_with_flags
     left join companies
         on menu_weeks_with_flags.company_id = companies.company_id
+    left join portions
+        on menu_weeks_with_flags.portion_name_products = portions.portion_name_local
+        and companies.language_id = portions.language_id
+
 )
 
 select * from menu_weeks_with_flags_and_fks

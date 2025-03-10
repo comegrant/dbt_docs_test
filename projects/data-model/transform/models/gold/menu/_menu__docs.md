@@ -49,6 +49,24 @@ Primary key of the fact_recipe_reaction_types table.
 
 {% enddocs %}
 
+{% docs column__portion_id_menu_variations %}
+
+portion_id obtained from the menu variations.
+
+{% enddocs %}
+
+{% docs column__portion_id_recipes %}
+
+portion_id obtained from the recipes.
+
+{% enddocs %}
+
+{% docs column__portion_id_products %}
+
+portion_id obtained from product variations.
+
+{% enddocs %}
+
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 
@@ -201,12 +219,6 @@ Primary key of the bridge table which connects dim_recipes and dim_taxonomies
 {% docs column__pk_bridge_recipes_ingredients %}
 
 Primary key of the bridge table which connects dim_recipes and dim_ingredients
-
-{% enddocs %}
-
-{% docs column__fk_dim_recipes %}
-
-Foreign key to dim_recipes
 
 {% enddocs %}
 
