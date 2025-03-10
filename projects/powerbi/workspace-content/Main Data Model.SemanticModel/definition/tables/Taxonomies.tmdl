@@ -1,0 +1,50 @@
+/// Taxonomies are connected to recipes and allows for filtering of recipe taxonomies.
+table 'Taxonomies'
+    lineageTag: Taxonomies-Table
+
+    /// The primary key of the Taxonomies table
+    column pk_dim_taxonomies
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_taxonomies
+
+    /// The name of the taxonomy on the local language
+    column 'Taxonomy'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: taxonomy_name_local
+
+    /// The name of the taxonomy in English
+    column 'Taxonomy (Eng)'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: taxonomy_name_english
+
+    /// The name of the status code of the taxonomy in English
+    column 'Taxonomy Status'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: taxonomy_status_name_english
+
+    /// The taxonomy type name
+    column 'Taxonomy Type'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: taxonomy_type_name
+
+    partition 'Taxonomies' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_taxonomies_Table = gold_Schema{[Name="dim_taxonomies",Kind="Table"]}[Data]
+                in
+                    dim_taxonomies_Table

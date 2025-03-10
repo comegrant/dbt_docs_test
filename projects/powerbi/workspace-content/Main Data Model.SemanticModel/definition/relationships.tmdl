@@ -212,3 +212,11 @@ relationship fact_budget_to_dim_dates
 	fromColumn: 'Budget Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
+relationship Recipes-Bridge-Recipes-Taxonomies
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship Taxonomies-Bridge-Recipes-Taxonomies
+	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_taxonomies
+	toColumn: 'Taxonomies'.pk_dim_taxonomies

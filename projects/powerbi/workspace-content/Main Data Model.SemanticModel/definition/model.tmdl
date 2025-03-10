@@ -46,6 +46,7 @@ ref table 'Agreement Recipe Compliance Measures'
 ref table 'Budget Types'
 ref table 'Budget Measures'
 ref table 'Time Intelligence'
+ref table 'Bridge Recipes Taxonomies'
+ref table 'Taxonomies'
 
 ref cultureInfo en-US
-

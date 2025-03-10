@@ -1,0 +1,30 @@
+/// Bridge table connecting recipes and taxonomies
+table 'Bridge Recipes Taxonomies'
+    lineageTag: Bridge-Recipes-Taxonomies-Table
+
+    /// Primary key of the Recipes table
+    column fk_dim_recipes
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_recipes
+
+    /// Primary key of the Taxonomies table
+    column fk_dim_taxonomies
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_taxonomies
+
+    partition 'Bridge Dim Recipes Dim Taxonomies' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    bridge_dim_recipes_dim_taxonomies_Table = gold_Schema{[Name="bridge_dim_recipes_dim_taxonomies",Kind="Table"]}[Data]
+                in
+                    bridge_dim_recipes_dim_taxonomies_Table
