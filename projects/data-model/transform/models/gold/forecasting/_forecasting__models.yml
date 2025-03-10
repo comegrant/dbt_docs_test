@@ -1,9 +1,12 @@
-  models: 
+  models:
   - name: fact_estimations
-    description: "Table of all estimations at each timestamp they're generated"
+    description: "Table of all estimations at each timestamp they're generated. The estimations are a snapshot of the active baskets at the time of generation, and is generated in the Data Platform."
     latest_version: 1
     config:
       alias: fact_estimations
+      config:
+        enforced: true
+
     columns:
       - name: pk_fact_estimations
         data_type: string
@@ -14,6 +17,66 @@
           - type: not_null
         data_tests:
           - unique
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_basket_deviation_origin_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - not_null
+
+      - name: estimation_generated_at
+        data_type: timestamp
+        description: "{{ doc('column__estimation_generated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__estimations_product_variation_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: is_latest_estimation
+        data_type: boolean
+        description: "{{ doc('column__is_latest_estimation') }}"
+        data_tests:
           - not_null
 
       - name: fk_dim_date_estimation_generated
@@ -27,13 +90,13 @@
         description: "{{ doc('column__fk_dim_time_estimation_generated') }}"
         data_tests:
           - not_null
-      
+
       - name: fk_dim_date_menu_week
         datatype: int
-        description: "{{ doc('column__fk_dim_date_menu_week') }}" 
+        description: "{{ doc('column__fk_dim_date_menu_week') }}"
         data_tests:
           - not_null
-      
+
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
@@ -46,7 +109,6 @@
         data_tests:
           - not_null
 
-
       - name: fk_dim_basket_deviation_origins
         data_type: string
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
@@ -56,18 +118,6 @@
       - name: fk_dim_billing_agreements
         data_type: int
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
-        data_tests:
-          - not_null
-
-      - name: product_variation_quantity
-        data_type: int
-        description: "{{ doc('column__estimations_product_variation_quantity') }}"
-        data_tests:
-          - not_null
-
-      - name: is_latest_estimation
-        data_type: boolean
-        description: "{{ doc('column__is_latest_estimation') }}"
         data_tests:
           - not_null
 
@@ -109,7 +159,7 @@
 
     versions:
       - v: 1
-      
+
   - name: dim_budget_types
     description: "Contain all ids, names and descriptions of budget attributes"
     latest_version: 1
@@ -125,7 +175,7 @@
         data_tests:
           - unique
           - not_null
-      
+
       - name: budget_type_id
         data_type: string
         description: "{{ doc('column__budget_type_id') }}"
@@ -163,7 +213,7 @@
         data_tests:
           - unique
           - not_null
-      
+
       - name: budget_id
         data_type: string
         description: "{{ doc('column__budget_id') }}"
@@ -234,6 +284,6 @@
         data_type: string
         description: "{{ doc('column__pk_dim_budget_types') }}"
         data_tests:
-          - not_null          
+          - not_null
     versions:
       - v: 1

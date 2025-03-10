@@ -1,6 +1,0 @@
-version: 2
-
-data_tests:
-  - name: fact_orders_missing_recipe_id
-    description: >
-      Make sure that all ordered dishes with an order line has a recipe (i.e. does not test chef composed mealbox recipes)

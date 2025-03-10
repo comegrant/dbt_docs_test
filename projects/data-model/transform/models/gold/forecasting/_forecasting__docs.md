@@ -3,6 +3,10 @@
 Primary key of the fact_estimations table
 {% enddocs %}
 
+{% docs column__estimation_generated_at %}
+Timestamp for when the estimation was generated (the estimation is generated within the Data Platform).
+{% enddocs %}
+
 {% docs column__fk_dim_date_estimation_generated %}
 Foreign key connecting dim_date to the day at which an estimation was generated at.
 {% enddocs %}

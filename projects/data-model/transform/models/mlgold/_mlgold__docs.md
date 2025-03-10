@@ -41,12 +41,6 @@ The unique primary key in estimations_log table
 
 {% enddocs %}
 
-{% docs column__estimation_generated_at %}
-
-The timestamp of when the estimation in estimations_log was created
-
-{% enddocs %}
-
 {% docs column__source_estimations_log %}
 
 Indicates if the data is imported from ADB to get history, or if it is generated in the new data platform (NDP)

@@ -1,5 +1,5 @@
-select 
-    * 
+select
+    *
 from {{ ref('fact_orders') }}
 left join {{ ref('dim_products') }}
     on fk_dim_products = pk_dim_products
