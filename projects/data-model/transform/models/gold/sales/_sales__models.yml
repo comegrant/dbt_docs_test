@@ -328,6 +328,23 @@ models:
               to: ref('dim_products')
               field: pk_dim_products
 
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+
+      - name: fk_dim_portions_preselected
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+
+
       - name: fk_dim_products_preselected
         data_type: string
         description: "{{ doc('column__fk_dim_products_preselected') }}"

@@ -89,33 +89,16 @@ The main ingredient of the recipe in english language.
 # Dim Products
 {% docs column__pk_dim_products %}
 
-...
-
-{% enddocs %}
-
-{% docs column__default_mealbox_product_id %}
-
-...
-
-{% enddocs %}
-
-{% docs column__default_mealbox_product_variation_id %}
-
-...
+Primary key of dim_products. It is a composite of product_variation_id and company_id.
 
 {% enddocs %}
 
 {% docs column__meals %}
 
-...
+Number of meals in the product (e.g. in the mealbox). One can also have information about meals for other product types, like Velg&Vrak and Standalone-Groceries. However, for these the meals is usually 1.
 
 {% enddocs %}
 
-{% docs column__portions %}
-
-...
-
-{% enddocs %}
 
 # Dim Taxonomies
 {% docs column__pk_dim_taxonomies %}
@@ -250,6 +233,13 @@ The name of the status for each portion on the local language.
 {% docs column__portion_status_name_english %}
 
 The name of the status for each portion on English.
+
+{% enddocs %}
+
+{% docs column__portions %}
+
+Number of portions in the products. Plus size portions will have the same value as normal size portions.
+portion_name can be used to get information about plus size portions.
 
 {% enddocs %}
 

@@ -74,6 +74,7 @@ product_tables_joined as (
         , product_variations.sku
         , coalesce(meals_and_portions.meals, meals_and_portions_default.meals) as meals
         , coalesce(meals_and_portions.portions, meals_and_portions_default.portions) as portions
+        , coalesce(meals_and_portions.portion_name, meals_and_portions_default.portion_name) as portion_name
     from product_variations_companies
     left join product_variations
     on product_variations_companies.product_variation_id = product_variations.product_variation_id

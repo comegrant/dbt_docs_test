@@ -6,6 +6,100 @@ models:
     latest_version: 1
     config:
       alias: dim_products
+      contract:
+        enforced: True
+
+    columns:
+      - name: pk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: product_concept_id
+        data_type: char(36)
+        description: "{{ doc('column__product_concept_id') }}"
+
+      - name: product_type_id
+        data_type: char(36)
+        description: "{{ doc('column__product_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_id
+        data_type: char(36)
+        description: "{{ doc('column__product_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_status_id
+        data_type: int
+        description: "{{ doc('column__product_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: char(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_concept_name
+        data_type: string
+        description: "{{ doc('column__product_concept_name') }}"
+
+      - name: product_type_name
+        data_type: string
+        description: "{{ doc('column__product_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: product_name
+        data_type: string
+        description: "{{ doc('column__product_name') }}"
+        data_tests:
+          - not_null
+
+      - name: product_status_name
+        data_type: string
+        description: "{{ doc('column__product_status_name') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_name
+        data_type: string
+        description: "{{ doc('column__product_variation_name') }}"
+        data_tests:
+          - not_null
+
+      - name: sku
+        data_type: string
+        description: "{{ doc('column__sku') }}"
+        data_tests:
+          - not_null
+
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portions') }}"
+
+      - name: portion_name
+        data_type: string
+        description: "{{ doc('column__portion_name') }}"
 
     versions:
       - v: 1
@@ -826,7 +920,13 @@ models:
       - v: 1
 
   - name: dim_portions
-    description: ""
+    description: "Dimension that lets the user filter on number of portions and plus size portions."
+    data_tests:
+      - unique:
+          # We need this to be unique to avoid duplicates when joining dim_portions with 
+          # fact tables based on the portions of the products. When considering portions of the products we don't have 
+          # portion_id and need to use the portion name in the join to find the foreign key to dim_portions. 
+          column_name: "(portion_name_local || '-' || language_id)"
     latest_version: 1
     config:
       alias: dim_portions
@@ -851,7 +951,7 @@ models:
         data_tests:
           - not_null
 
-      - name: language_id_local
+      - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
         constraints:

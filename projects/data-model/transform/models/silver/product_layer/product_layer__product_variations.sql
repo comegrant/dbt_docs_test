@@ -17,9 +17,6 @@ renamed as (
         {# strings #}
         , sku
 
-        {# numeric #}
-        , stock
-
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by

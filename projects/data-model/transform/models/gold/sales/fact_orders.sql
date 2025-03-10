@@ -53,6 +53,12 @@ order_lines as (
 
 )
 
+, dim_portions as (
+
+    select * from {{ ref('dim_portions') }}
+
+)
+
 -- TODO: This solution is a bit hacky
 , recommendations_origin as (
 
@@ -79,9 +85,9 @@ order_lines as (
         , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
         , companies.pk_dim_companies as fk_dim_companies
         , cast(date_format(order_lines.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
-        , md5(order_lines.order_status_id) AS fk_dim_order_statuses
-        , md5(order_lines.order_type_id) AS fk_dim_order_types
-        , coalesce(products.pk_dim_products, 0) AS fk_dim_products
+        , md5(order_lines.order_status_id) as fk_dim_order_statuses
+        , md5(order_lines.order_type_id) as fk_dim_order_types
+        , coalesce(products.pk_dim_products, 0) as fk_dim_products
     from order_lines
     left join deviations_order_mapping
         on order_lines.billing_agreement_order_id = deviations_order_mapping.billing_agreement_order_id
@@ -145,8 +151,8 @@ order_lines as (
     -- TODO: Use variable for this
     -- only extract subscription related orders
     where order_line_dimensions_joined.order_type_id in (
-        '1C182E51-ECFA-4119-8928-F2D9F57C5FCC', 
-        '5F34860B-7E61-46A0-80F7-98DCDC53BA9E', 
+        '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+        '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
         'C7D2684C-B715-4C6C-BF90-053757926679'
     )
     -- TODO: Can be removed after scd2 of basket products are fixed
@@ -201,11 +207,11 @@ order_lines as (
     select * from recommendation_engine_preselected_recipes
 
     union all
-    
-    select 
-        chef_preselected_recipes.* 
+
+    select
+        chef_preselected_recipes.*
     from chef_preselected_recipes
-    left join recommendation_engine_preselected_recipes 
+    left join recommendation_engine_preselected_recipes
         on chef_preselected_recipes.billing_agreement_order_id = recommendation_engine_preselected_recipes.billing_agreement_order_id
     where recommendation_engine_preselected_recipes.billing_agreement_order_id is null
 
@@ -231,7 +237,7 @@ order_lines as (
 )
 
 , add_recipes_to_orders as (
-    
+
     -- Add Velg&Vrak recipes that have not been changed
    select
         order_line_dimensions_joined.menu_year
@@ -247,7 +253,7 @@ order_lines as (
         , order_line_dimensions_joined.unit_price_inc_vat
         , order_line_dimensions_joined.total_amount_ex_vat
         , order_line_dimensions_joined.total_amount_inc_vat
-        , case 
+        , case
             when ordered_and_preselected_recipes_joined.recipe_id = ordered_and_preselected_recipes_joined.preselected_recipe_id
             then 0
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
@@ -257,24 +263,24 @@ order_lines as (
             else null
         end as is_added_dish
         -- this part of the union will not consist of any removed dishes
-        , case 
+        , case
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
             then 0
             else null
         end as is_removed_dish
-        , case 
+        , case
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             then true
             else false
         end as is_dish
         , case
-            when order_line_dimensions_joined.product_type_id = '{{ var("mealbox_product_type_id") }}' 
+            when order_line_dimensions_joined.product_type_id = '{{ var("mealbox_product_type_id") }}'
             or order_line_dimensions_joined.product_type_id = '{{ var("financial_product_type_id") }}'
             then order_line_dimensions_joined.meals - subscribed_mealbox.subscribed_meals
             else null
         end as meal_adjustment_subscription
-        , case 
+        , case
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             then order_line_dimensions_joined.portions - subscribed_mealbox.subscribed_portions
             else null
@@ -312,7 +318,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.recipe_id, 
+                        ordered_and_preselected_recipes_joined.recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -322,7 +328,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.preselected_recipe_id, 
+                        ordered_and_preselected_recipes_joined.preselected_recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -337,8 +343,8 @@ order_lines as (
     left join subscribed_product_variations as subscribed_mealbox
         on order_line_dimensions_joined.billing_agreement_order_id = subscribed_mealbox.billing_agreement_order_id
         and subscribed_mealbox.subscribed_product_type_id = '{{ var("mealbox_product_type_id") }}'
-    
-        
+
+
     union all
 
     -- Add velg&vrak recipes that was removed
@@ -395,7 +401,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.recipe_id, 
+                        ordered_and_preselected_recipes_joined.recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -405,7 +411,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.preselected_recipe_id, 
+                        ordered_and_preselected_recipes_joined.preselected_recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -416,7 +422,7 @@ order_lines as (
         on ordered_and_preselected_recipes_joined.billing_agreement_order_id = order_line_dimensions_joined.billing_agreement_order_id
     where ordered_and_preselected_recipes_joined.billing_agreement_order_line_id is null
 
-    union all 
+    union all
 
     -- (Legacy) Add recipes that belong to mealbox products before Onesub
     select distinct
@@ -433,7 +439,7 @@ order_lines as (
         , 0 as unit_price_inc_vat
         , 0 as total_amount_ex_vat
         , 0 as total_amount_inc_vat
-        , case 
+        , case
             when ordered_and_preselected_recipes_joined.preselected_recipe_id = ordered_and_preselected_recipes_joined.recipe_id
             then 0
             when ordered_and_preselected_recipes_joined.preselected_recipe_id is null
@@ -442,7 +448,7 @@ order_lines as (
             then 1
             else null
         end as is_added_dish
-        , case 
+        , case
             when ordered_and_preselected_recipes_joined.preselected_recipe_id = ordered_and_preselected_recipes_joined.recipe_id
             then 0
             when ordered_and_preselected_recipes_joined.preselected_recipe_id is not null
@@ -487,7 +493,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.recipe_id, 
+                        ordered_and_preselected_recipes_joined.recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -497,7 +503,7 @@ order_lines as (
             md5(
                 cast(
                     concat(
-                        ordered_and_preselected_recipes_joined.preselected_recipe_id, 
+                        ordered_and_preselected_recipes_joined.preselected_recipe_id,
                         order_line_dimensions_joined.language_id
                         ) as string
                     )
@@ -515,7 +521,7 @@ order_lines as (
 )
 
 , add_recipe_feedback as (
-    select 
+    select
         add_recipes_to_orders.*
         , recipe_feedback.recipe_rating_id
         , recipe_feedback.recipe_comment_id
@@ -536,20 +542,32 @@ order_lines as (
 )
 
 , add_pk as (
-    select 
+    select
         md5(concat_ws('-'
-            , menu_week_monday_date
-            , billing_agreement_id
-            , billing_agreement_order_id
-            , billing_agreement_order_line_id
-            , product_variation_id
-            , preselected_product_variation_id
-            , recipe_id
-            , preselected_recipe_id
+            , add_recipe_feedback.menu_week_monday_date
+            , add_recipe_feedback.billing_agreement_id
+            , add_recipe_feedback.billing_agreement_order_id
+            , add_recipe_feedback.billing_agreement_order_line_id
+            , add_recipe_feedback.product_variation_id
+            , add_recipe_feedback.preselected_product_variation_id
+            , add_recipe_feedback.recipe_id
+            , add_recipe_feedback.preselected_recipe_id
             )
         ) as pk_fact_orders
-        , add_recipe_feedback.* 
+        , add_recipe_feedback.*
+        , dim_portions.pk_dim_portions as fk_dim_portions
+        , dim_portions_preselected.pk_dim_portions as fk_dim_portions_preselected
     from add_recipe_feedback
+    left join products
+        on add_recipe_feedback.fk_dim_products = products.pk_dim_products
+    left join products as products_preselected
+        on add_recipe_feedback.fk_dim_products_preselected = products_preselected.pk_dim_products
+    left join dim_portions
+        on products.portion_name = dim_portions.portion_name_local
+        and add_recipe_feedback.language_id = dim_portions.language_id
+    left join dim_portions as dim_portions_preselected
+        on products_preselected.portion_name = dim_portions_preselected.portion_name_local
+        and add_recipe_feedback.language_id = dim_portions_preselected.language_id
 )
 
 select * from add_pk

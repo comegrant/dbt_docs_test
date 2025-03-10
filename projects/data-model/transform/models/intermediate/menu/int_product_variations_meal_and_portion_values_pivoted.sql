@@ -63,7 +63,11 @@ attribute_values as (
         product_variation_id
         , company_id
         , cast(meals as int) as meals
-        , cast(portions as int) as portions
+        , case
+            when len(portions) = 2 and right(portions, 1) = '1'
+            then cast(left(portions, 1) as int)
+            else cast(portions as int)
+        end as portions
         , case
             when len(portions) = 2 and right(portions, 1) = '1'
             then concat(left(portions, 1), '+')

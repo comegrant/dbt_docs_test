@@ -270,10 +270,6 @@ models:
         data_tests:
           - not_null
 
-      - name: stock
-        data_type: int
-        description: "{{ doc('column__stock') }}"
-
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"

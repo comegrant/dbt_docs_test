@@ -144,27 +144,6 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
-	column preselected_mealbox_product_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 1600489b-556a-403f-b1d5-e4b9e7412e1a
-		summarizeBy: none
-		sourceColumn: preselected_mealbox_product_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Preselected Mealbox Product Name'
-		dataType: string
-		isAvailableInMdx: false
-		lineageTag: 90e49601-821a-4e21-8f95-87efaf0ecf00
-		summarizeBy: none
-		sourceColumn: preselected_mealbox_product_name
-
-		annotation SummarizationSetBy = Automatic
-
 	column Portions
 		dataType: string
 		formatString: 0

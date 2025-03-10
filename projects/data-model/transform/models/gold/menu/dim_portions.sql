@@ -22,7 +22,7 @@ portions as (
     select
         md5(concat(portions.portion_id, portion_translations.language_id)) as pk_dim_portions
         ,portions.portion_id
-        ,portion_translations.language_id as language_id_local
+        ,portion_translations.language_id as language_id
         ,portions.portion_size as portions
         ,portion_translations.portion_name as portion_name_local
         ,portion_translations_english.portion_name as portion_name_english
