@@ -585,3 +585,45 @@ The unique key of each row in Dim Loyalty Events.
 The unique key of each row in Fact Loyalty Points.
 
 {% enddocs %}
+
+# Dim Loyalty Periods
+{% docs column__pk_dim_loyalty_seasons %}
+
+The unique key of each row in Dim Loyalty Periods. It is a composite key of company_id and loyalty_season_start_date.
+
+{% enddocs %}
+
+
+{% docs column__loyalty_season_name %}
+
+The name of the loyalty period (e.g. "2025-P1"). 'P' is short for Period.
+
+{% enddocs %}
+
+
+{% docs column__loyalty_season_year %}
+
+The year in which the loyalty period starts.
+
+{% enddocs %}
+
+
+{% docs column__loyalty_season_quarter %}
+
+The quarter of the year in which the loyalty period starts.
+
+{% enddocs %}
+
+
+{% docs column__loyalty_season_start_date %}
+
+The start date of the loyalty period.
+
+{% enddocs %}
+
+
+{% docs column__loyalty_season_end_date %}
+
+The end date of the loyalty period.
+
+{% enddocs %}

@@ -2480,3 +2480,62 @@ models:
           - relationships:
               to: ref('dim_companies')
               field: pk_dim_companies
+  
+  - name: dim_loyalty_seasons
+    columns:
+      - name: pk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        constraints:
+          - type: primary_key
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_season_name
+        data_type: string
+        description: "{{ doc('column__loyalty_season_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_season_year
+        data_type: int
+        description: "{{ doc('column__loyalty_season_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_season_quarter
+        data_type: int
+        description: "{{ doc('column__loyalty_season_quarter') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_season_start_date
+        data_type: date
+        description: "{{ doc('column__loyalty_season_start_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_season_end_date
+        data_type: date
+        description: "{{ doc('column__loyalty_season_end_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
