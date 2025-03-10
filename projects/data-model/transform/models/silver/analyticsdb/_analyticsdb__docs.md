@@ -11,15 +11,21 @@ The year in which the budget process is done (eg. F3 done in 2024, but includes 
 
 {% enddocs %}
 
-{% docs column__number_of_orders %}
+{% docs column__budget_number_of_orders %}
 
 The number of orders per week per customer segment
 
 {% enddocs %}
 
-{% docs column__atv_gross %}
+{% docs column__budget_atv_gross_ex_vat %}
 
 The gross atv per week and customer segment
+
+{% enddocs %}
+
+{% docs column__budget_order_value_gross_ex_vat %}
+
+The gross atv multiplied by the number of orders per week and customer segment 
 
 {% enddocs %}
 

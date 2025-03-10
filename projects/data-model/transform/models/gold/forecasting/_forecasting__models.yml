@@ -200,15 +200,21 @@
         data_tests:
           - not_null
 
-      - name: atv_gross
+      - name: budget_atv_gross_ex_vat
         data_type: decimal(19,4)
-        description: "{{ doc('column__atv_gross') }}"
+        description: "{{ doc('column__budget_atv_gross_ex_vat') }}"
         data_tests:
           - not_null
 
-      - name: number_of_orders
+      - name: budget_order_value_gross_ex_vat
+        data_type: decimal(19,4)
+        description: "{{ doc('column__budget_order_value_gross_ex_vat') }}"
+        data_tests:
+          - not_null
+
+      - name: budget_number_of_orders
         data_type: int
-        description: "{{ doc('column__number_of_orders') }}"
+        description: "{{ doc('column__budget_number_of_orders') }}"
         data_tests:
           - not_null
 

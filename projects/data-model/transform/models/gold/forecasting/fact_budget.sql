@@ -31,8 +31,9 @@ budget as (
         , budget.financial_week
 
         --NUMBERS
-        , budget.atv_gross
-        , budget.number_of_orders 
+        , budget.budget_atv_gross_ex_vat
+        , budget.budget_number_of_orders 
+        , budget.budget_order_value_gross_ex_vat
         
         --FKs
         , dates.pk_dim_dates as fk_dim_dates
