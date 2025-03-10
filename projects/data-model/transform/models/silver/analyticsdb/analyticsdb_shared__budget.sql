@@ -25,7 +25,7 @@ source as (
         , week as financial_week
         , orders as budget_number_of_orders
         , atv_gross as budget_atv_gross_ex_vat
-        , budget_atv_gross_ex_vat*budget_number_of_orders as budget_order_value_gross_ex_vat
+        , atv_gross*orders as budget_order_value_gross_ex_vat
         
         {# system #}
         , created_at as source_created_at
