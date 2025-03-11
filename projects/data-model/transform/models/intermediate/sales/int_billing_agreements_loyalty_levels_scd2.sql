@@ -28,6 +28,8 @@ loyalty_ledger as (
     from loyalty_ledger
     left join loyalty_level_companies
         on loyalty_ledger.loyalty_level_company_id = loyalty_level_companies.loyalty_level_company_id
+        and loyalty_ledger.points_generated_at >= loyalty_level_companies.valid_from 
+        and loyalty_ledger.points_generated_at < loyalty_level_companies.valid_to
     left join loyalty_levels
     on loyalty_level_companies.loyalty_level_id = loyalty_levels.loyalty_level_id
 )

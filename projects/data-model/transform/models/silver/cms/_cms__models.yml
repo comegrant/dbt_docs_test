@@ -434,11 +434,8 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__loyalty_level_company_id') }}"
         constraints:
-          - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
-          - unique
           - not_null
 
       - name: company_id
@@ -476,6 +473,22 @@ models:
       - name: point_requirement
         data_type: int
         description: "{{ doc('column__point_requirement') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
         constraints:
           - type: not_null
         data_tests:
