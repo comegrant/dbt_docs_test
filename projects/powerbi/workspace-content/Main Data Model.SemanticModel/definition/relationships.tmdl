@@ -212,6 +212,27 @@ relationship fact_budget_to_dim_dates
 	fromColumn: 'Budget Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
+relationship fact_loyalty_points_to_dim_loyalty_events
+	fromColumn: 'Loyalty Point Measures'.fk_dim_loyalty_events
+	toColumn: 'Loyalty Events'.pk_dim_loyalty_events
+
+relationship fact_loyalty_points_to_dim_billing_agreements
+	fromColumn: 'Loyalty Point Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fact_loyalty_points_to_dim_companies
+	fromColumn: 'Loyalty Point Measures'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_loyalty_points_to_dim_dates_on_transaction_date
+	fromColumn: 'Loyalty Point Measures'.fk_dim_dates_transaction
+	toColumn: Dates.pk_dim_dates
+
+relationship fact_loyalty_points_to_dim_dates_on_points_expiration
+	isActive: false
+	fromColumn: 'Loyalty Point Measures'.fk_dim_dates_points_expiration
+	toColumn: Dates.pk_dim_dates
+
 relationship Recipes-Bridge-Recipes-Taxonomies
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_recipes
@@ -220,3 +241,4 @@ relationship Recipes-Bridge-Recipes-Taxonomies
 relationship Taxonomies-Bridge-Recipes-Taxonomies
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_taxonomies
 	toColumn: 'Taxonomies'.pk_dim_taxonomies
+

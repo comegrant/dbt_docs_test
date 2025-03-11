@@ -1,0 +1,38 @@
+/// Table containing the names of events which trigger the generation or expenditure of loyalty points.
+table 'Loyalty Events'
+	lineageTag: 02c93af8-02b7-4d20-a7d5-7a98d225582e
+
+	column pk_dim_loyalty_events
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 803e47b1-2aa7-4809-9030-a340b5cc8928
+		summarizeBy: none
+		sourceColumn: pk_dim_loyalty_events
+
+	column loyalty_event_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a1f63282-290e-4a57-8334-1c7a6deb82a1
+		summarizeBy: none
+		sourceColumn: loyalty_event_id
+
+	/// Name of event which triggered generation or expenditure of loyalty points.
+	column 'Loyalty Event Name'
+		dataType: string
+		lineageTag: b2888c93-bba0-47a9-a5c1-86fc4c887c7d
+		summarizeBy: none
+		sourceColumn: loyalty_event_name
+
+	partition 'Loyalty Events' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_loyalty_events_Table = gold_Schema{[Name="dim_loyalty_events",Kind="Table"]}[Data]
+				in
+					dim_loyalty_events_Table
+

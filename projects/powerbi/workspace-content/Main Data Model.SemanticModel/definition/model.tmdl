@@ -11,7 +11,7 @@ annotation PBI_QueryOrder = ["Date","Brands","Order Statuses","Order Types","Rec
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.140.1205.0 (25.02)+2ab3defe107764e1cf486b42122d9362df7f34ea
+annotation PBIDesktopVersion = 2.140.1351.0 (25.02)+9bb96b6a5aee417774126f3416805b86efac121f
 
 annotation PBI_ProTooling = ["DevMode","TMDL-Extension","CalcGroup"]
 
@@ -46,6 +46,8 @@ ref table 'Agreement Recipe Compliance Measures'
 ref table 'Budget Types'
 ref table 'Budget Measures'
 ref table 'Time Intelligence'
+ref table 'Loyalty Point Measures'
+ref table 'Loyalty Events'
 ref table 'Bridge Recipes Taxonomies'
 ref table 'Taxonomies'
 

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "cc8395cf4a478fc7aed7",
+  "position": {
+    "x": 438.88888888888886,
+    "y": 0,
+    "z": 5000,
+    "height": 57.777777777777779,
+    "width": 201.11111111111111,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Billing Agreements"
+                    }
+                  },
+                  "Property": "Billing Agreement Status"
+                }
+              },
+              "queryRef": "Billing Agreements.Billing Agreement Status",
+              "nativeQueryRef": "Billing Agreement Status",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

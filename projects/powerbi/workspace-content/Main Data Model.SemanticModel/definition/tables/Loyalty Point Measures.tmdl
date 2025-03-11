@@ -1,0 +1,209 @@
+/// Table of measures related to all loyalty points transactions
+table 'Loyalty Point Measures'
+	lineageTag: Loyalty-Point-Measures-Table
+
+	/// Sum of points of all loyalty points transactions
+	measure 'Number of Loyalty Points' =
+			CALCULATE(
+				SUM('Loyalty Point Measures'[Transaction Points])
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: 8737f78b-8329-45ef-baf4-995778c67d08
+
+	/// Sum of all loyalty points earned
+	measure 'Number of Loyalty Points Earned' =
+			CALCULATE(
+			    [Number of Loyalty Points],
+			    ISBLANK('Loyalty Point Measures'[loyalty_points_parent_id])
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: 5e8fa074-ac41-4516-acac-2508cfb505a9
+
+	/// Sum of all loyalty points spent
+	measure 'Number of Loyalty Points Spent on Loyalty Orders' =
+			CALCULATE(
+			    [Number of Loyalty Points],
+			    NOT ISBLANK('Loyalty Point Measures'[loyalty_order_id])
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: d7cb57b0-5563-4441-bb3e-2d8882e2891f
+
+	/// Sum of all loyalty points lost
+	measure 'Number of Loyalty Points Lost' =
+			CALCULATE(
+			    [Number of Loyalty Points],
+			    ISBLANK('Loyalty Point Measures'[loyalty_order_id]) && 'Loyalty Point Measures'[Transaction Points] < 0
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: 869635da-16d5-459a-a046-69e7fdf8f3b1
+
+	column pk_fact_loyalty_points
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 07639d2d-5da6-465b-8803-1c100692e8b6
+		summarizeBy: none
+		sourceColumn: pk_fact_loyalty_points
+
+	column loyalty_points_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 079cd03b-fb0d-4524-8a08-ed5f009c2175
+		summarizeBy: none
+		sourceColumn: loyalty_points_id
+
+	column loyalty_points_parent_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a56d0906-20e8-4f4a-9c77-3affd48b1918
+		summarizeBy: none
+		sourceColumn: loyalty_points_parent_id
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: c48fe694-3712-474b-a5b2-f6b6ed9bce2a
+		summarizeBy: none
+		sourceColumn: billing_agreement_id
+
+	column loyalty_event_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: c7742b09-72ea-4af1-a1a7-0b7cd22b852b
+		summarizeBy: none
+		sourceColumn: loyalty_event_id
+
+	column loyalty_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 3ee0ab08-2c90-4d5f-8807-084daa7f8956
+		summarizeBy: none
+		sourceColumn: loyalty_order_id
+
+	/// Comments for awarding or removing loyalty points. Usually null or a generic name unless used by Customer Service.
+	column 'Transaction Reason'
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: e4a8d873-ff57-4eb3-8221-c466d60e9daf
+		summarizeBy: none
+		sourceColumn: transaction_reason
+
+	/// Loyalty Points earned, spent or expired on this transaction.
+	column 'Transaction Points'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: c4e636fe-3586-45ff-a1d5-ea52f4ebf3ec
+		summarizeBy: none
+		sourceColumn: transaction_points
+
+	/// Points remaining from points earned on the parent transaction as of now.
+	column 'Remaining Points'
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 33a6120f-3960-40d2-b45c-96ebaa4dcdda
+		summarizeBy: none
+		sourceColumn: remaining_points
+
+	/// ID of the order if points were earned at order generation.
+	column billing_agreement_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: d4964cde-de1e-4020-8492-53e75058a26f
+		summarizeBy: none
+		sourceColumn: billing_agreement_order_id
+
+	column company_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 02f5d5eb-a3f2-406e-b95d-5f9efbfa1ae6
+		summarizeBy: none
+		sourceColumn: company_id
+
+	column 'Source Created At'
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: ca804d29-87c4-4694-82bb-4bb671999359
+		summarizeBy: none
+		sourceColumn: source_created_at
+
+	column 'Points Expiration Date'
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		isAvailableInMdx: false
+		lineageTag: b36473d3-b068-458f-a204-e6e3085812bc
+		summarizeBy: none
+		sourceColumn: points_expiration_date
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: c6230a4b-f366-49b4-a5d6-a0bf7e48e6b4
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_loyalty_events
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: fa2e27fa-0bbe-4269-a638-2a3a07c78a96
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_events
+
+	column fk_dim_dates_transaction
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: 87fb4610-e6b7-45cb-b131-b31cf0f8d3d5
+		summarizeBy: none
+		sourceColumn: fk_dim_dates_transaction
+
+	column fk_dim_dates_points_expiration
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: cab55d7f-6da7-49b2-979b-2a3aeb61119d
+		summarizeBy: none
+		sourceColumn: fk_dim_dates_points_expiration
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 2da3bd8c-da9a-4562-8b60-681b44cd5709
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	partition 'Loyalty Point Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_loyalty_points_Table = gold_Schema{[Name="fact_loyalty_points",Kind="Table"]}[Data]
+				in
+				    fact_loyalty_points_Table
+
