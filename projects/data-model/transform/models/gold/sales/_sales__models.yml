@@ -117,6 +117,14 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
 
+      - name: is_onesub_migration
+        data_type: int
+        description: "..."
+
+      - name: is_missing_preselector_output
+        data_type: int
+        description: "..."
+
       - name: has_recipe_leaflets
         data_type: boolean
         description: "{{ doc('column__has_recipe_leaflets') }}"
@@ -128,6 +136,14 @@ models:
       - name: has_delivery
         data_type: boolean
         description: "{{ doc('column__has_delivery') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_swap
+        data_type: boolean
+        description: "{{ doc('column__has_swap') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -148,6 +164,14 @@ models:
       - name: is_not_cooked_dish
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
+
+      - name: billing_agreement_basket_deviation_origin_id
+        data_type: varchar(36)
+        description: "..."
+
+      - name: billing_agreement_basket_deviation_origin_id_preselected
+        data_type: varchar(36)
+        description: "..."
 
       - name: billing_agreement_id
         data_type: int

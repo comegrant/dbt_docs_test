@@ -29,6 +29,12 @@ The recipe id of the dish preseneted to the customer on the webpage.
 
 {% enddocs %}
 
+{% docs column__has_swap %}
+
+True if the customer has swapped in or out dishes when placing the orders. Is false if they only removed or added one dish without replacing it with another recipe, or if the customer did not make any changes to the order at all.
+
+{% enddocs %}
+
 {% docs column__is_added_dish %}
 
 Is 1 if the ordered dish was added by the customer and 0 if the ordered dish was preselected for the customer. For all rows that are not representing a dish the field will be null.

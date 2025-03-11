@@ -74,11 +74,20 @@ order_lines as (
 
     select
         order_lines.*
+        , deviations_order_mapping.is_onesub_migration
+        , case when deviations_order_mapping.is_onesub_migration = 0
+            and order_lines.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
+            and recommendations_origin.billing_agreement_basket_deviation_origin_id is null
+            then 1
+            else 0
+        end as is_missing_preselector_output
         , products.portions
         , products.meals
         , products.product_type_id
         , companies.company_id
         , companies.language_id
+        , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
+        , recommendations_origin.billing_agreement_basket_deviation_origin_id as billing_agreement_basket_deviation_origin_id_preselected
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
         , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
@@ -290,6 +299,10 @@ order_lines as (
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
         , order_line_dimensions_joined.has_recipe_leaflets
+        , order_line_dimensions_joined.is_onesub_migration
+        , order_line_dimensions_joined.is_missing_preselector_output
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
@@ -373,6 +386,10 @@ order_lines as (
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
         , order_line_dimensions_joined.has_recipe_leaflets
+        , order_line_dimensions_joined.is_onesub_migration
+        , order_line_dimensions_joined.is_missing_preselector_output
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
@@ -465,6 +482,10 @@ order_lines as (
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
         , order_line_dimensions_joined.has_recipe_leaflets
+        , order_line_dimensions_joined.is_onesub_migration
+        , order_line_dimensions_joined.is_missing_preselector_output
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
+        , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
@@ -541,6 +562,22 @@ order_lines as (
 
 )
 
+-- ASSUPMTION: Only one mealbox adjustment subscription per order)
+-- Test has been added
+, has_swap_flag as (
+
+    select
+        billing_agreement_order_id
+        , case when
+            sum(is_added_dish) + sum(is_removed_dish) != abs(sum(meal_adjustment_subscription))
+            then true
+            else false
+        end as has_swap
+    from add_recipes_to_orders
+    group by billing_agreement_order_id
+
+)
+
 , add_pk as (
     select
         md5(concat_ws('-'
@@ -555,6 +592,7 @@ order_lines as (
             )
         ) as pk_fact_orders
         , add_recipe_feedback.*
+        , has_swap_flag.has_swap
         , dim_portions.pk_dim_portions as fk_dim_portions
         , dim_portions_preselected.pk_dim_portions as fk_dim_portions_preselected
     from add_recipe_feedback
@@ -568,6 +606,8 @@ order_lines as (
     left join dim_portions as dim_portions_preselected
         on products_preselected.portion_name = dim_portions_preselected.portion_name_local
         and add_recipe_feedback.language_id = dim_portions_preselected.language_id
+    left join has_swap_flag
+        on add_recipe_feedback.billing_agreement_order_id = has_swap_flag.billing_agreement_order_id
 )
 
 select * from add_pk
