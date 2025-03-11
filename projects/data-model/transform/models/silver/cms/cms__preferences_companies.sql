@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -10,18 +10,18 @@ source as (
 
     select
 
-        
+
         {# ids #}
         upper(preference_id) as preference_id
         , company_id
 
         {# strings #}
-        , name as preference_name
+        , initcap(name) as preference_name
         , description as preference_description
-        
+
         {# booleans #}
         , is_active as is_active_preference
-        
+
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by

@@ -1,4 +1,4 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
@@ -1756,6 +1756,12 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_allergen') }}"
 
+      - name: is_onesub_concept_preference
+        data_type: boolean
+        description: "{{ doc('column__is_onesub_concept_preference') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
@@ -2365,7 +2371,7 @@ models:
           - not_null
 
   - name: cms__consent_categories
-    description: "Holds information about the differenct categories of consents."
+    description: "Holds information about the different categories of consents."
     columns:
       - name: consent_category_id
         data_type: char(36)

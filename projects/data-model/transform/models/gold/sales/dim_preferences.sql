@@ -1,4 +1,4 @@
-with 
+with
 
 preferences as (
     select * from {{ ref('cms__preferences') }}
@@ -18,7 +18,7 @@ preferences as (
 
 , tables_joined as (
 
-    select 
+    select
       preferences.preference_id
     , coalesce(preferences_companies.company_id,'0') as company_id
     , preferences.preference_type_id
@@ -30,7 +30,8 @@ preferences as (
     , preference_types.preference_type_description
     , coalesce(preferences_companies.is_active_preference, false) as is_active_preference
     , preferences.is_allergen
-    from 
+    , preferences.is_onesub_concept_preference
+    from
     preferences
     left join preference_types
     on preferences.preference_type_id = preference_types.preference_type_id
@@ -41,7 +42,7 @@ preferences as (
 
 , add_pk as (
 
-    select 
+    select
 
     md5(concat(
         cast(preference_id as string),
@@ -49,8 +50,8 @@ preferences as (
         )
     ) AS pk_dim_preferences
     , tables_joined.*
-    
-    from 
+
+    from
     tables_joined
 
 )

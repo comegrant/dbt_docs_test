@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -10,21 +10,29 @@ source as (
 
     select
 
-        
+
         {# ids #}
         upper(preference_id) as preference_id
         , preference_type_id
 
         {# strings #}
-        , name as preference_name_general
+        -- Removing OneSub: prefix from preference names
+        , case
+            when name like 'OneSub:%' then initcap(trim(substring(name, 8)))
+            else initcap(name)
+          end as preference_name_general
+        , case
+            when name like 'OneSub:%' then true
+            else false
+          end as is_onesub_concept_preference
         , description as preference_description_general
 
         {# numerics #}
         -- place numerics here
-        
+
         {# booleans #}
         , is_allergen
-        
+
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by

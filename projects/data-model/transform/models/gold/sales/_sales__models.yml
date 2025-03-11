@@ -7,7 +7,7 @@ models:
     config:
       alias: fact_orders
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_fact_orders
@@ -405,7 +405,7 @@ models:
     config:
       alias: dim_billing_agreements
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_dim_billing_agreements
@@ -718,11 +718,18 @@ models:
         data_tests:
           - not_null
 
+      - name: is_onesub_concept_preference
+        data_type: boolean
+        description: "{{ doc('column__is_onesub_concept_preference') }}"
+        data_tests:
+          - not_null
+
     versions:
       - v: 1
 
   - name: dim_preference_combinations
-    description: "Contains all preference combinations for the agreements, as well as a list with only concept preferences and a list with only taste preferences."
+    description: "Contains all preference combinations for the agreements, as well as a list with only concept preferences\
+      \ and a list with only taste preferences."
     latest_version: 1
     config:
       alias: dim_preference_combinations
@@ -810,7 +817,7 @@ models:
           - not_null
 
     versions:
-    - v: 1
+      - v: 1
 
 
   - name: bridge_billing_agreements_preferences
@@ -918,8 +925,8 @@ models:
           - relationships:
               to: ref('dim_dates')
               field: pk_dim_dates
-              config: 
-                ## This agreement has records from 1970 before we have any rows on dim_dates. 
+              config:
+                ## This agreement has records from 1970 before we have any rows on dim_dates.
                 where: "billing_agreement_id <> 528003"
 
       - name: fk_dim_time
@@ -1178,7 +1185,10 @@ models:
           - not_null
 
   - name: fact_preselector
-    description: "Contains the successful outputs from the preselector model, which automatically selects recipes for customers based on their preferences. Each row represents a recipe selection for a specific billing agreement, menu week and product variation. The table includes details about the request (portions, meals), customer preferences used, and error metrics that indicate how well the selection matches the preferences."
+    description: "Contains the successful outputs from the preselector model, which automatically selects recipes for customers\
+      \ based on their preferences. Each row represents a recipe selection for a specific billing agreement, menu week and\
+      \ product variation. The table includes details about the request (portions, meals), customer preferences used, and\
+      \ error metrics that indicate how well the selection matches the preferences."
     latest_version: 1
     config:
       alias: fact_preselector
@@ -1884,12 +1894,13 @@ models:
           - not_null
 
   - name: fact_billing_agreement_consents
-    description: "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed. If no consent has ever been made no row will exist for the customer."
+    description: "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed.\
+      \ If no consent has ever been made no row will exist for the customer."
     latest_version: 1
     config:
       alias: fact_billing_agreement_consents
     contract:
-        enforced: True
+      enforced: true
 
     columns:
       - name: pk_fact_billing_agreement_consents
@@ -1996,7 +2007,7 @@ models:
     config:
       alias: dim_consent_types
     contract:
-        enforced: True
+      enforced: true
     columns:
       - name: pk_dim_consent_types
         data_type: string
@@ -2372,7 +2383,8 @@ models:
 
 
   - name: fact_loyalty_points
-    description: "Information about loyalty points transactions, explaining how customers are receiving or spending loyalty points."
+    description: "Information about loyalty points transactions, explaining how customers are receiving or spending loyalty\
+      \ points."
     latest_version: 1
     config:
       alias: fact_loyalty_points
