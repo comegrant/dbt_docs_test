@@ -93,24 +93,6 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: d7731cff-64d8-45f8-ad92-7833eb7a22e9
 
-	/// Average order value
-	/// Excluding VAT
-	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
-	measure 'Average Order Value Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Orders],BLANK())
-		isHidden
-		lineageTag: 85357b8f-6a82-4a0a-8243-d2756573a1b2
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	/// Average order value
-	/// Including VAT
-	/// Before unhiding: Why are some order statuses excluded for number of orders but not here?
-	measure 'Average Order Value Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Orders],BLANK())
-		isHidden
-		lineageTag: e35a4577-2ae2-46b4-8511-031e29d678ec
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	/// Number of orders where the customers order included a printed recipe leaflet.
 	measure 'Number of Orders with Recipe Leaflet' = CALCULATE([Number of Orders], 'Order Measures'[has_recipe_leaflets] = TRUE())
 		formatString: #,0
@@ -691,17 +673,6 @@ table 'Order Measures'
 		displayFolder: Meal Adjustments
 		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
 
-	/// Mostly a middle step measure.
-	/// Nice to have for % of grand total calculations
-	measure 'Number of Orders All Recipes' =
-			CALCULATE(
-				[Number of Orders],
-				ALL(Recipes)
-			)
-		formatString: #,0
-		isHidden
-		lineageTag: 375ab208-b385-4455-9b5e-9e7dc70606ae
-
 	/// Middle step calculation used to find the difference between orderes meals and subscribed meals
 	measure 'Meal Adjustments' =
 			
@@ -893,7 +864,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
-		isHidden
 		displayFolder: Orders
 		lineageTag: 6107c597-37e1-40fb-936d-536e8c6fa315
 
@@ -904,7 +874,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0
-		isHidden
 		displayFolder: Orders
 		lineageTag: 12a86a97-0cbc-4aa7-a69a-318ce5f87a49
 
@@ -915,10 +884,43 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		isHidden
 		displayFolder: Orders
 		lineageTag: e34487bd-7086-4db7-be56-468ea17a45f3
 
+	/// This measure calculates the growth rate of the number of orders by comparing the selected year's 
+	/// total orders to the previous year's total orders. 
+	/// It is computed by dividing the number of orders in the current year by the number of orders in the previous year. 
+	/// 
+	/// A result greater than 100% indicates an increase in order volume, 
+	/// while a result below 100% indicates a decline.
+	measure 'Number of Orders (CY/PY)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orders
+
+	/// Number of Orders Year to Date. 
+	/// Cumulative sum of number of orders from the beginning of the year
+	measure 'Number of Orders (YTD)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
+
+	/// Number of Orders Year to Date for the previous year.
+	/// Cumulative sum of number of orders from the beginning of the previous year
+	measure 'Number of Orders (PYTD)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
+	
 	/// Average Transaction Value of orders in the same period of the previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
@@ -928,7 +930,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 3c4644d8-ad4a-4c09-b41a-fd69e27cf2af
 
@@ -941,7 +942,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 6c08eed4-a32e-4a12-b976-df39ad8546e6
 
@@ -954,9 +954,22 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		isHidden
 		displayFolder: Orders
 		lineageTag: 17e80dd3-0ead-4ec4-a125-5b0492aace7f
+
+	/// This measure calculates the growth rate of the Average Transaction Value (ATV) 
+	/// by comparing the selected year's ATV to the previous year's ATV. 
+	/// It is computed by dividing the ATV of the current year by the ATV of the previous year. 
+	/// 
+	/// A result greater than 100% indicates an increase in average transaction value, 
+	/// while a result below 100% indicates a decrease. 
+	measure 'ATV Gross Ex Vat (CY/PY)' =
+			CALCULATE(
+				[Average Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orders
 
 	/// Average Transaction Value of orders in the same period of the previous year
 	/// including all order lines (i.e. include discounts and credit)
@@ -967,7 +980,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: b37ae9b9-9d5a-4d00-a8fd-1c2db5d6d3dd
 
@@ -980,7 +992,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: b39c6ac0-af25-41ad-a3c3-7eb7a08652cd
 
@@ -993,9 +1004,22 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		isHidden
 		displayFolder: Orders
 		lineageTag: 7dec0ff3-e84b-4dc5-9ae0-41ddb6525a5d
+
+	/// This measure calculates the growth rate of the Average Transaction Value (ATV) 
+	/// by comparing the selected year's ATV to the previous year's ATV. 
+	/// It is computed by dividing the ATV of the current year by the ATV of the previous year. 
+	/// 
+	/// A result greater than 100% indicates an increase in average transaction value, 
+	/// while a result below 100% indicates a decrease. 
+	measure 'ATV Net Ex Vat (CY/PY)' =
+			CALCULATE(
+				[Average Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orders
 
 	/// Revenue from orders in the same period of the previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
@@ -1006,7 +1030,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 81164b9b-6304-4cbd-94d2-eb0f42c1ea0c
 
@@ -1019,22 +1042,52 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 3c78d03b-415c-4815-aaba-e2aba1d33acf
 
 	/// Relative increase/decrease in revenue from orders in the same period previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
-	measure 'Order Value Gross Vat (YOY%)' =
+	measure 'Order Value Gross Ex Vat (YOY%)' =
 			CALCULATE(
 				[Order Value Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		isHidden
 		displayFolder: Orders
 		lineageTag: 23fe5356-77e8-4303-a1bb-eb7e4ee902e7
+
+	/// This measure calculates the growth rate of order value by comparing the selected year's order value 
+	/// to the previous year's order value. 
+	/// It is computed by dividing the order value of the current year by the order value of the previous year. 
+	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline. 
+	measure 'Order Value Gross Ex Vat (CY/PY)' =
+			CALCULATE(
+				[Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orders
+
+	/// Revenue from orders Year to Date. 
+	/// Cumulative sum of revenue from orders from the beginning of the year
+	measure 'Order Value Gross Ex Vat (YTD)' =
+			CALCULATE(
+				[Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
+
+	/// Revenue from orders Year to Date for the previous year.
+	/// Cumulative sum of revenue from orders from the beginning of the previous year
+	measure 'Order Value Gross Ex Vat (PYTD)' =
+			CALCULATE(
+				[Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
 
 	/// Revenue from orders in the same period of the previous year
 	/// including all order lines (i.e. include discounts and credit)
@@ -1045,7 +1098,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 9d37b5ab-ce84-47ea-a41a-3a9b809d476b
 
@@ -1059,7 +1111,6 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY"
 			)
 		formatString: #,0.00
-		isHidden
 		displayFolder: Orders
 		lineageTag: 25b6eaae-6b7f-44c5-b043-36376e37e606
 
@@ -1072,9 +1123,40 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		isHidden
 		displayFolder: Orders
 		lineageTag: 454d5649-146b-4526-b347-dc995c07bcb1
+
+	/// This measure calculates the growth rate of order value by comparing the selected year's order value 
+	/// to the previous year's order value. 
+	/// It is computed by dividing the order value of the current year by the order value of the previous year. 
+	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline. 
+	measure 'Order Value Net Ex Vat (CY/PY)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orders
+
+	/// Revenue from orders Year to Date. 
+	/// Cumulative sum of revenue from orders from the beginning of the year
+	measure 'Order Value Net Ex Vat (YTD)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
+
+	/// Revenue from orders Year to Date for the previous year.
+	/// Cumulative sum of revenue from orders from the beginning of the previous year
+	measure 'Order Value Net Ex Vat (PYTD)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Orders
 
 	column ops_order_id
 		dataType: int64

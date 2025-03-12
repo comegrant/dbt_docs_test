@@ -7,45 +7,50 @@ table 'Time Intelligence'
 
 		calculationItem PY =
 				
-				VAR CurrentFinancialYear = SELECTEDVALUE('Dates'[Financial Year])
-				VAR CurrentFinancialQuarter = SELECTEDVALUE('Dates'[Financial Quarter])
-				VAR CurrentFinancialMonth = SELECTEDVALUE('Dates'[Financial Month Number])
-				VAR CurrentFinancialWeek = SELECTEDVALUE('Dates'[Financial Week])
+				VAR SelectedFinancialYear = SELECTEDVALUE(Dates[Financial Year])
+				VAR SelectedFinancialQuarter = SELECTEDVALUE(Dates[Financial Quarter])
+				VAR SelectedFinancialMonth = SELECTEDVALUE(Dates[Financial Month Number])
+				VAR SelectedFinancialWeek = SELECTEDVALUE(Dates[Financial Week])
 				
 				RETURN
 				    SWITCH(
 				        TRUE(),
 				
-				        ISINSCOPE('Dates'[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), CALCULATE(
+				        ISINSCOPE(Dates[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), 
+						CALCULATE(
 				            SELECTEDMEASURE(),
-				            DATEADD('Dates'[Date], -1, YEAR),
+				            DATEADD(Dates[Date], -1, YEAR),
 				            REMOVEFILTERS(Dates)
 				        ),
 				
-				        ISINSCOPE('Dates'[Financial Week]), CALCULATE(
+				        ISINSCOPE(Dates[Financial Week]), 
+						CALCULATE(
 				            SELECTEDMEASURE(),
-				            'Dates'[Financial Year] = CurrentFinancialYear - 1,
-				            'Dates'[Financial Week] = CurrentFinancialWeek,
+				            Dates[Financial Year] = SelectedFinancialYear - 1,
+				            Dates[Financial Week] = SelectedFinancialWeek,
 				            REMOVEFILTERS(Dates)
 				        ),
 				
-				        ISINSCOPE('Dates'[Financial Month Name]), CALCULATE(
+				        ISINSCOPE(Dates[Financial Month Name]), 
+						CALCULATE(
 				            SELECTEDMEASURE(),
-				            'Dates'[Financial Year] = CurrentFinancialYear - 1,
-				            'Dates'[Financial Month Number] = CurrentFinancialMonth,
+				            Dates[Financial Year] = SelectedFinancialYear - 1,
+				            Dates[Financial Month Number] = SelectedFinancialMonth,
 				            REMOVEFILTERS(Dates)
 				        ),
 				
-				        ISINSCOPE('Dates'[Financial Quarter]), CALCULATE(
+				        ISINSCOPE(Dates[Financial Quarter]), 
+						CALCULATE(
 				            SELECTEDMEASURE(),
-				            'Dates'[Financial Year] = CurrentFinancialYear - 1,
-				            'Dates'[Financial Quarter] = CurrentFinancialQuarter,
+				            Dates[Financial Year] = SelectedFinancialYear - 1,
+				            Dates[Financial Quarter] = SelectedFinancialQuarter,
 				            REMOVEFILTERS(Dates)
 				        ),
 				
-				        ISINSCOPE('Dates'[Financial Year]), CALCULATE(
+				        ISINSCOPE(Dates[Financial Year]), 
+						CALCULATE(
 				            SELECTEDMEASURE(),
-				            'Dates'[Financial Year] = CurrentFinancialYear - 1,
+				            Dates[Financial Year] = SelectedFinancialYear - 1,
 				            REMOVEFILTERS(Dates)
 				        ),
 				
@@ -72,6 +77,74 @@ table 'Time Intelligence'
 				)
 
 			formatStringDefinition = "0.00%;-0.00%;0.00%"
+
+		calculationItem CY/PY =
+			DIVIDE(
+				CALCULATE(
+					SELECTEDMEASURE(),
+					'Time Intelligence'[Time Calculation]="Current"
+				),
+				CALCULATE(
+					SELECTEDMEASURE(),
+					'Time Intelligence'[Time Calculation]="PY"
+				)
+			)
+
+		calculationItem YTD =
+				
+			VAR SelectedFinancialYear = SELECTEDVALUE(Dates[Financial Year])
+			VAR LastWeekAvailable = CALCULATE( MAX(Dates[Financial Week]), Dates[is_future_menu_week] = false)
+			
+			RETURN
+				SWITCH(
+					TRUE(),
+			
+					ISINSCOPE(Dates[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), 
+					TOTALYTD(
+						SELECTEDMEASURE(),
+						Dates[Date],
+						REMOVEFILTERS(Dates)
+					),
+			
+					ISINSCOPE(Dates[Financial Year]), 
+					CALCULATE(
+						SELECTEDMEASURE(),
+						Dates[Financial Year] = SelectedFinancialYear,
+						Dates[Financial Week] <= LastWeekAvailable,
+						REMOVEFILTERS(Dates)
+					),
+			
+					BLANK()
+				)
+
+		calculationItem PYTD =
+				
+			VAR PreviousFinancialYear = SELECTEDVALUE(Dates[Financial Year]) - 1
+			VAR LastWeekAvailable = CALCULATE( MAX(Dates[Financial Week]), Dates[is_future_menu_week] = false)
+			
+			RETURN
+				SWITCH(
+					TRUE(),
+			
+					ISINSCOPE(Dates[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]), 
+					CALCULATE(
+						TOTALYTD(
+							SELECTEDMEASURE(),
+							Dates[Date]
+						),
+						DATEADD(Dates[Date], -1, YEAR),
+						REMOVEFILTERS(Dates)
+					),
+			
+					ISINSCOPE(Dates[Financial Year]), CALCULATE(
+						SELECTEDMEASURE(),
+						'Dates'[Financial Year] = PreviousFinancialYear,
+						'Dates'[Financial Week] <= LastWeekAvailable,
+						REMOVEFILTERS(Dates)
+					),
+			
+					BLANK()
+				)
 
 	column 'Time Calculation'
 		dataType: string
