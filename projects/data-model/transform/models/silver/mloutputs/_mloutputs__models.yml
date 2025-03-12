@@ -1,4 +1,4 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
@@ -6,6 +6,14 @@ models:
   - name: mloutputs__preselector_successful_realtime_output
     description: "Table of all successful preselector outputs."
     columns:
+      - name: preselector_output_id
+        data_type: string
+        description: "{{ doc('column__preselector_output_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
@@ -138,6 +146,14 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+      - name: error_cooking_time_mean
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
 
       - name: error_is_beef_percentage
         data_type: double

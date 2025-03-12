@@ -1209,10 +1209,23 @@ models:
           - not_null
 
   - name: fact_preselector
-    description: "Contains the successful outputs from the preselector model, which automatically selects recipes for customers\
-      \ based on their preferences. Each row represents a recipe selection for a specific billing agreement, menu week and\
-      \ product variation. The table includes details about the request (portions, meals), customer preferences used, and\
-      \ error metrics that indicate how well the selection matches the preferences."
+    description: |
+      A record of successful recipe selections made by the preselector algorithm based on customer preferences, outputs which contain errors are not included. 
+      
+      This table contains two types of records:
+      1. **Dish records**: Individual recipe selections for a customer's menu week
+      2. **Mealbox records**: The aggregation of recipes selected for a customer's menu week
+      
+      Each customer can have multiple output versions for the same menu week, as they can re-run the preselector for upcoming weeks, 
+      so the output version helps us track which is the current output version and which are historical outputs.
+      
+      The table includes:
+      - Request parameters (portions, meals requested)
+      - Customer preference data used for selection
+      - Quality metrics measuring how well selections match preferences
+      - Rotation and variation scores to ensure menu diversity
+      - Version tracking to identify the latest selections
+      
     latest_version: 1
     config:
       alias: fact_preselector
@@ -1231,27 +1244,27 @@ models:
           - unique
           - not_null
 
+      - name: preselector_output_id
+        data_type: string
+        description: "{{ doc('column__preselector_output_id') }}"
+        data_tests:
+          - not_null
+
       - name: created_at
         data_type: timestamp
         description: "{{ doc('column__created_at_preselector_output') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_output_version
         data_type: int
         description: "{{ doc('column__menu_week_output_version') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_most_recent_output
         data_type: int
         description: "{{ doc('column__is_most_recent_output') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
@@ -1276,72 +1289,71 @@ models:
       - name: product_variation_id
         data_type: string
         description: "{{ doc('column__product_variation_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
-          - not_null
+          - not_null:
+              where: "is_dish = true"
 
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
-          - not_null
+          - not_null:
+              where: "is_dish = true"
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null:
+              where: "is_dish = true"
 
       - name: main_recipe_id
         data_type: int
         description: "{{ doc('column__main_recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
-          - not_null
+          - not_null:
+              where: "is_dish = true"
+
+      - name: main_recipe_ids
+        data_type: array<int>
+        description: "{{ doc('column__main_recipe_ids') }}"
+        data_tests:
+          - not_null:
+              where: "is_dish = false"
 
       - name: concept_preference_ids
         data_type: array<string>
         description: "{{ doc('column__concept_preference_list') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: taste_preference_ids
         data_type: array<string>
         description: "{{ doc('column__taste_preference_list') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_year
         data_type: int
         description: "{{ doc('column__menu_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week
         data_type: int
         description: "{{ doc('column__menu_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portions
         data_type: int
         description: "{{ doc('column__requested_portions') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
@@ -1351,8 +1363,6 @@ models:
       - name: meals
         data_type: int
         description: "{{ doc('column__requested_meals') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
@@ -1362,19 +1372,26 @@ models:
       - name: taste_preference_compliancy_code
         data_type: int
         description: "{{ doc('column__taste_preference_compliancy_code') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
               values: [1, 2, 3]
               quote: false
 
+      - name: recipe_main_ingredient_name_english
+        data_type: string
+        description: "{{ doc('column__recipe_main_ingredient_name_english') }}"
+        data_tests:
+          - not_null:
+              where: "is_dish = true"
+              config:
+                # Some recipes have no english main ingredient, this isn't an error
+                # but it's good to be aware of
+                severity: warn
+
       - name: model_version_commit_sha
         data_type: string
         description: "{{ doc('column__model_version_commit_sha') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1706,12 +1723,77 @@ models:
               min_value: 0
               max_value: 1
 
+      - name: dish_rotation_score
+        data_type: double
+        description: "{{ doc('column__dish_rotation_score') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              where: "dish_rotation_score is not null"
+
+      - name: rotation_score
+        data_type: double
+        description: "{{ doc('column__rotation_score') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              where: "rotation_score is not null"
+
+      - name: rotation_score_group
+        data_type: string
+        description: "{{ doc('column__rotation_score_group') }}"
+        data_tests:
+          - accepted_values:
+              values: ["Perfect", "Great", "Good", "OK", "Poor"]
+              where: "rotation_score_group is not null"
+
+      - name: number_of_unique_main_ingredients
+        data_type: int
+        description: "{{ doc('column__number_of_unique_main_ingredients') }}"
+
+      - name: protein_variation_score
+        data_type: double
+        description: "{{ doc('column__protein_variation_score') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              where: "protein_variation_score is not null"
+
+      - name: protein_variation_score_group
+        data_type: string
+        description: "{{ doc('column__protein_variation_score_group') }}"
+        data_tests:
+          - accepted_values:
+              values: ["Perfect", "Great", "Good", "OK", "Poor"]
+              where: "protein_variation_score_group is not null"
+
+      - name: selection_quality_score
+        data_type: double
+        description: "{{ doc('column__selection_quality_score') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish_preselector_output') }}"
+        data_tests:
+          - not_null
+
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         data_tests:
           - not_null:
               config:
+                # If fact preselector is run a while later than dim_billing_agreements, 
+                # there will be new customers getting output which don't 
+                # exist in dim_billing_agreements this is not an error, but 
+                # it's good to be aware of
                 severity: warn
           - relationships:
               to: ref('dim_billing_agreements')
@@ -1720,8 +1802,6 @@ models:
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -1731,8 +1811,6 @@ models:
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -1742,30 +1820,32 @@ models:
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
-        constraints:
-          - type: not_null
         data_tests:
-          - not_null
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
       - name: fk_dim_dates
         data_type: int
-        description: "{{ doc('column__fk_dim_dates_created_at_preselector_output') }}"
-        constraints:
-          - type: not_null
+        description: "{{ doc('column__fk_dim_dates_menu_week_monday_date') }}"
         data_tests:
           - not_null
           - relationships:
               to: ref('dim_dates')
               field: pk_dim_dates
 
-      - name: fk_dim_time
+      - name: fk_dim_dates_created_at
+        data_type: int
+        description: "{{ doc('column__fk_dim_dates_created_at_preselector_output') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_time_created_at
         data_type: int
         description: "{{ doc('column__fk_dim_time_created_at_preselector_output') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:
@@ -1775,8 +1855,6 @@ models:
       - name: fk_dim_preselector_versions
         data_type: string
         description: "{{ doc('column__pk_dim_preselector_versions') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - relationships:

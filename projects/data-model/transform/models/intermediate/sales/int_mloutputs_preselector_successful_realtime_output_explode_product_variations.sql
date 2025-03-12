@@ -66,7 +66,8 @@ preselector_successful_output as (
         error_repeated_carbohydrates_percentage,
         menu_week_output_version,
         is_most_recent_output,
-        created_at
+        created_at,
+        preselector_output_id
     from preselector_successful_output
     lateral view explode(product_variation_ids) as product_variation_id
 

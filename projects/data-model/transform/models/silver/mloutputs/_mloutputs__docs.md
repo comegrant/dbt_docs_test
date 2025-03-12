@@ -106,3 +106,11 @@ The preselector can output and overwrite each menu week's pre-selection multiple
 The preselector can output and overwrite each menu week's pre-selection multiple times, either because the customer has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the customers sees on the frontend, because they may have made a deviation themselves.
 
 {% enddocs %}
+
+{% docs column__preselector_output_id %}
+
+This is the ID for the successful preselector output. It is generated as the concat of billing_agreement_id, menu_week_monday_date, and menu_week_output_version.
+
+It is used later on to group the exploded dishes together with it's parent mealbox
+
+{% enddocs %}

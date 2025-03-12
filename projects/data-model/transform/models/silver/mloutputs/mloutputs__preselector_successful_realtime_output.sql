@@ -83,4 +83,13 @@ with preselector_successful_output as (
     from rename_and_distinct
 )
 
-select * from add_output_version
+, add_preselector_output_id as (
+    select *
+    , md5(
+        cast(concat(
+            billing_agreement_id, menu_week_monday_date, menu_week_output_version) as string)
+        ) as preselector_output_id
+    from add_output_version
+)
+
+select * from add_preselector_output_id

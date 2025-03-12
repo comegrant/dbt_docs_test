@@ -124,13 +124,13 @@ The year of the customers first delivery.
 
 {% docs column__onesub_flag%}
 
-Describes if the customer has a OneSub product or not in their basket. It will not "OneSub" from the time when the customer got OneSub in their basket for each indivisual customer and "Not OneSub" before.
+Describes if the customer has a OneSub product or not in their basket. It will not "OneSub" from the time when the customer got OneSub in their basket for each individual customer and "Not OneSub" before.
 
 {% enddocs %}
 
 {% docs column__preselector_flag %}
 
-Describes if a customer has been rolled over to the preselector during Onesub launch. The field is changed to "Preselector" at the time preselector was run first time for each individual customer, and is "Not Preselector" before this for each customer. After the launch people get preselector output for the weeks visble in the webpage if they have taken the preference quiz and not made a deviation themselves. For the weeks not visble in the webpage at launch the preselector will run for all customers.
+Describes if a customer has been rolled over to the preselector during Onesub launch. The field is changed to "Preselector" at the time preselector was run first time for each individual customer, and is "Not Preselector" before this for each customer. After the launch people get preselector output for the weeks visible in the webpage if they have taken the preference quiz and not made a deviation themselves. For the weeks not visible in the webpage at launch the preselector will run for all customers.
 
 {% enddocs %}
 
@@ -314,6 +314,12 @@ The unique id of each row in Fact Preselector.
 
 {% enddocs %}
 
+{% docs column__fk_dim_dates_menu_week_monday_date %}
+
+Foreign key that is used to relate the monday date of the menu week to Dim Dates.
+
+{% enddocs %}
+
 {% docs column__fk_dim_dates_created_at_preselector_output %}
 
 Foreign key that is used to relate the created at date from the preselector output to Dim Date.
@@ -354,6 +360,60 @@ The reason for this calculation is that the number of weeks in the comparison wi
 
 {% enddocs %}
 
+{% docs column__dish_rotation_score %}
+
+A score from 0 to 1 which indicates how often a dish has been repeated in recent weeks. The closer to 1, the less the dish has been repeating in recent weeks. Calculated as 1 - repeat_weeks_percentage.
+
+{% enddocs %}
+
+{% docs column__rotation_score %}
+
+A score from 0 to 1 of which indicates how often the dishes in the mealbox have been repeated in recent weeks. The closer to 1, the "newer" dishes are to the customer, the closer to 0 the more the dishes have been repeated recently. Calculated as the average dish_rotiation_score of all the dishes in a mealbox.
+
+{% enddocs %}
+
+{% docs column__rotation_score_group %}
+
+A grouping of rotation_score to provide a guide on what is good and what is not, broken down into the groups "Perfect", "Great", "Good", "OK", "Poor"
+
+{% enddocs %}
+
+{% docs column__number_of_unique_main_ingredients %}
+
+The number of unique main ingredients within a mealbox output by the preselector
+
+{% enddocs %}
+
+{% docs column__protein_variation_score %}
+
+A score from 0 to 1 which indicates how varied the main ingredients are in a mealbox output by the preselector. Calculated as number_of_unique_main_ingredients divided by the number of meals
+
+{% enddocs %}
+
+{% docs column__protein_variation_score_group %}
+
+A grouping of protein_variation_score to provide a guide on what is good and what is not, broken down into the groups "Perfect", "Great", "Good", "OK", "Poor"
+
+{% enddocs %}
+
+{% docs column__is_dish_preselector_output %}
+
+A boolean which indicates whether the row relates to a single dish or the whole mealbox. If true the it's the individual dishes, if false then it's the mealbox
+
+{% enddocs %}
+
+{% docs column__main_recipe_ids %}
+
+The list of all main_recipe_ids that are in the mealbox for that preselector output
+
+{% enddocs %}
+
+{% docs column__selection_quality_score %}
+
+A measure of the overall quality of the selection in the mealbox we gave the customer. It's calculated as the protein_variation_score * rotation_score for the mealbox and goes from 0 to 1, where 1 is good and 0 is bad.
+
+{% enddocs %}
+
 # Fact Billing Agreement Consents
 
 {% docs column__pk_fact_billing_agreement_consents %}
@@ -374,13 +434,13 @@ The unique key of each row in Dim Consents.
 
 {% docs column__pk_fact_billing_agreement_updates %}
 
-The unique key of each row in Fact Billing Agrement Updates. This is the same as the foreign key to the updated billing agreement.
+The unique key of each row in Fact Billing Agreement Updates. This is the same as the foreign key to the updated billing agreement.
 
 {% enddocs %}
 
 {% docs column__fk_dim_dates_first_menu_week%}
 
-Foreign key to dim_dates representing the monday date of the menu week each agreement had their first delivery. 
+Foreign key to dim_dates representing the monday date of the menu week each agreement had their first delivery.
 
 {% enddocs %}
 
@@ -405,7 +465,7 @@ The timestamp of when the update of the billing agreement happened.
 
 {% docs column__is_signup %}
 
-True if this is the first version of the agreement which has status, subscribed product, preferences and loyalty level. 
+True if this is the first version of the agreement which has status, subscribed product, preferences and loyalty level.
 
 {% enddocs %}
 
