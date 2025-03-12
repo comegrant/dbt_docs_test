@@ -1,0 +1,22 @@
+table '(Param) Minimum Number of Ratings Limit'
+
+    
+	measure 'Minimum Number of Ratings Limit Value' = SELECTEDVALUE('(Param) Minimum Number of Ratings Limit'[Minimum Number of Ratings Limit], 30)
+        isHidden
+        formatString: 0
+        lineageTag: 3ded712d-5969-48c3-acc0-a845157dee54
+
+    column 'Minimum Number of Ratings Limit'
+        isHidden
+        formatString: 0
+        lineageTag: 59524d23-1842-43a7-88e8-b1747bebf577
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Minimum Number of Ratings Limit' = calculated
+        mode: import
+        source = GENERATESERIES(0, 200, 1)

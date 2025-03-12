@@ -1,0 +1,22 @@
+table '(Param) Recipe Rating Target Score Cheffelo'
+
+    
+	measure 'Recipe Rating Target Score Cheffelo Value' = SELECTEDVALUE('(Param) Recipe Rating Target Score Cheffelo'[Recipe Rating Target Score Cheffelo], 77)
+        isHidden
+        formatString: 0
+        lineageTag: dc203142-72b4-4e74-936d-34cd261f1ceb
+
+    column 'Recipe Rating Target Score Cheffelo'
+        isHidden
+        formatString: 0
+        lineageTag: a664b724-8e3d-4667-9bd4-d18322380604
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Recipe Rating Target Score' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

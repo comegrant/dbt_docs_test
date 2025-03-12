@@ -1,0 +1,21 @@
+table '(Param) Recipe Rating Target Score Linas Matkasse'
+    
+	measure 'Recipe Rating Target Score Linas Matkasse Value' = SELECTEDVALUE('(Param) Recipe Rating Target Score Linas Matkasse'[Recipe Rating Target Score Linas Matkasse], 76)
+        isHidden
+        formatString: 0
+        lineageTag: 7436b91e-3102-44f0-a5d8-41da423dba42
+
+    column 'Recipe Rating Target Score Linas Matkasse'
+        isHidden
+        formatString: 0
+        lineageTag: d23b71d5-91c8-4e7f-a848-cbbf7d18d5e9
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Recipe Rating Target Score Linas Matkasse' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

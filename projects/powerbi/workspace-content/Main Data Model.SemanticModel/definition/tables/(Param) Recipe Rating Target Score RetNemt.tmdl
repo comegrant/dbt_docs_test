@@ -1,0 +1,21 @@
+table '(Param) Recipe Rating Target Score RetNemt'
+
+    measure 'Recipe Rating Target Score RetNemt Value' = SELECTEDVALUE('(Param) Recipe Rating Target Score RetNemt'[Recipe Rating Target Score RetNemt], 76)
+        isHidden
+        formatString: 0
+        lineageTag: 04e14452-25e5-485d-a488-d440f58f5d62
+
+    column 'Recipe Rating Target Score RetNemt'
+        isHidden
+        formatString: 0
+        lineageTag: a520525e-ab35-4ffa-9fba-58ba00cedaa7
+        summarizeBy: none
+        sourceColumn: [Value]
+
+    extendedProperty ParameterMetadata = {"version":0}
+
+    annotation SummarizationSetBy = User
+
+    partition 'Recipe Rating Target Score RetNemt' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

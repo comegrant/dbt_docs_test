@@ -1,0 +1,22 @@
+table '(Param) Recipe Rating Target Score Adams Matkasse'
+
+    
+	measure 'Recipe Rating Target Score Adams Matkasse Value' = SELECTEDVALUE('(Param) Recipe Rating Target Score Adams Matkasse'[Recipe Rating Target Score Adams Matkasse], 79)
+        isHidden
+        formatString: 0
+        lineageTag: 910f2c88-a432-4f99-a062-cb97de6a550c
+
+    column 'Recipe Rating Target Score Adams Matkasse'
+        isHidden
+        formatString: 0
+        lineageTag: cbbdb9e6-713a-4827-8028-78175595d4a8
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Recipe Rating Target Score Adams Matkasse' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

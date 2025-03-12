@@ -50,5 +50,11 @@ ref table 'Loyalty Point Measures'
 ref table 'Loyalty Events'
 ref table 'Bridge Recipes Taxonomies'
 ref table 'Taxonomies'
+ref table '(Param) Minimum Number of Ratings Limit'
+ref table '(Param) Recipe Rating Target Score Cheffelo'
+ref table '(Param) Recipe Rating Target Score Adams Matkasse'
+ref table '(Param) Recipe Rating Target Score GodtLevert'
+ref table '(Param) Recipe Rating Target Score Linas Matkasse'
+ref table '(Param) Recipe Rating Target Score RetNemt'
 
 ref cultureInfo en-US

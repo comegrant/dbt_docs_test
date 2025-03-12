@@ -1,0 +1,22 @@
+table '(Param) Recipe Rating Target Score GodtLevert'
+
+    
+	measure 'Recipe Rating Target Score GodtLevert Value' = SELECTEDVALUE('(Param) Recipe Rating Target Score GodtLevert'[Recipe Rating Target Score GodtLevert], 79)
+        isHidden
+        formatString: 0
+        lineageTag: 38bde3d9-b620-441c-a5f6-b543f787878b
+
+    column 'Recipe Rating Target Score GodtLevert'
+        isHidden
+        formatString: 0
+        lineageTag: f7165b37-f787-436e-8744-b66cc02e8c46
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Recipe Rating Target Score GodtLevert' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

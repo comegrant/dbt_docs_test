@@ -303,6 +303,16 @@ table Dates
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The offset in number of weeks for the Monday date of the week of any date compared with the Monday date of the current week.
+	/// All historic weeks are negative values and all future weeks are positive values.
+	/// I.e. the last week will be -1, the current week is 0, and the next week will be 1.
+	column 'Weeks Offset from Current Monday'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: weeks_offset_from_current_monday
+
 	/// In Cheffelo we have defined a financial hiearchy that should be the default for most reports.
 	/// 
 	/// Year:
