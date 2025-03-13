@@ -57,7 +57,7 @@ table 'Time Intelligence'
 				        BLANK()
 				    )
 
-		calculationItem YOY =
+		calculationItem 'Diff PY' =
 				SELECTEDMEASURE() -
 				    CALCULATE(
 				        SELECTEDMEASURE(),
@@ -68,7 +68,7 @@ table 'Time Intelligence'
 				DIVIDE(
 				    CALCULATE(
 				        SELECTEDMEASURE(),
-				        'Time Intelligence'[Time Calculation]="YOY"
+				        'Time Intelligence'[Time Calculation]="Diff PY"
 				    ),
 				    CALCULATE(
 				        SELECTEDMEASURE(),

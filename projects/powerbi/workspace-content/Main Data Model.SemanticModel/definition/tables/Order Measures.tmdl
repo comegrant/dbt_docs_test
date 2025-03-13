@@ -868,10 +868,10 @@ table 'Order Measures'
 		lineageTag: 6107c597-37e1-40fb-936d-536e8c6fa315
 
 	/// Absolute increase/decrease in sales from previous year
-	measure 'Number of Orders (YOY)' =
+	measure 'Number of Orders (Diff PY)' =
 			CALCULATE(
 				[Number of Orders],
-				'Time Intelligence'[Time Calculation]="YOY"
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0
 		displayFolder: Orders
@@ -936,10 +936,10 @@ table 'Order Measures'
 	/// Absolute increase/decrease in average transaction value from previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
-	measure 'ATV Gross Ex Vat (YOY)' =
+	measure 'ATV Gross Ex Vat (Diff PY)' =
 			CALCULATE(
 				[Average Order Value Gross Ex Vat],
-				'Time Intelligence'[Time Calculation]="YOY"
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
 		displayFolder: Orders
@@ -986,10 +986,10 @@ table 'Order Measures'
 	/// Absolute increase/decrease in average transaction value from previous year
 	/// including all order lines (i.e. include discounts and credit)
 	/// exlucding vat
-	measure 'ATV Net Ex Vat (YOY)' =
+	measure 'ATV Net Ex Vat (Diff PY)' =
 			CALCULATE(
 				[Average Order Value Net Ex Vat],
-				'Time Intelligence'[Time Calculation]="YOY"
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
 		displayFolder: Orders
@@ -1036,10 +1036,10 @@ table 'Order Measures'
 	/// Absolute increase/decrease in revenue from orders in the same period previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
-	measure 'Order Value Gross Ex Vat (YOY)' =
+	measure 'Order Value Gross Ex Vat (Diff PY)' =
 			CALCULATE(
 				[Order Value Gross Ex Vat],
-				'Time Intelligence'[Time Calculation]="YOY"
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
 		displayFolder: Orders
@@ -1105,10 +1105,10 @@ table 'Order Measures'
 	/// of the previous year from previous year
 	/// including all order lines (i.e. include discounts and credit)
 	/// exlucding vat
-	measure 'Order Value Net Ex Vat (YOY)' =
+	measure 'Order Value Net Ex Vat (Diff PY)' =
 			CALCULATE(
 				[Order Value Net Ex Vat],
-				'Time Intelligence'[Time Calculation]="YOY"
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
 		displayFolder: Orders
