@@ -298,7 +298,7 @@ table 'Order Measures'
 				[Total Order Value Ex Vat],
 				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
-				'Order Measures'[order_line_type_name] IN {"Credit"}
+				'Products'[Product Name] = "Credits"
 			)
 		displayFolder: Credit and PRP
 		lineageTag: 1fe11954-5b54-4c34-9abb-796297d4ecee
