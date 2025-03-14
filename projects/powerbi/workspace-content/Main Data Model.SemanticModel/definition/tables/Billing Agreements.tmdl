@@ -201,7 +201,6 @@ table 'Billing Agreements'
 
 	column 'First Menu Date'
 		dataType: dateTime
-		isHidden
 		formatString: Long Date
 		lineageTag: d67151df-ae12-48b5-beb5-cf563a456e54
 		summarizeBy: none
@@ -301,4 +300,3 @@ table 'Billing Agreements'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

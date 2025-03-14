@@ -83,6 +83,12 @@ Defines a unique recipe comment. To be used to count number of comments. A conca
 
 {% enddocs %}
 
+{% docs column__fk_dim_periods_since_first_menu_week %}
+
+Foreign key to the dimension dim_periods_since, representing number of days since the first menu week of the agreement.
+
+{% enddocs %}
+
 
 # Dim Billing Agreements
 

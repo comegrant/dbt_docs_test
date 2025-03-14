@@ -97,6 +97,7 @@ order_lines as (
         , md5(order_lines.order_status_id) as fk_dim_order_statuses
         , md5(order_lines.order_type_id) as fk_dim_order_types
         , coalesce(products.pk_dim_products, 0) as fk_dim_products
+        , datediff(order_lines.menu_week_monday_date, billing_agreements_ordergen.first_menu_week_monday_date) as fk_dim_periods_since_first_menu_week
     from order_lines
     left join deviations_order_mapping
         on order_lines.billing_agreement_order_id = deviations_order_mapping.billing_agreement_order_id
@@ -319,6 +320,7 @@ order_lines as (
         , order_line_dimensions_joined.fk_dim_order_statuses
         , order_line_dimensions_joined.fk_dim_order_types
         , order_line_dimensions_joined.fk_dim_products
+        , order_line_dimensions_joined.fk_dim_periods_since_first_menu_week
         , coalesce(
             md5(
                 concat(
@@ -406,6 +408,7 @@ order_lines as (
         , order_line_dimensions_joined.fk_dim_order_statuses
         , order_line_dimensions_joined.fk_dim_order_types
         , 0 as fk_dim_products
+        , order_line_dimensions_joined.fk_dim_periods_since_first_menu_week
         , coalesce(
             md5(
                 concat(
@@ -502,6 +505,7 @@ order_lines as (
         , order_line_dimensions_joined.fk_dim_order_statuses
         , order_line_dimensions_joined.fk_dim_order_types
         , order_line_dimensions_joined.fk_dim_products
+        , order_line_dimensions_joined.fk_dim_periods_since_first_menu_week
         , coalesce(
             md5(
                 concat(

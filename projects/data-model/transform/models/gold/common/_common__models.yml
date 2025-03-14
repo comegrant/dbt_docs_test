@@ -24,7 +24,7 @@ models:
         data_type: string
         data_tests:
           - not_null
-  
+
       - name: language_id
         description: ""
         data_type: int
@@ -42,13 +42,13 @@ models:
         data_type: string
         data_tests:
           - not_null
-      
+
       - name: country_currency
         description: "{{ doc('column__product_concept_id') }}"
         data_type: string
         data_tests:
           - not_null
-          
+
     versions:
       - v: 1
 
@@ -59,7 +59,7 @@ models:
       alias: dim_dates
       contract:
         enforced: true
-    
+
     columns:
 
       - name: pk_dim_dates
@@ -201,7 +201,7 @@ models:
         data_tests:
           - not_null
 
-      - name: day_of_financial_year_number 
+      - name: day_of_financial_year_number
         data_type: int
         description: "{{ doc('column__day_of_financial_year_number') }}"
         constraints:
@@ -209,15 +209,15 @@ models:
         data_tests:
           - not_null
 
-      - name: day_of_financial_quarter_number 
+      - name: day_of_financial_quarter_number
         data_type: int
         description: "{{ doc('column__day_of_financial_quarter_number') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
-  
-      - name: day_of_financial_month_number 
+
+      - name: day_of_financial_month_number
         data_type: int
         description: "{{ doc('column__day_of_financial_month_number') }}"
         constraints:
@@ -238,7 +238,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-      
+
       - name: weeks_offset_from_current_monday
         data_type: bigint
         description: "{{ doc('column__weeks_offset_from_current_monday') }}"
@@ -249,7 +249,7 @@ models:
 
     versions:
       - v: 1
-    
+
   - name: dim_time
     description: "Dimension table for time-related attributes"
     latest_version: 1
@@ -257,7 +257,7 @@ models:
       alias: dim_time
       contract:
         enforced: false
-    
+
     columns:
       - name: pk_dim_time
         description: "{{ doc('column__pk_dim_time') }}"
@@ -275,6 +275,59 @@ models:
       - name: minute
         description: "{{ doc('column__minute') }}"
         data_type: int
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: dim_periods_since
+    description: "Contains the number of days, weeks, months, quarters, and years since a given date"
+    latest_version: 1
+    config:
+      alias: dim_periods_since
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_periods_since
+        data_type: int
+        description: "{{ doc('column__pk_dim_periods_since') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: days_since
+        data_type: int
+        description: "{{ doc('column__days_since') }}"
+        data_tests:
+          - not_null
+
+      - name: weeks_since
+        data_type: int
+        description: "{{ doc('column__weeks_since') }}"
+        data_tests:
+          - not_null
+
+      - name: months_since
+        data_type: int
+        description: "{{ doc('column__months_since') }}"
+        data_tests:
+          - not_null
+
+      - name: quarters_since
+        data_type: int
+        description: "{{ doc('column__quarters_since') }}"
+        data_tests:
+          - not_null
+
+      - name: years_since
+        data_type: int
+        description: "{{ doc('column__years_since') }}"
         data_tests:
           - not_null
 

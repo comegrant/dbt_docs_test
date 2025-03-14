@@ -3,7 +3,7 @@ table 'Order Measures'
 
 	/// Total order value excluding vat
 	measure 'Total Order Value Ex Vat' =
-			
+
 			CALCULATE(
 			    SUM('Order Measures'[total_amount_ex_vat]),
 				USERELATIONSHIP(
@@ -24,7 +24,7 @@ table 'Order Measures'
 			        'Billing Agreements'[pk_dim_billing_agreements],
 					None
 				)
-			
+
 			)
 		isHidden
 		lineageTag: 9514c3b0-8d1c-49a4-a547-99ac13fa089d
@@ -35,7 +35,7 @@ table 'Order Measures'
 
 	/// Order value including VAT
 	measure 'Total Order Value Inc Vat' =
-			
+
 			CALCULATE(
 			    SUM('Order Measures'[total_amount_inc_vat]),
 				USERELATIONSHIP(
@@ -101,7 +101,7 @@ table 'Order Measures'
 
 	/// Sum of Product Variation Quantity
 	measure 'Product Variation Quantity' =
-			
+
 			CALCULATE(
 			    SUM('Order Measures'[product_variation_quantity]),
 				USERELATIONSHIP(
@@ -310,7 +310,7 @@ table 'Order Measures'
 	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X),
 	/// use the measures for Number of added/removed dishes
 	measure 'Number of Swapped Dishes' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			        BLANK(),
@@ -329,7 +329,7 @@ table 'Order Measures'
 	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X),
 	/// use the measures for Number of added/removed dishes
 	measure 'Number of Swapped In Dishes' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			        BLANK(),
@@ -498,7 +498,7 @@ table 'Order Measures'
 					None
 				)
 			)
-			
+
 			```
 		formatString: #,0
 		isHidden
@@ -507,7 +507,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer replaced one or more dishes with another dish
 	measure 'Number of Orders with Swaps' = ```
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			        BLANK(),
@@ -515,7 +515,7 @@ table 'Order Measures'
 			            ISFILTERED('Products'),
 			            BLANK(),
 			            CALCULATE(
-			                [Number of Orders], 
+			                [Number of Orders],
 			                'Order Measures'[is_removed_dish] = 1 || 'Order Measures'[is_added_dish] = 1
 			            )
 			        )
@@ -527,7 +527,7 @@ table 'Order Measures'
 
 	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
-			
+
 			    DIVIDE(
 			        [Number of Orders with Swaps],
 			        [Number of Orders],
@@ -540,7 +540,7 @@ table 'Order Measures'
 
 	/// Average number of orders where a customer swapped one or more dishes
 	measure 'Average Number of Swaps per Order' = ```
-			
+
 			    DIVIDE(
 			        [Number of Swapped Dishes],
 			        [Number of Orders],
@@ -554,7 +554,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer increased the number of portions
 	measure 'Number of Orders with Increased Portions' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			    BLANK(),
@@ -573,7 +573,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer decreased the number of portions
 	measure 'Number of Orders with Decreased Portions' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			    BLANK(),
@@ -592,7 +592,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer changed (increased/decreased) the number of portions
 	measure 'Number of Orders with Adjusted Portions' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			    BLANK(),
@@ -629,7 +629,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer decreased the number of meals/days
 	measure 'Number of Orders with Decreased Meals' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			        BLANK(),
@@ -648,7 +648,7 @@ table 'Order Measures'
 
 	/// Number of orders where the customer adjusted (increased/decreased) the number of meals/days
 	measure 'Number of Orders with Adjusted Meals' =
-			
+
 			IF(
 			    ISFILTERED('Recipes'),
 			        BLANK(),
@@ -675,7 +675,7 @@ table 'Order Measures'
 
 	/// Middle step calculation used to find the difference between orderes meals and subscribed meals
 	measure 'Meal Adjustments' =
-			
+
 			CALCULATE(
 			    IF(
 			        ISFILTERED('Recipes'),
@@ -719,7 +719,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Meal Adjustments],
 				'Order Measures'[meal_adjustment_subscription] < 0
-			
+
 			)
 		formatString: #,0
 		isHidden
@@ -731,7 +731,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Meal Adjustments],
 				'Order Measures'[meal_adjustment_subscription] > 0
-			
+
 			)
 		formatString: #,0
 		isHidden
@@ -887,11 +887,11 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: e34487bd-7086-4db7-be56-468ea17a45f3
 
-	/// This measure calculates the growth rate of the number of orders by comparing the selected year's 
-	/// total orders to the previous year's total orders. 
-	/// It is computed by dividing the number of orders in the current year by the number of orders in the previous year. 
-	/// 
-	/// A result greater than 100% indicates an increase in order volume, 
+	/// This measure calculates the growth rate of the number of orders by comparing the selected year's
+	/// total orders to the previous year's total orders.
+	/// It is computed by dividing the number of orders in the current year by the number of orders in the previous year.
+	///
+	/// A result greater than 100% indicates an increase in order volume,
 	/// while a result below 100% indicates a decline.
 	measure 'Number of Orders (CY/PY)' =
 			CALCULATE(
@@ -901,7 +901,7 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 
-	/// Number of Orders Year to Date. 
+	/// Number of Orders Year to Date.
 	/// Cumulative sum of number of orders from the beginning of the year
 	measure 'Number of Orders (YTD)' =
 			CALCULATE(
@@ -920,7 +920,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		displayFolder: Orders
-	
+
 	/// Average Transaction Value of orders in the same period of the previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
@@ -957,12 +957,12 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 17e80dd3-0ead-4ec4-a125-5b0492aace7f
 
-	/// This measure calculates the growth rate of the Average Transaction Value (ATV) 
-	/// by comparing the selected year's ATV to the previous year's ATV. 
-	/// It is computed by dividing the ATV of the current year by the ATV of the previous year. 
-	/// 
-	/// A result greater than 100% indicates an increase in average transaction value, 
-	/// while a result below 100% indicates a decrease. 
+	/// This measure calculates the growth rate of the Average Transaction Value (ATV)
+	/// by comparing the selected year's ATV to the previous year's ATV.
+	/// It is computed by dividing the ATV of the current year by the ATV of the previous year.
+	///
+	/// A result greater than 100% indicates an increase in average transaction value,
+	/// while a result below 100% indicates a decrease.
 	measure 'ATV Gross Ex Vat (CY/PY)' =
 			CALCULATE(
 				[Average Order Value Gross Ex Vat],
@@ -1007,12 +1007,12 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 7dec0ff3-e84b-4dc5-9ae0-41ddb6525a5d
 
-	/// This measure calculates the growth rate of the Average Transaction Value (ATV) 
-	/// by comparing the selected year's ATV to the previous year's ATV. 
-	/// It is computed by dividing the ATV of the current year by the ATV of the previous year. 
-	/// 
-	/// A result greater than 100% indicates an increase in average transaction value, 
-	/// while a result below 100% indicates a decrease. 
+	/// This measure calculates the growth rate of the Average Transaction Value (ATV)
+	/// by comparing the selected year's ATV to the previous year's ATV.
+	/// It is computed by dividing the ATV of the current year by the ATV of the previous year.
+	///
+	/// A result greater than 100% indicates an increase in average transaction value,
+	/// while a result below 100% indicates a decrease.
 	measure 'ATV Net Ex Vat (CY/PY)' =
 			CALCULATE(
 				[Average Order Value Net Ex Vat],
@@ -1057,10 +1057,10 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 23fe5356-77e8-4303-a1bb-eb7e4ee902e7
 
-	/// This measure calculates the growth rate of order value by comparing the selected year's order value 
-	/// to the previous year's order value. 
-	/// It is computed by dividing the order value of the current year by the order value of the previous year. 
-	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline. 
+	/// This measure calculates the growth rate of order value by comparing the selected year's order value
+	/// to the previous year's order value.
+	/// It is computed by dividing the order value of the current year by the order value of the previous year.
+	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline.
 	measure 'Order Value Gross Ex Vat (CY/PY)' =
 			CALCULATE(
 				[Order Value Gross Ex Vat],
@@ -1069,7 +1069,7 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 
-	/// Revenue from orders Year to Date. 
+	/// Revenue from orders Year to Date.
 	/// Cumulative sum of revenue from orders from the beginning of the year
 	measure 'Order Value Gross Ex Vat (YTD)' =
 			CALCULATE(
@@ -1126,10 +1126,10 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 454d5649-146b-4526-b347-dc995c07bcb1
 
-	/// This measure calculates the growth rate of order value by comparing the selected year's order value 
-	/// to the previous year's order value. 
-	/// It is computed by dividing the order value of the current year by the order value of the previous year. 
-	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline. 
+	/// This measure calculates the growth rate of order value by comparing the selected year's order value
+	/// to the previous year's order value.
+	/// It is computed by dividing the order value of the current year by the order value of the previous year.
+	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline.
 	measure 'Order Value Net Ex Vat (CY/PY)' =
 			CALCULATE(
 				[Order Value Net Ex Vat],
@@ -1138,7 +1138,7 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 
-	/// Revenue from orders Year to Date. 
+	/// Revenue from orders Year to Date.
 	/// Cumulative sum of revenue from orders from the beginning of the year
 	measure 'Order Value Net Ex Vat (YTD)' =
 			CALCULATE(
@@ -1769,6 +1769,13 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: recipe_comment_id
 
+	column 'fk_dim_periods_since_first_menu_week'
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_periods_since_first_menu_week
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =
@@ -1784,4 +1791,3 @@ table 'Order Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

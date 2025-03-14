@@ -352,6 +352,10 @@ models:
               to: ref('dim_products')
               field: pk_dim_products
 
+      - name: fk_dim_periods_since_first_menu_week
+        data_type: int
+        description: "{{ doc('column__fk_dim_periods_since_first_menu_week') }}"
+
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
