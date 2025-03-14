@@ -56,5 +56,8 @@ ref table '(Param) Recipe Rating Target Score Adams Matkasse'
 ref table '(Param) Recipe Rating Target Score GodtLevert'
 ref table '(Param) Recipe Rating Target Score Linas Matkasse'
 ref table '(Param) Recipe Rating Target Score RetNemt'
+ref table 'Preselector Measures'
+ref table 'Preselector Versions'
+ref table 'Preselector Details'
 
 ref cultureInfo en-US

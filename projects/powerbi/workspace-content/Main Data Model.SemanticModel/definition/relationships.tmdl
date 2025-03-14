@@ -242,3 +242,26 @@ relationship Taxonomies-Bridge-Recipes-Taxonomies
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_taxonomies
 	toColumn: 'Taxonomies'.pk_dim_taxonomies
 
+relationship fact_preselector_to_dim_companies
+	fromColumn: 'Preselector Details'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_preselector_to_dim_dates
+	fromColumn: 'Preselector Details'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates
+
+relationship fact_preselector_to_dim_products
+	fromColumn: 'Preselector Details'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship fact_preselector_to_dim_recipes
+	fromColumn: 'Preselector Details'.fk_dim_recipes
+	toColumn: Recipes.pk_dim_recipes
+
+relationship fact_preselector_to_dim_preselector_versions
+	fromColumn: 'Preselector Details'.fk_dim_preselector_versions
+	toColumn: 'Preselector Versions'.pk_dim_preselector_versions
+
+relationship fact_preselector_to_dim_billing_agreements
+	fromColumn: 'Preselector Details'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements

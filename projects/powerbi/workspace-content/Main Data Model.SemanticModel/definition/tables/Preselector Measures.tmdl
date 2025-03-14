@@ -1,0 +1,122 @@
+/// A table which contains measures about the preselector output for a subscriber's menu week.
+table 'Preselector Measures'
+	lineageTag: preselecor-measures-table
+
+    /// The number of mealboxes that have been output by the preselector and have satisfied all the subscriber's taste preferences
+    measure 'Number of Mealboxes with Taste Preferences Upheld' =
+            CALCULATE(
+                [Number of Mealboxes from Preselector],
+                'Preselector Details'[Taste Preference Compliancy Code] = 3
+                )
+        formatString: #,0
+        displayFolder: Preference Compliance
+
+    /// The number of mealboxes that have been output by the preselector that have broken at least one of the subscriber's non-allergy taste preferences (e.g. fish, pork)
+    measure 'Number of Mealboxes with Non-Allergy Taste Preferences Broken' =
+            CALCULATE(
+                [Number of Mealboxes from Preselector],
+                    'Preselector Details'[Taste Preference Compliancy Code] = 2
+                )
+        formatString: #,0
+        displayFolder: Preference Compliance
+
+    /// The number of mealboxes that have been output by the preselector that have broken at least one of the subscriber's allergy taste preferences (e.g. nuts, lactose)
+    measure 'Number of Mealboxes with Allergy Taste Preferences Broken' =
+            CALCULATE(
+                [Number of Mealboxes from Preselector],
+                'Preselector Details'[Taste Preference Compliancy Code] = 1
+                )
+        formatString: #,0
+        displayFolder: Preference Compliance
+
+    /// The number of mealboxes that have been output by the preselector
+    measure 'Number of Mealboxes from Preselector' =
+            IF(
+                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[preselector_output_id]),
+                    'Preselector Details'[Is Dish] = TRUE()
+                ),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[preselector_output_id]),
+                    'Preselector Details'[Is Dish] = FALSE()
+                )
+            )
+        formatString: #,0
+
+    /// The number of dishes that have been output by the preselector
+    measure 'Number of Dishes from Preselector' =
+            CALCULATE(
+                COUNT('Preselector Details'[pk_fact_preselector]),
+                    'Preselector Details'[Is Dish] = TRUE()
+                )
+        formatString: #,0
+
+    /// The number of subscribers that have received a preselector output.
+    measure 'Number of Subscribers with Preselector Output' =
+            IF(
+                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[billing_agreement_id]),
+                    'Preselector Details'[Is Dish] = TRUE()
+                ),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[billing_agreement_id]),
+                    'Preselector Details'[Is Dish] = FALSE()
+                )
+            )
+        formatString: #,0
+
+    /// The overall quality metric (0 bad - 1 good) of the preselector output, calculated as a combination of the rotation and main ingredient variation scores for mealboxes
+    measure 'Average Combined Rotation and Variation Score' =
+            CALCULATE(
+                AVERAGE('Preselector Details'[Combined Rotation Variation Score]),
+                    'Preselector Details'[Is Dish] = FALSE()
+                )
+        formatString: #,0.00
+        displayFolder: Selection Quality
+
+    /// The average score (0 bad - 1 good) for how often dishes are repeated for a subscriber
+    measure 'Average Rotation Score' =
+            IF(
+                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
+                CALCULATE(
+                    AVERAGE('Preselector Details'[Rotation Score]),
+                    'Preselector Details'[Is Dish] = TRUE()
+                    ),
+                CALCULATE(
+                    AVERAGE('Preselector Details'[Rotation Score]),
+                    'Preselector Details'[Is Dish] = FALSE()
+                    )
+            )
+        formatString: #,0.00
+        displayFolder: Selection Quality
+
+    /// The average score (0 bad - 1 good) for how much main ingredient variation there is in a mealbox
+    measure 'Average Main Ingredient Variation Score' =
+            CALCULATE(
+                AVERAGE('Preselector Details'[Main Ingredient Variation Score]),
+                    'Preselector Details'[Is Dish] = FALSE()
+                )
+        formatString: #,0.00
+        displayFolder: Selection Quality
+
+    /// The average main ingredient error from the preselector
+    measure 'Average Main Ingredient Error' =
+            IF(
+                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
+                CALCULATE(
+                    AVERAGE('Preselector Details'[Sum Error Main Ingredients]),
+                        'Preselector Details'[Is Dish] = TRUE()
+                ),
+                CALCULATE(
+                    AVERAGE('Preselector Details'[Sum Error Main Ingredients]),
+                        'Preselector Details'[Is Dish] = FALSE()
+                )
+            )
+        formatString: #,0.00
+        displayFolder: Selection Quality
+
+	partition 'Measure Table' = m
+		mode: import
+		source = GENERATESERIES(1,1,1)

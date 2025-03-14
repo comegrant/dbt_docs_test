@@ -1,0 +1,54 @@
+/// A table which contains data about the model versions of the preselector algorithm. This table can only be currently used to filter the Preselector Measures table.
+table 'Preselector Versions'
+    lineageTag: Preselector-Versions-Table
+
+    column pk_dim_preselector_versions
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_preselector_versions
+
+    /// The full commit SHA of the model version used to create the output
+    column 'Commit Sha'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: commit_sha
+
+    /// The short commit sha for the model version that was used to generate the output.
+    column 'Short Commit Sha'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: short_commit_sha
+
+    /// The first time the model version was used to generate the output.
+    column 'Model Version First Used At'
+        dataType: dateTime
+        formatString: General Date
+        summarizeBy: none
+        sourceColumn: source_model_version_first_used_at
+
+    /// The latest time the model version was used to generate the output.
+    column 'Model Version Latest Used At'
+        dataType: dateTime
+        formatString: General Date
+        summarizeBy: none
+        sourceColumn: source_model_version_latest_used_at
+
+    /// The sequential version number of the preselector algorithm.
+    column 'Version Number'
+        dataType: int64
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: version_number
+
+    partition 'Preselector Versions' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_preselector_versions_Table = gold_Schema{[Name="dim_preselector_versions",Kind="Table"]}[Data]
+                in
+                    dim_preselector_versions_Table

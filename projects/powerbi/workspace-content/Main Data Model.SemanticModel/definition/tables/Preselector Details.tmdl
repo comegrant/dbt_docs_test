@@ -1,0 +1,316 @@
+/// This table contains the details of the preselector output for a subscriber's menu week that you can use to filter and drill down on.
+table 'Preselector Details'
+    lineageTag: Preselector-Details-Table
+
+    column pk_fact_preselector
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_fact_preselector
+
+    column preselector_output_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: preselector_output_id
+
+    column 'Created At'
+        dataType: dateTime
+        isHidden
+        isAvailableInMdx: false
+        formatString: General Date
+        summarizeBy: none
+        sourceColumn: created_at
+
+    /// The preselector can output and overwrite each menu week's pre-selection multiple times, either because the subscriber has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates which sequential version of the output it is for that menu week per billing agreement.
+    column 'Menu Week Output Version'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: menu_week_output_version
+
+    /// The preselector can output and overwrite each menu week's pre-selection multiple times, either because the subscriber has changed their preferences or because the preselector batch job from CMS has been run again. This column indicates whether the output is the latest version or not for that menu week per billing agreement. Note that this may not be the same as the latest set of meals that the subscribers sees on the frontend, because they may have made a deviation themselves.
+    column 'Is Most Recent Output'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: is_most_recent_output
+
+    column billing_agreement_id
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: billing_agreement_id
+
+    column company_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: company_id
+
+    column product_variation_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: product_variation_id
+
+    column recipe_id
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: recipe_id
+
+    column main_recipe_id
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: main_recipe_id
+
+    column main_recipe_ids
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: main_recipe_ids
+
+    column 'Menu Week Monday Date'
+        dataType: dateTime
+        isHidden
+        isAvailableInMdx: false
+        formatString: Short Date
+        summarizeBy: none
+        sourceColumn: menu_week_monday_date
+
+    column 'Portions'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: portions
+
+    column 'Meals'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: meals
+
+    /// The degree to which the preselector was able to produce a set of meals that complied with the taste preferences selected by the subscriber
+    /// - 3: all taste preferences are upheld
+    /// - 2: allergy taste preferences are upheld, but we have broken some non-allergy taste preferences for at least one meal e.g. pork when they selected pork as a taste preference
+    /// - 1: we have broken allergy taste preferences for at least one meal
+    column 'Taste Preference Compliancy Code'
+        dataType: int64
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: taste_preference_compliancy_code
+        displayFolder: Preference Compliance
+
+    column 'Recipe Main Ingredient (English)'
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: recipe_main_ingredient_name_english
+
+    column 'Model Version Commit Sha'
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: model_version_commit_sha
+
+    column 'Sum Error Main Ingredients'
+        dataType: double
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: sum_error_main_ingredients
+
+    column 'Repeat Weeks'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: repeat_weeks
+
+    column 'Menu Week Window'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: menu_week_window
+
+    column 'Repeat Weeks Percentage'
+        dataType: double
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: repeat_weeks_percentage
+
+    column 'Rotation Score'
+        dataType: double
+        isHidden
+        summarizeBy: none
+        sourceColumn: rotation_score
+
+    /// A grouping of Rotation Score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+    column 'Rotation Score Group'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: rotation_score_group
+        displayFolder: Selection Quality
+        sortByColumn: 'Rotation Score Group Number'
+
+    column 'Rotation Score Group Number'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: rotation_score_group_number
+
+    column 'Number Of Unique Main Ingredients'
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: number_of_unique_main_ingredients
+
+    column 'Main Ingredient Variation Score'
+        dataType: double
+        isHidden
+        summarizeBy: none
+        sourceColumn: main_ingredient_variation_score
+
+    /// A grouping of Main Ingredient Variation Score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+    column 'Main Ingredient Variation Score Group'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: main_ingredient_variation_score_group
+        displayFolder: Selection Quality
+        sortByColumn: 'Main Ingredient Variation Score Group Number'
+
+    column 'Main Ingredient Variation Score Group Number'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: main_ingredient_variation_score_group_number
+
+    column 'Combined Rotation Variation Score'
+        dataType: double
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: combined_rotation_variation_score
+
+    /// A grouping of Combined Rotation Variation Score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+    column 'Combined Rotation Variation Score Group'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: combined_rotation_variation_score_group
+        displayFolder: Selection Quality
+        sortByColumn: 'Combined Rotation Variation Score Group Number'
+
+    column 'Combined Rotation Variation Score Group Number'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: combined_rotation_variation_score_group_number
+
+    /// A flag which indicates whether the row relates to a single dish or the whole mealbox. If true the it's the individual dishes, if false then it's the mealbox
+    column 'Is Dish'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: is_dish
+
+    column fk_dim_billing_agreements
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_billing_agreements
+
+    column fk_dim_companies
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_companies
+
+    column fk_dim_products
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_products
+
+    column fk_dim_recipes
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_recipes
+
+    column fk_dim_dates
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: fk_dim_dates
+
+    column fk_dim_dates_created_at
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: fk_dim_dates_created_at
+
+    column fk_dim_time_created_at
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: fk_dim_time_created_at
+
+    column fk_dim_preselector_versions
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_preselector_versions
+
+    partition 'Preselector Measures' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    fact_preselector_Table = gold_Schema{[Name="fact_preselector",Kind="Table"]}[Data],
+				    #"Filtered Rows" = Table.SelectRows(fact_preselector_Table, each [is_most_recent_output] = 1)
+				in
+				    #"Filtered Rows"
