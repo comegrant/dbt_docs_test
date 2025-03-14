@@ -368,13 +368,21 @@ A score from 0 to 1 which indicates how often a dish has been repeated in recent
 
 {% docs column__rotation_score %}
 
-A score from 0 to 1 of which indicates how often the dishes in the mealbox have been repeated in recent weeks. The closer to 1, the "newer" dishes are to the customer, the closer to 0 the more the dishes have been repeated recently. Calculated as the average dish_rotiation_score of all the dishes in a mealbox.
+A score from 0 to 1 of which indicates how often the dishes have been repeated in recent weeks. The closer to 1, the "newer" dishes are to the customer, the closer to 0 the more the dishes have been repeated recently.
+
+If you are looking at a dish then this is calculated as 1 - repeat_weeks_percentage, if you are looking at a mealbox, then it's the average of the dishes in the mealbox, calculated as 1 - avg(repeat_weeks_percentage).
 
 {% enddocs %}
 
 {% docs column__rotation_score_group %}
 
-A grouping of rotation_score to provide a guide on what is good and what is not, broken down into the groups "Perfect", "Great", "Good", "OK", "Poor"
+A grouping of rotation_score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+
+{% enddocs %}
+
+{% docs column__rotation_score_group_number %}
+
+A grouping of rotation_score in number format to provide a guide on what is good and what is not, broken down into the groups 1 (Very High),2,3,4,5 (Very Low)
 
 {% enddocs %}
 
@@ -384,15 +392,21 @@ The number of unique main ingredients within a mealbox output by the preselector
 
 {% enddocs %}
 
-{% docs column__protein_variation_score %}
+{% docs column__main_ingredient_variation_score %}
 
 A score from 0 to 1 which indicates how varied the main ingredients are in a mealbox output by the preselector. Calculated as number_of_unique_main_ingredients divided by the number of meals
 
 {% enddocs %}
 
-{% docs column__protein_variation_score_group %}
+{% docs column__main_ingredient_variation_score_group %}
 
-A grouping of protein_variation_score to provide a guide on what is good and what is not, broken down into the groups "Perfect", "Great", "Good", "OK", "Poor"
+A grouping of protein_variation_score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+
+{% enddocs %}
+
+{% docs column__main_ingredient_variation_score_group_number %}
+
+A grouping of protein_variation_score in number format to provide a guide on what is good and what is not, broken down into the groups 1 (Very High),2,3,4,5 (Very Low)
 
 {% enddocs %}
 
@@ -408,9 +422,27 @@ The list of all main_recipe_ids that are in the mealbox for that preselector out
 
 {% enddocs %}
 
-{% docs column__selection_quality_score %}
+{% docs column__combined_rotation_variation_score %}
 
-A measure of the overall quality of the selection in the mealbox we gave the customer. It's calculated as the protein_variation_score * rotation_score for the mealbox and goes from 0 to 1, where 1 is good and 0 is bad.
+A measure of the overall quality of the selection in the mealbox we gave the customer. It's calculated as the main_ingredient_variation_score * rotation_score for the mealbox and goes from 0 to 1, where 1 is good and 0 is bad.
+
+{% enddocs %}
+
+{% docs column__combined_rotation_variation_score_group %}
+
+A grouping of combined_rotation_variation_score to provide a guide on what is good and what is not, broken down into the groups "Very High", "High", "Medium", "Low", "Very Low"
+
+{% enddocs %}
+
+{% docs column__combined_rotation_variation_score_group_number %}
+
+A grouping of combined_rotation_variation_score in number format to provide a guide on what is good and what is not, broken down into the groups 1 (Very High),2,3,4,5 (Very Low)
+
+{% enddocs %}
+
+{% docs column__sum_error_main_ingredients %}
+
+The sum of all preselector errors that relate to the choice of proteins or main ingredients in a mealbox
 
 {% enddocs %}
 

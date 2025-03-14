@@ -1210,22 +1210,22 @@ models:
 
   - name: fact_preselector
     description: |
-      A record of successful recipe selections made by the preselector algorithm based on customer preferences, outputs which contain errors are not included. 
-      
+      A record of successful recipe selections made by the preselector algorithm based on customer preferences, outputs which contain errors are not included.
+
       This table contains two types of records:
       1. **Dish records**: Individual recipe selections for a customer's menu week
       2. **Mealbox records**: The aggregation of recipes selected for a customer's menu week
-      
-      Each customer can have multiple output versions for the same menu week, as they can re-run the preselector for upcoming weeks, 
+
+      Each customer can have multiple output versions for the same menu week, as they can re-run the preselector for upcoming weeks,
       so the output version helps us track which is the current output version and which are historical outputs.
-      
+
       The table includes:
       - Request parameters (portions, meals requested)
       - Customer preference data used for selection
       - Quality metrics measuring how well selections match preferences
       - Rotation and variation scores to ensure menu diversity
       - Version tracking to identify the latest selections
-      
+
     latest_version: 1
     config:
       alias: fact_preselector
@@ -1699,6 +1699,12 @@ models:
               min_value: 0
               max_value: 1
 
+      - name: sum_error_main_ingredients
+        data_type: double
+        description: "{{ doc('column__sum_error_main_ingredients') }}"
+        data_tests:
+          - not_null
+
       - name: repeat_weeks
         data_type: bigint
         description: "{{ doc('column__repeat_weeks') }}"
@@ -1723,15 +1729,6 @@ models:
               min_value: 0
               max_value: 1
 
-      - name: dish_rotation_score
-        data_type: double
-        description: "{{ doc('column__dish_rotation_score') }}"
-        data_tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1
-              where: "dish_rotation_score is not null"
-
       - name: rotation_score
         data_type: double
         description: "{{ doc('column__rotation_score') }}"
@@ -1739,44 +1736,73 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
-              where: "rotation_score is not null"
 
       - name: rotation_score_group
         data_type: string
         description: "{{ doc('column__rotation_score_group') }}"
         data_tests:
           - accepted_values:
-              values: ["Perfect", "Great", "Good", "OK", "Poor"]
-              where: "rotation_score_group is not null"
+              values: ["Very High", "High", "Medium", "Low", "Very Low"]
+
+      - name: rotation_score_group_number
+        data_type: int
+        description: "{{ doc('column__rotation_score_group_number') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 6
 
       - name: number_of_unique_main_ingredients
         data_type: int
         description: "{{ doc('column__number_of_unique_main_ingredients') }}"
 
-      - name: protein_variation_score
+      - name: main_ingredient_variation_score
         data_type: double
-        description: "{{ doc('column__protein_variation_score') }}"
+        description: "{{ doc('column__main_ingredient_variation_score') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
-              where: "protein_variation_score is not null"
+              where: "main_ingredient_variation_score is not null"
 
-      - name: protein_variation_score_group
+      - name: main_ingredient_variation_score_group
         data_type: string
-        description: "{{ doc('column__protein_variation_score_group') }}"
+        description: "{{ doc('column__main_ingredient_variation_score_group') }}"
         data_tests:
           - accepted_values:
-              values: ["Perfect", "Great", "Good", "OK", "Poor"]
-              where: "protein_variation_score_group is not null"
+              values: ["Very High", "High", "Medium", "Low", "Very Low"]
+              where: "main_ingredient_variation_score_group is not null"
 
-      - name: selection_quality_score
+      - name: main_ingredient_variation_score_group_number
+        data_type: int
+        description: "{{ doc('column__main_ingredient_variation_score_group_number') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 6
+
+      - name: combined_rotation_variation_score
         data_type: double
-        description: "{{ doc('column__selection_quality_score') }}"
+        description: "{{ doc('column__combined_rotation_variation_score') }}"
         data_tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 1
+
+      - name: combined_rotation_variation_score_group
+        data_type: string
+        description: "{{ doc('column__combined_rotation_variation_score_group') }}"
+        data_tests:
+          - accepted_values:
+              values: ["Very High", "High", "Medium", "Low", "Very Low"]
+
+      - name: combined_rotation_variation_score_group_number
+        data_type: int
+        description: "{{ doc('column__combined_rotation_variation_score_group_number') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 6
 
       - name: is_dish
         data_type: boolean
@@ -1790,9 +1816,9 @@ models:
         data_tests:
           - not_null:
               config:
-                # If fact preselector is run a while later than dim_billing_agreements, 
-                # there will be new customers getting output which don't 
-                # exist in dim_billing_agreements this is not an error, but 
+                # If fact preselector is run a while later than dim_billing_agreements,
+                # there will be new customers getting output which don't
+                # exist in dim_billing_agreements this is not an error, but
                 # it's good to be aware of
                 severity: warn
           - relationships:
@@ -2611,7 +2637,7 @@ models:
           - relationships:
               to: ref('dim_companies')
               field: pk_dim_companies
-  
+
   - name: dim_loyalty_seasons
     columns:
       - name: pk_dim_loyalty_seasons

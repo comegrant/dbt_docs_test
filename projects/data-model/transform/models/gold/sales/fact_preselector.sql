@@ -236,7 +236,6 @@ preselector_successful_output_dishes as (
         , coalesce(repeat_selection_metrics.repeat_weeks, 0) as repeat_weeks
         , coalesce(repeat_selection_metrics.menu_week_window, 0) as menu_week_window
         , coalesce(try_divide(repeat_selection_metrics.repeat_weeks, repeat_selection_metrics.menu_week_window), 0) as repeat_weeks_percentage
-        , 1 - repeat_weeks_percentage as dish_rotation_score
     from join_recipe_and_main_recipe_id_to_preselector_dishes
     left join repeat_selection_metrics
         on
@@ -329,7 +328,6 @@ preselector_successful_output_dishes as (
         , null as repeat_weeks
         , null as menu_week_window
         , null as repeat_weeks_percentage
-        , null as dish_rotation_score
         -- Identifiers
         , preselector_successful_output_mealbox.main_recipe_ids
         -- Distinguishing between dishes and mealboxes
@@ -343,19 +341,27 @@ preselector_successful_output_dishes as (
         union_preselector_dishes_with_mealbox.*
         -- Dish rotation (aka. repeat dishes)
         , case
-            when is_dish = false then avg(dish_rotation_score) over (
+            when is_dish = false then 1-avg(repeat_weeks_percentage) over (
                 partition by billing_agreement_id, preselector_output_id
             )
-            else null
-          end as rotation_score
+            when is_dish = true then 1-repeat_weeks_percentage
+            else null end as rotation_score
         , case
-            when rotation_score = 1 then "Perfect"
-            when rotation_score >= 0.9 then "Great"
-            when rotation_score >= 0.8 then "Good"
-            when rotation_score >= 0.6 then "OK"
-            when rotation_score >= 0 then "Poor"
+            when rotation_score = 1 then "Very High"
+            when rotation_score >= 0.9 then "High"
+            when rotation_score >= 0.8 then "Medium"
+            when rotation_score >= 0.6 then "Low"
+            when rotation_score >= 0 then "Very Low"
             else null
         end as rotation_score_group
+        , case
+            when rotation_score_group = "Very High" then 1
+            when rotation_score_group = "High" then 2
+            when rotation_score_group = "Medium" then 3
+            when rotation_score_group = "Low" then 4
+            when rotation_score_group = "Very Low" then 5
+            else 6
+        end as rotation_score_group_number
         -- Protein variation
         , case
             when is_dish = false then size(collect_set(recipe_main_ingredient_name_english) over (
@@ -366,77 +372,120 @@ preselector_successful_output_dishes as (
         , case
             when is_dish = false then number_of_unique_main_ingredients/meals
             else null
-        end as protein_variation_score
+        end as main_ingredient_variation_score
         , case
-            when protein_variation_score = 1 then "Perfect"
-            when protein_variation_score >= 0.75 then "Great"
-            when protein_variation_score >= 0.6 then "Good"
-            when protein_variation_score >= 0.5 then "OK"
-            when protein_variation_score >= 0 then "Poor"
+            when main_ingredient_variation_score = 1 then "Very High"
+            when main_ingredient_variation_score >= 0.75 then "High"
+            when main_ingredient_variation_score >= 0.6 then "Medium"
+            when main_ingredient_variation_score >= 0.5 then "Low"
+            when main_ingredient_variation_score >= 0 then "Very Low"
             else null
-        end as protein_variation_score_group
+        end as main_ingredient_variation_score_group
+        , case
+            when main_ingredient_variation_score_group = "Very High" then 1
+            when main_ingredient_variation_score_group = "High" then 2
+            when main_ingredient_variation_score_group = "Medium" then 3
+            when main_ingredient_variation_score_group = "Low" then 4
+            when main_ingredient_variation_score_group = "Very Low" then 5
+            else 6
+        end as main_ingredient_variation_score_group_number
         -- Overall selection quality metric
-        , protein_variation_score * rotation_score as selection_quality_score
-
+        , main_ingredient_variation_score * rotation_score as combined_rotation_variation_score
+        , case
+            when combined_rotation_variation_score = 1 then "Very High"
+            when combined_rotation_variation_score >= 0.8 then "High"
+            when combined_rotation_variation_score >= 0.6 then "Medium"
+            when combined_rotation_variation_score >= 0.4 then "Low"
+            when combined_rotation_variation_score >= 0 then "Very Low"
+            else null
+        end as combined_rotation_variation_score_group
+        , case
+            when combined_rotation_variation_score_group = "Very High" then 1
+            when combined_rotation_variation_score_group = "High" then 2
+            when combined_rotation_variation_score_group = "Medium" then 3
+            when combined_rotation_variation_score_group = "Low" then 4
+            when combined_rotation_variation_score_group = "Very Low" then 5
+            else 6
+        end as combined_rotation_variation_score_group_number
     from union_preselector_dishes_with_mealbox
+)
+
+, add_aggregated_error_metrics as (
+    select
+        *
+        , error_is_beef_percentage
+        + error_is_chicken_percentage
+        + error_is_cod_percentage
+        + error_is_lamb_percentage
+        + error_is_mixed_meat_percentage
+        + error_is_other_protein_percentage
+        + error_is_pork_percentage
+        + error_is_salmon_percentage
+        + error_is_seafood_percentage
+        + error_is_shrimp_percentage
+        + error_is_tuna_percentage
+        + error_is_vegan_percentage
+        + error_is_vegetarian_percentage
+        as sum_error_main_ingredients
+    from add_mealbox_level_metrics
 )
 
 , add_keys as (
 
     select
-        add_mealbox_level_metrics.*
+        add_aggregated_error_metrics.*
         -- Primary key
         , md5(
             cast(concat(
-                add_mealbox_level_metrics.billing_agreement_id
-                , coalesce(add_mealbox_level_metrics.product_variation_id, 'mealbox')
-                , add_mealbox_level_metrics.created_at
-                , add_mealbox_level_metrics.menu_week_monday_date
+                add_aggregated_error_metrics.billing_agreement_id
+                , coalesce(add_aggregated_error_metrics.product_variation_id, 'mealbox')
+                , add_aggregated_error_metrics.created_at
+                , add_aggregated_error_metrics.menu_week_monday_date
             ) as string)
         ) as pk_fact_preselector
         -- Foreign keys
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
-        , md5(add_mealbox_level_metrics.company_id) as fk_dim_companies
+        , md5(add_aggregated_error_metrics.company_id) as fk_dim_companies
         , md5(
-            concat(add_mealbox_level_metrics.recipe_id, add_mealbox_level_metrics.language_id)
+            concat(add_aggregated_error_metrics.recipe_id, add_aggregated_error_metrics.language_id)
         ) as fk_dim_recipes
         , cast(
-            date_format(add_mealbox_level_metrics.created_at, 'yyyyMMdd') as int
+            date_format(add_aggregated_error_metrics.created_at, 'yyyyMMdd') as int
         ) as fk_dim_dates_created_at
         , cast(
-            date_format(add_mealbox_level_metrics.menu_week_monday_date, 'yyyyMMdd') as int
+            date_format(add_aggregated_error_metrics.menu_week_monday_date, 'yyyyMMdd') as int
         ) as fk_dim_dates
         , cast(
-            date_format(add_mealbox_level_metrics.created_at, 'HHmm') as int
+            date_format(add_aggregated_error_metrics.created_at, 'HHmm') as int
         ) as fk_dim_time_created_at
         , md5(
-            add_mealbox_level_metrics.model_version_commit_sha
+            add_aggregated_error_metrics.model_version_commit_sha
         )                                      as fk_dim_preselector_versions
         , case when is_dish = true then
             md5(
                 concat(
-                    add_mealbox_level_metrics.product_variation_id
-                    , add_mealbox_level_metrics.company_id
+                    add_aggregated_error_metrics.product_variation_id
+                    , add_aggregated_error_metrics.company_id
                 )
             )
         else
             products_mealbox.pk_dim_products
         end as fk_dim_products
-    from add_mealbox_level_metrics
+    from add_aggregated_error_metrics
     left join agreements
         on
-            add_mealbox_level_metrics.billing_agreement_id = agreements.billing_agreement_id
-            and add_mealbox_level_metrics.created_at >= agreements.valid_from
-            and add_mealbox_level_metrics.created_at < agreements.valid_to
+            add_aggregated_error_metrics.billing_agreement_id = agreements.billing_agreement_id
+            and add_aggregated_error_metrics.created_at >= agreements.valid_from
+            and add_aggregated_error_metrics.created_at < agreements.valid_to
     -- The connection to dim_products is different for dishes and mealboxes, as the preselector doesn't output the product_variation_id for the mealbox,
     -- so I have to join it on the company, product_name, type, meals, and portions
     left join products as products_mealbox
         on
-            add_mealbox_level_metrics.company_id = products_mealbox.company_id
+            add_aggregated_error_metrics.company_id = products_mealbox.company_id
             and products_mealbox.product_type_id = '{{ var("mealbox_product_type_id") }}'
             and products_mealbox.product_id = '{{ var("onesub_product_id") }}'
-            and add_mealbox_level_metrics.meals = products_mealbox.meals
-            and add_mealbox_level_metrics.portions = products_mealbox.portions
+            and add_aggregated_error_metrics.meals = products_mealbox.meals
+            and add_aggregated_error_metrics.portions = products_mealbox.portions
 )
 
 select * from add_keys
