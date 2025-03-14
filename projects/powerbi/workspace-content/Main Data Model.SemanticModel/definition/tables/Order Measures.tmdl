@@ -1708,6 +1708,27 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column is_onesub_migration
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_onesub_migration
+
+	column is_missing_preselector_output
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_missing_preselector_output
+
+	column has_swap
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: has_swap
+
 	column fk_dim_basket_deviation_origins
 		dataType: string
 		isHidden
