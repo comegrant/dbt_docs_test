@@ -82,7 +82,7 @@ source as (
         , extract('DAY', signup_at_corrected) as signup_month_day
         , extract('DAYOFWEEK_ISO', signup_at_corrected) as signup_week_day
         , extract('WEEK', signup_at_corrected) as signup_week
-        , extract('MONTH', signup_at_corrected) as signup_month
+        , date_format(signup_at_corrected, 'MMMM') as signup_month
         , extract('QUARTER', signup_at_corrected) as signup_quarter
         , extract('YEAROFWEEK', signup_at_corrected) as signup_year
 

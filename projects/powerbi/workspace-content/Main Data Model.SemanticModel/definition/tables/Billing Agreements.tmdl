@@ -172,9 +172,9 @@ table 'Billing Agreements'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The month name the customer signed up
 	column 'Signup Month'
-		dataType: int64
-		formatString: 0
+		dataType: string
 		lineageTag: 370a5d43-c083-4583-a04f-36f335bf432f
 		summarizeBy: none
 		sourceColumn: signup_month

@@ -366,7 +366,7 @@ The week the customer signed up
 
 {% docs column__signup_month %}
 
-The month the customer signed up
+The month name the customer signed up
 
 {% enddocs %}
 
