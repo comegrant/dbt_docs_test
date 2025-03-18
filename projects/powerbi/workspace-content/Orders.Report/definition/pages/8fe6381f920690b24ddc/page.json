@@ -192,7 +192,7 @@
                         [
                           {
                             "Literal": {
-                              "Value": "'''Order Measures''[Average Order Value Net Ex Vat]'"
+                              "Value": "'''Order Measures''[ATV Net Ex Vat]'"
                             }
                           }
                         ],
@@ -247,7 +247,7 @@
                           "0": [
                             {
                               "Literal": {
-                                "Value": "'''Order Measures''[Average Order Value Net Ex Vat]'"
+                                "Value": "'''Order Measures''[ATV Net Ex Vat]'"
                               }
                             }
                           ]
@@ -296,7 +296,7 @@
                       "0": "Number of Orders with Swaps"
                     },
                     {
-                      "0": "Average Order Value (Net)"
+                      "0": "ATV (Net)"
                     },
                     {
                       "0": "Number of Customers"

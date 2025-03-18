@@ -23,11 +23,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Average Order Value Net Inc Vat"
+                  "Property": "ATV Net Inc Vat"
                 }
               },
-              "queryRef": "Order Measures.Average Order Value Net Inc Vat",
-              "nativeQueryRef": "Average Order Value Net Inc Vat"
+              "queryRef": "Order Measures.ATV Net Inc Vat",
+              "nativeQueryRef": "ATV Net Inc Vat"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "Order Measures"
                   }
                 },
-                "Property": "Average Order Value Net Inc Vat"
+                "Property": "ATV Net Inc Vat"
               }
             },
             "direction": "Descending"

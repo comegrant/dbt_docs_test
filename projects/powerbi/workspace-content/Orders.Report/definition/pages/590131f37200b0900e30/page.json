@@ -183,14 +183,14 @@
                     [
                       {
                         "Literal": {
-                          "Value": "'''Order Measures''[Average Order Value Gross Ex Vat]'"
+                          "Value": "'''Order Measures''[ATV Gross Ex Vat]'"
                         }
                       }
                     ],
                     [
                       {
                         "Literal": {
-                          "Value": "'''Order Measures''[Average Order Value Net Ex Vat]'"
+                          "Value": "'''Order Measures''[ATV Net Ex Vat]'"
                         }
                       }
                     ],
@@ -243,7 +243,7 @@
                           "0": [
                             {
                               "Literal": {
-                                "Value": "'''Order Measures''[Average Order Value Gross Ex Vat]'"
+                                "Value": "'''Order Measures''[ATV Gross Ex Vat]'"
                               }
                             }
                           ]
@@ -254,7 +254,7 @@
                           "0": [
                             {
                               "Literal": {
-                                "Value": "'''Order Measures''[Average Order Value Net Ex Vat]'"
+                                "Value": "'''Order Measures''[ATV Net Ex Vat]'"
                               }
                             }
                           ]
@@ -303,10 +303,10 @@
                       "0": "Number of Orders"
                     },
                     {
-                      "0": "Average Order Value (Gross)"
+                      "0": "ATV (Gross)"
                     },
                     {
-                      "0": "Average Order Value (Net)"
+                      "0": "ATV (Net)"
                     },
                     {
                       "0": "Total Amount (Gross)"

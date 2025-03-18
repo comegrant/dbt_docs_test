@@ -13354,13 +13354,13 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Measures",
-			          "ConceptualProperty": "Average Order Value Net Ex Vat"
+			          "ConceptualProperty": "ATV Net Ex Vat"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "average order value net ex vat": {
+			          "ATV net ex vat": {
 			            "State": "Generated"
 			          }
 			        },
@@ -13413,7 +13413,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value net": {
+			          "ATV net": {
 			            "State": "Generated",
 			            "Weight": 0.97
 			          }
@@ -13479,7 +13479,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value meshwork": {
+			          "ATV meshwork": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -13524,13 +13524,13 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Measures",
-			          "ConceptualProperty": "Average Order Value Gross Ex Vat"
+			          "ConceptualProperty": "ATV Gross Ex Vat"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "average order value gross ex vat": {
+			          "ATV gross ex vat": {
 			            "State": "Generated"
 			          }
 			        },
@@ -13583,7 +13583,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value gross": {
+			          "ATV gross": {
 			            "State": "Generated",
 			            "Weight": 0.97
 			          }
@@ -13649,7 +13649,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value aggregate": {
+			          "ATV aggregate": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -13659,7 +13659,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value overall": {
+			          "ATV overall": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -13669,7 +13669,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "average order value whole": {
+			          "ATV whole": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -13694,13 +13694,13 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Measures",
-			          "ConceptualProperty": "Average Order Value Net Inc Vat"
+			          "ConceptualProperty": "ATV Net Inc Vat"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "average order value net inc vat": {
+			          "ATV net inc vat": {
 			            "State": "Generated"
 			          }
 			        }

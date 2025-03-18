@@ -85,11 +85,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Average Order Value Gross Ex Vat"
+                  "Property": "ATV Gross Ex Vat"
                 }
               },
-              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
-              "nativeQueryRef": "Average Order Value Gross Ex Vat"
+              "queryRef": "Order Measures.ATV Gross Ex Vat",
+              "nativeQueryRef": "ATV Gross Ex Vat"
             }
           ]
         }
@@ -138,7 +138,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Average Order Value'"
+                  "Value": "'ATV'"
                 }
               }
             }

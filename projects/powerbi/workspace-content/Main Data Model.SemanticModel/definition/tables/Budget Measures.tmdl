@@ -42,12 +42,12 @@ table 'Budget Measures'
 		lineageTag: f6e96297-0348-4c8e-b56d-eb9ec130f3d7
 
 	/// Increase/decrease in ATV compared to budgeted ATV
-	measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE([Average Order Value Gross Ex Vat],[ATV Gross Ex Vat (Budget)])
+	measure 'ATV Gross Ex Vat (vs Budget %)' = DIVIDE([ATV Gross Ex Vat],[ATV Gross Ex Vat (Budget)])
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 3818d45c-f8bb-4c79-a3ef-2446c5471a7c
 
 	/// Increase/decrease in ATV compared to budgeted ATV
-	measure 'ATV Gross Ex Vat (vs Budget)' =  [Average Order Value Gross Ex Vat] - [ATV Gross Ex Vat (Budget)]
+	measure 'ATV Gross Ex Vat (vs Budget)' =  [ATV Gross Ex Vat] - [ATV Gross Ex Vat (Budget)]
 		formatString: #,0
 		lineageTag: cfec4b82-0efc-4c0e-a713-72a9e2257465
 

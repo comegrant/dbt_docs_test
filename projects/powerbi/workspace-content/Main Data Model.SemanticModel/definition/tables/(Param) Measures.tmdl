@@ -43,8 +43,8 @@ table '(Param) Measures'
 				{
 				    ("Number of Orders", NAMEOF('Order Measures'[Number of Orders]), 0),
 				    ("Number of Orders with Swaps", NAMEOF('Order Measures'[Number of Orders with Swaps]), 1),
-				    ("Average Order Value (Gross)", NAMEOF('Order Measures'[Average Order Value Gross Ex Vat]), 2),
-				    ("Average Order Value (Net)", NAMEOF('Order Measures'[Average Order Value Net Ex Vat]), 3),
+				    ("ATV (Gross)", NAMEOF('Order Measures'[ATV Gross Ex Vat]), 2),
+				    ("ATV (Net)", NAMEOF('Order Measures'[ATV Net Ex Vat]), 3),
 				    ("Total Amount (Gross)", NAMEOF('Order Measures'[Order Value Gross Ex Vat]), 6),
 				    ("Total Amount (Net)", NAMEOF('Order Measures'[Order Value Net Ex Vat]), 7)
 				}

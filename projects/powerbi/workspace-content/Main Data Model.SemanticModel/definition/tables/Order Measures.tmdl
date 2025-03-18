@@ -202,7 +202,7 @@ table 'Order Measures'
 
 	/// Average net order value
 	/// Excluding VAT
-	measure 'Average Order Value Net Ex Vat' = DIVIDE([Order Value Net Ex Vat],[Number of Orders],BLANK())
+	measure 'ATV Net Ex Vat' = DIVIDE([Order Value Net Ex Vat],[Number of Orders],BLANK())
 		displayFolder: Orders
 		lineageTag: 69286001-d4af-4316-bc1d-20e7ae3e405b
 
@@ -210,7 +210,7 @@ table 'Order Measures'
 
 	/// Average gross order value
 	/// Excluding VAT
-	measure 'Average Order Value Gross Ex Vat' = DIVIDE([Order Value Gross Ex Vat],[Number of Orders],BLANK())
+	measure 'ATV Gross Ex Vat' = DIVIDE([Order Value Gross Ex Vat],[Number of Orders],BLANK())
 		displayFolder: Orders
 		lineageTag: c678f208-e305-4ff1-997e-b5da8a25f094
 
@@ -218,7 +218,7 @@ table 'Order Measures'
 
 	/// Average net order value
 	/// Including VAT
-	measure 'Average Order Value Net Inc Vat' = DIVIDE([Order Value Net Inc Vat],[Number of Orders],BLANK())
+	measure 'ATV Net Inc Vat' = DIVIDE([Order Value Net Inc Vat],[Number of Orders],BLANK())
 		displayFolder: Orders
 		lineageTag: 935be5ed-4ed8-47d6-96b3-433c36ba087e
 
@@ -926,7 +926,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (PY)' =
 			CALCULATE(
-				[Average Order Value Gross Ex Vat],
+				[ATV Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
@@ -938,7 +938,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (Diff PY)' =
 			CALCULATE(
-				[Average Order Value Gross Ex Vat],
+				[ATV Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
@@ -950,7 +950,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Gross Ex Vat (YOY%)' =
 			CALCULATE(
-				[Average Order Value Gross Ex Vat],
+				[ATV Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -965,7 +965,7 @@ table 'Order Measures'
 	/// while a result below 100% indicates a decrease.
 	measure 'ATV Gross Ex Vat (CY/PY)' =
 			CALCULATE(
-				[Average Order Value Gross Ex Vat],
+				[ATV Gross Ex Vat],
 				'Time Intelligence'[Time Calculation]="CY/PY"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -976,7 +976,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Net Ex Vat (PY)' =
 			CALCULATE(
-				[Average Order Value Net Ex Vat],
+				[ATV Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
@@ -988,7 +988,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Net Ex Vat (Diff PY)' =
 			CALCULATE(
-				[Average Order Value Net Ex Vat],
+				[ATV Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
@@ -1000,7 +1000,7 @@ table 'Order Measures'
 	/// exlucding vat
 	measure 'ATV Net Ex Vat (YOY%)' =
 			CALCULATE(
-				[Average Order Value Net Ex Vat],
+				[ATV Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -1015,7 +1015,7 @@ table 'Order Measures'
 	/// while a result below 100% indicates a decrease.
 	measure 'ATV Net Ex Vat (CY/PY)' =
 			CALCULATE(
-				[Average Order Value Net Ex Vat],
+				[ATV Net Ex Vat],
 				'Time Intelligence'[Time Calculation]="CY/PY"
 			)
 		formatString: 0.00%;-0.00%;0.00%

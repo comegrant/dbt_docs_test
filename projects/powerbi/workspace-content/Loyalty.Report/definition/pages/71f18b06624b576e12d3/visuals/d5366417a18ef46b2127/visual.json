@@ -42,11 +42,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Average Order Value Ex Vat"
+                  "Property": "ATV Ex Vat"
                 }
               },
-              "queryRef": "Order Measures.Average Order Value Ex Vat",
-              "nativeQueryRef": "Average Order Value Ex Vat"
+              "queryRef": "Order Measures.ATV Ex Vat",
+              "nativeQueryRef": "ATV Ex Vat"
             }
           ]
         }
@@ -126,7 +126,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Average Order Value Ex Vat per tier'"
+                  "Value": "'ATV Ex Vat per tier'"
                 }
               }
             }

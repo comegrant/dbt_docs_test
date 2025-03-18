@@ -81,11 +81,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Average Order Value Gross Ex Vat"
+                  "Property": "ATV Gross Ex Vat"
                 }
               },
-              "queryRef": "Order Measures.Average Order Value Gross Ex Vat",
-              "nativeQueryRef": "Average Order Value Gross Ex Vat",
+              "queryRef": "Order Measures.ATV Gross Ex Vat",
+              "nativeQueryRef": "ATV Gross Ex Vat",
               "format": "#,0 \"kr\";-#,0 \"kr\";#,0 \"kr\""
             },
             {

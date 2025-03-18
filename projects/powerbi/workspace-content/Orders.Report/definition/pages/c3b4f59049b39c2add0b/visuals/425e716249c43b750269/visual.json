@@ -64,11 +64,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "Average Order Value Net Ex Vat"
+                  "Property": "ATV Net Ex Vat"
                 }
               },
-              "queryRef": "Order Measures.Average Order Value Net Ex Vat",
-              "nativeQueryRef": "Average Order Value Net Ex Vat"
+              "queryRef": "Order Measures.ATV Net Ex Vat",
+              "nativeQueryRef": "ATV Net Ex Vat"
             },
             {
               "field": {
