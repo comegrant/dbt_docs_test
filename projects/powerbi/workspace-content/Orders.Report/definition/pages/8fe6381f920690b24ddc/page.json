@@ -199,13 +199,6 @@
                         [
                           {
                             "Literal": {
-                              "Value": "'''Agreements Daily''[Number of Customers]'"
-                            }
-                          }
-                        ],
-                        [
-                          {
-                            "Literal": {
                               "Value": "'''Order Measures''[Sum Order Value Net Ex Vat]'"
                             }
                           }
@@ -248,17 +241,6 @@
                             {
                               "Literal": {
                                 "Value": "'''Order Measures''[ATV Net Ex Vat]'"
-                              }
-                            }
-                          ]
-                        }
-                      ],
-                      [
-                        {
-                          "0": [
-                            {
-                              "Literal": {
-                                "Value": "'''Agreements Daily''[Number of Customers]'"
                               }
                             }
                           ]

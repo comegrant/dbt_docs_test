@@ -3,19 +3,6 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Agreements Daily",
-      "measures": [
-        {
-          "name": "YTD orders",
-          "dataType": "Double",
-          "expression": "",
-          "references": {
-            "unrecognizedReferences": true
-          }
-        }
-      ]
-    },
-    {
       "name": "Order Measures",
       "measures": [
         {

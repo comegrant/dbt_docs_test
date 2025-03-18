@@ -139,19 +139,6 @@
         },
         {
           "location": {
-            "x": 2061.0415257377308,
-            "y": 466.85810144268748
-          },
-          "nodeIndex": "Agreements Daily",
-          "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 5
-        },
-        {
-          "location": {
             "x": 2272.2312929509767,
             "y": 954.663140388295
           },
@@ -162,19 +149,6 @@
             "width": 234
           },
           "zIndex": 6
-        },
-        {
-          "location": {
-            "x": 2422.2105718703533,
-            "y": 466.85810144268748
-          },
-          "nodeIndex": "Agreements Weekly",
-          "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 15
         },
         {
           "location": {
@@ -768,32 +742,6 @@
         "y": 0
       },
       "nodes": [
-        {
-          "location": {
-            "x": 1809.8291695278642,
-            "y": 450.66502841228316
-          },
-          "nodeIndex": "Agreements Weekly",
-          "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 1
-        },
-        {
-          "location": {
-            "x": 533.80931794589083,
-            "y": 510.27767497248783
-          },
-          "nodeIndex": "Agreements Daily",
-          "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 6
-        },
         {
           "location": {
             "x": 1103,

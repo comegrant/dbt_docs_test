@@ -280,46 +280,6 @@
       "isHidden": false
     },
     {
-      "name": "Agreements Daily",
-      "lineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
-      "navigationStepName": "Navigation",
-      "text": [
-        "let",
-        "\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
-        "\tcatalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
-        "\tgold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
-        "\tdim_preferences_Table = gold_Schema{[Name=\"fact_billing_agreements_daily\",Kind=\"Table\"]}[Data],",
-        "    #\"Filtered Rows\" = Table.SelectRows(dim_preferences_Table, each Date.IsInPreviousNDays([date], 7))",
-        "in",
-        "    #\"Filtered Rows\""
-      ],
-      "isDirectQuery": true,
-      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n\\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n\\tcatalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n\\tgold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n\\tdim_preferences_Table = gold_Schema{[Name=\\\"fact_billing_agreements_daily\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Filtered Rows\\\" = Table.SelectRows(dim_preferences_Table, each Date.IsInPreviousNDays([date], 7))\\nin\\n    #\\\"Filtered Rows\\\"\",\"ReferencedQueriesFormulaText\":{}}",
-      "loadAsTableDisabled": false,
-      "resultType": "Table",
-      "isHidden": false
-    },
-    {
-      "name": "Agreements Weekly",
-      "lineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
-      "navigationStepName": "Navigation",
-      "text": [
-        "let",
-        "\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),",
-        "\tcatalog_Database = Source{[Name=Catalog,Kind=\"Database\"]}[Data],",
-        "\tgold_Schema = catalog_Database{[Name=Schema,Kind=\"Schema\"]}[Data],",
-        "\tdim_preferences_Table = gold_Schema{[Name=\"fact_billing_agreements_weekly\",Kind=\"Table\"]}[Data],",
-        "    #\"Filtered Rows\" = Table.SelectRows(dim_preferences_Table, each Date.IsInPreviousNDays([monday_date], 7))",
-        "in",
-        "    #\"Filtered Rows\""
-      ],
-      "isDirectQuery": true,
-      "lastLoadedAsTableFormulaText": "{\"IncludesReferencedQueries\":false,\"RootFormulaText\":\"let\\n\\tSource = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),\\n\\tcatalog_Database = Source{[Name=Catalog,Kind=\\\"Database\\\"]}[Data],\\n\\tgold_Schema = catalog_Database{[Name=Schema,Kind=\\\"Schema\\\"]}[Data],\\n\\tdim_preferences_Table = gold_Schema{[Name=\\\"fact_billing_agreements_weekly\\\",Kind=\\\"Table\\\"]}[Data],\\n    #\\\"Filtered Rows\\\" = Table.SelectRows(dim_preferences_Table, each Date.IsInPreviousNDays([monday_date], 7))\\nin\\n    #\\\"Filtered Rows\\\"\",\"ReferencedQueriesFormulaText\":{}}",
-      "loadAsTableDisabled": false,
-      "resultType": "Table",
-      "isHidden": false
-    },
-    {
       "name": "Subscription Quiz Measures",
       "lineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
       "text": [

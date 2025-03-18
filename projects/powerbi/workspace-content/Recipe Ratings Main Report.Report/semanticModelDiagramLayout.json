@@ -296,37 +296,11 @@
         },
         {
           "location": {
-            "x": 1214.2228019178988,
-            "y": 1140.3076811742094
-          },
-          "nodeIndex": "Agreements Daily",
-          "nodeLineageTag": "a8ab3df4-a35a-45a5-af58-17df4ee11ae8",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 3041.5723418083689,
             "y": 720.81727377568268
           },
           "nodeIndex": "Customer Measures",
           "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 529.25427831442209,
-            "y": 1215.2154757820181
-          },
-          "nodeIndex": "Agreements Weekly",
-          "nodeLineageTag": "3bced9b8-db9f-4144-a9ba-6388673c1c5e",
           "size": {
             "height": 300,
             "width": 234
