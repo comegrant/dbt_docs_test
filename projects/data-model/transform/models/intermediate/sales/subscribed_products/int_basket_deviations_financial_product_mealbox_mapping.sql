@@ -30,17 +30,18 @@ deviations as (
         , products.portions
         , case 
             -- Use updated at timestamp when Tech overwrites already existing deviation products using script (e.g., in migration processes)
-            when deviation_product_updated_by like '%Tech%' then deviation_product_updated_at
+            when deviations.deviation_product_updated_by like '%Tech%' then deviations.deviation_product_updated_at
             else deviations.deviation_created_at 
         end as valid_from
         ,deviations.billing_agreement_basket_deviation_origin_id
+        , 'financial' as basket_source
     from deviations
     -- only include deviations with financial products
     inner join products
         on
             deviations.product_variation_id = products.product_variation_id
             and deviations.company_id = products.company_id
-            and product_type_id = '{{ var("financial_product_type_id") }}'
+            and products.product_type_id = '{{ var("financial_product_type_id") }}'
 
 
 )
@@ -52,6 +53,7 @@ deviations as (
         financial_product_deviations.billing_agreement_id
         , financial_product_deviations.billing_agreement_basket_id
         , financial_product_deviations.company_id
+        , financial_product_deviations.product_variation_id as financial_product_variation_id
         , financial_mealbox_product_mapping.preselected_mealbox_product_id as product_id
         , financial_product_deviations.meals
         , financial_product_deviations.portions

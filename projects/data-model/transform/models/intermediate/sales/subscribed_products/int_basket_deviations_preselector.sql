@@ -18,12 +18,14 @@ deviations as (
         deviations.billing_agreement_id
         , deviations.billing_agreement_basket_id
         , deviations.company_id
+        , products.product_type_id
         , products.product_id
         , products.meals
         , products.portions
         , deviations.product_variation_id
         , deviations.product_variation_quantity
         , deviations.deviation_created_at as valid_from
+        , 'preselector deviation' as basket_source
     from deviations
     left join products
         on

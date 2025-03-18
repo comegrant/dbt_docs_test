@@ -44,7 +44,7 @@ deviations as (
     select
         billing_agreement_basket_id
         , menu_week_monday_date
-        , max(is_onesub_migration) as is_onesub_migration
+        , max(is_onesub_migration_insert + is_onesub_migration_update) as is_onesub_migration
         -- get the timestamp of the first deviation created by the customer
         , min(
             case 

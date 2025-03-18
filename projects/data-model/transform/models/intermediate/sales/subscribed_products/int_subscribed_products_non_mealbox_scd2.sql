@@ -6,7 +6,7 @@ with
 
 subscribed_products as (
 
-    select * from {{ ref('int_subscribed_products_joined') }}
+    select * from {{ ref('int_basket_products_joined') }}
 )
 
 , products as (

@@ -86,14 +86,14 @@ source as (
 
     select 
         * 
-        , 'analyticsdb_log' as basket_source
+        , 'analyticsdb log' as basket_source
     from history_before_source
 
     union 
 
     select 
         * 
-        , 'dbt_snapshots' as basket_source
+        , 'dbt snapshots' as basket_source
     from source_renamed
 
 )
