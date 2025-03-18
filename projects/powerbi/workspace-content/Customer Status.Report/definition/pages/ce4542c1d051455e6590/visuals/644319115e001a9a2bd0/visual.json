@@ -42,10 +42,10 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Sign-ups YTD"
+                  "Property": "Number of Sign-ups (YTD)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups YTD",
+              "queryRef": "Customer Measures.Number of Sign-ups (YTD)",
               "nativeQueryRef": "Current Year1",
               "displayName": "Current Year"
             },
@@ -57,10 +57,10 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Sign-ups YTD PY"
+                  "Property": "Number of Sign-ups (PYTD)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups YTD PY",
+              "queryRef": "Customer Measures.Number of Sign-ups (PYTD)",
               "nativeQueryRef": "Previous Year1",
               "displayName": "Previous Year"
             }

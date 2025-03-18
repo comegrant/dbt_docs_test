@@ -121,17 +121,17 @@
         {
           "name": "_Local Number of Active Customers % Diff PY",
           "dataType": "Double",
-          "expression": "\n    DIVIDE(\n        [Number of Active Customers]-[Number of Active Customers PY],\n        [Number of Active Customers PY]\n    )",
+          "expression": "\n    DIVIDE(\n        [Number of Active Subscribers]-[Number of Active Subscribers (PY)],\n        [Number of Active Subscribers (PY)]\n    )",
           "formatString": "0.00\\ %;-0.00\\ %;0.00\\ %",
           "references": {
             "measures": [
               {
                 "entity": "Customer Measures",
-                "name": "Number of Active Customers"
+                "name": "Number of Active Subscribers"
               },
               {
                 "entity": "Customer Measures",
-                "name": "Number of Active Customers PY"
+                "name": "Number of Active Subscribers (PY)"
               }
             ]
           }
@@ -139,12 +139,12 @@
         {
           "name": "_Local Number of Active Customers In Beginning of Period",
           "dataType": "Double",
-          "expression": "\nCALCULATE(\n    [Number of Customers All Statuses], \n    FILTER(\n        'Dates',\n        Dates[Date]=MIN(Dates[Date])\n    ), \n    'Billing Agreements'[Billing Agreement Status]=\"Active\"\n)",
+          "expression": "\nCALCULATE(\n    [Number of Subscribers All Statuses], \n    FILTER(\n        'Dates',\n        Dates[Date]=MIN(Dates[Date])\n    ), \n    'Billing Agreements'[Billing Agreement Status]=\"Active\"\n)",
           "references": {
             "measures": [
               {
                 "entity": "Customer Measures",
-                "name": "Number of Customers All Statuses"
+                "name": "Number of Subscribers All Statuses"
               }
             ]
           }
@@ -152,12 +152,12 @@
         {
           "name": "_Local Change in Active Customers",
           "dataType": "Double",
-          "expression": "[Number of Active Customers]-[_Local Number of Active Customers In Beginning of Period]",
+          "expression": "[Number of Active Subscribers]-[_Local Number of Active Customers In Beginning of Period]",
           "references": {
             "measures": [
               {
                 "entity": "Customer Measures",
-                "name": "Number of Active Customers"
+                "name": "Number of Active Subscribers"
               },
               {
                 "schema": "extension",

@@ -24,20 +24,10 @@ table 'Customer Measures'
 		isHidden
 		lineageTag: bb5e3faf-1d2a-4b8e-be86-438d234cebb5
 
-	/// Number of Customers included all statuses (also included deleted).
-	measure 'Number of Customers All Statuses' =
+	/// Number of Active Subscribers
+	measure 'Number of Active Subscribers' =
 			CALCULATE(
-				[Number of Agreement Changes to Filtered State] - [Number of Agreement Changes from Filtered State],
-				ALL('Dates'),
-				'Dates'[Date] <= MAX('Dates'[Date])
-			)
-		formatString: #,0
-		lineageTag: fd14e082-b1f9-477a-8dfc-6ac06324ce11
-
-	/// Number of Active Customers
-	measure 'Number of Active Customers' =
-			CALCULATE(
-				[Number of Customers All Statuses],
+				[Number of Subscribers All Statuses],
 				FILTER(
 					'Dates',
 					Dates[Date]=MAX(Dates[Date])
@@ -45,27 +35,146 @@ table 'Customer Measures'
 				'Billing Agreements'[Billing Agreement Status]="Active"
 			)
 		formatString: #,0
+		displayFolder: Active Subscribers
 		lineageTag: 97c48411-d8b8-4fa8-aa51-3eea12e119f2
 
-	/// Number of Active Customers same period last year.
-	measure 'Number of Active Customers PY' =
+	/// Number of Active Subscribers same period last year.
+	measure 'Number of Active Subscribers (PY)' =
 			CALCULATE(
-				[Number of Active Customers],
-				SAMEPERIODLASTYEAR('Dates'[Date]),
-				ALL('Dates')
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="PY"
 			)
+
 		formatString: #,0
+		displayFolder: Active Subscribers
 		lineageTag: 19d1851e-5f07-4655-a252-cb0338ba7fdb
 
-	/// Number of customers (included all statuses) same period last year.
-	measure 'Number of Customers All Statuses PY' =
+	/// Difference between number of active subscribers in the current year
+	/// and the same period in the previous year.
+	measure 'Number of Active Subscribers (Diff PY)' =
 			CALCULATE(
-				[Number of Active Customers],
-				SAMEPERIODLASTYEAR('Dates'[Date]),
-				ALL('Dates')
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="Diff PY"
+			)
+
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// % change in number of active subscribers
+	/// comparing current period to same period last year
+	measure 'Number of Active Subscribers (YOY%)' =
+			CALCULATE(
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Active Subscribers
+
+	/// Growth ratio of active customers
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Active Subscribers (CY/PY)' =
+			CALCULATE(
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Active Subscribers
+
+
+	/// Cumulative sum of active customers from the beginning of the year (Year To Date).
+	measure 'Number of Active Subscribers (YTD)' =
+			CALCULATE(
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// Cumulative sum of number of active subscribers from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Active Subscribers (PYTD)' =
+			CALCULATE(
+				[Number of Active Subscribers],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// Number of subscribers included all statuses (also included deleted).
+	measure 'Number of Subscribers All Statuses' =
+			CALCULATE(
+				[Number of Agreement Changes to Filtered State] - [Number of Agreement Changes from Filtered State],
+				ALL('Dates'),
+				'Dates'[Date] <= MAX('Dates'[Date])
 			)
 		formatString: #,0
+		displayFolder: All Subscribers
+		lineageTag: fd14e082-b1f9-477a-8dfc-6ac06324ce11
+
+	/// Number of subscribers (included all statuses) same period last year.
+	measure 'Number of Subscribers All Statuses (PY)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: All Subscribers
 		lineageTag: a840a69a-c3f1-4878-ae41-b99013d1b47d
+
+	/// Difference between number of subscribers (including all statuses) in the current period
+	/// and the same period in the previous year.
+	measure 'Number of Subscribers All Statuses (Diff PY)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="Diff PY"
+			)
+		formatString: #,0
+		displayFolder: All Subscribers
+
+	/// % change in number of subscribers (including all statues)
+	/// comparing current period to same period last year
+	measure 'Number of Subscribers All Statuses (YOY%)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: All Subscribers
+
+	/// Growth ratio of number of subscribers (including all statues)
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Subscribers All Statuses (CY/PY)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: All Subscribers
+
+
+	/// Cumulative sum of number of subscribers (including all statues) from the beginning of the year (year-to-date)
+	measure 'Number of Subscribers All Statuses (YTD)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: All Subscribers
+
+	/// Cumulative sum of number of subscribers (including all statues) from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Subscribers All Statuses (PYTD)' =
+			CALCULATE(
+				[Number of Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: All Subscribers
+
 
 	/// Number of customers having their first delivery on the corresponding menu week.
 	measure 'Number of Customers with First Delivery' =
@@ -78,40 +187,69 @@ table 'Customer Measures'
 				)
 			)
 		formatString: #,0
+		displayFolder: First Delivery
 		lineageTag: 6ab987c5-f8dc-4b42-97cd-427d7b732eb6
 
 	/// Number of customers having their first delivery, same period last year.
-	/// It compares the same dates in the previous year (not the same weeks).
-	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
-	measure 'Number of Customers with First Delivery PY' =
+	measure 'Number of Customers with First Delivery (PY)' =
 			CALCULATE(
 				[Number of Customers with First Delivery],
-				ALL('Dates'),
-				SAMEPERIODLASTYEAR('Dates'[Date])
+				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
+		displayFolder: First Delivery
 		lineageTag: bca7b0e3-22e6-492d-972f-1a0edd49f9f8
 
-	/// Number of customers having their first delivery, same period last year. This uses calendar year.
-	measure 'Number of Customers with First Delivery YTD' =
-			TOTALYTD(
+	/// Difference between number of customers with first delivery in the current period
+	/// and the same period in the previous year.
+	measure 'Number of Customers with First Delivery (Diff PY)' =
+			CALCULATE(
 				[Number of Customers with First Delivery],
-				Dates[Date],
-				ALL('Dates')
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0
+		displayFolder: First Delivery
+
+	/// % change in number of customers with first delivery
+	/// comparing current period to same period last year
+	measure 'Number of Customers with First Delivery (YOY%)' =
+			CALCULATE(
+				[Number of Customers with First Delivery],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: First Delivery
+
+	/// Growth ratio of number of customers with first delivery
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Customers with First Delivery (CY/PY)' =
+			CALCULATE(
+				[Number of Customers with First Delivery],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: First Delivery
+
+
+	/// Cumulative sum of number of customers with first delivery from the beginning of the year (year-to-date)
+	measure 'Number of Customers with First Delivery (YTD)' =
+			CALCULATE(
+				[Number of Customers with First Delivery],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: First Delivery
 		lineageTag: 359e8c41-e175-4c30-bb88-eb271fba3181
 
-	/// Number of customers having their first delivery, year to date, same period last year.
-	/// It compares the same dates in the previous year (not the same weeks).
-	/// The data team is working on a more general solution for time period comparison, so that it can be used to compare the same weeks the previous year.
-	measure 'Number of Customers with First Delivery YTD PY' =
-			TOTALYTD(
-				[Number of Customers with First Delivery PY],
-				Dates[Date],
-				ALL('Dates')
+	/// Cumulative sum of number of customers with first delivery from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Customers with First Delivery (PYTD)' =
+			CALCULATE(
+				[Number of Customers with First Delivery],
+				'Time Intelligence'[Time Calculation]="PYTD"
 			)
 		formatString: #,0
+		displayFolder: First Delivery
 		lineageTag: 214a91d8-fc9a-4084-8144-625b9cb7a7f6
 
 	/// Number of new registered agreements on the day they signed up. They do not need to have had a delivery.
@@ -121,59 +259,91 @@ table 'Customer Measures'
 				'Customer Measures'[is_signup]=TRUE()
 			)
 		formatString: #,0
+		displayFolder: Sign-ups
 		lineageTag: 7cdf8cd7-4766-4a7c-acf8-d5b435ac1b1e
 
-	/// Number of new sign-ups same period last year. Compares the same dates in the previous year (not the same weeks).
-	measure 'Number of Sign-ups PY' =
+	/// Number of new sign-ups same period last year.
+	measure 'Number of Sign-ups (PY)' =
 			CALCULATE(
 				[Number of Sign-ups],
-				ALL('Dates'),
-				SAMEPERIODLASTYEAR('Dates'[Date])
+				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
+		displayFolder: Sign-ups
 		lineageTag: 801ee2fa-401a-46de-8c57-f8354b3470b4
 
-	/// Number of new sign-ups Year to Date. This uses the calendar year.
-	measure 'Number of Sign-ups YTD' =
-			TOTALYTD(
+	/// Difference between number of sign-ups in
+	/// the current period and the same period previous year.
+	measure 'Number of Sign-ups (Diff PY)' =
+			CALCULATE(
 				[Number of Sign-ups],
-				Dates[Date],
-				ALL('Dates')
+				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0
+		displayFolder: Sign-ups
+
+	/// % change in sign-ups
+	/// comparing current period to same period last year
+	measure 'Number of Sign-ups (YOY%)' =
+			CALCULATE(
+				[Number of Sign-ups],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Sign-ups
+
+	/// Growth ratio of sign-ups
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Sign-ups (CY/PY)' =
+			CALCULATE(
+				[Number of Sign-ups],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Sign-ups
+
+	/// Cumulative sum of number of sign-ups from the beginning of the year (year-to-date)
+	measure 'Number of Sign-ups (YTD)' =
+			CALCULATE(
+				[Number of Sign-ups],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Sign-ups
 		lineageTag: 69492a6f-2f2b-4b14-8d67-ca182e031ee0
 
-	/// Number of new sign-ups Year to Date, same period last year. This uses the calendar year.
-	measure 'Number of Sign-ups YTD PY' =
-			TOTALYTD(
-				[Number of Sign-ups PY],
-				Dates[Date],
-				ALL('Dates')
+	/// Cumulative sum of number of sign-ups from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Sign-ups (PYTD)' =
+			CALCULATE(
+				[Number of Sign-ups],
+				'Time Intelligence'[Time Calculation]="PYTD"
 			)
 		formatString: #,0
+		displayFolder: Sign-ups
 		lineageTag: c9fc05d1-f58a-46ce-a71e-b25dc72992ad
 
-	/// Number of customers changed from active to another status during the selected period.
-	/// It will count number of customers that was in a active state at the beginning of the selected period
+	/// Number of subscribers changed from active to another status during the selected period.
+	/// It will count number of subscribers that was in a active state at the beginning of the selected period
 	/// and was in another status at the end of the selected period.
-	measure 'Number of Customers Changed from Active' =
+	measure 'Number of Subscribers Changed from Active' =
 			SUMX(
 				VALUES('Billing Agreements'[Agreement Id]),
-			
+
 				VAR min_updated_at = CALCULATE(
 					MIN('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]>MIN('Dates'[Date])
 				)
-			
+
 				VAR max_updated_at = CALCULATE(
 					MAX('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
 				)
-			
+
 				VAR CountStart =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -185,7 +355,7 @@ table 'Customer Measures'
 						),
 						'Billing Agreements'[Billing Agreement Status] = "Active"
 					)
-			
+
 				VAR CountEnd =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -193,34 +363,95 @@ table 'Customer Measures'
 						'Customer Measures'[updated_at] = max_updated_at,
 						'Billing Agreements'[Billing Agreement Status] <> "Active"
 					)
-			
+
 				RETURN
 					IF(CountStart>0 && CountEnd>0, 1, 0)
 			)
 		formatString: #,0
+		displayFolder: Inactive Subscribers
 		lineageTag: a950a2a5-a013-47d2-b69e-01e8337bf788
 
-	/// Number of customers changed to active from another status during the selected period.
-	/// It will count number of customers that was not in a active state at the beginning of the selected period
+	/// Number of subscribers changing status from active to another status in the same period last year.
+	measure 'Number of Subscribers Changed from Active (PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: Inactive Subscribers
+
+	/// Difference between number of subscribers changing status from active to another status
+	/// in the current period and the same period previous year.
+	measure 'Number of Subscribers Changed from Active (Diff PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="Diff PY"
+			)
+		formatString: #,0
+		displayFolder: Inactive Subscribers
+
+	/// % change in number of subscribers changing status from active to another status
+	/// comparing current period to same period last year
+	measure 'Number of Subscribers Changed from Active (YOY%)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Inactive Subscribers
+
+	/// Growth ratio of number of subscribers changing status from active to another status
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Subscribers Changed from Active (CY/PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Inactive Subscribers
+
+	/// Cumulative sum of number of subscribers changing status from active to another status
+	/// from the beginning of the year (year-to-date)
+	measure 'Number of Subscribers Changed from Active (YTD)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Inactive Subscribers
+
+	/// Cumulative sum of number of subscribers changing status from active to another status
+	/// from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Subscribers Changed from Active (PYTD)' =
+			CALCULATE(
+				[Number of Subscribers Changed from Active],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Inactive Subscribers
+
+	/// Number of subscribers changed to active from another status during the selected period.
+	/// It will count number of subscribers that was not in a active state at the beginning of the selected period
 	/// but was active at the end of the selected period.
-	measure 'Number of Customers Changed to Active' =
+	measure 'Number of Subscribers Changed to Active' =
 			SUMX(
 				VALUES('Billing Agreements'[Agreement Id]),
-			
+
 				VAR min_updated_at = CALCULATE(
 					MIN('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]>MIN('Dates'[Date])
 				)
-			
+
 				VAR max_updated_at = CALCULATE(
 					MAX('Customer Measures'[updated_at]),
 					'Customer Measures'[has_updated_status]=TRUE(),
 					ALL('Customer Measures'[updated_at]),
 					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
 				)
-			
+
 				VAR CountStart =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -232,7 +463,7 @@ table 'Customer Measures'
 						),
 						'Billing Agreements'[Billing Agreement Status] <> "Active"
 					)
-			
+
 				VAR CountEnd =
 					CALCULATE(
 						COUNTROWS('Customer Measures'),
@@ -240,12 +471,73 @@ table 'Customer Measures'
 						'Customer Measures'[updated_at] = max_updated_at,
 						'Billing Agreements'[Billing Agreement Status] = "Active"
 					)
-			
+
 				RETURN
 					IF(CountStart>0 && CountEnd>0, 1, 0)
 			)
 		formatString: #,0
+		displayFolder: Active Subscribers
 		lineageTag: 60ba4403-dc9a-4221-b046-d3dea3afa7bb
+
+	/// Number of subscribers changes their status to active in the same period previous year.
+	measure 'Number of Subscribers Changed to Active (PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// Difference between number of subscribers changing status to active
+	/// in the current period and the same period previous year.
+	measure 'Number of Subscribers Changed to Active (Diff PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="Diff PY"
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// % change in number of subscribers changing status to active
+	/// comparing current period to same period last year
+	measure 'Number of Subscribers Changed to Active (YOY%)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Active Subscribers
+
+	/// Growth ratio of number of subscribers changing status to active
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Subscribers Changed to Active (CY/PY)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Active Subscribers
+
+	/// Cumulative sum of number of subscribers changing status to active
+	/// from the beginning of the year (year-to-date)
+	measure 'Number of Subscribers Changed to Active (YTD)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	/// Cumulative sum of number of subscribers changing status to active
+	/// from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Subscribers Changed to Active (PYTD)' =
+			CALCULATE(
+				[Number of Subscribers Changed to Active],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
 
 	/// Number of customers who have swapped at least once during the selected period.
 	/// To see the definition of a swap, see the measure 'Number of Orders with Swaps'.
@@ -259,7 +551,69 @@ table 'Customer Measures'
 			    			)
 						)
 		formatString: #,0
+		displayFolder: Swapping Customers
 		lineageTag: ea08cc3e-e123-4ca0-bdca-efbdee4c4503
+
+	/// Number of swapping customers in the same period last year.
+	/// 2024 is the first year with available data for this measure.
+	/// The data points from 2024 is not 100% reliable, but from 2025 an onwards it is reliable.
+	measure 'Number of Swapping Customers (PY)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: Swapping Customers
+
+	/// Difference between number of customers making swaps
+	/// in the current year and the same period previous year.
+	measure 'Number of Swapping Customers (Diff PY)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="Diff PY"
+			)
+		formatString: #,0
+		displayFolder: Swapping Customers
+
+	/// % change in number of swapping customers
+	/// comparing current period to same period last year
+	measure 'Number of Swapping Customers (YOY%)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Swapping Customers
+
+	/// Growth ratio of number of swapping customers
+	/// comparing current period to the same period in the previous year
+	measure 'Number of Swapping Customers (CY/PY)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="CY/PY"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Swapping Customers
+
+	/// Cumulative sum of number of swapping customers changing status to active
+	/// from the beginning of the year (year-to-date)
+	measure 'Number of Swapping Customers (YTD)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="YTD"
+			)
+		formatString: #,0
+		displayFolder: Swapping Customers
+
+	/// Cumulative sum of number of swapping customers from the beginning of the year up to the current period
+	/// for the same period in the previous year (Previous Year to Date).
+	measure 'Number of Swapping Customers (PYTD)' =
+			CALCULATE(
+				[Number of Swapping Customers],
+				'Time Intelligence'[Time Calculation]="PYTD"
+			)
+		formatString: #,0
+		displayFolder: Swapping Customers
 
 	column fk_dim_dates
 		dataType: int64
@@ -400,4 +754,3 @@ table 'Customer Measures'
 					fact_billing_agreement_updates_Table = gold_Schema{[Name="fact_billing_agreement_updates",Kind="Table"]}[Data]
 				in
 					fact_billing_agreement_updates_Table
-

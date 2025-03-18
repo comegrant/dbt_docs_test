@@ -121,11 +121,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Active Customers"
+                  "Property": "Number of Active Subscribers"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Customers",
-              "nativeQueryRef": "Number of Active Customers"
+              "queryRef": "Customer Measures.Number of Active Subscribers",
+              "nativeQueryRef": "Number of Active Subscribers"
             },
             {
               "field": {
@@ -135,11 +135,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Active Customers PY"
+                  "Property": "Number of Active Subscribers (PY)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Customers PY",
-              "nativeQueryRef": "Number of Active Customers PY"
+              "queryRef": "Customer Measures.Number of Active Subscribers (PY)",
+              "nativeQueryRef": "Number of Active Subscribers (PY)"
             }
           ]
         }

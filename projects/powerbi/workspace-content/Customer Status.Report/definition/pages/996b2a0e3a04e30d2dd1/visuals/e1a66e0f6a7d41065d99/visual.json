@@ -60,11 +60,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Active Customers"
+                  "Property": "Number of Active Subscribers"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Customers",
-              "nativeQueryRef": "Number of Active Customers"
+              "queryRef": "Customer Measures.Number of Active Subscribers",
+              "nativeQueryRef": "Number of Active Subscribers"
             }
           ]
         }

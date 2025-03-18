@@ -126,11 +126,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Customers All Statuses"
+                  "Property": "Number of Subscribers All Statuses"
                 }
               },
-              "queryRef": "Customer Measures.Number of Customers All Statuses",
-              "nativeQueryRef": "Number of Customers All Statuses"
+              "queryRef": "Customer Measures.Number of Subscribers All Statuses",
+              "nativeQueryRef": "Number of Subscribers All Statuses"
             }
           ]
         }

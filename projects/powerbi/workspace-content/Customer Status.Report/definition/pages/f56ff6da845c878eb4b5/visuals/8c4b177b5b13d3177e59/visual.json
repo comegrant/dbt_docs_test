@@ -23,10 +23,10 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Active Customers"
+                  "Property": "Number of Active Subscribers"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Customers",
+              "queryRef": "Customer Measures.Number of Active Subscribers",
               "nativeQueryRef": "Active Customers at End of Period",
               "displayName": "Active Customers at End of Period"
             }
@@ -43,7 +43,7 @@
                     "Entity": "Customer Measures"
                   }
                 },
-                "Property": "Number of Active Customers"
+                "Property": "Number of Active Subscribers"
               }
             },
             "direction": "Descending"
