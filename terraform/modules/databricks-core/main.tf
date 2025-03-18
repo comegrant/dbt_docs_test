@@ -309,7 +309,7 @@ resource "databricks_permissions" "db_wh_external_read" {
 
 resource "databricks_sql_endpoint" "db_wh_segment" {
   count                     = terraform.workspace == "prod" ? 1 : 0
-  
+
   name                      = "Segment SQL Warehouse"
   cluster_size              = var.databricks_sql_warehouse_explore_cluster_size
   min_num_clusters          = var.databricks_sql_warehouse_explore_min_num_clusters
@@ -337,7 +337,7 @@ resource "databricks_sql_endpoint" "db_wh_segment" {
 }
 
 ##########################################
-### Preperation for Service Principals ###
+### Preparation for Service Principals ###
 ##########################################
 
 data "databricks_service_principal" "resource-sp" {
@@ -642,7 +642,7 @@ resource "databricks_grants" "catalog" {
 }
 
 
-resource "databricks_grants" "catalog_segment" { 
+resource "databricks_grants" "catalog_segment" {
   count   = terraform.workspace == "prod" ? 1 : 0
   catalog = databricks_catalog.segment_shared[count.index].name
 
@@ -701,10 +701,14 @@ resource "databricks_grants" "schemas" {
     principal  = var.azure_client_id
     privileges = ["ALL_PRIVILEGES"]
   }
-  # Only add this all privileges if environment is dev
+
   grant {
-    principal = "data-scientists"
-    privileges = terraform.workspace == "dev" ? ["ALL_PRIVILEGES"] : ["USE_SCHEMA"]
+    principal  = "data-scientists"
+    privileges = compact([
+      "USE_SCHEMA",
+      terraform.workspace == "dev" ? "ALL_PRIVILEGES" : "",
+      startswith(each.key, "ml") ? "MANAGE" : ""
+    ])
   }
 
   grant {
