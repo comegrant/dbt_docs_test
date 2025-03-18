@@ -55,12 +55,6 @@ portion_id obtained from the menu variations.
 
 {% enddocs %}
 
-{% docs column__portion_id_recipes %}
-
-portion_id obtained from the recipes.
-
-{% enddocs %}
-
 {% docs column__portion_id_products %}
 
 portion_id obtained from product variations.

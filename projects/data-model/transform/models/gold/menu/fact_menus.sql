@@ -101,9 +101,10 @@ menu_weeks as (
         , menu_weeks_with_flags.recipe_id
 
         , menu_weeks_with_flags.recipe_portion_id
-        , menu_weeks_with_flags.portion_id
+        , menu_weeks_with_flags.portion_id as portion_id_menus
         , menu_weeks_with_flags.portion_id_recipes
-        , portions.portion_id as portion_id_products
+        , portions_products.portion_id as portion_id_products
+        , coalesce(portions_products.portion_id, menu_weeks_with_flags.portion_id) as portion_id
         , menu_weeks_with_flags.portion_quantity
         , menu_weeks_with_flags.portion_name
 
@@ -124,16 +125,27 @@ menu_weeks as (
         {# FKS #}
         , md5(cast(concat(menu_weeks_with_flags.recipe_id, companies.language_id) as string)) as fk_dim_recipes
         , md5(concat(menu_weeks_with_flags.product_variation_id, companies.company_id)) as fk_dim_products
-        , md5(concat(menu_weeks_with_flags.portion_id, companies.language_id)) as fk_dim_portions
+        , md5(
+            concat(
+                -- There are cases before 2023-05-08 where the portion_id from the product variations and the menu variations deviates.
+                -- In those cases we will use the portion_id from the product variations.
+                -- In cases where portions_products.portion_id is null we will use the portion_id from the menu variations.
+                -- We will catch new cases from tests and try to get them fixed in the source systems
+                coalesce(
+                    portions_products.portion_id
+                    ,menu_weeks_with_flags.portion_id
+                )
+            , companies.language_id)
+        ) as fk_dim_portions
         , cast(date_format(menu_weeks_with_flags.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(menu_weeks_with_flags.company_id) as fk_dim_companies
 
     from menu_weeks_with_flags
     left join companies
         on menu_weeks_with_flags.company_id = companies.company_id
-    left join portions
-        on menu_weeks_with_flags.portion_name_products = portions.portion_name_local
-        and companies.language_id = portions.language_id
+    left join portions as portions_products
+        on menu_weeks_with_flags.portion_name_products = portions_products.portion_name_local
+        and companies.language_id = portions_products.language_id
 
 )
 

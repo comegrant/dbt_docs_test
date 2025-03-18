@@ -796,14 +796,17 @@ models:
 
       - name: portion_id
         data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        data_tests:
+          - not_null:
+              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+
+      - name: portion_id_menus
+        data_type: int
         description: "{{ doc('column__portion_id_menu_variations') }}"
         data_tests:
           - not_null:
               where: "menu_year >= 2019" # can be removed after filter to fact menus is added
-          - equal_to_column:
-              value: portion_id_recipes
-              config:
-                where: 'portion_id_recipes is not null and menu_year >= 2019' # the menu_year >= 2019 can be removed after filter to fact menus is added
           - equal_to_column:
               value: portion_id_products
               config:
@@ -812,11 +815,15 @@ models:
 
       - name: portion_id_recipes
         data_type: int
-        description: "{{ doc('column__portion_id_recipes') }}"
+        description: "This column can be removed as it is duplicate with portion_id_menus, but we keep it for debugging reasons for now."
 
       - name: portion_id_products
         data_type: int
         description: "{{ doc('column__portion_id_products') }}"
+        data_tests:
+          - not_null:
+              # There are known issues before 2023-07-17
+              where: 'menu_week_monday_date > DATE("2023-07-17")'
 
       - name: menu_year
         data_type: smallint
@@ -949,9 +956,9 @@ models:
     description: "Dimension that lets the user filter on number of portions and plus size portions."
     data_tests:
       - unique:
-          # We need this to be unique to avoid duplicates when joining dim_portions with 
-          # fact tables based on the portions of the products. When considering portions of the products we don't have 
-          # portion_id and need to use the portion name in the join to find the foreign key to dim_portions. 
+          # We need this to be unique to avoid duplicates when joining dim_portions with
+          # fact tables based on the portions of the products. When considering portions of the products we don't have
+          # portion_id and need to use the portion name in the join to find the foreign key to dim_portions.
           column_name: "(portion_name_local || '-' || language_id)"
     latest_version: 1
     config:

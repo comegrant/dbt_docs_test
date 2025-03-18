@@ -1,4 +1,4 @@
-with 
+with
 
 weekly_menus as (
 
@@ -73,8 +73,8 @@ weekly_menus as (
 
         , recipe_portions.recipe_portion_id
         , menu_variations.portion_id
-        , recipe_portions.portion_id as portion_id_recipes
-        
+        , recipe_portions.portion_id as portion_id_recipes -- This can be removed when removing it from fact_menus after debugging.
+
         , weekly_menus.menu_year
         , weekly_menus.menu_week
         , weekly_menus.menu_week_monday_date
@@ -94,7 +94,7 @@ weekly_menus as (
     from weekly_menus
     left join menus
         on weekly_menus.weekly_menu_id = menus.weekly_menu_id
-    left join menu_variations 
+    left join menu_variations
         on menus.menu_id = menu_variations.menu_id
     left join menu_recipes
         on menus.menu_id = menu_recipes.menu_id
