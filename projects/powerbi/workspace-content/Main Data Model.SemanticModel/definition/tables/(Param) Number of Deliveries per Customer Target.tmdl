@@ -1,0 +1,34 @@
+/// This parameter can be used to set the target number of deliveries per customer for the selected cohort.
+/// By changing it you will modify which customers are included in the following measures:
+/// - Number of Ordering Customers with Fewer than X Deliveries
+/// - Number of Ordering Customers with X or More Deliveries
+/// - Share of Ordering Customers with Fewer than X Deliveries
+/// - Share of Ordering Customers with X or More Deliveries
+table '(Param) Number of Deliveries per Customer Target'
+
+	measure 'Number of Deliveries per Customer Target Value' =
+            SELECTEDVALUE(
+                '(Param) Number of Deliveries per Customer Target'[Number of Deliveries per Customer Target],
+                4
+            )
+        isHidden
+        formatString: 0
+
+    /// This parameter can be used to set the target number of deliveries per customer for the selected cohort.
+    /// By changing it you will modify which customers are included in the following measures:
+    /// - Number of Ordering Customers with Fewer than X Deliveries
+    /// - Number of Ordering Customers with X or More Deliveries
+    /// - Share of Ordering Customers with Fewer than X Deliveries
+    /// - Share of Ordering Customers with X or More Deliveries
+    column 'Number of Deliveries per Customer Target'
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Number of Deliveries per Customer Target' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

@@ -803,6 +803,54 @@ table 'Order Measures'
 		displayFolder: Customers
 		lineageTag: 04d72b55-4e5c-458a-b85e-4221d4ed4ef1
 
+	/// Number of ordering customers who have had fewer than x deliveries in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
+	measure 'Number of Ordering Customers with Fewer than X Deliveries' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] < '(Param) Number of Deliveries per Customer Target'[Number of Deliveries per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		displayFolder: Customers
+
+	/// Number of ordering customers who have had x or more deliveries in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
+	measure 'Number of Ordering Customers with X or More Deliveries' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] >= '(Param) Number of Deliveries per Customer Target'[Number of Deliveries per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		displayFolder: Customers
+
+	/// Share of ordering customers who have had fewer than x deliveries in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
+	measure 'Share of Ordering Customers with Fewer than X Deliveries' =
+			DIVIDE(
+				[Number of Ordering Customers with Fewer than X Deliveries],
+				[Number of Ordering Customers],
+				BLANK()
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Customers
+
+	/// Share of ordering customers who have had x or more deliveries in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
+	measure 'Share of Ordering Customers with X or More Deliveries' =
+			DIVIDE(
+				[Number of Ordering Customers with X or More Deliveries],
+				[Number of Ordering Customers],
+				BLANK()
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Customers
+
 	/// Number of order that has one or more grocery purchases
 	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
