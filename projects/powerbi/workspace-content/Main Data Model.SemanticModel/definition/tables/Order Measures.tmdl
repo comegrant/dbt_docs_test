@@ -1824,6 +1824,54 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_periods_since_first_menu_week
 
+	/// 1 if the order line represents a thrifty dish
+	column is_thrifty_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_thrifty_dish
+
+	/// 1 if the order line represents a plus price dish
+	column is_plus_price_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_plus_price_dish
+
+	/// true if the customer has made adjustments to the order
+	column is_adjusted_by_customer
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: is_adjusted_by_customer
+
+	/// the number of meals of a product
+	column meals
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: meals
+
+	/// the number of portions of a product
+	column portions
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: portions
+
+	/// the product of meals and portions for a mealbox
+	column mealbox_servings
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: mealbox_servings
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =
