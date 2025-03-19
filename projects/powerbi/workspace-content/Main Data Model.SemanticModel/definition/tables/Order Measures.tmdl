@@ -1769,6 +1769,27 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: recipe_comment_id
 
+	column is_thrifty_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_thrifty_dish
+
+	column is_plus_price_dish
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_plus_price_dish
+
+	column is_adjusted_by_customer
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		summarizeBy: none
+		sourceColumn: is_adjusted_by_customer
+
 	column 'fk_dim_periods_since_first_menu_week'
 		dataType: string
 		isHidden

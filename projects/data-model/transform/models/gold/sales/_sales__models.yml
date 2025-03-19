@@ -105,6 +105,18 @@ models:
         data_type: int
         description: "{{ doc('column__portion_adjustment_subscription') }}"
 
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portion_size') }}"
+
+      - name: mealbox_servings
+        data_type: int
+        description: "{{ doc('column__mealbox_servings') }}"
+
       - name: is_added_dish
         data_type: int
         description: "{{ doc('column__is_added_dish') }}"
@@ -119,11 +131,19 @@ models:
 
       - name: is_onesub_migration
         data_type: int
-        description: "..."
+        description: "{{ doc('column__is_onesub_migration') }}"
 
       - name: is_missing_preselector_output
         data_type: int
-        description: "..."
+        description: "{{ doc('column__is_missing_preselector_output') }}"
+
+      - name: is_thrifty_dish
+        data_type: int
+        description: "{{ doc('column__is_thrifty_dish') }}"
+
+      - name: is_plus_price_dish
+        data_type: int
+        description: "{{ doc('column__is_plus_price_dish') }}"
 
       - name: has_recipe_leaflets
         data_type: boolean
@@ -148,6 +168,10 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+      - name: is_adjusted_by_customer
+        data_type: boolean
+        description: "{{ doc('column__is_adjusted_by_customer') }}"
 
       - name: recipe_comment
         data_type: string

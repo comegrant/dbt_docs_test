@@ -23,6 +23,12 @@ The recipe id of the dish preseneted to the customer on the webpage.
 
 {% enddocs %}
 
+{% docs column__mealbox_servings %}
+
+The total number of mealbox_servings in a mealbox. I.e., ordered portions * ordered meals. This is null for all order lines that are not a mealbox.
+
+{% enddocs %}
+
 {% docs column__has_delivery %}
 
 1 if the order has delivery. E.g., gift card orders does not have a delivery, most other orders does.
@@ -44,6 +50,36 @@ Is 1 if the ordered dish was added by the customer and 0 if the ordered dish was
 {% docs column__is_removed_dish %}
 
 Is 1 if the preselected dish was removed by the customer and 0 if the preselected dish was ordered. For all rows that are not representing a dish the field will be null.
+
+{% enddocs %}
+
+{% docs column__is_thrifty_dish %}
+
+Customers can select dishes that give them a price decrease. Column is 1 if the customer was discounted for the dish on their order. 0 for all dishes that did not have a minus price. Null if the order line is not a dish.
+
+{% enddocs %}
+
+{% docs column__is_plus_price_dish %}
+
+Customers can select dishes for an extra price. The column is 1 if the customer was charged extra for the dish on their order. 0 for all dishes that did not have an extra price. Null if the order line is not a dish.
+
+{% enddocs %}
+
+{% docs column__is_onesub_migration %}
+
+1 if the customers order was migrated to onesub. Meaning that the product on the order line was changed to the Onesub mealbox product.
+
+{% enddocs %}
+
+{% docs column__is_missing_preselector_output %}
+
+1 if the customer did not see any preselector output in the frontend before selecting recipes, else 0.
+
+{% enddocs %}
+
+{% docs column__is_adjusted_by_customer %}
+
+True if customers edited the order before placing it. This could be swapping recipes, adding portions, adding meals or adding groceries, else false.
 
 {% enddocs %}
 

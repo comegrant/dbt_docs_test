@@ -81,8 +81,26 @@ order_lines as (
             then 1
             else 0
         end as is_missing_preselector_output
+        , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            and total_amount_ex_vat > 0 
+            then 1
+            else 0
+        end as is_plus_price_dish
+        , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            and total_amount_ex_vat < 0 
+            then 1
+            else 0
+        end as is_thrifty_dish
         , products.portions
         , products.meals
+        , case 
+            when product_type_id in (
+                '{{ var("mealbox_product_type_id") }}'
+                , '{{ var("financial_product_type_id") }}'
+            )
+            then products.portions * products.meals 
+            else null
+        end as mealbox_servings
         , products.product_type_id
         , companies.company_id
         , companies.language_id
@@ -284,6 +302,8 @@ order_lines as (
             then true
             else false
         end as is_dish
+        , order_line_dimensions_joined.is_thrifty_dish
+        , order_line_dimensions_joined.is_plus_price_dish
         , case
             when order_line_dimensions_joined.product_type_id = '{{ var("mealbox_product_type_id") }}'
             or order_line_dimensions_joined.product_type_id = '{{ var("financial_product_type_id") }}'
@@ -295,6 +315,9 @@ order_lines as (
             then order_line_dimensions_joined.portions - subscribed_mealbox.subscribed_portions
             else null
         end as portion_adjustment_subscription
+        , order_line_dimensions_joined.meals
+        , order_line_dimensions_joined.portions
+        , order_line_dimensions_joined.mealbox_servings
         , order_line_dimensions_joined.order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
@@ -380,9 +403,14 @@ order_lines as (
         , 0 as is_added_dish
         , 1 as is_removed_dish
         , true as is_dish
+        , null as is_thrifty_dish
+        , null as is_plus_price_dish
         , null as meal_adjustment_subscription
         -- Portion adjustments are only relevant for added recipes
         , null as portion_adjustment_subscription
+        , null as meals
+        , null as portions
+        , null as mealbox_servings
         , "GENERATED" as order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
@@ -478,8 +506,13 @@ order_lines as (
             else null
         end as is_removed_dish
         , true as is_dish
+        , 0 as is_thrifty_dish
+        , 0 as is_plus_price_dish
         , null as meal_adjustment_subscription
         , order_line_dimensions_joined.portions - subscribed_mealbox.subscribed_portions as portion_adjustment_subscription
+        , null as meals
+        , order_line_dimensions_joined.portions
+        , null as mealbox_servings
         , "GENERATED" as order_line_type_name
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
@@ -599,6 +632,11 @@ order_lines as (
         , has_swap_flag.has_swap
         , dim_portions.pk_dim_portions as fk_dim_portions
         , dim_portions_preselected.pk_dim_portions as fk_dim_portions_preselected
+        , case 
+            when add_recipe_feedback.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
+            then true
+            else false
+        end as is_adjusted_by_customer
     from add_recipe_feedback
     left join products
         on add_recipe_feedback.fk_dim_products = products.pk_dim_products
