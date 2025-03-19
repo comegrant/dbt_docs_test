@@ -1001,3 +1001,33 @@ The name of the channel of the discount which is the first step in the discount 
 ...
 
 {% enddocs %}
+
+# Billing Agreement Order Discounts
+
+{% docs column__billing_agreement_order_discount_id %}
+
+This is the primary key of the billing_agreement_order_discount table in CMS.
+
+{% enddocs %}
+
+{% docs column__discount_order_cancelled_relation_id %}
+
+Each discount line has one credit line and one debit line in billing_agreement_order_discount. The related credit line is the row where billing_agreement_order_discount_id is the same as in this column. COlumn will be NULL for all credit lines.
+
+{% enddocs %}
+
+# Discount Criterias
+
+{% docs column__discount_criteria_id %}
+
+This is the primary key of the discount_criteria table in CMS.
+
+{% enddocs %}
+
+# Discount Coupons
+
+{% docs column__discount_coupon_code_id %}
+
+This is the primary key of the discount_coupon table in CMS.
+
+{% enddocs %}

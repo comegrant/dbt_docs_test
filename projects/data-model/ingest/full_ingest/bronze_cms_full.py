@@ -12,6 +12,7 @@ tables = [
         "billing_agreement_basket_deviation_origin",
         "billing_agreement_status",
         "billing_agreement_addon_subscriptions",
+        "billing_agreement_order_discount",
         "billing_agreement_order_status",
         "company",
         "country",

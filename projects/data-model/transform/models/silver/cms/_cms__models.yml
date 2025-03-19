@@ -4,6 +4,63 @@ version: 2
 
 models:
 
+  - name: cms__billing_agreement_order_discounts
+    description: "Discount data on all order lines with a discount. Gets populated at order gen."
+
+    columns:
+      - name: billing_agreement_order_discount_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_discount_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ops_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__ops_order_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_id
+        data_type: varchar(36)
+        description: "{{ doc('column__discount_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: discount_criteria_id
+        data_type: varchar(36)
+        description: "{{ doc('column__discount_criteria_id') }}"
+
+      - name: discount_order_cancelled_relation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__discount_order_cancelled_relation_id') }}"
+        constraints:
+          - type: unique
+        data_tests:
+          - unique
+
+      - name: discount_coupon_code_id
+        data_type: varchar(36)
+        description: "{{ doc('column__discount_coupon_code_id') }}"
+
+      - name: billing_agreement_order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: error
+                error_if:  ">86450" # orders <= week 7 2020 can be without order line
+                warn_if: ">86450"
+                  
   - name: cms__discount_category_mapping_discount_sub_categories
     description: "Table used to find which sub categories are connected to each category in the discount categorization hierarchy"
 
@@ -800,6 +857,7 @@ models:
           - not_null:
               config:
                   severity: warn
+                  
       - name: total_amount_inc_vat
         data_type: decimal(38,9)
         description: "{{ doc('column__total_amount_inc_vat') }}"

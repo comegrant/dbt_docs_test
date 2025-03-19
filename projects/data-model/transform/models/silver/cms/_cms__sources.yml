@@ -19,6 +19,7 @@ sources:
       - name: cms__billing_agreement_basket_scheduler
       - name: cms__billing_agreement_consent
       - name: cms__billing_agreement_order
+      - name: cms__billing_agreement_order_discount
       - name: cms__billing_agreement_order_line
       - name: cms__billing_agreement_order_status
       - name: cms__billing_agreement_status
