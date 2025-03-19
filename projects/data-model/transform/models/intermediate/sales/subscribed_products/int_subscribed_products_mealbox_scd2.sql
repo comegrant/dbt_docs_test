@@ -126,7 +126,9 @@ basket_products as (
     left join dbt_snapshot_min_valid_from
         on signup_products.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include signup mealbox if history is missing in the dbt snapshot of the basket
-    where signup_products.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+    where (
+        signup_products.valid_from < dbt_snapshot_min_valid_from.min_valid_from 
+        or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null)
     and signup_products.product_type_id = '{{ var("mealbox_product_type_id") }}'
     
 )
@@ -146,7 +148,10 @@ basket_products as (
     left join dbt_snapshot_min_valid_from
         on mealboxes_from_orders.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include signup mealbox if history is missing in the dbt snapshot of the basket
-    where mealboxes_from_orders.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+    where (
+        mealboxes_from_orders.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+        or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null
+    )
 
 )
 
@@ -182,7 +187,10 @@ basket_products as (
     left join dbt_snapshot_min_valid_from
         on financial_deviation_mealbox.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include customer deviation mealbox if history is missing in the dbt snapshot of the basket
-    where financial_deviation_mealbox.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+    where (
+        financial_deviation_mealbox.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+        or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null
+    )
     and billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}' 
 
 )
