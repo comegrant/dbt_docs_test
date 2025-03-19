@@ -767,3 +767,11 @@ The start date of the loyalty period.
 The end date of the loyalty period.
 
 {% enddocs %}
+
+# Dim Discounts
+
+{% docs column__pk_dim_discounts %}
+
+The primary key of dim_discounts.
+
+{% enddocs %}
