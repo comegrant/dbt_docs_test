@@ -21,6 +21,7 @@ tables = [
     "ingredient_categories_translations",
     "ingredient_category_preference",
     "ingredient_nutrient_facts",
+    "ingredient_price",
     "ingredients_translations",
     "menus",
     "menu_recipes",
@@ -31,6 +32,7 @@ tables = [
     "portions_translations",
     "order_ingredients",
     "portions",
+    "procurement_cycle",
     "recipes",
     "recipes_comments",
     "recipe_companies",
@@ -49,6 +51,8 @@ tables = [
     "taxonomies_translations",
     "taxonomy_types",
     "weekly_menus",
+    "weekly_orders",
+    "weekly_orders_lines",
     "recipe_favorite_types",
 ]
 for table in tables:
