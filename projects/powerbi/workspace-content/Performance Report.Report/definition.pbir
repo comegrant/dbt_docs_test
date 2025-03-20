@@ -1,0 +1,13 @@
+{
+  "version": "4.0",
+  "datasetReference": {
+    "byConnection": {
+      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo;Initial Catalog=\"Main Data Model\";Access Mode=readonly;Integrated Security=ClaimsToken",
+      "pbiServiceModelId": null,
+      "pbiModelVirtualServerName": "sobe_wowvirtualserver",
+      "pbiModelDatabaseName": "fdc184ae-b967-41d0-95ce-f5a6aed083e4",
+      "name": "EntityDataSource",
+      "connectionType": "pbiServiceXmlaStyleLive"
+    }
+  }
+}

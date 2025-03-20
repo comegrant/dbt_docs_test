@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "e48a06831ea0409b7107",
+  "position": {
+    "x": 231.1764705882353,
+    "y": 400.58823529411768,
+    "z": 6000,
+    "height": 34.705882352941174,
+    "width": 541.17647058823536,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "NB! Year vs Year logic varies slightly from Tableau, which leads to all weeks being included in the total for PY",
+                    "textStyle": {
+                      "fontSize": "8pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

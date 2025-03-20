@@ -1,0 +1,126 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "a97ba3762ffbff293166",
+  "position": {
+    "x": 16.466607480862326,
+    "y": 82.333037404311639,
+    "z": 0,
+    "height": 300.51558652573749,
+    "width": 1247.3455166753213,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Year"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Week"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Week",
+              "nativeQueryRef": "Financial Date Hierarchy Week",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders (PY)"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders (PY)",
+              "nativeQueryRef": "Number of Orders (PY)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "valueAxis": [
+        {
+          "properties": {
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Performance vs PY'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

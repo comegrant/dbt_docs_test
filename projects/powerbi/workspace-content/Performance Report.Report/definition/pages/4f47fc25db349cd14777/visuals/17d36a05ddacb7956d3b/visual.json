@@ -1,0 +1,725 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "17d36a05ddacb7956d3b",
+  "position": {
+    "x": 26.666666666666664,
+    "y": 93.333333333333329,
+    "z": 0,
+    "height": 614.44444444444446,
+    "width": 1226.6666666666667,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Year"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Quarter"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
+              "nativeQueryRef": "Financial Date Hierarchy Quarter",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Month"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Month",
+              "nativeQueryRef": "Financial Date Hierarchy Month",
+              "active": true
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Week"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Week",
+              "nativeQueryRef": "Financial Date Hierarchy Week",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "ATV Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.ATV Gross Ex Vat",
+              "nativeQueryRef": "ATV Gross Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "ATV Net Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.ATV Net Ex Vat",
+              "nativeQueryRef": "ATV Net Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Net Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Net Ex Vat",
+              "nativeQueryRef": "Order Value Net Ex Vat",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Discount Value Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Discount Value Ex Vat",
+              "nativeQueryRef": "Discount Value Ex Vat",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Credit Value Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Credit Value Ex Vat",
+              "nativeQueryRef": "Credit Value Ex Vat",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Sum PRP Value Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Sum PRP Value Ex Vat",
+              "nativeQueryRef": "Sum PRP Value Ex Vat",
+              "format": "#,0"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Year"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Quarter"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Month"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Week"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Year"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Year"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Quarter"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Quarter"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Month"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Month Name"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Week"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {}
+      }
+    ],
+    "objects": {
+      "total": [
+        {
+          "properties": {}
+        }
+      ],
+      "subTotals": [
+        {
+          "properties": {
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "columnSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "118.19354578856168D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Number of Orders"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "110.03208097033777D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Order Value Gross Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "175.49999948169875D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Sum PRP Value Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "159.7499987783511D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Credit Value Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "152.0000002088338D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Discount Value Ex Vat"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Discount Overview'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "fa55fee09046179c116a",
+        "ordinal": 0,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Average Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "e1df9890eeb8396d7c31",
+        "ordinal": 1,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Average Order Value Net Ex Vat"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "8b89284ae2156d2a4c53",
+        "ordinal": 2,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "2f4f3347456e2b389822",
+        "ordinal": 3,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Credit Value Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "01b8b15cc1007e031100",
+        "ordinal": 4,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Discount Value Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fc12a5c6c0e926c16d3d",
+        "ordinal": 5,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "8ba0c57eb1329644b107",
+        "ordinal": 6,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Number of Orders"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "da022aace8779200767b",
+        "ordinal": 7,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "469152b88bd03b700ed9",
+        "ordinal": 8,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Net Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b00a5897eaab1e765c65",
+        "ordinal": 9,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Type Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "7bb6e96eaa4666267a66",
+        "ordinal": 10,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Quarter"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e512f58cd6430d190c38",
+        "ordinal": 11,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Sum PRP Value Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9ddfbd8a8a37e5d60807",
+        "ordinal": 12,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "80ed09b29d267b546eb1",
+        "ordinal": 13,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      }
+    ],
+    "filterSortOrder": "Custom"
+  }
+}

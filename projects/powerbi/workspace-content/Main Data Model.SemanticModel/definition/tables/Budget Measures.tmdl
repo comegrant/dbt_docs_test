@@ -37,7 +37,7 @@ table 'Budget Measures'
 		lineageTag: 107c94d0-7512-4623-9c3f-1abcfbdc4804
 
 	/// Increase/decrease in sales revenue compared to budgeted sales revenue (Actual over Budget%)
-	measure 'Order Value Gross Ex Vat (AoB%)' = DIVIDE([Order Value Gross Ex Vat],[Order Value Gross Ex Vat (Target)])
+	measure 'Order Value Gross Ex Vat (AoB%)' = DIVIDE([Order Value Gross Ex Vat (Diff Target)],[Order Value Gross Ex Vat (Target)])
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: f6e96297-0348-4c8e-b56d-eb9ec130f3d7
 

@@ -1,0 +1,585 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "7de69051161c0a25254b",
+  "position": {
+    "x": 16.534954407294833,
+    "y": 402.67477203647417,
+    "z": 4000,
+    "height": 307.35562310030394,
+    "width": 1246.9300911854104,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Year"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Year",
+              "nativeQueryRef": "Financial Date Hierarchy Year"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Quarter"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
+              "nativeQueryRef": "Financial Date Hierarchy Quarter"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Month"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Month",
+              "nativeQueryRef": "Financial Date Hierarchy Month"
+            },
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Week"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Week",
+              "nativeQueryRef": "Financial Date Hierarchy Week"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "Number of Orders (Target)"
+                }
+              },
+              "queryRef": "Budget Measures.Number of Orders (Target)",
+              "nativeQueryRef": "Number of Orders (Target)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "Number of Orders (AoB%)"
+                }
+              },
+              "queryRef": "Budget Measures.Number of Orders (AoB%)",
+              "nativeQueryRef": "Number of Orders (AoB%)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "ATV Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.ATV Gross Ex Vat",
+              "nativeQueryRef": "ATV Gross Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "ATV Gross Ex Vat (Target)"
+                }
+              },
+              "queryRef": "Budget Measures.ATV Gross Ex Vat (Target)",
+              "nativeQueryRef": "ATV Gross Ex Vat (Target)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "ATV Gross Ex Vat (AoB%)"
+                }
+              },
+              "queryRef": "Budget Measures.ATV Gross Ex Vat (AoB%)",
+              "nativeQueryRef": "ATV Gross Ex Vat (AoB%)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat (Target)"
+                }
+              },
+              "queryRef": "Budget Measures.Order Value Gross Ex Vat (Target)",
+              "nativeQueryRef": "Order Value Gross Ex Vat (Target)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat (AoB%)"
+                }
+              },
+              "queryRef": "Budget Measures.Order Value Gross Ex Vat (AoB%)",
+              "nativeQueryRef": "Order Value Gross Ex Vat (AoB%)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "ATV Net Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.ATV Net Ex Vat",
+              "nativeQueryRef": "ATV Net Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Net Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Net Ex Vat",
+              "nativeQueryRef": "Order Value Net Ex Vat",
+              "format": "#,0"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Order Measures"
+                  }
+                },
+                "Property": "Order Value Net Ex Vat"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "42D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Dates.Financial Date Hierarchy.Year"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "58.74443452883658D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Dates.Financial Date Hierarchy.Quarter"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78.02059599577554D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Dates.Financial Date Hierarchy.Month"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "46.74443333944432D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Dates.Financial Date Hierarchy.Week"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "75.28805936104615D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Number of Orders"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "91.50578996355314D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Order Value Gross Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "86.79858354489083D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Order Value Net Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78.75D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.ATV Gross Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70.67284668236083D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.ATV Net Ex Vat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78.48757321006246D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.Number of Orders (Target)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "98.04845163845076D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.Number of Orders (AoB%)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100.97929922338889D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.ATV Gross Ex Vat (Target)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "105.44475022933867D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.ATV Gross Ex Vat (AoB%)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "97.42406805103828D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.Order Value Gross Ex Vat (Target)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "90.9586241362697D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Budget Measures.Order Value Gross Ex Vat (AoB%)"
+          }
+        }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Left'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Dates.Financial Date Hierarchy.Year"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Performance Week-by-Week'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "underline": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "b00a5897eaab1e765c65",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Type Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      }
+    ]
+  }
+}
