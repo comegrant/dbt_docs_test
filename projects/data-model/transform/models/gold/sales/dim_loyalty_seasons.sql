@@ -7,9 +7,9 @@ loyalty_agreement_ledger as (
 )
 
 
-, agreements as (
+, loyalty_level_companies as (
 
-    select * from {{ ref('cms__billing_agreements') }}
+    select * from {{ ref('cms__loyalty_level_companies') }}
     where valid_to = '{{ var("future_proof_date") }}'
 
 )
@@ -24,9 +24,9 @@ loyalty_agreement_ledger as (
         , loyalty_agreement_ledger.loyalty_level_company_id
         , loyalty_agreement_ledger.accrued_points
         , loyalty_agreement_ledger.points_generated_at
-        , agreements.company_id
+        , loyalty_level_companies.company_id
     from loyalty_agreement_ledger
-    left join agreements on loyalty_agreement_ledger.billing_agreement_id = agreements.billing_agreement_id
+    left join loyalty_level_companies on loyalty_agreement_ledger.loyalty_level_company_id = loyalty_level_companies.loyalty_level_company_id
 
 )
 
