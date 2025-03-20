@@ -3,8 +3,10 @@ import logging
 from contextlib import suppress
 from typing import Literal
 
-from aligned.schemas.feature import StaticFeatureTags
-from data_contracts.preselector.basket_features import BasketFeatures
+from aligned.feature_view.feature_view import FeatureViewWrapper
+from data_contracts.preselector.store import Preselector, SuccessfulPreselectorOutput
+from data_contracts.sources import ml_outputs
+from data_contracts.unity_catalog import UCTableSource
 from pydantic import BaseModel
 from pydantic_argparser import parse_args
 
@@ -15,35 +17,37 @@ class RunArgs(BaseModel):
     env: Literal["test", "prod", "dev"]
 
 
-async def migrate_batch_error() -> None:
-    import polars as pl
-    from data_contracts.preselector.store import Preselector
-    from data_contracts.sources import databricks_catalog
+async def migrate_source(source: UCTableSource, view: FeatureViewWrapper) -> None:
+    from data_contracts.unity_catalog import pyspark_schema_changes
 
-    source = databricks_catalog.schema("mloutputs").table("preselector_batch")
-    source = source.overwrite_schema()
+    table_identifier = source.table.identifier()
+    spark = source.config.connection()
+    if not spark.catalog.tableExists(table_identifier):
+        logger.info(f"Did not find table '{table_identifier}'. Will not migrate.")
+        return
 
-    df = await source.all_columns().to_pandas()
-    df["taste_preferences"] = df["taste_preferences"].astype(str)
+    df = spark.read.table(table_identifier)
 
-    error_features = [
-        feat.name
-        for feat in BasketFeatures.query().request.all_returned_features
-        if StaticFeatureTags.is_entity not in (feat.tags or [])
-    ]
-    error_vector_type = pl.Struct({feat: pl.Float64 for feat in error_features})
+    change = pyspark_schema_changes(df.schema, view.request.spark_schema())
 
-    new_df = pl.from_pandas(df).with_columns(pl.col("error_vector").cast(error_vector_type))
+    if not change.has_changes:
+        logger.info(
+            f"Everything is up to date. Skipping migration of source '{table_identifier}'"
+            f" to the expected schema in view '{view.location}'"
+        )
+        return
 
-    await (
-        Preselector.query()
-        .store.update_source_for(Preselector.location, source)
-        .overwrite(Preselector.location, new_df)
-    )
+    spark_sql = change.to_spark_sql(table_identifier)
+
+    commands = spark_sql.split(";")
+    for command in commands:
+        spark.sql(command)
 
 
 async def migrate() -> None:
-    pass
+    await migrate_source(ml_outputs.table("preselector_batch"), Preselector)
+    await migrate_source(ml_outputs.table("preselector_validate"), Preselector)
+    await migrate_source(ml_outputs.table("preselector_successful_realtime_output"), SuccessfulPreselectorOutput)
 
 
 async def main() -> None:

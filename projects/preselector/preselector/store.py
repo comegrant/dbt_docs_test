@@ -17,5 +17,4 @@ def preselector_store() -> ContractStore:
     store.add_feature_view(RecipePreferences)
     store.add_feature_view(PreselectorOutput)
     store.add_feature_view(CostOfFoodPerMenuWeek)
-
     return store

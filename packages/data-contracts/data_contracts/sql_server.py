@@ -4,29 +4,26 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
 import polars as pl
 from aligned.data_source.batch_data_source import CodableBatchDataSource, ColumnFeatureMappable
 from aligned.feature_source import WritableFeatureSource
-from aligned.request.retrival_request import RetrivalRequest
-from aligned.retrival_job import RequestResult, RetrivalJob
+from aligned.request.retrieval_request import RetrievalRequest
+from aligned.retrieval_job import RequestResult, RetrievalJob
 from aligned.schemas.codable import Codable
-from aligned.schemas.derivied_feature import AggregatedFeature, AggregateOver
-
-if TYPE_CHECKING:
-    from aligned.schemas.feature import EventTimestamp
+from aligned.schemas.derivied_feature import AggregatedFeature, AggregateOver, Feature
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class SqlServerJob(RetrivalJob, CodableBatchDataSource):
+class SqlServerJob(RetrievalJob, CodableBatchDataSource):  # type: ignore
     config: SqlServerConfig
     query: str
-    requests: list[RetrivalRequest] = field(default_factory=list)
+    requests: list[RetrievalRequest] = field(default_factory=list)
     type_name: str = "raw_sql_server_query"
 
     def job_group_key(self) -> str:
@@ -45,25 +42,26 @@ Query:
 
     @property
     def request_result(self) -> RequestResult:
-        return RequestResult.from_request_list(self.retrival_requests)
+        return RequestResult.from_request_list(self.retrieval_requests)
 
     @property
-    def retrival_requests(self) -> list[RetrivalRequest]:
+    def retrieval_requests(self) -> list[RetrievalRequest]:
         return self.requests
 
     def join(
         self,
-        job: RetrivalJob,
-        method: str,
-        on_columns: str | tuple[str, str],
-    ) -> RetrivalJob:
-        from aligned.retrival_job import JoinJobs
+        job: RetrievalJob,
+        method: Literal["inner", "left", "outer"],
+        left_on: str | list[str],
+        right_on: str | list[str],
+    ) -> RetrievalJob:
+        from aligned.retrieval_job import JoinJobs
 
-        if not isinstance(on_columns, str):
-            left_on, right_on = on_columns
-        else:
-            left_on = on_columns
-            right_on = on_columns
+        if isinstance(left_on, str):
+            left_on = [left_on]
+
+        if isinstance(right_on, str):
+            right_on = [right_on]
 
         if isinstance(job, SqlServerJob):
             return SqlServerJob(
@@ -75,11 +73,11 @@ Query:
             )
 
         return JoinJobs(
-            method=method, # type: ignore
+            method=method,  # type: ignore
             left_job=self,
             right_job=job,
-            left_on=[left_on],
-            right_on=[right_on],
+            left_on=left_on,
+            right_on=right_on,
         )
 
     async def to_lazy_polars(self) -> pl.LazyFrame:
@@ -93,10 +91,10 @@ Query:
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         import sqlglot
 
         if not request.event_timestamp:
@@ -116,14 +114,14 @@ Query:
 
         return SqlServerJob(self.config, query=query, requests=[request])
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         query = self.query
         if limit:
             query = f"SELECT TOP {limit} sub.* FROM ({query}) sub"
 
         return SqlServerJob(self.config, query=query, requests=[request])
 
-    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+    def features_for(self, facts: RetrievalJob, request: RetrievalRequest) -> RetrievalJob:
         raise NotImplementedError(f"Not implemented for {type(self)}")
 
 
@@ -238,7 +236,7 @@ GROUP BY {entity_select}
 
 def build_full_select_query_mssql(
     source: SqlServerDataSource,
-    request: RetrivalRequest,
+    request: RetrievalRequest,
     limit: int | None,
 ) -> str:
     """
@@ -313,7 +311,7 @@ def insert_mssql_queries(
 
 
 def factual_mssql_query(
-    requests: list[RetrivalRequest],
+    requests: list[RetrievalRequest],
     entities: SqlServerJob,
     sources: dict[str, SqlServerDataSource],
 ) -> str:
@@ -492,7 +490,7 @@ Column Mappings: *{self.mapping_keys}*"""
     def __hash__(self) -> int:
         return hash(self.table)
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         # if request.aggregated_features:
         #
         # return SqlServerJob(
@@ -522,31 +520,31 @@ Column Mappings: *{self.mapping_keys}*"""
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         from aligned.psql.jobs import build_date_range_query_psql
 
         return SqlServerJob(
             config=self.config,
-            query=build_date_range_query_psql(self, request, start_date, end_date), # type: ignore
+            query=build_date_range_query_psql(self, request, start_date, end_date),  # type: ignore
             requests=[request],
         )
 
     @classmethod
-    def multi_source_features_for(
+    def multi_source_features_for(  # type: ignore
         cls: type[SqlServerDataSource],
-        facts: RetrivalJob,
-        requests: list[tuple[SqlServerDataSource, RetrivalRequest]],
-    ) -> RetrivalJob:
-        from aligned.local.job import LiteralRetrivalJob
+        facts: RetrievalJob,
+        requests: list[tuple[SqlServerDataSource, RetrievalRequest]],
+    ) -> RetrievalJob:
+        from aligned.local.job import LiteralRetrievalJob
 
         sources = {request.name: source for source, request in requests}
         reqs = [request for _, request in requests]
         config = next(iter(sources.values())).config
 
-        if isinstance(facts, LiteralRetrivalJob):
+        if isinstance(facts, LiteralRetrievalJob):
             values_sql = df_to_values_query(facts.df.collect().to_pandas(), "entities")
             facts = SqlServerJob(config, query=f"SELECT * FROM ({values_sql}")
 
@@ -561,7 +559,7 @@ Column Mappings: *{self.mapping_keys}*"""
             requests=reqs,
         )
 
-    async def freshness(self, event_timestamp: EventTimestamp) -> datetime | None:
+    async def freshness(self, feature: Feature) -> datetime | None:
         import polars as pl
 
         table = self.table
@@ -569,7 +567,7 @@ Column Mappings: *{self.mapping_keys}*"""
             table = f"{self.config.schema}.{self.table}"
 
         value = pl.read_database(
-            f"SELECT MAX({event_timestamp.name}) as freshness FROM {table}",
+            f"SELECT MAX({feature.name}) as freshness FROM {table}",
             connection=self.config.url,
         )["freshness"].max()
 
@@ -581,15 +579,8 @@ Column Mappings: *{self.mapping_keys}*"""
         else:
             return None
 
-    async def upsert(self, job: RetrivalJob, requests: list[RetrivalRequest]) -> None:
+    async def upsert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         import aioodbc
-
-        if len(requests) != 1:
-            raise ValueError(
-                f"Only support writing for one request, got {len(requests)}.",
-            )
-
-        request = requests[0]
 
         data = await job.to_pandas()
         pool = await aioodbc.create_pool(dsn=self.config.url)
@@ -622,15 +613,8 @@ Column Mappings: *{self.mapping_keys}*"""
 
         await asyncio.gather(*[insert_query(query) for query in queries])
 
-    async def insert(self, job: RetrivalJob, requests: list[RetrivalRequest]) -> None:
+    async def insert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         import aioodbc
-
-        if len(requests) != 1:
-            raise ValueError(
-                f"Only support writing for one request, got {len(requests)}.",
-            )
-
-        request = requests[0]
 
         data = await job.to_pandas()
         pool = await aioodbc.create_pool(dsn=self.config.url)

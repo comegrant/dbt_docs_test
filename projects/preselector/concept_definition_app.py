@@ -424,7 +424,7 @@ def plot_importance_graph(data: pl.DataFrame) -> None:
 
     bars = ax.barh(
         data["feature"].to_list(),
-        data["target"].clip_min(0.01).to_list(),
+        data["target"].clip(lower_bound=0.01).to_list(),
         color="#d84f4f",
     )
 

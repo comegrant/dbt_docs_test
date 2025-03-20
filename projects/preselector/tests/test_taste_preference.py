@@ -7,7 +7,6 @@ from preselector.main import filter_out_recipes_based_on_preference
 
 @pytest.fixture()
 def model_contracts() -> ContractStore:
-    from aligned.feature_source import BatchFeatureSource
     from data_contracts.preselector.store import RecipeNegativePreferences
 
     store = ContractStore.empty()
@@ -32,11 +31,8 @@ def model_contracts() -> ContractStore:
         )
     }
 
-    assert isinstance(store.feature_source, BatchFeatureSource)
-    assert isinstance(store.feature_source.sources, dict)
-
     for location, source in locations.items():
-        store.feature_source.sources[location.identifier] = source
+        store.sources[location] = source
 
     return store
 

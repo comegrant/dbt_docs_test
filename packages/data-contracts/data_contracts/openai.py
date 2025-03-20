@@ -16,7 +16,7 @@ from aligned.exposed_model.interface import (
     ExposedModel,
     Feature,
     FeatureReference,
-    RetrivalJob,
+    RetrievalJob,
     VersionedModel,
 )
 from aligned.feature_store import ModelFeatureStore
@@ -67,9 +67,7 @@ And use the prompt template:
     async def needed_entities(self, store: ModelFeatureStore) -> set[Feature]:
         return store.needed_entities()
 
-    async def run_polars(
-        self, values: RetrivalJob, store: ModelFeatureStore
-    ) -> pl.DataFrame:
+    async def run_polars(self, values: RetrievalJob, store: ModelFeatureStore) -> pl.DataFrame:
         import os
 
         from openai import AsyncClient
@@ -112,9 +110,7 @@ And use the prompt template:
             )
 
         if entities.is_empty():
-            raise ValueError(
-                f"No prompts to generate completions for. {entities} is empty"
-            )
+            raise ValueError(f"No prompts to generate completions for. {entities} is empty")
 
         file_name = f"{uuid4()}.jsonl"
         with Path(file_name).open(mode="a") as file:
@@ -159,9 +155,7 @@ And use the prompt template:
             content = await client.files.content(batch_request.error_file_id)
         else:
             if batch_request.errors:
-                raise ValueError(
-                    f"Batch request failed with errors: {batch_request.errors}"
-                )
+                raise ValueError(f"Batch request failed with errors: {batch_request.errors}")
 
             raise ValueError("No output file found in batch request.")
 
@@ -176,54 +170,36 @@ And use the prompt template:
             for entity, value in zip(entity_info, key.split("-"), strict=False):
                 sub_res[entity.name] = entity.dtype.python_type(value)
 
-            sub_res[self.output_name] = response["response"]["body"]["choices"][0][
-                "message"
-            ]["content"]
+            sub_res[self.output_name] = response["response"]["body"]["choices"][0]["message"]["content"]
             ret_vals.append(sub_res)
 
         ret_df = pl.DataFrame(ret_vals)
 
         for entity in entity_info:
-            ret_df = ret_df.with_columns(
-                pl.col(entity.name).cast(entity.dtype.polars_type)
-            )
+            ret_df = ret_df.with_columns(pl.col(entity.name).cast(entity.dtype.polars_type))
 
         if model_version_column:
-            ret_df = ret_df.with_columns(
-                pl.lit(model_version).alias(model_version_column.name)
-            )
+            ret_df = ret_df.with_columns(pl.lit(model_version).alias(model_version_column.name))
 
         return prompts.join(ret_df, on="recipe_id", how="left")
 
 
-def write_batch_request(
-    texts: list[str],
-    path: Path,
-    model: str,
-    url: str
-) -> None:
+def write_batch_request(texts: list[str], path: Path, model: str, url: str) -> None:
     """
     Creates a .jsonl file for batch processing, with each line being a request to the embeddings API.
     """
     with path.open("w") as f:
         for i, text in enumerate(texts):
             request = {
-                "custom_id": f"request-{i+1}",
+                "custom_id": f"request-{i + 1}",
                 "method": "POST",
                 "url": url,
-                "body": {
-                    "model": model,
-                    "input": text
-                }
+                "body": {"model": model, "input": text},
             }
-            f.write(json.dumps(request) + '\n')
+            f.write(json.dumps(request) + "\n")
 
-async def chunk_batch_embedding_request(
-    texts: list[str],
-    model: str,
-    client: AsyncClient
-) -> pl.DataFrame:
 
+async def chunk_batch_embedding_request(texts: list[str], model: str, client: AsyncClient) -> pl.DataFrame:
     max_batch = 50_000
     number_of_batches = ceil(len(texts) / max_batch)
 
@@ -238,10 +214,7 @@ async def chunk_batch_embedding_request(
         else:
             batch_prompts = texts[start:end_batch]
 
-
-        result = await make_batch_embedding_request(
-            batch_prompts, model, client
-        )
+        result = await make_batch_embedding_request(batch_prompts, model, client)
 
         if batch_result is None:
             batch_result = result
@@ -252,35 +225,25 @@ async def chunk_batch_embedding_request(
     return batch_result
 
 
-async def make_batch_embedding_request(
-    texts: list[str],
-    model: str,
-    client: AsyncClient
-) -> pl.DataFrame:
-
+async def make_batch_embedding_request(texts: list[str], model: str, client: AsyncClient) -> pl.DataFrame:
     id_path = str(uuid4())
     batch_file = Path(id_path)
     output_file = Path(id_path + "-output.jsonl")
 
-    write_batch_request(
-        texts, batch_file, model, "/v1/embeddings"
-    )
-    request_file = await client.files.create(
-        file=batch_file,
-        purpose="batch"
-    )
+    write_batch_request(texts, batch_file, model, "/v1/embeddings")
+    request_file = await client.files.create(file=batch_file, purpose="batch")
     response = await client.batches.create(
         input_file_id=request_file.id,
         endpoint="/v1/embeddings",
         completion_window="24h",
-        metadata={"description": "Embedding batch job"}
+        metadata={"description": "Embedding batch job"},
     )
     status_response = await client.batches.retrieve(response.id)
 
     last_process = None
     expected_duration_left = 60
 
-    while status_response.status not in ['completed', 'failed']:
+    while status_response.status not in ["completed", "failed"]:
         await asyncio.sleep(expected_duration_left * 0.8)  # Poll every minute
         status_response = await client.batches.retrieve(response.id)
         logger.info(f"Status of batch request {status_response.status}")
@@ -293,18 +256,11 @@ async def make_batch_embedding_request(
             leftover_records = status_response.request_counts.total - processed_records
 
         if status_response.in_progress_at:
-            last_process = datetime.fromtimestamp(
-                status_response.in_progress_at,
-                tz=timezone.utc
-            )
+            last_process = datetime.fromtimestamp(status_response.in_progress_at, tz=timezone.utc)
             now = datetime.now(tz=timezone.utc)
 
-            items_per_process = (
-                now - last_process
-            ).total_seconds() / max(processed_records, 1)
-            expected_duration_left = max(
-                items_per_process * leftover_records, 60
-            )
+            items_per_process = (now - last_process).total_seconds() / max(processed_records, 1)
+            expected_duration_left = max(items_per_process * leftover_records, 60)
 
     batch_info = await client.batches.retrieve(response.id)
     output_file_id = batch_info.output_file_id
@@ -317,23 +273,18 @@ async def make_batch_embedding_request(
     embeddings = pl.read_ndjson(output_file.as_posix())
     expanded_emb = (
         embeddings.unnest("response")
-            .unnest("body")
-            .explode("data")
-            .select(["custom_id", "data"])
-            .unnest("data")
-            .select(["custom_id", "embedding"])
-            .with_columns(
-                pl.col("custom_id").str.split("-").list.get(1).alias("index")
-            )
+        .unnest("body")
+        .explode("data")
+        .select(["custom_id", "data"])
+        .unnest("data")
+        .select(["custom_id", "embedding"])
+        .with_columns(pl.col("custom_id").str.split("-").list.get(1).alias("index"))
     )
     return expanded_emb
 
 
 async def embed_texts(
-    texts: list[str],
-    model: str,
-    skip_if_n_chunks: int | None,
-    client: AsyncClient
+    texts: list[str], model: str, skip_if_n_chunks: int | None, client: AsyncClient
 ) -> list[list[float]] | str:
     import tiktoken
 
@@ -367,38 +318,32 @@ async def embed_texts(
         if last_chunk_index == 0 and chunk_index >= number_of_texts - 1:
             chunk_texts = texts
         elif last_chunk_index == 0:
-            chunk_texts = texts[: chunk_index]
+            chunk_texts = texts[:chunk_index]
         elif chunk_index >= number_of_texts - 1:
             chunk_texts = texts[last_chunk_index:]
         else:
-            chunk_texts = texts[last_chunk_index: chunk_index]
+            chunk_texts = texts[last_chunk_index:chunk_index]
 
-        res = await client.embeddings.create(
-            input=chunk_texts, model=model
-        )
-        embeddings.extend([
-            emb.embedding for emb in res.data
-        ])
+        res = await client.embeddings.create(input=chunk_texts, model=model)
+        embeddings.extend([emb.embedding for emb in res.data])
         last_chunk_index = chunk_index
 
     return embeddings
 
 
-
 @dataclass
 class OpenAiEmbeddingPredictor(ExposedModel, VersionedModel):
-
     model: str
 
     batch_on_n_chunks: int = 100
     feature_refs: list[FeatureReference] = None  # type: ignore
-    output_name: str = ''
-    prompt_template: str = ''
-    model_type = 'openai_emb'
+    output_name: str = ""
+    prompt_template: str = ""
+    model_type = "openai_emb"
 
     @property
     def exposed_at_url(self) -> str | None:
-        return 'https://api.openai.com/'
+        return "https://api.openai.com/"
 
     def prompt_template_hash(self) -> str:
         from hashlib import sha256
@@ -432,19 +377,19 @@ And use the prompt template:
         embeddings = model.predictions_view.embeddings()
         assert len(embeddings) == 1, f"Need at least one embedding. Got {len(embeddings)}"
 
-        if self.output_name == '':
+        if self.output_name == "":
             self.output_name = embeddings[0].name
 
         if not self.feature_refs:
             self.feature_refs = list(model.feature_references())
 
-        if self.prompt_template == '':
+        if self.prompt_template == "":
             for feat in self.feature_refs:
                 self.prompt_template += f"{feat.name}: {{{feat.name}}}\n\n"
 
         return self
 
-    async def run_polars(self, values: RetrivalJob, store: ModelFeatureStore) -> pl.DataFrame:
+    async def run_polars(self, values: RetrievalJob, store: ModelFeatureStore) -> pl.DataFrame:
         from openai import AsyncClient
 
         client = AsyncClient()
@@ -458,7 +403,6 @@ And use the prompt template:
         else:
             df = await values.to_polars()
 
-
         if len(expected_cols) == 1:
             texts = df[self.feature_refs[0].name].to_list()
         else:
@@ -467,25 +411,20 @@ And use the prompt template:
                 texts.append(self.prompt_template.format(**row))
 
         realtime_emb = await embed_texts(
-            texts,
-            model=self.model,
-            skip_if_n_chunks=self.batch_on_n_chunks,
-            client=client
+            texts, model=self.model, skip_if_n_chunks=self.batch_on_n_chunks, client=client
         )
 
         if isinstance(realtime_emb, list):
-            return df.hstack([
-                pl.Series(
-                    name=self.output_name,
-                    values=realtime_emb,
-                    dtype=pl.List(pl.Float32),
-                )
-            ])
+            return df.hstack(
+                [
+                    pl.Series(
+                        name=self.output_name,
+                        values=realtime_emb,
+                        dtype=pl.List(pl.Float32),
+                    )
+                ]
+            )
 
-        batch_result = await chunk_batch_embedding_request(
-            texts, self.model, client
-        )
+        batch_result = await chunk_batch_embedding_request(texts, self.model, client)
 
-        return df.hstack(
-            [batch_result["embedding"].alias(self.output_name)]
-        )
+        return df.hstack([batch_result["embedding"].alias(self.output_name)])

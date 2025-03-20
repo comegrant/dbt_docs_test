@@ -74,7 +74,9 @@ async def load_cache_for(
             except Exception:
                 logger.info(f"Will load data due to either missing data, or incorrect schema. for {location}")
 
-        logger.info(f"Loading {location} to cache")
+        from_source = store.sources[location]
+        logger.info(f"Loading {location} to cache from {from_source.source_id()}")
+
         if location.location_type == "feature_view":
             job = store.feature_view(location.name).all().remove_derived_features()
         else:

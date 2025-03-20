@@ -47,19 +47,19 @@ class PreselectorYearWeekResponse(BaseModel):
     @computed_field
     @property
     def variation_ids(self) -> list[str]:
-        "Is here to keep backwards compatability"
+        "Is here to keep backwards compatibility"
         return [rec.variation_id for rec in self.recipe_data]
 
     @computed_field
     @property
     def main_recipe_ids(self) -> list[int]:
-        "Is here to keep backwards compatability"
+        "Is here to keep backwards compatibility"
         return [rec.main_recipe_id for rec in self.recipe_data]
 
     @computed_field
     @property
     def compliancy(self) -> PreselectorPreferenceCompliancy:
-        "Is here to keep backwards compatability"
+        "Is here to keep backwards compatibility"
         return PreselectorPreferenceCompliancy(min(rec.compliancy.real for rec in self.recipe_data))
 
     @model_validator(mode="before")
@@ -152,10 +152,11 @@ class PreselectorSuccessfulResponse(BaseModel):
             # Need to convert the keys to strings,
             # as polars do not support ints as the key type
             mealkit_dict["ordered_weeks_ago"] = (
-                json.dumps({str(key): value for key, value in mealkit.ordered_weeks_ago.items()})
+                json.dumps({str(key): str(value) for key, value in mealkit.ordered_weeks_ago.items()})
                 if mealkit.ordered_weeks_ago
                 else None
             )
+            mealkit_dict["weeks_since_selected"] = mealkit_dict["ordered_weeks_ago"]
 
             mealkit_dict["recipes"] = [recipe.model_dump() for recipe in mealkit.recipe_data]
 

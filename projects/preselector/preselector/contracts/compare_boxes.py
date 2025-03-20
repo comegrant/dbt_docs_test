@@ -5,8 +5,6 @@ import pandas as pd
 import polars as pl
 from aligned import ContractStore, Int32, String, feature_view
 from aligned.compiler.feature_factory import List
-from aligned.request.retrival_request import RetrivalRequest
-from aligned.schemas.feature import FeatureType
 from data_contracts.recipe import NormalizedRecipeFeatures
 from data_contracts.sources import SqlServerConfig, adb, data_science_data_lake
 from preselector.data.models.customer import PreselectorCustomer
@@ -16,32 +14,13 @@ logger = logging.getLogger(__name__)
 preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
 
 
-def needed_features_for(request: RetrivalRequest) -> list[tuple[str, FeatureType]]:
-    needed_features: set[tuple[str, FeatureType]] = set()
-    for feature in request.derived_features:
-        for depend_on in feature.depending_on:
-            if depend_on.location != request.location:
-                needed_features.add((depend_on.name, depend_on.dtype))
-
-    for feature in request.aggregated_features:
-        for depend_on in feature.depending_on:
-            if depend_on.location != request.location:
-                needed_features.add((depend_on.name, depend_on.dtype))
-
-    return list(needed_features)
-
-
 async def compute_normalized_features(recipes: pl.DataFrame, store: ContractStore) -> pl.DataFrame:
     # Fixes a bug in the data
     recipes = recipes.unique("recipe_id")
 
-    return (await store.feature_view(NormalizedRecipeFeatures)
-        .features_for(recipes)
-        .drop_invalid()
-        .to_polars()
-    ).with_columns(
-        order_rank=pl.lit(0)
-    )
+    return (
+        await store.feature_view(NormalizedRecipeFeatures).features_for(recipes).drop_invalid().to_polars()
+    ).with_columns(order_rank=pl.lit(0))
 
 
 async def historical_preselector_vector(
@@ -106,7 +85,7 @@ async def historical_preselector_vector(
         ).to_polars()
     ).select(pl.exclude("basket_id"))
 
-    feature_importance = 1 / basket_features.fill_nan(0).std().transpose().to_series().clip_min(0.2)
+    feature_importance = 1 / basket_features.fill_nan(0).std().transpose().to_series().clip(lower_bound=0.2)
     soft_max_importance = feature_importance.exp() / feature_importance.exp().sum()
     target_vector = basket_features.fill_nan(0).mean().transpose().to_series()
 
@@ -186,7 +165,7 @@ FROM (SELECT rec.recipe_id,
         INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
         INNER JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
       WHERE
-        rec.main_recipe_id IN ({', '.join([str(x) for x in main_recipe_ids])})
+        rec.main_recipe_id IN ({", ".join([str(x) for x in main_recipe_ids])})
         AND rec.recipes_year = {year}
         AND rec.recipes_week = {week}) as recipes
 WHERE recipes.nr = 1"""
@@ -286,7 +265,7 @@ SELECT ba.agreement_id
     INNER JOIN product_layer.product p ON p.id = pv.product_id
     WHERE
         p.product_type_id = @PRODUCT_TYPE_ID_MEALBOX
-        AND ba.agreement_id IN ({', '.join([str(x) for x in agreement_ids])})
+        AND ba.agreement_id IN ({", ".join([str(x) for x in agreement_ids])})
     """
 
     return await (

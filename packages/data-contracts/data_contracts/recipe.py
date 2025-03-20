@@ -18,8 +18,8 @@ from aligned import (
 from aligned.exposed_model.interface import openai_embedding
 from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
-from aligned.retrival_job import RetrivalJob
-from aligned.schemas.feature_view import RetrivalRequest
+from aligned.retrieval_job import RetrievalJob
+from aligned.schemas.feature_view import RetrievalRequest
 from aligned.sources.in_mem_source import InMemorySource
 from project_owners.owner import Owner
 
@@ -258,7 +258,7 @@ class MainIngredients:
     is_main_carbohydrate = Bool()
 
 
-async def recipe_main_ingredient_category(request: RetrivalRequest) -> pl.LazyFrame:
+async def recipe_main_ingredient_category(request: RetrievalRequest) -> pl.LazyFrame:
     df = (
         await MainIngredients.query()
         .all()
@@ -417,8 +417,8 @@ class RecipeFeatures:
     is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25)  # noqa: PLR2004
     is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
 
-    taxonomies = List(String())
-    taxonomy_ids = List(Int32())
+    taxonomies = List(String()).description("The taxonomies for a recipe")
+    taxonomy_ids = List(Int32()).description("The taconomy ids for a recipe")
 
     is_addon_kit = taxonomy_ids.contains(2164)
     is_adams_signature = taxonomy_ids.contains(2146)
@@ -643,7 +643,7 @@ class RecipeCost:
     suggested_selling_price_incl_vat = Float()
 
 
-def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
+def compute_recipe_features(store: ContractStore | None = None) -> RetrievalJob:
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
         """
         Makes it easier to swap between prod, and manually defined data for testing.
@@ -665,7 +665,7 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
         .all()
         .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").not_()))
         .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
-        .with_request(nutrition.retrival_requests)  # Hack to get around a join bug
+        .with_request(nutrition.retrieval_requests)  # Hack to get around a join bug
         .join(
             cost,
             method="inner",
@@ -677,14 +677,16 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrivalJob:
 
 
 async def compute_normalized_features(
-    request: RetrivalRequest, limit: int | None, store: ContractStore | None = None
+    request: RetrievalRequest, limit: int | None, store: ContractStore | None = None
 ) -> pl.LazyFrame:
     menu_recipe_features = await compute_recipe_features(store).derive_features([request]).to_polars()
 
     needed_features = [(feature.name, feature.dtype) for feature in request.returned_features.union(request.entities)]
 
-    min_max_scaled_features = [name for name, dtype in needed_features if "float" in dtype.name and dtype.is_numeric]
-    other_features = [name for name, _ in needed_features if name not in min_max_scaled_features]
+    min_max_scaled_features = list(
+        {name for name, dtype in needed_features if "float" in dtype.name and dtype.is_numeric}
+    )
+    other_features = list({name for name, _ in needed_features if name not in min_max_scaled_features})
 
     menu_recipe_features = menu_recipe_features.with_columns(year_week=pl.col("year") * 100 + pl.col("week"))
 
@@ -707,6 +709,7 @@ async def compute_normalized_features(
         normalized = normalized.transpose().rename(
             lambda x: min_max_scaled_features[int(x.split("_")[1])],
         )
+
         normalized = pl.concat(
             [
                 normalized,
@@ -752,7 +755,7 @@ class NormalizedRecipeFeatures:
     main_recipe_id = Int32()
     main_ingredient_id = Int32().is_optional()
 
-    taxonomy_ids = List(Int32())
+    taxonomy_ids = List(Int32()).description("The taxonomy ids for that recipe")
 
     year = Int32()
     week = Int32()
@@ -965,11 +968,11 @@ class RecipePreferences:
 
     main_recipe_id = Int32()
 
-    preference_ids = List(String())
-    preferences = List(String())
+    preference_ids = List(String()).description("the preference ids for a recipe")
+    preferences = List(String()).description("the preference name for a recipe")
 
 
-async def join_recipe_and_allergies(request: RetrivalRequest, store: ContractStore | None = None) -> pl.LazyFrame:
+async def join_recipe_and_allergies(request: RetrievalRequest, store: ContractStore | None = None) -> pl.LazyFrame:
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
         """
         Makes it easier to swap between prod, and manually defined data for testing.
@@ -1040,4 +1043,4 @@ class RecipeNegativePreferences:
 
     portion_id = String()
 
-    preference_ids = List(String())
+    preference_ids = List(String()).description("the preferencefor a recipe")

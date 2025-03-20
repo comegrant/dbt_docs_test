@@ -1,6 +1,7 @@
 from aligned import FeatureStore
 from aligned.compiler.model import ModelContractWrapper
 from aligned.feature_view.feature_view import FeatureViewWrapper
+from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.orders import CurrentSelectedRecipes, WeeksSinceRecipe
 from data_contracts.preselector.basket_features import BasketFeatures, HistoricalCustomerMealkitFeatures
 from data_contracts.recipe import (
@@ -93,6 +94,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         BasketFeatures,
         UserCompletedQuiz,
         CurrentSelectedRecipes,
+        AttributeScoring,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,

@@ -52,6 +52,7 @@ LEFT JOIN number_of_recipes nr ON pvc.variation_id = nr.variation_id
 LEFT JOIN selling_price sp ON pvc.variation_id = sp.variation_id
 WHERE pv.product_id = 'd699150e-d2de-4bc1-a75c-8b70c9b28ae3'"""
 
+
 @feature_view(
     name="one_sub_mealkits",
     source=adb.fetch(one_sub_mealkit_features),
@@ -110,6 +111,7 @@ GROUP BY
     p.variation_name,
     p.variation_id"""
 
+
 @feature_view(
     name="default_mealbox_recipes",
     source=adb.fetch(default_mealbox_query).with_loaded_at(),
@@ -129,5 +131,5 @@ class DefaultMealboxRecipes:
 
     variation_name = String()
 
-    recipe_ids = List(Int32())
-    main_recipe_ids = List(Int32())
+    recipe_ids = List(Int32()).description("The recipe ids")
+    main_recipe_ids = List(Int32()).description("The main recipe ids")

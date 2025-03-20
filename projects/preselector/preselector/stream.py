@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, TypeVar
 
 from aligned import ContractStore
-from aligned.feature_source import BatchDataSource
+from aligned.data_source.batch_data_source import BatchDataSource
 from aligned.streams.interface import SinakableStream
 from aligned.streams.redis import RedisStream
 from azure.servicebus import (
@@ -308,15 +308,18 @@ class PreselectorResultWriter(WritableStream):
         from data_contracts.preselector.store import Preselector
 
         expected_features = Preselector.query().request.all_returned_columns
-        df = pl.concat([
-            row.to_dataframe()
-            for row in data
-            if isinstance(row, PreselectorSuccessfulResponse)
-        ], how="vertical_relaxed").with_columns(
-            agreement_id=pl.col("billing_agreement_id"),
-            year=pl.col("menu_year"),
-            week=pl.col("menu_week"),
-        ).select(expected_features)
+        df = (
+            pl.concat(
+                [row.to_dataframe() for row in data if isinstance(row, PreselectorSuccessfulResponse)],
+                how="vertical_relaxed",
+            )
+            .with_columns(
+                agreement_id=pl.col("billing_agreement_id"),
+                year=pl.col("menu_year"),
+                week=pl.col("menu_week"),
+            )
+            .select(expected_features)
+        )
 
         if self.sink is not None:
             self.store = self.store.update_source_for(Preselector.location, self.sink)

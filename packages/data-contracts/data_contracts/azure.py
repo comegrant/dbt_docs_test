@@ -14,7 +14,7 @@ from aligned.exceptions import UnableToFindFileException
 from aligned.feature_source import WritableFeatureSource
 from aligned.lazy_imports import pandas as pd
 from aligned.local.job import FileDateJob, FileFactualJob, FileFullJob
-from aligned.retrival_job import RetrivalJob, RetrivalRequest
+from aligned.retrieval_job import RetrievalJob, RetrievalRequest
 from aligned.schemas.codable import Codable
 from aligned.schemas.date_formatter import DateFormatter
 from aligned.schemas.feature import Feature, FeatureType
@@ -48,8 +48,8 @@ class AzurePath:
 
 
 def azure_container_blob(path: str) -> AzurePath:
-    splits = path.split('/')
-    return AzurePath(container=splits[0], blob_path='/'.join(splits[1:]))
+    splits = path.split("/")
+    return AzurePath(container=splits[0], blob_path="/".join(splits[1:]))
 
 
 @dataclass
@@ -60,7 +60,7 @@ class PathResolver(Codable):
     def path(self) -> Path:
         path = Path(self.components[0].read())
 
-        if len(self.components) < 2: # noqa
+        if len(self.components) < 2:  # noqa
             return path
 
         for comp in self.components[1:]:
@@ -75,27 +75,22 @@ class PathResolver(Codable):
     def replace(self, find: ValueRepresentable | str, new_value: ValueRepresentable | str) -> PathResolver:
         find_comp = LiteralValue.from_value(find)
         new_value_comp = LiteralValue.from_value(new_value)
-        return PathResolver([
-            new_value_comp
-            if find_comp == comp
-            else comp
-            for comp
-            in self.components
-        ])
+        return PathResolver([new_value_comp if find_comp == comp else comp for comp in self.components])
 
     def append(self, value: ValueRepresentable | str) -> PathResolver:
-        return PathResolver(
-            [*self.components, LiteralValue.from_value(value)]
-        )
+        return PathResolver([*self.components, LiteralValue.from_value(value)])
 
     @staticmethod
-    def from_value(values: list[ValueRepresentable] | str | PathResolver) -> PathResolver:
+    def from_value(values: ValueRepresentable | list[ValueRepresentable] | str | PathResolver) -> PathResolver:
         if isinstance(values, PathResolver):
             return values
         elif isinstance(values, str):
             return PathResolver([LiteralValue.from_value(values)])
-        else:
+        elif isinstance(values, list):
             return PathResolver(values)
+        else:
+            return PathResolver([values])
+
 
 @dataclass
 class AzureBlobConfig(Directory):
@@ -124,7 +119,7 @@ You can choose between two ways of authenticating with Azure Blob Storage.
 """
 
     def json_at(self, path: str) -> StorageFileReference:
-        raise NotImplementedError(type(self))
+        return AzureBlobDataSource(self, PathResolver.from_value(path))
 
     def parquet_at(
         self,
@@ -187,28 +182,28 @@ You can choose between two ways of authenticating with Azure Blob Storage.
             date_formatter=date_formatter or DateFormatter.unix_timestamp(),
         )
 
-    def directory(self, path: str) -> AzureBlobDirectory:
+    def directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:
         return AzureBlobDirectory(self, PathResolver.from_value(path))
 
-    def sub_directory(self, path: str) -> Directory:
+    def sub_directory(self, path: str | ValueRepresentable) -> Directory:  # type: ignore
         return self.directory(path)
 
     def client(self) -> BlobServiceClient:
         from azure.storage.blob import BlobServiceClient
 
         creds = self.read_creds()
-        account_name = creds['account_name']
+        account_name = creds["account_name"]
         account_url = f"https://{account_name}.blob.core.windows.net/"
 
-        if 'account_key' in creds:
+        if "account_key" in creds:
             return BlobServiceClient(account_url=account_url, credential=creds)
         else:
             from azure.identity import ClientSecretCredential
 
             creds = ClientSecretCredential(
-                tenant_id=creds['tenant_id'],
-                client_id=creds['client_id'],
-                client_secret=creds['client_secret'],
+                tenant_id=creds["tenant_id"],
+                client_id=creds["client_id"],
+                client_secret=creds["client_secret"],
             )
 
             return BlobServiceClient(account_url=account_url, credential=creds)
@@ -217,16 +212,13 @@ You can choose between two ways of authenticating with Azure Blob Storage.
         account_name = self.account_name.read()
 
         try:
-            return {
-                'account_name': account_name,
-                'account_key': self.account_id.read()
-            }
+            return {"account_name": account_name, "account_key": self.account_id.read()}
         except AttributeError:
             return {
-                'account_name': account_name,
-                'tenant_id': self.tenant_id.read(),
-                'client_id': self.client_id.read(),
-                'client_secret': self.client_secret.read()
+                "account_name": account_name,
+                "tenant_id": self.tenant_id.read(),
+                "client_id": self.client_id.read(),
+                "client_secret": self.client_secret.read(),
             }
 
     @property
@@ -235,19 +227,19 @@ You can choose between two ways of authenticating with Azure Blob Storage.
 
 
 class AzureConfigurable:
-    'Something that contains an azure config'
+    "Something that contains an azure config"
+
     config: AzureBlobConfig
 
 
 @dataclass
 class AzureBlobDirectory(Directory):
-
     config: AzureBlobConfig
     components: PathResolver
 
     @classmethod
     def schema_placeholder(cls) -> str:
-        return '{_schema_version_placeholder}'
+        return "{_schema_version_placeholder}"
 
     def json_at(self, path: str) -> StorageFileReference:
         return AzureBlobDataSource(self.config, self.components.append(path))
@@ -261,7 +253,7 @@ class AzureBlobDirectory(Directory):
     ) -> AzureBlobParquetDataSource:
         sub_path = self.components.append(path)
         return self.config.parquet_at(
-            sub_path, # type: ignore
+            sub_path,  # type: ignore
             mapping_keys=mapping_keys,
             config=config,
             date_formatter=date_formatter or DateFormatter.noop(),
@@ -277,7 +269,7 @@ class AzureBlobDirectory(Directory):
     ) -> AzureBlobPartitionedParquetDataSource:
         sub_path = self.components.append(directory)
         return self.config.partitioned_parquet_at(
-            sub_path, # type: ignore
+            sub_path,  # type: ignore
             partition_keys,
             mapping_keys=mapping_keys,
             config=config,
@@ -293,7 +285,7 @@ class AzureBlobDirectory(Directory):
     ) -> AzureBlobCsvDataSource:
         sub_path = self.components.append(path)
         return self.config.csv_at(
-            sub_path, # type: ignore
+            sub_path,  # type: ignore
             mapping_keys=mapping_keys,
             date_formatter=date_formatter or DateFormatter.unix_timestamp(),
             csv_config=csv_config or CsvConfig(),
@@ -308,39 +300,25 @@ class AzureBlobDirectory(Directory):
     ) -> AzureBlobDeltaDataSource:
         sub_path = self.components.append(path)
         return self.config.delta_at(
-            sub_path, # type: ignore
+            sub_path,  # type: ignore
             mapping_keys,
             config=config,
-            date_formatter=date_formatter
+            date_formatter=date_formatter,
         )
 
-    def sub_directory(self, path: str) -> AzureBlobDirectory:
-        return AzureBlobDirectory(
-            self.config,
-            self.components.append(path)
-        )
+    def sub_directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:  # type: ignore
+        return AzureBlobDirectory(self.config, self.components.append(path))
 
-    def directory(self, path: str) -> AzureBlobDirectory:
-        return AzureBlobDirectory(
-            self.config,
-            self.components.append(path)
-        )
+    def directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:  # type: ignore
+        return AzureBlobDirectory(self.config, self.components.append(path))
 
-    def with_schema_version(self, sub_directory: str | None = None) -> Directory:
+    def with_schema_version(self, sub_directory: str | ValueRepresentable | None = None) -> Directory:  # type: ignore
         if sub_directory:
             return AzureBlobDirectory(
-                self.config,
-                self.components.append(
-                    sub_directory
-                ).append(
-                    AzureBlobDirectory.schema_placeholder()
-                )
+                self.config, self.components.append(sub_directory).append(AzureBlobDirectory.schema_placeholder())
             )
         else:
-            return AzureBlobDirectory(
-                self.config,
-                self.components.append(AzureBlobDirectory.schema_placeholder())
-            )
+            return AzureBlobDirectory(self.config, self.components.append(AzureBlobDirectory.schema_placeholder()))
 
 
 @dataclass
@@ -357,11 +335,13 @@ class BlobStorage(Storage):
             byte_stream.seek(0)
             return byte_stream.read()
 
-    async def write(self, path: str, content: bytes) -> None:
+    async def write(self, path: str, content: bytes | bytearray) -> None:
         azure_path = azure_container_blob(path)
         client = self.config.client()
         container = client.get_blob_client(azure_path.container, azure_path.blob_path)
-        container.upload_blob(content, overwrite=True)
+        if not isinstance(content, bytes):
+            content = bytes(content)
+        container.upload_blob(bytes(content), overwrite=True)
 
 
 @dataclass
@@ -369,7 +349,7 @@ class AzureBlobDataSource(StorageFileReference, ColumnFeatureMappable):
     config: AzureBlobConfig
     path: PathResolver
 
-    type_name: str = 'azure_blob'
+    type_name: str = "azure_blob"
 
     def job_group_key(self) -> str:
         return f"{self.type_name}/{self.path.as_posix}"
@@ -386,16 +366,14 @@ class AzureBlobDataSource(StorageFileReference, ColumnFeatureMappable):
 
 
 @dataclass
-class AzureBlobCsvDataSource(
-    CodableBatchDataSource, DataFileReference, ColumnFeatureMappable, AzureConfigurable
-):
+class AzureBlobCsvDataSource(CodableBatchDataSource, DataFileReference, ColumnFeatureMappable, AzureConfigurable):
     config: AzureBlobConfig
     path: PathResolver
     mapping_keys: dict[str, str] = field(default_factory=dict)
     csv_config: CsvConfig = field(default_factory=CsvConfig)
     date_formatter: DateFormatter = field(default_factory=lambda: DateFormatter.unix_timestamp())
 
-    type_name: str = 'azure_blob_csv'
+    type_name: str = "azure_blob_csv"
 
     @property
     def to_markdown(self) -> str:
@@ -416,10 +394,7 @@ Path: *{self.path}*
         schema_hash = view.schema_hash()
         return AzureBlobCsvDataSource(
             config=self.config,
-            path=self.path.replace(
-                AzureBlobDirectory.schema_placeholder(),
-                schema_hash.hex()
-            ),
+            path=self.path.replace(AzureBlobDirectory.schema_placeholder(), schema_hash.hex()),
             mapping_keys=self.mapping_keys,
             csv_config=self.csv_config,
             date_formatter=self.date_formatter,
@@ -431,37 +406,38 @@ Path: *{self.path}*
             return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
 
         except FileNotFoundError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
         except HTTPStatusError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
 
     async def to_lazy_polars(self) -> pl.LazyFrame:
         url = f"az://{self.path.as_posix}"
         return pl.scan_csv(
             url,
-            separator=self.csv_config.seperator,
-            storage_options=self.config.read_creds(), # type: ignore
+            separator=self.csv_config.separator,
+            storage_options=self.config.read_creds(),  # type: ignore
         )
 
     async def to_pandas(self) -> pd.DataFrame:
+        file = self.path.as_posix
         try:
-            data = await self.storage.read(self.path.as_posix)
+            data = await self.storage.read(file)
             buffer = BytesIO(data)
             return pd.read_csv(
                 buffer,
-                sep=self.csv_config.seperator,
+                sep=self.csv_config.separator,
                 compression=self.csv_config.compression,
             )
         except FileNotFoundError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(file) from error
         except HTTPStatusError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(file) from error
 
     async def write_pandas(self, df: pd.DataFrame) -> None:
         url = f"az://{self.path.as_posix}"
         df.to_csv(
             url,
-            sep=self.csv_config.seperator,
+            sep=self.csv_config.separator,
             compression=self.csv_config.compression,
             storage_options=self.config.read_creds(),
         )
@@ -469,7 +445,7 @@ Path: *{self.path}*
     async def write_polars(self, df: pl.LazyFrame) -> None:
         await self.write_pandas(df.collect().to_pandas())
 
-    async def write(self, job: RetrivalJob, requests: list[RetrivalRequest]) -> None:
+    async def write(self, job: RetrievalJob, requests: list[RetrievalRequest]) -> None:
         if len(requests) != 1:
             raise ValueError(f"Only support writing on request, got {len(requests)}.")
 
@@ -479,12 +455,11 @@ Path: *{self.path}*
 
     @classmethod
     def multi_source_features_for(  # type: ignore
-        cls, facts: RetrivalJob, requests: list[tuple[AzureBlobCsvDataSource, RetrivalRequest]]
-    ) -> RetrivalJob:
-
+        cls, facts: RetrievalJob, requests: list[tuple[AzureBlobCsvDataSource, RetrievalRequest]]
+    ) -> RetrievalJob:
         source = requests[0][0]
         if not isinstance(source, cls):
-            raise ValueError(f'Only {cls} is supported, recived: {source}')
+            raise ValueError(f"Only {cls} is supported, received: {source}")
 
         # Group based on config
         return FileFactualJob(
@@ -494,18 +469,18 @@ Path: *{self.path}*
             date_formatter=source.date_formatter,
         )
 
-    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+    def features_for(self, facts: RetrievalJob, request: RetrievalRequest) -> RetrievalJob:
         return FileFactualJob(self, [request], facts, date_formatter=self.date_formatter)
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         return FileFullJob(self, request, limit, date_formatter=self.date_formatter)
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         return FileDateJob(
             source=self,
             request=request,
@@ -530,7 +505,7 @@ class AzureBlobPartitionedParquetDataSource(
     mapping_keys: dict[str, str] = field(default_factory=dict)
     parquet_config: ParquetConfig = field(default_factory=ParquetConfig)
     date_formatter: DateFormatter = field(default_factory=lambda: DateFormatter.noop())
-    type_name: str = 'azure_blob_partitiond_parquet'
+    type_name: str = "azure_blob_partitiond_parquet"
 
     @property
     def to_markdown(self) -> str:
@@ -551,10 +526,7 @@ Partition Keys: *{self.partition_keys}*
         schema_hash = view.schema_hash()
         return AzureBlobPartitionedParquetDataSource(
             config=self.config,
-            directory=self.directory.replace(
-                AzureBlobDirectory.schema_placeholder(),
-                schema_hash.hex()
-            ),
+            directory=self.directory.replace(AzureBlobDirectory.schema_placeholder(), schema_hash.hex()),
             partition_keys=self.partition_keys,
             mapping_keys=self.mapping_keys,
             parquet_config=self.parquet_config,
@@ -571,9 +543,9 @@ Partition Keys: *{self.partition_keys}*
             return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
 
         except FileNotFoundError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.directory.as_posix) from error
         except HTTPStatusError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.directory.as_posix) from error
 
     async def read_pandas(self) -> pd.DataFrame:
         return (await self.to_lazy_polars()).collect().to_pandas()
@@ -582,7 +554,7 @@ Partition Keys: *{self.partition_keys}*
         url = f"az://{self.directory.as_posix}/**/*.parquet"
         try:
             creds = self.config.read_creds()
-            return pl.scan_parquet(url, storage_options=creds)
+            return pl.scan_parquet(url, storage_options=creds, hive_partitioning=True)
         except FileNotFoundError as error:
             raise UnableToFindFileException(url) from error
         except HTTPStatusError as error:
@@ -600,9 +572,9 @@ Partition Keys: *{self.partition_keys}*
         fs = AzureBlobFileSystem(**self.config.read_creds())  # type: ignore
 
         pyarrow_options = {
-            'partition_cols': self.partition_keys,
-            'filesystem': fs,
-            'compression': 'zstd',
+            "partition_cols": self.partition_keys,
+            "filesystem": fs,
+            "compression": "zstd",
         }
 
         write_to_dataset(
@@ -613,12 +585,11 @@ Partition Keys: *{self.partition_keys}*
 
     @classmethod
     def multi_source_features_for(  # type: ignore
-        cls, facts: RetrivalJob, requests: list[tuple[AzureBlobParquetDataSource, RetrivalRequest]]
-    ) -> RetrivalJob:
-
+        cls, facts: RetrievalJob, requests: list[tuple[AzureBlobParquetDataSource, RetrievalRequest]]
+    ) -> RetrievalJob:
         source = requests[0][0]
         if not isinstance(source, cls):
-            raise ValueError(f'Only {cls} is supported, recived: {source}')
+            raise ValueError(f"Only {cls} is supported, received: {source}")
 
         # Group based on config
         return FileFactualJob(
@@ -628,18 +599,18 @@ Partition Keys: *{self.partition_keys}*
             date_formatter=source.date_formatter,
         )
 
-    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+    def features_for(self, facts: RetrievalJob, request: RetrievalRequest) -> RetrievalJob:
         return FileFactualJob(self, [request], facts, date_formatter=self.date_formatter)
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         return FileFullJob(self, request, limit, date_formatter=self.date_formatter)
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         return FileDateJob(
             source=self,
             request=request,
@@ -648,12 +619,12 @@ Partition Keys: *{self.partition_keys}*
             date_formatter=self.date_formatter,
         )
 
-    async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def insert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         features = request.all_returned_columns
         df = await job.select(features).to_lazy_polars()
         await self.write_polars(df.select(features))
 
-    async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def upsert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         from adlfs import AzureBlobFileSystem
 
         fs = AzureBlobFileSystem(**self.config.read_creds())  # type: ignore
@@ -662,7 +633,7 @@ Partition Keys: *{self.partition_keys}*
             paths = fs.find(directory_path)
 
             for path in paths:
-                if fs.info(path)['type'] == 'directory':
+                if fs.info(path)["type"] == "directory":
                     delete_directory_recursively(path)
                 else:
                     fs.rm(path)
@@ -695,7 +666,6 @@ Partition Keys: *{self.partition_keys}*
                 else:
                     filter_exp = current
 
-
         assert filter_exp is not None, "Filter should never be None, but was."
         try:
             existing_df = (await self.to_lazy_polars()).filter(filter_exp)
@@ -704,7 +674,6 @@ Partition Keys: *{self.partition_keys}*
             write_df = df.lazy()
 
         for row in unique_partitions.iter_rows(named=True):
-
             partition_dir = self.directory
 
             for partition_key in self.partition_keys:
@@ -724,7 +693,7 @@ Partition Keys: *{self.partition_keys}*
             paths = fs.find(directory_path)
 
             for path in paths:
-                if fs.info(path)['type'] == 'directory':
+                if fs.info(path)["type"] == "directory":
                     delete_directory_recursively(path)
                 else:
                     fs.rm(path)
@@ -733,21 +702,19 @@ Partition Keys: *{self.partition_keys}*
 
         delete_directory_recursively(self.directory.as_posix)
 
-    async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def overwrite(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         await self.delete()
         await self.insert(job, request)
 
 
 @dataclass
-class AzureBlobParquetDataSource(
-    CodableBatchDataSource, DataFileReference, ColumnFeatureMappable, AzureConfigurable
-):
+class AzureBlobParquetDataSource(CodableBatchDataSource, DataFileReference, ColumnFeatureMappable, AzureConfigurable):
     config: AzureBlobConfig
     path: PathResolver
     mapping_keys: dict[str, str] = field(default_factory=dict)
     parquet_config: ParquetConfig = field(default_factory=ParquetConfig)
     date_formatter: DateFormatter = field(default_factory=lambda: DateFormatter.noop())
-    type_name: str = 'azure_blob_parquet'
+    type_name: str = "azure_blob_parquet"
 
     @property
     def to_markdown(self) -> str:
@@ -782,9 +749,9 @@ Path: *{self.path}*
             return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
 
         except FileNotFoundError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
         except HTTPStatusError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
 
     async def read_pandas(self) -> pd.DataFrame:
         path = self.path.as_posix
@@ -826,12 +793,11 @@ Path: *{self.path}*
 
     @classmethod
     def multi_source_features_for(  # type: ignore
-        cls, facts: RetrivalJob, requests: list[tuple[AzureBlobParquetDataSource, RetrivalRequest]]
-    ) -> RetrivalJob:
-
+        cls, facts: RetrievalJob, requests: list[tuple[AzureBlobParquetDataSource, RetrievalRequest]]
+    ) -> RetrievalJob:
         source = requests[0][0]
         if not isinstance(source, cls):
-            raise ValueError(f'Only {cls} is supported, recived: {source}')
+            raise ValueError(f"Only {cls} is supported, received: {source}")
 
         # Group based on config
         return FileFactualJob(
@@ -841,18 +807,18 @@ Path: *{self.path}*
             date_formatter=source.date_formatter,
         )
 
-    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+    def features_for(self, facts: RetrievalJob, request: RetrievalRequest) -> RetrievalJob:
         return FileFactualJob(self, [request], facts, date_formatter=self.date_formatter)
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         return FileFullJob(self, request, limit, date_formatter=self.date_formatter)
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         return FileDateJob(
             source=self,
             request=request,
@@ -874,8 +840,8 @@ class AzureBlobDeltaDataSource(
     config: AzureBlobConfig
     path: PathResolver
     mapping_keys: dict[str, str] = field(default_factory=dict)
-    date_formatter: DateFormatter = field(default_factory=lambda: DateFormatter.unix_timestamp('ms'))
-    type_name: str = 'azure_blob_delta'
+    date_formatter: DateFormatter = field(default_factory=lambda: DateFormatter.unix_timestamp("ms"))
+    type_name: str = "azure_blob_delta"
 
     def job_group_key(self) -> str:
         return f"{self.type_name}/{self.path}"
@@ -917,18 +883,17 @@ Path: *{self.path}*
             schema = (await self.to_lazy_polars()).schema
             return {name: FeatureType.from_polars(pl_type) for name, pl_type in schema.items()}
         except FileNotFoundError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
         except HTTPStatusError as error:
-            raise UnableToFindFileException() from error
+            raise UnableToFindFileException(self.path.as_posix) from error
 
     @classmethod
     def multi_source_features_for(  # type: ignore
-        cls, facts: RetrivalJob, requests: list[tuple[AzureBlobDeltaDataSource, RetrivalRequest]]
-    ) -> RetrivalJob:
-
+        cls, facts: RetrievalJob, requests: list[tuple[AzureBlobDeltaDataSource, RetrievalRequest]]
+    ) -> RetrievalJob:
         source = requests[0][0]
         if not isinstance(source, cls):
-            raise ValueError(f'Only {cls} is supported, recived: {source}')
+            raise ValueError(f"Only {cls} is supported, received: {source}")
 
         # Group based on config
         return FileFactualJob(
@@ -938,18 +903,18 @@ Path: *{self.path}*
             date_formatter=source.date_formatter,
         )
 
-    def features_for(self, facts: RetrivalJob, request: RetrivalRequest) -> RetrivalJob:
+    def features_for(self, facts: RetrievalJob, request: RetrievalRequest) -> RetrievalJob:
         return FileFactualJob(self, [request], facts, date_formatter=self.date_formatter)
 
-    def all_data(self, request: RetrivalRequest, limit: int | None) -> RetrivalJob:
+    def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         return FileFullJob(self, request, limit, date_formatter=self.date_formatter)
 
     def all_between_dates(
         self,
-        request: RetrivalRequest,
+        request: RetrievalRequest,
         start_date: datetime,
         end_date: datetime,
-    ) -> RetrivalJob:
+    ) -> RetrievalJob:
         return FileDateJob(
             source=self,
             request=request,
@@ -968,30 +933,28 @@ Path: *{self.path}*
         df.collect().write_delta(
             url,
             storage_options=creds,
-            mode='append',
+            mode="append",
         )
 
-    def df_to_deltalake_compatible(
-        self, df: pl.DataFrame, request: RetrivalRequest
-    ) -> tuple[pl.DataFrame, dict]:
+    def df_to_deltalake_compatible(self, df: pl.DataFrame, request: RetrievalRequest) -> tuple[pl.DataFrame, dict]:
         import pyarrow as pa
         from aligned.schemas.constraints import Optional
 
         def pa_dtype(dtype: FeatureType) -> pa.DataType:
             pa_types = {
-                'int8': pa.int8(),
-                'int16': pa.int16(),
-                'int32': pa.int32(),
-                'int64': pa.int64(),
-                'float': pa.float64(),
-                'double': pa.float64(),
-                'string': pa.large_string(),
-                'date': pa.date64(),
-                'embedding': pa.large_list(pa.float32()),
-                'datetime': pa.float64(),
-                'list': pa.large_list(pa.int32()),
-                'array': pa.large_list(pa.int32()),
-                'bool': pa.bool_(),
+                "int8": pa.int8(),
+                "int16": pa.int16(),
+                "int32": pa.int32(),
+                "int64": pa.int64(),
+                "float": pa.float64(),
+                "double": pa.float64(),
+                "string": pa.large_string(),
+                "date": pa.date64(),
+                "embedding": pa.large_list(pa.float32()),
+                "datetime": pa.float64(),
+                "list": pa.large_list(pa.int32()),
+                "array": pa.large_list(pa.int32()),
+                "bool": pa.bool_(),
             }
 
             if dtype.name in pa_types:
@@ -1034,7 +997,7 @@ Path: *{self.path}*
 
         return df, schemas
 
-    async def insert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def insert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         import pyarrow as pa
 
         df = await job.to_polars()
@@ -1047,11 +1010,11 @@ Path: *{self.path}*
         df.select(list(orderd_schema.keys())).write_delta(
             url,
             storage_options=self.config.read_creds(),
-            mode='append',
-            delta_write_options={'schema': pa.schema(schema)},
+            mode="append",
+            delta_write_options={"schema": pa.schema(schema)},
         )
 
-    async def upsert(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def upsert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         import pyarrow as pa
         from deltalake.exceptions import TableNotFoundError
 
@@ -1064,7 +1027,7 @@ Path: *{self.path}*
 
         orderd_schema = OrderedDict(sorted(schemas.items()))
         schema = list(orderd_schema.values())
-        predicate = ' AND '.join([f"s.{key} = t.{key}" for key in merge_on])
+        predicate = " AND ".join([f"s.{key} = t.{key}" for key in merge_on])
 
         try:
             from deltalake import DeltaTable
@@ -1076,8 +1039,8 @@ Path: *{self.path}*
                 table.merge(
                     pa_df,
                     predicate=predicate,
-                    source_alias='s',
-                    target_alias='t',
+                    source_alias="s",
+                    target_alias="t",
                 )
                 .when_matched_update_all()
                 .when_not_matched_insert_all()
@@ -1087,9 +1050,9 @@ Path: *{self.path}*
         except TableNotFoundError:
             df.write_delta(
                 url,
-                mode='append',
+                mode="append",
                 storage_options=self.config.read_creds(),
-                delta_write_options={'schema': pa.schema(schema)},
+                delta_write_options={"schema": pa.schema(schema)},
             )
 
     async def delete(self) -> None:
@@ -1099,6 +1062,6 @@ Path: *{self.path}*
         table = DeltaTable(url, storage_options=self.config.read_creds())
         table.delete()
 
-    async def overwrite(self, job: RetrivalJob, request: RetrivalRequest) -> None:
+    async def overwrite(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         await self.delete()
         await self.insert(job, request)

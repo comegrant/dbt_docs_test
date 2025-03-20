@@ -33,6 +33,14 @@ resources:
               environment: "${var.environment}"
               should_force_update: "true"
 
+        - task_key: migrate
+          job_cluster_key: preselector
+          spark_python_task:
+            python_file: migrate.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+
         - task_key: batch-predict-gl
           job_cluster_key: preselector
           notebook_task:

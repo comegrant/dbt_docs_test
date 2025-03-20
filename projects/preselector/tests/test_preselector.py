@@ -4,7 +4,6 @@ from random import seed
 import polars as pl
 import pytest
 from aligned import ContractStore, FeatureLocation
-from aligned.feature_source import BatchFeatureSource
 from aligned.sources.in_mem_source import InMemorySource
 from aligned.sources.random_source import RandomDataSource, data_for_request
 from concept_definition_app import potential_features
@@ -46,17 +45,13 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
 
     features = potential_features()
 
-    assert isinstance(dummy_store.feature_source, BatchFeatureSource)
-    assert isinstance(dummy_store.feature_source.sources, dict)
-
-    for source in list(dummy_store.feature_source.sources.keys()):
-        loc = FeatureLocation.from_string(source)
+    for loc in list(dummy_store.sources.keys()):
         if loc.location_type != "feature_view":
             continue
 
         request = dummy_store.feature_view(loc.name).request
         if "agreement_id" in request.entity_names:
-            del dummy_store.feature_source.sources[loc.identifier]
+            del dummy_store.sources[loc]
 
     output = await run_preselector(
         customer=GenerateMealkitRequest(
@@ -181,20 +176,15 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
 
     # Removing the sources that the pre-selector source have not defined
     # Would be nice for something with better support for this.
-    source = dummy_store.feature_source
     preselector_deps = Preselector.metadata.source.depends_on().union({FeatureLocation.model("rec_engine")})
 
-    assert isinstance(source, BatchFeatureSource)
-    assert isinstance(source.sources, dict)
+    new_sources = dummy_store.sources.copy()
 
-    new_sources = source.sources.copy()
-
-    for source_identifier in source.sources:
-        loc = FeatureLocation.from_string(source_identifier)
+    for loc in dummy_store.sources:
         if loc not in preselector_deps:
-            del new_sources[source_identifier]
+            del new_sources[loc]
 
-    source.sources = new_sources
+    dummy_store.sources = new_sources
 
     request = GenerateMealkitRequest(
         agreement_id=agreement_id,

@@ -15,7 +15,8 @@ from aligned import (
     String,
     feature_view,
 )
-from aligned.retrival_job import RetrivalJob
+from aligned.retrieval_job import RetrievalJob
+from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.mealkits import OneSubMealkits
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import (
@@ -259,11 +260,11 @@ async def find_best_combination(
 
         e.g. recipe a and b -> 1 chicken, 0.2 similarity, 0.5 CoF, etc.
         """
-        job = RetrivalJob.from_polars_df(df, [basket_computations])
+        job = RetrievalJob.from_polars_df(df, [basket_computations])
         aggregations = await job.aggregate(basket_computations).to_polars()
 
         if mealkit_embedding is None:
-            return aggregations.with_columns(inter_week_similarity=pl.lit(0))
+            return aggregations.with_columns(intra_week_similarity=pl.lit(0))
 
         with_mealkit = recipe_embeddings.select(
             [pl.col("recipe_id"), pl.col("embedding"), pl.lit(mealkit_embedding).alias("mealkit_embedding")]
@@ -276,14 +277,16 @@ async def find_best_combination(
             output = await derive.transformation.transform_polars(
                 with_mealkit.lazy(), derive.name, ContractStore.empty()
             )
-            assert isinstance(output, pl.LazyFrame)
-            with_mealkit = output.collect()
+            if isinstance(output, pl.LazyFrame):
+                with_mealkit = output.collect()
+            else:
+                with_mealkit = with_mealkit.with_columns(output.alias(derive.name))
 
         similarity = with_mealkit.select(
             [
                 pl.col("recipe_id"),
                 # Normalize [0, 1] as all features will be in this range.
-                ((pl.col("similarity") + 1) / 2).alias("inter_week_similarity"),
+                ((pl.col("similarity") + 1) / 2).alias("intra_week_similarity"),
             ]
         )
         return aggregations.join(similarity, left_on="basket_id", right_on="recipe_id")
@@ -694,7 +697,7 @@ async def historical_preselector_vector(
                     "mean_cost_of_food": [0.03],
                     "mean_rank": [0.05],
                     "mean_ordered_ago": [0.4],
-                    "inter_week_similarity": [0.09],
+                    "intra_week_similarity": [0.09],
                     "repeated_proteins_percentage": [0.1],
                     "repeated_carbo_percentage": [0.05],
                 }
@@ -711,7 +714,7 @@ async def historical_preselector_vector(
                     "mean_rank": [0],
                     # aka max
                     "mean_ordered_ago": [0],
-                    "inter_week_similarity": [0],
+                    "intra_week_similarity": [0],
                     "repeated_proteins_percentage": [0],
                     "repeated_carbo_percentage": [0],
                 }
@@ -735,8 +738,7 @@ async def historical_preselector_vector(
         )
 
         merged_importance = (
-            importance.select(pl.all() * (1 - weighting))
-            .vstack(static_vector)
+            pl.concat([importance.select(pl.all() * (1 - weighting)), static_vector], how="vertical_relaxed")
             .sum()
             .select(pl.all() / pl.sum_horizontal(vector_features))
         )
@@ -1069,16 +1071,17 @@ async def run_preselector_for_request(
 
     # main_recipe_id: year_week it was last ordered
     generated_recipe_ids: dict[int, int] = {}
-    quarantining_data = (
-        await store.feature_view(WeeksSinceRecipe)
-        .select({"last_order_year_week"})
-        .filter(pl.col("agreement_id") == request.agreement_id)
-        .to_polars()
-    )
 
-    if not quarantining_data.is_empty():
-        for row in quarantining_data.iter_rows(named=True):
-            generated_recipe_ids[row["main_recipe_id"]] = row["last_order_year_week"]
+    if WeeksSinceRecipe.location.identifier in store.feature_views:
+        quarantining_data = (
+            await store.feature_view(WeeksSinceRecipe)
+            .select({"last_order_year_week"})
+            .filter(pl.col("agreement_id") == request.agreement_id)
+            .to_polars()
+        )
+        if not quarantining_data.is_empty():
+            for row in quarantining_data.iter_rows(named=True):
+                generated_recipe_ids[row["main_recipe_id"]] = row["last_order_year_week"]
 
     if request.ordered_weeks_ago:
         for main_recipe_id, yearweek in request.ordered_weeks_ago.items():
@@ -1588,7 +1591,7 @@ async def run_preselector(
         st.write(normalized_recipe_features)
 
     filtered = normalized_recipe_features.filter(
-        pl.col("is_adams_signature").is_not() & pl.col("is_cheep").is_not()
+        pl.col("is_adams_signature").not_() & pl.col("is_cheep").not_()
         # & pl.col("is_slow_grown_chicken").is_not()
     ).select(
         pl.exclude(["is_adams_signature", "is_cheep"]),
@@ -1711,6 +1714,11 @@ async def run_preselector(
         )
         logger.warning(f"We are missing some embeddings for main recipe ids: {missing_recipes}")
         logger.error(f"We are missing some embeddings for main recipe ids: {missing_recipes}")
+
+    with duration("load-attribute-scoring"):
+        recipe_features = (
+            await store.feature_view(AttributeScoring).features_for(recipe_features).with_subfeatures().to_polars()
+        )
 
     assert (
         not recipe_features.is_empty()

@@ -13,7 +13,7 @@ from aligned import (
     feature_view,
 )
 from aligned.feature_store import FeatureViewStore, FeatureViewWrapper
-from aligned.schemas.feature_view import RetrivalRequest
+from aligned.schemas.feature_view import RetrievalRequest
 from project_owners.owner import Owner
 
 from data_contracts.mealkits import DefaultMealboxRecipes
@@ -67,9 +67,10 @@ data as (
 SELECT * FROM data WHERE year >= 2024
 """
 
+
 @feature_view(
     name="historical_recipe_orders",
-    description="The recipes that our customers have recived. Together with the rating of the dish.",
+    description="The recipes that our customers have received. Together with the rating of the dish.",
     source=adb_ml.fetch(historical_orders_sql),
     materialized_source=materialized_data.parquet_at("historical_recipe_orders.parquet"),
     contacts=contacts,
@@ -91,9 +92,10 @@ class HistoricalRecipeOrders:
     delivered_at = ValidFrom()
 
     rating = (Int32().is_optional().lower_bound(0).upper_bound(5)).description(
-        "A value of 0 means that the user did not make the dish. " "While a missing values means did not rate",
+        "A value of 0 means that the user did not make the dish. While a missing values means did not rate",
     )
     did_make_dish = rating != 0
+
 
 current_selection_sql = """SELECT
     estimations.billing_agreement_id as agreement_id,
@@ -110,13 +112,13 @@ INNER JOIN gold.dim_recipes recipes
   ON menus.fk_dim_recipes = recipes.pk_dim_recipes
 WHERE estimations.is_latest_estimation"""
 
+
 @feature_view(
     name="current_selected_recipes",
     source=databricks_config.sql(current_selection_sql),
     materialized_source=materialized_data.partitioned_parquet_at(
-        "current_selected_recipes",
-        partition_keys=["company_id"]
-    )
+        "current_selected_recipes", partition_keys=["company_id"]
+    ),
 )
 class CurrentSelectedRecipes:
     agreement_id = Int32().as_entity()
@@ -127,9 +129,7 @@ class CurrentSelectedRecipes:
     main_recipe_id = Int32()
 
 
-async def quarantined_recipes(
-    request: RetrivalRequest, store: ContractStore | None = None
-) -> pl.LazyFrame:
+async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | None = None) -> pl.LazyFrame:
     from datetime import date
 
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
@@ -142,37 +142,39 @@ async def quarantined_recipes(
             return view_wrapper.query()
 
     today = date.today()
-    orders = await query(HistoricalRecipeOrders).filter(
-        today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week")
-    ).to_polars()
+    orders = (
+        await query(HistoricalRecipeOrders)
+        .filter(today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week"))
+        .to_polars()
+    )
     current_selection = await query(CurrentSelectedRecipes).all().to_polars()
 
     subset = orders.select(current_selection.columns)
 
-    return subset.vstack(
-        current_selection.cast(subset.schema) # type: ignore
-    ).with_columns(
-        year_week=pl.col("year") * 100 + pl.col("week")
-    ).group_by(["agreement_id", "company_id", "main_recipe_id"]).agg(
-        pl.col("year_week").max().alias("last_order_year_week")
-    ).lazy()
+    return (
+        subset.vstack(
+            current_selection.cast(subset.schema)  # type: ignore
+        )
+        .with_columns(year_week=pl.col("year") * 100 + pl.col("week"))
+        .group_by(["agreement_id", "company_id", "main_recipe_id"])
+        .agg(pl.col("year_week").max().alias("last_order_year_week"))
+        .lazy()
+    )
 
 
 quarantining_week_interval = 8
 
+
 def week_to_date(col: str) -> pl.Expr:
     return pl.format("{}1", col).str.to_date("%G%V%w", strict=False)
+
 
 @feature_view(
     name="weeks_since_recipe",
     source=CustomMethodDataSource.from_load(
-        quarantined_recipes,
-        depends_on={ HistoricalRecipeOrders.location, CurrentSelectedRecipes.location }
+        quarantined_recipes, depends_on={HistoricalRecipeOrders.location, CurrentSelectedRecipes.location}
     ),
-    materialized_source=materialized_data.partitioned_parquet_at(
-        "weeks_since_recipe",
-        partition_keys=["company_id"]
-    )
+    materialized_source=materialized_data.partitioned_parquet_at("weeks_since_recipe", partition_keys=["company_id"]),
 )
 class WeeksSinceRecipe:
     agreement_id = Int32().as_entity()
@@ -184,15 +186,12 @@ class WeeksSinceRecipe:
 
     order_diff = Int32().transformed_using_features_polars(
         using_features=[from_year_week, last_order_year_week],
-        transformation=(
-            week_to_date("from_year_week") - week_to_date("last_order_year_week")
-        ).dt.total_days() / 7
+        transformation=(week_to_date("from_year_week") - week_to_date("last_order_year_week")).dt.total_days() / 7,
     )
     ordered_weeks_ago = Int32().transformed_using_features_polars(
         using_features=[order_diff],
-        transformation=(
-            quarantining_week_interval - pl.col("order_diff")
-        ).clip(lower_bound=1).log(2) / pl.lit(quarantining_week_interval).log(2)
+        transformation=(quarantining_week_interval - pl.col("order_diff")).clip(lower_bound=1).log(2)
+        / pl.lit(quarantining_week_interval).log(2),
     )
 
 
@@ -223,13 +222,11 @@ INNER JOIN pim.MENU_RECIPES mr ON mr.MENU_ID = m.menu_id AND mr.menu_recipe_orde
 INNER JOIN pim.recipes r ON r.recipe_id = mr.RECIPE_ID
 WHERE babd.year >= 2024"""
 
+
 @feature_view(
     name="raw_deviated_recipes",
     source=adb.fetch(deviation_sql),
-    materialized_source=materialized_data.partitioned_parquet_at(
-        "deselected_recipes",
-        partition_keys=["company_id"]
-    ),
+    materialized_source=materialized_data.partitioned_parquet_at("deselected_recipes", partition_keys=["company_id"]),
 )
 class DeselectedRecipes:
     recipe_id = Int32().as_entity()
@@ -249,7 +246,6 @@ class DeselectedRecipes:
     updated_at = EventTimestamp()
 
 
-
 async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
     from data_contracts.mealkits import DefaultMealboxRecipes
     from data_contracts.user import UserSubscription
@@ -263,7 +259,7 @@ async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
     unique_users = subs["agreement_id"].unique()
     all_orders = await HistoricalRecipeOrders.query().all().to_lazy_polars()
 
-    grouped_orders = all_orders.groupby(["agreement_id", "week", "year"]).agg(
+    grouped_orders = all_orders.group_by(["agreement_id", "week", "year"]).agg(
         pl.col("recipe_id").alias("ordered_recipe_ids"),
     )
 
@@ -306,11 +302,9 @@ async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
             default_baskets,
             left_on=["variation_id", "week", "year"],
             right_on=["variation_id", "menu_week", "menu_year"],
-            how="left"
+            how="left",
         )
-        .with_columns(
-            recipe_ids=pl.col("recipe_ids").fill_null([])
-        )
+        .with_columns(recipe_ids=pl.col("recipe_ids").fill_null([]))
         .collect()
     )
 
@@ -348,15 +342,10 @@ async def transform_deviations(req, limit) -> pl.LazyFrame:  # noqa: ANN001
     name="mealbox_changes",
     source=CustomMethodDataSource.from_methods(
         all_data=transform_deviations,
-        depends_on_sources={
-            UserSubscription.location,
-            DefaultMealboxRecipes.location,
-            HistoricalRecipeOrders.location
-        }
+        depends_on_sources={UserSubscription.location, DefaultMealboxRecipes.location, HistoricalRecipeOrders.location},
     ),
     materialized_source=materialized_data.partitioned_parquet_at(
-        "mealbox_changes",
-        partition_keys=["company_id", "year"]
+        "mealbox_changes", partition_keys=["company_id", "year"]
     ),
 )
 class MealboxChanges:
@@ -368,10 +357,10 @@ class MealboxChanges:
 
     company_id = String()
 
-    selected_recipe_ids = List(Int32())
-    deselected_recipe_ids = List(Int32())
-    starting_recipe_ids = List(Int32())
-    ordered_recipe_ids = List(Int32())
+    selected_recipe_ids = List(Int32()).description("The customers selected recipe ids")
+    deselected_recipe_ids = List(Int32()).description("The customers deselected recipe ids")
+    starting_recipe_ids = List(Int32()).description("The customers starting recipes")
+    ordered_recipe_ids = List(Int32()).description("The ordered recipes")
 
 
 def mealbox_changes_as_rating(df: pl.LazyFrame) -> pl.LazyFrame:

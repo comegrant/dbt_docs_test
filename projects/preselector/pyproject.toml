@@ -18,7 +18,7 @@ fsspec = "^2024.6.1"
 adlfs = "^2024.4.1"
 sqlglot = "^25.7.1"
 azure-keyvault-secrets = "^4.8.0"
-polars-lts-cpu = "0.20.31"
+polars-lts-cpu = "1.17.1"
 fastapi = { version = "^0.113.0", extras=["standard"] }
 pyodbc = "5.1.0"
 streamlit-cookies-manager = "^0.2.0"

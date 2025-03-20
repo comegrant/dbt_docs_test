@@ -7,7 +7,6 @@ from typing import Annotated
 import polars as pl
 from aligned import ContractStore, FeatureLocation
 from aligned.data_source.batch_data_source import BatchDataSource
-from aligned.feature_source import BatchFeatureSource
 from aligned.sources.in_mem_source import InMemorySource
 from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
@@ -24,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 class GeneratePreview(BaseModel):
-
     taste_preferences: list[NegativePreference] | None
     attribute_ids: list[str]
 
@@ -35,7 +33,6 @@ class GeneratePreview(BaseModel):
     portion_size: int
 
     def request(self) -> GenerateMealkitRequest:
-
         return GenerateMealkitRequest(
             agreement_id=0,
             company_id=self.company_id,
@@ -48,6 +45,7 @@ class GeneratePreview(BaseModel):
             has_data_processing_consent=False,
         )
 
+
 class Mealkit(BaseModel):
     main_recipe_ids: list[int]
     model_version: str
@@ -55,8 +53,9 @@ class Mealkit(BaseModel):
 
 store: ContractStore | None = None
 
+
 async def load_store() -> ContractStore:
-    global store # noqa: PLW0603
+    global store  # noqa: PLW0603
     if store is not None:
         return store
 
@@ -74,12 +73,12 @@ async def load_store() -> ContractStore:
         (
             FeatureLocation.feature_view("preselector_year_week_menu"),
             InMemorySource.empty(),
-            (pl.col("menu_year") >= today.year)
+            (pl.col("menu_year") >= today.year),
         ),
         (
             FeatureLocation.feature_view("normalized_recipe_features"),
             InMemorySource.empty(),
-            (pl.col("year") >= today.year)
+            (pl.col("year") >= today.year),
         ),
     ]
 
@@ -99,13 +98,10 @@ async def load_store() -> ContractStore:
         if "agreement_id" in entity_names:
             # Do not want any user spesific data
             logger.info(dep.name)
-            assert isinstance(store.feature_source, BatchFeatureSource)
-            assert isinstance(store.feature_source.sources, dict)
-            store.feature_source.sources.pop(dep.identifier, None)
+            store.sources.pop(dep, None)
             continue
 
         cache_sources.append((dep, InMemorySource.empty(), None))
-
 
     logger.info(f"Loading data for {len(cache_sources)}")
     store = await load_cache_for(store, cache_sources)
@@ -125,7 +121,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     with suppress(ValidationError):
         # Adding data dog to the root
         datadog_tags = {
-            "env": os.getenv('ENV'),
+            "env": os.getenv("ENV"),
         }
 
         if "GIT_COMMIT_HASH" in os.environ:
@@ -141,13 +137,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 datadog_service_name="pre-selector-api",
                 datadog_source="python",
                 datadog_tags=datadog_tag_string.strip(","),
-            ) # type: ignore[reportGeneralTypeIssues]
+            ),  # type: ignore[reportGeneralTypeIssues]
         )
 
     await load_store()
     yield
 
+
 app = FastAPI(lifespan=lifespan)
+
 
 @app.get("/")
 def index() -> str:
@@ -155,30 +153,21 @@ def index() -> str:
 
 
 @app.post("/pre-selector/preview")
-async def generate_preview(
-    body: GeneratePreview,
-    store: Annotated[ContractStore, Depends(load_store)]
-) -> Mealkit:
+async def generate_preview(body: GeneratePreview, store: Annotated[ContractStore, Depends(load_store)]) -> Mealkit:
     """
     An endpoint used to preview the output of the pre-selector.
     """
     req = body.request()
     with duration("preview-api-generate"):
         try:
-            response = await run_preselector_for_request(
-                req,
-                store
-            )
+            response = await run_preselector_for_request(req, store)
         except Exception as error:
             logger.exception(error)
             raise error
 
     success = response.success_response()
     if success:
-        response = Mealkit(
-            main_recipe_ids=success.year_weeks[0].main_recipe_ids,
-            model_version=response.model_version
-        )
+        response = Mealkit(main_recipe_ids=success.year_weeks[0].main_recipe_ids, model_version=response.model_version)
     elif response.failures:
         logger.error(f"Failed for request {body}")
         response = response.failures[0]

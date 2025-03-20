@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 import pytest
-from aligned.retrival_job import RetrivalJob
+from aligned.retrieval_job import RetrievalJob
 from data_contracts.preselector.store import FailedPreselectorOutput, Preselector, SuccessfulPreselectorOutput
 from preselector.data.models.customer import (
     PreselectorFailedResponse,
@@ -98,7 +98,7 @@ async def test_successful_output_is_valid_dataframe() -> None:
 
     expected_request = SuccessfulPreselectorOutput.query().request
     validated_df = (
-        await RetrivalJob.from_convertable(df, [expected_request])
+        await RetrievalJob.from_convertable(df, [expected_request])
         .drop_invalid()
         .select(expected_request.all_returned_columns)
         .to_polars()
@@ -151,7 +151,7 @@ async def test_failed_request_to_dataframe() -> None:
 
     expected_request = FailedPreselectorOutput.query().request
     validated_df = (
-        await RetrivalJob.from_convertable(df, [expected_request])
+        await RetrievalJob.from_convertable(df, [expected_request])
         .drop_invalid()
         .select(expected_request.all_returned_columns)
         .to_polars()
