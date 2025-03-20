@@ -477,8 +477,8 @@ preselector_successful_output_dishes as (
             add_aggregated_error_metrics.billing_agreement_id = agreements.billing_agreement_id
             and add_aggregated_error_metrics.created_at >= agreements.valid_from
             and add_aggregated_error_metrics.created_at < agreements.valid_to
-    -- The connection to dim_products is different for dishes and mealboxes, as the preselector doesn't output the product_variation_id for the mealbox,
-    -- so I have to join it on the company, product_name, type, meals, and portions
+    -- The connection to dim_products is different for dishes and mealboxes, as the preselector doesn't output the
+    -- product_variation_id for the mealbox, so I have to join it on the company, product_name, type, meals, and portions
     left join products as products_mealbox
         on
             add_aggregated_error_metrics.company_id = products_mealbox.company_id

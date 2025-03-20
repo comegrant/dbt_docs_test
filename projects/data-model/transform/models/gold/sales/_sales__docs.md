@@ -390,7 +390,7 @@ The number of menu weeks that we want to compare the preselector output against 
 
 We always compare the preselector output against the previous 6 menu weeks and the current future menu weeks visible on the front-end, but the number of future weeks visible in the front-end can vary.
 
-E.g. if the preselector output was for the next visible menu week in the front-end, we will compare it against the previous 6 weeks ordered weeks and the other 3 weeks on the front-end, resulting in the number of weeks in the window being 9. But if the preselector output was for the furthest away week in the front-end, we will compare it against the previous 6 weeks, however there are no other future weeks visible on the front-end, resulting in the number of weeks in the window being 6.
+E.g. if the preselector output was for the next visible menu week in the front-end, we will compare it against the previous 6 weeks ordered weeks and the other 3 weeks on the front-end, resulting in the number of weeks in the window being 9. But if the preselector output was for the furthest away week in the front-end, we will compare it against the previous 6 weeks, however there are no other future weeks visible on the front-end, resulting in the number of weeks in the window being 6
 
 {% enddocs %}
 
