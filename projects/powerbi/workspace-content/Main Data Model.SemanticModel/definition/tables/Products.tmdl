@@ -94,6 +94,7 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the product type, note that the Financial product type name is renamed to be Mealbox to avoid confusion when filtering
 	column 'Product Type Name'
 		dataType: string
 		lineageTag: 456bd8d7-d4ac-46e9-b1f6-e96f873ff591
@@ -165,4 +166,3 @@ table Products
 					dim_products_Table
 
 	annotation PBI_ResultType = Table
-

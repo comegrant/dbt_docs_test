@@ -7,7 +7,7 @@ models:
     config:
       alias: dim_products
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_dim_products
@@ -101,6 +101,12 @@ models:
         data_type: string
         description: "{{ doc('column__portion_name') }}"
 
+      - name: is_financial
+        data_type: boolean
+        description: "{{ doc('column__is_financial') }}"
+        data_tests:
+          - not_null
+
     versions:
       - v: 1
 
@@ -111,7 +117,7 @@ models:
     config:
       alias: dim_recipe_reaction_types
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_dim_recipe_reaction_types
@@ -153,7 +159,7 @@ models:
     config:
       alias: fact_recipe_reactions
       contract:
-        enforced: True
+        enforced: true
 
     columns:
       - name: pk_fact_recipe_reactions

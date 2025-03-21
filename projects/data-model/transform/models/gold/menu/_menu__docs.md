@@ -111,6 +111,11 @@ Number of meals in the product (e.g. in the mealbox). One can also have informat
 
 {% enddocs %}
 
+{% docs column__is_financial %}
+
+product_type_name is renamed from Financial to Mealbox in Gold to avoid confusion when filtering, so this is a flag to indicate whether this product originally had a Financial product_type_name in the silver layer.
+
+{% enddocs %}
 
 # Dim Taxonomies
 {% docs column__pk_dim_taxonomies %}
