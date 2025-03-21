@@ -289,10 +289,22 @@ order_lines as (
         , order_line_dimensions_joined.total_amount_inc_vat
         , case
             when ordered_and_preselected_recipes_joined.recipe_id = ordered_and_preselected_recipes_joined.preselected_recipe_id
+            -- quickfix to remove campaign orders
+            and order_line_dimensions_joined.order_type_id in (
+                    '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+                    '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
+                    'C7D2684C-B715-4C6C-BF90-053757926679'
+            )
             then 0
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             and ordered_and_preselected_recipes_joined.preselected_recipe_id is null
             and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
+            -- quickfix to remove campaign orders
+            and order_line_dimensions_joined.order_type_id in (
+                    '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+                    '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
+                    'C7D2684C-B715-4C6C-BF90-053757926679'
+            )
             then 1
             else null
         end as is_added_dish
@@ -300,6 +312,12 @@ order_lines as (
         , case
             when order_line_dimensions_joined.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             and order_line_dimensions_joined.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
+            -- quickfix to remove campaign orders
+            and order_line_dimensions_joined.order_type_id in (
+                    '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+                    '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
+                    'C7D2684C-B715-4C6C-BF90-053757926679'
+            )
             then 0
             else null
         end as is_removed_dish
@@ -475,6 +493,12 @@ order_lines as (
     left join order_line_dimensions_joined
         on ordered_and_preselected_recipes_joined.billing_agreement_order_id = order_line_dimensions_joined.billing_agreement_order_id
     where ordered_and_preselected_recipes_joined.billing_agreement_order_line_id is null
+    -- quickfix to remove campaign orders
+    and order_line_dimensions_joined.order_type_id in (
+                    '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+                    '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
+                    'C7D2684C-B715-4C6C-BF90-053757926679'
+            )
 
     union all
 
@@ -581,6 +605,12 @@ order_lines as (
         on order_line_dimensions_joined.billing_agreement_order_id = subscribed_mealbox.billing_agreement_order_id
         and subscribed_mealbox.subscribed_product_type_id = '{{ var("mealbox_product_type_id") }}'
     where order_line_dimensions_joined.product_type_id = '{{ var("mealbox_product_type_id") }}'
+    -- quickfix to remove campaign orders
+    and order_line_dimensions_joined.order_type_id in (
+                    '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
+                    '5F34860B-7E61-46A0-80F7-98DCDC53BA9E',
+                    'C7D2684C-B715-4C6C-BF90-053757926679'
+            )
 
 )
 
