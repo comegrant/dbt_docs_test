@@ -24,7 +24,7 @@ discounts as (
 
 )
 
-, relevant_columns as (
+, discount_tables_joined as (
 
     select
         md5(discounts.discount_id) as pk_dim_discounts
@@ -58,4 +58,39 @@ discounts as (
 
 )
 
-select * from relevant_columns
+, add_unknown_row as (
+
+    select *
+    from discount_tables_joined
+
+    union all
+
+    select
+        '0' as pk_dim_discounts
+        , 0 as discount_id
+        , 0 as discount_usage_type_id
+        , 0 as discount_type_id
+        , 0 as discount_amount_type_id
+        , 0 as discount_category_id
+        , 0 as discount_channel_id
+        , 0 as discount_sub_category_id
+        , 0 as discount_coupon_type_id
+        , 'Not relevant'as discount_title
+        , 0 as discount_amount
+        , 'Not relevant'as discount_channel_name
+        , 'Not relevant'as discount_category_name
+        , 'Not relevant'as discount_sub_category_name
+        , 0 as discount_partner_invoice_reference
+        , 0 as customer_usage_limit
+        , 0 as discount_partner_price
+        , false as is_active_discount
+        , false as is_coupon_code_required
+        , false as is_cumulative_discount
+        , false as is_valid_on_direct_order
+        , false as is_registration_discount
+        , false as is_disabled_on_freeze
+        , false as is_highest_price_discount
+
+)
+
+select * from add_unknown_row

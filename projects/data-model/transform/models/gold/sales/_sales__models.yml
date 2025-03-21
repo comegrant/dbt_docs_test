@@ -430,6 +430,14 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
+      - name: fk_dim_discounts
+        data_type: string
+        description: "{{ doc('column__pk_dim_discounts') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_discounts')
+              field: pk_dim_discounts        
+
     versions:
       - v: 1
 

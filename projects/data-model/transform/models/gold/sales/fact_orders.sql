@@ -59,6 +59,12 @@ order_lines as (
 
 )
 
+, order_discounts as (
+
+    select * from {{ ref('cms__billing_agreement_order_discounts') }}
+
+)
+
 -- TODO: This solution is a bit hacky
 , recommendations_origin as (
 
@@ -637,6 +643,7 @@ order_lines as (
             then true
             else false
         end as is_adjusted_by_customer
+        , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
     from add_recipe_feedback
     left join products
         on add_recipe_feedback.fk_dim_products = products.pk_dim_products
@@ -650,6 +657,10 @@ order_lines as (
         and add_recipe_feedback.language_id = dim_portions_preselected.language_id
     left join has_swap_flag
         on add_recipe_feedback.billing_agreement_order_id = has_swap_flag.billing_agreement_order_id
+    left join order_discounts
+        on add_recipe_feedback.billing_agreement_order_line_id = order_discounts.billing_agreement_order_line_id
+        and add_recipe_feedback.menu_year > 2020
+
 )
 
 select * from add_pk
