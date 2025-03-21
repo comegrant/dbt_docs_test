@@ -1,0 +1,216 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "1340d866890d115573d1",
+  "position": {
+    "x": 16,
+    "y": 392,
+    "z": 2000,
+    "height": 264,
+    "width": 1248,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Versions"
+                    }
+                  },
+                  "Property": "Version Number"
+                }
+              },
+              "queryRef": "Preselector Versions.Version Number",
+              "nativeQueryRef": "Version Number"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Combined Rotation and Variation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Combined Rotation and Variation Score",
+              "nativeQueryRef": "Average Combined Rotation and Variation Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Rotation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Rotation Score",
+              "nativeQueryRef": "Average Rotation Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Main Ingredient Variation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Main Ingredient Variation Score",
+              "nativeQueryRef": "Average Main Ingredient Variation Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Number of Subscribers with Preselector Output"
+                }
+              },
+              "queryRef": "Preselector Measures.Number of Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Subscribers with Preselector Output"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Versions"
+                    }
+                  },
+                  "Property": "Model Version First Used At"
+                }
+              },
+              "queryRef": "Preselector Versions.Model Version First Used At",
+              "nativeQueryRef": "Model Version First Used At",
+              "format": "MMMM d, yyyy"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Versions"
+                    }
+                  },
+                  "Property": "Model Version Latest Used At"
+                }
+              },
+              "queryRef": "Preselector Versions.Model Version Latest Used At",
+              "nativeQueryRef": "Model Version Latest Used At",
+              "format": "MMMM d, yyyy"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Preselector Versions"
+                  }
+                },
+                "Property": "Version Number"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "189.37735849056605D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preselector Measures.Number of Subscribers with Preselector Output"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "162.26415094339623D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preselector Measures.Average Main Ingredient Variation Score"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "154.43396226415095D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preselector Measures.Average Rotation Score"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "183.9056603773585D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preselector Measures.Average Combined Rotation and Variation Score"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Version Number Details'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

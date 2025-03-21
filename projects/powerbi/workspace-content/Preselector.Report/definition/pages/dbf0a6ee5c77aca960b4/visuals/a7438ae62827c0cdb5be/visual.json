@@ -1,0 +1,108 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "a7438ae62827c0cdb5be",
+  "position": {
+    "x": 656,
+    "y": 96,
+    "z": 5000,
+    "height": 280,
+    "width": 608,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Versions"
+                    }
+                  },
+                  "Property": "Version Number"
+                }
+              },
+              "queryRef": "Preselector Versions.Version Number",
+              "nativeQueryRef": "Version Number",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Details"
+                    }
+                  },
+                  "Property": "Rotation Score Group"
+                }
+              },
+              "queryRef": "Preselector Details.Rotation Score Group",
+              "nativeQueryRef": "Rotation Score Group"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Rotation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Rotation Score",
+              "nativeQueryRef": "Average Rotation Score"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Number of Subscribers with Preselector Output"
+                }
+              },
+              "queryRef": "Preselector Measures.Number of Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Subscribers with Preselector Output"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of Rotation Score Group per Version Number'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

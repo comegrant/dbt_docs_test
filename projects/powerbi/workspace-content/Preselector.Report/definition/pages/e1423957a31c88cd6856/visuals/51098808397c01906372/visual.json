@@ -1,0 +1,81 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "51098808397c01906372",
+  "position": {
+    "x": 16,
+    "y": 584,
+    "z": 6000,
+    "height": 120,
+    "width": 1248,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "This report uses 3 metrics which help us measures the quality of the preselection output:"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Rotation Score",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ": A score between 0 (bad) and 1 (good) which indicates how much the dishes in a mealbox repeat in the previous 6 weeks and all future visible weeks. A score of 0.8 for example says that the dishes in that mealbox repeat on average in 20% of other weeks."
+                  }
+                ],
+                "listType": "ordered"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Main Ingredient Variation Score",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ": "
+                  },
+                  {
+                    "value": "A score between 0 (bad) and 1 (good) which indicates how many unique main proteins are in a mealbox. For example, if they have 4 meals and 3 unique main ingredients then their score is 0.75. ",
+                    "textStyle": {
+                      "fontSize": "12px"
+                    }
+                  }
+                ],
+                "listType": "ordered"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Combined Rotation and Variation Score",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ": This is an overall metric which is the multiplication of Rotation and Variation scores."
+                  }
+                ],
+                "listType": "ordered"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

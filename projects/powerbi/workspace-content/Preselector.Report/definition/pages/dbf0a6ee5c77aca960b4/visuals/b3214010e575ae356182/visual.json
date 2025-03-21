@@ -1,0 +1,108 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "b3214010e575ae356182",
+  "position": {
+    "x": 16,
+    "y": 96,
+    "z": 3000,
+    "height": 280,
+    "width": 624,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Versions"
+                    }
+                  },
+                  "Property": "Version Number"
+                }
+              },
+              "queryRef": "Preselector Versions.Version Number",
+              "nativeQueryRef": "Version Number",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Details"
+                    }
+                  },
+                  "Property": "Main Ingredient Variation Score Group"
+                }
+              },
+              "queryRef": "Preselector Details.Main Ingredient Variation Score Group",
+              "nativeQueryRef": "Main Ingredient Variation Score Group"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Main Ingredient Variation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Main Ingredient Variation Score",
+              "nativeQueryRef": "Average Main Ingredient Variation Score"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Number of Subscribers with Preselector Output"
+                }
+              },
+              "queryRef": "Preselector Measures.Number of Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Subscribers with Preselector Output"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of Variation Score Group per Version Number'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
