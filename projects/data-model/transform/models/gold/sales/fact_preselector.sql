@@ -48,6 +48,12 @@ preselector_successful_output_dishes as (
 
 )
 
+, portions as (
+
+    select * from {{ ref('dim_portions') }}
+
+)
+
 -- Get the recipe and main recipe id for each dish in the preselector dishes output
 , join_recipe_and_main_recipe_id_to_preselector_dishes as (
 
@@ -62,7 +68,6 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_dishes.product_variation_id
         , menus.recipe_id
         , recipes.main_recipe_id
-        , companies.language_id
         , recipes.recipe_main_ingredient_name_english
         , preselector_successful_output_dishes.model_version_commit_sha
 
@@ -267,7 +272,6 @@ preselector_successful_output_dishes as (
         -- Dish level IDs not relevant for mealboxes
         , null as product_variation_id
         , null as recipe_id
-        , null as language_id
         , null as main_recipe_id
         , null as recipe_main_ingredient_name_english
         -- Identifiers
@@ -434,6 +438,7 @@ preselector_successful_output_dishes as (
 
     select
         add_aggregated_error_metrics.*
+        , companies.language_id
         -- Primary key
         , md5(
             cast(concat(
@@ -447,7 +452,7 @@ preselector_successful_output_dishes as (
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , md5(add_aggregated_error_metrics.company_id) as fk_dim_companies
         , md5(
-            concat(add_aggregated_error_metrics.recipe_id, add_aggregated_error_metrics.language_id)
+            concat(add_aggregated_error_metrics.recipe_id, companies.language_id)
         ) as fk_dim_recipes
         , cast(
             date_format(add_aggregated_error_metrics.created_at, 'yyyyMMdd') as int
@@ -462,16 +467,18 @@ preselector_successful_output_dishes as (
             add_aggregated_error_metrics.model_version_commit_sha
         )                                      as fk_dim_preselector_versions
         , case when is_dish = true then
-            md5(
-                concat(
-                    add_aggregated_error_metrics.product_variation_id
-                    , add_aggregated_error_metrics.company_id
-                )
-            )
+            products_dish.pk_dim_products
         else
             products_mealbox.pk_dim_products
         end as fk_dim_products
+        , case when is_dish = true then
+            portions_dish.pk_dim_portions
+        else
+            portions_mealbox.pk_dim_portions
+        end as fk_dim_portions
     from add_aggregated_error_metrics
+    left join companies
+        on add_aggregated_error_metrics.company_id = companies.company_id
     left join agreements
         on
             add_aggregated_error_metrics.billing_agreement_id = agreements.billing_agreement_id
@@ -486,6 +493,18 @@ preselector_successful_output_dishes as (
             and products_mealbox.product_id = '{{ var("onesub_product_id") }}'
             and add_aggregated_error_metrics.meals = products_mealbox.meals
             and add_aggregated_error_metrics.portions = products_mealbox.portions
+            and add_aggregated_error_metrics.is_dish = false
+    left join products as products_dish
+        on
+            add_aggregated_error_metrics.company_id = products_dish.company_id
+            and add_aggregated_error_metrics.product_variation_id = products_dish.product_variation_id
+            and add_aggregated_error_metrics.is_dish = true
+    left join portions as portions_mealbox
+        on products_mealbox.portion_name = portions_mealbox.portion_name_local
+        and companies.language_id = portions_mealbox.language_id
+    left join portions as portions_dish
+        on products_dish.portion_name = portions_dish.portion_name_local
+        and companies.language_id = portions_dish.language_id
 )
 
 select * from add_keys

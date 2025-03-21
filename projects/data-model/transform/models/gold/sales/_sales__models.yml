@@ -1887,6 +1887,15 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__fk_dim_dates_menu_week_monday_date') }}"
