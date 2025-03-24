@@ -47,3 +47,4 @@ sources:
       - name: pim__ingredient_nutrient_facts
       - name: pim__generic_ingredients
       - name: pim__nutrient_facts_translations
+      - name: pim__procurement_cycle

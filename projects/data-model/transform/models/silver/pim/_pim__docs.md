@@ -419,6 +419,20 @@ The unique id of the recipe favorite type in the source database.
 The name of the recipe type (can be favorite or dislike).
 {% enddocs %}
 
+# Procurement Cycles
+
+{% docs column__purchasing_company_id %}
+
+Id of the company used for purchasing ingredients. Eg. in Norway where there are multiple brands but they order ingredients as the same company_id, which is different from the brand company_id.
+
+{% enddocs %}
+
+{% docs column__distribution_center_id %}
+
+Id of the distribution center where the ingredients are delivered to.
+
+{% enddocs %}
+
 # Not Organized
 {% docs column__is_main_protein %} 
 
