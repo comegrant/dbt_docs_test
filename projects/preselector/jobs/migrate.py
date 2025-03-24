@@ -47,6 +47,7 @@ async def migrate_source(source: UCTableSource, view: FeatureViewWrapper) -> Non
 async def migrate() -> None:
     await migrate_source(ml_outputs.table("preselector_batch"), Preselector)
     await migrate_source(ml_outputs.table("preselector_validate"), Preselector)
+
     await migrate_source(ml_outputs.table("preselector_successful_realtime_output"), SuccessfulPreselectorOutput)
 
 

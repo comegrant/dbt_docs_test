@@ -103,8 +103,8 @@ async def deploy_preselector(
     intervals = {
         "test": {
             "write_output_interval": write_output_interval,
-            "write_output_max_size": 10_000,
-            "update_data_interval": timedelta(hours=12),
+            "write_output_max_size": 10_000_000,
+            "update_data_interval": timedelta(hours=6),
         },
         "prod": {
             "write_output_interval": write_output_interval,
@@ -342,8 +342,8 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                 WorkerConfig(
                     container_name=f"{name}-flush",
                     batch_size=10,
-                    topic_request_name="priority-deviation-request",
-                    topic_success_name="priority-deviation-response",
+                    topic_request_name="deviation-request",
+                    topic_success_name="deviation-response",
                     # sub_queue_name="deadletter",
                 ),
             ]

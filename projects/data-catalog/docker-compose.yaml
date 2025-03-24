@@ -1,5 +1,20 @@
 services:
 
+  catalog:
+    image: matsmoll/aligned-catalog
+    command: "fastapi run aligned_cloud/api.py --host 0.0.0.0 --port 8000"
+    volumes:
+      - ${PWD}/contract_store.json:/app/aligned-cloud/contract_store.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow.raspberrypi.local
+      - HOST_URL=http://127.0.0.1:8000
+      - LOCAL_VOLUME=${PWD}
+    ports:
+      - 8000:8000
+    env_file:
+      - ../../.env
+
   data-catalog:
     image: data-catalog-data-catalog-app
     platform: linux/amd64
@@ -21,7 +36,7 @@ services:
     command: ["python", "-m", "streamlit", "run", "/app/app.py", "--server.fileWatcherType", "poll"]
     profiles: ["catalog"]
     ports:
-      - 8000:8501
+      - 8001:8501
     volumes:
       - ./data_catalog/load_contracts.py:/app/custom_store.py
       - ./../../packages:/app/packages

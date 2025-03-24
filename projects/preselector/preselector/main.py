@@ -1675,7 +1675,10 @@ async def run_preselector(
     )
 
     if recipe_features.height <= customer.number_of_recipes:
-        logger.warning(f"Too few recipes to run the preselector for agreement: {customer.agreement_id}")
+        logger.warning(
+            f"Too few recipes to run the preselector for agreement: {customer.agreement_id}"
+            f" found only {recipe_features.height} recipes"
+        )
         return PreselectorWeekOutput(
             recipes=[
                 PreselectorRecipe(main_recipe_id, compliance)

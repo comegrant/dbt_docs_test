@@ -18,10 +18,10 @@ fsspec = "^2024.6.1"
 adlfs = "^2024.4.1"
 sqlglot = "^25.7.1"
 azure-keyvault-secrets = "^4.8.0"
-polars-lts-cpu = "1.17.1"
+polars = "1.16.0"
+polars-lts-cpu = "1.16.0"
 fastapi = { version = "^0.113.0", extras=["standard"] }
 pyodbc = "5.1.0"
-streamlit-cookies-manager = "^0.2.0"
 ruff = "^0.6.6"
 redis = "^4.3.1"
 hiredis = "^3.0.0"
@@ -43,7 +43,6 @@ azure-mgmt-containerinstance = "^10.1.0"
 
 [tool.poetry.group.databricks.dependencies]
 databricks-env = {path = "../../packages/databricks-env", develop = true}
-databricks-feature-engineering = "^0.7.0"
 nest_asyncio = "1.6.0"
 
 [tool.poetry.group.app.dependencies]

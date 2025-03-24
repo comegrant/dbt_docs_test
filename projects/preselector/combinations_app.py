@@ -18,7 +18,6 @@ from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
 from streamlit.delta_generator import DeltaGenerator
-from streamlit_cookies_manager import EncryptedCookieManager
 from ui.components.mealkit import mealkit
 from ui.deeplinks.compare_week import cached_recipe_info
 
@@ -72,13 +71,6 @@ def all_combinations(ids: list[T], include_empty_set: bool) -> list[list[T]]:
 
 async def main() -> None:
     load_dotenv(".env")
-
-    # Initialize the cookie manager
-    cookies = EncryptedCookieManager(prefix="preselector_combinations_app", password="my-password")
-
-    # Load the cookie
-    if not cookies.ready():
-        st.stop()
 
     st.title("Default Pre-selector Combinations")
 

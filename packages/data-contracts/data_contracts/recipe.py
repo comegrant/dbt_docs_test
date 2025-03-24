@@ -763,9 +763,14 @@ class NormalizedRecipeFeatures:
     average_rating = Float().is_optional()
     cost_of_food = Float()
 
-    number_of_ratings_log = Float().description("Taking the log in order to get it closer to a normal distribution.")
+    number_of_ratings_log = (
+        Float()
+        .lower_bound(0)
+        .upper_bound(1)
+        .description("Taking the log in order to get it closer to a normal distribution.")
+    )
 
-    cooking_time_from = Float()
+    cooking_time_from = Float().lower_bound(0).upper_bound(1)
 
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
@@ -792,12 +797,12 @@ class NormalizedRecipeFeatures:
     is_adams_signature = Bool()
     is_cheep = Bool()
 
-    energy_kcal_per_portion = Float()
-    carbs_pct = Float()
-    fat_pct = Float()
-    fat_saturated_pct = Float()
-    protein_pct = Float()
-    fruit_veg_fresh_p = Float()
+    energy_kcal_per_portion = Float().lower_bound(0).upper_bound(1)
+    carbs_pct = Float().lower_bound(0).upper_bound(1)
+    fat_pct = Float().lower_bound(0).upper_bound(1)
+    fat_saturated_pct = Float().lower_bound(0).upper_bound(1)
+    protein_pct = Float().lower_bound(0).upper_bound(1)
+    fruit_veg_fresh_p = Float().lower_bound(0).upper_bound(1)
 
 
 ingredient_allergy_preferences_sql = """
