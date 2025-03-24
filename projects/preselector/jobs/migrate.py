@@ -56,7 +56,7 @@ SELECT * FROM mloutputs.preselector_successful_realtime_output"""
     ).toPandas()
     temp_count = spark.sql("SELECT COUNT(*) as count FROM temp_migrate_table").toPandas()
 
-    assert realtime_count["count"] == temp_count["count"]
+    assert realtime_count["count"].tolist()[0] == temp_count["count"].tolist()[0]
 
     drop_table = "DROP TABLE mloutputs.preselector_successful_realtime_output;"
     spark.sql(drop_table)
