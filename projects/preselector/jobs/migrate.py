@@ -44,10 +44,29 @@ async def migrate_source(source: UCTableSource, view: FeatureViewWrapper) -> Non
         spark.sql(command)
 
 
+async def migrate_realtime() -> None:
+    spark = ml_outputs.config.connection()
+
+    copy_sql = """CREATE OR REPLACE TABLE temp_migrate_table AS
+SELECT * FROM mloutputs.preselector_successful_realtime_output"""
+    spark.sql(copy_sql)
+
+    realtime_count = spark.sql(
+        "SELECT COUNT(*) as count FROM mloutputs.preselector_successful_realtime_output"
+    ).toPandas()
+    temp_count = spark.sql("SELECT COUNT(*) as count FROM temp_migrate_table").toPandas()
+
+    assert realtime_count["count"] == temp_count["count"]
+
+    drop_table = "DROP TABLE mloutputs.preselector_successful_realtime_output;"
+    spark.sql(drop_table)
+
+
 async def migrate() -> None:
     await migrate_source(ml_outputs.table("preselector_batch"), Preselector)
     await migrate_source(ml_outputs.table("preselector_validate"), Preselector)
 
+    await migrate_realtime()
     await migrate_source(ml_outputs.table("preselector_successful_realtime_output"), SuccessfulPreselectorOutput)
 
 

@@ -107,7 +107,7 @@ async def deploy_preselector(
             "update_data_interval": timedelta(hours=6),
         },
         "prod": {
-            "write_output_interval": write_output_interval,
+            # "write_output_interval": write_output_interval,
             "write_output_max_size": 10_000,
             "update_data_interval": timedelta(hours=2),
         },
