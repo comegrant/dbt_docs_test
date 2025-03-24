@@ -111,6 +111,21 @@ weekly_menus as (
     left join portion_translations
         on recipe_portions.portion_id = portion_translations.portion_id
         and countries.language_id = portion_translations.language_id
+
+    where weekly_menus.menu_year >= 2019
+        and menus.is_selected_menu = true
+        and (
+                --this is to include all menu variation that has no recipe
+                --i.e. most Standalone groceries or similar products
+                menu_recipes.recipe_id is null  
+                or (
+                    --this is for all menu variations with recipes,
+                    --to only include the menu variations where the recipe variation actually exists
+                    menu_recipes.recipe_id is not null      
+                        and recipe_portions.portion_id is not null
+                )
+
+        )
 )
 
 select * from weekly_menus_variations_recipes_portions_joined
