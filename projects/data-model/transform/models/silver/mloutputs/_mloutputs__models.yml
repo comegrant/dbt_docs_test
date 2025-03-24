@@ -403,6 +403,22 @@ models:
               min_value: 0
               max_value: 100
 
+      - name: error_mean_family_friendly_probability
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: error_intra_week_similarity
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
       - name: error_mean_protein
         data_type: double
         description: "{{ doc('column__preselector_error_vector') }}"

@@ -436,7 +436,7 @@ models:
         data_tests:
           - relationships:
               to: ref('dim_discounts')
-              field: pk_dim_discounts        
+              field: pk_dim_discounts
 
     versions:
       - v: 1
@@ -1405,6 +1405,12 @@ models:
               values: [2, 3, 4, 5]
               quote: false
 
+      - name: has_data_processing_consent
+        data_type: boolean
+        description: "{{ doc('column__has_data_processing_consent') }}"
+        data_tests:
+          - not_null
+
       - name: taste_preference_compliancy_code
         data_type: int
         description: "{{ doc('column__taste_preference_compliancy_code') }}"
@@ -1680,6 +1686,22 @@ models:
               max_value: 100
 
       - name: error_mean_ordered_ago
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: error_mean_family_friendly_probability
+        data_type: double
+        description: "{{ doc('column__preselector_error_vector') }}"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: error_intra_week_similarity
         data_type: double
         description: "{{ doc('column__preselector_error_vector') }}"
         data_tests:
@@ -2741,7 +2763,7 @@ models:
           - type: not_null
         data_tests:
           - not_null
-        
+
   - name: dim_discounts
     description: "Contains information on all discounts which customers can add to their account"
     latest_version: 1
@@ -2749,7 +2771,7 @@ models:
       alias: dim_discounts
       contract:
         enforced: true
-      
+
     versions:
       - v: 1
 
@@ -2804,7 +2826,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if:  ">1020" # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">1020"  # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">1020"
 
       - name: discount_channel_id
@@ -2822,7 +2844,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if:  ">152" # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">152"  # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">152"
 
       - name: discount_title
@@ -2924,7 +2946,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if:  ">1020" # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">1020"  # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">1020"
 
       - name: discount_sub_category_name

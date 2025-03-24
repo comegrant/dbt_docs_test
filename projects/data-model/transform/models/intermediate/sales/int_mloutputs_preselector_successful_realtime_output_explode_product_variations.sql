@@ -58,6 +58,8 @@ preselector_successful_output as (
         error_mean_fat_saturated,
         error_mean_number_of_ratings,
         error_mean_ordered_ago,
+        error_intra_week_similarity,
+        error_mean_family_friendly_probability,
         error_mean_protein,
         error_mean_rank,
         error_mean_ratings,

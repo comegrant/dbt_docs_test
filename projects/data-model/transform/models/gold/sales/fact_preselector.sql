@@ -81,6 +81,7 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_dishes.menu_week_monday_date
         , preselector_successful_output_dishes.portions
         , preselector_successful_output_dishes.meals
+        , preselector_successful_output_dishes.has_data_processing_consent
 
         -- Preferences
         , preselector_successful_output_dishes.concept_preference_ids
@@ -120,6 +121,8 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_dishes.error_mean_fat_saturated
         , preselector_successful_output_dishes.error_mean_number_of_ratings
         , preselector_successful_output_dishes.error_mean_ordered_ago
+        , preselector_successful_output_dishes.error_intra_week_similarity
+        , preselector_successful_output_dishes.error_mean_family_friendly_probability
         , preselector_successful_output_dishes.error_mean_protein
         , preselector_successful_output_dishes.error_mean_rank
         , preselector_successful_output_dishes.error_mean_ratings
@@ -285,6 +288,7 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_mealbox.menu_week_monday_date
         , preselector_successful_output_mealbox.portions
         , preselector_successful_output_mealbox.meals
+        , preselector_successful_output_mealbox.has_data_processing_consent
         -- Preferences
         , preselector_successful_output_mealbox.concept_preference_ids
         , preselector_successful_output_mealbox.taste_preference_ids
@@ -322,6 +326,8 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_mealbox.error_mean_fat_saturated
         , preselector_successful_output_mealbox.error_mean_number_of_ratings
         , preselector_successful_output_mealbox.error_mean_ordered_ago
+        , preselector_successful_output_mealbox.error_intra_week_similarity
+        , preselector_successful_output_mealbox.error_mean_family_friendly_probability
         , preselector_successful_output_mealbox.error_mean_protein
         , preselector_successful_output_mealbox.error_mean_rank
         , preselector_successful_output_mealbox.error_mean_ratings

@@ -56,12 +56,14 @@ with preselector_successful_output as (
         coalesce(error_vector.mean_fat_saturated, 0) as error_mean_fat_saturated,
         coalesce(error_vector.mean_number_of_ratings, 0) as error_mean_number_of_ratings,
         coalesce(error_vector.mean_ordered_ago, 0) as error_mean_ordered_ago,
+        coalesce(error_vector.mean_family_friendly_probability, 0) as error_mean_family_friendly_probability,
         coalesce(error_vector.mean_protein, 0) as error_mean_protein,
         coalesce(error_vector.mean_rank, 0) as error_mean_rank,
         coalesce(error_vector.mean_ratings, 0) as error_mean_ratings,
         coalesce(error_vector.mean_veg_fruit, 0) as error_mean_veg_fruit,
         coalesce(error_vector.repeated_proteins_percentage, 0) as error_repeated_proteins_percentage,
         coalesce(error_vector.repeated_carbo_percentage, 0) as error_repeated_carbohydrates_percentage,
+        coalesce(error_vector.intra_week_similarity, 0) as error_intra_week_similarity,
         generated_at as created_at
     from preselector_successful_output
 
