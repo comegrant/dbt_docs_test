@@ -567,16 +567,9 @@ order_lines as (
         , order_line_dimensions_joined.fk_dim_date
         , order_line_dimensions_joined.fk_dim_order_statuses
         , order_line_dimensions_joined.fk_dim_order_types
-        , order_line_dimensions_joined.fk_dim_products
+        , '0' as fk_dim_products
         , order_line_dimensions_joined.fk_dim_periods_since_first_menu_week
-        , coalesce(
-            md5(
-                concat(
-                    ordered_and_preselected_recipes_joined.preselected_product_variation_id,
-                    order_line_dimensions_joined.company_id
-                    )
-                ), '0'
-            ) as fk_dim_products_preselected
+        , '0' as fk_dim_products_preselected
         , coalesce(
             md5(
                 cast(
