@@ -16,10 +16,9 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: preselector_output_id
 
+    /// The date and time when the preselector output was created
     column 'Created At'
         dataType: dateTime
-        isHidden
-        isAvailableInMdx: false
         formatString: General Date
         summarizeBy: none
         sourceColumn: created_at
@@ -243,6 +242,13 @@ table 'Preselector Details'
         isAvailableInMdx: false
         summarizeBy: none
         sourceColumn: is_dish
+
+    /// A flag which indicates whether the subscriber has consented to data processing
+    column 'Has Data Processing Consent'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: has_data_processing_consent
 
     column fk_dim_billing_agreements
         dataType: string
