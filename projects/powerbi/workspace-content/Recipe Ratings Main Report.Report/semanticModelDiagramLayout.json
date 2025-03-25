@@ -11,7 +11,7 @@
         {
           "location": {
             "x": 1363.2511583859607,
-            "y": 423.79212767961963
+            "y": 534.41712767961963
           },
           "nodeIndex": "Order Measures",
           "nodeLineageTag": "6c298811-8ad5-482b-b89a-827db89210a3",
@@ -24,7 +24,7 @@
         {
           "location": {
             "x": 1165.2133089284841,
-            "y": 783.75587013371637
+            "y": 894.38087013371637
           },
           "nodeIndex": "Subscription Quiz Measures",
           "nodeLineageTag": "f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef",
@@ -37,7 +37,7 @@
         {
           "location": {
             "x": 2767.5723418083689,
-            "y": 794.81727377568268
+            "y": 905.44227377568268
           },
           "nodeIndex": "(Param) Measures",
           "nodeLineageTag": "6249c02e-7c72-4883-8fd1-d5a33f3de090",
@@ -50,7 +50,7 @@
         {
           "location": {
             "x": 1507.0031234553487,
-            "y": 832.60038424730612
+            "y": 943.22538424730612
           },
           "nodeIndex": "Billing Agreements",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
@@ -63,7 +63,7 @@
         {
           "location": {
             "x": 1798.2154580334004,
-            "y": 806.903914310145
+            "y": 917.528914310145
           },
           "nodeIndex": "Billing Agreements Deviation",
           "nodeLineageTag": "a9dc5972-85e4-4024-983d-23afcc61bfd9",
@@ -76,7 +76,7 @@
         {
           "location": {
             "x": 2202.03282378071,
-            "y": 844.33831578228046
+            "y": 954.96331578228046
           },
           "nodeIndex": "Bridge Billing Agreements Preferences",
           "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
@@ -89,7 +89,7 @@
         {
           "location": {
             "x": 1939.1869970046037,
-            "y": 1126.9113605857358
+            "y": 1237.5363605857358
           },
           "nodeIndex": "Bridge Billing Agreements Subscribed Products",
           "nodeLineageTag": "488b18a8-7e56-41db-b1d3-d04d09d34886",
@@ -102,7 +102,7 @@
         {
           "location": {
             "x": 874.83426994090917,
-            "y": 891.84547594195669
+            "y": 1002.4704759419567
           },
           "nodeIndex": "Brands",
           "nodeLineageTag": "3b7baf1d-beaf-4be6-98c8-8c0e917f79f1",
@@ -115,7 +115,7 @@
         {
           "location": {
             "x": 594.9215611276552,
-            "y": 535.90336060299433
+            "y": 646.52836060299433
           },
           "nodeIndex": "Dates",
           "nodeLineageTag": "c07364ff-2124-4e7c-891b-a66b8032cb30",
@@ -128,7 +128,7 @@
         {
           "location": {
             "x": 302.9726156781569,
-            "y": 854.34317085272585
+            "y": 964.96817085272585
           },
           "nodeIndex": "Estimations",
           "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
@@ -141,7 +141,7 @@
         {
           "location": {
             "x": 304.26047273675897,
-            "y": 191.41490743181976
+            "y": 302.03990743181976
           },
           "nodeIndex": "Menu Measures",
           "nodeLineageTag": "007c46b4-40eb-4dda-b8d8-38aff56cc4ff",
@@ -154,7 +154,7 @@
         {
           "location": {
             "x": 805.426032135657,
-            "y": 64.86249024363633
+            "y": 175.48749024363633
           },
           "nodeIndex": "Order Statuses",
           "nodeLineageTag": "1328111a-5f01-4b3f-8a2c-c02c4dad327c",
@@ -167,7 +167,7 @@
         {
           "location": {
             "x": 1419.4318632925861,
-            "y": 15
+            "y": 125.625
           },
           "nodeIndex": "Order Types",
           "nodeLineageTag": "6fa76248-580e-4a45-882f-c64c0358e75c",
@@ -180,7 +180,7 @@
         {
           "location": {
             "x": 1656.1534426781382,
-            "y": 296.38597901324079
+            "y": 407.01097901324079
           },
           "nodeIndex": "Origin of Preselected Dishes",
           "nodeLineageTag": "5dc57e37-a162-4b62-a970-7d6cc1315f19",
@@ -193,7 +193,7 @@
         {
           "location": {
             "x": 10,
-            "y": 1024.5424660598237
+            "y": 1135.1674660598237
           },
           "nodeIndex": "Origin of Selected Dishes in Basket",
           "nodeLineageTag": "31d6e085-8ba5-4560-b085-27c6cb034f32",
@@ -205,21 +205,8 @@
         },
         {
           "location": {
-            "x": 1057.2675783047662,
-            "y": 1499.6602703924268
-          },
-          "nodeIndex": "Period Since First Order",
-          "nodeLineageTag": "45e03479-e4f8-48e0-9804-190221e983b8",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 2391.4841381927172,
-            "y": 1127.4726262816891
+            "y": 1238.0976262816891
           },
           "nodeIndex": "Preferences",
           "nodeLineageTag": "a1fb30ef-72c3-45ad-89e5-2a5341187904",
@@ -232,7 +219,7 @@
         {
           "location": {
             "x": 885.316386319346,
-            "y": 415.0037621607421
+            "y": 525.6287621607421
           },
           "nodeIndex": "Products",
           "nodeLineageTag": "4ff9201f-5185-4392-bb6c-8c531c115fb3",
@@ -245,7 +232,7 @@
         {
           "location": {
             "x": 1105.2900007041083,
-            "y": 61.518400091905733
+            "y": 172.14340009190573
           },
           "nodeIndex": "Recipes",
           "nodeLineageTag": "bd92b28f-2317-4cec-b83c-99b43a1927d2",
@@ -258,7 +245,7 @@
         {
           "location": {
             "x": 2079.5804603813413,
-            "y": 1410.6345475513654
+            "y": 1521.2595475513654
           },
           "nodeIndex": "Subscribed Products",
           "nodeLineageTag": "f67b9e95-b0a2-4473-b449-c15e28cd825d",
@@ -271,7 +258,7 @@
         {
           "location": {
             "x": 110.34953003062515,
-            "y": 644.41667138809487
+            "y": 755.04167138809487
           },
           "nodeIndex": "Time",
           "nodeLineageTag": "0c99312c-27e7-45c7-9e1e-ee88cf5707e5",
@@ -284,7 +271,7 @@
         {
           "location": {
             "x": 2493.5723418083689,
-            "y": 761.6907487063088
+            "y": 872.3157487063088
           },
           "nodeIndex": "Preference Combinations",
           "nodeLineageTag": "eea593a0-57c3-4b96-bc0b-a198c99514f6",
@@ -297,7 +284,7 @@
         {
           "location": {
             "x": 3041.5723418083689,
-            "y": 720.81727377568268
+            "y": 831.44227377568268
           },
           "nodeIndex": "Customer Measures",
           "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
@@ -310,7 +297,7 @@
         {
           "location": {
             "x": 3315.5723418083689,
-            "y": 720.81727377568268
+            "y": 831.44227377568268
           },
           "nodeIndex": "Agreement Recipe Compliance Measures",
           "nodeLineageTag": "6b6f33c7-a4ff-4449-a8ff-7b1ab39e43eb",
@@ -323,7 +310,7 @@
         {
           "location": {
             "x": 3923.5723418083689,
-            "y": 670.81727377568268
+            "y": 781.44227377568268
           },
           "nodeIndex": "Budget Measures",
           "nodeLineageTag": "Budget-Measures-Table",
@@ -336,7 +323,7 @@
         {
           "location": {
             "x": 3639.5723418083689,
-            "y": 732.81727377568268
+            "y": 843.44227377568268
           },
           "nodeIndex": "Budget Types",
           "nodeLineageTag": "Budget-Types-Table",
@@ -349,11 +336,199 @@
         {
           "location": {
             "x": 4197.5723418083689,
-            "y": 786.81727377568268
+            "y": 897.44227377568268
           },
           "nodeIndex": "Time Intelligence",
           "size": {
             "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5607.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Minimum Number of Ratings Limit",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5891.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Recipe Rating Target Score Adams Matkasse",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6175.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Recipe Rating Target Score Cheffelo",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6459.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Recipe Rating Target Score GodtLevert",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6743.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Recipe Rating Target Score Linas Matkasse",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7027.5723418083689,
+            "y": 880.44227377568268
+          },
+          "nodeIndex": "(Param) Recipe Rating Target Score RetNemt",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4805.5723418083689,
+            "y": 842.44227377568268
+          },
+          "nodeIndex": "Bridge Recipes Taxonomies",
+          "nodeLineageTag": "Bridge-Recipes-Taxonomies-Table",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5373.5723418083689,
+            "y": 830.44227377568268
+          },
+          "nodeIndex": "Loyalty Events",
+          "nodeLineageTag": "02c93af8-02b7-4d20-a7d5-7a98d225582e",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5089.5723418083689,
+            "y": 756.44227377568268
+          },
+          "nodeIndex": "Loyalty Point Measures",
+          "nodeLineageTag": "Loyalty-Point-Measures-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4521.5723418083689,
+            "y": 806.44227377568268
+          },
+          "nodeIndex": "Taxonomies",
+          "nodeLineageTag": "Taxonomies-Table",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7869.5723418083689,
+            "y": 773.94227377568268
+          },
+          "nodeIndex": "Preselector Measures",
+          "nodeLineageTag": "preselecor-measures-table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7635.5723418083689,
+            "y": 723.94227377568268
+          },
+          "nodeIndex": "Preselector Details",
+          "nodeLineageTag": "Preselector-Details-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7351.5723418083689,
+            "y": 761.94227377568268
+          },
+          "nodeIndex": "Preselector Versions",
+          "nodeLineageTag": "Preselector-Versions-Table",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1057.2675783047662,
+            "y": 1610.2852703924268
+          },
+          "nodeIndex": "Periods Since First Menu Week",
+          "nodeLineageTag": "45e03479-e4f8-48e0-9804-190221e983b8",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8143.5723418083689,
+            "y": 811.69227377568268
+          },
+          "nodeIndex": "(Param) Number of Deliveries per Customer Target",
+          "size": {
+            "height": 152,
             "width": 234
           },
           "zIndex": 0

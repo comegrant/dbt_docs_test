@@ -134,6 +134,13 @@
                   "Value": "8D"
                 }
               }
+            },
+            "titleFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
             }
           }
         }
@@ -245,6 +252,7 @@
             }
           ]
         },
+        "isHiddenInViewMode": true,
         "objects": {
           "general": [
             {

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "5261d2fa5e0495e0a3eb",
+  "position": {
+    "x": 483.71671388101981,
+    "y": 18.855524079320112,
+    "z": 3000,
+    "height": 101.52974504249292,
+    "width": 657.042492917847,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "This page could work instead of both Global Average Score and Averages Scores per Brand if there was a way to select which Parameter to show, i.e. what Target Score to display. I had to go for the quick/temporary solution and need to research more to find the optimal way to display this."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "/Daniel 2025-03-13"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

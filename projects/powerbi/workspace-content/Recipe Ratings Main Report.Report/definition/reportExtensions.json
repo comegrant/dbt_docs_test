@@ -1,0 +1,50 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "Measure",
+          "dataType": "Double",
+          "expression": "",
+          "annotations": [
+            {
+              "name": "43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c",
+              "value": "True"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Menu Measures",
+      "measures": [
+        {
+          "name": "Target score",
+          "dataType": "Double",
+          "expression": "CALCULATE"
+        }
+      ]
+    },
+    {
+      "name": "(Param) Minimum Number of Ratings Limit",
+      "measures": [
+        {
+          "name": "_local Number of Ratings filtered by Limit",
+          "dataType": "Double",
+          "expression": "IF([Number of Ratings] >= '(Param) Minimum Number of Ratings Limit',1,0)",
+          "references": {
+            "measures": [
+              {
+                "entity": "Menu Measures",
+                "name": "Number of Ratings"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

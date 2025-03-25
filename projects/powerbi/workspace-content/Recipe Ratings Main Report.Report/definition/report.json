@@ -7,7 +7,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "CheffeloTemplate34814292476624953.json",
+      "name": "CheffeloTemplate9222310624906209.json",
       "reportVersionAtImport": "5.61",
       "type": "RegisteredResources"
     }
@@ -292,6 +292,72 @@
         "howCreated": "User",
         "isHiddenInViewMode": true,
         "isLockedInViewMode": true
+      },
+      {
+        "name": "86d3f212502b367d9bc4",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dates"
+              }
+            },
+            "Property": "Weeks Offset from Current Monday"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "Dates",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 4,
+                  "Left": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "d"
+                        }
+                      },
+                      "Property": "Weeks Offset from Current Monday"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "-2L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "fd3d1d4e8514ebc47be2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Param) Recipe Rating Target Score Cheffelo"
+              }
+            },
+            "Property": "Recipe Rating Target Score Cheffelo"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User",
+        "isHiddenInViewMode": true
       }
     ]
   },
@@ -340,11 +406,6 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "CheffeloTemplate34814292476624953.json",
-          "path": "CheffeloTemplate34814292476624953.json",
-          "type": "CustomTheme"
-        },
-        {
           "name": "Cheffelo-Report-Background5715553308376722.svg",
           "path": "Cheffelo-Report-Background5715553308376722.svg",
           "type": "Image"
@@ -373,6 +434,11 @@
           "name": "Cheffelo-Report-Background5813350735255718.svg",
           "path": "Cheffelo-Report-Background5813350735255718.svg",
           "type": "Image"
+        },
+        {
+          "name": "CheffeloTemplate9222310624906209.json",
+          "path": "CheffeloTemplate9222310624906209.json",
+          "type": "CustomTheme"
         }
       ]
     }

@@ -162,7 +162,14 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }
@@ -183,6 +190,13 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -217,7 +231,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Number of Dishes not Cooked'"
+                  "Value": "'Number of Dishes not Cooked per Number of Ratings'"
                 }
               }
             },
