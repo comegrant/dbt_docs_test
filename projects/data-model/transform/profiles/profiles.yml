@@ -10,6 +10,7 @@ transform:
       method: http
       catalog: dev
       schema: dev
+      threads: 4 # Threads used for the data-model CI workflow
       http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
       host: "{{ env_var('DATABRICKS_HOST') }}"
       token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
