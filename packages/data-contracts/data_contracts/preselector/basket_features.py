@@ -267,6 +267,7 @@ HistoricalCustomerMealkitFeatures = BasketFeatures.with_schema(
             NormalizedRecipeFeatures.location,
             HistoricalRecipeOrders.location,
             RecipeMainIngredientCategory.location,
+            AttributeScoring.location,
         },
     ),
     entities=dict(agreement_id=Int32(), year=Int32(), week=Int32()),

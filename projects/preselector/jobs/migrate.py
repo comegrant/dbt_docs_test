@@ -41,7 +41,7 @@ async def migrate_source(source: UCTableSource, view: FeatureViewWrapper) -> Non
 
     commands = spark_sql.split(";")
     for command in commands:
-        logger.info(f"Running command: '{command}'")
+        logger.info(f"Running sql: '{command}'")
         spark.sql(command)
 
 
