@@ -12,6 +12,10 @@ recipes as (
     select * from {{ ref('pim__portions') }}
 )
 
+, portion_translations as (
+    select * from {{ ref('pim__portion_translations') }}
+)
+
 , ingredient_sections as (
     select * from {{ ref('pim__chef_ingredient_sections') }}
 )
@@ -63,6 +67,7 @@ recipes as (
         , recipes.language_id
         , recipe_portions.recipe_portion_id
         , portions.portion_size
+        , portion_translations.portion_name
         , sum(
             order_ingredients.nutrition_units
         ) as nutrition_units
@@ -135,6 +140,8 @@ recipes as (
         on recipe_portions.recipe_portion_id = ingredient_sections.recipe_portion_id
     left join portions
         on recipe_portions.portion_id = portions.portion_id
+    left join portion_translations
+        on recipe_portions.portion_id = portion_translations.portion_id
     left join chef_ingredients
         on ingredient_sections.chef_ingredient_section_id = chef_ingredients.chef_ingredient_section_id
     left join generic_ingredients
@@ -152,7 +159,7 @@ recipes as (
     where
         generic_ingredients.nutrition_calculation = 1
         and recipes.is_in_recipe_universe = true
-    group by 1, 2, 3, 4, 5
+    group by 1, 2, 3, 4, 5, 6
 )
 
 , recipe_portions_nutrition as (
@@ -162,6 +169,7 @@ recipes as (
         , language_id
         , recipe_portion_id
         , portion_size
+        , portion_name
         , (protein_g / portion_size)     as protein_gram_per_portion
         , (carbs_g / portion_size)       as carbs_gram_per_portion
         , (fat_g / portion_size)         as fat_gram_per_portion

@@ -488,3 +488,56 @@ models:
       - name: total_kcal_per_portion
         description: "{{ doc('column__total_kcal_per_portion') }}"
         data_type: float
+
+
+  - name: ml_recipe_tagging
+    description: "Table containing data for the recipe tagging project"
+
+    columns:
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+
+      - name: recipe_main_ingredient_name_local
+        description: "{{ doc('column__recipe_main_ingredient_name_local') }}"
+        data_type: string
+
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+
+      - name: cooking_time_to
+        description: "{{ doc('column__cooking_time_to') }}"
+        data_type: int
+
+      - name: taxonomy_name_list
+        description: "{{ doc('column__taxonomy_list') }}"
+        data_type: string
+
+      - name: generic_ingredient_name_list
+        description: "{{ doc('column__generic_ingredient_name_list_per_recipe_portion') }}"
+        data_type: string 
+
+      - name: preference_name_combinations
+        description: "{{ doc('column__preference_name_combinations') }}"
+        data_type: string
+
+      - name: is_low_calorie
+        description: "{{ doc('column__is_low_calorie') }}"
+        data_type: boolean
+
+      - name: is_high_fiber
+        description: "{{ doc('column__is_high_fiber') }}"
+        data_type: boolean
+
+      - name: is_low_fat
+        description: "{{ doc('column__is_low_fat') }}"
+        data_type: boolean
+
+      - name: is_low_sugar
+        description: "{{ doc('column__is_low_sugar') }}"
+        data_type: boolean

@@ -172,3 +172,27 @@ Processed fruit and vegetables per portion in grams for a recipe portion id.
 Total calories per portion for a recipe portion id.
 
 {% enddocs %}
+
+{% docs column__is_low_calorie %}
+
+Whether ot not the recipe is low calorie. A recipe is considered low calorie if the total calories per portion is less than the threshold for the country (NO: 750, SE: 550, DK: 600), and the sum of fresh and processed fruit and vegetables per portion is greater than 150 grams.
+
+{% enddocs %}
+
+{% docs column__is_high_fiber %}
+
+Whether ot not the recipe is high fiber. A recipe is considered high fiber if the fiber per portion is greater than 10 grams.
+
+{% enddocs %}
+
+{% docs column__is_low_fat %}
+
+Whether ot not the recipe is low fat. A recipe is considered low fat if the fat per portion is less than 30% of the total calories per portion.
+
+{% enddocs %}
+
+{% docs column__is_low_sugar %}
+
+Whether ot not the recipe is low sugar. A recipe is considered low sugar if the sugar per portion is less than 7% of the total calories per portion.
+
+{% enddocs %}
