@@ -340,12 +340,12 @@ async def historical_preselector_vector(
     )
     return (
         target.vstack(importance.select(target.columns))
-        .with_columns(created_at=datetime.now(tz=timezone.utc), **{feat: 0 for feat in inject_features})
+        .with_columns(created_at=datetime.now(tz=timezone.utc), **dict.fromkeys(inject_features, 0))
         .lazy()
     )
 
 
-async def generate_attribut_definition_vectors(request: RetrievalRequest) -> pl.LazyFrame:
+async def generate_attribut_definition_vectors(request: RetrievalRequest, limit: int | None) -> pl.LazyFrame:
     from dataclasses import dataclass
 
     @dataclass
@@ -367,14 +367,14 @@ async def generate_attribut_definition_vectors(request: RetrievalRequest) -> pl.
         },
         # Chef favorite
         "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {
-            "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=0.1),
+            # "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=0.1),
             # "mean_number_of_ratings": FeatureImportance(target=0.75, importance=0.1),
             # "mean_ratings": FeatureImportance(target=0.8, importance=0.1),
             "mean_family_friendly_probability": FeatureImportance(target=0.0, importance=1.0),
         },
         # Family
         "B172864F-D58E-4395-B182-26C6A1F1C746": {
-            "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=0.1),
+            # "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=0.1),
             "mean_family_friendly_probability": FeatureImportance(target=1.0, importance=1.0),
         },
         # Vegetarian
@@ -458,7 +458,9 @@ PreselectorErrorStructure = BasketFeatures.with_schema(
 
 PredefinedVectors = BasketFeatures.with_schema(
     name="predefined_vectors",
-    source=CustomMethodDataSource.from_load(generate_attribut_definition_vectors),
+    source=CustomMethodDataSource.from_methods(
+        all_data=generate_attribut_definition_vectors, docker_config="preselector-preselector:latest"
+    ),
     materialized_source=materialized_data.parquet_at("predefined_vectors.parquet"),
     entities=dict(
         concept_id=String(), company_id=String(), vector_type=String().accepted_values(["importance", "target"])

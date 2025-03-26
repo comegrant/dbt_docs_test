@@ -4,7 +4,7 @@ from contextlib import suppress
 from typing import Literal
 
 from aligned.feature_view.feature_view import FeatureViewWrapper
-from data_contracts.preselector.store import Preselector, SuccessfulPreselectorOutput
+from data_contracts.preselector.store import FailedPreselectorOutput, Preselector, SuccessfulPreselectorOutput
 from data_contracts.sources import ml_outputs
 from data_contracts.unity_catalog import UCTableSource
 from pydantic import BaseModel
@@ -41,33 +41,15 @@ async def migrate_source(source: UCTableSource, view: FeatureViewWrapper) -> Non
 
     commands = spark_sql.split(";")
     for command in commands:
+        logger.info(f"Running command: '{command}'")
         spark.sql(command)
-
-
-async def migrate_realtime() -> None:
-    spark = ml_outputs.config.connection()
-
-    copy_sql = """CREATE OR REPLACE TABLE temp_migrate_table AS
-SELECT * FROM mloutputs.preselector_successful_realtime_output"""
-    spark.sql(copy_sql)
-
-    realtime_count = spark.sql(
-        "SELECT COUNT(*) as count FROM mloutputs.preselector_successful_realtime_output"
-    ).toPandas()
-    temp_count = spark.sql("SELECT COUNT(*) as count FROM temp_migrate_table").toPandas()
-
-    assert realtime_count["count"].tolist()[0] == temp_count["count"].tolist()[0]
-
-    drop_table = "DROP TABLE mloutputs.preselector_successful_realtime_output;"
-    spark.sql(drop_table)
 
 
 async def migrate() -> None:
     await migrate_source(ml_outputs.table("preselector_batch"), Preselector)
     await migrate_source(ml_outputs.table("preselector_validate"), Preselector)
-
-    await migrate_realtime()
     await migrate_source(ml_outputs.table("preselector_successful_realtime_output"), SuccessfulPreselectorOutput)
+    await migrate_source(ml_outputs.table("preselector_failed_realtime_output"), FailedPreselectorOutput)
 
 
 async def main() -> None:

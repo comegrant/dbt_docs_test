@@ -16,6 +16,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
 from cheffelo_logging import DataDogConfig
 from cheffelo_logging.logging import DataDogStatsdConfig
+from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
 from data_contracts.recipe import RecipeEmbedding
@@ -77,6 +78,12 @@ async def load_cache_for(
         from_source = store.sources[location]
         logger.info(f"Loading {location} to cache from {from_source.source_id()}")
 
+        if isinstance(from_source, DatabricksSource):
+            logger.warning(
+                f"Found a databricks source at {location}, this can lead to unexpected costs."
+                " Therefore, consider changing to an intermediate source instead."
+            )
+
         if location.location_type == "feature_view":
             job = store.feature_view(location.name).all().remove_derived_features()
         else:
@@ -132,12 +139,12 @@ async def load_cache(
         (
             FeatureLocation.feature_view("preselector_year_week_menu"),
             cache_dir.parquet_at(f"{company_id}/menus.parquet"),
-            (pl.col("menu_year") >= this_year) & (pl.col("company_id") == company_id),
+            (pl.col("company_id") == company_id) & (pl.col("menu_year") >= this_year),
         ),
         (
             FeatureLocation.feature_view("normalized_recipe_features"),
             cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
-            (pl.col("year") >= this_year) & (pl.col("company_id") == company_id),
+            (pl.col("company_id") == company_id) & (pl.col("year") >= this_year),
         ),
         (RecommendatedDish.location, partition_recs, (pl.col("company_id") == company_id) & rec_partitions),
         (PredefinedVectors.location, InMemorySource.empty(), pl.col("company_id") == company_id),
@@ -149,6 +156,11 @@ async def load_cache(
         (
             RecipeEmbedding.location,
             cache_dir.parquet_at(f"{company_id}/recipe_embeddings.parquet"),
+            pl.col("company_id") == company_id,
+        ),
+        (
+            AttributeScoring.location,
+            cache_dir.parquet_at(f"{company_id}/attribute_scoring.parquet"),
             pl.col("company_id") == company_id,
         ),
     ]
