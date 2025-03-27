@@ -1591,10 +1591,9 @@ async def run_preselector(
         st.write(normalized_recipe_features)
 
     filtered = normalized_recipe_features.filter(
-        pl.col("is_adams_signature").not_() & pl.col("is_cheep").not_()
-        # & pl.col("is_slow_grown_chicken").is_not()
+        pl.col("is_adams_signature").not_() & pl.col("is_cheep").not_() & pl.col("is_red_cross").not_()
     ).select(
-        pl.exclude(["is_adams_signature", "is_cheep"]),
+        pl.exclude(["is_adams_signature", "is_cheep", "is_red_cross"]),
     )
 
     filtered, compliance, preselected_recipes = await filter_on_preferences(customer, filtered, store)

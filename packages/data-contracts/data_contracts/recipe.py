@@ -775,6 +775,9 @@ class NormalizedRecipeFeatures:
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
     )
+    is_red_cross = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains(3663) | pl.col("taxonomy_ids").list.contains(3664), as_dtype=Bool()
+    )
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
     is_high_cooking_time = Bool()
