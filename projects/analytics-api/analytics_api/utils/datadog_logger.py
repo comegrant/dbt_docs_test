@@ -23,10 +23,7 @@ async def datadog_logger(env: str | None = None) -> None:
             datadog_source="python",
         ),
     )
-    # print(settings)
     # The root logger, so we log everything to datadog
     logger = logging.getLogger("")
     setup_logger()
     setup_datadog(logger, settings)
-    # logger.info("Hello DataDog")
-    # logger.info("This is an info message")

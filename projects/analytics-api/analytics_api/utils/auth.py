@@ -48,7 +48,7 @@ async def get_auth_config() -> AuthConfig | None:
         logger.error("Failed to load authentication configuration due to validation error: %s", validation_error)
 
 
-async def retreive_token(username, password):  # noqa: ANN001, ANN201
+async def retrieve_token(username, password):  # noqa: ANN001, ANN201
     """
     Retrieves a token for a given username and password.
 

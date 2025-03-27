@@ -21,15 +21,12 @@ from dotenv import find_dotenv, load_dotenv
 # from analyticsapi.services.external_apis import auth_api
 from fastapi import FastAPI, Form  # , Query
 from fastapi.routing import APIRoute
-from fastapi_try.auth import retreive_token, validate_token
-from fastapi_try.datadog_logger import datadog_logger
-
-# from fastapi_try.fastapi_mop import app as mop_app
-from fastapi_try.fastapi_mop import mop_router as mop_app_router
 from pydantic_settings import BaseSettings
 
-# LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
-# logging.basicConfig(level=LOGLEVEL)
+from analytics_api.routers.menu_optimiser import mop_router as mop_app_router
+from analytics_api.utils.auth import retrieve_token, validate_token
+from analytics_api.utils.datadog_logger import datadog_logger
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +37,6 @@ class EnvSettings(BaseSettings):
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     load_dotenv(find_dotenv())
-    # environment = os.getenv("ENVIRONMENT")
 
     settings = EnvSettings()
     await datadog_logger(env=settings.environment)
@@ -49,16 +45,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Analytics API", lifespan=lifespan)
-# app.mount("/mop", mop_app, name="mop")
-# mop_router = APIRouter()
-# mop_router.include_router(mop_app_router, prefix="/")
-# app.include_router(mop_router, prefix="/mop")
 app.include_router(mop_app_router)
-
-
-# @app.on_event("startup")
-# async def startup_event():
-#    await datadog_logger()
 
 
 # app.include_router(forecasting.router)
@@ -77,7 +64,6 @@ async def hello() -> Literal["Hello from the new site again!!"]:
     Default landing page to test if page is up
     """
     string_to_return = "Hello from the new site again!!"
-    # logger.info(string_to_return)
     return string_to_return
 
 
@@ -117,7 +103,7 @@ async def login(
         if await validate_token(client_secret):
             return {"access_token": client_secret}
     else:
-        return await retreive_token(username, password)  # retrieve_token(username, password)
+        return await retrieve_token(username, password)
 
 
 # def custom_openapi():
