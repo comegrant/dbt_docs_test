@@ -1,0 +1,139 @@
+resources:
+  jobs:
+    ingestion_job:
+      name: ingestion-job
+
+      timeout_seconds: 2700 #Timeout after 45 mins
+      edit_mode: EDITABLE
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: start-notification
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: 🚀 Ingestion job has started
+              is_error: "false"
+
+        - task_key: bronze_coredb_snapshot_full
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_full.py
+
+        - task_key: bronze_cms_full
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/full_ingest/bronze_cms_full.py
+
+        - task_key: bronze_pim_full
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/full_ingest/bronze_pim_full.py
+
+        - task_key: bronze_psl_full
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/full_ingest/bronze_psl_full.py
+
+        - task_key: bronze_cms_billing_agreement_order_and_order_lines
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_order_&_order_lines.py
+
+        - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+
+        - task_key: bronze_cms_register_info_basket
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
+
+        - task_key: dbt-snapshot-all
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt snapshot'
+          environment_key: dbt-default
+          depends_on:
+            - task_key: bronze_coredb_snapshot_full
+
+        # perform an extra ingest of billing agreements to
+        # capture agreements that has been created during the job
+        - task_key: bronze_coredb_snapshot_billing_agreements
+          depends_on: [
+            {task_key: bronze_cms_full},
+            {task_key: bronze_pim_full},
+            {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+            {task_key: bronze_cms_register_info_basket},
+            {task_key: dbt-snapshot-all}
+          ]
+          notebook_task:
+            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_billing_agreements.py
+
+        # perform an extra snapshot of billing agreements to
+        # capture agreements that has been created during the job
+        - task_key: dbt-snapshot-billing-agreements
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt snapshot -s scd_cms__billing_agreements'
+          environment_key: dbt-default
+          depends_on:
+            - task_key: bronze_coredb_snapshot_billing_agreements
+
+        - task_key: success-notification
+          depends_on:
+            - task_key: dbt-snapshot-billing-agreements
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Ingestion job completed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: bronze_coredb_snapshot_full},
+            {task_key: bronze_coredb_snapshot_billing_agreements},
+            {task_key: bronze_cms_full},
+            {task_key: bronze_pim_full},
+            {task_key: bronze_psl_full},
+            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+            {task_key: bronze_cms_register_info_basket},
+            {task_key: dbt-snapshot-all},
+            {task_key: dbt-snapshot-billing-agreements}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Ingestion job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, engineering
