@@ -527,7 +527,7 @@
             "x": 5477.7490014002269,
             "y": 1458.3997290208724
           },
-          "nodeIndex": "(Param) Number of Deliveries per Customer Target",
+          "nodeIndex": "(Param) Number of Orders per Customer Target",
           "size": {
             "height": 152,
             "width": 234

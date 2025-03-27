@@ -1,0 +1,34 @@
+/// This parameter can be used to set the target number of orders per customer for the selected cohort.
+/// By changing it you will modify which customers are included in the following measures:
+/// - Number of Customers with Fewer than X Orders
+/// - Number of Customers with X or More Orders
+/// - Share of Customers with Fewer than X Orders
+/// - Share of Customers with X or More Orders
+table '(Param) Number of Orders per Customer Target'
+
+	measure 'Number of Orders per Customer Target Value' =
+            SELECTEDVALUE(
+                '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target],
+                4
+            )
+        isHidden
+        formatString: 0
+
+    /// This parameter can be used to set the target number of orders per customer for the selected cohort.
+    /// By changing it you will modify which customers are included in the following measures:
+    /// - Number of Customers with Fewer than X Orders
+    /// - Number of Customers with X or More Orders
+    /// - Share of Customers with Fewer than X Orders
+    /// - Share of Customers with X or More Orders
+    column 'Number of Orders per Customer Target'
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Number of Orders per Customer Target' = calculated
+        mode: import
+        source = GENERATESERIES(0, 100, 1)

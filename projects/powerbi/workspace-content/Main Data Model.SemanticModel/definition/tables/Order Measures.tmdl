@@ -803,48 +803,98 @@ table 'Order Measures'
 		displayFolder: Customers
 		lineageTag: 04d72b55-4e5c-458a-b85e-4221d4ed4ef1
 
-	/// Number of ordering customers who have had fewer than x deliveries in the selected period.
-	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
-	measure 'Number of Ordering Customers with Fewer than X Deliveries' =
+	/// Number of customers (with at least one order) who have had fewer than x orders, in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Customers with Fewer than X Orders' =
 			CALCULATE(
 				[Number of Ordering Customers],
 				FILTER(
 					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
-					[Number of Orders] < '(Param) Number of Deliveries per Customer Target'[Number of Deliveries per Customer Target Value]
+					[Number of Orders] < '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
 		formatString: #,0
 		displayFolder: Customers
 
-	/// Number of ordering customers who have had x or more deliveries in the selected period.
-	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
-	measure 'Number of Ordering Customers with X or More Deliveries' =
+	/// Number of customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Customers with X or More Orders' =
 			CALCULATE(
 				[Number of Ordering Customers],
 				FILTER(
 					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
-					[Number of Orders] >= '(Param) Number of Deliveries per Customer Target'[Number of Deliveries per Customer Target Value]
+					[Number of Orders] >= '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
 		formatString: #,0
 		displayFolder: Customers
 
-	/// Share of ordering customers who have had fewer than x deliveries in the selected period.
-	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
-	measure 'Share of Ordering Customers with Fewer than X Deliveries' =
+	/// Number of orders by customers who have had fewer than x orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Orders by Customers with Fewer than X Orders' =
+			CALCULATE(
+				[Number of Orders],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] < '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Customers
+
+	/// Number of orders by customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Orders by Customers with X or More Orders' =
+			CALCULATE(
+				[Number of Orders],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] >= '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Customers
+
+	/// Order frequency for ordering customers who have had fewer than x orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Average Number of Orders per Customer with Fewer than X Orders' =
 			DIVIDE(
-				[Number of Ordering Customers with Fewer than X Deliveries],
+				[Number of Orders by Customers with Fewer than X Orders],
+				[Number of Customers with Fewer than X Orders],
+				BLANK()
+			)
+		formatString: #,0.00
+		displayFolder: Customers
+
+	/// Order frequency for customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Average Number of Orders per Customer with X or More Orders' =
+			DIVIDE(
+				[Number of Orders by Customers with X or More Orders],
+				[Number of Customers with X or More Orders],
+				BLANK()
+			)
+		formatString: #,0.00
+		displayFolder: Customers
+
+	/// Share of customers who have had fewer than x orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Share of Customers with Fewer than X Orders' =
+			DIVIDE(
+				[Number of Customers with Fewer than X Orders],
 				[Number of Ordering Customers],
 				BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Customers
 
-	/// Share of ordering customers who have had x or more deliveries in the selected period.
-	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Deliveries per Customer Target"
-	measure 'Share of Ordering Customers with X or More Deliveries' =
+	/// Share of customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Share of Customers with X or More Orders' =
 			DIVIDE(
-				[Number of Ordering Customers with X or More Deliveries],
+				[Number of Customers with X or More Orders],
 				[Number of Ordering Customers],
 				BLANK()
 			)
