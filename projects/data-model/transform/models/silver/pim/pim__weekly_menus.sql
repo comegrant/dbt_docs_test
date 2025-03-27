@@ -21,6 +21,7 @@ source as (
 
         {# dates #}
         , {{ get_iso_week_start_date('menu_year', 'menu_week') }} as menu_week_monday_date
+        , ordering_date as ingredient_purchase_date
 
     from source
 

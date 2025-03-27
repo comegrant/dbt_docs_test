@@ -6,6 +6,7 @@ sources:
     schema: bronze
     tables:
       - name: pim__weekly_menus
+      - name: pim__ingredient_price
       - name: pim__menus
       - name: pim__menu_variations
       - name: pim__menu_recipes

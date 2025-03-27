@@ -3,6 +3,79 @@
 version: 2
 
 models:
+  - name: pim__ingredient_prices
+    description: "Contains information on the planning purchasing price of ingredients."
+
+    columns:
+      - name: ingredient_price_id
+        data_type: char(36)
+        description: "{{ doc('column__ingredient_price_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null 
+  
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_price_type_id
+        data_type: int
+        description: "{{ doc('column__ingredient_price_type_id') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1, 2]
+
+      - name: ingredient_unit_cost
+        data_type: decimal(19,4)
+        description: "{{ doc('column__ingredient_unit_cost') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_unit_cost_markup
+        data_type: decimal(19,4)
+        description: "{{ doc('column__ingredient_unit_cost_markup') }}"
+
+      - name: ingredient_price_valid_from
+        data_type: date
+        description: "{{ doc('column__ingredient_price_valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_price_valid_to
+        data_type: date
+        description: "{{ doc('column__ingredient_price_valid_to') }}"        
+        
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+   
   - name: pim__procurement_cycles
     description: "Holds information on distribution center and company used for ingredient orders."
 
@@ -10,14 +83,7 @@ models:
       - name: company_id
         data_type: char(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
-        data_tests:
-          - unique
-          - not_null
-
+        
       - name: purchasing_company_id
         data_type: char(36)
         description: "{{ doc('column__purchasing_company_id') }}"
@@ -47,13 +113,13 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
-
+          
       - name: source_updated_by
-        data_type: string
-        description: "{{ doc('column__source_updated_by') }}"
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
-
+          
   - name: pim__recipe_favorite_types
     description: "Holds information about the different types of favoriting that is possible to select on the frontend."
     columns:
@@ -513,6 +579,12 @@ models:
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_purchase_date
+        data_type: date
+        description: "{{ doc('column__ingredient_purchase_date') }}"
         data_tests:
           - not_null
 

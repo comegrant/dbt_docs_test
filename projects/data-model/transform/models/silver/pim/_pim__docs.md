@@ -7,6 +7,11 @@ The primary key of a menu week in the pim database.
 
 {% enddocs %}
 
+{% docs column__ingredient_purchase_date %}
+
+The set purchasing date for the ingredients to be supplied for a specific menu week.
+
+{% enddocs %}
 
 # Menus
 {% docs column__menu_id %}
@@ -417,6 +422,44 @@ The unique id of the recipe favorite type in the source database.
 {% docs column__recipe_favorite_type_name %}
 
 The name of the recipe type (can be favorite or dislike).
+{% enddocs %}
+
+# Ingredient Prices
+
+{% docs column__ingredient_price_id %}
+
+This is the primary key of the ingredient_price table in PIM.
+
+{% enddocs %}
+
+{% docs column__ingredient_price_type_id %}
+
+Key to know if the type of price./- 0: Regular/- 1: Campaign/- 2: Marketing Contribution
+
+{% enddocs %}
+
+{% docs column__ingredient_unit_cost %}
+
+The planned cost of purchasing ingredients. Used for procurement planning.
+
+{% enddocs %}
+
+{% docs column__ingredient_unit_cost_markup %}
+
+Unit price with an extra mark up used to reduce the risk of price increases when planning menus.
+
+{% enddocs %}
+
+{% docs column__ingredient_price_valid_from %}
+
+Date from which the price of the ingredient is valid.
+
+{% enddocs %}
+
+{% docs column__ingredient_price_valid_to %}
+
+Date until which the price of the ingredient is valid.
+
 {% enddocs %}
 
 # Procurement Cycles
