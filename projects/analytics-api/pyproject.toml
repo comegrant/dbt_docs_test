@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "analytics-api"
+version = "0.1.0"
+description = "A collection of endpoints serving various ML and Analytics products'"
+authors = ["Niladri Banerjee, PhD <niladri.banerjee@cheffelo.com>"]
+packages = [{include = "analytics_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic-settings = "^2.1.0"
+polars-lts-cpu = "0.20.31"
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+numpy = "1.26.4"
+fastapi = {version= "^0.113", extras = ["standard"]}
+uvicorn = "^0.34.0"
+cheffelo-logging = {path = "../../packages/cheffelo-logging", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+aiocache = "^0.12.3"
+python-jose = {version = "^3.4.0", extras = ["cryptography"]}
+
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.databricks.dependencies]
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+pyright = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

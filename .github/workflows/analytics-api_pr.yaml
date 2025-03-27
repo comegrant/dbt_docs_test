@@ -1,0 +1,36 @@
+name: analytics-api PR
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/analytics-api_pr.yaml'
+      - 'projects/analytics-api/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-analytics-api:
+    uses:
+      ./.github/workflows/template_test_python.yml
+    with:
+      python-version: "3.10.13"
+      working-directory: projects/analytics-api
+    secrets: inherit
+
+  build-analytics-api-databricks-image:
+    needs: test-analytics-api
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/analytics-api
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: analytics-api
+      dockerfile: docker/Dockerfile.databricks
+      tag: dev-latest
+    secrets: inherit
+
+  deploy-analytics-api-to-dev:
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/analytics-api
+      target-env: Development
+      docker-image-name: analytics-api
+      docker-image-tag: dev-latest
+    secrets: inherit

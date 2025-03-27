@@ -1,0 +1,20 @@
+name: analytics-api deploy
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/analytics-api_deploy.yaml'
+      - 'projects/analytics-api/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-analytics-api-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/analytics-api
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: analytics-api
+      dockerfile: docker/Dockerfile.databricks
+      tag: ${{ github.sha }}
+    secrets: inherit

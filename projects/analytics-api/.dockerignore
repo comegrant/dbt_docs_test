@@ -1,0 +1,17 @@
+models/*.pkl
+connection.json
+
+### Python template
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.vscode/
+# MacOS
+.DS_Store
+
+.databricks
+
+docker
+docker-compose.yaml
+tests

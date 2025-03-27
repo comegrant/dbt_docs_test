@@ -7,9 +7,8 @@ import polars as pl
 from aligned.schemas.feature import StaticFeatureTags
 from data_contracts.preselector.basket_features import BasketFeatures
 from data_contracts.preselector.store import FailedPreselectorOutput, Preselector, SuccessfulPreselectorOutput
-from pydantic import BaseModel, Field, computed_field, model_validator
-
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference
+from pydantic import BaseModel, Field, computed_field, model_validator
 
 
 class PreselectorCustomer(BaseModel):
@@ -127,7 +126,7 @@ class PreselectorSuccessfulResponse(BaseModel):
             for feat in returned_features
             if "json" not in feat.dtype.name and feat.name != "recipes"
         }
-        error_vector_type = pl.Struct({feat: pl.Float64 for feat in error_features})
+        error_vector_type = pl.Struct(dict.fromkeys(error_features, pl.Float64))
         expected_schema["error_vector"] = error_vector_type
 
         expected_schema["recipes"] = pl.List(
