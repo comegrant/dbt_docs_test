@@ -30,3 +30,10 @@ company_config = {
     "Linas_Matkasse": "LMK",
     "RetNemt": "RT",
 }
+
+mapping = {
+    "6a2d0b60-84d6-4830-9945-58d518d27ac2": "LMK",
+    "8a613c15-35e4-471f-91cc-972f933331d7": "AM",
+    "09ecd4f0-ae58-4539-8e8f-9275b1859a19": "GL",
+    "5e65a955-7b1a-446c-b24f-cfe576bf52d7": "RT",
+}
