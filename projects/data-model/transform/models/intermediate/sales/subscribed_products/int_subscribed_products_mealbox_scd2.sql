@@ -301,7 +301,8 @@ basket_products as (
 , replace_product_variation as (
 
     select 
-        billing_agreement_basket_id
+        billing_agreement_id
+        , billing_agreement_basket_id
         , case 
             when basket_source = 'customer deviation' 
             and product_id = previous_product_id 
@@ -319,7 +320,8 @@ basket_products as (
 -- group consecutive rows with same product variation id
 , subscribed_mealbox_group_periods as (
     select 
-        billing_agreement_basket_id
+        billing_agreement_id
+        , billing_agreement_basket_id
         , product_variation_id
         , valid_from
         , valid_to
@@ -346,7 +348,8 @@ basket_products as (
 -- merge consecutive rows with same product variation id
 , subscribed_mealbox_merge_groups as (
     select
-        billing_agreement_basket_id
+        billing_agreement_id
+        , billing_agreement_basket_id
         , product_variation_id
         , group_periods
         , min(valid_from) as valid_from
@@ -358,4 +361,53 @@ basket_products as (
         all
 )
 
-select * from subscribed_mealbox_merge_groups
+
+
+-- for all agreements that signed up before the history start date
+-- and that does not have a dbt_snapshot before the history start date
+-- we want to get the first subscribed mealbox they had after the history start date
+, find_first_row_after_history_start as (
+    
+    select
+        subscribed_mealbox_group_periods.billing_agreement_id
+        , min(subscribed_mealbox_group_periods.group_periods) as group_periods
+    from subscribed_mealbox_group_periods
+    left join dbt_snapshot_min_valid_from
+        on subscribed_mealbox_group_periods.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
+    left join billing_agreements
+        on subscribed_mealbox_group_periods.billing_agreement_id = billing_agreements.billing_agreement_id
+    where (dbt_snapshot_min_valid_from.min_valid_from > '{{ var("basket_history_start_at") }}' or dbt_snapshot_min_valid_from.min_valid_from is null)
+        and billing_agreements.signup_at < '{{ var("basket_history_start_at") }}'
+        and subscribed_mealbox_group_periods.valid_from > '{{ var("basket_history_start_at") }}'
+    group by 1
+
+)
+
+-- for all agreements that signed up before the history start date
+-- and that does not have a dbt_snapshot before the history start date
+-- we trust the first subscried product after the history start date
+-- over the last subscribed product before the history start date
+, adjust_first_subscribed_product as (
+
+    select 
+        subscribed_mealbox_merge_groups.billing_agreement_basket_id
+        , subscribed_mealbox_merge_groups.product_variation_id
+        , case 
+            when subscribed_mealbox_merge_groups.group_periods = find_first_row_after_history_start.group_periods
+            then to_timestamp('{{ var("basket_history_start_at") }}')
+            else subscribed_mealbox_merge_groups.valid_from
+        end as valid_from
+        , subscribed_mealbox_merge_groups.valid_to
+        , subscribed_mealbox_merge_groups.basket_source_mealbox
+    from subscribed_mealbox_merge_groups
+    left join find_first_row_after_history_start
+        on subscribed_mealbox_merge_groups.billing_agreement_id = find_first_row_after_history_start.billing_agreement_id
+    where (
+        subscribed_mealbox_merge_groups.group_periods >= find_first_row_after_history_start.group_periods
+        and subscribed_mealbox_merge_groups.billing_agreement_id = find_first_row_after_history_start.billing_agreement_id
+    )
+    or find_first_row_after_history_start.billing_agreement_id is null
+
+)
+
+select * from adjust_first_subscribed_product
