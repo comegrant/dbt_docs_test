@@ -1256,6 +1256,51 @@ table 'Order Measures'
 		formatString: #,0
 		displayFolder: Orders
 
+	/// The number of people eating the delivered dishes, which is calculated as the Number of Orders x Number of Portions of each order.
+	/// Example: One 6 portions delivery and one 4 portions delivery will together count as 10 consumers.
+	measure 'Number of Consumers' =
+			CALCULATE(
+				SUM('Order Measures'[portions])
+				, 'Products'[Product Type Name] = "Mealbox"
+			)
+		formatString: # ###,0
+		displayFolder: Recipe Sales
+
+	/// The number of unique recipe ids (not to be confused with main recipe) ordered in the selected filtering context.
+	measure 'Number of Distinct Recipes Ordered' =
+			DISTINCTCOUNTNOBLANK('Order Measures'[recipe_id])
+		formatString: # ###,0
+		displayFolder: Recipe Sales
+
+	/// The total number of plates served, which is calculated as the sum of all Portions x Meals for all orders in the selection.
+	/// Example: One delivery with 5 meals and 4 portions per meal will count as 20 servings.
+	measure 'Number of Servings' =
+			SUM('Order Measures'[mealbox_servings])
+		formatString: # ###,0
+		displayFolder: Recipe Sales		
+
+	/// The average number of servings per unique recipe id.
+	measure 'Average Number of Consumers per Dish' =
+			DIVIDE([Number of Servings],[Number of Distinct Recipes Ordered])
+		formatString: # ###,0
+		isHidden
+		displayFolder: Recipe Sales
+
+	/// The average number of meals in the selected filtering context.
+	measure 'Average Number of Meals per Order' =
+			DIVIDE([Number of Ordered Dishes],[Number of Orders])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Sales
+
+	/// The average number of portions in the selected filtering context.
+	measure 'Average Number of Portions per Order' =
+			DIVIDE([Number of Consumers],[Number of Orders])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Sales
+
+
 	column ops_order_id
 		dataType: int64
 		isHidden
