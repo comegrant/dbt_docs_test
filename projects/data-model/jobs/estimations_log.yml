@@ -57,7 +57,7 @@ resources:
               - 'dbt run -s +estimations_log'
               - 'dbt test -s +estimations_log --indirect-selection cautious'
               # I've put this here temporary since its also supposed to run every 2nd h and depends on the same tables
-              - 'dbt build -s main_recipe_last_menu_year_week'
+              - 'dbt build -s active_basket_deviations_recent_weeks'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_cms_full},

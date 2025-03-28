@@ -14,7 +14,7 @@ models:
       - name: menu_week
         description: "{{ doc('column__menu_week') }}"
         data_type: int
-        
+
       - name: company_id
         description: "{{ doc('column__company_id') }}"
         data_type: string
@@ -22,11 +22,11 @@ models:
       - name: weekly_menu_id
         description: "{{ doc('column__weekly_menu_id') }}"
         data_type: int
-      
+
       - name: menu_id
         description: "{{ doc('column__menu_id') }}"
         data_type: int
-      
+
       - name: product_variation_id
         description: "{{ doc('column__product_variation_id') }}"
         data_type: string
@@ -38,7 +38,7 @@ models:
       - name: recipe_id
         description: "{{ doc('column__recipe_id') }}"
         data_type: int
-      
+
       - name: recipe_portion_id
         description: "{{ doc('column__recipe_portion_id') }}"
         data_type: int
@@ -46,15 +46,15 @@ models:
       - name: portion_id
         description: "{{ doc('column__portion_id') }}"
         data_type: int
-      
+
       - name: portion_quantity
         description: "{{ doc('column__portion_quantity') }}"
         data_type: int
-      
+
       - name: menu_recipe_order
         description: "{{ doc('column__menu_recipe_order') }}"
         data_type: int
-      
+
       - name: menu_number_days
         description: "{{ doc('column__menu_number_days') }}"
         data_type: int
@@ -62,17 +62,18 @@ models:
       - name: language_id
         description: "{{ doc('column__language_id') }}"
         data_type: int
-      
+
       - name: product_type_id
         description: "{{ doc('column__product_variation_id') }}"
         data_type: string
-      
+
       - name: product_variation_name
         description: "{{ doc('column__product_variation_name') }}"
-        data_type: string    
-    
+        data_type: string
+
   - name: ml_recipes
-    description: "Table containing recipe information with concatenated lists of taxonomies, generic ingredients and recipe steps"
+    description: "Table containing recipe information with concatenated lists of taxonomies, generic ingredients and recipe\
+      \ steps"
 
     columns:
       - name: fk_dim_companies
@@ -115,7 +116,7 @@ models:
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: recipe_id
         description: "{{ doc('column__recipe_id') }}"
@@ -125,14 +126,14 @@ models:
               config:
                 severity: warn
           - not_null
-      
+
       - name: recipe_portion_id
         description: "{{ doc('column__recipe_portion_id') }}"
         data_type: int
         data_tests:
           - not_null:
               config:
-                  severity: warn
+                severity: warn
 
       - name: recipe_name
         description: "{{ doc('column__recipe_name') }}"
@@ -165,15 +166,15 @@ models:
       - name: taxonomy_list
         data_type: string
         description: "{{ doc('column__taxonomy_list') }}"
-      
+
       - name: number_of_taxonomies
         data_type: int
         description: "{{ doc('column__number_of_taxonomies') }}"
-      
+
       - name: generic_ingredient_id_list
         data_type: string
         description: "{{ doc('column__generic_ingredient_id_list') }}"
-      
+
       - name: number_of_ingredients
         data_type: int
         description: "{{ doc('column__number_of_ingredients') }}"
@@ -181,7 +182,7 @@ models:
       - name: recipe_step_id_list
         data_type: string
         description: "{{ doc('column__recipe_step_id_list') }}"
-      
+
       - name: number_of_recipe_steps
         data_type: int
         description: "{{ doc('column__number_of_recipe_steps') }}"
@@ -189,7 +190,7 @@ models:
   - name: estimations_log
     description: Showing what would have been ordered for the next 14 weeks if the cutoff was when the estimation was generated
 
-    columns: 
+    columns:
       - name: pk_estimations_log
         description: "{{ doc('column__pk_estimations_log') }}"
         data_type: string
@@ -199,8 +200,7 @@ models:
 
       - name: menu_year
         description: "{{doc('column__menu_year')}}"
-        data_type: int
-          - not_null
+        data_type: int - not_null
 
       - name: menu_week
         description: "{{doc('column__menu_week')}}"
@@ -219,11 +219,11 @@ models:
         data_type: string
         data_tests:
           - required_values:
-              value_list: 
+              value_list:
                 - '{{ var("normal_origin_id") }}'
                 - '{{ var("preselector_origin_id") }}'
                 - 00000000-0000-0000-0000-000000000000 # Not deviation
-                
+
               config:
                 where: 'estimation_generated_at >= current_date'
 
@@ -238,7 +238,7 @@ models:
       - name: source
         description: "{{ doc('column__source_estimations_log') }}"
         data_type: int
-  
+
   - name: dishes_order_history
     description: "Table containing aggregated information about the order history for product variations ids"
 
@@ -246,11 +246,11 @@ models:
       - name: company_id
         description: "{{ doc('column__company_id') }}"
         data_type: string
-      
+
       - name: company_name
         description: "{{ doc('column__company_name') }}"
         data_type: string
-      
+
       - name: menu_year
         description: "{{ doc('column__menu_year') }}"
         data_type: int
@@ -258,19 +258,19 @@ models:
       - name: menu_week
         description: "{{ doc('column__menu_week') }}"
         data_type: int
-      
+
       - name: menu_week_monday_date
         description: "{{ doc('column__menu_week_monday_date') }}"
         data_type: date
-      
+
       - name: product_variation_id
         description: "{{ doc('column__product_variation_id') }}"
         data_type: string
-      
+
       - name: product_variation_quantity
         description: "{{ doc('column__product_variation_quantity_order_history') }}"
         data_type: int
-      
+
       - name: total_weekly_qty
         description: "{{ doc('column__total_weekly_qty') }}"
         data_type: int
@@ -278,8 +278,8 @@ models:
       - name: variation_ratio
         description: "{{ doc('column__variation_ratio') }}"
         data_type: double
-          
-          
+
+
   - name: ingredients_aggregated_by_recipe_portion_id
     description: "Table with aggregated ingredient information for recipe portion ids"
 
@@ -287,31 +287,31 @@ models:
       - name: recipe_portion_id
         description: "{{ doc('column__recipe_portion_id') }}"
         data_type: int
-      
+
       - name: language_id
         description: "{{ doc('column__language_id') }}"
         data_type: int
-      
+
       - name: number_generic_ingredients
         description: "{{ doc('column__number_generic_ingredients') }}"
         data_type: int
-      
+
       - name: generic_ingredient_id_list
         description: "{{ doc('column__generic_ingredient_id_list_per_recipe_portion') }}"
         data_type: string
-      
+
       - name: generic_ingredient_name_list
         description: "{{ doc('column__generic_ingredient_name_list_per_recipe_portion') }}"
         data_type: string
-      
+
       - name: ingredient_id_list
         description: "{{ doc('column__ingredient_id_list_per_recipe_portion') }}"
         data_type: string
-      
+
       - name: ingredient_category_id_list
         description: "{{ doc('column__ingredient_category_id_list_per_recipe_portion') }}"
         data_type: string
-    
+
 
 
   - name: main_recipe_last_menu_year_week
@@ -333,8 +333,8 @@ models:
       - name: most_recent_menu_year_week
         description: "{{ doc('column__most_recent_menu_year_week_main_recipe') }}"
         data_type: int
-      
-  - name: preselector_recipes 
+
+  - name: preselector_recipes
     description: "Table containing the weekly preselected recipes for billing agreement ids"
 
     columns:
@@ -382,39 +382,39 @@ models:
       - name: recipe_portion_id
         description: "{{ doc('column__recipe_portion_id') }}"
         data_type: int
-      
+
       - name: generic_ingredient_id
         description: "{{ doc('column__generic_ingredient_id') }}"
         data_type: int
-      
+
       - name: language_id
         description: "{{ doc('column__language_id') }}"
         data_type: int
-      
+
       - name: generic_ingredient_name
         description: "{{ doc('column__generic_ingredient_name') }}"
         data_type: string
-      
+
       - name: order_ingredient_id
         description: "{{ doc('column__order_ingredient_id') }}"
         data_type: int
-      
+
       - name: ingredient_id
         description: "{{ doc('column__ingredient_id') }}"
         data_type: int
-      
+
       - name: ingredient_category_id
         description: "{{ doc('column__ingredient_category_id') }}"
         data_type: int
-      
+
       - name: is_main_carbohydrate
         description: "{{ doc('column__is_main_carbohydrate') }}"
         data_type: boolean
-      
+
       - name: is_main_protein
         description: "{{ doc('column__is_main_protein') }}"
         data_type: boolean
-  
+
   - name: ml_recipe_nutritional_facts
     description: "Table containing nutritional facts for recipes"
 
@@ -489,7 +489,6 @@ models:
         description: "{{ doc('column__total_kcal_per_portion') }}"
         data_type: float
 
-
   - name: ml_recipe_tagging
     description: "Table containing data for the recipe tagging project"
 
@@ -520,7 +519,7 @@ models:
 
       - name: generic_ingredient_name_list
         description: "{{ doc('column__generic_ingredient_name_list_per_recipe_portion') }}"
-        data_type: string 
+        data_type: string
 
       - name: preference_name_combinations
         description: "{{ doc('column__preference_name_combinations') }}"
@@ -541,3 +540,59 @@ models:
       - name: is_low_sugar
         description: "{{ doc('column__is_low_sugar') }}"
         data_type: boolean
+
+  - name: active_basket_deviations_recent_weeks
+    description: "Table containing current active basket deviations for recent and all future menu weeks"
+    meta:
+      owners:
+        - "matsmoll"
+        - "stephen"
+
+    columns:
+      - name: billing_agreement_id
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_type: date
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: deviation_created_at
+        description: "{{ doc('column__source_created_at') }}"
+        data_type: timestamp
+        data_tests:
+          - not_null
