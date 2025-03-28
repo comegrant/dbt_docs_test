@@ -544,7 +544,7 @@ table 'Customer Measures'
 	/// If the customer switched out dishes in a week, but never placed the order for the week, it will not be counted as a swap.
 	measure 'Number of Swapping Customers' =
 						CALCULATE(
-			    			'Order Measures'[Number of Ordering Customers],
+			    			[Number of Ordering Customers],
 			    			FILTER(
 			    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
 			    			    'Order Measures'[Number of Orders with Swaps] > 0
@@ -614,6 +614,83 @@ table 'Customer Measures'
 			)
 		formatString: #,0
 		displayFolder: Swapping Customers
+
+	/// The number of customers with an order
+	measure 'Number of Ordering Customers' =
+			CALCULATE(
+				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id]),
+				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				USERELATIONSHIP(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				),
+				USERELATIONSHIP(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			)
+		formatString: #,0
+		displayFolder: Ordering Customers
+		lineageTag: 3571b433-1c30-49d4-9a71-58d46e446c50
+
+	/// Number of customers (with at least one order) who have had fewer than x orders, in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Customers with Fewer than X Orders' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] < '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		displayFolder: Customers
+
+	/// Number of customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Number of Customers with X or More Orders' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				FILTER(
+					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					[Number of Orders] >= '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
+				)
+			)
+		formatString: #,0
+		displayFolder: Customers
+
+	/// Share of customers who have had fewer than x orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Share of Customers with Fewer than X Orders' =
+			DIVIDE(
+				[Number of Customers with Fewer than X Orders],
+				[Number of Ordering Customers],
+				BLANK()
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Customers
+
+	/// Share of customers who have had x or more orders in the selected period.
+	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
+	measure 'Share of Customers with X or More Orders' =
+			DIVIDE(
+				[Number of Customers with X or More Orders],
+				[Number of Ordering Customers],
+				BLANK()
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Customers
 
 	column fk_dim_dates
 		dataType: int64
