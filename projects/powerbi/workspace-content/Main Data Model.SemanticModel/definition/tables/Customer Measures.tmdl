@@ -655,7 +655,7 @@ table 'Customer Measures'
 				)
 			)
 		formatString: #,0
-		displayFolder: Customers
+		displayFolder: Ordering Customers
 
 	/// Number of customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -668,7 +668,7 @@ table 'Customer Measures'
 				)
 			)
 		formatString: #,0
-		displayFolder: Customers
+		displayFolder: Ordering Customers
 
 	/// Share of customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -679,7 +679,7 @@ table 'Customer Measures'
 				BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Customers
+		displayFolder: Ordering Customers
 
 	/// Share of customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -690,7 +690,7 @@ table 'Customer Measures'
 				BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Customers
+		displayFolder: Ordering Customers
 
 	column fk_dim_dates
 		dataType: int64
