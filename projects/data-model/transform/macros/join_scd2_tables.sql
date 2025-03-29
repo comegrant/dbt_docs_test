@@ -5,11 +5,11 @@
 
 with
 
-    unified_timeline as (    
+    unified_timeline as (
         {% for table in table_names %}
-        select 
+        select
             {{ id_column }}
-            , valid_from 
+            , valid_from
         from {{ table }}
         {% if not loop.last %}
         union
@@ -27,12 +27,12 @@ with
     )
 
 
-select 
+select
     timeline.*
-    , case 
+    , case
         when timeline.valid_to = '{{ var("future_proof_date") }}'
-        then true 
-        else false 
+        then true
+        else false
     end as is_current
     {% for table in table_names %}
             , {{ table }}.* except({{id_column}}, valid_from, valid_to)
@@ -40,7 +40,7 @@ select
 from unified_timeline_recalculate_valid_to timeline
 -- Join all tables with specified conditions
 {% for table in table_names %}
-left join {{ table }} 
+left join {{ table }}
     on timeline.{{ id_column }} = {{ table }}.{{ id_column }}
     and timeline.valid_from >= {{ table }}.valid_from
     and timeline.valid_to <= {{ table }}.valid_to

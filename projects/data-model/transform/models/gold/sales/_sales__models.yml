@@ -205,6 +205,12 @@ models:
         data_tests:
           - not_null
 
+      - name: billing_agreement_preferences_updated_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
+        data_tests:
+          - not_null
+
       - name: billing_agreement_order_id
         data_type: varchar(36)
         description: "{{ doc('column__billing_agreement_order_id') }}"
@@ -429,6 +435,15 @@ models:
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_discounts
         data_type: string
@@ -1029,8 +1044,8 @@ models:
         description: "dimension does not exist yet, so will add description later."
         data_tests:
           - relationships:
-              to: ref('dim_periods_since_first_order')
-              field: pk_dim_periods_since_first_order
+              to: ref('dim_periods_since')
+              field: pk_dim_periods_since
 
       - name: billing_agreement_id
         data_type: int
@@ -2964,3 +2979,56 @@ models:
       - name: discount_sub_category_name
         data_type: string
         description: "{{ doc('column__discount_sub_category_name') }}"
+
+  - name: bridge_preference_combinations_preferences
+    description: "Bridge table between dim_all_preference_combinations and dim_preferences"
+    latest_version: 1
+    config:
+      alias: bridge_preference_combinations_preferences
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_bridge_preference_combinations_preferences
+        data_type: string
+        description: "{{ doc('column__pk_bridge_preference_combinations_preferences') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
+      - name: fk_dim_preferences
+        data_type: string
+        description: "{{ doc('column__pk_dim_preferences') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_preferences')
+              field: pk_dim_preferences
+
+      - name: preference_id_list
+        data_type: array<string>
+        description: "{{ doc('column__preference_id_list') }}"
+        data_tests:
+          - not_null
+
+      - name: preference_id
+        data_type: string
+        description: "{{ doc('column__preference_id') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1

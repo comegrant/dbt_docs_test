@@ -775,3 +775,11 @@ The end date of the loyalty period.
 The primary key of dim_discounts.
 
 {% enddocs %}
+
+# Bridge Preference Combinations Preferences
+
+{% docs column__pk_bridge_preference_combinations_preferences %}
+
+The primary key of the bridge_preference_combinations_preferences.
+
+{% enddocs %}

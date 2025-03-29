@@ -1,0 +1,6 @@
+version: 2
+
+data_tests:
+  - name: unique__int_billing_agreement_preferences_unioned__billing_agreement_preferences_updated_id
+    description: >
+      Make sure that billing_agreement_preferences_updated_id in int_billing_agreement_preferences_unioned is unique.

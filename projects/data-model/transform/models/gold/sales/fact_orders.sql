@@ -59,6 +59,12 @@ order_lines as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , order_discounts as (
 
     select * from {{ ref('cms__billing_agreement_order_discounts') }}
@@ -88,23 +94,23 @@ order_lines as (
             else 0
         end as is_missing_preselector_output
         , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            and total_amount_ex_vat > 0 
+            and total_amount_ex_vat > 0
             then 1
             else 0
         end as is_plus_price_dish
         , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            and total_amount_ex_vat < 0 
+            and total_amount_ex_vat < 0
             then 1
             else 0
         end as is_thrifty_dish
         , products.portions
         , products.meals
-        , case 
+        , case
             when product_type_id in (
                 '{{ var("mealbox_product_type_id") }}'
                 , '{{ var("financial_product_type_id") }}'
             )
-            then products.portions * products.meals 
+            then products.portions * products.meals
             else null
         end as mealbox_servings
         , products.product_type_id
@@ -113,6 +119,7 @@ order_lines as (
         , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
         , recommendations_origin.billing_agreement_basket_deviation_origin_id as billing_agreement_basket_deviation_origin_id_preselected
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
+        , billing_agreements_deviations.billing_agreement_preferences_updated_id
         , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
         , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
         , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
@@ -352,6 +359,7 @@ order_lines as (
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
+        , order_line_dimensions_joined.billing_agreement_preferences_updated_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
         , order_line_dimensions_joined.order_status_id
@@ -445,6 +453,7 @@ order_lines as (
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
+        , order_line_dimensions_joined.billing_agreement_preferences_updated_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
         , order_line_dimensions_joined.order_status_id
@@ -553,6 +562,7 @@ order_lines as (
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id
         , order_line_dimensions_joined.billing_agreement_basket_deviation_origin_id_preselected
         , order_line_dimensions_joined.billing_agreement_id
+        , order_line_dimensions_joined.billing_agreement_preferences_updated_id
         , order_line_dimensions_joined.company_id
         , order_line_dimensions_joined.language_id
         , order_line_dimensions_joined.order_status_id
@@ -661,7 +671,8 @@ order_lines as (
         , has_swap_flag.has_swap
         , dim_portions.pk_dim_portions as fk_dim_portions
         , dim_portions_preselected.pk_dim_portions as fk_dim_portions_preselected
-        , case 
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
+        , case
             when add_recipe_feedback.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
             then true
             else false
@@ -680,6 +691,8 @@ order_lines as (
         and add_recipe_feedback.language_id = dim_portions_preselected.language_id
     left join has_swap_flag
         on add_recipe_feedback.billing_agreement_order_id = has_swap_flag.billing_agreement_order_id
+    left join billing_agreement_preferences
+        on add_recipe_feedback.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join order_discounts
         on add_recipe_feedback.billing_agreement_order_line_id = order_discounts.billing_agreement_order_line_id
         and add_recipe_feedback.menu_year > 2020
