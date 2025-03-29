@@ -2,7 +2,7 @@
 
 {% docs column__taste_preference_compliancy_code %}
 
-The degree to which the preselector was able to produce a set of meals that complied with the taste preferences selected by the customer
+The degree to which the preselector was able to produce a mealkit or dish (depending on the aggregation) that complied with the taste preferences selected by the customer
 
 - 3: all taste preferences are upheld
 - 2: allergy taste preferences are upheld, but we have broken some non-allergy taste preferences for at least one meal e.g. pork when they selected pork as a taste preference

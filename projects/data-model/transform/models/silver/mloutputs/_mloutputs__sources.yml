@@ -12,3 +12,5 @@ sources:
         description: "Table of all successful preselector outputs."
       - name: preselector_failed_realtime_output
         description: "Table of all failed preselector outputs."
+      - name: preselector_batch
+        description: "Table of all successful preselector batch outputs."

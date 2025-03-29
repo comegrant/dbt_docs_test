@@ -600,3 +600,103 @@ models:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 500
+
+  - name: mloutputs__preselector_batch
+    description: "Table of all successful preselector batch outputs."
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__requested_portions') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6]
+              quote: false
+
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__requested_meals') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [2, 3, 4, 5]
+              quote: false
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_ids
+        data_type: array<string>
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: main_recipe_ids
+        data_type: array<int>
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: mealkit_taste_preference_compliancy_code
+        data_type: int
+        description: "{{ doc('column__taste_preference_compliancy_code') }}"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3]
+              quote: false
+
+      - name: dish_taste_preference_compliancy_codes
+        data_type: array<int>
+        description: "{{ doc('column__taste_preference_compliancy_code') }}"
+        data_tests:
+          - not_null
+
+      - name: concept_preference_ids
+        data_type: array<string>
+        description: "{{ doc('column__concept_preference_list') }}"
+        data_tests:
+          - not_null
+
+      - name: taste_preference_ids
+        data_type: array<string>
+        description: "{{ doc('column__taste_preference_list') }}"
+
+      - name: model_version_commit_sha
+        data_type: string
+        description: "{{ doc('column__model_version_commit_sha') }}"
+        data_tests:
+          - not_null
+
+      - name: created_at
+        data_type: timestamp
+        description: "{{ doc('column__created_at_preselector_output') }}"
+        data_tests:
+          - not_null
