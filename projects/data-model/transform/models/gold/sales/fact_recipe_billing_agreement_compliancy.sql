@@ -6,9 +6,35 @@
     )
 }}
 
+-- If incremental load, we only process data after the incremental_start_date which is n days before today.
+{% if is_incremental() %}
+    {% set days_to_subtract = var('incremental_number_of_days') %}
+    {% set today = run_started_at.strftime('%Y-%m-%d') %}
+    {% set incremental_start_date = dateadd(today,-days_to_subtract,'day') %}
+{% endif %}
+
 with
 
-dim_billing_agreements as (
+preselector_output as (
+
+    select * from {{ ref('mloutputs__preselector_successful_realtime_output') }}
+
+    {% if is_incremental() %}
+        where menu_week_monday_date >= current_date() - interval 30 days
+    {% endif %}
+
+)
+
+, menu_weeks as (
+
+    select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
+
+    {% if is_incremental() %}
+        where menu_week_monday_date >= current_date() - interval 30 days
+    {% endif %}
+
+)
+, dim_billing_agreements as (
 
     select * from {{ ref('dim_billing_agreements') }}
 
@@ -35,18 +61,6 @@ dim_billing_agreements as (
 , preference_combinations as (
 
     select * from {{ ref('dim_all_preference_combinations') }}
-
-)
-
-, menu_weeks as (
-
-    select * from {{ ref('int_weekly_menus_variations_recipes_portions_joined') }}
-
-)
-
-, preselector_output as (
-
-    select * from {{ ref('mloutputs__preselector_successful_realtime_output') }}
 
 )
 
@@ -92,6 +106,7 @@ dim_billing_agreements as (
         , menu_weeks.menu_week                                                  as recipe_menu_week
         , menu_weeks.menu_year                                                  as recipe_menu_year
         , menu_weeks.company_id                                                 as recipe_company_id
+        , coalesce(menu_weeks.portion_id,0)                                     as portion_id
     from menu_weeks
     left join dim_recipes
         on
@@ -155,6 +170,7 @@ dim_billing_agreements as (
                 , menu_week
                 , menu_year
                 , company_id
+                , portion_id
             )
         )                 as pk_fact_recipe_billing_agreement_compliancy
         , md5(company_id) as fk_dim_companies
@@ -163,9 +179,14 @@ dim_billing_agreements as (
         )                 as fk_dim_dates
         , fk_dim_billing_agreements
         , fk_dim_recipes
+        , case
+            when portion_id = 0 then 0
+            else md5(concat(portion_id, language_id))
+        end as fk_dim_portions
         , menu_week_monday_date
         , company_id
         , language_id
+        , portion_id
         , billing_agreement_id
         , billing_agreement_preference_combination_id
         , recipe_id

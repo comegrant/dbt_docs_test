@@ -2024,6 +2024,14 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
@@ -2071,6 +2079,10 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
 
       - name: recipe_preference_combination_id
         data_type: string

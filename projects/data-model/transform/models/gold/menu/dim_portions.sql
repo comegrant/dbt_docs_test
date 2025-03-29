@@ -31,7 +31,7 @@ portions as (
         ,status_names_english.status_code_name as portion_status_name_english
     from
         portions
-        left join portion_translations 
+        left join portion_translations
             on portions.portion_id = portion_translations.portion_id
         left join status_names
             on portions.portion_status_code_id = status_names.status_code_id
@@ -47,4 +47,22 @@ portions as (
         where languages.language_id is not null
 )
 
-select * from joined
+, add_unrelevant_row as (
+
+    select
+        '0' as pk_dim_portions
+        , 0 as portion_id
+        , 0 as language_id
+        , 0 as portions
+        , 'Not relevant' as portion_name_local
+        , 'Not relevant' as portion_name_english
+        , '0' as portion_status_code_id
+        , 'Not relevant' as portion_status_name_local
+        , 'Not relevant' as portion_status_name_english
+
+    union all
+
+    select * from joined
+)
+
+select * from add_unrelevant_row

@@ -54,10 +54,6 @@ dates as (
 
 )
 
-, dim_products as (
-    select * from {{ref('dim_products')}}
-)
-
 , orders as (
 
     select * from {{ref('cms__billing_agreement_orders')}}

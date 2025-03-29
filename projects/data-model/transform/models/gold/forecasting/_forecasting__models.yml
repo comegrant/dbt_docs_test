@@ -84,42 +84,73 @@
         description: "{{ doc('column__fk_dim_date_estimation_generated') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
 
       - name: fk_dim_time_estimation_generated
         datatype: bigint
         description: "{{ doc('column__fk_dim_time_estimation_generated') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_time')
+              field: pk_dim_time
 
       - name: fk_dim_date_menu_week
         datatype: int
         description: "{{ doc('column__fk_dim_date_menu_week') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
 
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
 
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
 
       - name: fk_dim_basket_deviation_origins
         data_type: string
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_basket_deviation_origins')
+              field: pk_dim_basket_deviation_origins
 
       - name: fk_dim_billing_agreements
-        data_type: int
+        data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
 
     versions:
       - v: 1
