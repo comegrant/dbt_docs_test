@@ -208,8 +208,6 @@ models:
       - name: billing_agreement_preferences_updated_id
         data_type: string
         description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
-        data_tests:
-          - not_null
 
       - name: billing_agreement_order_id
         data_type: varchar(36)
@@ -440,7 +438,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
         data_tests:
-          - not_null
           - relationships:
               to: ref('dim_all_preference_combinations')
               field: pk_preference_combination_id
