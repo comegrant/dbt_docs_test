@@ -21,6 +21,7 @@ ref table Dates
 ref table Brands
 ref table 'Order Statuses'
 ref table 'Order Types'
+ref table 'Order Line Details'
 ref table Recipes
 ref table Products
 ref table 'Order Measures'

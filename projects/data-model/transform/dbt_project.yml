@@ -37,6 +37,10 @@ vars:
  mealbox_product_type_id: '2F163D69-8AC1-6E0C-8793-FF0000804EB3'
  financial_product_type_id: '288ED8CA-B437-4A6D-BE16-8F9A30185008'
  velg&vrak_product_type_id: 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
+ grocery_product_type_ids: [
+          "'E146C37C-DD49-42C7-8A78-6BB647021F66'", #Add-on-product
+          "'ADB241C3-DECA-4FD7-A173-923BE1A7ABD3'" #Standalone-groceries
+]
  incremental_number_of_days: 30
  full_load_first_date: '2024-01-15'
  subscription_order_type_ids: [

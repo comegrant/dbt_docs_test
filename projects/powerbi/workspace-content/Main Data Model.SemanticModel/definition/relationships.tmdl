@@ -237,3 +237,7 @@ relationship fact_preselector_to_dim_preselector_versions
 relationship fact_preselector_to_dim_billing_agreements
 	fromColumn: 'Preselector Details'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fact_orders_to_dim_order_line_details
+	fromColumn: 'Order Measures'.fk_dim_order_line_details
+	toColumn: 'Order Line Details'.pk_dim_order_line_details

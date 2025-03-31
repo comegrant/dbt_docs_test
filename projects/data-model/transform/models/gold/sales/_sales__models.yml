@@ -97,6 +97,10 @@ models:
         data_tests:
           - not_null
 
+      - name: order_line_details
+        data_type: string
+        description: "{{ doc('column__order_line_details') }}"
+
       - name: meal_adjustment_subscription
         data_type: int
         description: "{{ doc('column__meal_adjustment_subscription') }}"
@@ -368,6 +372,17 @@ models:
           - relationships:
               to: ref('dim_order_types')
               field: pk_dim_order_types
+
+      - name: fk_dim_order_line_details
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_line_details') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_order_line_details')
+              field: pk_dim_order_line_details
 
       - name: fk_dim_products
         data_type: string
@@ -2796,9 +2811,6 @@ models:
       contract:
         enforced: true
 
-    versions:
-      - v: 1
-
     columns:
       - name: pk_dim_discounts
         data_type: string
@@ -2976,6 +2988,47 @@ models:
       - name: discount_sub_category_name
         data_type: string
         description: "{{ doc('column__discount_sub_category_name') }}"
+        
+    versions:
+      - v: 1
+
+  - name: dim_order_line_details
+    description: >
+      Information about Order Line Details. First level is credit, debit, transport and so on.
+      Whereas next level is plus price dish, thrifty dish, groceries etc.
+      Can be used to determine which type of order line that contributes to revenue.
+    latest_version: 1
+    config:
+      alias: dim_order_line_details
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_order_line_details
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_line_details') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_line_type_name
+        data_type: string
+        description: "{{ doc('column__order_line_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: order_line_details
+        data_type: string
+        description: "{{ doc('column__order_line_details') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
 
   - name: bridge_preference_combinations_preferences
     description: "Bridge table between dim_all_preference_combinations and dim_preferences"
@@ -3029,3 +3082,4 @@ models:
 
     versions:
       - v: 1
+

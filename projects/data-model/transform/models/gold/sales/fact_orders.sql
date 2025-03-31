@@ -94,15 +94,34 @@ order_lines as (
             else 0
         end as is_missing_preselector_output
         , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            and total_amount_ex_vat > 0
+            and order_lines.total_amount_ex_vat > 0
             then 1
             else 0
         end as is_plus_price_dish
         , case when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            and total_amount_ex_vat < 0
+            and order_lines.total_amount_ex_vat < 0
             then 1
             else 0
         end as is_thrifty_dish
+        , case
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            and order_lines.total_amount_ex_vat > 0
+            then 'Plus Price Dish'
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            and order_lines.total_amount_ex_vat < 0
+            then 'Thrifty Dish'
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            and order_lines.total_amount_ex_vat = 0
+            then 'Normal Dish'
+            when products.product_type_id in (
+                '{{ var("mealbox_product_type_id") }}',
+                '{{ var("financial_product_type_id") }}'
+                )
+            then 'Mealbox'
+            when products.product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }})
+            then 'Groceries'
+        else order_lines.order_line_type_name
+        end as order_line_details
         , products.portions
         , products.meals
         , case
@@ -350,6 +369,7 @@ order_lines as (
         , order_line_dimensions_joined.portions
         , order_line_dimensions_joined.mealbox_servings
         , order_line_dimensions_joined.order_line_type_name
+        , order_line_dimensions_joined.order_line_details
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
@@ -444,6 +464,7 @@ order_lines as (
         , null as portions
         , null as mealbox_servings
         , "GENERATED" as order_line_type_name
+        , null as order_line_details
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
@@ -553,6 +574,7 @@ order_lines as (
         , order_line_dimensions_joined.portions
         , null as mealbox_servings
         , "GENERATED" as order_line_type_name
+        , null as order_line_details
         , ordered_and_preselected_recipes_joined.recipe_id
         , ordered_and_preselected_recipes_joined.preselected_recipe_id
         , order_line_dimensions_joined.has_delivery
@@ -678,6 +700,7 @@ order_lines as (
             else false
         end as is_adjusted_by_customer
         , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
+        , coalesce(md5(concat(add_recipe_feedback.order_line_type_name, add_recipe_feedback.order_line_details)), '0') as fk_dim_order_line_details
     from add_recipe_feedback
     left join products
         on add_recipe_feedback.fk_dim_products = products.pk_dim_products

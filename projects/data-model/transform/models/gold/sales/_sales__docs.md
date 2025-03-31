@@ -199,6 +199,20 @@ The unique id of the rows in Dim Order Types
 
 {% enddocs %}
 
+# Dim Order Line Details
+
+{% docs column__pk_dim_order_line_details %}
+
+The unique id of the rows in Dim Order Line Details
+
+{% enddocs %}
+
+{% docs column__order_line_details %}
+
+Detials on the type of order line. Such as plus price dish, thrifty dish, groceries, mealbox etc.
+
+{% enddocs %}
+
 # Dim Preferences
 
 {% docs column__pk_dim_preferences %}

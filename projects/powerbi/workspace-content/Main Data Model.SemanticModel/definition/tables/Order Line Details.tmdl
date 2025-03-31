@@ -1,0 +1,37 @@
+/// Table that holds information about different types of order lines.
+/// For example plus prices dishes, thrifty dishes, groceries etc.
+/// Can for instance be used to check what type of order line that
+/// is the source of a change in revenue.
+/// Overlap to some extent with the information in the product-tables.
+table 'Order Line Details'
+    lineageTag: Order-Line-Details
+
+    column pk_dim_order_line_details
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_order_line_details
+
+    /// The type of the order line, i.e debit, credit etc.
+    column 'Order Line Type'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: order_line_type_name
+
+    /// Detailes about order line, i.e. plus price dish, thrifty dish, grocery etc.
+    column 'Order Line Details'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: order_line_details
+
+    partition 'Order Line Details' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_order_line_details_Table = gold_Schema{[Name="dim_order_line_details",Kind="Table"]}[Data]
+                in
+                    dim_order_line_details_Table
