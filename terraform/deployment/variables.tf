@@ -30,7 +30,8 @@ variable "medallion_layers" {
     "snapshots",
     "mlgold",
     "mlfeatures",
-    "mloutputs"
+    "mloutputs",
+    "forecasting"
   ]
   description = "Names of containers and schemas within the Data Lake resource and Databricks catalogs, respectively."
 }

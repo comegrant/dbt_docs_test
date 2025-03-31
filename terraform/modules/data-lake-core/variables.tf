@@ -24,7 +24,8 @@ variable "data_lake_containers" {
     "mloutputs",
     "mltesting",
     "mlfeaturetesting",
-    "snapshots"
+    "snapshots",
+    "forecasting"
   ]
   description = "Names of containers within the Data Lake resource."
 }
