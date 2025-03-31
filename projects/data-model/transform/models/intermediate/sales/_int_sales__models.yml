@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: int_subscribed_products_mealbox_scd2
+    data_tests:
+      - unique:
+          column_name: "(billing_agreement_basket_id || '-' || valid_from)"
+          config:
+                severity: warn
+      - unique:
+          column_name: "(billing_agreement_basket_id || '-' || valid_to)"
+          config:
+            severity: warn
+      - consistent_row_ranking:
+          id_column: billing_agreement_basket_id
+          order_by_columns: ['valid_from', 'valid_to']
+          config:
+            severity: warn

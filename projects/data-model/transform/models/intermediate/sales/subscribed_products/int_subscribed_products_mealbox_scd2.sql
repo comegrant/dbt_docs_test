@@ -2,7 +2,7 @@
   materialized="table"
 ) }}
 
-with 
+with
 
 basket_products as (
 
@@ -24,7 +24,7 @@ basket_products as (
 , billing_agreements as (
 
     select * from {{ ref('cms__billing_agreements') }}
-    where valid_to = '{{var("future_proof_date")}}'
+    where valid_to = '{{ var("future_proof_date") }}'
 
 )
 
@@ -41,14 +41,14 @@ basket_products as (
 )
 
 , financial_deviation_mealbox as (
-    
-    select * from {{ ref('int_basket_deviations_financial_product_mealbox_mapping')}}
+
+    select * from {{ ref('int_basket_deviations_financial_product_mealbox_mapping') }}
 
 )
 
 , mealboxes_from_onesub_migration as (
-    
-    select * from {{ ref('int_basket_deviations_onesub_migration')}}
+
+    select * from {{ ref('int_basket_deviations_onesub_migration') }}
 
 )
 
@@ -91,13 +91,13 @@ basket_products as (
         , product_variation_id
         , valid_from
         , basket_source
-    from preselector_deviation_products 
+    from preselector_deviation_products
     where product_type_id = '{{ var("mealbox_product_type_id") }}'
 
 )
 
 , mealselector_mealbox as (
-    select 
+    select
         billing_agreement_id
         , billing_agreement_basket_id
         , company_id
@@ -108,7 +108,7 @@ basket_products as (
         , valid_from
         , 'mealselector deviation' as basket_source
     from financial_deviation_mealbox
-    where billing_agreement_basket_deviation_origin_id = '{{ var("mealselector_origin_id") }}' 
+    where billing_agreement_basket_deviation_origin_id = '{{ var("mealselector_origin_id") }}'
 )
 
 , signup_mealbox as (
@@ -124,13 +124,16 @@ basket_products as (
         , signup_products.basket_source
     from signup_products
     left join dbt_snapshot_min_valid_from
-        on signup_products.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
+        on
+            signup_products.billing_agreement_basket_id
+            = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include signup mealbox if history is missing in the dbt snapshot of the basket
     where (
-        signup_products.valid_from < dbt_snapshot_min_valid_from.min_valid_from 
-        or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null)
+        signup_products.valid_from < dbt_snapshot_min_valid_from.min_valid_from
+        or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null
+    )
     and signup_products.product_type_id = '{{ var("mealbox_product_type_id") }}'
-    
+
 )
 
 , orders_mealbox as (
@@ -146,7 +149,9 @@ basket_products as (
         , mealboxes_from_orders.basket_source
     from mealboxes_from_orders
     left join dbt_snapshot_min_valid_from
-        on mealboxes_from_orders.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
+        on
+            mealboxes_from_orders.billing_agreement_basket_id
+            = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include signup mealbox if history is missing in the dbt snapshot of the basket
     where (
         mealboxes_from_orders.valid_from < dbt_snapshot_min_valid_from.min_valid_from
@@ -172,7 +177,7 @@ basket_products as (
 )
 
 , customer_deviation_mealbox as (
-    
+
     select
         financial_deviation_mealbox.billing_agreement_id
         , financial_deviation_mealbox.billing_agreement_basket_id
@@ -185,13 +190,15 @@ basket_products as (
         , 'customer deviation' as basket_source
     from financial_deviation_mealbox
     left join dbt_snapshot_min_valid_from
-        on financial_deviation_mealbox.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
+        on
+            financial_deviation_mealbox.billing_agreement_basket_id
+            = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     -- only include customer deviation mealbox if history is missing in the dbt snapshot of the basket
     where (
         financial_deviation_mealbox.valid_from < dbt_snapshot_min_valid_from.min_valid_from
         or dbt_snapshot_min_valid_from.billing_agreement_basket_id is null
     )
-    and billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}' 
+    and billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
 
 )
 
@@ -203,8 +210,7 @@ basket_products as (
     -- Main mealbox subscription source: 
     -- Tracks the subscription of customers to capture changes.
     -- Based on snapshots taken every week from April 2024 and every second hour from October 2024.
-    select 
-    *
+    select *
     from basket_mealbox
 
     union all
@@ -212,20 +218,17 @@ basket_products as (
     -- Complementing mealbox subscription source: 
     -- Trusthworthy source of subscribed mealbox, catches changes that can have happened inbetween snapshots.
     -- Based on deviations which is not made by the customer.
-    select 
-    *
+    select *
     from preselector_mealbox
 
     union all
 
-    select 
-    * 
+    select *
     from mealselector_mealbox
 
     union all
 
-    select 
-    *
+    select *
     from onesub_migration_mealbox
 
     union all
@@ -233,28 +236,25 @@ basket_products as (
     -- Supplementing mealbox subscription source: 
     -- Used for customers that are missing data on historically subscribed products.
     -- Before October 2024 we are missing history for some customers.
-    select 
-    * 
+    select *
     from orders_mealbox
 
     union all
 
-    select 
-    * 
+    select *
     from signup_mealbox
 
     union all
 
-    select 
-    * 
+    select *
     from customer_deviation_mealbox
 
 )
 
 , subscribed_mealbox_add_valid_to as (
     select
-    *
-    , {{get_scd_valid_to('valid_from', 'billing_agreement_basket_id')}} as valid_to
+        *
+        , {{ get_scd_valid_to('valid_from', 'billing_agreement_basket_id') }} as valid_to
     from subscribed_mealboxes_unioned
 )
 
@@ -270,28 +270,28 @@ basket_products as (
 -- Fill down product id and product variation id for the product on the row above the customer deviations
 , find_previous_product_variation as (
 
-  select
-    *
-    -- Get the most recent product_variation_id from a non-customer deviation row
-    , last_value(
-        case 
-            when basket_source <> 'customer deviation' then product_id 
-        end, true
+    select
+        *
+        -- Get the most recent product_variation_id from a non-customer deviation row
+        , last_value(
+            case
+                when basket_source <> 'customer deviation' then product_id
+            end, true
         ) over (
-        partition by billing_agreement_id
-        order by valid_from 
-        rows between unbounded preceding and current row
-    ) as previous_product_id
-    , last_value(
-        case 
-            when basket_source <> 'customer deviation' then product_variation_id 
-        end, true
+            partition by billing_agreement_basket_id
+            order by valid_from
+            rows between unbounded preceding and current row
+        ) as previous_product_id
+        , last_value(
+            case
+                when basket_source <> 'customer deviation' then product_variation_id
+            end, true
         ) over (
-        partition by billing_agreement_id
-        order by valid_from 
-        rows between unbounded preceding and current row
-    ) as previous_product_variation_id
-  from subscribed_mealbox_add_valid_to
+            partition by billing_agreement_basket_id
+            order by valid_from
+            rows between unbounded preceding and current row
+        ) as previous_product_variation_id
+    from subscribed_mealbox_add_valid_to
 
 )
 
@@ -300,49 +300,60 @@ basket_products as (
 -- row which was not a customer deviation
 , replace_product_variation as (
 
-    select 
+    select
         billing_agreement_id
         , billing_agreement_basket_id
+        , case
+            when
+                basket_source = 'customer deviation'
+                and product_id = previous_product_id
+                then previous_product_variation_id
+            else product_variation_id
+        end as product_variation_id
         , case 
             when basket_source = 'customer deviation' 
             and product_id = previous_product_id 
-            then previous_product_variation_id
-            else product_variation_id
-        end as product_variation_id
+            then true
+            else false
+        end as is_replaced_product_variation_id
         , valid_from
         , valid_to
         , basket_source
-        
+
     from find_previous_product_variation
 
 )
 
 -- group consecutive rows with same product variation id
 , subscribed_mealbox_group_periods as (
-    select 
+    select
         billing_agreement_id
         , billing_agreement_basket_id
         , product_variation_id
         , valid_from
         , valid_to
         , basket_source
-        , row_number() over 
+        , row_number()
+            over
             (
-                partition by 
-                    billing_agreement_basket_id 
+                partition by
+                    billing_agreement_basket_id
                 order by valid_from
-            ) 
-            - 
-            row_number() over 
+            )
+        -
+        row_number()
+            over
             (
-                partition by 
+                partition by
                     billing_agreement_basket_id
                     , product_variation_id
                 order by valid_from
-            ) 
+            )
         as group_periods
-    from 
+    from
         replace_product_variation
+-- remove rows where valid from and valid to are equal
+-- where valid_to != valid_from
 )
 
 -- merge consecutive rows with same product variation id
@@ -351,11 +362,11 @@ basket_products as (
         billing_agreement_id
         , billing_agreement_basket_id
         , product_variation_id
-        , group_periods
-        , min(valid_from) as valid_from
-        , max(valid_to) as valid_to
+        , min(valid_from)                   as valid_from
+        , max(valid_to)                     as valid_to
         , min_by(basket_source, valid_from) as basket_source_mealbox
-    from 
+        , group_periods
+    from
         subscribed_mealbox_group_periods
     group by
         all
@@ -367,19 +378,34 @@ basket_products as (
 -- and that does not have a dbt_snapshot before the history start date
 -- we want to get the first subscribed mealbox they had after the history start date
 , find_first_row_after_history_start as (
-    
+
     select
         subscribed_mealbox_group_periods.billing_agreement_id
-        , min(subscribed_mealbox_group_periods.group_periods) as group_periods
+        , subscribed_mealbox_group_periods.billing_agreement_basket_id
+        , min_by(
+            subscribed_mealbox_group_periods.group_periods, subscribed_mealbox_group_periods.valid_from
+        ) as group_periods
+        , min_by(
+            subscribed_mealbox_group_periods.product_variation_id, subscribed_mealbox_group_periods.valid_from
+        ) as product_variation_id
     from subscribed_mealbox_group_periods
     left join dbt_snapshot_min_valid_from
-        on subscribed_mealbox_group_periods.billing_agreement_basket_id = dbt_snapshot_min_valid_from.billing_agreement_basket_id
+        on
+            subscribed_mealbox_group_periods.billing_agreement_basket_id
+            = dbt_snapshot_min_valid_from.billing_agreement_basket_id
     left join billing_agreements
         on subscribed_mealbox_group_periods.billing_agreement_id = billing_agreements.billing_agreement_id
-    where (dbt_snapshot_min_valid_from.min_valid_from > '{{ var("basket_history_start_at") }}' or dbt_snapshot_min_valid_from.min_valid_from is null)
+    -- no dbt snapshot before the history start date
+    where
+        (
+            dbt_snapshot_min_valid_from.min_valid_from > '{{ var("basket_history_start_at") }}'
+            or dbt_snapshot_min_valid_from.min_valid_from is null
+        )
+        -- signup before history start date
         and billing_agreements.signup_at < '{{ var("basket_history_start_at") }}'
+        -- valid from higher than history start date
         and subscribed_mealbox_group_periods.valid_from > '{{ var("basket_history_start_at") }}'
-    group by 1
+    group by 1, 2
 
 )
 
@@ -389,24 +415,29 @@ basket_products as (
 -- over the last subscribed product before the history start date
 , adjust_first_subscribed_product as (
 
-    select 
+    select
         subscribed_mealbox_merge_groups.billing_agreement_basket_id
+        , subscribed_mealbox_merge_groups.billing_agreement_id
         , subscribed_mealbox_merge_groups.product_variation_id
-        , case 
-            when subscribed_mealbox_merge_groups.group_periods = find_first_row_after_history_start.group_periods
-            then to_timestamp('{{ var("basket_history_start_at") }}')
+        , case
+            when
+                subscribed_mealbox_merge_groups.group_periods
+                = find_first_row_after_history_start.group_periods
+                and subscribed_mealbox_merge_groups.product_variation_id
+                = find_first_row_after_history_start.product_variation_id
+                then to_timestamp('{{ var("basket_history_start_at") }}')
             else subscribed_mealbox_merge_groups.valid_from
         end as valid_from
         , subscribed_mealbox_merge_groups.valid_to
         , subscribed_mealbox_merge_groups.basket_source_mealbox
+        , subscribed_mealbox_merge_groups.group_periods
     from subscribed_mealbox_merge_groups
     left join find_first_row_after_history_start
-        on subscribed_mealbox_merge_groups.billing_agreement_id = find_first_row_after_history_start.billing_agreement_id
-    where (
-        subscribed_mealbox_merge_groups.group_periods >= find_first_row_after_history_start.group_periods
-        and subscribed_mealbox_merge_groups.billing_agreement_id = find_first_row_after_history_start.billing_agreement_id
-    )
-    or find_first_row_after_history_start.billing_agreement_id is null
+        on
+            subscribed_mealbox_merge_groups.billing_agreement_basket_id
+            = find_first_row_after_history_start.billing_agreement_basket_id
+    -- only keep rows with valid to higher than history start date
+    where subscribed_mealbox_merge_groups.valid_to > '{{ var("basket_history_start_at") }}'
 
 )
 
