@@ -143,6 +143,14 @@
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
 
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"

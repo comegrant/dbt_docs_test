@@ -1042,6 +1042,22 @@ models:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
 
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
+      - name: fk_dim_preference_combinations_previous_version
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
@@ -1160,6 +1176,14 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_companies
         data_type: string
@@ -1910,6 +1934,14 @@ models:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
 
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
@@ -2039,6 +2071,22 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+
+      - name: fk_dim_preference_combinations_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
+
+      - name: fk_dim_preference_combinations_recipes
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_recipes
         data_type: string
@@ -2198,6 +2246,14 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_dates
         data_type: int
@@ -2436,6 +2492,14 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_companies
         data_type: string
@@ -2705,6 +2769,14 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_preference_combination_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_all_preference_combinations')
+              field: pk_preference_combination_id
 
       - name: fk_dim_loyalty_events
         data_type: string

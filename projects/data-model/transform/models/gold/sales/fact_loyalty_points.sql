@@ -21,6 +21,12 @@ source as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , add_fks as (
 
     select
@@ -38,6 +44,7 @@ source as (
         , add_pk.source_created_at
         , add_pk.points_expiration_date
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , md5(add_pk.loyalty_event_id) as fk_dim_loyalty_events
         , cast(date_format(add_pk.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates_transaction
         , cast(date_format(add_pk.points_expiration_date, 'yyyyMMdd') as int) as fk_dim_dates_points_expiration
@@ -47,6 +54,8 @@ source as (
         on add_pk.billing_agreement_id = agreements.billing_agreement_id
         and add_pk.source_created_at >= agreements.valid_from
         and add_pk.source_created_at < agreements.valid_to
+    left join billing_agreement_preferences
+        on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
 
 )
 

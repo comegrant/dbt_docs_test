@@ -12,6 +12,12 @@ recipe_favorites as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , companies as (
 
         select * from {{ ref('dim_companies') }}
@@ -33,6 +39,7 @@ recipe_favorites as (
         , md5(cast(concat(recipe_favorites.recipe_id, companies.language_id) as string)) as fk_dim_recipes
         , md5(companies.company_id) AS fk_dim_companies
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , cast(date_format(recipe_favorites.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates
         , md5(cast(recipe_favorites.recipe_favorite_type_id as string)) as fk_dim_recipe_reaction_types
         , cast(date_format(recipe_favorites.source_created_at, 'HHmm') as int) as fk_dim_time
@@ -44,6 +51,8 @@ recipe_favorites as (
         and recipe_favorites.source_created_at < billing_agreements.valid_to
     left join companies 
         on billing_agreements.company_id = companies.company_id
+    left join billing_agreement_preferences
+        on billing_agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     
 )
 

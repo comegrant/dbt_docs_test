@@ -183,6 +183,8 @@ preselector_output as (
             when portion_id = 0 then 0
             else md5(concat(portion_id, language_id))
         end as fk_dim_portions
+        , billing_agreement_preference_combination_id as fk_dim_preference_combinations_billing_agreements
+        , recipe_preference_combination_id as fk_dim_preference_combinations_recipes
         , menu_week_monday_date
         , company_id
         , language_id

@@ -30,6 +30,12 @@ preselector_successful_output_dishes as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , companies as (
 
     select * from {{ ref('dim_companies') }}
@@ -456,6 +462,7 @@ preselector_successful_output_dishes as (
         ) as pk_fact_preselector
         -- Foreign keys
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , md5(add_aggregated_error_metrics.company_id) as fk_dim_companies
         , md5(
             concat(add_aggregated_error_metrics.recipe_id, companies.language_id)
@@ -511,6 +518,8 @@ preselector_successful_output_dishes as (
     left join portions as portions_dish
         on products_dish.portion_name = portions_dish.portion_name_local
         and companies.language_id = portions_dish.language_id
+    left join billing_agreement_preferences
+        on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
 )
 
 select * from add_keys

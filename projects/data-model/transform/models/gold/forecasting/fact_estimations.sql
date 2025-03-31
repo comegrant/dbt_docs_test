@@ -21,6 +21,10 @@ products as (
     select * from {{ ref('dim_companies') }}
 )
 
+, billing_agreement_preferences as (
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+)
+
 , latest_estimation_in_fact as (
     select
         distinct estimation_generated_at
@@ -85,6 +89,7 @@ products as (
         , md5(concat(estimations.product_variation_id,estimations.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , portions.pk_dim_portions as fk_dim_portions
 
 
@@ -103,6 +108,8 @@ products as (
     left join portions
         on products.portion_name = portions.portion_name_local
         and companies.language_id = portions.language_id
+    left join billing_agreement_preferences
+        on billing_agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
 )
 
 select * from add_keys

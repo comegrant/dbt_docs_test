@@ -18,6 +18,12 @@ billing_agreements as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , update_subscription_events_unioned as (
     select
         event_id_segment
@@ -61,6 +67,7 @@ billing_agreements as (
         
         {# FKS #}
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , md5(update_subscription_events_unioned.company_id) as fk_dim_companies
         , cast(date_format(update_subscription_events_unioned.source_created_at_segment, 'yyyyMMdd') as int) as fk_dim_date_source_created_at_segment
         , cast(date_format(update_subscription_events_unioned.source_created_at_segment, 'HHmm') as int) as fk_dim_time_source_created_at_segment
@@ -76,6 +83,8 @@ billing_agreements as (
             update_subscription_events_unioned.billing_agreement_id = billing_agreements.billing_agreement_id
             and update_subscription_events_unioned.source_created_at_segment >= billing_agreements.valid_from
             and update_subscription_events_unioned.source_created_at_segment < billing_agreements.valid_to
+    left join billing_agreement_preferences
+        on billing_agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     where billing_agreements.pk_dim_billing_agreements is not null
 )
 

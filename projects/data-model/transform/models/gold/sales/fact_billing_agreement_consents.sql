@@ -12,6 +12,12 @@ consents as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , add_fks as (
     select
         md5(
@@ -26,6 +32,7 @@ consents as (
         , consents.company_id
         , consents.consent_id
         , billing_agreements.pk_dim_billing_agreements              as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id   as fk_dim_preference_combinations
         , cast(date_format(consents.valid_from, 'yyyyMMdd') as int) as fk_dim_dates
         , md5(consents.company_id)                                  as fk_dim_companies
         , md5(consents.consent_id)                                  as fk_dim_consent_types
@@ -35,6 +42,8 @@ consents as (
             consents.billing_agreement_id = billing_agreements.billing_agreement_id
             and consents.valid_from >= billing_agreements.valid_from
             and consents.valid_from < billing_agreements.valid_to
+    left join billing_agreement_preferences
+        on billing_agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
 )
 
 select * from add_fks

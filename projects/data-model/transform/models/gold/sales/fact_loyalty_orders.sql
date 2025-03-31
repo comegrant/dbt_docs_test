@@ -12,6 +12,12 @@ loyalty_order_lines as (
 
 )
 
+, billing_agreement_preferences as (
+
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+  
+)
+
 , add_pk as (
 
     select         
@@ -44,6 +50,7 @@ loyalty_order_lines as (
         , md5(cast(add_pk.loyalty_order_status_id as string)) AS fk_dim_loyalty_order_statuses
         , cast(date_format(add_pk.order_week_monday_date, 'yyyyMMdd') as int) as fk_dim_dates
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , md5(agreements.company_id) AS fk_dim_companies
         , md5(
             concat(
@@ -55,6 +62,8 @@ loyalty_order_lines as (
         on add_pk.billing_agreement_id = agreements.billing_agreement_id  
         and add_pk.loyalty_order_created_at >= agreements.valid_from 
         and add_pk.loyalty_order_created_at < agreements.valid_to
+    left join billing_agreement_preferences
+        on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
 )
 
 
