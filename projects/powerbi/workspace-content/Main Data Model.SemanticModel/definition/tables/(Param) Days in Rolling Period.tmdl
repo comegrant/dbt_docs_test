@@ -1,0 +1,24 @@
+/// Add description
+table '(Param) Days in Rolling Period'
+
+	measure 'Days in Rolling Period Value' =
+            SELECTEDVALUE(
+                '(Param) Days in Rolling Period'[Days in Rolling Period],
+                90
+            )
+        isHidden
+        formatString: 0
+
+    /// Add description
+    column 'Days in Rolling Period'
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Days in Rolling Period' = calculated
+        mode: import
+        source = GENERATESERIES(0, 1000, 1)

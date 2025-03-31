@@ -1,3 +1,38 @@
+/// This Calculation Group, named 'Time Intelligence', provides a flexible framework
+/// to apply common time-based calculations to any measure in the model.
+/// Simply place the 'Time Intelligence'[Time Calculation] column on a visual,
+/// or use it in a slicer to dynamically apply the selected calculation to any measure.
+///
+/// Available Calculation Items:
+///
+/// - Current: Returns the original value of the measure without any time modification.
+///
+/// - PY (Previous Year): Returns the value of the measure for the same period one year earlier.
+///   It adapts based on what time hierarchy is in scope (Date, Calendar Month, Financial Quarter, etc.).
+///
+/// - Diff PY: Calculates the absolute difference between the Current and PY values.
+///
+/// - YOY%: Calculates the Year-over-Year percentage change: (Current - PY) / PY.
+///
+/// - CY/PY: Returns the ratio between Current and PY values, often used to analyze relative growth.
+///
+/// - YTD (Year-To-Date): Accumulates values from the start of the year to the current date.
+///
+/// - PYTD (Previous Year-To-Date): Returns the same YTD value, but for the previous year.
+///
+/// - Rolling X days: Returns a rolling sum over a defined number of past days.
+///   By default, it uses the last 90 days, but this can be adjusted using the
+///   '(Param) Days in Rolling Period'[Days in Rolling Period Value] parameter.
+///   If the user applies a filter over a broader time range (e.g. a week or a month),
+///   the rolling window will be calculated relative to the latest date within the filtered period.
+///
+/// - Rolling X days (PY): Returns the same Rolling X days value, but for the same dates in the previous year.
+///   Note that this is based on exact date comparison — not by matching calendar week or month numbers.
+///   For example, if a specific week is selected, the measure looks at the equivalent dates one year earlier,
+///   not the same week number from the previous year.
+///
+/// - Rolling X days (YOY%): Calculates the Year-over-Year percentage change of the rolling x days measure:
+///   ([Rolling X Days] - [Rolling X days (PY)]) / [Rolling X days (PY)].
 table 'Time Intelligence'
 	lineageTag: 4067c429-0c5a-430e-a01b-a002f6b8a92c
 
@@ -161,6 +196,57 @@ table 'Time Intelligence'
 						REMOVEFILTERS(Dates)
 					)
 				)
+
+		calculationItem 'Rolling X days' =
+			VAR X = '(Param) Days in Rolling Period'[Days in Rolling Period Value]
+			RETURN
+			CALCULATE(
+				SELECTEDMEASURE(),
+				REMOVEFILTERS(Dates),
+				Dates[Date] <= MAX(Dates[Date]),
+				Dates[Date] > MAX(Dates[Date]) - X
+			)
+
+		calculationItem 'Rolling X days (PY)' =
+			VAR X = '(Param) Days in Rolling Period'[Days in Rolling Period Value]
+			VAR EndDate =
+                CALCULATE(
+                    MAX(Dates[Date]),
+                    DATEADD(Dates[Date],-1,YEAR),
+					REMOVEFILTERS(Dates)
+                )
+            VAR StartDate = EndDate - X
+			RETURN
+			CALCULATE(
+				SELECTEDMEASURE(),
+				REMOVEFILTERS(Dates),
+				Dates[Date] > StartDate,
+        		Dates[Date] <= EndDate
+			)
+
+		calculationItem 'Rolling X days (YOY%)' =
+			VAR DiffPY =
+				CALCULATE(
+					SELECTEDMEASURE(),
+					'Time Intelligence'[Time Calculation]="Rolling X days"
+				)
+				-
+				CALCULATE(
+					SELECTEDMEASURE(),
+					'Time Intelligence'[Time Calculation]="Rolling X days (PY)"
+				)
+			
+			VAR PY = 
+				CALCULATE(
+					SELECTEDMEASURE(),
+					'Time Intelligence'[Time Calculation]="Rolling X days (PY)"
+				)
+
+			RETURN
+			DIVIDE(
+				DiffPY,
+				PY
+			)
 
 	column 'Time Calculation'
 		dataType: string
