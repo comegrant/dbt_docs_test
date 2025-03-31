@@ -48,8 +48,10 @@ tables = [
     "recipe_step_sections",
     "recipes_translations",
     "status_codes_translations",
+    "suppliers",
     "taxonomies_translations",
     "taxonomy_types",
+    "weekly_ingredients"
     "weekly_menus",
     "weekly_orders",
     "weekly_orders_lines",
