@@ -51,7 +51,7 @@ tables = [
     "suppliers",
     "taxonomies_translations",
     "taxonomy_types",
-    "weekly_ingredients"
+    "weekly_ingredients",
     "weekly_menus",
     "weekly_orders",
     "weekly_orders_lines",
