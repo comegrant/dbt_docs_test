@@ -9,6 +9,7 @@ class Company:
     cut_off_week_day: int
     country: str
     language: str
+    language_id: int
 
 
 company_amk = Company(
@@ -18,6 +19,7 @@ company_amk = Company(
     cut_off_week_day=2,
     country="Norway",
     language="Norwegian",
+    language_id=1,
 )
 
 
@@ -28,6 +30,7 @@ company_gl = Company(
     cut_off_week_day=2,
     country="Norway",
     language="Norwegian",
+    language_id=1,
 )
 
 
@@ -38,6 +41,7 @@ company_lmk = Company(
     cut_off_week_day=2,
     country="Sweden",
     language="Swedish",
+    language_id=5,
 )
 
 
@@ -48,6 +52,7 @@ company_rt = Company(
     cut_off_week_day=4,
     country="Denmark",
     language="Danish",
+    language_id=6,
 )
 
 
