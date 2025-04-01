@@ -20,7 +20,7 @@ services:
     build:
       context: ../../
       dockerfile: projects/analytics-api/docker/Dockerfile
-    command: "fastapi dev analytics-api/main.py --host 0.0.0.0 --port 8000"
+    command: "fastapi dev analytics_api/main.py --host 0.0.0.0 --port 8000"
     volumes:
       - ./:/opt/projects/analytics-api
       - ./../../packages:/opt/packages

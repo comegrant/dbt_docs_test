@@ -1,13 +1,10 @@
 import logging
-import os
-import sys
+
 from typing import Any
 
 import pandas as pd
 from data_contracts.helper import camel_to_snake  # type: ignore
 from menu_optimiser.utils import input_recipes
-
-sys.path.append(os.getcwd())  # noqa: PTH109
 
 
 from menu_optimiser.data import (

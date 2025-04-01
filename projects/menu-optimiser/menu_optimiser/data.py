@@ -1,15 +1,10 @@
-from typing import Tuple, Union, List, Dict, Any
+from typing import Tuple, Union, List, Dict
 
 import numpy as np
 import pandas as pd
 
-import os
-import sys
 
-sys.path.append(os.getcwd())
-
-
-from utils.constants import (
+from menu_optimiser.utils.constants import (
     ING_COLUMN,
     PRICE_CATEGORY_COLUMN,
     RATING_COLUMN,
@@ -34,7 +29,7 @@ def postprocess_recipe_data(
         pd.DataFrame: Postprocessed DataFrame of recipes
     """
     df_recipes.loc[:, RATING_COLUMN] = df_recipes[RATING_COLUMN].fillna(np.nan)
-    df_recipes = df_recipes[
+    df_recipes = df_recipes[  # type: ignore
         [
             RECIPE_ID_COLUMN,
             ING_COLUMN,
@@ -53,7 +48,9 @@ def postprocess_recipe_data(
 
 
 def get_ingredient_distribution(
-    ingredients: List[Dict[str, Union[int, float, str]]], df: pd.DataFrame, ingredients_not_found: List[int]
+    ingredients: List[Dict[str, Union[int, float, str]]],
+    df: pd.DataFrame,
+    ingredients_not_found: List[int],
 ) -> Tuple[List[Dict[str, Union[int, float, str]]], List[int]]:
     """
     Calculate the actual and wanted quantities of each ingredient in a recipe.
@@ -65,13 +62,15 @@ def get_ingredient_distribution(
 
     Returns:
         Tuple[List[Dict[str, Union[int, float, str]]], List[int]]: A tuple containing a list of dictionaries with the ingredient information
-            and a list of ingredient ids that are not fullfilled
+            and a list of ingredient ids that are not fulfilled
     """
     ings = []
     not_full = []
     for ing in ingredients:
         actual = (
-            df[f"{ING_COLUMN}_{int(ing[ING_COLUMN])}"].sum() if int(ing[ING_COLUMN]) not in ingredients_not_found else 0
+            df[f"{ING_COLUMN}_{int(ing[ING_COLUMN])}"].sum()
+            if int(ing[ING_COLUMN]) not in ingredients_not_found
+            else 0
         )
         output = {
             ING_COLUMN: int(ing[ING_COLUMN]),
@@ -100,12 +99,16 @@ def get_taxonomies_distribution(
 
     Returns:
         Tuple[List[Dict[str, Union[int, str]]], List[int]]: A tuple containing a list of dictionaries with the taxonomy information
-            and a list of taxonomy ids that are not fullfilled
+            and a list of taxonomy ids that are not fulfilled
     """
     taxs = []
     not_full = []
     for tax in taxonomies:
-        actual = df[f"{TAX_COLUMN}_{tax[TAX_COLUMN]}"].sum() if tax[TAX_COLUMN] not in taxs_not_found else 0
+        actual = (
+            df[f"{TAX_COLUMN}_{tax[TAX_COLUMN]}"].sum()
+            if tax[TAX_COLUMN] not in taxs_not_found
+            else 0
+        )
         output = {
             TAX_COLUMN: tax[TAX_COLUMN],
             "taxonomy_type_id": tax["taxonomy_type_id"],
@@ -137,7 +140,7 @@ def get_prices_distribution(
     Returns:
         A tuple containing:
             - A list of dictionaries with the same keys as the prices argument, but with the actual quantities.
-            - A list of price category ids that are not fullfilled.
+            - A list of price category ids that are not fulfilled.
     """
     prices_out = []
     not_full = []
@@ -178,14 +181,16 @@ def get_cooking_times_distribution(
     Returns:
         A tuple containing a list of dictionaries, where each dictionary contains the keys 'from', 'to', 'wanted', and
             'actual', representing the difference between the number of wanted and actual recipes, and a list of strings representing
-            the cooking times that were not fullfilled.
+            the cooking times that were not fulfilled.
     """
     cooking_times_out = []
     not_full = []
 
     for cooking_time in cooking_times:
         actual = (
-            df[f"{COOKING_TIME_COLUMN}_{int(cooking_time['time_from'])}_{int(cooking_time['time_to'])}"].sum()
+            df[
+                f"{COOKING_TIME_COLUMN}_{int(cooking_time['time_from'])}_{int(cooking_time['time_to'])}"
+            ].sum()
             if f"{COOKING_TIME_COLUMN}_{int(cooking_time['time_from'])}_{int(cooking_time['time_to'])}"
             not in cooking_times_not_found
             else 0
@@ -199,6 +204,8 @@ def get_cooking_times_distribution(
         cooking_times_out.append(output)
 
         if output["wanted"] > output["actual"]:
-            not_full.append(f"{COOKING_TIME_COLUMN}_{int(cooking_time['time_from'])}_{int(cooking_time['time_to'])}")
+            not_full.append(
+                f"{COOKING_TIME_COLUMN}_{int(cooking_time['time_from'])}_{int(cooking_time['time_to'])}"
+            )
 
     return cooking_times_out, not_full

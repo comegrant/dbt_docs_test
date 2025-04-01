@@ -1,9 +1,4 @@
 import logging
-import sys
-
-sys.path.append("../menu_optimiser")
-
-
 from typing import List, Optional  # noqa: UP035
 
 from data_contracts.helper import snake_to_camel
@@ -133,7 +128,7 @@ class CompanyModel(ApiModel):
             "num_recipes": self.num_recipes,
             "required_recipes": self.required_recipes,
             "available_recipes": self.available_recipes,
-            "taxonomies": [taxonomy.to_dict() for taxonomy in self.taxonomies],
+            "taxonomies": [taxonomy.to_dict() for taxonomy in self.taxonomies],  # type: ignore
         }
 
 

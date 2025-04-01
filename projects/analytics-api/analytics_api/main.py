@@ -23,7 +23,7 @@ from fastapi import FastAPI, Form  # , Query
 from fastapi.routing import APIRoute
 from pydantic_settings import BaseSettings
 
-from analytics_api.routers.menu_optimiser import mop_router as mop_app_router
+from analytics_api.routers.menu_generator import mop_router as mop_app_router
 from analytics_api.utils.auth import retrieve_token, validate_token
 from analytics_api.utils.datadog_logger import datadog_logger
 
