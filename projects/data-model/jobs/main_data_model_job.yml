@@ -8,8 +8,8 @@ resources:
 
       schedule:
        #Run every day at 3 AM UTC
-       quartz_cron_expression: 0 0 3 * * ?
-       timezone_id: UTC
+       quartz_cron_expression: 0 0 4 * * ?
+       timezone_id: Europe/Oslo
 
       environments:
         - environment_key: dbt-default
@@ -68,7 +68,7 @@ resources:
             - task_key: start-notification
           notebook_task:
             notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
-        
+
         - task_key: dbt-snapshot-all
           dbt_task:
             project_directory: ../transform/
@@ -80,7 +80,7 @@ resources:
           environment_key: dbt-default
           depends_on:
             - task_key: bronze_coredb_snapshot_full
-        
+
         # perform an extra ingest of billing agreements to
         # capture agreements that has been created during the job
         - task_key: bronze_coredb_snapshot_billing_agreements

@@ -7,8 +7,8 @@ resources:
 
       schedule:
        #Run every day every second hour
-       quartz_cron_expression: 0 0 0/2 ? * * *
-       timezone_id: UTC
+       quartz_cron_expression: 0 0 1/2 ? * * *
+       timezone_id: Europe/Oslo
 
       environments:
         - environment_key: dbt-default
