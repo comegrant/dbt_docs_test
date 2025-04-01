@@ -123,7 +123,7 @@ dim_billing_agreements as (
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join billing_agreement_preferences as billing_agreement_preferences_previous_version
-        on agreements_previous_version.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
+        on agreements_previous_version.billing_agreement_preferences_updated_id = billing_agreement_preferences_previous_version.billing_agreement_preferences_updated_id
 
 )
 
