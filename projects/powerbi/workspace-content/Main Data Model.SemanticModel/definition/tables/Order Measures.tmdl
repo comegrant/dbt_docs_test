@@ -516,7 +516,8 @@ table 'Order Measures'
 			            BLANK(),
 			            CALCULATE(
 			                [Number of Orders],
-			                'Order Measures'[is_removed_dish] = 1 || 'Order Measures'[is_added_dish] = 1
+			                'Order Measures'[has_swap] = True,
+							'Order Measures'[is_missing_preselector_output] = 0
 			            )
 			        )
 			)
@@ -528,15 +529,29 @@ table 'Order Measures'
 	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
 
-			    DIVIDE(
-			        [Number of Orders with Swaps],
-			        [Number of Orders],
-			        BLANK()
-			    )
+			DIVIDE(
+			    [Number of Orders with Swaps],
+			    [Number of Orders] - [Number of Orders with no Preselector],
+			    BLANK()
+			)
 			```
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		displayFolder: Swapped Dishes
 		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
+
+	/// Number of customers that was not presented with any preselector output
+	/// before selecting dishes for the menu week
+	measure 'Number of Orders with no Preselector' = ```
+	
+			CALCULATE(
+			    [Number of Orders],
+				'Order Measures'[is_missing_preselector_output] = 1
+			)
+	
+			```
+		formatString: #,0
+		isHidden
+		displayFolder: Swapped Dishes
 
 	/// Average number of orders where a customer swapped one or more dishes
 	measure 'Average Number of Swaps per Order' = ```
