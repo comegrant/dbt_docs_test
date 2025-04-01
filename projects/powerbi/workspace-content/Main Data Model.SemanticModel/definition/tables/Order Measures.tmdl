@@ -1183,7 +1183,7 @@ table 'Order Measures'
 	/// E.g., the percentage of gross revenue coming from plus price dishes
 	/// thrifty dishes, transportation free or groceries.
 	/// Should be used together with the Order Line Details-table.
-	measure 'Share of Order Value Gross per Order Line Type' =
+	measure 'Share of Order Value Gross per Order Line' =
 			VAR GrandTotal = CALCULATE(
 				[Order Value Gross Ex Vat]
 				, REMOVEFILTERS('Order Line Details')
