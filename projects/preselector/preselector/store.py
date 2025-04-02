@@ -95,13 +95,13 @@ async def normalize_cost(
     logger.debug(f"Min CoF {min_cof} max: {max_cof}")
 
     assert min_cof, (
-        f"Missing min cof for {request.company_id}, year: {year_week.year}, week: {year_week.week}, "
+        f"Missing min cof '{min_cof}' for {request.company_id}, year: {year_week.year}, week: {year_week.week}, "
         f"{request.portion_size} portions. Therefore, can not normalize the cof target"
     )
-    assert max_cof, "Missing max cof. Therefore, can not normalize the cof target"
-    assert (
-        min_cof != max_cof
-    ), f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
+    assert max_cof, f"Missing max cof '{max_cof}'. Therefore, can not normalize the cof target"
+    assert min_cof != max_cof, (
+        f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
+    )
     cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
     logger.debug(f"Normalized value from {target_cost_of_food} to {cost_of_food_value}")

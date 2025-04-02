@@ -114,7 +114,6 @@ WHERE pt.product_type_id = 'cac333ea-ec15-4eea-9d8d-2b9ef60ec0c1'
     acceptable_freshness=timedelta(days=6),
 )
 class YearWeekMenuWithPortions:
-
     recipe_id = Int32().as_entity()
     portion_id = Int32().as_entity()
 
@@ -146,7 +145,7 @@ async def transform_recipe_cost(req, limit) -> pl.LazyFrame:  # noqa: ANN001
             ],
         }
     )
-    with_id = frame.join(company_name_mapping.lazy(), on="company_name")
+    with_id = frame.filter(pl.col("recipe_cost_whole_units") >= 1).join(company_name_mapping.lazy(), on="company_name")
 
     return with_id.group_by(["menu_year", "menu_week", "portion_size", "company_id"]).agg(
         min_cost_of_food=pl.col("recipe_cost_whole_units").min(),
@@ -174,7 +173,6 @@ class MenuWeekRecipeNormalization:
     max_cost_of_food = Float()
     mean_cost_of_food = Float()
     median_cost_of_food = Float()
-
 
 
 year_week_menu_sql = """SELECT DISTINCT (menu_year * 100 + menu_week) as yearweek,
