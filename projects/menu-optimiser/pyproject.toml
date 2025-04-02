@@ -22,6 +22,7 @@ pytest = "*"
 pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
+pyright = "*"
 
 [build-system]
 requires = ["poetry-core"]

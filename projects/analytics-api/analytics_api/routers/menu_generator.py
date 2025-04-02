@@ -1,16 +1,13 @@
 import logging
-from typing import List, Optional  # noqa: UP035
+from typing import Optional
 
 from data_contracts.helper import snake_to_camel
-from dotenv import find_dotenv, load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException
 from menu_optimiser.optimization import generate_menu_companies_api
 from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse
 
 from analytics_api.utils.auth import validate_token
-
-load_dotenv(find_dotenv())
 
 app = FastAPI()
 mop_router = APIRouter(dependencies=[Depends(validate_token)])
@@ -20,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ApiModel(BaseModel):
     class Config:
-        alias_generator = snake_to_camel  # snake2camel
+        alias_generator = snake_to_camel
         populate_by_name = True
 
 
@@ -36,7 +33,7 @@ class PriceModel(ApiModel):
     wanted: Optional[int] = None
     actual: Optional[int] = None
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "price_category_id": self.price_category_id,
             "quantity": self.quantity,
@@ -52,7 +49,7 @@ class CookingTimeModel(ApiModel):
     wanted: Optional[int] = None
     actual: Optional[int] = None
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "time_from": self.time_from,
             "time_to": self.time_to,
@@ -68,7 +65,7 @@ class MainIngredientModel(ApiModel):
     wanted: Optional[int] = None
     actual: Optional[int] = None
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "main_ingredient_id": self.main_ingredient_id,
             "quantity": self.quantity,
@@ -83,12 +80,12 @@ class TaxonomyModel(ApiModel):
     taxonomy_type_id: Optional[int] = Field(alias="taxonomyTypeId", default=None)
     wanted: Optional[int] = None
     actual: Optional[int] = None
-    main_ingredients: Optional[List[MainIngredientModel]] = Field(alias="mainIngredients", default=None)  # noqa: UP006
-    price_categories: Optional[List[PriceModel]] = Field(alias="priceCategories", default=None)  # noqa: UP006
-    cooking_times: Optional[List[CookingTimeModel]] = Field(alias="cookingTimes", default=None)  # noqa: UP006
+    main_ingredients: Optional[list[MainIngredientModel]] = Field(alias="mainIngredients", default=None)
+    price_categories: Optional[list[PriceModel]] = Field(alias="priceCategories", default=None)
+    cooking_times: Optional[list[CookingTimeModel]] = Field(alias="cookingTimes", default=None)
     min_average_rating: Optional[float] = Field(alias="minAverageRating", default=None)
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "taxonomy_id": self.taxonomy_id,
             "quantity": self.quantity,
@@ -117,18 +114,18 @@ class RecipesModel(ApiModel):
 class CompanyModel(ApiModel):
     company_id: str = Field(alias="companyId")
     num_recipes: Optional[int] = Field(alias="numRecipes", default=None)
-    required_recipes: Optional[List[str]] = Field(alias="requiredRecipes", default=None)  # noqa: UP006
-    available_recipes: Optional[List[str]] = Field(alias="availableRecipes", default=None)  # noqa: UP006
-    taxonomies: Optional[List[TaxonomyModel]]  # noqa: UP006
-    recipes: Optional[List[RecipesModel]] = None  # noqa: UP006
+    required_recipes: Optional[list[str]] = Field(alias="requiredRecipes", default=None)
+    available_recipes: Optional[list[str]] = Field(alias="availableRecipes", default=None)
+    taxonomies: Optional[list[TaxonomyModel]]
+    recipes: Optional[list[RecipesModel]] = None
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "company_id": self.company_id,
             "num_recipes": self.num_recipes,
             "required_recipes": self.required_recipes,
             "available_recipes": self.available_recipes,
-            "taxonomies": [taxonomy.to_dict() for taxonomy in self.taxonomies],  # type: ignore
+            "taxonomies": [taxonomy.to_dict() for taxonomy in self.taxonomies or []],
         }
 
 
@@ -145,9 +142,9 @@ class MenuPlannerOptimizationInputModel(ApiModel):
 
     year: int
     week: int
-    companies: List[CompanyModel]  # noqa: UP006
+    companies: list[CompanyModel]
 
-    def to_dict(self):  # noqa: ANN201
+    def to_dict(self) -> dict:
         return {
             "year": self.year,
             "week": self.week,
@@ -165,11 +162,11 @@ class MenuPlannerOptimizationOutputModel(ApiModel):
     year: int
     STATUS: int
     STATUS_MSG: str
-    companies: Optional[List[CompanyModel]] = None  # noqa: UP006
+    companies: Optional[list[CompanyModel]] = None
 
 
 @mop_router.post("/menu", response_model=MenuPlannerOptimizationOutputModel, tags=["Menu Planner"])
-async def menu_generator(request: MenuPlannerOptimizationInputModel):  # noqa: ANN201
+async def menu_generator(request: MenuPlannerOptimizationInputModel) -> JSONResponse:
     try:
         request_dict = request.to_dict()
         logger.info("Received request for menu generation: %s", request_dict)
@@ -178,7 +175,6 @@ async def menu_generator(request: MenuPlannerOptimizationInputModel):  # noqa: A
             week=request_dict["week"], year=request_dict["year"], companies=request_dict["companies"]
         )
         logger.info("Menu generation completed: %s", response)
-        print(response)  # if we want to display results to the terminal also  # noqa: T201#
         response = MenuPlannerOptimizationOutputModel(**response)
 
         logger.info("Returning menu response")

@@ -9,11 +9,9 @@ on:
 
 jobs:
   test-menu-optimiser:
-    uses:
-      ./.github/workflows/test_in_docker.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
-      base-service: base
-      test-service: test
+      python-version: "3.10.13"
       working-directory: projects/menu-optimiser
     secrets: inherit
 

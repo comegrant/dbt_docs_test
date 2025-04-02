@@ -9,8 +9,6 @@ from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-
-# from pydantic.error_wrappers import ValidationError
 from pydantic import ValidationError
 from pydantic.types import SecretStr
 from pydantic_settings import BaseSettings

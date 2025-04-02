@@ -4,26 +4,15 @@ on:
     paths:
       - '.github/workflows/analytics-api_pr.yaml'
       - 'projects/analytics-api/**'
+      - 'projects/menu-optimiser/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
   test-analytics-api:
-    uses:
-      ./.github/workflows/template_test_python.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
       python-version: "3.10.13"
       working-directory: projects/analytics-api
-    secrets: inherit
-
-  build-analytics-api-databricks-image:
-    needs: test-analytics-api
-    uses: ./.github/workflows/cd_docker_image_template.yml
-    with:
-      working-directory: projects/analytics-api
-      registry: ${{ vars.CONTAINER_REGISTRY }}
-      image-name: analytics-api
-      dockerfile: docker/Dockerfile.databricks
-      tag: dev-latest
     secrets: inherit
 
   deploy-analytics-api-to-dev:
