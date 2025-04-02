@@ -1,4 +1,10 @@
-/// Add description
+/// This parameter defines the number of days to include in rolling period calculations. It is specifically used in the following calculation items within the Time Intelligence calculation group:
+///   - Rolling X days
+///   - Rolling X days (PY)
+///   - Rolling X days (YOY%)
+/// The parameter determines the length of the rolling window in days, counting backwards from the latest available date in the current filter context.
+/// The default value is 90 days, but users can customize it through a slicer or other user input.
+/// Example: If the parameter is set to 30 and the latest date in the filter context is 2025-03-31, these calculation items will evaluate data from 2025-03-01 to 2025-03-31 (or the equivalent period one year earlier in the case of Rolling X days (PY)).
 table '(Param) Days in Rolling Period'
 
 	measure 'Days in Rolling Period Value' =
@@ -9,7 +15,13 @@ table '(Param) Days in Rolling Period'
         isHidden
         formatString: 0
 
-    /// Add description
+    /// This parameter defines the number of days to include in rolling period calculations. It is specifically used in the following calculation items within the Time Intelligence calculation group:
+    ///   - Rolling X days
+    ///   - Rolling X days (PY)
+    ///   - Rolling X days (YOY%)
+    /// The parameter determines the length of the rolling window in days, counting backwards from the latest available date in the current filter context.
+    /// The default value is 90 days, but users can customize it through a slicer or other user input.
+    /// Example: If the parameter is set to 30 and the latest date in the filter context is 2025-03-31, these calculation items will evaluate data from 2025-03-01 to 2025-03-31 (or the equivalent period one year earlier in the case of Rolling X days (PY)).
     column 'Days in Rolling Period'
         formatString: 0
         summarizeBy: none
