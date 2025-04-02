@@ -11,6 +11,7 @@ from aligned.feature_source import (
     FeatureLocation,
     WritableFeatureSource,
 )
+from aligned.feature_store import ConvertableToLocation, convert_to_location
 from aligned.sources.in_mem_source import InMemorySource
 from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
@@ -19,7 +20,8 @@ from cheffelo_logging.logging import DataDogStatsdConfig
 from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
-from data_contracts.recipe import RecipeEmbedding
+from data_contracts.preselector.menu import PreselectorYearWeekMenu
+from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost, RecipeEmbedding
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.unity_catalog import DatabricksConnectionConfig, DatabricksSource
 from pydantic import Field
@@ -50,9 +52,51 @@ class KeyVaultSettings(BaseSettings):
 
 
 async def load_cache_for(
-    store: ContractStore, loads: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]], force_load: bool = False
+    store: ContractStore,
+    loads: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]],
+    force_load: bool = False,
 ) -> ContractStore:
-    for location, source, pl_filter in loads:
+    """
+    Creates a cache based for a specified set of views, and a potential filter.
+
+
+    Arguments:
+        store (ContractStore): The original store that contains the most up to date data
+        loads: The views to load, where to cache them, and a potential filter if relevant
+        force_load (bool): Should we overwrite the cache, or only if the data is out of date
+
+    Returns:
+        ContractStore: A new contract store that uses the cache sources
+
+    ```python
+    store = ...
+
+    # The most up to date data
+    latest_data = await store.feature_view(RecipeCost).all().to_polars()
+
+    cached_store = await load_cache_for(
+        store,
+        [
+            (
+                PreselectorYearWeekMenu,
+                InMemorySource.empty(),
+                pl.col("menu_year") >= today.year
+            ),
+            (
+                RecipeCost,
+                FileSource.parquet_at("local_path.parquet"),
+                pl.col("menu_year") >= today.year
+            )
+        ],
+    )
+
+    # The data in the cache which is only a subset of the original
+    local_cache_data = await cached_store.feature_view(RecipeCost).all().to_polars()
+    ```
+    """
+
+    for loc, source, pl_filter in loads:
+        location = convert_to_location(loc)
         if location.location_type == "feature_view":
             request = store.feature_view(location.name).request
         else:
@@ -111,7 +155,9 @@ async def load_cache_for(
 async def load_cache(
     store: ContractStore, company_id: str, exclude_views: set[FeatureLocation] | None = None, force_load: bool = False
 ) -> ContractStore:
-    from preselector.recipe_contracts import cache_dir
+    from aligned import FileSource
+
+    cache_dir = FileSource.directory("data")
 
     if exclude_views is None:
         exclude_views = set()
@@ -130,19 +176,19 @@ async def load_cache(
 
     partition_recs = cache_dir.partitioned_parquet_at(f"{company_id}/recs", partition_keys=["year", "week"])
 
-    cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
+    cache_sources: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]] = [
         (
-            FeatureLocation.feature_view("recipe_cost"),
+            RecipeCost.location,
             cache_dir.parquet_at("recipe_cost.parquet"),
             (pl.col("menu_year") >= this_year) & (pl.col("menu_week") > this_week),
         ),
         (
-            FeatureLocation.feature_view("preselector_year_week_menu"),
+            PreselectorYearWeekMenu.location,
             cache_dir.parquet_at(f"{company_id}/menus.parquet"),
             (pl.col("company_id") == company_id) & (pl.col("menu_year") >= this_year),
         ),
         (
-            FeatureLocation.feature_view("normalized_recipe_features"),
+            NormalizedRecipeFeatures.location,
             cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
             (pl.col("company_id") == company_id) & (pl.col("year") >= this_year),
         ),

@@ -305,7 +305,6 @@ class PreselectorResultWriter(WritableStream):
 
     async def batch_write(self, data: Sequence[BaseModel]) -> None:
         import polars as pl
-        from data_contracts.preselector.store import Preselector
 
         expected_features = Preselector.query().request.all_returned_columns
         df = (

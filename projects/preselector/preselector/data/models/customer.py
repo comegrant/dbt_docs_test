@@ -108,7 +108,7 @@ class PreselectorSuccessfulResponse(BaseModel):
         Returns a dataframe that conforms to the data contract `SuccessfulPreselectorOutput`.
         """
         request_values = self.model_dump(exclude={"year_weeks", "originated_at"})
-        request_values["taste_preferences"] = json.dumps([pref.model_dump() for pref in self.taste_preferences])
+        request_values["taste_preferences"] = [pref.model_dump() for pref in self.taste_preferences]
         request_values["taste_preference_ids"] = [pref.preference_id for pref in self.taste_preferences]
         generated_weeks = []
 
@@ -124,7 +124,7 @@ class PreselectorSuccessfulResponse(BaseModel):
         expected_schema = {
             feat.name: feat.dtype.polars_type
             for feat in returned_features
-            if "json" not in feat.dtype.name and feat.name != "recipes"
+            if "json" not in feat.dtype.name and not feat.dtype.name.startswith("struct") and feat.name != "recipes"
         }
         error_vector_type = pl.Struct(dict.fromkeys(error_features, pl.Float64))
         expected_schema["error_vector"] = error_vector_type

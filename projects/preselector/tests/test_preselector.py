@@ -5,9 +5,9 @@ import numpy as np
 import polars as pl
 import pytest
 from aligned import ContractStore, FeatureLocation
+from aligned.schemas.feature import Feature
 from aligned.sources.in_mem_source import InMemorySource
 from aligned.sources.random_source import RandomDataSource, data_for_request
-from concept_definition_app import potential_features
 from data_contracts.preselector.basket_features import (
     BasketFeatures,
     ImportanceVector,
@@ -22,6 +22,10 @@ from numpy.random import seed as np_seed
 from preselector.main import run_preselector, run_preselector_for_request
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
 from preselector.store import preselector_store
+
+
+def potential_features() -> list[Feature]:
+    return list(BasketFeatures.compile().request_all.needed_requests[0].all_features)
 
 
 @pytest.fixture()
@@ -218,7 +222,7 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
 
     store = (
         dummy_store.update_source_for(
-            PreselectorYearWeekMenu.location,
+            PreselectorYearWeekMenu,
             RandomDataSource.with_values(
                 {
                     "recipe_id": list(range(recipe_pool)),
@@ -235,11 +239,11 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
                 }
             ),
         )
-        .update_source_for(TargetVectors.location, RandomDataSource(partial_data=target_data))
-        .update_source_for(ImportanceVector.location, RandomDataSource(partial_data=target_data))
-        .update_source_for(PredefinedVectors.location, RandomDataSource(partial_data=defined_vectors))
+        .update_source_for(TargetVectors, RandomDataSource(partial_data=target_data))
+        .update_source_for(ImportanceVector, RandomDataSource(partial_data=target_data))
+        .update_source_for(PredefinedVectors, RandomDataSource(partial_data=defined_vectors))
         .update_source_for(
-            WeeksSinceRecipe.location,
+            WeeksSinceRecipe,
             InMemorySource(
                 pl.DataFrame(
                     data={
@@ -352,7 +356,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
 
     store = (
         dummy_store.update_source_for(
-            PreselectorYearWeekMenu.location,
+            PreselectorYearWeekMenu,
             RandomDataSource.with_values(
                 {
                     "recipe_id": list(range(recipe_pool)),
@@ -369,11 +373,11 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
                 }
             ),
         )
-        .update_source_for(TargetVectors.location, RandomDataSource(partial_data=target_data))
-        .update_source_for(ImportanceVector.location, RandomDataSource(partial_data=target_data))
-        .update_source_for(PredefinedVectors.location, RandomDataSource(partial_data=defined_vectors))
+        .update_source_for(TargetVectors, RandomDataSource(partial_data=target_data))
+        .update_source_for(ImportanceVector, RandomDataSource(partial_data=target_data))
+        .update_source_for(PredefinedVectors, RandomDataSource(partial_data=defined_vectors))
         .update_source_for(
-            WeeksSinceRecipe.location,
+            WeeksSinceRecipe,
             InMemorySource(
                 pl.DataFrame(
                     data={
@@ -388,7 +392,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
             ),
         )
         .update_source_for(
-            NormalizedRecipeFeatures.location,
+            NormalizedRecipeFeatures,
             RandomDataSource.with_values(
                 {
                     "recipe_id": list(range(recipe_pool)),
@@ -404,7 +408,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
             ),
         )
         .update_source_for(
-            RecipeEmbedding.location,
+            RecipeEmbedding,
             RandomDataSource().transform_with_polars(
                 lambda df: df.with_columns(
                     pl.col("embedding").map_elements(normalise_embedding, return_dtype=pl.List(pl.Float32()))
@@ -412,7 +416,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
             ),
         )
         .update_source_for(
-            RecipeNegativePreferences.location,
+            RecipeNegativePreferences,
             RandomDataSource.with_values(
                 {
                     "recipe_id": list(range(recipe_pool)),
@@ -422,7 +426,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
             ),
         )
         .update_source_for(
-            RecipeMainIngredientCategory.location,
+            RecipeMainIngredientCategory,
             RandomDataSource.with_values(
                 {
                     "recipe_id": list(range(recipe_pool)),

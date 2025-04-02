@@ -9,7 +9,7 @@ from typing import TypeVar
 
 import polars as pl
 import streamlit as st
-from concept_definition_app import load_attributes
+from data_contracts.preselector.basket_features import PredefinedVectors
 from data_contracts.sources import adb
 from dotenv import load_dotenv
 from preselector.data.models.customer import PreselectorYearWeekResponse
@@ -18,16 +18,32 @@ from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
 from streamlit.delta_generator import DeltaGenerator
-from ui.components.mealkit import mealkit
-from ui.deeplinks.compare_week import cached_recipe_info
+from ui.components.mealkit import cached_recipe_info, mealkit
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class Concept:
+    name: str
+    id: str
 
 
 @dataclass
 class TastePref:
     preference_id: str
     name: str
+
+
+async def load_attributes(company_id: str) -> list[Concept]:
+    df: pl.DataFrame = (
+        await PredefinedVectors.query()
+        .select({"concept_name", "concept_id", "company_id", "vector_type"})
+        .filter((pl.col("company_id") == company_id) & (pl.col("vector_type") == "importance"))
+        .to_polars()
+    ).sort("concept_name")
+
+    return [Concept(name=row["concept_name"], id=row["concept_id"]) for row in df.to_dicts()]
 
 
 async def load_taste_preferences(company_id: str) -> list[TastePref]:
@@ -43,30 +59,6 @@ WHERE p.preference_type_id = '4C679266-7DC0-4A8E-B72D-E9BB8DADC7EB' AND (
 
 
 T = TypeVar("T")
-
-
-def all_combinations(ids: list[T], include_empty_set: bool) -> list[list[T]]:
-    if not ids:
-        if include_empty_set:
-            return [[]]
-        else:
-            return []
-
-    if len(ids) == 1:
-        return [*all_combinations([], include_empty_set), ids]
-
-    new_combos = []
-
-    last = ids[-1]
-
-    for combo in all_combinations(ids[:-1], include_empty_set):
-        new_combos.append(combo)
-        new_combos.append([*combo, last])
-
-    if not include_empty_set:
-        new_combos.append([last])
-
-    return new_combos
 
 
 async def main() -> None:

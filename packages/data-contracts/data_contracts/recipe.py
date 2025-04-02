@@ -657,6 +657,7 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrievalJob:
     cost = (
         query(RecipeCost)
         .select_columns(["recipe_cost_whole_units", "is_plus_portion"])
+        # Remove the 4+ portions - This only effects Retnemt
         .transform_polars(lambda df: df.filter(pl.col("is_plus_portion").not_()))
     )
 
@@ -743,7 +744,7 @@ async def compute_normalized_features(
     materialized_source=materialized_data.partitioned_parquet_at(
         "normalized_recipe_features_per_company", partition_keys=["company_id", "year"]
     ),
-    acceptable_freshness=timedelta(days=4),
+    acceptable_freshness=timedelta(hours=12),
 )
 class NormalizedRecipeFeatures:
     recipe_id = Int32().as_entity()

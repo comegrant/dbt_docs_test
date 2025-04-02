@@ -5,12 +5,15 @@ from datetime import date
 from typing import Annotated
 
 import polars as pl
-from aligned import ContractStore, FeatureLocation
+from aligned import ContractStore
 from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.feature_store import ConvertableToLocation
 from aligned.sources.in_mem_source import InMemorySource
 from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
+from data_contracts.preselector.menu import PreselectorYearWeekMenu
 from data_contracts.preselector.store import Preselector as PreselectorOutput
+from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost
 from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field, ValidationError
 
@@ -64,19 +67,19 @@ async def load_store() -> ContractStore:
     today = date.today()
     this_week = today.isocalendar().week
 
-    cache_sources: list[tuple[FeatureLocation, BatchDataSource, pl.Expr | None]] = [
+    cache_sources: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]] = [
         (
-            FeatureLocation.feature_view("recipe_cost"),
+            RecipeCost.location,
             InMemorySource.empty(),
             (pl.col("menu_year") >= today.year) & (pl.col("menu_week") > this_week),
         ),
         (
-            FeatureLocation.feature_view("preselector_year_week_menu"),
+            PreselectorYearWeekMenu.location,
             InMemorySource.empty(),
             (pl.col("menu_year") >= today.year),
         ),
         (
-            FeatureLocation.feature_view("normalized_recipe_features"),
+            NormalizedRecipeFeatures.location,
             InMemorySource.empty(),
             (pl.col("year") >= today.year),
         ),
@@ -96,7 +99,7 @@ async def load_store() -> ContractStore:
             entity_names = store.model(dep.name).model.predictions_view.request("").entity_names
 
         if "agreement_id" in entity_names:
-            # Do not want any user spesific data
+            # Do not want any user specific data
             logger.info(dep.name)
             store.sources.pop(dep, None)
             continue

@@ -2,7 +2,7 @@ import polars as pl
 import pytest
 from aligned import ContractStore
 from aligned.sources.in_mem_source import InMemorySource
-from preselector.main import filter_out_recipes_based_on_preference
+from preselector.filtering import filter_out_recipes_based_on_preference
 
 
 @pytest.fixture()

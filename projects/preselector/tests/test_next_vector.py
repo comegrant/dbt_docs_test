@@ -1,5 +1,5 @@
 import polars as pl
-from preselector.main import select_next_vector
+from preselector.model import select_next_vector
 
 
 def test_next_vector_equal_importance() -> None:
