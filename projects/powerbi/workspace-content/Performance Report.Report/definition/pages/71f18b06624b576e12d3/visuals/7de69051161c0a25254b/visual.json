@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "7de69051161c0a25254b",
   "position": {
     "x": 16.534954407294833,
@@ -10,10 +10,10 @@
     "tabOrder": 4000
   },
   "visual": {
-    "visualType": "tableEx",
+    "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Values": {
+        "Rows": {
           "projections": [
             {
               "field": {
@@ -32,7 +32,8 @@
                 }
               },
               "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year"
+              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "active": true
             },
             {
               "field": {
@@ -51,7 +52,8 @@
                 }
               },
               "queryRef": "Dates.Financial Date Hierarchy.Quarter",
-              "nativeQueryRef": "Financial Date Hierarchy Quarter"
+              "nativeQueryRef": "Financial Date Hierarchy Quarter",
+              "active": true
             },
             {
               "field": {
@@ -70,7 +72,8 @@
                 }
               },
               "queryRef": "Dates.Financial Date Hierarchy.Month",
-              "nativeQueryRef": "Financial Date Hierarchy Month"
+              "nativeQueryRef": "Financial Date Hierarchy Month",
+              "active": true
             },
             {
               "field": {
@@ -89,8 +92,13 @@
                 }
               },
               "queryRef": "Dates.Financial Date Hierarchy.Week",
-              "nativeQueryRef": "Financial Date Hierarchy Week"
-            },
+              "nativeQueryRef": "Financial Date Hierarchy Week",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
             {
               "field": {
                 "Measure": {
@@ -254,20 +262,150 @@
         "sort": [
           {
             "field": {
-              "Measure": {
+              "HierarchyLevel": {
                 "Expression": {
-                  "SourceRef": {
-                    "Entity": "Order Measures"
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
                   }
                 },
-                "Property": "Order Value Net Ex Vat"
+                "Level": "Year"
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Quarter"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Month"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Week"
+              }
+            },
+            "direction": "Ascending"
           }
         ]
       }
     },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Year"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Year"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Quarter"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Quarter"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Month"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Month Name"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Dates.Financial Date Hierarchy.Week"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {}
+      }
+    ],
     "objects": {
       "columnHeaders": [
         {
@@ -309,7 +447,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "42D"
+                  "Value": "122.8078745101518D"
                 }
               }
             }
@@ -365,7 +503,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "75.28805936104615D"
+                  "Value": "96.28249595494599D"
                 }
               }
             }
@@ -379,7 +517,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "91.50578996355314D"
+                  "Value": "109.16272029418248D"
                 }
               }
             }
@@ -407,7 +545,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "78.75D"
+                  "Value": "83.15418418185443D"
                 }
               }
             }
@@ -421,7 +559,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "70.67284668236083D"
+                  "Value": "84.78685238188748D"
                 }
               }
             }
@@ -435,7 +573,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "78.48757321006246D"
+                  "Value": "104.66646836320007D"
                 }
               }
             }
