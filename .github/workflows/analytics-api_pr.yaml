@@ -15,11 +15,12 @@ jobs:
       working-directory: projects/analytics-api
     secrets: inherit
 
-  deploy-analytics-api-to-dev:
-    uses: ./.github/workflows/cd_dab_template.yml
+  build-analytics-api-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/analytics-api
-      target-env: Development
-      docker-image-name: analytics-api
-      docker-image-tag: dev-latest
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: analytics-api
+      dockerfile: docker/Dockerfile
+      tag: dev-latest
     secrets: inherit

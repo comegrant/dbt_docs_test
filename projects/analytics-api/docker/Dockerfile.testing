@@ -1,3 +1,0 @@
-FROM analytics-api-base:latest
-
-RUN poetry install

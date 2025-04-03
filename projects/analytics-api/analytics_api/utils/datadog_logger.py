@@ -25,5 +25,4 @@ async def datadog_logger(env: str | None = None) -> None:
     )
     # The root logger, so we log everything to datadog
     logger = logging.getLogger("")
-    setup_logger()
     setup_datadog(logger, settings)

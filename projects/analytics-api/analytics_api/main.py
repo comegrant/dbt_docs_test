@@ -11,8 +11,8 @@ from fastapi import FastAPI, Form
 from pydantic_settings import BaseSettings
 
 from analytics_api.routers.menu_generator import mop_router as mop_app_router
-from analytics_api.utils.auth import retrieve_token, validate_token
-from analytics_api.utils.datadog_logger import datadog_logger
+from analytics_api.utils.auth import AuthToken, raise_on_invalid_token, retrieve_token
+from analytics_api.utils.datadog_logger import datadog_logger, setup_logger
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     load_dotenv(find_dotenv())
 
     settings = EnvSettings()
-    await datadog_logger(env=settings.environment)
+
+    setup_logger()
+    if settings.environment != "dev":
+        await datadog_logger(env=settings.environment)
+
     logger.info("Application started")
     yield
 
@@ -77,10 +81,10 @@ def perform_healthcheck() -> dict[str, str]:
 
 @app.post("/token", include_in_schema=True)
 async def login(
-    username: str = Form(None),
-    password: str = Form(None),
-    client_secret: str = Form(None),
-) -> dict[str, str] | None:
+    username: str | None = Form(None),
+    password: str | None = Form(None),
+    client_secret: str | None = Form(None),
+) -> AuthToken:
     """
     Authenticates a user with a username and password and returns a JSON response
     containing an access token.
@@ -95,7 +99,10 @@ async def login(
         successful, otherwise None.
     """
     if client_secret is not None:
-        if await validate_token(client_secret):
-            return {"access_token": client_secret}
-    else:
-        return await retrieve_token(username, password)
+        await raise_on_invalid_token(client_secret)
+        return AuthToken(access_token=client_secret)
+
+    assert username, f"Expected to get a username: '{username}'."
+    assert password, "Expected to get a password but got nothing or an empty string."
+
+    return await retrieve_token(username, password)

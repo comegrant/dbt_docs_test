@@ -2,15 +2,14 @@ import logging
 from typing import Optional
 
 from data_contracts.helper import snake_to_camel
-from fastapi import APIRouter, Depends, FastAPI, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from menu_optimiser.optimization import generate_menu_companies_api
 from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse
 
-from analytics_api.utils.auth import validate_token
+from analytics_api.utils.auth import raise_on_invalid_token
 
-app = FastAPI()
-mop_router = APIRouter(dependencies=[Depends(validate_token)])
+mop_router = APIRouter(dependencies=[Depends(raise_on_invalid_token)])
 
 logger = logging.getLogger(__name__)
 

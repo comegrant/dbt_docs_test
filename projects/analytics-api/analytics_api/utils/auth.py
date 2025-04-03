@@ -1,16 +1,11 @@
 import logging
-from os import getenv
-from typing import Any, Optional
 
 import aiohttp
-from aiocache import cached
-from aiocache.serializers import PickleSerializer
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from pydantic import ValidationError
-from pydantic.types import SecretStr
+from pydantic import BaseModel, Field, ValidationError
 from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
@@ -20,17 +15,23 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class AuthConfig(BaseSettings):
-    auth_host: Optional[str] = getenv("AUTH_HOST")
-    auth_email: Optional[str] = getenv("AUTH_EMAIL")
-    auth_password: Optional[SecretStr] = SecretStr(getenv("AUTH_PASSWORD", default=""))
-    auth_public_key: Optional[Any] = getenv("AUTH_PUBLIC_KEY")
-    auth_api_login: str = getenv("AUTH_API_LOGIN", default="/api/Auth/LoginBackend")
-    auth_api_validate_backend: str = getenv("AUTH_API_VALIDATE_BACKEND", default="/api/Auth/ValidateTokenJose")
-    auth_algorithm: str = getenv("AUTH_ALGORITHM", default="RS512")
+    auth_host: str
+    auth_public_key: str
+
+    auth_api_login: str = Field("/api/Auth/LoginBackend")
+    auth_algorithm: str = Field("RS512")
+    auth_email: str | None = Field(None)
+
+    @property
+    def auth_login_uri(self) -> str:
+        return self.auth_host + self.auth_api_login
 
 
-@cached(serializer=PickleSerializer())
-async def get_auth_config() -> AuthConfig | None:
+class AuthToken(BaseModel):
+    access_token: str
+
+
+def get_auth_config() -> AuthConfig:
     """
     Retrieve the authentication configuration for the application.
 
@@ -41,12 +42,13 @@ async def get_auth_config() -> AuthConfig | None:
         AuthConfig: The authentication configuration, or None if it is invalid.
     """
     try:
-        return AuthConfig()
+        return AuthConfig()  # type: ignore
     except ValidationError as validation_error:
         logger.error("Failed to load authentication configuration due to validation error: %s", validation_error)
+        raise validation_error
 
 
-async def retrieve_token(username, password):  # noqa: ANN001, ANN201
+async def retrieve_token(username: str, password: str) -> AuthToken:
     """
     Retrieves a token for a given username and password.
 
@@ -60,23 +62,22 @@ async def retrieve_token(username, password):  # noqa: ANN001, ANN201
     Raises:
         HTTPException: If the authentication request fails.
     """
-    auth_settings = AuthConfig()
+    auth_settings = get_auth_config()
+
     headers = {"X-GG-NEW": "True"}
     data = {"email": username, "password": password}
-    if auth_settings.auth_host is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Auth host is not defined")
-    url = auth_settings.auth_host + auth_settings.auth_api_login
-    logger.info(url)
+
+    url = auth_settings.auth_login_uri
 
     async with aiohttp.ClientSession() as client:
         async with client.post(url, headers=headers, json=data) as response:
-            if response.status == status.HTTP_200_OK:
-                return {"access_token": await response.json()}
+            if response.status != status.HTTP_200_OK:
+                raise HTTPException(status_code=response.status, detail=await response.json())
 
-            raise HTTPException(status_code=response.status, detail=await response.json())
+            return AuthToken(access_token=await response.json())
 
 
-async def validate_token(token: str = Depends(oauth2_scheme)) -> bool:
+async def raise_on_invalid_token(token: str = Depends(oauth2_scheme)) -> None:
     """
     Validate a given token.
 
@@ -94,18 +95,15 @@ async def validate_token(token: str = Depends(oauth2_scheme)) -> bool:
     Raises:
         HTTPException: If the token is invalid or does not contain the expected
             CompanyId.
-
-    Returns:
-        bool: True if the token is valid, False otherwise.
     """
-    auth_settings = AuthConfig()
+    auth_settings = get_auth_config()
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    if auth_settings.auth_public_key is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Auth public key is not defined")
+
     try:
         payload = jwt.decode(
             token,
@@ -115,7 +113,6 @@ async def validate_token(token: str = Depends(oauth2_scheme)) -> bool:
         company_id = payload["CompanyId"]
         if company_id != "00000000-0000-0000-0000-000000000000":
             raise credentials_exception
+
     except JWTError:
         raise credentials_exception from JWTError
-
-    return True

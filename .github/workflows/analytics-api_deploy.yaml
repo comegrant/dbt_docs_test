@@ -16,6 +16,6 @@ jobs:
       working-directory: projects/analytics-api
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: analytics-api
-      dockerfile: docker/Dockerfile.databricks
+      dockerfile: docker/Dockerfile
       tag: ${{ github.sha }}
     secrets: inherit
