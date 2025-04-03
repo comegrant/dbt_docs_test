@@ -162,6 +162,14 @@ table 'Loyalty Point Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements
 
+	/// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations
+
 	column fk_dim_loyalty_events
 		dataType: string
 		isHidden

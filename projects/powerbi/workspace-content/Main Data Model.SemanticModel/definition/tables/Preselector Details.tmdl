@@ -309,6 +309,14 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: fk_dim_preselector_versions
 
+    /// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations
+
     partition 'Preselector Measures' = m
         mode: directQuery
         source =

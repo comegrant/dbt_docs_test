@@ -49,7 +49,7 @@ relationship e3d2c6c0-3f64-33a8-0194-761fdfb88538
 	toColumn: Products.pk_dim_products
 
 relationship 8a15615d-11fc-fbaa-2f96-ac8c881b9124
-	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_preferences
+	fromColumn: 'Bridge Preference Combinations Preferences'.fk_dim_preferences
 	toColumn: Preferences.pk_dim_preferences
 
 relationship 103a4d25-48bd-a74e-e7ac-0e4acd24645d
@@ -101,10 +101,9 @@ relationship 20285513-1770-0ace-c116-8fd2fa6e064b
 	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
 
 relationship dae01af1-a97e-54b0-3730-3aaf8052dd21
-	isActive: false
 	crossFilteringBehavior: bothDirections
-	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
-	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
+	fromColumn: 'Bridge Preference Combinations Preferences'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
 
 relationship 281ef7b7-e62c-fbe6-6b3e-6055fffb30e1
 	isActive: false
@@ -120,15 +119,6 @@ relationship 7dbb512c-7bdb-d90a-3b76-1a1d0dd2b61f
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Billing Agreements Subscribed Products'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
-
-relationship daa2c4ad-90bf-e02d-ecf5-4888d1fbb509
-	crossFilteringBehavior: bothDirections
-	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
-	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
-
-relationship ea04ed46-e5b1-3d93-7342-2ee686096142
-	fromColumn: 'Bridge Billing Agreements Preferences'.fk_dim_billing_agreements
-	toColumn: 'Preference Combinations'.fk_dim_billing_agreements
 
 relationship d7c179ab-ac67-9630-d7ab-9aaa3c46a1a8
 	fromColumn: 'Customer Measures'.fk_dim_billing_agreements
@@ -237,6 +227,44 @@ relationship fact_preselector_to_dim_preselector_versions
 relationship fact_preselector_to_dim_billing_agreements
 	fromColumn: 'Preselector Details'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fact_orders_to_dim_preference_combinations
+	fromColumn: 'Order Measures'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_agreement_recipe_compliance_to_dim_preference_combinations_billing_agreements
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_preference_combinations_billing_agreements
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_agreement_recipe_compliance_to_dim_preference_combinations_recipes
+	isActive: false
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_preference_combinations_recipes
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_billing_agreement_updates_to_dim_preference_combinations
+	fromColumn: 'Customer Measures'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_billing_agreement_updates_to_dim_preference_combinations_previous_version
+	isActive: false
+	fromColumn: 'Customer Measures'.fk_dim_preference_combinations_previous_version
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_estimations_to_dim_preference_combinations
+	fromColumn: 'Estimations'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_loyalty_points_to_dim_preference_combinations
+	fromColumn: 'Loyalty Point Measures'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_preselector_to_dim_preference_combinations
+	fromColumn: 'Preselector Details'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
+relationship fact_subscription_quiz_to_dim_preference_combinations
+	fromColumn: 'subscription Quiz Measures'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
 
 relationship fact_orders_to_dim_portions
 	fromColumn: 'Order Measures'.fk_dim_portions

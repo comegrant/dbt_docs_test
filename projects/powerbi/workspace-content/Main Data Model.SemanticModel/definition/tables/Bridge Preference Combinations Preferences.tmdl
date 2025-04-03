@@ -1,0 +1,38 @@
+/// A bridge table that connects a combination of preferences with each preference in the combination.
+table 'Bridge Preference Combinations Preferences'
+    lineageTag: Bridge-Preference-Combinations-Preferences-Table
+
+    /// The primary key of the bridge_preference_combinations_preferences.
+    column pk_bridge_preference_combinations_preferences
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_bridge_preference_combinations_preferences
+
+    /// Unique primary key for the preference combinations dimension.
+    column fk_dim_preference_combinations
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_preference_combinations
+
+    /// Primary key of the preferences dimension. It is a composite key of preference_id and company_id.
+    column fk_dim_preferences
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_preferences
+
+    partition 'Bridge Preference Combinations Preferences' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    bridge_preference_combinations_preferences_Table = gold_Schema{[Name="bridge_preference_combinations_preferences",Kind="Table"]}[Data]
+                in
+                    bridge_preference_combinations_preferences_Table

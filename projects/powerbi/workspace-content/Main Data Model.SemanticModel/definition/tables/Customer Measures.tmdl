@@ -18,7 +18,8 @@ table 'Customer Measures'
 	measure 'Number of Agreement Changes from Filtered State' =
 			CALCULATE(
 				COUNTROWS('Customer Measures'),
-				USERELATIONSHIP('Customer Measures'[fk_dim_billing_agreements_previous_version],'Billing Agreements'[pk_dim_billing_agreements])
+				USERELATIONSHIP('Customer Measures'[fk_dim_billing_agreements_previous_version],'Billing Agreements'[pk_dim_billing_agreements]),
+				USERELATIONSHIP('Customer Measures'[fk_dim_preference_combinations_previous_version],'Preference Combinations'[pk_dim_preference_combinations])
 			)
 		formatString: #,0
 		isHidden
@@ -381,6 +382,10 @@ table 'Customer Measures'
 							'Customer Measures'[fk_dim_billing_agreements_previous_version],
 							'Billing Agreements'[pk_dim_billing_agreements]
 						),
+						USERELATIONSHIP(
+							'Customer Measures'[fk_dim_preference_combinations_previous_version],
+							'Preference Combinations'[pk_dim_preference_combinations]
+						),
 						'Billing Agreements'[Billing Agreement Status] = "Active"
 					)
 
@@ -488,6 +493,10 @@ table 'Customer Measures'
 						USERELATIONSHIP(
 							'Customer Measures'[fk_dim_billing_agreements_previous_version],
 							'Billing Agreements'[pk_dim_billing_agreements]
+						),
+						USERELATIONSHIP(
+							'Customer Measures'[fk_dim_preference_combinations_previous_version],
+							'Preference Combinations'[pk_dim_preference_combinations]
 						),
 						'Billing Agreements'[Billing Agreement Status] <> "Active"
 					)
@@ -653,15 +662,6 @@ table 'Customer Measures'
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements Deviation'[pk_dim_billing_agreements]
 				),
-				USERELATIONSHIP(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-					'Billing Agreements Deviation'[pk_dim_billing_agreements]
-				),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-					'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements'[pk_dim_billing_agreements],
@@ -796,6 +796,22 @@ table 'Customer Measures'
 		lineageTag: 199a8f38-e0f7-4d40-b339-3d5614ef0303
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements_previous_version
+
+	/// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations
+
+	/// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations_previous_version
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations_previous_version
 
 	column is_signup
 		dataType: boolean

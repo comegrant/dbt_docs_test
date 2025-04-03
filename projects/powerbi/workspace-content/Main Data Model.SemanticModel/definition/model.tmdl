@@ -27,7 +27,7 @@ ref table Products
 ref table 'Order Measures'
 ref table 'Menu Measures'
 ref table 'Billing Agreements'
-ref table 'Bridge Billing Agreements Preferences'
+ref table 'Bridge Preference Combinations Preferences'
 ref table Preferences
 ref table 'Periods Since First Menu Week'
 ref table '(Param) Measures'

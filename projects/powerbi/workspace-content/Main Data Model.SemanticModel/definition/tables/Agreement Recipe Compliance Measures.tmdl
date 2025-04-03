@@ -9,6 +9,7 @@ table 'Agreement Recipe Compliance Measures'
 					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
 				)
 			```
+		isHidden
 		lineageTag: d4e0cd1e-43d0-49c7-8643-d3a5e21c246b
 
 	/// Returns the total number of unique billing agreements that have recipes with the selected compliance level.
@@ -19,6 +20,7 @@ table 'Agreement Recipe Compliance Measures'
 					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
 				)
 			```
+		isHidden
 		lineageTag: fc73f9ca-84b6-4807-ad19-29d6d49ccc8e
 
 	/// Calculates the average number of recipes per billing agreement with the selected compliance level.
@@ -29,6 +31,7 @@ table 'Agreement Recipe Compliance Measures'
 			        [Number of Agreements with Compliancy]
 			    )
 			```
+		isHidden
 		lineageTag: a91015f4-c2b3-45f1-bd9a-7a2df87d00b4
 
 	/// Returns the number of recipes that are currently on the menu with the selected compliance level.
@@ -43,6 +46,7 @@ table 'Agreement Recipe Compliance Measures'
 					'Agreement Recipe Compliance Measures'[Compliancy Level] IN VALUES('Agreement Recipe Compliance Measures'[Compliancy Level])
 				)
 			```
+		isHidden
 		lineageTag: 94a351ec-9643-40c0-b5ad-aade250a4a97
 
 	/// The unique key of each row in Fact Recipe Billing Agreement Compliancy.
@@ -80,6 +84,24 @@ table 'Agreement Recipe Compliance Measures'
 		lineageTag: 0393c07d-0f34-4e21-a0af-2e4392ae8310
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements
+
+	/// Primary key for the preference combinations dimension.
+	/// This references the preferences related to the selected recipes
+	column fk_dim_preference_combinations_recipes
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations_recipes
+
+	/// Primary key for the preference combinations dimension.
+	/// This references the preferences related to the selected billing agreements
+	column fk_dim_preference_combinations_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations_billing_agreements
 
 	/// Primary key of the dim_recipes table.
 	column fk_dim_recipes

@@ -10,15 +10,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -42,15 +33,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -74,15 +56,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -108,15 +81,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -422,15 +386,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -457,15 +412,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -494,15 +440,6 @@ table 'Order Measures'
 				   USERELATIONSHIP(
 					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					   'Billing Agreements Deviation'[pk_dim_billing_agreements]
-				   ),
-				   USERELATIONSHIP(
-					   'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-					   'Billing Agreements Deviation'[pk_dim_billing_agreements]
-				   ),
-				   CROSSFILTER(
-					   'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-					   'Billing Agreements'[pk_dim_billing_agreements],
-					   None
 				   ),
 				   CROSSFILTER(
 					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
@@ -545,15 +482,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -771,15 +699,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -825,15 +744,6 @@ table 'Order Measures'
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
-				USERELATIONSHIP(
-			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
-			    ),
-				CROSSFILTER(
-					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
-					None
-				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements'[pk_dim_billing_agreements],
@@ -1351,7 +1261,7 @@ table 'Order Measures'
 	measure 'Number of Servings' =
 			SUM('Order Measures'[mealbox_servings])
 		formatString: # ###,0
-		displayFolder: Recipe Sales		
+		displayFolder: Recipe Sales
 
 	/// The average number of servings per unique recipe id.
 	measure 'Average Number of Consumers per Dish' =
@@ -2047,12 +1957,20 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: mealbox_servings
 
+	/// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations
+
 	column fk_dim_order_line_details
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_order_line_details
+    	dataType: string
+    	isHidden
+    	isAvailableInMdx: false
+    	summarizeBy: none
+    	sourceColumn: fk_dim_order_line_details
 
 	column is_subscribed_grocery
 		dataType: boolean
@@ -2076,7 +1994,6 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: sum
 		sourceColumn: subscribed_product_variation_amount_ex_vat
-
 
 	partition 'Order Measures' = m
 		mode: directQuery
