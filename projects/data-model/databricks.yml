@@ -18,6 +18,8 @@ variables:
     description: The id of the sql warehouse used for the dbt task
   slack_notification_job_id:
     description: The id of the slack notification job to call
+  preselector_materialization_job_id:
+    description: The id of the preselector materialization job to call
 
 targets:
   dev:
@@ -28,15 +30,17 @@ targets:
     variables:
       warehouse_id: 45100b61eb7ee2f5
       slack_notification_job_id: 221967110790300
+      preselector_materialization_job_id: 98557615197253
 
   test:
     mode: production
     variables:
       warehouse_id: 76c581aa18fb7b4f
       slack_notification_job_id: 823927532277018
-      
+      preselector_materialization_job_id: 1030627407532831
   prod:
     mode: production
     variables:
       warehouse_id: 1a2fc265706df5fb
       slack_notification_job_id: 808732355997444
+      preselector_materialization_job_id: 148734131753684

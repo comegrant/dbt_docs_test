@@ -1,7 +1,7 @@
 resources:
   jobs:
-    estimations_log:
-      name: estimations_log
+    basket_deviations_hourly:
+      name: basket_deviations_hourly
 
       permissions:
         - group_name: data-scientists
@@ -9,13 +9,13 @@ resources:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN
 
-      timeout_seconds: 3000 #Timeout after 50 mins
+      timeout_seconds: 4500 #Timeout after 75 mins
       edit_mode: EDITABLE
 
       schedule:
-       #Run every day every second hour between 9 and 23. (9:30, 11:30, 13:30 etc.) and midnight 01:30.
-       quartz_cron_expression: 0 30 9-23/2,0 ? * * *
-       timezone_id: Europe/Oslo
+       #Run every day every hour between 6:30am and 2:30am. (6:30, 7:30, ..., 23:30, 00:30, 1:30, 2:30) and also at 00:00 to ensure a successful run at around midnight.
+        quartz_cron_expression: 0 30 6-2/1,0 ? * * *
+        timezone_id: Europe/Oslo
 
       environments:
         - environment_key: dbt-default
@@ -54,14 +54,20 @@ resources:
             commands:
               - 'dbt deps'
               - 'dbt snapshot'
-              - 'dbt run -s +estimations_log'
-              - 'dbt test -s +estimations_log --indirect-selection cautious'
-              # I've put this here temporary since its also supposed to run every 2nd h and depends on the same tables
-              - 'dbt build -s active_basket_deviations_recent_weeks'
+              - 'dbt run -s +estimations_log +active_basket_deviations_recent_weeks'
+              - 'dbt test -s +estimations_log +active_basket_deviations_recent_weeks --indirect-selection cautious'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_cms_full},
             {task_key: bronze_psl_full}
+          ]
+
+        # The preselector uses the data created in this job, so it's loaded into the preselector at the end of the job
+        - task_key: start_preselector_materialization
+          run_job_task:
+            job_id: ${var.preselector_materialization_job_id}
+          depends_on: [
+            {task_key: dbt}
           ]
 
         - task_key: fail-notification
@@ -70,14 +76,15 @@ resources:
             {task_key: bronze_psl_full},
             {task_key: bronze_cms_billing_agreement_basket_scheduler},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: dbt}
+            {task_key: dbt},
+            {task_key: start_preselector_materialization}
           ]
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
             job_id: ${var.slack_notification_job_id}
             job_parameters:
               environment: ${bundle.target}
-              header_message: ❌ Estimations log job failed
+              header_message: ❌ Basket deviations hourly job failed
               body_message: Check the Databricks logs for more details
               is_error: true
-              relevant_people: stephen, sylvia, grant, engineering
+              relevant_people: stephen, mats, sylvia, grant, engineering
