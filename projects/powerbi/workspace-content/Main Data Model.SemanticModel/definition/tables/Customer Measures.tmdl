@@ -323,6 +323,35 @@ table 'Customer Measures'
 		displayFolder: Sign-ups
 		lineageTag: c9fc05d1-f58a-46ce-a71e-b25dc72992ad
 
+	/// The rolling number of signups for the last 7 days. Including current day.
+	measure 'Number of Sign-ups (7 Days Rolling)' =
+			CALCULATE(
+				[Number of Sign-ups],
+				'Time intelligence'[Time Calculation]= "Rolling x days",
+				'(Param) Days in Rolling Period'[Days in Rolling Period] = 7
+			)
+		formatString: #,0
+		displayFolder: Sign-ups
+
+	/// The rolling number of signups for the last 7 days, same period last year.
+	measure 'Number of Sign-ups (7 Days Rolling PY)' =
+			CALCULATE(
+				[Number of Sign-ups (PY)],
+				'Time intelligence'[Time Calculation]= "Rolling x days",
+				'(Param) Days in Rolling Period'[Days in Rolling Period] = 7
+			)
+		formatString: #,0
+		displayFolder: Sign-ups
+	
+	/// Calculates the year over year percentage change in the rolling number of signups for the last 7 days. Matches exact dates previous year.
+	measure 'Number of Sign-ups (Rolling 7 Days YOY%)' = 
+				CALCULATE(
+				DIVIDE([Number of Sign-ups (Diff PY)],[Number of Sign-ups (PY)]),
+				'Time intelligence'[Time Calculation]= "Rolling x days (YOY%)",
+				'(Param) Days in Rolling Period'[Days in Rolling Period] = 7)
+		formatString: #,0
+		displayFolder: Sign-ups
+
 	/// Number of subscribers changed from active to another status during the selected period.
 	/// It will count number of subscribers that was in a active state at the beginning of the selected period
 	/// and was in another status at the end of the selected period.
