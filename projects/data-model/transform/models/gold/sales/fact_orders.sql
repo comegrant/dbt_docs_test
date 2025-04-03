@@ -138,7 +138,7 @@ order_lines as (
         , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
         , recommendations_origin.billing_agreement_basket_deviation_origin_id as billing_agreement_basket_deviation_origin_id_preselected
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
-        , billing_agreements_deviations.billing_agreement_preferences_updated_id
+        , coalesce(billing_agreements_deviations.billing_agreement_preferences_updated_id, billing_agreements_ordergen.billing_agreement_preferences_updated_id) as billing_agreement_preferences_updated_id
         , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
         , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
         , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
