@@ -3,7 +3,7 @@
   "artifacts": [
     {
       "report": {
-        "path": "Recipe Ratings Main Report.Report"
+        "path": "Recipe Ratings.Report"
       }
     }
   ],
