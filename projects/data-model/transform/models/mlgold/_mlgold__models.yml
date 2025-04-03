@@ -596,3 +596,39 @@ models:
         data_type: timestamp
         data_tests:
           - not_null
+
+  - name: menu_feedback_recipe_preferences
+    description: "Table containing recipe preferences for menu feedback"
+
+    columns:
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: recipe_main_ingredient_id
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"
+        data_type: int
+
+      - name: negative_taste_preferences
+        description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
+        data_type: string
+
+  - name: menu_feedback_agreement_preferences_aggregated
+    description: "Table containing aggregated agreement preferences for menu feedback"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: negative_taste_preferences
+        description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
+        data_type: string
+
+      - name: number_of_users
+        description: "{{ doc('column__menu_feedback_model__column__number_of_users') }}"
+        data_type: int

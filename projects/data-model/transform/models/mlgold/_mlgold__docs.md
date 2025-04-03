@@ -196,3 +196,10 @@ Whether ot not the recipe is low fat. A recipe is considered low fat if the fat 
 Whether ot not the recipe is low sugar. A recipe is considered low sugar if the sugar per portion is less than 7% of the total calories per portion.
 
 {% enddocs %}
+
+
+{% docs column__menu_feedback_model__column__number_of_users %}
+
+Number of users who have the same negative taste preferences for a company
+
+{% enddocs %}
