@@ -1,7 +1,7 @@
 resources:
   jobs:
-    dbt_only_with_parameter:
-      name: dbt_only_with_parameter   
+    dbt_build_with_parameter:
+      name: dbt_build_with_parameter   
 
       environments:
         - environment_key: dbt-default

@@ -1,7 +1,7 @@
 resources:
   jobs:
-    dbt_developer_bulk_ingest_silver_tables:
-      name: dbt_developer_bulk_ingest_silver_tables 
+    developer_schema_bulk_ingest_silver_tables:
+      name: developer_schema_bulk_ingest_silver_tables 
 
       environments:
         - environment_key: dbt-default

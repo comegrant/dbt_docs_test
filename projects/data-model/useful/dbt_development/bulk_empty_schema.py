@@ -7,9 +7,5 @@ tables = spark.sql(f"SHOW TABLES IN {dbt_schema}")
 
 # COMMAND ----------
 
-tables.show()
-
-# COMMAND ----------
-
 for table in tables.collect():
   spark.sql(f"DROP TABLE {dbt_schema}.{table[1]}")

@@ -16,8 +16,6 @@
         {% set related_model = column_name.replace('fk_', '') %}
         {% set pk_column = column_name.replace('fk', 'pk') %}
         {% set tests = 
-            "        constraints:\n" ~
-            "          - type: not_null\n" ~ 
             "        data_tests:\n" ~
             "          - not_null\n" ~
             "          - relationships:\n" ~
@@ -27,8 +25,6 @@
 
     {% elif 'string' == column_type %}
         {% set tests =
-            "        constraints:\n" ~
-            "          - type: not_null\n" ~ 
             "        data_tests:\n" ~
             "          - not_null\n" ~
             "          - accepted_values:\n" ~
@@ -39,8 +35,6 @@
         
     {% else %}
         {% set tests = 
-            "        constraints:\n" ~
-            "          - type: not_null\n" ~ 
             "        data_tests:\n" ~
             "          - not_null" %}
     {% endif %}

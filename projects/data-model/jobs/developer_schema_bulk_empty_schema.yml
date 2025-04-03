@@ -1,7 +1,7 @@
 resources:
   jobs:
-    dbt_developer_bulk_delete_tables:
-      name: dbt_developer_bulk_delete_tables 
+    developer_schema_bulk_empty_schema:
+      name: developer_schema_bulk_empty_schema
 
       environments:
         - environment_key: dbt-default
@@ -14,7 +14,7 @@ resources:
 
         - task_key: delete_tables_per_schema
           notebook_task: 
-            notebook_path: ../useful/dbt_development/bulk_delete_tables.py
+            notebook_path: ../useful/dbt_development/bulk_empty_schema.py
 
       parameters:
         - name: firstname_lastname
