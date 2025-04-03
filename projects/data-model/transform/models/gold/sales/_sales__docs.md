@@ -170,6 +170,12 @@ The year of the customers first delivery.
 
 {% enddocs %}
 
+{% docs column__has_grocery_subscription %}
+
+True if the customer has groceries in their subscription, else false.
+
+{% enddocs %}
+
 {% docs column__onesub_flag%}
 
 Describes if the customer has a OneSub product or not in their basket. It will not "OneSub" from the time when the customer got OneSub in their basket for each individual customer and "Not OneSub" before.

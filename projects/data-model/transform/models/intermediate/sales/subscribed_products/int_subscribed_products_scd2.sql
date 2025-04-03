@@ -79,6 +79,7 @@ basket_mealboxes as (
     select
          billing_agreement_basket_id
         , basket_products_list
+        , has_grocery_subscription
         , valid_from
         , valid_to
         , basket_source_groceries
@@ -171,6 +172,7 @@ basket_mealboxes as (
         , basket_product_object.product_variation_id
         , basket_product_object.product_variation_quantity
         , basket_product_object.is_extra_product
+        , coalesce(has_grocery_subscription, false) as has_grocery_subscription
         , valid_from
         , valid_to
         , basket_source_groceries

@@ -675,6 +675,10 @@ models:
         data_type: int
         description: "{{ doc('column__loyalty_level_number') }}"
 
+      - name: has_grocery_subscription
+        data_type: boolean
+        description: "{{ doc('column__has_grocery_subscription') }}"
+
       - name: preselector_flag
         data_type: string
         description: "{{ doc('column__preselector_flag') }}"

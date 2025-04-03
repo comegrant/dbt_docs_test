@@ -25,6 +25,7 @@ subscribed_products as (
         , valid_from
         , valid_to
         , basket_source
+        , case when product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }}) then true else false end as is_grocery
     from subscribed_products
     where product_type_id <> '{{ var("mealbox_product_type_id") }}'
     group by all
@@ -47,6 +48,7 @@ subscribed_products as (
         , valid_from
         , valid_to
         , basket_source
+        , max(is_grocery) as has_grocery_subscription
   from basket_non_mealbox_products
   group by billing_agreement_basket_id, valid_from, valid_to, basket_source
 
@@ -59,6 +61,7 @@ subscribed_products as (
     select 
         billing_agreement_basket_id
         , basket_products_list
+        , has_grocery_subscription
         , valid_from
         , valid_to
         , basket_source
@@ -74,6 +77,7 @@ subscribed_products as (
     select 
         billing_agreement_basket_id
         , basket_products_list
+        , has_grocery_subscription
         , valid_from
         , valid_to
         , basket_source
@@ -87,6 +91,7 @@ subscribed_products as (
     select
         billing_agreement_basket_id
         , basket_products_list
+        , has_grocery_subscription
         , group
         , min(valid_from) as valid_from
         , max(valid_to) as valid_to

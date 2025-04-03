@@ -30,7 +30,7 @@ billing_agreements as (
 
 )
 
-, basket_products_joined as (
+, subscribed_products as (
 
     select *  from {{ ref('int_subscribed_products_scd2') }}
 
@@ -62,12 +62,12 @@ billing_agreements as (
 
 , onesub_agreements as (
     select 
-    basket_products_joined.billing_agreement_basket_product_updated_id
+    subscribed_products.billing_agreement_basket_product_updated_id
     , max(product_id) as product_id_mealbox
-    from basket_products_joined
+    from subscribed_products
     left join products
-        on basket_products_joined.company_id = products.company_id
-        and basket_products_joined.product_variation_id = products.product_variation_id
+        on subscribed_products.company_id = products.company_id
+        and subscribed_products.product_variation_id = products.product_variation_id
     where products.product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' --Mealbox
     group by 1
     having max(product_id) = 'D699150E-D2DE-4BC1-A75C-8B70C9B28AE3' -- Onesub
@@ -122,15 +122,16 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
 )
 */
 
-, basket_products_scd2 as (
+, subscribed_products_scd2 as (
 
     select distinct
-    basket_products_joined.billing_agreement_basket_product_updated_id
-    , basket_products_joined.billing_agreement_id
-    , basket_products_joined.valid_from
-    , basket_products_joined.valid_to
-    from basket_products_joined
-    where basket_products_joined.billing_agreement_id is not null
+    subscribed_products.billing_agreement_basket_product_updated_id
+    , subscribed_products.billing_agreement_id
+    , subscribed_products.has_grocery_subscription
+    , subscribed_products.valid_from
+    , subscribed_products.valid_to
+    from subscribed_products
+    where subscribed_products.billing_agreement_id is not null
 
 )
 
@@ -162,7 +163,7 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
 {% set table_names = [
     'base_scd2' 
     , 'billing_agreement_statuses'
-    , 'basket_products_scd2'
+    , 'subscribed_products_scd2'
     , 'preferences_scd2'
     , 'preselector_agreements_scd2'
     , 'loyalty_levels_scd2'
@@ -210,6 +211,7 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , first_orders.first_menu_week_quarter
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name
+        , scd2_tables_joined.has_grocery_subscription
         , coalesce(scd2_tables_joined.preselector_flag, "Not Preselector") as preselector_flag
         , case
             when onesub_agreements.billing_agreement_basket_product_updated_id is null
