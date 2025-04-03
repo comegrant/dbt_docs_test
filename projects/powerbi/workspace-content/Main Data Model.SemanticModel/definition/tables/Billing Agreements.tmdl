@@ -72,6 +72,14 @@ table 'Billing Agreements'
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
+		
+	column has_grocery_subscription
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: has_grocery_subscription
 
 	column 'Payment Method'
 		dataType: string

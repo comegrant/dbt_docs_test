@@ -130,6 +130,68 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
+	/// Sum of Subscribed Product Variation Quantity
+	measure 'Subscribed Product Variation Quantity' =
+
+			CALCULATE(
+			    SUM('Order Measures'[subscribed_product_variation_quantity]),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				USERELATIONSHIP(
+			        'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
+			    ),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+			        'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Orders
+
+		changedProperty = IsHidden
+
+	/// Sum of Subscribed Product Variation Amount Ex Vat
+	measure 'Subscribed Product Variation Amount Ex Vat' =
+
+			CALCULATE(
+				SUM('Order Measures'[subscribed_product_variation_amount_ex_vat]),
+				USERELATIONSHIP(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				),
+				USERELATIONSHIP(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					'Billing Agreements Deviation'[pk_dim_billing_agreements]
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Preferences'[fk_dim_billing_agreements],
+					'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				),
+				CROSSFILTER(
+					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
+					'Billing Agreements'[pk_dim_billing_agreements],
+					None
+				)
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Orders
+
+		changedProperty = IsHidden
+
+
+
 	/// Average price per unit
 	/// Including VAT
 	/// Example: A person bought 2 cucumbers, 1 milk and 1 apple. If we want to
@@ -851,12 +913,51 @@ table 'Order Measures'
 		displayFolder: Groceries
 		lineageTag: 90ce50c3-d6c7-4a7b-8339-518093f7f186
 
-	/// Revenue from groceries of completed orders
+	/// Number of order that has one or more subscribed groceries
+	measure 'Number of Orders with Subscribed Groceries' = CALCULATE([Number of Orders], 'Order Measures'[is_subscribed_grocery] = true)
+		formatString: #,0
+		displayFolder: Groceries
+
+	/// Share of orders that has one or more subscribed groceries
+	measure 'Share of Orders with Subscribed Groceries' = DIVIDE([Number of Orders with Subscribed Groceries],[Number of Orders], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
+
+	/// Share of orders contaning groceries where one or more of the groceries was subscribed to.
+	/// Divides number of orders with subscribed groceries by number of orders with groceries.
+	measure 'Share of Grocery Orders from Subscription' = DIVIDE([Number of Orders with Subscribed Groceries],[Number of Orders with Groceries], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
+
+	/// Number of ordered groceries.
+	/// Sums the product variation quantitiy for all ordered products that are groceries.
+	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+		formatString: #,0
+		displayFolder: Groceries
+
+	/// Number of ordered groceries that comes from a grocery subscription.
+	/// Sums the product variation quantitiy for all ordered product variations that are subscribed groceries.
+	measure 'Number of Ordered Groceries from Subscription' = CALCULATE([Subscribed Product Variation Quantity], 'Order Measures'[is_subscribed_grocery] = true)
+		formatString: #,0
+		displayFolder: Groceries
+
+	/// Share of orders containing subscribed groceries
+	measure 'Share of Ordered Groceries from Subscription' = DIVIDE([Number of Ordered Groceries from Subscription],[Number of Ordered Groceries], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
+
+	/// Revenue from groceries
 	/// Excluding VAT
 	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
 		displayFolder: Groceries
 		lineageTag: ad346d06-f70c-436e-960b-33738cb969e1
+
+	/// Share of gross revenue coming from groceries.
+	/// Does not include discount and credit lines.
+	measure 'Share of Order Value from Groceries' = DIVIDE([Grocery Value Ex Vat],[Order Value Gross Ex Vat], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
 
 	/// Average grocery revenue per completed order with groceries
 	/// Excluding VAT
@@ -864,6 +965,23 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Groceries
 		lineageTag: 2ff8d559-1016-4fca-be06-7f2951485081
+
+	/// Revenue from subscribed groceries
+	/// Excluding VAT
+	measure 'Subscribed Grocery Value Ex Vat' = CALCULATE([Subscribed Product Variation Amount Ex Vat], 'Order Measures'[is_subscribed_grocery] = true)
+		formatString: #,0
+		displayFolder: Groceries
+		
+	/// Share of revenue from groceries coming from subscribed products
+	measure 'Share of Grocery Value from Subscription' = DIVIDE([Subscribed Grocery Value Ex Vat],[Grocery Value Ex Vat], BLANK())
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Groceries
+		
+	/// Average grocery revenue per completed order with subscribed groceries
+	/// Excluding VAT
+	measure 'ATV of Subscribed Groceries Ex Vat' = DIVIDE([Subscribed Grocery Value Ex Vat],[Number of Orders with Subscribed Groceries], BLANK())
+		formatString: #,0.00
+		displayFolder: Groceries
 
 	/// Number of orders done by customers who have swapped at least once during the selected period.
 	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
@@ -1935,6 +2053,30 @@ table 'Order Measures'
         isAvailableInMdx: false
         summarizeBy: none
         sourceColumn: fk_dim_order_line_details
+
+	column is_subscribed_grocery
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_subscribed_grocery
+
+	column subscribed_product_variation_quantity
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: sum
+		sourceColumn: subscribed_product_variation_quantity
+
+	column subscribed_product_variation_amount_ex_vat
+		dataType: double
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: sum
+		sourceColumn: subscribed_product_variation_amount_ex_vat
+
 
 	partition 'Order Measures' = m
 		mode: directQuery

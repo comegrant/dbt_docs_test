@@ -720,6 +720,38 @@ table 'Customer Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Ordering Customers
 
+	/// Number of Active Subscribers that has an grocery subscription
+	measure 'Number of Active Grocery Subscribers' =
+			CALCULATE(
+				[Number of Active Subscribers],
+				'Billing Agreements'[has_grocery_subscription]=true
+			)
+		formatString: #,0
+		displayFolder: Grocery Subscribers
+
+	/// Number of customers placing an order that has an grocery subscription.
+	/// If the customer removed subscribed product from their order, they would
+	/// still be counted in this measure.
+	/// To only look at customers that ordered a grocery they subscribed to
+	/// look at Order Measures and Number of Orders with Subscribed Groceries.
+	measure 'Number of Ordering Grocery Subscribers' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				'Billing Agreements'[has_grocery_subscription]=true
+			)
+		formatString: #,0
+		displayFolder: Grocery Subscribers
+
+
+	/// Number of Grocery Subscribers including all customer statuses (also included deleted).
+	measure 'Number of Grocery Subscribers All Statuses' =
+            CALCULATE(
+                [Number of Subscribers All Statuses],
+                'Billing Agreements'[has_grocery_subscription]=true
+            )
+		formatString: #,0
+		displayFolder: Grocery Subscribers
+
 	column fk_dim_dates
 		dataType: int64
 		isHidden
