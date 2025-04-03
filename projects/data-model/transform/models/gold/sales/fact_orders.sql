@@ -87,7 +87,10 @@ order_lines as (
     select
         order_lines.*
         , deviations_order_mapping.is_onesub_migration
-        , case when deviations_order_mapping.is_onesub_migration = 0
+        , case when (
+                deviations_order_mapping.is_onesub_migration = 0 
+                or deviations_order_mapping.billing_agreement_order_id is null
+            )
             and order_lines.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
             and recommendations_origin.billing_agreement_basket_deviation_origin_id is null
             then 1
