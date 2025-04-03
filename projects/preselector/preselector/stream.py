@@ -5,6 +5,7 @@ from typing import Any, Generic, Literal, Protocol, TypeVar
 
 from aligned import ContractStore
 from aligned.data_source.batch_data_source import BatchDataSource
+from aligned.local.job import LiteralRetrievalJob
 from aligned.streams.interface import SinakableStream
 from aligned.streams.redis import RedisStream
 from azure.servicebus import (
@@ -321,10 +322,12 @@ class PreselectorResultWriter(WritableStream):
         )
 
         if self.sink is not None:
-            self.store = self.store.update_source_for(Preselector.location, self.sink)
+            self.store = self.store.update_source_for(Preselector, self.sink)
 
         try:
-            await self.store.upsert_into(Preselector.location, df)
+            # Needs to store it in a job first, to avoid casting of the map
+            job = LiteralRetrievalJob(df, [Preselector.request])
+            await self.store.upsert_into(Preselector, job)
         except ValueError as e:
             logger.error(f"Error when upserting {df.head()}")
             logger.exception(e)

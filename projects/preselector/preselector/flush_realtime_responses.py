@@ -98,7 +98,3 @@ async def write_to_databricks(
             logger.exception(f"Unable to write to databricks {error}")
             await success_stream.mark_as_uncomplete(success_messages)
             message_count = write_size
-
-
-if __name__ == "__main__":
-    pass

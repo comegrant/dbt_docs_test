@@ -11,6 +11,7 @@ from preselector.data.models.customer import (
     PreselectorYearWeekResponse,
 )
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
+from preselector.stream import PreselectorResultWriter
 
 response = PreselectorSuccessfulResponse(
     agreement_id=1337,
@@ -111,6 +112,8 @@ async def test_successful_output_is_valid_dataframe() -> None:
 
 @pytest.mark.asyncio
 async def test_batch_output_is_valid_dataframe() -> None:
+    from aligned import FileSource
+
     df = response.to_dataframe()
 
     assert df.height == 2
@@ -125,6 +128,21 @@ async def test_batch_output_is_valid_dataframe() -> None:
     assert len(df["weeks_since_selected"].struct.fields) == 5
     assert (df["taste_preference_ids"] == ["A"]).all()
     assert df["taste_preferences"].null_count() == 0
+
+    sink = FileSource.parquet_at("data/test.parquet")
+    await sink.delete()
+
+    writer = PreselectorResultWriter(company_id="...", sink=sink)
+
+    without_quarantining = response.copy()
+    without_quarantining.year_weeks = [week.copy(update={"ordered_weeks_ago": None}) for week in response.year_weeks]
+    new_df = without_quarantining.to_dataframe()
+    assert new_df["weeks_since_selected"].null_count() == 2
+
+    await writer.batch_write([response, without_quarantining])
+
+    written_df = await sink.to_polars()
+    assert written_df.height == 4
 
 
 @pytest.mark.asyncio
