@@ -682,6 +682,9 @@ order_lines as (
         add_recipe_feedback.*
         -- TODO: When refactoring, should be 1 or 0 if grocery and null if not grocery
         , coalesce(subscribed_product_variations.billing_agreement_order_id is not null) as is_subscribed_grocery
+        -- TODO: When refactoring, would expect a number here for mealboxes as well since its only called subscribed product variation quantity
+        , cast(subscribed_product_variations.subscribed_product_variation_quantity as int) as subscribed_product_variation_quantity
+        , cast(subscribed_product_variations.subscribed_product_variation_quantity as int) * add_recipe_feedback.unit_price_ex_vat as subscribed_product_variation_amount_ex_vat
     from add_recipe_feedback
     left join subscribed_product_variations
         on add_recipe_feedback.billing_agreement_order_id = subscribed_product_variations.billing_agreement_order_id

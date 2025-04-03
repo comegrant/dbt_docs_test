@@ -101,6 +101,18 @@ The difference between the ordered number of portions and the number of portions
 
 {% enddocs %}
 
+{% docs column__subscribed_product_variation_quantity %}
+
+Quantity subscribed to of the product.
+
+{% enddocs %}
+
+{% docs column__subscribed_product_variation_amount_ex_vat %}
+
+The total amount of the order line if only including subscribed product variation quantity. E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk.
+
+{% enddocs %}
+
 {% docs column__fk_dim_products_preselected %}
 
 Used to fetch product information about the dishes that has been presented to the customer on the webpage before the order was placed. Is 0 for order lines that are not representing a preselected dish.

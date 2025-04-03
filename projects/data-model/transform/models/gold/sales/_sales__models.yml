@@ -69,6 +69,14 @@ models:
         data_tests:
           - not_null
 
+      - name: subscribed_product_variation_quantity
+        data_type: int
+        description: "{{ doc('column__subscribed_product_variation_quantity') }}"
+    
+      - name: subscribed_product_variation_amount_ex_vat
+        data_type: decimal(20,6)
+        description: "{{ doc('column__subscribed_product_variation_amount_ex_vat') }}"
+
       - name: vat
         data_type: decimal(10,8)
         description: "{{ doc('column__vat') }}"
