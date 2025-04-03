@@ -676,49 +676,63 @@ order_lines as (
 
 )
 
+, subscribed_groceries_flag as (
+    
+    select 
+        add_recipe_feedback.*
+        -- TODO: When refactoring, should be 1 or 0 if grocery and null if not grocery
+        , coalesce(subscribed_product_variations.billing_agreement_order_id is not null) as is_subscribed_grocery
+    from add_recipe_feedback
+    left join subscribed_product_variations
+        on add_recipe_feedback.billing_agreement_order_id = subscribed_product_variations.billing_agreement_order_id
+        and add_recipe_feedback.product_variation_id = subscribed_product_variations.subscribed_product_variation_id
+        and subscribed_product_variations.subscribed_product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }})
+
+)
+
 , add_pk as (
     select
         md5(concat_ws('-'
-            , add_recipe_feedback.menu_week_monday_date
-            , add_recipe_feedback.billing_agreement_id
-            , add_recipe_feedback.billing_agreement_order_id
-            , add_recipe_feedback.billing_agreement_order_line_id
-            , add_recipe_feedback.product_variation_id
-            , add_recipe_feedback.preselected_product_variation_id
-            , add_recipe_feedback.recipe_id
-            , add_recipe_feedback.preselected_recipe_id
+            , subscribed_groceries_flag.menu_week_monday_date
+            , subscribed_groceries_flag.billing_agreement_id
+            , subscribed_groceries_flag.billing_agreement_order_id
+            , subscribed_groceries_flag.billing_agreement_order_line_id
+            , subscribed_groceries_flag.product_variation_id
+            , subscribed_groceries_flag.preselected_product_variation_id
+            , subscribed_groceries_flag.recipe_id
+            , subscribed_groceries_flag.preselected_recipe_id
             )
         ) as pk_fact_orders
-        , add_recipe_feedback.*
+        , subscribed_groceries_flag.*
         , has_swap_flag.has_swap
         , dim_portions.pk_dim_portions as fk_dim_portions
         , dim_portions_preselected.pk_dim_portions as fk_dim_portions_preselected
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , case
-            when add_recipe_feedback.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
+            when subscribed_groceries_flag.billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
             then true
             else false
         end as is_adjusted_by_customer
         , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
-        , coalesce(md5(concat(add_recipe_feedback.order_line_type_name, add_recipe_feedback.order_line_details)), '0') as fk_dim_order_line_details
-    from add_recipe_feedback
+        , coalesce(md5(concat(subscribed_groceries_flag.order_line_type_name, subscribed_groceries_flag.order_line_details)), '0') as fk_dim_order_line_details
+    from subscribed_groceries_flag
     left join products
-        on add_recipe_feedback.fk_dim_products = products.pk_dim_products
+        on subscribed_groceries_flag.fk_dim_products = products.pk_dim_products
     left join products as products_preselected
-        on add_recipe_feedback.fk_dim_products_preselected = products_preselected.pk_dim_products
+        on subscribed_groceries_flag.fk_dim_products_preselected = products_preselected.pk_dim_products
     left join dim_portions
         on products.portion_name = dim_portions.portion_name_local
-        and add_recipe_feedback.language_id = dim_portions.language_id
+        and subscribed_groceries_flag.language_id = dim_portions.language_id
     left join dim_portions as dim_portions_preselected
         on products_preselected.portion_name = dim_portions_preselected.portion_name_local
-        and add_recipe_feedback.language_id = dim_portions_preselected.language_id
+        and subscribed_groceries_flag.language_id = dim_portions_preselected.language_id
     left join has_swap_flag
-        on add_recipe_feedback.billing_agreement_order_id = has_swap_flag.billing_agreement_order_id
+        on subscribed_groceries_flag.billing_agreement_order_id = has_swap_flag.billing_agreement_order_id
     left join billing_agreement_preferences
-        on add_recipe_feedback.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
+        on subscribed_groceries_flag.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join order_discounts
-        on add_recipe_feedback.billing_agreement_order_line_id = order_discounts.billing_agreement_order_line_id
-        and add_recipe_feedback.menu_year > 2020
+        on subscribed_groceries_flag.billing_agreement_order_line_id = order_discounts.billing_agreement_order_line_id
+        and subscribed_groceries_flag.menu_year > 2020
 
 )
 

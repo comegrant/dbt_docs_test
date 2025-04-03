@@ -149,6 +149,10 @@ models:
         data_type: int
         description: "{{ doc('column__is_plus_price_dish') }}"
 
+      - name: is_subscribed_grocery
+        data_type: boolean
+        description: "{{ doc('column__is_subscribed_grocery') }}"
+
       - name: has_recipe_leaflets
         data_type: boolean
         description: "{{ doc('column__has_recipe_leaflets') }}"

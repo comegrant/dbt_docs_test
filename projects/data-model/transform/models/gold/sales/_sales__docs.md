@@ -65,6 +65,12 @@ Customers can select dishes for an extra price. The column is 1 if the customer 
 
 {% enddocs %}
 
+{% docs column__is_subscribed_grocery %}
+
+True if the order line is a grocery the customer subscribes to, else false.
+
+{% enddocs %}
+
 {% docs column__is_onesub_migration %}
 
 1 if the customers order was migrated to onesub. Meaning that the product on the order line was changed to the Onesub mealbox product.
