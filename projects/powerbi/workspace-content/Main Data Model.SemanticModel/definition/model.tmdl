@@ -59,5 +59,6 @@ ref table '(Param) Days in Rolling Period'
 ref table 'Preselector Measures'
 ref table 'Preselector Versions'
 ref table 'Preselector Details'
+ref table 'Portions'
 
 ref cultureInfo en-US

@@ -1,0 +1,47 @@
+/// This table can be used to filter on number of portions of the products and recipes
+table 'Portions'
+    lineageTag: Portions-Table
+
+    /// Primary key of dim_portions. It is a composite o portion_id and language_id.
+    column pk_dim_portions
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_portions
+
+    /// A numerical value for number of portions in a product or recipe.
+    /// Plus size portions will be represented by the base number only, e.g. 4+ will be represented as 4.
+    column 'Portions'
+        dataType: int64
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: portions
+
+    /// The name of the number of portions on English.
+    /// Plus size portions will be distinguished by the '+' sign, e.g. 4+.
+    column 'Portion Name'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: portion_name_english
+
+    /// The name of the status for each portion on English.
+    /// The status indicate if the portion is Disabled or Enabled as of the last update.
+    column 'Portion Status'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: portion_status_name_english
+
+    partition 'Portions' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_portions_Table = gold_Schema{[Name="dim_portions",Kind="Table"]}[Data]
+                in
+                    dim_portions_Table

@@ -1851,6 +1851,13 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	column fk_dim_portions
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_portions
+
 	column 'Recipe Rating Id'
 		dataType: string
 		isHidden

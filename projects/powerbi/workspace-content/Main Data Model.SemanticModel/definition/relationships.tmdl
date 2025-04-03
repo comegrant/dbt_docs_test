@@ -201,12 +201,12 @@ relationship fact_loyalty_points_to_dim_dates_on_points_expiration
 	fromColumn: 'Loyalty Point Measures'.fk_dim_dates_points_expiration
 	toColumn: Dates.pk_dim_dates
 
-relationship Recipes-Bridge-Recipes-Taxonomies
+relationship bridge_recipes_taxonomies_to_dim_recipes
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_recipes
 	toColumn: Recipes.pk_dim_recipes
 
-relationship Taxonomies-Bridge-Recipes-Taxonomies
+relationship bridge_recipes_taxonomies_to_dim_taxonomies
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_taxonomies
 	toColumn: 'Taxonomies'.pk_dim_taxonomies
 
@@ -237,6 +237,22 @@ relationship fact_preselector_to_dim_preselector_versions
 relationship fact_preselector_to_dim_billing_agreements
 	fromColumn: 'Preselector Details'.fk_dim_billing_agreements
 	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fact_orders_to_dim_portions
+	fromColumn: 'Order Measures'.fk_dim_portions
+	toColumn: 'Portions'.pk_dim_portions
+
+relationship fact_menus_to_dim_portions
+	fromColumn: 'Menu Measures'.fk_dim_portions
+	toColumn: 'Portions'.pk_dim_portions
+
+relationship fact_estimations_to_dim_portions
+	fromColumn: 'Estimations'.fk_dim_portions
+	toColumn: 'Portions'.pk_dim_portions
+
+relationship fact_recipe_billing_agreement_compliance-to-dim_portions
+	fromColumn: 'Agreement Recipe Compliance Measures'.fk_dim_portions
+	toColumn: 'Portions'.pk_dim_portions
 
 relationship fact_orders_to_dim_order_line_details
 	fromColumn: 'Order Measures'.fk_dim_order_line_details

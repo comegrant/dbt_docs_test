@@ -85,6 +85,14 @@ table Estimations
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements
 
+	/// The unique id of each row in Dim Portions
+	column fk_dim_portions
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_portions
+
 	/// A boolean flag indicating whether this estimation is from the most recent generation.
 	column is_latest_estimation
 		dataType: boolean
@@ -125,4 +133,3 @@ table Estimations
 					filtered_table = Table.SelectRows(fact_estimations_Table, each ([is_latest_estimation]=true))
 				in
 					filtered_table
-

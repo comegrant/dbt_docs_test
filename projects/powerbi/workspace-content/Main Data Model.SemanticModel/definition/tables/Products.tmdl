@@ -147,6 +147,7 @@ table Products
 
 	column Portions
 		dataType: string
+		isHidden
 		formatString: 0
 		lineageTag: 5fa348f4-8073-4778-9698-81d4b4c4ffb1
 		summarizeBy: none
