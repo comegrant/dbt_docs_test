@@ -19,7 +19,7 @@ source as (
     select 
         *
         , case when 
-        date(start_date) < date(created_at) 
+        created_at < '2021-09-22' and date(start_date) < date(created_at) 
         then start_date
         else created_at end as signup_at
     from source
