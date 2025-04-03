@@ -54,7 +54,7 @@ loyalty_ledger as (
     select 
         loyalty_levels_group.* 
         , row_number() over (
-            partition by billing_agreement_id, group 
+            partition by billing_agreement_id, group, loyalty_level_name
             order by points_generated_at
         ) as row_number
     from loyalty_levels_group
