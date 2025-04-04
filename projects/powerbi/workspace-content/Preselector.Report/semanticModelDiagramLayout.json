@@ -523,13 +523,39 @@
           "zIndex": 0
         },
         {
-          "location": {
-            "x": 9839.59381447551,
-            "y": 0
-          },
-          "nodeIndex": "(Param) Number of Deliveries per Customer Target",
+          "location": {},
+          "nodeIndex": "(Param) Days in Rolling Period",
           "size": {
             "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "(Param) Number of Orders per Customer Target",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Order Line Details",
+          "nodeLineageTag": "Order-Line-Details",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Portions",
+          "nodeLineageTag": "Portions-Table",
+          "size": {
+            "height": 176,
             "width": 234
           },
           "zIndex": 0
