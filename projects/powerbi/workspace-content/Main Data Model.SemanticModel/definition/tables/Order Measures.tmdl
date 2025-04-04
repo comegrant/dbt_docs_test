@@ -1235,26 +1235,27 @@ table 'Order Measures'
 				SUM('Order Measures'[portions])
 				, 'Products'[Product Type Name] = "Mealbox"
 			)
-		formatString: # ###,0
+		formatString: #,0
 		displayFolder: Recipe Sales
 
 	/// The number of unique recipe ids (not to be confused with main recipe) ordered in the selected filtering context.
 	measure 'Number of Distinct Recipes Ordered' =
 			DISTINCTCOUNTNOBLANK('Order Measures'[recipe_id])
-		formatString: # ###,0
+		formatString: #,0
 		displayFolder: Recipe Sales
 
 	/// The total number of plates served, which is calculated as the sum of all Portions x Meals for all orders in the selection.
 	/// Example: One delivery with 5 meals and 4 portions per meal will count as 20 servings.
 	measure 'Number of Servings' =
 			SUM('Order Measures'[mealbox_servings])
-		formatString: # ###,0
-		displayFolder: Recipe Sales
+		formatString: #,0
+		displayFolder: Recipe Sales		
+
 
 	/// The average number of servings per unique recipe id.
 	measure 'Average Number of Consumers per Dish' =
 			DIVIDE([Number of Servings],[Number of Distinct Recipes Ordered])
-		formatString: # ###,0
+		formatString: #,0
 		isHidden
 		displayFolder: Recipe Sales
 
