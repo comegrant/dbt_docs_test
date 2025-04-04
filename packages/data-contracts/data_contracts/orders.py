@@ -17,7 +17,7 @@ from aligned.schemas.feature_view import RetrievalRequest
 from project_owners.owner import Owner
 
 from data_contracts.mealkits import DefaultMealboxRecipes
-from data_contracts.sources import adb, adb_ml, databricks_config, materialized_data
+from data_contracts.sources import adb, adb_ml, materialized_data, ml_gold
 from data_contracts.user import UserSubscription
 
 flex_dish_id = "CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1"
@@ -97,32 +97,15 @@ class HistoricalRecipeOrders:
     did_make_dish = rating != 0
 
 
-current_selection_sql = """SELECT
-    estimations.billing_agreement_id as agreement_id,
-    estimations.company_id,
-    menus.recipe_id,
-    estimations.menu_week as week,
-    estimations.menu_year as year,
-    coalesce(recipes.main_recipe_id, recipes.recipe_id) as main_recipe_id
-FROM gold.fact_estimations estimations
-INNER JOIN gold.fact_menus menus
-  ON estimations.fk_dim_products = menus.fk_dim_products
-  AND estimations.fk_dim_date_menu_week = menus.fk_dim_date
-INNER JOIN gold.dim_recipes recipes
-  ON menus.fk_dim_recipes = recipes.pk_dim_recipes
-WHERE estimations.is_latest_estimation"""
-
-
 @feature_view(
     name="current_selected_recipes",
-    source=databricks_config.sql(current_selection_sql),
+    source=ml_gold.table("active_basket_deviations_recent_weeks"),
     materialized_source=materialized_data.partitioned_parquet_at(
         "current_selected_recipes", partition_keys=["company_id"]
     ),
 )
 class CurrentSelectedRecipes:
     agreement_id = Int32().as_entity()
-    recipe_id = Int32().as_entity()
     company_id = String().as_entity()
     week = Int32()
     year = Int32()
