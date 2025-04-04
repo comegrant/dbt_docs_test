@@ -90,6 +90,7 @@ table Products
 		dataType: string
 		lineageTag: 5a455508-7287-4878-9abd-ca0273bdc011
 		summarizeBy: none
+		isHidden
 		sourceColumn: product_concept_name
 
 		annotation SummarizationSetBy = Automatic

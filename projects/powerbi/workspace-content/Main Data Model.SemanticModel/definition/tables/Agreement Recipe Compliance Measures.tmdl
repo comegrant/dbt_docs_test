@@ -1,4 +1,5 @@
 table 'Agreement Recipe Compliance Measures'
+	isHidden
 	lineageTag: 6b6f33c7-a4ff-4449-a8ff-7b1ab39e43eb
 
 	/// Returns the total number of unique recipes with the selected compliance level.

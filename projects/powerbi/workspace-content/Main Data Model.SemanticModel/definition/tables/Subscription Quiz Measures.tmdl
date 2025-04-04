@@ -1,18 +1,22 @@
 table 'Subscription Quiz Measures'
+	isHidden
 	lineageTag: f5e1ec25-70ff-4c4a-a684-9e2fbd53f2ef
 
 	/// Number of times the quiz has been started, regardless of who started it.
 	measure 'Number of Quiz Starts' = SUM('Subscription Quiz Measures'[has_started_subscription_quiz])
+		isHidden
 		formatString: #,0
 		lineageTag: 044f301c-85e0-469f-bae0-c409675ba117
 
 	/// Number of times the quiz has been completed, regardless of who completed it.
 	measure 'Number of Quiz Completions' = SUM('Subscription Quiz Measures'[has_completed_subscription_quiz])
+		isHidden
 		formatString: #,0
 		lineageTag: f0fc0491-6d8f-44ef-a6b7-d66300a856cc
 
 	/// Completion rate of the quiz, as a percentage, not using distinct customers.
 	measure 'Completion Rate of Quiz' = DIVIDE([Number of Quiz Completions], [Number of Quiz Starts], BLANK())
+		isHidden
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: ef801934-0883-4e1c-9df3-bf8f60e3386d
 
@@ -23,6 +27,7 @@ table 'Subscription Quiz Measures'
 			    'Subscription Quiz Measures'[has_started_subscription_quiz] = 1,
 			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
 			)
+		isHidden
 		formatString: #,0
 		lineageTag: 55670bac-cd4b-44c7-a27c-4c98f4a6dcd4
 
@@ -33,6 +38,7 @@ table 'Subscription Quiz Measures'
 			    'Subscription Quiz Measures'[has_completed_subscription_quiz] = 1,
 			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
 			)
+		isHidden
 		formatString: #,0
 		lineageTag: fed60897-c1eb-41c2-b2e5-580b3ec4d7ae
 
@@ -110,4 +116,3 @@ table 'Subscription Quiz Measures'
 				    fact_subscription_quiz_Table = gold_Schema{[Name="fact_subscription_quiz",Kind="Table"]}[Data]
 				in
 				    fact_subscription_quiz_Table
-

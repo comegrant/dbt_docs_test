@@ -16,6 +16,7 @@ table 'Origin of Preselected Dishes'
 	column 'Origin Name'
 		dataType: string
 		lineageTag: bc3cb59d-5d84-4ff1-9203-f675a3cca0b4
+		isHidden
 		summarizeBy: none
 		sourceColumn: basket_deviation_origin_name
 
@@ -26,6 +27,7 @@ table 'Origin of Preselected Dishes'
 	column 'Preselector Category'
 		dataType: string
 		lineageTag: 213c3fae-4ef7-41ea-9d62-e05c4187225a
+		isHidden
 		summarizeBy: none
 		sourceColumn: preselector_category
 
@@ -39,4 +41,3 @@ table 'Origin of Preselected Dishes'
 				    dim_basket_deviation_origins_Table = gold_Schema{[Name="dim_basket_deviation_origins",Kind="Table"]}[Data]
 				in
 				dim_basket_deviation_origins_Table
-

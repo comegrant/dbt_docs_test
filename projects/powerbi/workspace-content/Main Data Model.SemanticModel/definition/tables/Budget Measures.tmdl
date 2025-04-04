@@ -24,6 +24,7 @@ table 'Budget Measures'
 	/// Increase/decrease in sales compared to budgeted sales
 	measure 'Number of Orders (Diff Target)' = [Number of Orders] - [Number of Orders (Target)]
 		formatString: #,0
+		isHidden
 		lineageTag: 1a1cb7c8-c237-498e-8813-41698ec8fb36
 
 	/// Increase/decrease in sales compared to budgeted sales (Actual over Budget%)
@@ -34,6 +35,7 @@ table 'Budget Measures'
 	/// Increase/decrease in sales revenue compared to budgeted sales revenue
 	measure 'Order Value Gross Ex Vat (Diff Target)' = [Order Value Gross Ex Vat] - [Order Value Gross Ex Vat (Target)]
 		formatString: #,0
+		isHidden
 		lineageTag: 107c94d0-7512-4623-9c3f-1abcfbdc4804
 
 	/// Increase/decrease in sales revenue compared to budgeted sales revenue (Actual over Budget%)
@@ -44,6 +46,7 @@ table 'Budget Measures'
 	/// Increase/decrease in ATV compared to budgeted ATV
 	measure 'ATV Gross Ex Vat (Diff Target)' = [ATV Gross Ex Vat] - [ATV Gross Ex Vat (Target)]
 		formatString: #,0
+		isHidden
 		lineageTag: cfec4b82-0efc-4c0e-a713-72a9e2257465
 
 	/// Increase/decrease in ATV compared to budgeted ATV (Actual over Budget%)
