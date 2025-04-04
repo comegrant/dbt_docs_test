@@ -202,7 +202,7 @@ order_lines as (
         , products.product_type_id as subscribed_product_type_id
         , products.product_id as subscribed_product_id
         , products.product_variation_id as subscribed_product_variation_id
-        , bridge_subscribed_products.product_variation_id as subscribed_product_variation_quantity
+        , bridge_subscribed_products.product_variation_quantity as subscribed_product_variation_quantity
         , products.meals as subscribed_meals
         , products.portions as subscribed_portions
     from order_line_dimensions_joined
@@ -686,8 +686,8 @@ order_lines as (
         -- TODO: When refactoring, should be 1 or 0 if grocery and null if not grocery
         , coalesce(subscribed_product_variations.billing_agreement_order_id is not null) as is_subscribed_grocery
         -- TODO: When refactoring, would expect a number here for mealboxes as well since its only called subscribed product variation quantity
-        , cast(subscribed_product_variations.subscribed_product_variation_quantity as int) as subscribed_product_variation_quantity
-        , cast(subscribed_product_variations.subscribed_product_variation_quantity as int) * add_recipe_feedback.unit_price_ex_vat as subscribed_product_variation_amount_ex_vat
+        , subscribed_product_variations.subscribed_product_variation_quantity
+        , subscribed_product_variations.subscribed_product_variation_quantity * add_recipe_feedback.unit_price_ex_vat as subscribed_product_variation_amount_ex_vat
     from add_recipe_feedback
     left join subscribed_product_variations
         on add_recipe_feedback.billing_agreement_order_id = subscribed_product_variations.billing_agreement_order_id
