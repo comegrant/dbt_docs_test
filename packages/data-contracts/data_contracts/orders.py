@@ -105,10 +105,10 @@ class HistoricalRecipeOrders:
     ),
 )
 class CurrentSelectedRecipes:
-    agreement_id = Int32().as_entity()
+    billing_agreement_id = Int32().as_entity()
     company_id = String().as_entity()
-    week = Int32()
-    year = Int32()
+    menu_week = Int32()
+    menu_year = Int32()
     main_recipe_id = Int32()
 
 
@@ -130,8 +130,9 @@ async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | 
         .filter(today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week"))
         .to_polars()
     )
-    current_selection = await query(CurrentSelectedRecipes).all().to_polars()
-
+    current_selection = (await query(CurrentSelectedRecipes).all().to_polars()).rename(
+        {"menu_week": "week", "menu_year": "year", "billing_agreement_id": "agreement_id"}
+    )
     subset = orders.select(current_selection.columns)
 
     return (
