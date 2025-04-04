@@ -323,6 +323,8 @@ class PreselectorResultWriter(WritableStream):
 
         if self.sink is not None:
             self.store = self.store.update_source_for(Preselector, self.sink)
+        else:
+            df = df.with_columns(weeks_since_selected=pl.lit(None))
 
         try:
             # Needs to store it in a job first, to avoid casting of the map
