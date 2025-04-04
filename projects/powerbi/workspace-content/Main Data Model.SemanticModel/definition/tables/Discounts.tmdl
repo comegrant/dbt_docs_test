@@ -1,0 +1,129 @@
+/// Information on all discounts which customers can add to their account
+table Discounts
+    lineageTag: Discounts-Table
+
+    /// The primary key of the Discounts table
+    column pk_dim_discounts
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_discounts
+
+    /// The title of the discount.
+    column 'Discount Title'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: discount_title
+
+    /// We have partners who purchase discounts to share with third parties such as customers end employees and are invoiced for the discount.
+    /// This is the reference for invoicing those partners.
+    column 'Discount Partner Invoice Reference'
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: discount_partner_invoice_reference
+
+    /// Indicates the maximum number of times a customer can use a discount.
+    column 'Customer Usage Limit'
+        dataType: int64
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: customer_usage_limit
+
+    /// The size of the discount. Can be either in money(kr) or % based on discount_amount_type_id.
+    column 'Discount Amount'
+        dataType: double
+        summarizeBy: none
+        sourceColumn: discount_amount
+
+    /// We have partners who purchase discounts to share with third parties such as customers and 
+    /// employees and are invoiced for the discount. 
+    /// This is the price they pay for each discount.
+    column 'Discount Partner Price'
+        dataType: double
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: discount_partner_price
+
+    /// True if discount is active. 
+    /// If a discount isn't active, it cannot be added to an account or applied to an order.
+    column 'Is Active Discount'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_active_discount
+
+    /// True if coupon code is required for discount.
+    column 'Is Coupon Code Required'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_coupon_code_required
+
+    /// True if discount can be combined with other discounts.
+    column 'Is Cumulative Discount'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_cumulative_discount
+
+    /// True if discount can be used on direct order (products outside of subscription such as seasonal products).
+    column 'Is Valid On Direct Order'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_valid_on_direct_order
+
+    /// True if discount can only be used by new customers.
+    column 'Is Registration Discount'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_registration_discount
+
+    /// True if discount is inactivated when a customer freezes their account (status change).
+    column 'Is Disabled On Freeze'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_disabled_on_freeze
+
+    /// True if discount should only be applied to the product with the highest price on the order. 
+    /// The highest priced product will normally be the mealbox.
+    column 'Is Highest Price Discount'
+        dataType: boolean
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_highest_price_discount
+
+    /// The name of the channel of the discount which is the first step in the discount hierarchy (Channel->Category->Sub Category)
+    column 'Discount Channel'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: discount_channel_name
+
+    /// The name of the category of the discount which is the second step in the discount hierarchy (Channel->Category->Sub Category)
+    column 'Discount Category'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: discount_category_name
+
+    /// The name of the sub-category of the discount which is the second step in the discount hierarchy (Channel->Category->Sub Category)
+    column 'Discount Sub Category'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: discount_sub_category_name
+
+    partition 'Discounts' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_discounts_Table = gold_Schema{[Name="dim_discounts",Kind="Table"]}[Data]
+                in
+                    dim_discounts_Table

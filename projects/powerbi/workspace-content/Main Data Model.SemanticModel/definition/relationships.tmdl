@@ -285,3 +285,7 @@ relationship fact_recipe_billing_agreement_compliance-to-dim_portions
 relationship fact_orders_to_dim_order_line_details
 	fromColumn: 'Order Measures'.fk_dim_order_line_details
 	toColumn: 'Order Line Details'.pk_dim_order_line_details
+
+relationship fact_orders_to_dim_discounts
+    fromColumn: 'Order Measures'.fk_dim_discounts
+    toColumn: Discounts.pk_dim_discounts

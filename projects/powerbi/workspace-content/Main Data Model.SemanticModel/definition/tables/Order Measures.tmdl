@@ -1983,6 +1983,13 @@ table 'Order Measures'
 		summarizeBy: sum
 		sourceColumn: subscribed_product_variation_amount_ex_vat
 
+	column fk_dim_discounts
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_discounts
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =

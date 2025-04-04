@@ -60,5 +60,6 @@ ref table 'Preselector Measures'
 ref table 'Preselector Versions'
 ref table 'Preselector Details'
 ref table 'Portions'
+ref table Discounts
 
 ref cultureInfo en-US
