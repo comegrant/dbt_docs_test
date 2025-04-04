@@ -498,15 +498,27 @@ The name of the loyalty level in the language of the related company/brand.
 
 {% enddocs %}
 
-{% docs column__order_value_multiplier %}
+{% docs column__loyalty_level_name_english %}
 
-The multiplier used to calculate loyalty points obtained from amount of money spent by the customer.
+The name of the loyalty level in English.
 
 {% enddocs %}
 
 {% docs column__point_requirement %}
 
 The points required to reach the level.
+
+{% enddocs %}
+
+{% docs column__point_multiplier_accrued %}
+
+The multiplier used to calculate accrued loyalty points earned by a customer. The number of accrued points earned on an order is equal to this multiplied by the customer's gross order value. Accrued points are the points that determine a customer's loyalty tier.
+
+{% enddocs %}
+
+{% docs column__point_multiplier_spendable %}
+
+The multiplier used to calculate spendable loyalty points earned by a customer. The number of spendable points earned on an order is equal to this multipled by the customer's gross order value. Spendable points are the points that customers can spend in the points shop.
 
 {% enddocs %}
 

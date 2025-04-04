@@ -17,10 +17,12 @@ source as (
 
         {# strings #}
         , name as loyalty_level_name
+        , name_en as loyalty_level_name_english
 
         {# numerics #}
-        , multiplier as order_value_multiplier
         , requirement as point_requirement
+        , multiplier_accrued as point_multiplier_accrued
+        , multiplier_spendable as point_multiplier_spendable
 
         {# scd #}
         , dbt_valid_from as valid_from

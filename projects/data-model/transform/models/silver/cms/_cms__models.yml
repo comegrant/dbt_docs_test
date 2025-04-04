@@ -518,14 +518,6 @@ models:
           - type: not_null
         data_tests:
           - not_null
-          
-      - name: order_value_multiplier
-        data_type: decimal(3,1)
-        description: "{{ doc('column__order_value_multiplier') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
 
       - name: point_requirement
         data_type: int
@@ -578,6 +570,30 @@ models:
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: loyalty_level_name_english
+        data_type: string
+        description: "{{ doc('column__loyalty_level_name_english') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: point_multiplier_accrued
+        data_type: decimal(3,1)
+        description: "{{ doc('column__point_multiplier_accrued') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: point_multiplier_spendable
+        data_type: decimal(3,1)
+        description: "{{ doc('column__point_multiplier_spendable') }}"
         constraints:
           - type: not_null
         data_tests:
