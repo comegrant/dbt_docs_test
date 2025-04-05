@@ -150,7 +150,7 @@ table 'Order Measures'
 	/// know the average price paid per grocery item. This would give you the
 	/// order value divided by 4 (number of products)
 	measure 'Average Unit Price Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Ordered Units])
-		displayFolder: Orders
+		displayFolder: Ordered Units
 		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -158,7 +158,7 @@ table 'Order Measures'
 	/// Average price per unit
 	/// Excluding VAT
 	measure 'Average Unit Price Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Ordered Units])
-		displayFolder: Orders
+		displayFolder: Ordered Units
 		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -239,6 +239,8 @@ table 'Order Measures'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	/// Sum of total quantity by product variation
+	/// By default this includes all product types (also discounts, transport, etc.)
+	/// Hence, this measure should often be used together with a filter on product type
 	measure 'Number of Ordered Units' =
 			CALCULATE(
 				[Product Variation Quantity],
@@ -246,8 +248,47 @@ table 'Order Measures'
 				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
-		displayFolder: Orders
+		displayFolder: Ordered Units
 		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
+
+	/// Number of ordered units for the same period last year.
+	measure 'Number of Ordered Units (PY)' =
+			CALCULATE(
+				[Number of Ordered Units],
+				'Time Intelligence'[Time Calculation] = "PY"
+			)
+		formatString: #,0
+		displayFolder: Ordered Units
+
+	/// Relative increase/decrease in number of ordered units from previous year
+	measure 'Number of Ordered Units (YOY%)' =
+			CALCULATE(
+				[Number of Ordered Units],
+				'Time Intelligence'[Time Calculation] = "YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Ordered Units
+
+	/// Average basket size, i.e. average number of units per order
+	/// By default this includes all product types (also discounts, transport, etc.)
+	/// Hence, this measure should often be used together with a filter on product type
+	/// Calculated as [Number of Ordered Units] / [Number of Orders]
+	measure 'Average Number of Units per Order' =
+			DIVIDE(
+				[Number of Ordered Units],
+				[Number of Orders]
+			)
+		formatString: #,0.00
+		displayFolder: Ordered Units
+
+	/// Average Number of Units per Order for the same period last year.
+	measure 'Average Number of Units per Order (PY)' =
+			CALCULATE(
+				[Average Number of Units per Order],
+				'Time Intelligence'[Time Calculation] = "PY"
+			)
+		formatString: #,0.00
+		displayFolder: Ordered Units
 
 	/// Sum of value of gift card
 	/// Excluding VAT
@@ -381,7 +422,7 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
-		displayFolder: Orders
+		displayFolder: Recipe Sales
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
 	/// Number of dishes added by curtomer
@@ -520,12 +561,12 @@ table 'Order Measures'
 	/// Number of customers that was not presented with any preselector output
 	/// before selecting dishes for the menu week
 	measure 'Number of Orders with no Preselector' = ```
-	
+
 			CALCULATE(
 			    [Number of Orders],
 				'Order Measures'[is_missing_preselector_output] = 1
 			)
-	
+
 			```
 		formatString: #,0
 		isHidden
@@ -744,10 +785,23 @@ table 'Order Measures'
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
 
 	/// Average number of orders per unique customers placing an order in the selected filtering context (i.e. time, preferences etc.)
-	measure 'Average Number of Orders per Customer' = DIVIDE([Number of Orders], [Number of Ordering Customers], BLANK())
+	measure 'Average Number of Orders per Customer' =
+			DIVIDE(
+				[Number of Orders],
+				[Number of Ordering Customers]
+			)
 		formatString: #,0.00
-		displayFolder: Customers
+		displayFolder: Order Frequency
 		lineageTag: 04d72b55-4e5c-458a-b85e-4221d4ed4ef1
+
+	/// Order frequency same period last year
+	measure 'Average Number of Orders per Customer (PY)' =
+			CALCULATE(
+				[Average Number of Orders per Customer],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		displayFolder: Order Frequency
 
 	/// Number of orders by customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -761,7 +815,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Customers
+		displayFolder: Order Frequency
 
 	/// Number of orders by customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -775,7 +829,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Customers
+		displayFolder: Order Frequency
 
 	/// Order frequency for ordering customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -786,7 +840,7 @@ table 'Order Measures'
 				BLANK()
 			)
 		formatString: #,0.00
-		displayFolder: Customers
+		displayFolder: Order Frequency
 
 	/// Order frequency for customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -797,7 +851,7 @@ table 'Order Measures'
 				BLANK()
 			)
 		formatString: #,0.00
-		displayFolder: Customers
+		displayFolder: Order Frequency
 
 	/// Number of order that has one or more grocery purchases
 	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
@@ -821,20 +875,20 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Groceries
 
-	/// Share of orders contaning groceries where one or more of the groceries was subscribed to.
+	/// Share of orders containing groceries where one or more of the groceries was subscribed to.
 	/// Divides number of orders with subscribed groceries by number of orders with groceries.
 	measure 'Share of Grocery Orders from Subscription' = DIVIDE([Number of Orders with Subscribed Groceries],[Number of Orders with Groceries], BLANK())
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Groceries
 
 	/// Number of ordered groceries.
-	/// Sums the product variation quantitiy for all ordered products that are groceries.
+	/// Sums the product variation quantity for all ordered products that are groceries.
 	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
 		displayFolder: Groceries
 
 	/// Number of ordered groceries that comes from a grocery subscription.
-	/// Sums the product variation quantitiy for all ordered product variations that are subscribed groceries.
+	/// Sums the product variation quantity for all ordered product variations that are subscribed groceries.
 	measure 'Number of Ordered Groceries from Subscription' = CALCULATE([Subscribed Product Variation Quantity], 'Order Measures'[is_subscribed_grocery] = true)
 		formatString: #,0
 		displayFolder: Groceries
@@ -869,12 +923,12 @@ table 'Order Measures'
 	measure 'Subscribed Grocery Value Ex Vat' = CALCULATE([Subscribed Product Variation Amount Ex Vat], 'Order Measures'[is_subscribed_grocery] = true)
 		formatString: #,0
 		displayFolder: Groceries
-		
+
 	/// Share of revenue from groceries coming from subscribed products
 	measure 'Share of Grocery Value from Subscription' = DIVIDE([Subscribed Grocery Value Ex Vat],[Grocery Value Ex Vat], BLANK())
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Groceries
-		
+
 	/// Average grocery revenue per completed order with subscribed groceries
 	/// Excluding VAT
 	measure 'ATV of Subscribed Groceries Ex Vat' = DIVIDE([Subscribed Grocery Value Ex Vat],[Number of Orders with Subscribed Groceries], BLANK())
@@ -926,6 +980,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Orders
 		lineageTag: 12a86a97-0cbc-4aa7-a69a-318ce5f87a49
 
@@ -938,20 +993,6 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 		lineageTag: e34487bd-7086-4db7-be56-468ea17a45f3
-
-	/// This measure calculates the growth rate of the number of orders by comparing the selected year's
-	/// total orders to the previous year's total orders.
-	/// It is computed by dividing the number of orders in the current year by the number of orders in the previous year.
-	///
-	/// A result greater than 100% indicates an increase in order volume,
-	/// while a result below 100% indicates a decline.
-	measure 'Number of Orders (CY/PY)' =
-			CALCULATE(
-				[Number of Orders],
-				'Time Intelligence'[Time Calculation]="CY/PY"
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Orders
 
 	/// Number of Orders Year to Date.
 	/// Cumulative sum of number of orders from the beginning of the year
@@ -994,6 +1035,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Orders
 		lineageTag: 6c08eed4-a32e-4a12-b976-df39ad8546e6
 
@@ -1008,20 +1050,6 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 		lineageTag: 17e80dd3-0ead-4ec4-a125-5b0492aace7f
-
-	/// This measure calculates the growth rate of the Average Transaction Value (ATV)
-	/// by comparing the selected year's ATV to the previous year's ATV.
-	/// It is computed by dividing the ATV of the current year by the ATV of the previous year.
-	///
-	/// A result greater than 100% indicates an increase in average transaction value,
-	/// while a result below 100% indicates a decrease.
-	measure 'ATV Gross Ex Vat (CY/PY)' =
-			CALCULATE(
-				[ATV Gross Ex Vat],
-				'Time Intelligence'[Time Calculation]="CY/PY"
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Orders
 
 	/// Average Transaction Value of orders in the same period of the previous year
 	/// including all order lines (i.e. include discounts and credit)
@@ -1044,6 +1072,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Orders
 		lineageTag: b39c6ac0-af25-41ad-a3c3-7eb7a08652cd
 
@@ -1058,20 +1087,6 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 		lineageTag: 7dec0ff3-e84b-4dc5-9ae0-41ddb6525a5d
-
-	/// This measure calculates the growth rate of the Average Transaction Value (ATV)
-	/// by comparing the selected year's ATV to the previous year's ATV.
-	/// It is computed by dividing the ATV of the current year by the ATV of the previous year.
-	///
-	/// A result greater than 100% indicates an increase in average transaction value,
-	/// while a result below 100% indicates a decrease.
-	measure 'ATV Net Ex Vat (CY/PY)' =
-			CALCULATE(
-				[ATV Net Ex Vat],
-				'Time Intelligence'[Time Calculation]="CY/PY"
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Orders
 
 	/// Revenue from orders in the same period of the previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
@@ -1094,6 +1109,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Orders
 		lineageTag: 3c78d03b-415c-4815-aaba-e2aba1d33acf
 
@@ -1108,18 +1124,6 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 		lineageTag: 23fe5356-77e8-4303-a1bb-eb7e4ee902e7
-
-	/// This measure calculates the growth rate of order value by comparing the selected year's order value
-	/// to the previous year's order value.
-	/// It is computed by dividing the order value of the current year by the order value of the previous year.
-	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline.
-	measure 'Order Value Gross Ex Vat (CY/PY)' =
-			CALCULATE(
-				[Order Value Gross Ex Vat],
-				'Time Intelligence'[Time Calculation]="CY/PY"
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Orders
 
 	/// Revenue from orders Year to Date.
 	/// Cumulative sum of revenue from orders from the beginning of the year
@@ -1163,6 +1167,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation]="Diff PY"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Orders
 		lineageTag: 25b6eaae-6b7f-44c5-b043-36376e37e606
 
@@ -1177,18 +1182,6 @@ table 'Order Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Orders
 		lineageTag: 454d5649-146b-4526-b347-dc995c07bcb1
-
-	/// This measure calculates the growth rate of order value by comparing the selected year's order value
-	/// to the previous year's order value.
-	/// It is computed by dividing the order value of the current year by the order value of the previous year.
-	/// A result greater than 100% indicates growth, while a result below 100% indicates a decline.
-	measure 'Order Value Net Ex Vat (CY/PY)' =
-			CALCULATE(
-				[Order Value Net Ex Vat],
-				'Time Intelligence'[Time Calculation]="CY/PY"
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Orders
 
 	/// Revenue from orders Year to Date.
 	/// Cumulative sum of revenue from orders from the beginning of the year
@@ -1249,7 +1242,7 @@ table 'Order Measures'
 	measure 'Number of Servings' =
 			SUM('Order Measures'[mealbox_servings])
 		formatString: #,0
-		displayFolder: Recipe Sales		
+		displayFolder: Recipe Sales
 
 
 	/// The average number of servings per unique recipe id.

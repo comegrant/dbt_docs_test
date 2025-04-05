@@ -90,8 +90,8 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Active Subscribers
 
-	/// Number of subscribers included all statuses (also included deleted).
-	/// This should be used together with the Billing Agreement Status filter in the Billing Agreement table.
+	/// Number of subscribers included all selected statuses (also included deleted if not filtered otherwise).
+	/// This should be used together with the [Billing Agreement Status] filter in the [Billing Agreements] table.
 	measure 'Number of Subscribers All Statuses' =
 			VAR OneStatus = HASONEVALUE('Billing Agreements'[Billing Agreement Status])
 			VAR StatusIsBlank = ISBLANK(SELECTEDVALUE('Billing Agreements'[Billing Agreement Status]))
@@ -102,7 +102,7 @@ table 'Customer Measures'
 			    [Number of Subscribers All Statuses Included Blanks]
 			)
 		formatString: #,0
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 		lineageTag: fd14e082-b1f9-477a-8dfc-6ac06324ce11
 
 	/// Number of subscribers included all statuses (also included deleted and blanks).
@@ -114,7 +114,7 @@ table 'Customer Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 
 	/// Number of subscribers (included all statuses) same period last year.
 	measure 'Number of Subscribers All Statuses (PY)' =
@@ -123,7 +123,7 @@ table 'Customer Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 		lineageTag: a840a69a-c3f1-4878-ae41-b99013d1b47d
 
 	/// Difference between number of subscribers (including all statuses) in the current period
@@ -135,7 +135,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 
 	/// % change in number of subscribers (including all statues)
 	/// comparing current period to same period last year
@@ -145,7 +145,7 @@ table 'Customer Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 
 
 	/// Cumulative sum of number of subscribers (including all statues) from the beginning of the year (year-to-date)
@@ -156,7 +156,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 
 	/// Cumulative sum of number of subscribers (including all statues) from the beginning of the year up to the current period
 	/// for the same period in the previous year (Previous Year to Date).
@@ -167,7 +167,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: All Subscribers
+		displayFolder: Selected Statuses
 
 
 	/// Number of customers having their first delivery on the corresponding menu week.
@@ -323,7 +323,7 @@ table 'Customer Measures'
 			[Number of Sign-ups],
 			'Time intelligence'[Time Calculation]= "Rolling x days (YOY%)",
 			'(Param) Days in Rolling Period'[Days in Rolling Period] = 7)
-		formatString: #,0
+		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Sign-ups
 
 
@@ -376,7 +376,7 @@ table 'Customer Measures'
 					IF(CountStart>0 && CountEnd>0, 1, 0)
 			)
 		formatString: #,0
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 		lineageTag: a950a2a5-a013-47d2-b69e-01e8337bf788
 
 	/// Number of subscribers changing status from active to another status in the same period last year.
@@ -386,7 +386,7 @@ table 'Customer Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 
 	/// Difference between number of subscribers changing status from active to another status
 	/// in the current period and the same period previous year.
@@ -397,7 +397,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 
 	/// % change in number of subscribers changing status from active to another status
 	/// comparing current period to same period last year
@@ -407,7 +407,7 @@ table 'Customer Measures'
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 
 	/// Cumulative sum of number of subscribers changing status from active to another status
 	/// from the beginning of the year (year-to-date)
@@ -418,7 +418,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 
 	/// Cumulative sum of number of subscribers changing status from active to another status
 	/// from the beginning of the year up to the current period
@@ -430,7 +430,7 @@ table 'Customer Measures'
 			)
 		isHidden
 		formatString: #,0
-		displayFolder: Inactive Subscribers
+		displayFolder: Active Subscribers
 
 	/// Number of subscribers changed to active from another status during the selected period.
 	/// It will count number of subscribers that was not in a active state at the beginning of the selected period
@@ -606,7 +606,7 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Swapping Customers
 
-	/// The number of customers with an order
+	/// The number of customers with an order in the selected period
 	measure 'Number of Ordering Customers' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id]),
@@ -625,6 +625,26 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Ordering Customers
 		lineageTag: 3571b433-1c30-49d4-9a71-58d46e446c50
+
+	/// Number of customers who have placed an order in the same period last year.
+	measure 'Number of Ordering Customers (PY)' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: Ordering Customers
+
+	/// % change in number of ordering customers
+	/// comparing current period to same period last year
+	/// (CY-PY)/PY
+	measure 'Number of Ordering Customers (YOY%)' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Ordering Customers
 
 	/// Number of customers (with at least one order) who have had fewer than x orders, in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
@@ -674,7 +694,7 @@ table 'Customer Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Ordering Customers
 
-	/// Number of Active Subscribers that has an grocery subscription
+	/// Number of Active Subscribers that have a grocery subscription
 	measure 'Number of Active Grocery Subscribers' =
 			CALCULATE(
 				[Number of Active Subscribers],
@@ -683,11 +703,31 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Grocery Subscribers
 
-	/// Number of customers placing an order that has an grocery subscription.
-	/// If the customer removed subscribed product from their order, they would
-	/// still be counted in this measure.
-	/// To only look at customers that ordered a grocery they subscribed to
-	/// look at Order Measures and Number of Orders with Subscribed Groceries.
+	/// Number of Active Subscribers that have a grocery subscription, same period last year.
+	measure 'Number of Active Grocery Subscribers (PY)' =
+			CALCULATE(
+				[Number of Active Grocery Subscribers],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+
+		formatString: #,0
+		displayFolder: Grocery Subscribers
+
+	/// % change in number of active grocery subscribers
+	/// comparing current period to same period last year
+	measure 'Number of Active Grocery Subscribers (YOY%)' =
+			CALCULATE(
+				[Number of Active Grocery Subscribers],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Grocery Subscribers
+
+	/// Number of customers who are having a grocery subscription and have placed an order in the selected period.
+	/// If the customer removed subscribed product from their order, they would still be counted in this measure.
+	/// To only look at customers that ordered a grocery they subscribed to,
+	/// look at [Order Measures] and [Number of Orders with Subscribed Groceries].
 	measure 'Number of Ordering Grocery Subscribers' =
 			CALCULATE(
 				[Number of Ordering Customers],
@@ -696,14 +736,56 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Grocery Subscribers
 
+	/// Number of ordering grocery subscribers in the same period last year.
+	measure 'Number of Ordering Grocery Subscribers (PY)' =
+			CALCULATE(
+				[Number of Ordering Grocery Subscribers],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+		displayFolder: Grocery Subscribers
 
-	/// Number of Grocery Subscribers including all customer statuses (also included deleted).
+	/// % change in number of ordering grocery subscribers
+	/// comparing current period to same period last year
+	/// (CY-PY)/PY
+	measure 'Number of Ordering Grocery Subscribers (YOY%)' =
+			CALCULATE(
+				[Number of Ordering Customers],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Grocery Subscribers
+
+
+	/// Number of Grocery Subscribers including all selected agreement statuses (also included deleted).
+	/// This should be used together with the [Billing Agreement Status] filter in the [Billing Agreements] table.
 	measure 'Number of Grocery Subscribers All Statuses' =
             CALCULATE(
                 [Number of Subscribers All Statuses],
                 'Billing Agreements'[has_grocery_subscription]=true
             )
 		formatString: #,0
+		displayFolder: Grocery Subscribers
+
+	/// Number of Subscribers (all selected statuses) that have a grocery subscription, same period last year.
+	measure 'Number of Grocery Subscribers All Statuses (PY)' =
+			CALCULATE(
+				[Number of Grocery Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+
+		formatString: #,0
+		displayFolder: Grocery Subscribers
+
+	/// % change in number of grocery subscribers (all selected statuses)
+	/// comparing current period to same period last year
+	measure 'Number of Grocery Subscribers All Statuses (YOY%)' =
+			CALCULATE(
+				[Number of Grocery Subscribers All Statuses],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+
+		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Grocery Subscribers
 
 	column fk_dim_dates

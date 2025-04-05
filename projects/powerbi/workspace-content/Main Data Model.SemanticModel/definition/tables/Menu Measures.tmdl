@@ -1,9 +1,8 @@
 table 'Menu Measures'
 	lineageTag: 007c46b4-40eb-4dda-b8d8-38aff56cc4ff
 
-	/// The number of unique recipes.
-	/// If a recipe is repeated for more than one week it will count as unique every week it appears, even if the recipe is basically the same.
-	measure 'Number of Recipes' = DISTINCTCOUNTNOBLANK('Menu Measures'[recipe_id])
+	/// The number of unique recipes in the menu (not to be confused with main recipes)
+	measure 'Number of Recipes in Menu' = DISTINCTCOUNTNOBLANK('Menu Measures'[recipe_id])
 		formatString: #,0
 		lineageTag: aa718a65-cb1e-4b91-8c98-f185b10bf852
 
@@ -21,6 +20,7 @@ table 'Menu Measures'
 				)
 		formatString: 0.0
 		lineageTag: dc8be7f2-eb6c-4959-84f1-088adf406654
+		displayFolder: Recipe Ratings
 
 	/// The number of unique comments posted.
 	/// A unique comments means one customer commenting on one recipe.
@@ -31,6 +31,7 @@ table 'Menu Measures'
 				)
 		formatString: #,0
 		lineageTag: bc6fcdf9-e3b7-431c-b52f-47695eb1dd7e
+		displayFolder: Recipe Ratings
 
 	/// The number of unique comments divided by the total number of dishes.
 	/// The purpose of this measure is to be able to compare the number of comments between weeks when the number of dishes ordered varies.
@@ -41,6 +42,7 @@ table 'Menu Measures'
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 54e62f69-6bfa-4999-a6e9-2ad5846b25f0
+		displayFolder: Recipe Ratings
 
 	/// The number of unique customers posting a rating.
 	/// Customers marking "dish not cooked" are included.
@@ -51,6 +53,7 @@ table 'Menu Measures'
 				)
 		formatString: #,0
 		lineageTag: 370a5c81-d627-4103-9363-0f25903eeeb0
+		displayFolder: Recipe Ratings
 
 	/// The number of unique customer posting a rating divided by the total number of orders.
 	/// Customers marking "dish not cooked" are included.
@@ -62,6 +65,7 @@ table 'Menu Measures'
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 30040681-4c5e-4a2f-88eb-7648269b6b95
+		displayFolder: Recipe Ratings
 
 	/// The number of dishes marked as "dish not cooked".
 	/// Counts as unique with every customer marking each dish.
@@ -73,6 +77,7 @@ table 'Menu Measures'
 				)+0
 		formatString: 0
 		lineageTag: ca52eb56-1016-4b87-b59c-4804b629d3ef
+		displayFolder: Recipe Ratings
 
 	/// The number of dishes marked as "dish not cooked" divided by the total number of ratings.
 	/// The purpose of this measure is to be able to compare the number of dishes not cooked between weeks when the number of ratings varies.
@@ -83,6 +88,7 @@ table 'Menu Measures'
 				)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 39c7a96b-50ad-446b-a6b9-d5ea1670e2a2
+		displayFolder: Recipe Ratings
 
 	/// The number of unique ratings posted. A unique rating is the rating of one dish by one customer.
 	/// If one customer rates 3 dishes and another rates 2 dishes, then these are 5 unique ratings regardless of which specific dishes they rated.
@@ -94,6 +100,7 @@ table 'Menu Measures'
 				)
 		formatString: #,0
 		lineageTag: c056ab91-83d4-4db3-aa8d-fb27ac10e9c2
+		displayFolder: Recipe Ratings
 
 	/// The number of unique ratings posted divided by the total number of dishes sold.
 	/// The purpose of this measure is to be able to compare the number of ratings between weeks when the number of dishes sold varies.
@@ -104,6 +111,7 @@ table 'Menu Measures'
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: bc329d84-dd32-46c0-9dd6-21157b306135
+		displayFolder: Recipe Ratings
 
 	/// The number of unique recipes that have received any rating.
 	/// Dish not cooked is excluded.
@@ -115,6 +123,7 @@ table 'Menu Measures'
 				)
 		formatString: #,0
 		lineageTag: 27195082-227f-4e26-8144-68af06a5c82b
+		displayFolder: Recipe Ratings
 
 	column weekly_menu_id
 		dataType: int64
