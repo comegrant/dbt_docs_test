@@ -196,6 +196,6 @@ table 'Agreement Recipe Compliance Measures'
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 				    fact_recipe_billing_agreement_compliancy_Table = gold_Schema{[Name="fact_recipe_billing_agreement_compliancy",Kind="Table"]}[Data],
-					filtered_rows = Table.SelectRows(fact_recipe_billing_agreement_compliancy_Table, each Date.IsInPreviousNDays([menu_week_monday_date], 7))
+					filtered_rows = Table.SelectRows(fact_recipe_billing_agreement_compliancy_Table, each Date.IsInPreviousNDays([menu_week_monday_date], 0))
 				in
 					filtered_rows
