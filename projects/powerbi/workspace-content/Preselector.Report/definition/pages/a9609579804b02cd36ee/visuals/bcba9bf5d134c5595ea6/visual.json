@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "bcba9bf5d134c5595ea6",
   "position": {
     "x": 16,
-    "y": 96,
+    "y": 416,
     "z": 3000,
-    "height": 608,
+    "height": 288,
     "width": 1248,
     "tabOrder": 3000
   },
@@ -90,21 +90,8 @@
                 }
               },
               "queryRef": "Preselector Measures.Average Rotation Score",
-              "nativeQueryRef": "Average Rotation Score"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Preselector Measures"
-                    }
-                  },
-                  "Property": "Average Combined Rotation and Variation Score"
-                }
-              },
-              "queryRef": "Preselector Measures.Average Combined Rotation and Variation Score",
-              "nativeQueryRef": "Average Combined Rotation and Variation Score"
+              "nativeQueryRef": "Rotation",
+              "displayName": "Rotation"
             },
             {
               "field": {
@@ -118,7 +105,23 @@
                 }
               },
               "queryRef": "Preselector Measures.Average Main Ingredient Variation Score",
-              "nativeQueryRef": "Average Main Ingredient Variation Score"
+              "nativeQueryRef": "Variation",
+              "displayName": "Variation"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Combined Rotation and Variation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Combined Rotation and Variation Score",
+              "nativeQueryRef": "Combined",
+              "displayName": "Combined"
             },
             {
               "field": {
@@ -132,7 +135,8 @@
                 }
               },
               "queryRef": "Customer Measures.Number of Active Subscribers",
-              "nativeQueryRef": "Number of Active Subscribers"
+              "nativeQueryRef": "Active Subscribers",
+              "displayName": "Active Subscribers"
             }
           ]
         }
@@ -144,13 +148,13 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Preselector Measures"
+                    "Entity": "Customer Measures"
                   }
                 },
-                "Property": "Average Rotation Score"
+                "Property": "Number of Active Subscribers"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -271,106 +275,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "69bf19c70e70439d1cb0",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Rotation Score"
-          }
-        },
-        "type": "Advanced",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "p1",
-              "Entity": "Preselector Measures",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Not": {
-                  "Expression": {
-                    "Comparison": {
-                      "ComparisonKind": 0,
-                      "Left": {
-                        "Measure": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "p1"
-                            }
-                          },
-                          "Property": "Average Rotation Score"
-                        }
-                      },
-                      "Right": {
-                        "Literal": {
-                          "Value": "null"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      {
-        "name": "4a142bc5e7ba5ee15bcc",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer Measures"
-              }
-            },
-            "Property": "Number of Active Subscribers"
-          }
-        },
-        "type": "Advanced",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "c",
-              "Entity": "Customer Measures",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Comparison": {
-                  "ComparisonKind": 1,
-                  "Left": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "c"
-                        }
-                      },
-                      "Property": "Number of Active Subscribers"
-                    }
-                  },
-                  "Right": {
-                    "Literal": {
-                      "Value": "5L"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
       }
     ]
   }

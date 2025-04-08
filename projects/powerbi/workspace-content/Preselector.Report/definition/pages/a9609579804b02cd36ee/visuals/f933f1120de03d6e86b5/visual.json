@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "f933f1120de03d6e86b5",
   "position": {
     "x": 198,
@@ -231,16 +231,6 @@
                               },
                               "Property": "Year of Calendar Week"
                             }
-                          },
-                          {
-                            "Column": {
-                              "Expression": {
-                                "SourceRef": {
-                                  "Source": "d"
-                                }
-                              },
-                              "Property": "Calendar Week"
-                            }
                           }
                         ],
                         "Values": [
@@ -248,11 +238,6 @@
                             {
                               "Literal": {
                                 "Value": "2025L"
-                              }
-                            },
-                            {
-                              "Literal": {
-                                "Value": "11L"
                               }
                             }
                           ]
@@ -276,21 +261,6 @@
                               },
                               "Level": "Year"
                             }
-                          },
-                          {
-                            "HierarchyLevel": {
-                              "Expression": {
-                                "Hierarchy": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "Dates"
-                                    }
-                                  },
-                                  "Hierarchy": "Calendar Hierarchy with Week"
-                                }
-                              },
-                              "Level": "Week"
-                            }
                           }
                         ],
                         "decomposedIdentities": {
@@ -301,15 +271,6 @@
                                   {
                                     "Literal": {
                                       "Value": "2025L"
-                                    }
-                                  }
-                                ]
-                              },
-                              {
-                                "1": [
-                                  {
-                                    "Literal": {
-                                      "Value": "11L"
                                     }
                                   }
                                 ]
@@ -328,25 +289,12 @@
                                   "Property": "Year of Calendar Week"
                                 }
                               }
-                            },
-                            {
-                              "value": {
-                                "Column": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "Dates"
-                                    }
-                                  },
-                                  "Property": "Calendar Week"
-                                }
-                              }
                             }
                           ]
                         },
                         "valueMap": [
                           {
-                            "0": "2025",
-                            "1": "11"
+                            "0": "2025"
                           }
                         ]
                       }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "7656ad4fb84ce1a0db03",
   "position": {
     "x": 656,
@@ -85,11 +85,11 @@
                       "Entity": "Menu Measures"
                     }
                   },
-                  "Property": "Number of Recipes"
+                  "Property": "Number of Recipes in Menu"
                 }
               },
-              "queryRef": "Menu Measures.Number of Recipes",
-              "nativeQueryRef": "Number of Recipes"
+              "queryRef": "Menu Measures.Number of Recipes in Menu",
+              "nativeQueryRef": "Number of Recipes in Menu"
             }
           ]
         }
