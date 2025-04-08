@@ -20,8 +20,8 @@ In our data model we have four layers which is represented by a folder under `mo
 | Layers | ⭐️ Purpose | 📁 Subdirectories | 📃 Model names |
 | ----------- | ----------- | ----------- | ----------- |
 | 🥉 Bronze | Contains raw data | None, only exists in the Databricks Workspace | Same as in the source but with a prefix of the source `<source_system>__` |
-| 🥈 Silver | Cleanse and standarize raw tables from bronze | Folders divided by source system | `<source_system>__<source_table_name>(s).sql`: Keep table name from the source, but all words except the last should be singlar and the last should always be plural unless it end with "ledger" or something similar that does not make sense in plural |
-| 🏄🏻 Intermediate | Modularize transformations that is reused across other intermediate and gold models | Folders divided by business groupings | `int_<silver_model_reference>_<actions>s.sql`: The name should make it easy for other developers to understand the main acitons done in the intermediate step and which silver models it involves. Look at existing intermediate tables for inspiration. |
+| 🥈 Silver | Cleanse and standardize raw tables from bronze | Folders divided by source system | `<source_system>__<source_table_name>(s).sql`: Keep table name from the source, but all words except the last should be singular and the last should always be plural unless it end with "ledger" or something similar that does not make sense in plural |
+| 🏄🏻 Intermediate | Modularize transformations that is reused across other intermediate and gold models | Folders divided by business groupings | `int_<silver_model_reference>_<actions>s.sql`: The name should make it easy for other developers to understand the main actions done in the intermediate step and which silver models it involves. Look at existing intermediate tables for inspiration. |
 | 🥇 Gold | Join and transform tables from silver and intermediate to create a dimension or fact table | Folders divided by business groupings | `dim/fact_<business_concept>.sql`: The model file should start with fact or dim based on the type of table followed by a logic business related name in plain english. One should NOT create several models for the same concept. I.e., there should not be a table for `finance_orders` and `marketing_orders`. |
 | 🤖 mlGold | Perform further transformations and aggregations needed for specific ml projects | Not decided yet | Not decided yet |
 
@@ -35,7 +35,7 @@ This is the naming conventions that should be followed when creating models:
 - 🎚️ Booleans should be prefixed with `is_` or `has_` etc., e.g., `is_active_customer` and `has_admin_access`
 - 🔑 Id columns that are used as primary keys in the source system should always be called `<table_name>_id` e.g `billing_agreement_id`
 - 🤷🏻‍♀️ Avoid too generic names, e.g., use `product_name` rather than `name` or `product`.
-- 💪 Consistency is key! Use the same field names across models where possible. For example, an id to the `billing_agreement` table should be named `billing_agreement_id` everwhere rather than alternating with `customer_id`
+- 💪 Consistency is key! Use the same field names across models where possible. For example, an id to the `billing_agreement` table should be named `billing_agreement_id` everywhere rather than alternating with `customer_id`
 - 🚧 System fields from the source system should have source_ as prefix, e.g., the created_at and created_by columns should be source_created_at and source_created_by.
 
 ## 1.4 Best Practices
@@ -76,7 +76,7 @@ The `generate-silver-model` command outputs a model file that gives you a head s
 - `<source_system>`: The source system the data belongs to (e.g. cms, pim etc)
 - `<source_table_name>`: The name of the table in bronze
 - `<model-name>`: The name of the model you are creating (please follow our [naming conventions](#13-naming-conventions))
-  
+
 ```bash
 dbt-chef generate-silver-model --source-system <source_system> --source-table-name <source_table_name> --model-name <model_name>
 ```
@@ -85,15 +85,15 @@ dbt-chef generate-silver-model --source-system <source_system> --source-table-na
 There are different types of transformations that should be done depending on what layer you are creating the model in.
 
 #### ℹ️ General code structure
-Models in dbt are built using CTEs for each transformation step being done. 
+Models in dbt are built using CTEs for each transformation step being done.
 * A model should always start with a CTE which does `select * from` the source/model of interest.
-* After this there should be one CTE for each bigger transformation step with a name that describes the activity of the CTE, try to follow the format `table_of_interest_actions_done`, i.e., `product_tables_joined` or `deviations_filter_on_mealboxes`. The main purpose of the name is to make it easy to understand whats going on in the CTE for a random person.
+* After this there should be one CTE for each bigger transformation step with a name that describes the activity of the CTE, try to follow the format `table_of_interest_actions_done`, i.e., `product_tables_joined` or `deviations_filter_on_mealboxes`. The main purpose of the name is to make it easy to understand what's going on in the CTE for a random person.
 * Lastly, the script should end by doing a `select * from` the last created CTE. Please review already created models to get a sense of this structure works in each layer.
 
 The reason for using CTEs is to make the code more modular which in turn makes it easier to debug and reuse elements across the project. For more information about why dbt suggest to use CTEs, read [this article](https://docs.getdbt.com/terms/cte).
 
 #### 🥈 Transformations in silver
-The goal of the silver layer is to create the building block for the rest of the project. Hence, the main objective is to cleanse the source data and create a conform structre across the project.
+The goal of the silver layer is to create the building block for the rest of the project. Hence, the main objective is to cleanse the source data and create a conform structure across the project.
 
 The following transformations steps should be done in the silver layer:
 - ✅ Renaming
@@ -108,13 +108,13 @@ One should *not* do:
 - ❌ Aggregations
 
 Exceptions:
-- If the silver layer has historic data or similar which comes from another source these should be combined in the silver layer and in this case unions or joins might be needed. In this case the legacy source data should be handeled in the `base`-folder
+- If the silver layer has historic data or similar which comes from another source these should be combined in the silver layer and in this case unions or joins might be needed. In this case the legacy source data should be handled in the `base`-folder
 
 >[!NOTE]
 >In silver we organize the columns based on data type. Please look at previously made silver model to see examples of this structure.
 
 #### 🏄🏻‍♀️ Transformations in intermediate
-The goal of the intermediate layer is to isolate out different concepts and calculations than can be reused across the gold layer or other intermediate tables. Below is examples of transformations that can be done in the intermediate layer. The intermediate tables will be populated as [ephemeral](https://docs.getdbt.com/docs/build/materializations#ephemeral) in test and prod, but as tables in dev to make it easier to debug. 
+The goal of the intermediate layer is to isolate out different concepts and calculations than can be reused across the gold layer or other intermediate tables. Below is examples of transformations that can be done in the intermediate layer. The intermediate tables will be populated as [ephemeral](https://docs.getdbt.com/docs/build/materializations#ephemeral) in test and prod, but as tables in dev to make it easier to debug.
 
 The following transformation steps can be done in the intermediate layer:
 - ✅ Join silver tables to denormalise them
@@ -128,11 +128,11 @@ The goal of the gold layer is to create a dimensional data model that can be use
 The following transformation steps should done in the gold layer:
 - ✅ Join silver and/or intermediate tables
 - ✅ Add primary keys
-- ✅ Add foregin keys
+- ✅ Add foreign keys
   - Add foreign keys by concatenating columns and performing the needed transformations to create the key
   - Only when needed, join in the dim table to get extract foreign key
 - ✅ Other needed calculations that does not beloing to the intermediate layer
-  
+
 One should *not* do:
 - ❌ Join with other facts (then the needed logic should be moved to the intermediate layer)
 
@@ -147,7 +147,6 @@ Each subdirectory of the silver and gold layer has a .yml-file with the suffix `
 ```yml
 - name: model_name
   description: ""
-
   #column configs to be added here
 
 ```
@@ -156,17 +155,39 @@ Each subdirectory of the silver and gold layer has a .yml-file with the suffix `
 ```yml
 - name: dim_dates
   description: ""
+  meta:
+    owners:
+      - "firstname"
+      - "secondname"  # Optional additional owner
   latest_version: 1
   config:
     alias: dim_dates
     contract:
       enforced: true
-    
+
   versions:
     - v: 1
 
   #column to be added here
 
+```
+
+#### Model Ownership
+Each model in Gold should have at least one owner specified in the model configuration. The owner is responsible for maintaining the model or delegating to another team member.
+
+To add owners to your model:
+1. Add the `meta.owners` field to your model configuration in the `__models.yml` file
+2. List the owners using their names in quotes
+3. You can specify multiple owners by adding more names to the list
+
+Example:
+```yml
+- name: model_name
+  description: "Description of the model"
+  meta:
+    owners:
+      - "firstname"
+      - "secondname"  # Optional additional owner
 ```
 
 ## 2.5 Deploy model
@@ -190,7 +211,7 @@ After you have deployed your model you should check that the output is as expect
 ## 2.7 Add documentation
 After you are finished with your model you need to add documentation.
 
-### a) Adding documentation to tables 
+### a) Adding documentation to tables
 Table description should be added directly under description in the `__models.yml`-file.
 
 ### b) Adding documentation to columns
@@ -222,11 +243,11 @@ Each column should be configured with a description, [constraints](https://docs.
 dbt-chef generate-yaml --model-name <model_name>
 ```
 2. Copy output and add it to the `__models.yml`-file after `description:` if its in silver or before `versions:` if its in gold.
-3. Remove the generated constraints and data tests that are not appropriate fro your model.
+3. Remove the generated constraints and data tests that are not appropriate for your model.
 4. Add constraints and data tests that are needed.
 5. Fill in accepted values when appropriate (see tip further down).
 6. Run `dbt build -s model_name` (NB! this time we use `dbt build` and not `dbt run` as this will also run the tests we have added).
-7. Now that you added constraints and tests these might fail. Debug and fix the errors if occuring.
+7. Now that you added constraints and tests these might fail. Debug and fix the errors if occurring.
 
 >[!TIP]
 > To generate accepted values easily you can do a select distinct on the field after builidng the model to your personal silver schema and then use ChatGPT to format it for you as a list
@@ -235,7 +256,7 @@ dbt-chef generate-yaml --model-name <model_name>
 When everything works as it should you can create a pull request in GitHub and assign reviewers. When a pull request is created the models you have created will be moved to our the schemas in our developoment workspace. After the PR is merged it will be moved to the test workspace. After this it will be moved to the prod workspace when some of the admins approve the deployment.
 
 >[!NOTE]
->Eventhough you should not create a pull request before the code are finished and tested you should still create commits and push when making changes. Pushing the code will make sure that its stored online and not only locally on your computer. Doing commits make it possible to go back in time in your code, i.e. everytime you do a commit you save a new version of your code which can be reverted back to later if needed.
+>Even though you should not create a pull request before the code are finished and tested you should still create commits and push when making changes. Pushing the code will make sure that its stored online and not only locally on your computer. Doing commits make it possible to go back in time in your code, i.e. every time you do a commit you save a new version of your code which can be reverted back to later if needed.
 
 >[!TIP]
 >If you want to see how your code looks in Github, but are not ready to create a pull request yet you can create a [draft pull request](https://github.blog/news-insights/product-news/introducing-draft-pull-requests/)
@@ -279,7 +300,7 @@ If you want to empty all your development schemas you can follow these steps:
 To get started developing in dbt follow the steps described in this section. This assumes that you have [git and sous-chef](https://github.com/cheffelo/sous-chef) set up in your local development environment (using Visual Studio Code or another IDE).
 
 ## 4.1 Set up local dbt profile
-Your local dbt profile is used to conncet to Databricks from your local development environment. The connection details is stored in a yml-file for the following path on your computer: `[USERPATH]/.dbt/profiles.yml`. Please follow the instructions below to set up the profile.
+Your local dbt profile is used to connect to Databricks from your local development environment. The connection details are stored in a yml-file for the following path on your computer: `[USERPATH]/.dbt/profiles.yml`. Please follow the instructions below to set up the profile.
 
 1. Navigate to your userprofile-folder on your computer
 2. View hidden folders by running using the following hot keys for Mac/Windows: `cmd+shift+dot / ???`
@@ -348,7 +369,7 @@ The output from running `dbt debug` should look something like this if the set u
 ```
 
 ## 4.3 Debugging
-If you have any trouble the soultion might be here:
+If you have any trouble the solution might be here:
 
 ### Error: The Poetry configuration is invalid
 ```

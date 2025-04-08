@@ -1173,6 +1173,9 @@ models:
 
   - name: fact_subscription_quiz
     description: "Events relating to when a customer updates their subscription."
+    meta:
+      owners:
+        - "stephen"
     latest_version: 1
     config:
       alias: fact_subscription_quiz
@@ -1266,6 +1269,9 @@ models:
 
   - name: dim_preselector_versions
     description: "Contains different versions of the preselector codebase."
+    meta:
+      owners:
+        - "stephen"
     latest_version: 1
     config:
       alias: dim_preselector_versions
@@ -1338,6 +1344,11 @@ models:
       - Quality metrics measuring how well selections match preferences
       - Rotation and variation scores to ensure menu diversity
       - Version tracking to identify the latest selections
+
+    meta:
+      owners:
+        - "stephen"
+        - "marie"
 
     latest_version: 1
     config:
