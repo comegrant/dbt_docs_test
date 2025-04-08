@@ -1,0 +1,285 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "name": "2c872f008a0c66b69b7d",
+  "position": {
+    "x": 16.623376623376622,
+    "y": 236.05194805194805,
+    "z": 6000,
+    "height": 464.34632034632034,
+    "width": 611.74025974025972,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Financial Date Hierarchy"
+                    }
+                  },
+                  "Level": "Date"
+                }
+              },
+              "queryRef": "Dates.Financial Date Hierarchy.Date",
+              "nativeQueryRef": "Financial Date Hierarchy Date",
+              "active": true,
+              "format": "dd/MM/yyyy"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Schema": "extension",
+                      "Entity": "(Param) Measures"
+                    }
+                  },
+                  "Property": "Number of Sign-ups running total in Date"
+                }
+              },
+              "queryRef": "(Param) Measures.Number of Sign-ups running total in Date",
+              "nativeQueryRef": "Current Year",
+              "displayName": "Current Year",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Schema": "extension",
+                      "Entity": "(Param) Measures"
+                    }
+                  },
+                  "Property": "Number of Sign-ups (PY) running total in Date"
+                }
+              },
+              "queryRef": "(Param) Measures.Number of Sign-ups (PY) running total in Date",
+              "nativeQueryRef": "Previous Year",
+              "displayName": "Previous Year",
+              "format": "#,0"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Financial Date Hierarchy"
+                  }
+                },
+                "Level": "Date"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "labelPrecision": {
+              "expr": {
+                "Literal": {
+                  "Value": "0L"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 3,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "(Param) Measures.Number of Sign-ups (PY) running total in Date"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Number of Sign-ups Current Year And Previous Year'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "6aa4614b316b7bd322a5",
+        "ordinal": 0,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Billing Agreements"
+              }
+            },
+            "Property": "Billing Agreement Status"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      },
+      {
+        "name": "9f00dc7d08b0216c62a7",
+        "ordinal": 1,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Customer Measures"
+              }
+            },
+            "Property": "Number of Sign-ups"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "8677a5bb2ab565050880",
+        "ordinal": 2,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Customer Measures"
+              }
+            },
+            "Property": "Number of Sign-ups (PY)"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "a0fed729c8c6205193e9",
+        "ordinal": 3,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Customer Measures"
+              }
+            },
+            "Property": "Number of Sign-ups (PY)"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
+      },
+      {
+        "name": "470d9def0982e435ea82",
+        "ordinal": 4,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Schema": "extension",
+                "Entity": "(Param) Measures"
+              }
+            },
+            "Property": "Number of Sign-ups running total in Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d5448b01d6d750be3321",
+        "ordinal": 5,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Schema": "extension",
+                "Entity": "(Param) Measures"
+              }
+            },
+            "Property": "Number of Sign-ups (PY) running total in Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8f949ff27c19565c75de",
+        "ordinal": 6,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Date"
+          }
+        },
+        "type": "Categorical"
+      }
+    ],
+    "filterSortOrder": "Custom"
+  }
+}
