@@ -31,6 +31,7 @@ orders as (
         , first_menu_week_monday_date
         , dates.financial_week as first_menu_week_week
         , dates.financial_month_name as first_menu_week_month
+        , dates.financial_month_number as first_menu_week_month_number
         , dates.financial_quarter as first_menu_week_quarter
         , dates.financial_year as first_menu_week_year
     from first_orders

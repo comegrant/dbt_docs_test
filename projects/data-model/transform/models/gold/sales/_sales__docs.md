@@ -166,7 +166,13 @@ The week of the customers first delivery.
 
 {% docs column__first_menu_week_month %}
 
-The month of the customers first delivery.
+The month name of the customers first delivery.
+
+{% enddocs %}
+
+{% docs column__first_menu_week_month_number %}
+
+The month number of the customers first delivery.
 
 {% enddocs %}
 

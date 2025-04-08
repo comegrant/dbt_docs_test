@@ -31,7 +31,7 @@ recipes as (
 )
 
 , recipe_companies as (
-    
+
     select * from {{ ref('pim__recipe_companies') }}
 
 )
@@ -48,7 +48,7 @@ recipes as (
     select distinct
         recipe_id
         , companies.language_id
-    
+
     from recipe_companies
 
     left join companies
@@ -75,6 +75,7 @@ recipes as (
         , recipe_metadata.cooking_time_to
 
         , recipe_metadata.cooking_time
+        , recipe_metadata.cooking_time_from*1000+recipe_metadata.cooking_time_to as cooking_time_sorting
 
         , recipe_metadata.has_recipe_photo
 
@@ -131,9 +132,9 @@ recipes as (
 -- Filter to keep only language_ids which are used as brand language
 -- and to keep only language_ids for companies connected to recipes in recipe_companies
 , recipe_tables_filtered_to_only_keep_brand_language as (
-    
+
     select recipe_tables_joined.*
-    
+
     from recipe_tables_joined
 
     left join recipe_companies_find_local_language_id
@@ -170,6 +171,7 @@ recipes as (
         , 0              as cooking_time_from
         , 0              as cooking_time_to
         , 'Not relevant' as cooking_time
+        , 0              as cooking_time_sorting
         , false          as has_recipe_photo
         , 'Not relevant' as recipe_name
         , 'Not relevant' as recipe_photo_caption

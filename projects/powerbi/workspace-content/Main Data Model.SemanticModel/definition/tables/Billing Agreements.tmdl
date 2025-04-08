@@ -191,8 +191,16 @@ table 'Billing Agreements'
 		summarizeBy: none
 		sourceColumn: signup_month
 		displayFolder: Sign-up
+		sortByColumn: signup_month_number
 
 		annotation SummarizationSetBy = Automatic
+
+	column signup_month_number
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: signup_month_number
 
 	column 'Signup Quarter'
 		dataType: int64
@@ -245,8 +253,16 @@ table 'Billing Agreements'
 		summarizeBy: none
 		sourceColumn: first_menu_week_month
 		displayFolder: First Menu Week
+		sortByColumn: first_menu_week_month_number
 
 		annotation SummarizationSetBy = Automatic
+
+	column first_menu_week_month_number
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: first_menu_week_month_number
 
 	column 'First Menu Quarter'
 		dataType: int64

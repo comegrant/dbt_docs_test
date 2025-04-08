@@ -184,8 +184,16 @@ table Recipes
 		lineageTag: 56d08ed4-ea04-4d27-b993-640873c82ae4
 		summarizeBy: none
 		sourceColumn: cooking_time
+		sortByColumn: cooking_time_sorting
 
 		annotation SummarizationSetBy = Automatic
+
+	column cooking_time_sorting
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: cooking_time_sorting
 
 	column 'Has Recipe Photo'
 		dataType: boolean
@@ -266,4 +274,3 @@ table Recipes
 					dim_recipes_Table
 
 	annotation PBI_ResultType = Table
-

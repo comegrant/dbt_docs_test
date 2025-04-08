@@ -98,6 +98,12 @@ The main ingredient of the recipe in english language.
 
 {% enddocs %}
 
+{% docs column__cooking_time_sorting %}
+
+A column used for sorting the column cooking_time. It is calculated as cooking_time_from*1000+cooking_time_to.
+
+{% enddocs %}
+
 # Dim Products
 {% docs column__pk_dim_products %}
 

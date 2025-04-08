@@ -72,7 +72,7 @@ models:
       - name: subscribed_product_variation_quantity
         data_type: int
         description: "{{ doc('column__subscribed_product_variation_quantity') }}"
-    
+
       - name: subscribed_product_variation_amount_ex_vat
         data_type: decimal(20,6)
         description: "{{ doc('column__subscribed_product_variation_amount_ex_vat') }}"
@@ -639,6 +639,12 @@ models:
         data_tests:
           - not_null
 
+      - name: signup_month_number
+        data_type: int
+        description: "{{ doc('column__signup_month_number') }}"
+        data_tests:
+          - not_null
+
       - name: signup_quarter
         data_type: int
         description: "{{ doc('column__signup_quarter') }}"
@@ -666,6 +672,10 @@ models:
       - name: first_menu_week_month
         data_type: string
         description: "{{ doc('column__first_menu_week_month') }}"
+
+      - name: first_menu_week_month_number
+        data_type: int
+        description: "{{ doc('column__first_menu_week_month_number') }}"
 
       - name: first_menu_week_quarter
         data_type: int
@@ -3076,7 +3086,7 @@ models:
       - name: discount_sub_category_name
         data_type: string
         description: "{{ doc('column__discount_sub_category_name') }}"
-        
+
     versions:
       - v: 1
 
@@ -3170,4 +3180,3 @@ models:
 
     versions:
       - v: 1
-

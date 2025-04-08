@@ -1076,6 +1076,12 @@ models:
         data_tests:
           - not_null
 
+      - name: signup_month_number
+        data_type: int
+        description: "{{ doc('column__signup_month_number') }}"
+        data_tests:
+          - not_null
+
       - name: signup_month
         data_type: string
         description: "{{ doc('column__signup_month') }}"

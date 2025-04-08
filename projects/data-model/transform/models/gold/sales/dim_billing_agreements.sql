@@ -203,11 +203,13 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , billing_agreements_scd1.signup_week_day
         , billing_agreements_scd1.signup_week
         , billing_agreements_scd1.signup_month
+        , billing_agreements_scd1.signup_month_number
         , billing_agreements_scd1.signup_quarter
         , billing_agreements_scd1.signup_year
         , first_orders.first_menu_week_monday_date
         , first_orders.first_menu_week_week
         , first_orders.first_menu_week_month
+        , first_orders.first_menu_week_month_number
         , first_orders.first_menu_week_quarter
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name

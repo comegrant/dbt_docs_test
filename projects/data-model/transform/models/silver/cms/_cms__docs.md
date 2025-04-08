@@ -370,6 +370,12 @@ The month name the customer signed up
 
 {% enddocs %}
 
+{% docs column__signup_month_number %}
+
+The month number the customer signed up. This can be used for sorting the signup_month.
+
+{% enddocs %}
+
 {% docs column__signup_quarter %}
 
 The quarter the customer signed up

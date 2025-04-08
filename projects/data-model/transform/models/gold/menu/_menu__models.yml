@@ -390,6 +390,12 @@ models:
         data_type: string
         description: "{{ doc('column__cooking_time') }}"
 
+      - name: cooking_time_sorting
+        data_type: int
+        description: "{{ doc('column__cooking_time_sorting') }}"
+        data_tests:
+          - not_null
+
       - name: has_recipe_photo
         data_type: boolean
         description: "{{ doc('column__has_recipe_photo') }}"
