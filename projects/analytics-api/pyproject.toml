@@ -8,7 +8,7 @@ packages = [{include = "analytics_api"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
-polars-lts-cpu = "0.20.31"
+polars-lts-cpu = "1.16.0"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 numpy = "1.26.4"
 fastapi = {version= "^0.113", extras = ["standard"]}
@@ -18,7 +18,7 @@ key-vault = {path = "../../packages/key-vault", develop = true}
 aiocache = "^0.12.3"
 python-jose = {version = "^3.4.0", extras = ["cryptography"]}
 menu-optimiser = {path = "../../projects/menu-optimiser", develop = true}
-
+preselector = {path = "../../projects/preselector", develop = true}
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

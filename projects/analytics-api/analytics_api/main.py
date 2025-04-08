@@ -10,6 +10,7 @@ from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI, Form
 from pydantic_settings import BaseSettings
 
+from analytics_api.routers.menu_feedback import mf_router as mf_app_router
 from analytics_api.routers.menu_generator import mop_router as mop_app_router
 from analytics_api.utils.auth import AuthToken, raise_on_invalid_token, retrieve_token
 from analytics_api.utils.datadog_logger import datadog_logger, setup_logger
@@ -53,6 +54,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Analytics API", lifespan=lifespan)
 app.include_router(mop_app_router)
+app.include_router(mf_app_router)
 
 
 @app.get("/")

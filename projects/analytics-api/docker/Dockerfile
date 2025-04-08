@@ -15,6 +15,7 @@ WORKDIR $SERVICE_HOME
 COPY projects/analytics-api/pyproject.toml .
 COPY projects/analytics-api/poetry.lock .
 COPY projects/menu-optimiser/ $APP_HOME/projects/menu-optimiser
+COPY projects/preselector/ $APP_HOME/projects/preselector
 
 # create a dummy package to satisfy Poetry
 RUN mkdir -p analytics_api && touch analytics_api/__init__.py
