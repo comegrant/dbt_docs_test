@@ -1,0 +1,33 @@
+perspective Sign-ups
+
+	perspectiveTable 'Customer Measures'
+
+		perspectiveMeasure 'Number of Sign-ups'
+		perspectiveMeasure 'Number of Sign-ups (PY)'
+		perspectiveMeasure 'Number of Sign-ups (7 Days Rolling)'
+		perspectiveMeasure 'Number of Sign-ups (7 Days Rolling PY)'
+		perspectiveMeasure 'Number of Sign-ups (YTD)'
+		perspectiveMeasure 'Number of Sign-ups (PYTD)'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Dates'
+
+		perspectiveHierarchy 'Calendar Hierarchy with Month'
+
+	perspectiveTable 'Subscribed Products'
+
+		perspectiveColumn 'Portions'
+		perspectiveColumn 'Meals'
+
+	perspectiveTable 'Preference Combinations'
+
+		perspectiveColumn 'Concept Combinations'
+		perspectiveColumn 'Taste Preference Combinations'
+
+	perspectiveTable 'Preferences'
+
+		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Type Name'

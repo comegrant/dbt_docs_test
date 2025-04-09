@@ -18,6 +18,10 @@ perspective 'Recipe Sales'
 
 		perspectiveColumn 'Brand Name'
 
+	perspectiveTable 'Dates'
+
+		perspectiveHierarchy 'Financial Date Hierarchy'
+
 	perspectiveTable 'Preference Combinations'
 
 		perspectiveColumn 'Concept Combinations'

@@ -30,6 +30,10 @@ perspective Orders
 
 		perspectiveColumn 'Brand Name'
 
+	perspectiveTable 'Dates'
+
+		perspectiveHierarchy 'Financial Date Hierarchy'
+
 	perspectiveTable 'Discounts'
 
 		perspectiveColumn 'Discount Channel'

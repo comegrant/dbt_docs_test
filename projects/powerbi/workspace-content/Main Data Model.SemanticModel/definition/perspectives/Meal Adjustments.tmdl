@@ -13,6 +13,10 @@ perspective 'Meal Adjustments'
 		perspectiveColumn 'First Menu Month'
 		perspectiveColumn 'First Menu Year'
 
+	perspectiveTable 'Dates'
+
+		perspectiveHierarchy 'Financial Date Hierarchy'
+
 	perspectiveTable 'Brands'
 
 		perspectiveColumn 'Brand Name'
