@@ -1,0 +1,29 @@
+perspective 'Swaps'
+
+	perspectiveTable 'Order Measures'
+
+		perspectiveMeasure 'Number of Orders'
+		perspectiveMeasure 'Number of Orders with Swaps'
+		perspectiveMeasure 'Share of Orders with Swaps'
+		perspectiveMeasure 'Average Number of Orders per Swapping Customer'
+		perspectiveMeasure 'Average Number of Orders per Customer'
+
+	perspectiveTable 'Billing Agreements'
+
+		perspectiveColumn 'First Menu Week'
+		perspectiveColumn 'First Menu Month'
+		perspectiveColumn 'First Menu Year'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Preference Combinations'
+
+		perspectiveColumn 'Concept Combinations'
+		perspectiveColumn 'Taste Preference Combinations'
+
+	perspectiveTable 'Preferences'
+
+		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Type Name'

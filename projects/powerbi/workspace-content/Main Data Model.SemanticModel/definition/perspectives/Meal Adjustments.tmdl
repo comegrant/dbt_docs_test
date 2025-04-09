@@ -1,0 +1,44 @@
+perspective 'Meal Adjustments'
+
+	perspectiveTable 'Order Measures'
+
+		perspectiveMeasure 'Number of Added Dishes'
+		perspectiveMeasure 'Number of Removed Dishes'
+		perspectiveMeasure 'Number of Ordered Dishes'
+		perspectiveMeasure 'Number of Swapped Dishes'
+
+	perspectiveTable 'Billing Agreements'
+
+		perspectiveColumn 'First Menu Week'
+		perspectiveColumn 'First Menu Month'
+		perspectiveColumn 'First Menu Year'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Preference Combinations'
+
+		perspectiveColumn 'Concept Combinations'
+		perspectiveColumn 'Taste Preference Combinations'
+
+	perspectiveTable 'Preferences'
+
+		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Type Name'
+
+	perspectiveTable 'Portions'
+
+		perspectiveColumn 'Portion Name'
+
+	perspectiveTable 'Recipes'
+
+		perspectiveColumn 'Recipe Name'
+		perspectiveColumn 'Main Recipe Name'
+		perspectiveColumn 'Recipe Id'
+		perspectiveColumn 'Cooking Time'
+		perspectiveColumn 'Recipe Main Ingredient Name (Eng)'
+
+	perspectiveTable 'Taxonomies'
+
+		perspectiveColumn 'Taxonomy (Eng)'

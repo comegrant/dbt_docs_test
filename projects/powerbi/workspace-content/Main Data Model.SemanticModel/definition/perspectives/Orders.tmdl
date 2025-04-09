@@ -1,0 +1,47 @@
+perspective Orders
+
+	perspectiveTable 'Order Measures'
+
+		perspectiveMeasure 'Number of Orders'
+		perspectiveMeasure 'Number of Orders (PY)'
+		perspectiveMeasure 'ATV Gross Ex Vat'
+		perspectiveMeasure 'ATV Gross Ex Vat (PY)'
+		perspectiveMeasure 'Order Value Gross Ex Vat'
+		perspectiveMeasure 'Order Value Gross Ex Vat (PY)'
+		perspectiveMeasure 'Average Number of Orders per Customer'
+		perspectiveMeasure 'Average Number of Orders per Customer (PY)'
+
+	perspectiveTable 'Budget Measures'
+
+		perspectiveMeasure 'Number of Orders (AoB%)'
+		perspectiveMeasure 'Number of Orders (Target)'
+		perspectiveMeasure 'ATV Gross Ex Vat (AoB%)'
+		perspectiveMeasure 'ATV Gross Ex Vat (Target)'
+		perspectiveMeasure 'Order Value Gross Ex Vat (AoB%)'
+		perspectiveMeasure 'Order Value Gross Ex Vat (Target)'
+
+	perspectiveTable 'Billing Agreements'
+
+		perspectiveColumn 'First Menu Week'
+		perspectiveColumn 'First Menu Month'
+		perspectiveColumn 'First Menu Year'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Discounts'
+
+		perspectiveColumn 'Discount Channel'
+		perspectiveColumn 'Discount Category'
+		perspectiveColumn 'Discount Title'
+
+	perspectiveTable 'Preference Combinations'
+
+		perspectiveColumn 'Concept Combinations'
+		perspectiveColumn 'Taste Preference Combinations'
+
+	perspectiveTable 'Preferences'
+
+		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Type Name'

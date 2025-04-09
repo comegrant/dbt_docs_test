@@ -1,0 +1,29 @@
+perspective Menu
+
+	perspectiveTable 'Menu Measures'
+
+		perspectiveMeasure 'Number of Recipes in Menu'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Dates'
+
+		perspectiveHierarchy 'Financial Date Hierarchy'
+
+	perspectiveTable 'Portions'
+
+		perspectiveColumn 'Portion Name'
+
+	perspectiveTable 'Recipes'
+
+		perspectiveColumn 'Recipe Name'
+		perspectiveColumn 'Main Recipe Name'
+		perspectiveColumn 'Recipe Id'
+		perspectiveColumn 'Cooking Time'
+		perspectiveColumn 'Recipe Main Ingredient Name (Eng)'
+
+	perspectiveTable 'Taxonomies'
+
+		perspectiveColumn 'Taxonomy (Eng)'

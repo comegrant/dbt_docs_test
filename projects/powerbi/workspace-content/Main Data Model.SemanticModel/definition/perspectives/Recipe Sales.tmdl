@@ -1,0 +1,45 @@
+perspective 'Recipe Sales'
+
+	perspectiveTable 'Order Measures'
+
+		perspectiveMeasure 'Number of Orders'
+		perspectiveMeasure 'ATV Gross Ex Vat'
+		perspectiveMeasure 'Order Value Gross Ex Vat'
+		perspectiveMeasure 'Average Number of Orders per Customer'
+		perspectiveMeasure 'Number of Ordered Dishes'
+
+	perspectiveTable 'Billing Agreements'
+
+		perspectiveColumn 'First Menu Week'
+		perspectiveColumn 'First Menu Month'
+		perspectiveColumn 'First Menu Year'
+
+	perspectiveTable 'Brands'
+
+		perspectiveColumn 'Brand Name'
+
+	perspectiveTable 'Preference Combinations'
+
+		perspectiveColumn 'Concept Combinations'
+		perspectiveColumn 'Taste Preference Combinations'
+
+	perspectiveTable 'Preferences'
+
+		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Type Name'
+
+	perspectiveTable 'Portions'
+
+		perspectiveColumn 'Portion Name'
+
+	perspectiveTable 'Recipes'
+
+		perspectiveColumn 'Recipe Name'
+		perspectiveColumn 'Main Recipe Name'
+		perspectiveColumn 'Recipe Id'
+		perspectiveColumn 'Cooking Time'
+		perspectiveColumn 'Recipe Main Ingredient Name (Eng)'
+
+	perspectiveTable 'Taxonomies'
+
+		perspectiveColumn 'Taxonomy (Eng)'
