@@ -35,6 +35,29 @@ The total number of mealbox_servings in a mealbox. I.e., ordered portions * orde
 
 {% enddocs %}
 
+{% docs column__has_normal_order_type %}
+
+True if the order type is one of the following: 
+- Recurring
+- Order After Registration
+- Orders After Cutoff
+- Daily Direct Order
+- Campaign
+
+This filter will be used in Power BI to only include the orders of interest and not gift cards for example.
+
+{% enddocs %}
+
+{% docs column__has_finished_order_status %}
+
+True if the order status is one of the following: 
+- Finished
+- Processing
+
+This filter will be used in Power BI to only include the orders of interest and not include cancelled orders for example.
+
+{% enddocs %}
+
 {% docs column__has_swap %}
 
 True if the customer has swapped in or out dishes when placing the orders. Is false if they only removed or added one dish without replacing it with another recipe, or if the customer did not make any changes to the order at all.

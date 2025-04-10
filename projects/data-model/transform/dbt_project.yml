@@ -48,6 +48,8 @@ vars:
           "'5F34860B-7E61-46A0-80F7-98DCDC53BA9E'", #Recurring
           "'C7D2684C-B715-4C6C-BF90-053757926679'"  #Order After Registration
 ]
+ daily_direct_order_type_id: 'C4C44413-78A7-4EB8-8715-2643D88849B6'
+ campaign_order_type_id: '7DB44860-1075-49A1-BF37-9B4D5B9C4BA4'
  finished_order_status_ids: [
           "'38A5CC25-A639-4433-A8E6-43FB35DABFD9'", #Processing
           "'4508130E-6BA1-4C14-94A4-A56B074BB135'"  #Finished

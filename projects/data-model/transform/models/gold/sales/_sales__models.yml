@@ -189,6 +189,14 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_adjusted_by_customer') }}"
 
+      - name: has_normal_order_type
+        data_type: boolean
+        description: "{{ doc('column__has_normal_order_type') }}"
+
+      - name: has_finished_order_status
+        data_type: boolean
+        description: "{{ doc('column__has_finished_order_status') }}"
+
       - name: recipe_comment
         data_type: string
         description: "{{ doc('column__recipe_comment') }}"

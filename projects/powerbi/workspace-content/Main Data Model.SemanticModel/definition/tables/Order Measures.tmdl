@@ -1984,6 +1984,22 @@ table 'Order Measures'
         summarizeBy: none
         sourceColumn: fk_dim_discounts
 
+	column has_finished_order_status
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: has_finished_order_status
+
+	column has_normal_order_type
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: has_normal_order_type
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =

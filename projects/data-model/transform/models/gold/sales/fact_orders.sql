@@ -719,6 +719,19 @@ order_lines as (
             then true
             else false
         end as is_adjusted_by_customer
+        , case
+            when 
+                order_type_id = '{{var ("daily_direct_order_type_id")}}'
+                or order_type_id = '{{var ("campaign_order_type_id")}}'
+                or order_type_id in ({{var ('subscription_order_type_ids') | join(', ')}})
+            then true
+            else false
+        end as has_normal_order_type
+        , case
+            when order_status_id in ({{ var('finished_order_status_ids') | join(', ') }})
+            then true
+            else false
+        end as has_finished_order_status
         , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
         , coalesce(md5(concat(subscribed_groceries_flag.order_line_type_name, subscribed_groceries_flag.order_line_details)), '0') as fk_dim_order_line_details
     from subscribed_groceries_flag
