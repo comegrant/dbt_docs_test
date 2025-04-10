@@ -30,7 +30,7 @@ dbutils.widgets.text("environment", defaultValue="")
 dbutils.widgets.text("strategies_size", defaultValue="")
 dbutils.widgets.text("batch_write_interval", defaultValue="1000")
 dbutils.widgets.text("predict_amount", defaultValue="")
-dbutils.widgets.text("write_mode", defaultValue="dl")
+dbutils.widgets.text("write_mode", defaultValue="datalake-only")
 dbutils.widgets.text("write_table", defaultValue="mloutputs.preselector_batch")
 
 environment = dbutils.widgets.get("environment")

@@ -622,7 +622,7 @@ Partition Keys: *{self.partition_keys}*
     async def insert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         features = request.all_returned_columns
         df = await job.select(features).to_lazy_polars()
-        await self.write_polars(df.select(features))
+        await self.write_polars(df)
 
     async def upsert(self, job: RetrievalJob, request: RetrievalRequest) -> None:
         from adlfs import AzureBlobFileSystem
@@ -668,7 +668,7 @@ Partition Keys: *{self.partition_keys}*
 
         assert filter_exp is not None, "Filter should never be None, but was."
         try:
-            existing_df = (await self.to_lazy_polars()).filter(filter_exp)
+            existing_df = (await self.all_data(request, limit=None).to_lazy_polars()).filter(filter_exp)
             write_df = upsert_on_column(upsert_on, df.lazy(), existing_df).collect()
         except (UnableToFindFileException, pl.ComputeError):
             write_df = df.lazy()

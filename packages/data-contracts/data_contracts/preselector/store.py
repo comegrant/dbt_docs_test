@@ -8,7 +8,6 @@ from aligned import (
     List,
     String,
     Struct,
-    Timestamp,
     feature_view,
 )
 from aligned.schemas.date_formatter import DateFormatter
@@ -33,48 +32,6 @@ from data_contracts.recipe import (
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import data_science_data_lake, databricks_catalog
 from pydantic import BaseModel
-
-preselector_ab_test_dir = data_science_data_lake.directory("preselector/ab-test")
-
-
-@feature_view(
-    name="preselector_test_choice",
-    source=preselector_ab_test_dir.delta_at("preselector_test_result_v3.delta"),
-)
-class PreselectorTestChoice:
-    agreement_id = Int32().as_entity()
-    year = Int32().as_entity()
-    week = Int32().as_entity()
-
-    preselector_version = String().is_optional().fill_na("rulebased_v1")
-
-    main_recipe_ids = List(Int32())
-    number_of_recipes_to_change = Int32().is_optional()
-
-    compared_main_recipe_ids = List(Int32())
-    compared_number_of_recipes_to_change = Int32().is_optional()
-
-    chosen_mealkit = String().accepted_values(["pre-selector", "chef-selection"])
-
-    was_lower_cooking_time = Bool()
-    was_more_variety = Bool()
-    was_more_interesting = Bool()
-    was_more_family_friendly = Bool()
-    was_better_recipes = Bool()
-    was_better_proteins = Bool()
-    was_better_sides = Bool()
-    was_better_images = Bool()
-    was_fewer_unwanted_ingredients = Bool()
-    had_recipes_last_week = Bool()
-    has_order_history = Bool().is_optional()
-
-    created_at = Timestamp()
-    updated_at = Timestamp()
-
-    total_cost_of_food = Float().is_optional()
-    concept_revenue = Float().is_optional()
-
-    description = String().is_optional()
 
 
 class PreselectorRecipeOutput(BaseModel):
@@ -152,6 +109,23 @@ class Preselector:
 
 
 @feature_view(
+    source=data_science_data_lake.directory("preselector/latest").partitioned_parquet_at(
+        "output-slim",
+        partition_keys=["company_id", "year", "week"],
+        date_formatter=DateFormatter.unix_timestamp(time_unit="us", time_zone="UTC"),
+    )
+)
+class ForecastedMealkits:
+    agreement_id = Int32().lower_bound(1).as_entity()
+    year = Int32().lower_bound(2024).upper_bound(2050).as_entity()
+    week = Int32().upper_bound(53).lower_bound(1).as_entity()
+
+    company_id = String()
+
+    variation_ids = List(String()).description("The variation ids")
+
+
+@feature_view(
     name="preselector_successful_live_output",
     source=databricks_catalog.schema("mloutputs").table("preselector_successful_realtime_output"),
 )
@@ -213,7 +187,6 @@ def preselector_contracts() -> FeatureStore:
     store = FeatureStore.experimental()
 
     views = [
-        PreselectorTestChoice,
         RecipePreferences,
         Preselector,
     ]

@@ -18,11 +18,12 @@ from azure.servicebus import (
 )
 from azure.servicebus._common.message import PrimitiveTypes
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
-from data_contracts.preselector.store import Preselector
+from data_contracts.preselector.store import ForecastedMealkits, Preselector
 from data_contracts.sql_server import SqlServerConfig
 from pydantic import BaseModel, ValidationError
 
 from preselector.data.models.customer import PreselectorSuccessfulResponse
+from preselector.store import preselector_store
 
 logger = logging.getLogger(__name__)
 
@@ -297,7 +298,7 @@ class SqlServerStream(Generic[T], ReadableStream[T]):
 class PreselectorResultWriter(WritableStream):
     company_id: str
 
-    store: ContractStore = field(default_factory=lambda: Preselector.query().store)
+    store: ContractStore = field(default_factory=preselector_store)
     sink: BatchDataSource | None = field(default=None)
     error_features: list[str] | None = field(default=None)
 
@@ -321,15 +322,17 @@ class PreselectorResultWriter(WritableStream):
             .select(expected_features)
         )
 
-        if self.sink is not None:
-            self.store = self.store.update_source_for(Preselector, self.sink)
-        else:
-            df = df.with_columns(weeks_since_selected=pl.lit(None))
-
         try:
-            # Needs to store it in a job first, to avoid casting of the map
-            job = LiteralRetrievalJob(df, [Preselector.request])
-            await self.store.upsert_into(Preselector, job)
+            if self.sink is not None:
+                self.store = self.store.update_source_for(Preselector, self.sink)
+                view = Preselector
+                # Needs to store it in a job first, to avoid casting of the map
+                job = LiteralRetrievalJob(df, [view.request])
+            else:
+                view = ForecastedMealkits
+                job = df.select(view.request.all_returned_columns)
+
+            await self.store.upsert_into(view, job)
         except ValueError as e:
             logger.error(f"Error when upserting {df.head()}")
             logger.exception(e)

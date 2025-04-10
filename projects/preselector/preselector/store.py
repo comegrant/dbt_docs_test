@@ -5,7 +5,12 @@ import polars as pl
 from aligned import ContractStore
 from data_contracts.mealkits import OneSubMealkits
 from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, PreselectorYearWeekMenu
-from data_contracts.preselector.store import FailedPreselectorOutput, RecipePreferences, SuccessfulPreselectorOutput
+from data_contracts.preselector.store import (
+    FailedPreselectorOutput,
+    ForecastedMealkits,
+    RecipePreferences,
+    SuccessfulPreselectorOutput,
+)
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from data_contracts.recipe import NormalizedRecipeFeatures
 from data_contracts.recommendations.recommendations import RecommendatedDish
@@ -24,11 +29,12 @@ def preselector_store() -> ContractStore:
 
     store = recommendation_feature_contracts()
 
-    store.add_feature_view(SuccessfulPreselectorOutput)
-    store.add_feature_view(FailedPreselectorOutput)
-    store.add_feature_view(RecipePreferences)
-    store.add_feature_view(PreselectorOutput)
-    store.add_feature_view(CostOfFoodPerMenuWeek)
+    store.add(SuccessfulPreselectorOutput)
+    store.add(FailedPreselectorOutput)
+    store.add(RecipePreferences)
+    store.add(PreselectorOutput)
+    store.add(CostOfFoodPerMenuWeek)
+    store.add(ForecastedMealkits)
     return store
 
 
@@ -99,9 +105,9 @@ async def normalize_cost(
         f"{request.portion_size} portions. Therefore, can not normalize the cof target"
     )
     assert max_cof, f"Missing max cof '{max_cof}'. Therefore, can not normalize the cof target"
-    assert min_cof != max_cof, (
-        f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
-    )
+    assert (
+        min_cof != max_cof
+    ), f"Min and Max CoF are the same. This most likely means something is wrong for {year_week}"
     cost_of_food_value = (target_cost_of_food - min_cof) / (max_cof - min_cof)
 
     logger.debug(f"Normalized value from {target_cost_of_food} to {cost_of_food_value}")
