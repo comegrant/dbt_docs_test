@@ -625,6 +625,12 @@ models:
         data_tests:
           - not_null
 
+      - name: negative_taste_preference_combo_id
+        description: "{{ doc('column__negative_taste_preference_combo_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
       - name: negative_taste_preferences
         description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
         data_type: string

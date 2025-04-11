@@ -44,10 +44,15 @@ agreements as (
 
     select
         company_id
+        , md5(concat_ws(
+            '-'
+            , company_id
+            , taste_name_combinations_including_allergens
+        ))                                            as negative_taste_preference_combo_id
         , taste_name_combinations_including_allergens as negative_taste_preferences
         , count(distinct billing_agreement_id)        as number_of_users
     from billing_agreement_preferences
-    group by 1, 2
+    group by 1, 2, 3
 )
 
 select * from agreement_preferences_aggregated

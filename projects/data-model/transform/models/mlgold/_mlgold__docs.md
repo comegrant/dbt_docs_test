@@ -203,3 +203,9 @@ Whether ot not the recipe is low sugar. A recipe is considered low sugar if the 
 Number of users who have the same negative taste preferences for a company
 
 {% enddocs %}
+
+{% docs column__negative_taste_preference_combo_id %}
+
+Unique identifier for a company and negative taste preferences combination
+
+{% enddocs %}
