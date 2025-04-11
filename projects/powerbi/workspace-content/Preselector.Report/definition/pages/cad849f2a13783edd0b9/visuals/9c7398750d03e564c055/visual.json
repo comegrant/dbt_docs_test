@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "403155170327e0b6c587",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "name": "9c7398750d03e564c055",
   "position": {
-    "x": 440,
+    "x": 432,
     "y": 0,
-    "z": 4000,
+    "z": 5000,
     "height": 64,
-    "width": 192,
-    "tabOrder": 4000
+    "width": 208,
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "slicer",
@@ -32,25 +32,9 @@
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "isDefaultSort": true
       }
     },
     "objects": {
-      "general": [
-        {
-          "properties": {
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            }
-          }
-        }
-      ],
       "data": [
         {
           "properties": {
@@ -71,30 +55,9 @@
           }
         }
       ],
-      "items": [
+      "general": [
         {
-          "properties": {
-            "outlineStyle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "header": [
-        {
-          "properties": {
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "selection": [
@@ -116,7 +79,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "e9878e73aae851e0b502",
+        "name": "47ffe74bc3db46e9cb63",
         "field": {
           "Column": {
             "Expression": {
@@ -270,6 +233,13 @@
                       {
                         "Literal": {
                           "Value": "'Shellfish'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Single'"
                         }
                       }
                     ],

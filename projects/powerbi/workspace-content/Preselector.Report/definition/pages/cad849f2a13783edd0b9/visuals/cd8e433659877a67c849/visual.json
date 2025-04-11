@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
-  "name": "23e29390ab00e8c7e608",
+  "name": "cd8e433659877a67c849",
   "position": {
     "x": 16,
-    "y": 416,
-    "z": 6000,
+    "y": 400.00000000000006,
+    "z": 3000,
     "height": 288,
     "width": 1248,
-    "tabOrder": 6000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -64,15 +64,30 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Recipes"
+                      "Entity": "Preference Combinations"
                     }
                   },
-                  "Property": "Main Recipe Name"
+                  "Property": "Concept Combinations"
                 }
               },
-              "queryRef": "Recipes.Main Recipe Name",
-              "nativeQueryRef": "Main Recipe Name",
+              "queryRef": "Preference Combinations.Concept Combinations",
+              "nativeQueryRef": "Concept Combinations",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preference Combinations"
+                    }
+                  },
+                  "Property": "Preference Combinations"
+                }
+              },
+              "queryRef": "Preference Combinations.Preference Combinations",
+              "nativeQueryRef": "Preference Combinations",
+              "active": false
             }
           ]
         },
@@ -86,11 +101,42 @@
                       "Entity": "Preselector Measures"
                     }
                   },
+                  "Property": "Number of Subscribers with Preselector Output"
+                }
+              },
+              "queryRef": "Preselector Measures.Number of Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Subscribers",
+              "displayName": "Number of Subscribers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
                   "Property": "Average Rotation Score"
                 }
               },
               "queryRef": "Preselector Measures.Average Rotation Score",
-              "nativeQueryRef": "Average Rotation Score"
+              "nativeQueryRef": "Rotation Score",
+              "displayName": "Rotation Score"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Average Main Ingredient Variation Score"
+                }
+              },
+              "queryRef": "Preselector Measures.Average Main Ingredient Variation Score",
+              "nativeQueryRef": "Variation Score",
+              "displayName": "Variation Score"
             }
           ]
         }
@@ -99,16 +145,34 @@
         "sort": [
           {
             "field": {
+              "HierarchyLevel": {
+                "Expression": {
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Calendar Hierarchy with Week"
+                  }
+                },
+                "Level": "Week"
+              }
+            },
+            "direction": "Descending"
+          },
+          {
+            "field": {
               "Measure": {
                 "Expression": {
                   "SourceRef": {
                     "Entity": "Preselector Measures"
                   }
                 },
-                "Property": "Average Rotation Score"
+                "Property": "Number of Subscribers with Preselector Output"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -121,7 +185,26 @@
         "levels": [
           {
             "queryRefs": [
-              "Recipes.Main Recipe Name"
+              "Preference Combinations.Concept Combinations"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preference Combinations"
+                    }
+                  },
+                  "Property": "Concept Combinations"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Preference Combinations.Preference Combinations"
             ],
             "isCollapsed": true,
             "isPinned": true
@@ -130,77 +213,6 @@
         "root": {}
       }
     ],
-    "objects": {
-      "columnWidth": [
-        {
-          "properties": {},
-          "selector": {
-            "metadata": "Recipes.Main Recipe Name"
-          }
-        }
-      ],
-      "values": [
-        {
-          "properties": {
-            "backColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "FillRule": {
-                      "Input": {
-                        "Measure": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "Preselector Measures"
-                            }
-                          },
-                          "Property": "Average Rotation Score"
-                        }
-                      },
-                      "FillRule": {
-                        "linearGradient2": {
-                          "min": {
-                            "color": {
-                              "Literal": {
-                                "Value": "'#FFFFFF'"
-                              }
-                            }
-                          },
-                          "max": {
-                            "color": {
-                              "Literal": {
-                                "Value": "'#889C55'"
-                              }
-                            }
-                          },
-                          "nullColoringStrategy": {
-                            "strategy": {
-                              "Literal": {
-                                "Value": "'noColor'"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 1
-                }
-              }
-            ],
-            "metadata": "Preselector Measures.Average Rotation Score"
-          }
-        }
-      ]
-    },
     "visualContainerObjects": {
       "title": [
         {
@@ -208,7 +220,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Rotation Score per Weeks a Recipe Is On Menu'"
+                  "Value": "'Variation and Rotation Score per Preference Group and Week'"
                 }
               }
             }
@@ -221,74 +233,38 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "20827bd1e27d6a18b27a",
+        "name": "f56f6a5e7d7d2ce0522c",
+        "ordinal": 2,
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Brands"
+                "Entity": "Preferences"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Preference Type Name"
           }
         },
         "type": "Categorical",
         "howCreated": "User"
       },
       {
-        "name": "64616c172e2a08570a5a",
+        "name": "57dc169597e52c7e09a6",
+        "ordinal": 4,
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Taxonomies"
+                "Entity": "Preferences"
               }
             },
-            "Property": "Taxonomy Type"
+            "Property": "Preference Name General"
           }
         },
         "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "t",
-              "Entity": "Taxonomies",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "t"
-                          }
-                        },
-                        "Property": "Taxonomy Type"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'onesub'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
         "howCreated": "User"
       }
-    ]
+    ],
+    "filterSortOrder": "Custom"
   }
 }

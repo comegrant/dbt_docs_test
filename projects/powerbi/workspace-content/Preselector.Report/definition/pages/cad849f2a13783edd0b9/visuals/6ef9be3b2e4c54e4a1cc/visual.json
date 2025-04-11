@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
-  "name": "f933f1120de03d6e86b5",
+  "name": "6ef9be3b2e4c54e4a1cc",
   "position": {
     "x": 198,
     "y": 0,
@@ -220,28 +220,76 @@
                 "Where": [
                   {
                     "Condition": {
-                      "In": {
-                        "Expressions": [
-                          {
-                            "Column": {
-                              "Expression": {
-                                "SourceRef": {
-                                  "Source": "d"
+                      "And": {
+                        "Left": {
+                          "In": {
+                            "Expressions": [
+                              {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "d"
+                                    }
+                                  },
+                                  "Property": "Year of Calendar Week"
                                 }
-                              },
-                              "Property": "Year of Calendar Week"
-                            }
+                              }
+                            ],
+                            "Values": [
+                              [
+                                {
+                                  "Literal": {
+                                    "Value": "2025L"
+                                  }
+                                }
+                              ]
+                            ]
                           }
-                        ],
-                        "Values": [
-                          [
-                            {
-                              "Literal": {
-                                "Value": "2025L"
+                        },
+                        "Right": {
+                          "Not": {
+                            "Expression": {
+                              "In": {
+                                "Expressions": [
+                                  {
+                                    "Column": {
+                                      "Expression": {
+                                        "SourceRef": {
+                                          "Source": "d"
+                                        }
+                                      },
+                                      "Property": "Year of Calendar Week"
+                                    }
+                                  },
+                                  {
+                                    "Column": {
+                                      "Expression": {
+                                        "SourceRef": {
+                                          "Source": "d"
+                                        }
+                                      },
+                                      "Property": "Calendar Week"
+                                    }
+                                  }
+                                ],
+                                "Values": [
+                                  [
+                                    {
+                                      "Literal": {
+                                        "Value": "2025L"
+                                      }
+                                    },
+                                    {
+                                      "Literal": {
+                                        "Value": "1L"
+                                      }
+                                    }
+                                  ]
+                                ]
                               }
                             }
-                          ]
-                        ]
+                          }
+                        }
                       }
                     },
                     "Annotations": {
@@ -261,6 +309,21 @@
                               },
                               "Level": "Year"
                             }
+                          },
+                          {
+                            "HierarchyLevel": {
+                              "Expression": {
+                                "Hierarchy": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "Dates"
+                                    }
+                                  },
+                                  "Hierarchy": "Calendar Hierarchy with Week"
+                                }
+                              },
+                              "Level": "Week"
+                            }
                           }
                         ],
                         "decomposedIdentities": {
@@ -271,6 +334,26 @@
                                   {
                                     "Literal": {
                                       "Value": "2025L"
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            [
+                              {
+                                "0": [
+                                  {
+                                    "Literal": {
+                                      "Value": "2025L"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "1": [
+                                  {
+                                    "Literal": {
+                                      "Value": "1L"
                                     }
                                   }
                                 ]
@@ -289,12 +372,28 @@
                                   "Property": "Year of Calendar Week"
                                 }
                               }
+                            },
+                            {
+                              "value": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "Dates"
+                                    }
+                                  },
+                                  "Property": "Calendar Week"
+                                }
+                              }
                             }
                           ]
                         },
                         "valueMap": [
                           {
                             "0": "2025"
+                          },
+                          {
+                            "0": "2025",
+                            "1": "1"
                           }
                         ]
                       }
@@ -318,19 +417,6 @@
             }
           }
         }
-      ],
-      "selection": [
-        {
-          "properties": {
-            "strictSingleSelect": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
       ]
     },
     "drillFilterOtherVisuals": true
@@ -338,7 +424,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "334c2faae329cb501363",
+        "name": "8fe935a475c0bb236601",
         "field": {
           "Measure": {
             "Expression": {

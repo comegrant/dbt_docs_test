@@ -1,12 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
-  "name": "e4b1dbf12ee092544d13",
+  "name": "1442396b886eeed70c54",
   "position": {
-    "x": 784,
+    "x": 16,
     "y": 96,
     "z": 4000,
-    "height": 280,
-    "width": 480,
+    "height": 288,
+    "width": 1248,
     "tabOrder": 4000
   },
   "visual": {
@@ -305,36 +305,6 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "e4c7f9e0c4850ad44115",
-        "ordinal": 0,
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Rotation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "abfed8e2994a2b92297e",
-        "ordinal": 1,
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
         "name": "f56f6a5e7d7d2ce0522c",
         "ordinal": 2,
         "field": {
@@ -351,26 +321,6 @@
         "howCreated": "User"
       },
       {
-        "name": "2b78c5249003ee19d042",
-        "ordinal": 3,
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Week"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
         "name": "57dc169597e52c7e09a6",
         "ordinal": 4,
         "field": {
@@ -385,26 +335,6 @@
         },
         "type": "Categorical",
         "howCreated": "User"
-      },
-      {
-        "name": "bc5c64d5cd07908e6c95",
-        "ordinal": 5,
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
       }
     ],
     "filterSortOrder": "Custom"
