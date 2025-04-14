@@ -1,0 +1,33 @@
+---
+name: Reci-Pick PR Pipeline
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test_in_docker.yml'
+      - '.github/workflows/reci_pick_pr.yml'
+      - 'projects/reci-pick/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-reci-pick-databricks-image:
+    uses:
+      ./.github/workflows/cd_docker_image_template.yml
+    with:
+      runs-on: data-runner-4-cores
+      working-directory: projects/reci-pick
+      image-name: reci-pick-databricks
+      dockerfile: docker/Dockerfile.databricks
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      tag: dev-latest
+    secrets: inherit
+
+  deploy-to-dev:
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/reci-pick
+      target-env: Development
+
+        # Setting the docker image which is needed for python projects
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/reci-pick-databricks:dev-latest"'
+    secrets: inherit

@@ -17,7 +17,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 
 [tool.pyright]
-exclude = ["**/jobs/**"]
+exclude = ["**/jobs/**", "projects/reci-pick"]
 
 [tool.ruff]
 lint.select = [

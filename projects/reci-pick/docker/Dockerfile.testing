@@ -1,0 +1,3 @@
+FROM reci-pick-base:latest
+
+RUN poetry install

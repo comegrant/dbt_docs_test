@@ -1,0 +1,39 @@
+name: Deploy reci-pick
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/reci_pick_deploy.yml'
+      - 'projects/reci-pick/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-reci-pick-databricks-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/reci-pick
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: reci-pick-databricks
+      dockerfile: docker/Dockerfile.databricks
+      push-latest: true
+    secrets: inherit
+
+  deploy-ml-example-project:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-reci-pick-databricks-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/reci-pick
+      target-env: ${{matrix.target}}
+      should-change-target: true
+
+      # Setting the docker image which is needed for python projects
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/ml-example-project-databricks:${{ github.sha }}"
+        --var="mode=production"'
+    secrets: inherit

@@ -37,12 +37,17 @@ on:
         required: true
         type: string
 
+      runs-on:
+        required: false
+        default: ubuntu-22.04
+        type: string
+
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
   build-docker-image:
     name: 'Build and Push Docker image'
-    runs-on: ubuntu-22.04
+    runs-on: ${{ inputs.runs-on }}
 
     steps:
     - name: Checkout

@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "reci-pick"
+version = "0.1.0"
+description = "An embedding-based recommender systems for dishes"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "reci_pick"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic-settings = "^2.1.0"
+databricks-connect = "15.4.4"
+keras = "^3.8.0"
+tensorflow = "^2.18.0"
+constants = {path = "../../packages/constants", develop = true}
+sentence-transformers = "^3.4.1"
+tf-keras = "^2.18.0"
+streamlit = "^1.43.2"
+databricks-env = {path = "../../packages/databricks-env", develop = true}
+mlflow = {version = "^2.21.0", extras = ["databricks"]}
+ruff = "^0.11.2"
+time-machine = {path = "../../packages/time-machine", develop = true}
+databricks-connector = {path = "../../packages/catalog-connector", develop = true}
+
+[tool.poetry.group.cli.dependencies]
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+pyright = "^1.1.398"
+ipykernel = "^6.28.0"
+ipywidgets = "^8.1.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

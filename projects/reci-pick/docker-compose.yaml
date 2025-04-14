@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  base:
+    image: reci-pick-base
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/reci-pick/docker/Dockerfile
+    command: ["echo", "'Hello from reci-pick'"]
+    volumes:
+      - ./:/opt/projects/reci-pick
+      - ./../../packages:/opt/packages
+
+  test:
+    image: reci-pick-test
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/reci-pick/docker/Dockerfile.testing
+    command: ["python", "-m", "pytest", "-rav", "tests"]
+    volumes:
+      - ./:/opt/projects/reci-pick
+      - ./../../packages:/opt/packages
+    depends_on:
+      - base
+    profiles: ["test"]
+
+  databricks:
+    image: reci-pick-databricks
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/reci-pick/docker/Dockerfile.databricks
+    command: ["echo", "'Hello from reci-pick'"]
+    volumes:
+      - ./:/opt/projects/reci-pick
+      - ./../../packages:/opt/packages

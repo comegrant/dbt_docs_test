@@ -1,0 +1,40 @@
+FROM databricksruntime/python:15.4-LTS
+
+SHELL ["/bin/bash", "-c"]
+
+# Defaulting to utf-8 to fixe a few charset bugs
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+# set the home directory
+ENV APP_HOME /opt
+ENV SERVICE_HOME $APP_HOME/projects/reci-pick
+
+RUN /databricks/python3/bin/pip install poetry
+
+# copy source code
+WORKDIR $APP_HOME
+COPY packages packages
+
+WORKDIR $SERVICE_HOME
+COPY projects/reci-pick/pyproject.toml .
+COPY projects/reci-pick/poetry.lock .
+
+# create a dummy package to satisfy Poetry
+RUN mkdir -p reci_pick && touch reci_pick/__init__.py
+
+RUN source /databricks/python3/bin/activate \
+	&& echo "$(which poetry)" \
+	&& poetry config virtualenvs.create false \
+	&& poetry install --without=dev \
+    && rm -rf ~/.cache
+
+
+ENV PYTHONPATH /databricks/python3/bin
+ENV PATH /databricks/python3/bin:$PATH
+
+# copy source code
+COPY projects/reci-pick .
+
+WORKDIR $SERVICE_HOME
+CMD python reci_pick/main.py
