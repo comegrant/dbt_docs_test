@@ -35,9 +35,9 @@ def modify_scores_for_recommendations(
         df_recipes=df_recipes[
             ["main_recipe_id", "recipe_main_ingredient_name_english", "allergen_id_list"]
         ].drop_duplicates(subset="main_recipe_id"),
+        score_col="score_modified",
     )
-
-    logging.info("Modifying scores to penalize high occurance menu items...")
+    logging.info("Modifying scores to penalize high occurrence menu items...")
     df_score_modified = penalize_high_menu_occurance(
         df_menu_recipes=df_menu_recipes.copy(),
         df_menu_to_predict=df_menus_to_predict,

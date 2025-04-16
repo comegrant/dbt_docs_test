@@ -98,7 +98,12 @@ def modify_score_based_on_purchase_history(
 
 
 def check_for_preference_violation(
-    score_df: pd.DataFrame, df_taste_preference: pd.DataFrame, df_recipes: pd.DataFrame
+    score_df: pd.DataFrame,
+    df_taste_preference: pd.DataFrame,
+    df_recipes: pd.DataFrame,
+    score_col: str = "score_modified",
+    allergen_penalization_factor: float = 0.0,
+    preference_penalization_factor: float = 0.1,
 ) -> pd.DataFrame:
     # Check for allergens
     df_recipes["allergen_name_list"] = df_recipes.apply(
@@ -125,7 +130,10 @@ def check_for_preference_violation(
     score_df["is_main_ingredient_violation"] = score_df["recipe_main_ingredient_name_english"].isin(
         score_df["taste_preference_combinations"]
     )
-
+    score_df.loc[score_df["is_violate_allergens"], score_col] = allergen_penalization_factor
+    score_df.loc[score_df["is_main_ingredient_violation"], score_col] = (
+        preference_penalization_factor * score_df[score_df["is_main_ingredient_violation"]][score_col]
+    )
     return score_df
 
 
