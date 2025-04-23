@@ -1,337 +1,381 @@
+/// Calculation Group: 'Grand Total Calculations'
+///
+/// Purpose:
+/// Provides a dynamic framework for comparing selected vs. total values across multiple dimensions.
+/// Useful for calculating both absolute totals and relative shares of any measure for categories such as
+/// Recipes, Products, Preferences, etc.
+///
+/// Usage:
+/// Add the column 'Grand Total Calculations'[Grand Total Calculations] to visuals or slicers to apply
+/// different total/share calculations to any base measure.
+///
+/// Dimensions supported:
+/// - Recipes
+/// - Taxonomies
+/// - Billing Agreements
+/// - Preferences
+/// - Preference Combinations
+/// - Periods Since First Menu Week
+/// - Products
+/// - Subscribed Products
+/// - Order Line Details
+///
+/// Available Calculation Items (each applied per dimension):
+///
+/// - Selected: Returns the selected measure as-is without any filter changes.
+///
+/// - All [Dimension]: Calculates the selected measure across all values in the specified dimension
+///   by removing filters on the dimension table.
+///
+/// - Other [Dimension]: Calculates the measure for all values *except* the selected ones in the
+///   dimension, by subtracting the selected measure from the full total.
+///
+/// - % Selected [Dimension]: Calculates the percentage that the selected items contribute to the
+///   total across the full dimension.
+///
+/// - % Other [Dimension]: Calculates the percentage of the total that is contributed by all other
+///   (non-selected) items in the dimension.
 table 'Grand Total Calculations'
-	isHidden
-	calculationGroup
-		precedence: 2
+    calculationGroup
+        precedence: 2
 
-		calculationItem Current = SELECTEDMEASURE()
+        calculationItem Selected =
+            	SELECTEDMEASURE()
 
-		calculationItem 'GT Recipes'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Recipes)
-				)
+        calculationItem 'All Recipes' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Recipes)
+            	)
 
-		calculationItem 'GT Recipes Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Recipes)
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Recipes' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Recipes)
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Recipes'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Recipes"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Recipes' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Recipes"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Recipes Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Recipes"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Recipes' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Recipes"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Recipes"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Taxonomies'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Taxonomies)
-				)
+        calculationItem 'All Taxonomies' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Taxonomies')
+            	)
 
-		calculationItem 'GT Taxonomies Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Taxonomies)
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Taxonomies' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Taxonomies')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Taxonomies'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Taxonomies"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Taxonomies' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Taxonomies"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Taxonomies Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Taxonomies"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Taxonomies' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Taxonomies"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Taxonomies"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Billing Agreements'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Billing Agreements')
-				)
+        calculationItem 'All Billing Agreements' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Billing Agreements')
+            	)
 
-		calculationItem 'GT Billing Agreements Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Billing Agreements')
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Billing Agreements' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Billing Agreements')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Billing Agreements'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Billing Agreements"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Billing Agreements' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Billing Agreements"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Billing Agreements Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Billing Agreements"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Billing Agreements' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Billing Agreements"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Billing Agreements"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Preferences'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Preferences)
-				)
+        calculationItem 'All Preferences' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Preferences)
+            	)
 
-		calculationItem 'GT Preferences Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Preferences)
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Preferences' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Preferences)
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Preferences'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Preferences"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Preferences' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Preferences"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Preferences Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Preferences"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Preferences' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Preferences"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Preferences"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Preference Combinations'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Preference Combinations')
-				)
+        calculationItem 'All Preference Combinations' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Preference Combinations')
+            	)
 
-		calculationItem 'GT Preference Combinations Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Preference Combinations')
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Preference Combinations' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Preference Combinations')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Preference Combinations'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Preference Combinations"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Preference Combinations' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Preference Combinations"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Preference Combinations Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Preference Combinations"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Preference Combinations' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Preference Combinations"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Preference Combinations"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Periods Since First Menu Week'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Periods Since First Menu Week')
-				)
+        calculationItem 'All Periods Since First Menu Week' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Periods Since First Menu Week')
+            	)
 
-		calculationItem 'GT Periods Since First Menu Week Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Periods Since First Menu Week')
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Periods Since First Menu Week' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Periods Since First Menu Week')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Periods Since First Menu Week'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Periods Since First Menu Week"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Periods Since First Menu Week' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Periods Since First Menu Week"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Periods Since First Menu Week Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Periods Since First Menu Week"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Periods Since First Menu Week' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Periods Since First Menu Week"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Periods Since First Menu Week"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Products'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Products)
-				)
+        calculationItem 'All Products' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Products)
+            	)
 
-		calculationItem 'GT Products Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS(Products)
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Products' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS(Products)
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Products'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Products"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Products' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Products"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Products Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Products"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Products' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Products"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Products"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Subscribed Products'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Subscribed Products')
-				)
+        calculationItem 'All Subscribed Products' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Subscribed Products')
+            	)
 
-		calculationItem 'GT Subscribed Products Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Subscribed Products')
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Subscribed Products' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Subscribed Products')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Subscribed Products'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Subscribed Products"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Subscribed Products' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Subscribed Products"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Subscribed Products Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Subscribed Products"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Subscribed Products' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Subscribed Products"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Subscribed Products"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem 'GT Order Line Details'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Order Line Details')
-				)
+        calculationItem 'All Order Line Details' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Order Line Details')
+            	)
 
-		calculationItem 'GT Order Line Details Others'  =
-				CALCULATE(
-					SELECTEDMEASURE(),
-					REMOVEFILTERS('Order Line Details')
-				)
-				- SELECTEDMEASURE()
+        calculationItem 'Other Order Line Details' =
+            	CALCULATE(
+            	    SELECTEDMEASURE(),
+            	    REMOVEFILTERS('Order Line Details')
+            	) -
+            	SELECTEDMEASURE()
 
-		calculationItem '%GT Order Line Details'  =
-				DIVIDE(
-					SELECTEDMEASURE(),
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "GT Order Line Details"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Selected Order Line Details' =
+            	DIVIDE(
+            	    SELECTEDMEASURE(),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Order Line Details"
+            	    )
+            	)
+            formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-		calculationItem '%GT Order Line Details Others' =
-				IF(
-					ISBLANK(SELECTEDMEASURE()),
-					BLANK(),
-					1 -
-					CALCULATE(
-						SELECTEDMEASURE(),
-						'Grand Total Calculations'[Grand Total Calculations] = "%GT Order Line Details"
-					)
-				)
-			formatStringDefinition = "0.00%;-0.00%;0.00%"
+        calculationItem '% Other Order Line Details' =
+            	DIVIDE(
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Order Line Details"
+            	    ),
+            	    CALCULATE(
+            	        SELECTEDMEASURE(),
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Order Line Details"
+            	    )
+            	)
+        	formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-	column 'Grand Total Calculations'
-		dataType: string
-		summarizeBy: none
-		sourceColumn: Name
-		sortByColumn: Ordinal
+    column 'Grand Total Calculations'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: Name
+        sortByColumn: Ordinal
+        annotation SummarizationSetBy = Automatic
 
-		annotation SummarizationSetBy = Automatic
-
-	column Ordinal
-		dataType: int64
-		formatString: 0
-		summarizeBy: sum
-		sourceColumn: Ordinal
-
-		annotation SummarizationSetBy = Automatic
+    column Ordinal
+        dataType: int64
+        formatString: 0
+        summarizeBy: sum
+        sourceColumn: Ordinal
+        annotation SummarizationSetBy = Automatic
