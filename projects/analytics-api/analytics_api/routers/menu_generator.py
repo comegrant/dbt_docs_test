@@ -159,8 +159,8 @@ class MenuPlannerOptimizationOutputModel(ApiModel):
 
     week: int
     year: int
-    STATUS: int
-    STATUS_MSG: str
+    STATUS: int = Field(alias="status")
+    STATUS_MSG: str = Field(alias="statusMsg")
     companies: Optional[list[CompanyModel]] = None
 
 
@@ -177,7 +177,7 @@ async def menu_generator(request: MenuPlannerOptimizationInputModel) -> JSONResp
         response = MenuPlannerOptimizationOutputModel(**response)
 
         logger.info("Returning menu response")
-        return JSONResponse(content=response.model_dump(), status_code=200)
+        return JSONResponse(content=response.model_dump(by_alias=True), status_code=200)
     except Exception as e:
         logger.error("Menu generation failed", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e)) from e
