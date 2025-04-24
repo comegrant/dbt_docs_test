@@ -1,27 +1,26 @@
-name: recipe-tagging PR
+name: Recipe Tagging PR
 on:
   pull_request:
     paths:
-      - '.github/workflows/recipe-tagging_pr.yaml'
+      - '.github/workflows/template_test_in_docker.yml'
+      - '.github/workflows/recipe_tagging_pr.yaml'
       - 'projects/recipe-tagging/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
   test-recipe-tagging:
-    uses:
-      ./.github/workflows/template_test_python.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
-      python-version: "3.10.13"
+      python-version: "3.11.9"
       working-directory: projects/recipe-tagging
     secrets: inherit
 
   build-recipe-tagging-databricks-image:
-    needs: test-recipe-tagging
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/recipe-tagging
       registry: ${{ vars.CONTAINER_REGISTRY }}
-      image-name: recipe-tagging
+      image-name: recipe-tagging-databricks
       dockerfile: docker/Dockerfile.databricks
       tag: dev-latest
     secrets: inherit
@@ -31,6 +30,6 @@ jobs:
     with:
       working-directory: projects/recipe-tagging
       target-env: Development
-      docker-image-name: recipe-tagging
+      docker-image-name: recipe-tagging-databricks
       docker-image-tag: dev-latest
     secrets: inherit

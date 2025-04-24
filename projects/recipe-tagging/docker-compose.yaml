@@ -27,3 +27,21 @@ services:
     depends_on:
       - base
     profiles: ["test"]
+  
+  app:
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/recipe-tagging/docker/Dockerfile
+    volumes:
+      - ./:/opt/projects/recipe-tagging/
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run streamlit_app/First_Page.py --server.fileWatcherType poll"
+
+    depends_on:
+      - base
+    ports:
+      - 8500:8501
+    env_file:
+      - ../../.env
+      - .env

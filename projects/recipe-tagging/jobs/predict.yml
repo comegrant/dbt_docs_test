@@ -1,7 +1,7 @@
 resources:
   jobs:
-    recipe-tagging-run:
-      name: recipe-tagging-run-${bundle.target}
+    recipe-tagging-predict:
+      name: recipe-tagging-predict-${bundle.target}
 
       permissions:
         - group_name: data-scientists
@@ -21,41 +21,50 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "{{ secrets/auth_common/docker-registry-username }}"
-                password: "{{ secrets/auth_common/docker-registry-password }}"
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
         quartz_cron_expression: '0 0 2 ? * MON'
         timezone_id: UTC
 
+      email_notifications:
+        on_failure:
+          - agathe.raaum@cheffelo.com
+        on_success:
+          - agathe.raaum@cheffelo.com
+
       tasks:
-        - task_key: run
+        - task_key: predict
           job_cluster_key: recipe-tagging
           notebook_task:
-            notebook_path: run.py
+            notebook_path: ./predict.py
             base_parameters:
-              environment: "${var.environment}"
-
-        - task_key: run-fail
+              env: "${var.environment}"
+        
+        - task_key: predict-success
           depends_on:
-          - task_key: run
+            - task_key: predict
+          run_if: ALL_SUCCESS
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              header_message: ""
+              body_message: ✅ Recipe Tagging job successful!
+              is_error: false
+
+        - task_key: predict-fail
+          depends_on:
+            - task_key: predict
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              header_message: ❌ recipe-tagging job failed
+              header_message: ❌ Recipe Tagging job failed!
               body_message: Check Databricks for more details
               is_error: true
               relevant_people: Agathe Raaum
 
-        - task_key: run-success
-          depends_on:
-          - task_key: run
-          run_if: NONE_FAILED
-          run_job_task:
-            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
-            job_parameters:
-              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              body_message: ✅ recipe-tagging job succeeded
-              is_error: false
+        
