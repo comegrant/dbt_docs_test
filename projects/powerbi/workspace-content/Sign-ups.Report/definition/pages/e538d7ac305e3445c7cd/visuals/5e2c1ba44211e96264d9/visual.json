@@ -25,14 +25,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "queryRef": "Dates.Calendar Hierarchy with Month.Year",
+              "nativeQueryRef": "Calendar Hierarchy with Month Year",
               "active": true
             },
             {
@@ -45,14 +45,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Month"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Month",
-              "nativeQueryRef": "Financial Date Hierarchy Month",
+              "queryRef": "Dates.Calendar Hierarchy with Month.Month",
+              "nativeQueryRef": "Calendar Hierarchy with Month Month",
               "active": false
             },
             {
@@ -65,14 +65,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
-                  "Level": "Week"
+                  "Level": "Date"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Week",
-              "nativeQueryRef": "Financial Date Hierarchy Week",
+              "queryRef": "Dates.Calendar Hierarchy with Month.Date",
+              "nativeQueryRef": "Calendar Hierarchy with Month Date",
               "active": false
             }
           ]
@@ -200,7 +200,7 @@
                                   "Source": "d"
                                 }
                               },
-                              "Property": "Financial Year"
+                              "Property": "Calendar Year"
                             }
                           }
                         ],
@@ -227,7 +227,7 @@
                                       "Entity": "Dates"
                                     }
                                   },
-                                  "Hierarchy": "Financial Date Hierarchy"
+                                  "Hierarchy": "Calendar Hierarchy with Month"
                                 }
                               },
                               "Level": "Year"
@@ -257,7 +257,7 @@
                                       "Entity": "Dates"
                                     }
                                   },
-                                  "Property": "Financial Year"
+                                  "Property": "Calendar Year"
                                 }
                               }
                             }

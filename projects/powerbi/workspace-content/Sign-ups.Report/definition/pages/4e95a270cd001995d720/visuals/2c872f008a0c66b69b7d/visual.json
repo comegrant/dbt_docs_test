@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "2c872f008a0c66b69b7d",
   "position": {
-    "x": 16.623376623376622,
-    "y": 236.05194805194805,
+    "x": 16.25,
+    "y": 236.25,
     "z": 6000,
-    "height": 464.34632034632034,
-    "width": 611.74025974025972,
-    "tabOrder": 6000
+    "height": 463.75,
+    "width": 612.5,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "lineChart",
@@ -25,16 +25,47 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Date"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Date",
-              "nativeQueryRef": "Financial Date Hierarchy Date",
-              "active": true,
-              "format": "dd/MM/yyyy"
+              "queryRef": "Dates.Calendar Hierarchy with Month.Date",
+              "nativeQueryRef": "Calendar Hierarchy with Month Date",
+              "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Measures"
+                    }
+                  },
+                  "Property": "Number of Sign-ups"
+                }
+              },
+              "queryRef": "Customer Measures.Number of Sign-ups",
+              "nativeQueryRef": "Number of Sign-ups"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Measures"
+                    }
+                  },
+                  "Property": "Number of Sign-ups (PY)"
+                }
+              },
+              "queryRef": "Customer Measures.Number of Sign-ups (PY)",
+              "nativeQueryRef": "Number of Sign-ups (PY)"
             }
           ]
         },
@@ -89,7 +120,7 @@
                         "Entity": "Dates"
                       }
                     },
-                    "Hierarchy": "Financial Date Hierarchy"
+                    "Hierarchy": "Calendar Hierarchy with Month"
                   }
                 },
                 "Level": "Date"
@@ -151,7 +182,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Number of Sign-ups Current Year And Previous Year'"
+                  "Value": "'Running Number of Sign-ups Current Year And Previous Year'"
                 }
               }
             }
@@ -192,8 +223,7 @@
             "Property": "Number of Sign-ups"
           }
         },
-        "type": "Advanced",
-        "howCreated": "User"
+        "type": "Advanced"
       },
       {
         "name": "8677a5bb2ab565050880",
@@ -208,8 +238,7 @@
             "Property": "Number of Sign-ups (PY)"
           }
         },
-        "type": "Advanced",
-        "howCreated": "User"
+        "type": "Advanced"
       },
       {
         "name": "a0fed729c8c6205193e9",
@@ -277,7 +306,8 @@
             "Level": "Date"
           }
         },
-        "type": "Categorical"
+        "type": "Categorical",
+        "howCreated": "User"
       }
     ],
     "filterSortOrder": "Custom"

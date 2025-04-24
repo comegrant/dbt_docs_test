@@ -7,7 +7,7 @@
     "z": 7000,
     "height": 464.34632034632034,
     "width": 611.74025974025972,
-    "tabOrder": 7000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "columnChart",
@@ -25,14 +25,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Year"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Year",
-              "nativeQueryRef": "Financial Date Hierarchy Year",
+              "queryRef": "Dates.Calendar Hierarchy with Month.Year",
+              "nativeQueryRef": "Calendar Hierarchy with Month Year",
               "active": true
             },
             {
@@ -45,14 +45,14 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Month"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Month",
-              "nativeQueryRef": "Financial Date Hierarchy Month",
+              "queryRef": "Dates.Calendar Hierarchy with Month.Month",
+              "nativeQueryRef": "Calendar Hierarchy with Month Month",
               "active": true
             },
             {
@@ -65,36 +65,15 @@
                           "Entity": "Dates"
                         }
                       },
-                      "Hierarchy": "Financial Date Hierarchy"
-                    }
-                  },
-                  "Level": "Week"
-                }
-              },
-              "queryRef": "Dates.Financial Date Hierarchy.Week",
-              "nativeQueryRef": "Financial Date Hierarchy Week",
-              "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
+                      "Hierarchy": "Calendar Hierarchy with Month"
                     }
                   },
                   "Level": "Date"
                 }
               },
-              "queryRef": "Dates.Financial Date Hierarchy.Date",
-              "nativeQueryRef": "Financial Date Hierarchy Date",
-              "active": false,
-              "format": "dd/MM/yyyy"
+              "queryRef": "Dates.Calendar Hierarchy with Month.Date",
+              "nativeQueryRef": "Calendar Hierarchy with Month Date",
+              "active": false
             }
           ]
         },
