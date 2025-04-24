@@ -209,3 +209,27 @@ Number of users who have the same negative taste preferences for a company
 Unique identifier for a company and negative taste preferences combination
 
 {% enddocs %}
+
+{% docs column__taxonomy_id_list %}
+
+Aggregated list of taxonomy ids for a recipe id.
+
+{% enddocs %}
+
+{% docs column__cumulated_times_on_menu %}
+
+Cumulated times a recipe id has been on the menu based the main recipe id
+
+{% enddocs %}
+
+{% docs column__cumulated_number_of_ratings %}
+
+Cumulated number of rating a recipe id has received based on the main recipe id
+
+{% enddocs %}
+
+{% docs column__cumulated_average_rating %}
+
+Cumulated average rating of a recipe id based on the main recipe id
+
+{% enddocs %}

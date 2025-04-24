@@ -1,4 +1,4 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
@@ -638,3 +638,67 @@ models:
       - name: number_of_users
         description: "{{ doc('column__menu_feedback_model__column__number_of_users') }}"
         data_type: int
+
+  - name: ml_preselector_features
+    description: "Table containing recipe features for the preselector"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+
+      - name: recipe_main_ingredient_id
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"
+        data_type: int
+
+      - name: cooking_time_from
+        description: "{{ doc('column__cooking_time_from') }}"
+        data_type: int
+
+      - name: cooking_time_to
+        description: "{{ doc('column__cooking_time_to') }}"
+        data_type: int
+
+      - name: taxonomy_id_list
+        description: "{{ doc('column__taxonomy_id_list') }}"
+        data_type: array
+
+      - name: cumulated_times_on_menu
+        description: "{{ doc('column__cumulated_times_on_menu') }}"
+        data_type: int
+
+      - name: cumulated_number_of_ratings
+        description: "{{ doc('column__cumulated_number_of_ratings') }}"
+        data_type: int
+
+      - name: cumulated_average_rating
+        description: "{{ doc('column__cumulated_average_rating') }}"
+        data_type: float
