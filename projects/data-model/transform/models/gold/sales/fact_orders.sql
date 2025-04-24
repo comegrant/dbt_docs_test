@@ -62,7 +62,7 @@ order_lines as (
 , billing_agreement_preferences as (
 
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
-  
+
 )
 
 , order_discounts as (
@@ -88,7 +88,7 @@ order_lines as (
         order_lines.*
         , deviations_order_mapping.is_onesub_migration
         , case when (
-                deviations_order_mapping.is_onesub_migration = 0 
+                deviations_order_mapping.is_onesub_migration = 0
                 or deviations_order_mapping.billing_agreement_order_id is null
             )
             and order_lines.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
@@ -146,7 +146,7 @@ order_lines as (
         , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
         , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
         , companies.pk_dim_companies as fk_dim_companies
-        , cast(date_format(order_lines.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , cast(date_format(menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(order_lines.order_status_id) as fk_dim_order_statuses
         , md5(order_lines.order_type_id) as fk_dim_order_types
         , coalesce(products.pk_dim_products, 0) as fk_dim_products
@@ -306,6 +306,7 @@ order_lines as (
         order_line_dimensions_joined.menu_year
         , order_line_dimensions_joined.menu_week
         , order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.menu_week_financial_date
         , order_line_dimensions_joined.source_created_at
         , order_line_dimensions_joined.billing_agreement_order_id
         , order_line_dimensions_joined.ops_order_id
@@ -445,6 +446,7 @@ order_lines as (
         order_line_dimensions_joined.menu_year
         , order_line_dimensions_joined.menu_week
         , order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.menu_week_financial_date
         , order_line_dimensions_joined.source_created_at
         , order_line_dimensions_joined.billing_agreement_order_id
         , order_line_dimensions_joined.ops_order_id
@@ -540,6 +542,7 @@ order_lines as (
         order_line_dimensions_joined.menu_year
         , order_line_dimensions_joined.menu_week
         , order_line_dimensions_joined.menu_week_monday_date
+        , order_line_dimensions_joined.menu_week_financial_date
         , order_line_dimensions_joined.source_created_at
         , order_line_dimensions_joined.billing_agreement_order_id
         , order_line_dimensions_joined.ops_order_id
@@ -680,8 +683,8 @@ order_lines as (
 )
 
 , subscribed_groceries_flag as (
-    
-    select 
+
+    select
         add_recipe_feedback.*
         -- TODO: When refactoring, should be 1 or 0 if grocery and null if not grocery
         , coalesce(subscribed_product_variations.billing_agreement_order_id is not null) as is_subscribed_grocery
@@ -720,7 +723,7 @@ order_lines as (
             else false
         end as is_adjusted_by_customer
         , case
-            when 
+            when
                 order_type_id = '{{var ("daily_direct_order_type_id")}}'
                 or order_type_id = '{{var ("campaign_order_type_id")}}'
                 or order_type_id in ({{var ('subscription_order_type_ids') | join(', ')}})

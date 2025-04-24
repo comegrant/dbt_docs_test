@@ -6,6 +6,13 @@ The first date of the menu week (starts on a Monday).
 
 {% enddocs %}
 
+{% docs column__menu_week_financial_date %}
+
+The financial date of the menu week. This is usually the Monday of the week, but with some exceptions: 
+- In week 40 2024, the financial date is 2024-10-01, this is so that the week will belong to october and the quarter 3
+
+{% enddocs %}
+
 {% docs column__menu_year %}
 
 The year of the menu

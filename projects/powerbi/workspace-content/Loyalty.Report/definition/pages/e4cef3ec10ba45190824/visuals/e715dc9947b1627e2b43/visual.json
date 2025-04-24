@@ -23,11 +23,11 @@
                       "Entity": "Dates"
                     }
                   },
-                  "Property": "Monday Date Previous Week"
+                  "Property": "Relative Date Filter (Inc. week after cutoff)"
                 }
               },
-              "queryRef": "Dates.Monday Date Previous Week",
-              "nativeQueryRef": "Monday Date Previous Week",
+              "queryRef": "Dates.Relative Date Filter (Inc. week after cutoff)",
+              "nativeQueryRef": "Relative Date Filter (Inc. week after cutoff)",
               "active": true
             }
           ]
@@ -43,7 +43,7 @@
                     "Entity": "Dates"
                   }
                 },
-                "Property": "Monday Date Previous Week"
+                "Property": "Relative Date Filter (Inc. week after cutoff)"
               }
             },
             "direction": "Ascending"
@@ -172,7 +172,7 @@
                                 "Source": "d"
                               }
                             },
-                            "Property": "Monday Date Previous Week"
+                            "Property": "Relative Date Filter (Inc. week after cutoff)"
                           }
                         },
                         "LowerBound": {

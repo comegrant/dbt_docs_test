@@ -210,9 +210,8 @@ table Dates
 
 	/// The date of the Monday in the previous week.
 	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
-	column 'Monday Date Previous Week'
+	column 'Relative Date Filter (Inc. week after cutoff)'
 		dataType: dateTime
-		isHidden
 		formatString: General Date
 		lineageTag: 8204083b-0edb-48bb-ac95-6d4749e4c9c7
 		summarizeBy: none
@@ -313,37 +312,80 @@ table Dates
 		summarizeBy: none
 		sourceColumn: weeks_offset_from_current_monday
 
-	/// In Cheffelo we have defined a financial hiearchy that should be the default for most reports.
-	/// 
+	/// This hierarchy can be used for filtering on dates.
+	/// When looking at daily data, like signup data (unlike weekly order data),
+	/// one should remove the weeks as they don't add up with the months.
+	///
 	/// Year:
-	/// The year corresponding to the Monday of the same week.
-	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial year for January 1st, 2025, is 2024, as it follows the year of the corresponding Monday.
-	/// 
+	/// The calendar year.
+	/// When looking at weekly data, it is the year corresponding to the Monday of the same week.
+	/// Example: ISO-Week 1 in 2025, which is financial week 53 in 2024, has the Monday on December 30th 2024.
+	/// Therefore, the year for this week will be 2024.
+	///
 	/// Quarter:
-	/// The financial quarter, which is the quarter corresponding to the Monday of the same week.
-	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial quarter for January 1st, 2025, is 4, as it follows the quarter of the corresponding Monday.
-	/// 
+	/// The calendar quarter.
+	/// When looking at weekly data, it is the quarter corresponding to the Monday of the same week.
+	/// With one exception: week 40 2024 will show on Q3, which corresponds to the Tuesday of the week.
+	///
 	/// Month:
-	/// The full name of the month corresponding to the Monday of the same week.
-	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month name for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
-	/// 
+	/// The full name of the calendar month.
+	/// When looking at weekly data, it is the month corresponding to the Monday of the same week.
+	/// With one exception: for week 40 2024, the month is October, which corresponds to the Tuesday of the week.
+	///
 	/// Week:
 	/// The financial week number of the date. This is adjusted to align with the Monday of the corresponding week. A financial week 53 is introduced when necessary to replace ISO week 1 of the following year.
 	/// Example: Monday, December 30th, 2024, falls in ISO week 1 of 2025. Since this Monday is in 2024, we create financial week 53, and all days in ISO week 1 are assigned to it. This makes week 2 the first financial week of 2025.
-	/// 
+	///
+	/// Date:
+	/// Date of year on Date format.
+	hierarchy 'Date Hierarchy'
+		level Year
+			column: 'Calendar Year'
+
+		level Quarter
+			column: 'Calendar Quarter'
+
+		level Month
+			column: 'Calendar Month Name'
+
+		level Week
+			column: 'Financial Week'
+
+		level Date
+			column: Date
+
+	/// In Cheffelo we have defined a financial hierarchy that should be the default for most reports.
+	///
+	/// Year:
+	/// The year corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial year for January 1st, 2025, is 2024, as it follows the year of the corresponding Monday.
+	///
+	/// Quarter:
+	/// The financial quarter, which is the quarter corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial quarter for January 1st, 2025, is 4, as it follows the quarter of the corresponding Monday.
+	///
+	/// Month:
+	/// The full name of the month corresponding to the Monday of the same week.
+	/// Example: January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month name for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
+	///
+	/// Week:
+	/// The financial week number of the date. This is adjusted to align with the Monday of the corresponding week. A financial week 53 is introduced when necessary to replace ISO week 1 of the following year.
+	/// Example: Monday, December 30th, 2024, falls in ISO week 1 of 2025. Since this Monday is in 2024, we create financial week 53, and all days in ISO week 1 are assigned to it. This makes week 2 the first financial week of 2025.
+	///
 	/// Weekday:
 	/// Name of the weekday.
-	/// 
+	///
 	/// Monday Date:
 	/// The date of the Monday in the same week.
-	/// 
-	/// Monday Date Previous Week:
+	///
+	/// Relative Date Filter (Inc. week after cutoff):
 	/// The date of the Monday in the previous week.
 	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
-	/// 
+	///
 	/// Date:
 	/// Date of year on Date format.
 	hierarchy 'Financial Date Hierarchy'
+		isHidden
 		lineageTag: f5ba685b-9618-4140-b999-254eb5c7cf75
 
 		level Year
@@ -370,9 +412,9 @@ table Dates
 			lineageTag: 8ccbee8e-49c2-4d59-bc32-6cfe09df325b
 			column: 'Monday Date'
 
-		level 'Monday Date Previous Week'
+		level 'Relative Date Filter (Inc. week after cutoff)'
 			lineageTag: 57dd98c5-6846-405b-8d01-113891e0974b
-			column: 'Monday Date Previous Week'
+			column: 'Relative Date Filter (Inc. week after cutoff)'
 
 		level Date
 			lineageTag: 129eb82b-a3ea-496e-b479-d9c6e0cd8bb0
@@ -381,28 +423,29 @@ table Dates
 	/// The normal calendar hierarchy that follows the iso calendar.
 	/// When doing analysis on week level and we do not want to use the financial week, we should use this hierarchy.
 	/// Note: In most cases we should use the financial hierarchy with financial weeks instead.
-	/// 
+	///
 	/// Year:
 	/// The year corresponding to the calendar week (iso week) of the date.
 	/// Example: December 30th, 2024, falls within calendar week 1 of 2025. Therefore, this column will display 2025 for that date, as it reflects the year associated with the calendar week, even though the calendar year of the date is 2024.
-	/// 
+	///
 	/// Week:
 	/// The iso week of the year. This follows the normal calendar in Scandinavia.
 	/// For reporting in Cheffelo we should usually use the financial week instead.
-	/// 
+	///
 	/// Weekday:
 	/// Name of the weekday.
-	/// 
+	///
 	/// Monday Date:
 	/// The date of the Monday in the same week.
-	/// 
-	/// Monday Date Previous Week:
+	///
+	/// Relative Date Filter (Inc. week after cutoff):
 	/// The date of the Monday in the previous week.
 	/// This is useful when applying relative date filters, as it allows you to reference the menu week from the preceding week with the order cutoff.
-	/// 
+	///
 	/// Date:
 	/// Date of year on Date format.
 	hierarchy 'Calendar Hierarchy with Week'
+		isHidden
 		lineageTag: 79b7fcbf-49de-4c79-9834-e43a837b7e74
 
 		level Year
@@ -421,9 +464,9 @@ table Dates
 			lineageTag: 468d7df5-1684-4ddb-8895-48249114fb43
 			column: 'Monday Date'
 
-		level 'Monday Date Previous Week'
+		level 'Relative Date Filter (Inc. week after cutoff)'
 			lineageTag: 59c325c1-a71d-4036-af79-fb92df496480
-			column: 'Monday Date Previous Week'
+			column: 'Relative Date Filter (Inc. week after cutoff)'
 
 		level Date
 			lineageTag: 9f2678c6-9cf1-4329-8d4e-ab65cd12fdc0
@@ -431,19 +474,20 @@ table Dates
 
 	/// The normal calendar hierarchy that follows the iso calendar.
 	/// When doing analysis on quarter or month level and we do not want to use the financial months/quarters, we should use this hierarchy.
-	/// 
+	///
 	/// Year:
 	/// The normal calendar year of the date.
-	/// 
+	///
 	/// Quarter:
 	/// Quarter of the year (1-4), holding three calendar months each.
-	/// 
+	///
 	/// Month:
 	/// Full name of the month. This follows the normal calendar in Scandinavia.
-	/// 
+	///
 	/// Date:
 	/// Date of year on Date format.
 	hierarchy 'Calendar Hierarchy with Month'
+		isHidden
 		lineageTag: 098bb7e8-2f8e-46ea-9731-285d487467bd
 
 		level Year
@@ -481,4 +525,3 @@ table Dates
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

@@ -55,56 +55,64 @@ products as (
     select * from {{ ref('dim_billing_agreements') }}
 )
 
+, add_financial_date as (
+    select
+        estimations.*
+        , {{ get_financial_date_from_monday_date('estimations.menu_week_monday_date') }} as menu_week_financial_date
+    from estimations
+)
+
 , add_keys as (
     select
         md5(concat(
             estimation_generated_at
-            , estimations.menu_year
-            , estimations.menu_week
-            , estimations.company_id
-            , estimations.billing_agreement_id
-            , estimations.product_variation_id
+            , add_financial_date.menu_year
+            , add_financial_date.menu_week
+            , add_financial_date.company_id
+            , add_financial_date.billing_agreement_id
+            , add_financial_date.product_variation_id
             , billing_agreement_basket_deviation_origin_id
         )) as pk_fact_estimations
 
-        , estimations.menu_year
-        , estimations.menu_week
-        , estimations.menu_week_monday_date
-        , estimations.company_id
-        , estimations.billing_agreement_id
-        , estimations.product_variation_id
-        , estimations.billing_agreement_basket_deviation_origin_id
-        , estimations.estimation_generated_at
-        , estimations.product_variation_quantity
+        , add_financial_date.menu_year
+        , add_financial_date.menu_week
+        , add_financial_date.menu_week_monday_date
+        , add_financial_date.menu_week_financial_date
+        , add_financial_date.company_id
+        , add_financial_date.billing_agreement_id
+        , add_financial_date.product_variation_id
+        , add_financial_date.billing_agreement_basket_deviation_origin_id
+        , add_financial_date.estimation_generated_at
+        , add_financial_date.product_variation_quantity
         , case
-            when estimations.estimation_generated_at = latest_estimation_timestamp.latest_estimation_generated_at
+            when add_financial_date.estimation_generated_at = latest_estimation_timestamp.latest_estimation_generated_at
             then true
             else false
         end is_latest_estimation
 
         , cast(date_format(estimation_generated_at, 'yyyyMMdd') as int) as fk_dim_date_estimation_generated
         , cast(date_format(estimation_generated_at, 'HHmm') as string) as fk_dim_time_estimation_generated
-        , cast(date_format(estimations.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
-        , md5(estimations.company_id) as fk_dim_companies
-        , md5(concat(estimations.product_variation_id,estimations.company_id)) as fk_dim_products
+        , cast(date_format(add_financial_date.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
+        , md5(add_financial_date.company_id) as fk_dim_companies
+        , md5(concat(add_financial_date.product_variation_id,add_financial_date.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , portions.pk_dim_portions as fk_dim_portions
 
 
-    from estimations
+    from add_financial_date
     left join latest_estimation_timestamp
-        on latest_estimation_timestamp.company_id = estimations.company_id
+        on latest_estimation_timestamp.company_id = add_financial_date.company_id
     left join billing_agreements
-        on billing_agreements.billing_agreement_id = estimations.billing_agreement_id
-        and billing_agreements.valid_from <= estimations.estimation_generated_at
-        and billing_agreements.valid_to > estimations.estimation_generated_at
+        on billing_agreements.billing_agreement_id = add_financial_date.billing_agreement_id
+        and billing_agreements.valid_from <= add_financial_date.estimation_generated_at
+        and billing_agreements.valid_to > add_financial_date.estimation_generated_at
     left join products
-        on estimations.product_variation_id = products.product_variation_id
-        and estimations.company_id = products.company_id
+        on add_financial_date.product_variation_id = products.product_variation_id
+        and add_financial_date.company_id = products.company_id
     left join companies
-        on estimations.company_id = companies.company_id
+        on add_financial_date.company_id = companies.company_id
     left join portions
         on products.portion_name = portions.portion_name_local
         and companies.language_id = portions.language_id

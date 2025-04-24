@@ -33,7 +33,7 @@ preselector_successful_output_dishes as (
 , billing_agreement_preferences as (
 
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
-  
+
 )
 
 , companies as (
@@ -85,6 +85,7 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_dishes.menu_year
         , preselector_successful_output_dishes.menu_week
         , preselector_successful_output_dishes.menu_week_monday_date
+        , {{ get_financial_date_from_monday_date('preselector_successful_output_dishes.menu_week_monday_date') }} as menu_week_financial_date
         , preselector_successful_output_dishes.portions
         , preselector_successful_output_dishes.meals
         , preselector_successful_output_dishes.has_data_processing_consent
@@ -292,6 +293,7 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_mealbox.menu_year
         , preselector_successful_output_mealbox.menu_week
         , preselector_successful_output_mealbox.menu_week_monday_date
+        , {{ get_financial_date_from_monday_date('preselector_successful_output_mealbox.menu_week_monday_date') }} as menu_week_financial_date
         , preselector_successful_output_mealbox.portions
         , preselector_successful_output_mealbox.meals
         , preselector_successful_output_mealbox.has_data_processing_consent
@@ -471,7 +473,7 @@ preselector_successful_output_dishes as (
             date_format(add_aggregated_error_metrics.created_at, 'yyyyMMdd') as int
         ) as fk_dim_dates_created_at
         , cast(
-            date_format(add_aggregated_error_metrics.menu_week_monday_date, 'yyyyMMdd') as int
+            date_format(add_aggregated_error_metrics.menu_week_financial_date, 'yyyyMMdd') as int
         ) as fk_dim_dates
         , cast(
             date_format(add_aggregated_error_metrics.created_at, 'HHmm') as int

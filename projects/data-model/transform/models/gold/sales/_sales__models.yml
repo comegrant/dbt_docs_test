@@ -45,6 +45,14 @@ models:
         data_tests:
           - not_null
 
+      - name: menu_week_financial_date
+        data_type: date
+        description: "{{ doc('column__menu_week_financial_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
@@ -1480,6 +1488,12 @@ models:
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_financial_date
+        data_type: date
+        description: "{{ doc('column__menu_week_financial_date') }}"
         data_tests:
           - not_null
 

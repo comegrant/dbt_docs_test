@@ -869,6 +869,12 @@ models:
         data_tests:
           - not_null
 
+      - name: menu_week_financial_date
+        data_type: date
+        description: "{{ doc('column__menu_week_financial_date') }}"
+        data_tests:
+          - not_null
+
       - name: menu_number_days
         data_type: smallint
         description: "{{ doc('column__menu_number_days') }}"

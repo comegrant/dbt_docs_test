@@ -24,6 +24,7 @@ orders as (
         orders.menu_year
         , orders.menu_week
         , orders.menu_week_monday_date
+        , {{ get_financial_date_from_monday_date('orders.menu_week_monday_date') }} as menu_week_financial_date
         , orders.source_created_at
         , order_lines.product_variation_quantity
         , order_lines.vat

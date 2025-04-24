@@ -68,6 +68,7 @@ menu_weeks as (
             end as has_recipe_portions
 
         , products.portion_name as portion_name_products
+        , {{ get_financial_date_from_monday_date(' menu_weeks.menu_week_monday_date') }} as menu_week_financial_date
     from menu_weeks
     left join menu_year_and_week
         on menu_weeks.menu_year = menu_year_and_week.menu_year
@@ -111,6 +112,7 @@ menu_weeks as (
         , menu_weeks_with_flags.menu_year
         , menu_weeks_with_flags.menu_week
         , menu_weeks_with_flags.menu_week_monday_date
+        , menu_weeks_with_flags.menu_week_financial_date
 
         , menu_weeks_with_flags.menu_number_days
         , menu_weeks_with_flags.menu_recipe_order
@@ -137,7 +139,7 @@ menu_weeks as (
                 )
             , companies.language_id)
         ) as fk_dim_portions
-        , cast(date_format(menu_weeks_with_flags.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_date
+        , cast(date_format(menu_weeks_with_flags.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
         , md5(menu_weeks_with_flags.company_id) as fk_dim_companies
 
     from menu_weeks_with_flags
