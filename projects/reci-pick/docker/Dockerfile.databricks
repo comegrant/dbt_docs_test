@@ -2,7 +2,7 @@ FROM databricksruntime/python:15.4-LTS
 
 SHELL ["/bin/bash", "-c"]
 
-# Defaulting to utf-8 to fixe a few charset bugs
+# Defaulting to utf-8 to fix a few charset bugs
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
