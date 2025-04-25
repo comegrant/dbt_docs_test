@@ -584,6 +584,18 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11533.593814475509,
+            "y": 0
+          },
+          "nodeIndex": "Grand Total Calculations",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",

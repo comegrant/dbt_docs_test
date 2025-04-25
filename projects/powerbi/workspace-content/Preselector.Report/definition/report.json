@@ -127,6 +127,21 @@
         },
         "type": "Categorical",
         "howCreated": "User"
+      },
+      {
+        "name": "e8ea5c2a64f76cd5b1a1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Main Recipe Id"
+          }
+        },
+        "type": "Advanced",
+        "howCreated": "User"
       }
     ]
   },
@@ -150,7 +165,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
