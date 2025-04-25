@@ -29,6 +29,7 @@ from data_contracts.recipe import (
     RecipeNegativePreferences,
     RecipePreferences,
 )
+from data_contracts.recipe_vote import RecipeVote
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import data_science_data_lake, databricks_catalog
 from pydantic import BaseModel
@@ -64,6 +65,7 @@ class AllergenPreference(BaseModel):
             TargetVectors.location,
             RecipeCost.location,
             AttributeScoring.location,
+            RecipeVote.location,
         }
     ),
     materialized_source=data_science_data_lake.directory("preselector/latest").partitioned_parquet_at(

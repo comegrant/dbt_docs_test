@@ -17,6 +17,7 @@ from data_contracts.recipe import (
     RecipeEmbedding,
     RecipeMainIngredientCategory,
 )
+from data_contracts.recipe_vote import RecipeVote
 from data_contracts.recommendations.recommendations import RecommendatedDish
 
 from preselector.cache import cached_output, set_cache
@@ -485,6 +486,14 @@ async def run_preselector(
         )
 
     recipe_features = normalized_recipe_features
+
+    with duration("load-recipe-vote"):
+        recipe_features = (
+            await store.feature_view(RecipeVote)
+            # .select({"is_favorite", "is_dislike"})
+            .features_for(recipe_features.with_columns(pl.lit(customer.agreement_id).alias("agreement_id")))
+            .to_polars()
+        )
 
     if recipe_features.height < customer.number_of_recipes:
         recipes_of_interest = set(recipes["recipe_id"].to_list()) - set(recipe_features["recipe_id"].to_list())

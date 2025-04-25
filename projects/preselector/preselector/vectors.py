@@ -189,6 +189,8 @@ async def historical_preselector_vector(
                     "intra_week_similarity": [0.09],
                     "repeated_proteins_percentage": [0.1],
                     "repeated_carbo_percentage": [0.05],
+                    "mean_is_dislike": [0.1],
+                    "mean_is_favorite": [0.1],
                 }
             )
             .drop_invalid()
@@ -206,6 +208,8 @@ async def historical_preselector_vector(
                     "intra_week_similarity": [0],
                     "repeated_proteins_percentage": [0],
                     "repeated_carbo_percentage": [0],
+                    "mean_is_dislike": [0],
+                    "mean_is_favorite": [1],
                 }
             )
             .drop_invalid()

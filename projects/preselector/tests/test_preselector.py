@@ -18,6 +18,7 @@ from data_contracts.preselector.basket_features import (
 )
 from data_contracts.preselector.store import Preselector
 from data_contracts.recipe import RecipeEmbedding, RecipeMainIngredientCategory, RecipeNegativePreferences
+from data_contracts.recipe_vote import RecipeVote
 from numpy.random import seed as np_seed
 from preselector.main import run_preselector, run_preselector_for_request
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
@@ -61,6 +62,19 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
         if "agreement_id" in request.entity_names:
             del dummy_store.sources[loc]
 
+    dummy_store = dummy_store.update_source_for(
+        RecipeVote,
+        InMemorySource(
+            pl.DataFrame(
+                data={
+                    "main_recipe_id": list(range(recipe_pool)),
+                    "agreement_id": [0] * recipe_pool,
+                    "is_dislike": [False] * recipe_pool,
+                    "is_favorite": [False] * recipe_pool,
+                }
+            )
+        ),
+    )
     output = await run_preselector(
         customer=GenerateMealkitRequest(
             agreement_id=0,
@@ -404,6 +418,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
                     "is_slow_grown_chicken": [False] * recipe_pool,
                     "is_low_calorie": [False] * recipe_pool,
                     "is_roede": [False] * recipe_pool,
+                    "main_ingredient_id": [1] * recipe_pool,
                 }
             ),
         )
@@ -433,6 +448,19 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
                     "main_protein_category_id": [1] * recipe_pool,
                     "main_carbohydrate_category_id": [1] * recipe_pool,
                 }
+            ),
+        )
+        .update_source_for(
+            RecipeVote,
+            InMemorySource(
+                pl.DataFrame(
+                    data={
+                        "main_recipe_id": list(range(recipe_pool)),
+                        "agreement_id": [agreement_id] * recipe_pool,
+                        "is_dislike": [False] * recipe_pool,
+                        "is_favorite": [False] * recipe_pool,
+                    }
+                )
             ),
         )
     )

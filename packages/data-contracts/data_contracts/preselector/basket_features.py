@@ -22,6 +22,7 @@ from aligned.sources.random_source import RandomDataSource
 from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.orders import HistoricalRecipeOrders, WeeksSinceRecipe
 from data_contracts.recipe import MealkitRecipeSimilarity, NormalizedRecipeFeatures, RecipeMainIngredientCategory
+from data_contracts.recipe_vote import RecipeVote
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import materialized_data
 
@@ -85,6 +86,11 @@ quarantining = WeeksSinceRecipe()
 
 ordered_ago_agg = quarantining.ordered_weeks_ago.aggregate()
 
+recipe_vote = RecipeVote()
+
+dislike_agg = recipe_vote.is_dislike.aggregate()
+favorite_agg = recipe_vote.is_favorite.aggregate()
+
 
 @feature_view(name="injected_preselector_features", source=RandomDataSource())
 class InjectedFeatures:
@@ -94,6 +100,8 @@ class InjectedFeatures:
     intra_week_similarity = Float().default_value(0)
     repeated_proteins_percentage = Float().default_value(0)
     repeated_carbo_percentage = Float().default_value(0)
+    mean_is_dislike = dislike_agg.mean().default_value(0)
+    mean_is_favorite = favorite_agg.mean().default_value(0)
 
 
 injected_features = InjectedFeatures()
@@ -112,6 +120,8 @@ class BasketFeatures:
     mean_cost_of_food = cast_feature(injected_features.mean_cost_of_food, Float64())
     mean_ordered_ago = cast_feature(injected_features.mean_ordered_ago.default_value(0), Float64())
     intra_week_similarity = cast_feature(injected_features.intra_week_similarity, Float64())
+    mean_is_dislike = cast_feature(dislike_agg.mean().default_value(0), Float64())
+    mean_is_favorite = cast_feature(favorite_agg.mean().default_value(0), Float64())
 
     mean_energy = cast_feature(energy_kcal_agg.mean(), Float64())
     mean_number_of_ratings = cast_feature(number_of_ratings_agg.mean().with_tag(VariationTags.quality), Float64())

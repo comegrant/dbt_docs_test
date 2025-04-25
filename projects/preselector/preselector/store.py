@@ -13,6 +13,7 @@ from data_contracts.preselector.store import (
 )
 from data_contracts.preselector.store import Preselector as PreselectorOutput
 from data_contracts.recipe import NormalizedRecipeFeatures
+from data_contracts.recipe_vote import RecipeVote
 from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.recommendations.store import recommendation_feature_contracts
 
@@ -35,6 +36,7 @@ def preselector_store() -> ContractStore:
     store.add(PreselectorOutput)
     store.add(CostOfFoodPerMenuWeek)
     store.add(ForecastedMealkits)
+    store.add(RecipeVote)
     return store
 
 
