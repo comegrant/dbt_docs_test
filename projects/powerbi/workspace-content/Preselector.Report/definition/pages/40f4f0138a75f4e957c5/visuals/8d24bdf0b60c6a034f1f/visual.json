@@ -1,62 +1,18 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
-  "name": "4bf3719fe677dd474485",
+  "name": "8d24bdf0b60c6a034f1f",
   "position": {
-    "x": 16,
-    "y": 400,
-    "z": 7000,
+    "x": 648,
+    "y": 416,
+    "z": 8001,
     "height": 288,
-    "width": 1248,
-    "tabOrder": 7000
+    "width": 616,
+    "tabOrder": 8001
   },
   "visual": {
     "visualType": "pivotTable",
     "query": {
       "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Date Hierarchy"
-                    }
-                  },
-                  "Level": "Year"
-                }
-              },
-              "queryRef": "Dates.Date Hierarchy.Year",
-              "nativeQueryRef": "Date Hierarchy Year",
-              "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Date Hierarchy"
-                    }
-                  },
-                  "Level": "Week"
-                }
-              },
-              "queryRef": "Dates.Date Hierarchy.Week",
-              "nativeQueryRef": "Date Hierarchy Week",
-              "active": true
-            }
-          ]
-        },
         "Rows": {
           "projections": [
             {
@@ -90,8 +46,8 @@
                 }
               },
               "queryRef": "Preselector Measures.Number of Mealboxes from Preselector1",
-              "nativeQueryRef": "Number of Mealboxes",
-              "displayName": "Number of Mealboxes"
+              "nativeQueryRef": "Number Selected",
+              "displayName": "Number Selected"
             },
             {
               "field": {
@@ -195,10 +151,26 @@
             "rowSubtotals": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "370.4514195470371D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preference Combinations.Preference Combinations"
           }
         }
       ]

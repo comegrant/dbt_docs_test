@@ -6,7 +6,7 @@
     "y": 416,
     "z": 7000,
     "height": 288,
-    "width": 1248,
+    "width": 616,
     "tabOrder": 7000
   },
   "visual": {
@@ -45,21 +45,6 @@
             },
             {
               "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Recipes"
-                    }
-                  },
-                  "Property": "Recipe Main Ingredient Name (Eng)"
-                }
-              },
-              "queryRef": "Recipes.Recipe Main Ingredient Name (Eng)",
-              "nativeQueryRef": "Recipe Main Ingredient Name",
-              "displayName": "Recipe Main Ingredient Name"
-            },
-            {
-              "field": {
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
@@ -70,7 +55,8 @@
                 }
               },
               "queryRef": "Preselector Measures.Number of Dishes from Preselector",
-              "nativeQueryRef": "Number of Dishes from Preselector"
+              "nativeQueryRef": "Number Selected",
+              "displayName": "Number Selected"
             }
           ]
         }
@@ -100,21 +86,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "220.60377358490567D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Recipes.Recipe Main Ingredient Name (Eng)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "494.37735849056605D"
+                  "Value": "274.8326677548777D"
                 }
               }
             }
