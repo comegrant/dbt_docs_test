@@ -2,13 +2,6 @@
 table 'Preselector Details'
     lineageTag: Preselector-Details-Table
 
-    column pk_fact_preselector
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: pk_fact_preselector
-
     column preselector_output_id
         dataType: string
         isHidden

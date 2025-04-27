@@ -50,15 +50,6 @@ table 'Agreement Recipe Compliance Measures'
 		isHidden
 		lineageTag: 94a351ec-9643-40c0-b5ad-aade250a4a97
 
-	/// The unique key of each row in Fact Recipe Billing Agreement Compliancy.
-	column pk_fact_recipe_billing_agreement_compliancy
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 4cbeba4d-d252-49ba-9026-6bec0e9d1c3a
-		summarizeBy: none
-		sourceColumn: pk_fact_recipe_billing_agreement_compliancy
-
 	/// Primary key of the dim_companies table.
 	column fk_dim_companies
 		dataType: string

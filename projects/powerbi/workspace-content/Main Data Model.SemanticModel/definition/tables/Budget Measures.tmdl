@@ -54,15 +54,6 @@ table 'Budget Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 3818d45c-f8bb-4c79-a3ef-2446c5471a7c
 
-	/// The primary key of the fact_budget table
-	column pk_fact_budget
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 62644411-c04e-4180-a1a3-dd64e4d61411
-		summarizeBy: none
-		sourceColumn: pk_fact_budget
-
 	/// Unique id for each entry in the budget.
 	/// Granularity is company, financial week and customer segment
 	column budget_id

@@ -41,14 +41,6 @@ table 'Loyalty Point Measures'
 		isHidden
 		lineageTag: 869635da-16d5-459a-a046-69e7fdf8f3b1
 
-	column pk_fact_loyalty_points
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 07639d2d-5da6-465b-8803-1c100692e8b6
-		summarizeBy: none
-		sourceColumn: pk_fact_loyalty_points
-
 	column loyalty_points_id
 		dataType: string
 		isHidden
@@ -214,4 +206,3 @@ table 'Loyalty Point Measures'
 				    fact_loyalty_points_Table = gold_Schema{[Name="fact_loyalty_points",Kind="Table"]}[Data]
 				in
 				    fact_loyalty_points_Table
-

@@ -9,15 +9,6 @@ table Estimations
 		formatString: #,0
 		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
 
-	/// Primary key of the fact_estimations table
-	column pk_fact_estimations
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 4ea2e29b-1344-4b44-bf37-5b4aa0144b6b
-		summarizeBy: none
-		sourceColumn: pk_fact_estimations
-
 	/// Foreign key connecting dim_date to the day at which an estimation was generated at.
 	column fk_dim_date_estimation_generated
 		dataType: int64

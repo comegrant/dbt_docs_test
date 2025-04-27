@@ -1266,18 +1266,6 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Recipe Sales
 
-	column ops_order_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		lineageTag: 5e6494bf-67e2-4018-8da4-312942ab4a6c
-		summarizeBy: sum
-		sourceColumn: ops_order_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column order_status_id
 		dataType: string
 		isHidden
@@ -1297,18 +1285,6 @@ table 'Order Measures'
 		lineageTag: 094f462a-d367-48ec-9a45-4eeba1a9b353
 		summarizeBy: none
 		sourceColumn: order_type_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column billing_agreement_order_line_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 0319b8db-e0ea-4266-98d5-4460f2f2825a
-		summarizeBy: none
-		sourceColumn: billing_agreement_order_line_id
 
 		changedProperty = IsHidden
 
@@ -1434,21 +1410,6 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column menu_week_monday_date
-		dataType: dateTime
-		isHidden
-		formatString: Long Date
-		isAvailableInMdx: false
-		lineageTag: 62dff093-e3e8-4176-8b77-39772f786b2f
-		summarizeBy: none
-		sourceColumn: menu_week_monday_date
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
 	column fk_dim_order_types
 		dataType: string
 		isHidden
@@ -1565,16 +1526,6 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column pk_fact_orders
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: c6046602-8856-4929-b847-3477e9f6da80
-		summarizeBy: none
-		sourceColumn: pk_fact_orders
-
-		annotation SummarizationSetBy = Automatic
-
 	column menu_year
 		dataType: int64
 		isHidden
@@ -1583,17 +1534,6 @@ table 'Order Measures'
 		lineageTag: c9673c50-5e6f-469e-8554-fbde45b0c193
 		summarizeBy: sum
 		sourceColumn: menu_year
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_week
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 97307c94-3a2d-46bf-ba58-454db4d19551
-		summarizeBy: sum
-		sourceColumn: menu_week
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1755,15 +1695,6 @@ table 'Order Measures'
 		sourceColumn: portion_adjustment_subscription
 
 		changedProperty = IsHidden
-
-	column source_updated_at
-		dataType: dateTime
-		isHidden
-		formatString: General Date
-		isAvailableInMdx: false
-		lineageTag: 4a78a732-458d-4942-b98f-40d5b7691440
-		summarizeBy: none
-		sourceColumn: source_updated_at
 
 	column 'Recipe Comment'
 		dataType: string

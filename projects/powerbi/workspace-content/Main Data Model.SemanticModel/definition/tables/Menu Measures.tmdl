@@ -227,16 +227,6 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column pk_fact_menus
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 1ed8ab09-dc2b-476d-be4a-bd325747dcc8
-		summarizeBy: none
-		sourceColumn: pk_fact_menus
-
-		annotation SummarizationSetBy = Automatic
-
 	column company_id
 		dataType: string
 		isHidden

@@ -42,14 +42,6 @@ table 'Subscription Quiz Measures'
 		formatString: #,0
 		lineageTag: fed60897-c1eb-41c2-b2e5-580b3ec4d7ae
 
-	column pk_fact_subscription_quiz
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: d55b0211-e413-44f6-9e2c-51f7a4f7e8ab
-		summarizeBy: none
-		sourceColumn: pk_fact_subscription_quiz
-
 	column fk_dim_billing_agreements
 		dataType: string
 		isHidden
