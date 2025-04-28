@@ -87,7 +87,7 @@ else:
     strategies_size = None
 
 number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
-number_of_weeks_from_now = int(dbutils.widgets.get("number_of_weeks"))
+number_of_weeks_from_now = int(dbutils.widgets.get("number_of_weeks_from_now"))
 from_date = dbutils.widgets.get("from_date_iso_format")
 
 if from_date:
