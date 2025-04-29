@@ -11,6 +11,7 @@ pydantic-settings = "^2.1.0"
 pandas = "2.2.2"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 numpy = "1.26.4"
+code2flow = "^2.5.1"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
