@@ -424,6 +424,117 @@ The unique id of the recipe favorite type in the source database.
 The name of the recipe type (can be favorite or dislike).
 {% enddocs %}
 
+# Weekly Orders
+
+{% docs column__purchase_order_id %}
+
+Unique identifier of weekly purchase orders in cms.
+
+{% enddocs %}
+
+{% docs column__purchase_order_status_id %}
+
+The status code of the purchase order.
+
+{% enddocs %}
+
+{% docs column__is_special_purchase_order %}
+
+True if the purchase order has been made outside of the normal routine, i.e. to purchase something outside of the recipes or buy extra quantity.
+
+{% enddocs %}
+
+{% docs column__production_date %}
+
+The planned production date in our production facility for the ingredients on the purchase order.
+
+{% enddocs %}
+
+{% docs column__purchase_delivery_date %}
+
+When the ingredients on the purchase order will be delivered to our production facility.
+
+{% enddocs %}
+
+{% docs column__purchase_order_date %}
+
+When purchase order was done.
+
+{% enddocs %}
+
+{% docs column__ingredient_supplier_id %} 
+
+Identifier for each ingredient supplier 
+
+{% enddocs %}
+
+# Weekly Order Lines
+
+{% docs column__purchase_order_line_id %}
+
+The unique identifier for purchase order lines in cms.
+
+{% enddocs %}
+
+{% docs column__ingredient_id %} 
+
+Identifier for an ingredient.
+
+{% enddocs %}
+
+{% docs column__purchase_order_line_status_id %}
+
+Id of status of purchase order. Status can be found in procurement_status in pim. Statuses include:
+* 10 - WIP
+* 20 - Approved
+* 30 - Draft
+* 40 - Ordered
+* 50 - Pre-order
+
+{% enddocs %}
+
+{% docs column__original_ingredient_quantity %}
+
+The ingredient quantity to order, based on the need from the recipes and the customer orders.
+
+{% enddocs %}
+
+{% docs column__ingredient_purchasing_cost %}
+
+The cost of the ingredient on the purchase order line.
+
+{% enddocs %}
+
+{% docs column__total_purchasing_cost %}
+
+Total cost of the order line. Ingredient cost * Total ingredient quantity.
+
+{% enddocs %}
+
+{% docs column__extra_ingredient_quantity %}
+
+Any extra ingredient quantity to order based on assumed waste or distribution pack sizes, or corrections to the original_ingredient_quantity.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_quantity %}
+
+Total ingredient quantity on the order line, i.e. original_ingredient_quantity + extra_ingredient_quantity. Does not include take_from_storage_ingredient_quantity.
+
+{% enddocs %}
+
+{% docs column__take_from_storage_ingredient_quantity %}
+
+The ingredient quantity to be taken from internal storage, and not from external supplier.
+
+{% enddocs %}
+
+{% docs column__received_ingredient_quantity %}
+
+The actual ingredient quantity registered as received in production.
+
+{% enddocs %}
+
 # Ingredient Prices
 
 {% docs column__ingredient_price_id %}
@@ -489,12 +600,6 @@ If an ingredient is used as the main carbohydrate in a recipe
 
 {% enddocs %}
 
-{% docs column__supplier_id %} 
-
-Identifier for each ingredient supplier 
-
-{% enddocs %}
-
 {% docs column__ingredient_amount %} 
 
 Amount of specific ingredient in a recipe variation 
@@ -504,12 +609,6 @@ Amount of specific ingredient in a recipe variation
 {% docs column__order_ingredient_id %} 
 
 Identifier for an ingredient connected to a specific recipe variation 
-
-{% enddocs %}
-
-{% docs column__ingredient_id %} 
-
-Identifier for an ingredient (connected to a supplier) 
 
 {% enddocs %}
 

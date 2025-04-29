@@ -3,6 +3,196 @@
 version: 2
 
 models:
+  - name: pim__weekly_purchase_order_lines
+    description: "Contains information on order lines for weekly purchase orders."
+
+    columns:
+      - name: purchase_order_line_id
+        data_type: char(36)
+        description: "{{ doc('column__purchase_order_line_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: purchase_order_id
+        data_type: char(36)
+        description: "{{ doc('column__purchase_order_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: purchase_order_line_status_id
+        data_type: int
+        description: "{{ doc('column__purchase_order_line_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: original_ingredient_quantity
+        data_type: decimal(34,3)
+        description: "{{ doc('column__original_ingredient_quantity') }}"
+
+      - name: ingredient_purchasing_cost
+        data_type: decimal(19,4)
+        description: "{{ doc('column__ingredient_purchasing_cost') }}"
+        data_tests:
+          - not_null
+
+      - name: vat
+        data_type: decimal(10,8)
+        description: "{{ doc('column__vat') }}"
+
+      - name: total_purchasing_cost
+        data_type: decimal(18,0)
+        description: "{{ doc('column__total_purchasing_cost') }}"
+
+      - name: extra_ingredient_quantity
+        data_type: decimal(18,0)
+        description: "{{ doc('column__extra_ingredient_quantity') }}"
+
+      - name: total_ingredient_quantity
+        data_type: decimal(18,0)
+        description: "{{ doc('column__total_ingredient_quantity') }}"
+
+      - name: take_from_storage_ingredient_quantity
+        data_type: decimal(18,0)
+        description: "{{ doc('column__take_from_storage_ingredient_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: received_ingredient_quantity
+        data_type: int
+        description: "{{ doc('column__received_ingredient_quantity') }}"
+        data_tests:
+          - not_null
+
+      - name: purchase_delivery_date
+        data_type: timestamp
+        description: "{{ doc('column__purchase_delivery_date') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+  - name: pim__weekly_purchase_orders
+    description: "Contains information on weekly purchase orders."
+
+    columns:
+      - name: purchase_order_id
+        data_type: string
+        description: "{{ doc('column__purchase_order_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ingredient_supplier_id
+        data_type: int
+        description: "{{ doc('column__ingredient_supplier_id') }}"
+        data_tests:
+          - not_null
+
+      - name: purchasing_company_id
+        data_type: char(36)
+        description: "{{ doc('column__purchasing_company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: purchase_order_status_id
+        data_type: int
+        description: "{{ doc('column__purchase_order_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: distribution_center_id
+        data_type: char(36)
+        description: "{{ doc('column__distribution_center_id') }}"
+        data_tests:
+          - not_null:
+              config:
+                severity: error
+                error_if:  ">9074" # orders < 2020 can be without distribution center id
+                warn_if: ">9074"
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: is_special_purchase_order
+        data_type: boolean
+        description: "{{ doc('column__is_special_purchase_order') }}"
+        data_tests:
+          - not_null
+
+      - name: production_date
+        data_type: date
+        description: "{{ doc('column__production_date') }}"
+
+      - name: purchase_delivery_date
+        data_type: timestamp
+        description: "{{ doc('column__purchase_delivery_date') }}"
+        data_tests:
+          - not_null
+
+      - name: purchase_order_date
+        data_type: timestamp
+        description: "{{ doc('column__purchase_order_date') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        
   - name: pim__ingredient_prices
     description: "Contains information on the planning purchasing price of ingredients."
 
@@ -119,7 +309,7 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
-          
+
   - name: pim__recipe_favorite_types
     description: "Holds information about the different types of favoriting that is possible to select on the frontend."
     columns:
@@ -582,12 +772,6 @@ models:
         data_tests:
           - not_null
 
-      - name: ingredient_purchase_date
-        data_type: date
-        description: "{{ doc('column__ingredient_purchase_date') }}"
-        data_tests:
-          - not_null
-
   - name: pim__recipes
     description: ""
     columns:
@@ -1023,9 +1207,9 @@ models:
         data_type: int
         description: "{{ doc('column__ingredient_id') }}"
 
-      - name: supplier_id
+      - name: ingredient_supplier_id
         data_type: int
-        description: "{{ doc('column__supplier_id') }}"
+        description: "{{ doc('column__ingredient_supplier_id') }}"
 
       - name: ingredient_category_id
         data_type: int

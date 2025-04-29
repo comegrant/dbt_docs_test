@@ -5,7 +5,7 @@ sources:
     description: ""
     schema: bronze
     tables:
-      - name: pim__weekly_menus
+
       - name: pim__ingredient_price
       - name: pim__menus
       - name: pim__menu_variations
@@ -48,4 +48,7 @@ sources:
       - name: pim__ingredient_nutrient_facts
       - name: pim__generic_ingredients
       - name: pim__nutrient_facts_translations
+      - name: pim__weekly_menus
+      - name: pim__weekly_orders
+      - name: pim__weekly_orders_lines
       - name: pim__procurement_cycle

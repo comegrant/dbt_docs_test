@@ -12,7 +12,7 @@ renamed as (
 
         {# ids #}
         ingredient_id
-        , supplier_id
+        , supplier_id as ingredient_supplier_id
         --, pack_type_id
         --, unit_label_id
         , ingredient_category_id
