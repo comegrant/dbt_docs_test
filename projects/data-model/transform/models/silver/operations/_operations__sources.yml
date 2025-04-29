@@ -1,0 +1,16 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/source-properties
+
+version: 2
+
+sources:
+  - name: operations
+    schema: bronze
+    description: "Tables from the operations database in the CoreDB Azure SQL Server"
+    tables:
+      - name: operations__cases
+      - name: operations__case_line
+      - name: operations__case_line_type
+      - name: operations__case_line_ingredient
+      - name: operations__case_category
+      - name: operations__case_responsible
+      - name: operations__case_cause
