@@ -42,13 +42,6 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: billing_agreement_id
 
-    column company_id
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: company_id
-
     column product_variation_id
         dataType: string
         isHidden

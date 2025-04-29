@@ -47,7 +47,7 @@ table 'Preselector Measures'
     /// The number of dishes that have been output by the preselector
     measure 'Number of Dishes from Preselector' =
             CALCULATE(
-                COUNT('Preselector Details'[pk_fact_preselector]),
+                COUNT('Preselector Details'[recipe_id]),
                     'Preselector Details'[Is Dish] = TRUE()
                 )
         formatString: #,0
