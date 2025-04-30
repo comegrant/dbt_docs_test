@@ -96,6 +96,28 @@ dates as (
 
 )
 
+-- Assuming only one basket of the mealbox type per billing agreement
+-- Should add a test for this
+, mealbox_baskets as (
+
+    select * from baskets
+    where basket_type_id = '{{ var("mealbox_basket_type_id") }}'
+)
+
+-- Scheduler should follow the mealbox, not the groceries. 
+, mealbox_basket_scheduler as (
+
+    select 
+    
+    basket_scheduler.* 
+    , mealbox_baskets.billing_agreement_id
+    
+    from basket_scheduler
+    inner join mealbox_baskets
+    on basket_scheduler.billing_agreement_basket_id = mealbox_baskets.billing_agreement_basket_id
+    
+)
+
 , baskets_with_company as 
 (
     select
@@ -121,11 +143,16 @@ dates as (
         , baskets_with_company.billing_agreement_id
         , baskets_with_company.billing_agreement_basket_id
         , baskets_with_company.company_id
-        , baskets_with_company.basket_delivery_week_type_id
+        , mealbox_baskets.basket_delivery_week_type_id
 
     from baskets_with_company
     left join relevant_period
-    on baskets_with_company.company_id = relevant_period.company_id
+        on baskets_with_company.company_id = relevant_period.company_id
+    
+    -- Assuming only one basket of the mealbox type per billing agreement
+    -- Should add a test for this
+    left join mealbox_baskets
+        on baskets_with_company.billing_agreement_id = mealbox_baskets.billing_agreement_id
 )
 
 , basket_even_weeks_default_schedule as (
@@ -135,13 +162,13 @@ dates as (
     basket_and_period_joined.*
     
     from basket_and_period_joined
-    left join basket_scheduler
-    on basket_and_period_joined.billing_agreement_basket_id = basket_scheduler.billing_agreement_basket_id
-    and basket_and_period_joined.menu_week_monday_date = basket_scheduler.menu_week_monday_date
+    left join mealbox_basket_scheduler
+    on basket_and_period_joined.billing_agreement_id = mealbox_basket_scheduler.billing_agreement_id
+    and basket_and_period_joined.menu_week_monday_date = mealbox_basket_scheduler.menu_week_monday_date
 
     where 
     basket_and_period_joined.menu_week % 2 = 0 --even weeks
-    and (basket_scheduler.billing_agreement_basket_id is null or basket_scheduler.has_delivery = true) --default scheduler
+    and (mealbox_basket_scheduler.billing_agreement_id is null or mealbox_basket_scheduler.has_delivery = true) --default scheduler
     and basket_and_period_joined.basket_delivery_week_type_id in (10, 20) --10 is every week, 20 is even weeks
 )
 
@@ -152,13 +179,13 @@ dates as (
     basket_and_period_joined.*
     
     from basket_and_period_joined
-    left join basket_scheduler
-    on basket_and_period_joined.billing_agreement_basket_id = basket_scheduler.billing_agreement_basket_id
-    and basket_and_period_joined.menu_week_monday_date = basket_scheduler.menu_week_monday_date
+    left join mealbox_basket_scheduler
+    on basket_and_period_joined.billing_agreement_id = mealbox_basket_scheduler.billing_agreement_id
+    and basket_and_period_joined.menu_week_monday_date = mealbox_basket_scheduler.menu_week_monday_date
 
     where 
     basket_and_period_joined.menu_week % 2 = 1 --odd weeks
-    and (basket_scheduler.billing_agreement_basket_id is null or basket_scheduler.has_delivery = true) --default scheduler
+    and (mealbox_basket_scheduler.billing_agreement_id is null or mealbox_basket_scheduler.has_delivery = true) --default scheduler
     and basket_and_period_joined.basket_delivery_week_type_id in (10, 30) --10 is every week, 30 is odd weeks
 )
 
@@ -170,13 +197,13 @@ dates as (
     basket_and_period_joined.*
     
     from basket_and_period_joined
-    left join basket_scheduler
-    on basket_and_period_joined.billing_agreement_basket_id = basket_scheduler.billing_agreement_basket_id
-    and basket_and_period_joined.menu_week_monday_date = basket_scheduler.menu_week_monday_date
+    left join mealbox_basket_scheduler
+    on basket_and_period_joined.billing_agreement_id = mealbox_basket_scheduler.billing_agreement_id
+    and basket_and_period_joined.menu_week_monday_date = mealbox_basket_scheduler.menu_week_monday_date
 
     where 
     basket_and_period_joined.menu_week % 2 = 0 --even weeks
-    and basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is odd
+    and mealbox_basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is odd
     and basket_and_period_joined.basket_delivery_week_type_id = 30 --30 is odd weeks
 )
 
@@ -188,13 +215,13 @@ dates as (
     basket_and_period_joined.*
     
     from basket_and_period_joined
-    left join basket_scheduler
-    on basket_and_period_joined.billing_agreement_basket_id = basket_scheduler.billing_agreement_basket_id
-    and basket_and_period_joined.menu_week_monday_date = basket_scheduler.menu_week_monday_date
+    left join mealbox_basket_scheduler
+    on basket_and_period_joined.billing_agreement_id = mealbox_basket_scheduler.billing_agreement_id
+    and basket_and_period_joined.menu_week_monday_date = mealbox_basket_scheduler.menu_week_monday_date
 
     where 
     basket_and_period_joined.menu_week % 2 = 1 --odd weeks
-    and basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is even
+    and mealbox_basket_scheduler.has_delivery = true --has_delivery even though delivery_week_type is even
     and basket_and_period_joined.basket_delivery_week_type_id = 20 --20 is even weeks
 )
 

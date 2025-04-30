@@ -57,6 +57,14 @@ The id of the subscribed timeblock of the billing agreement.
 
 {% enddocs %}
 
+{% docs column__basket_type_id %}
+
+The id of the basket type:
+- 550C0EF6-CD4E-487E-9F19-0CC929152497:	Mealbox
+- 1F72B8C1-D765-426D-88E3-EC412FB7F4B7:	Groceries
+
+{% enddocs %}
+
 {% docs column__is_default_basket %}
 
 Always 1. This column exists to support the potential of letting customers have multiple baskets.

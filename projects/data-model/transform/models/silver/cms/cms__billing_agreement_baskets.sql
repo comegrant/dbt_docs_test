@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -12,18 +12,19 @@ source as (
 
     select
 
-        
+
         {# ids #}
         id as billing_agreement_basket_id
         , agreement_id as billing_agreement_id
         , shipping_address as shipping_address_id
         , delivery_week_type as basket_delivery_week_type_id
         , timeblock as timeblock_id
-        
+        , basket_type_id
+
         {# booleans #}
         , is_default as is_default_basket
         , is_active as is_active_basket
-        
+
         {# scd #}
         /*
         TODO: Uncomment when we use the snapshot table again

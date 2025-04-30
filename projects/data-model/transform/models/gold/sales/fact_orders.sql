@@ -23,6 +23,12 @@ order_lines as (
 
 )
 
+, grocery_deviations_order_mapping as (
+
+    select * from {{ ref('int_basket_grocery_deviations_order_mapping') }}
+
+)
+
 , bridge_subscribed_products as (
 
     select * from {{ ref('bridge_billing_agreements_basket_products') }}
@@ -138,12 +144,19 @@ order_lines as (
         , products.product_type_id
         , companies.company_id
         , companies.language_id
-        , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
+        , coalesce(
+            grocery_deviations_order_mapping.billing_agreement_basket_deviation_origin_id
+            , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
+        ) as billing_agreement_basket_deviation_origin_id
         , recommendations_origin.billing_agreement_basket_deviation_origin_id as billing_agreement_basket_deviation_origin_id_preselected
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_deviations.billing_agreement_preferences_updated_id, billing_agreements_ordergen.billing_agreement_preferences_updated_id) as billing_agreement_preferences_updated_id
         , coalesce(billing_agreements_deviations.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_deviations
-        , coalesce(md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins
+        , coalesce(
+            md5(grocery_deviations_order_mapping.billing_agreement_basket_deviation_origin_id)
+            , md5(deviations_order_mapping.billing_agreement_basket_deviation_origin_id)
+            , md5('00000000-0000-0000-0000-000000000000')
+        ) as fk_dim_basket_deviation_origins
         , coalesce(md5(recommendations_origin.billing_agreement_basket_deviation_origin_id), md5('00000000-0000-0000-0000-000000000000')) as fk_dim_basket_deviation_origins_preselected
         , companies.pk_dim_companies as fk_dim_companies
         , cast(date_format(menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
@@ -170,6 +183,10 @@ order_lines as (
         and billing_agreements_ordergen.company_id = products.company_id
     left join companies
         on billing_agreements_ordergen.company_id = companies.company_id
+    left join grocery_deviations_order_mapping
+        on order_lines.billing_agreement_order_id = grocery_deviations_order_mapping.billing_agreement_order_id
+        and products.product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }})
+        and order_lines.menu_week_monday_date > '{{ var('basket_split_migration_date')}}'
 
 )
 

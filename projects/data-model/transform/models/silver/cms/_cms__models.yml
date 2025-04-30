@@ -1585,6 +1585,10 @@ models:
         data_tests:
           - not_null
 
+      - name: basket_type_id
+        data_type: int
+        description: "{{ doc('column__basket_type_id') }}"
+
       - name: is_default_basket
         data_type: boolean
         description: "{{ doc('column__is_default_basket') }}"

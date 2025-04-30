@@ -31,6 +31,7 @@ baskets as (
     select
         baskets.billing_agreement_id
         , baskets.billing_agreement_basket_id
+        , baskets.basket_type_id
         , billing_agreements.company_id
         , deviations.billing_agreement_basket_deviation_id
         , deviations.billing_agreement_basket_deviation_origin_id

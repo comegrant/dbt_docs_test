@@ -3,6 +3,8 @@ with
 deviations as (
 
     select * from {{ ref('int_basket_deviation_products_joined') }}
+    where basket_type_id = '{{ var("mealbox_basket_type_id") }}'
+    
 )
 
 , order_lines as (
