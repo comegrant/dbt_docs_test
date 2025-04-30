@@ -1,3 +1,4 @@
+/// Table defining the budget processes (F1, F2, F3, Budget)
 table 'Budget Types'
 	lineageTag: Budget-Types-Table
 

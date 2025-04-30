@@ -1,3 +1,4 @@
+/// A table which contains measures about the budgeted orders, atv and order value for each week. Relates to each budget process (F1, F2, F3, Budget).
 table 'Budget Measures'
 	lineageTag: Budget-Measures-Table
 
