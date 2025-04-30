@@ -1,3 +1,4 @@
+/// This is where all recipe dimensions are found.
 table Recipes
 	lineageTag: bd92b28f-2317-4cec-b83c-99b43a1927d2
 
@@ -13,6 +14,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The unique identifier of a weekly variation of a main recipe.
 	column 'Recipe Id'
 		dataType: int64
 		formatString: 0
@@ -35,6 +37,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The lower end of the specified cooking time range.
 	column 'Cooking Time From'
 		dataType: int64
 		formatString: 0
@@ -44,6 +47,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The higher end of the specified cooking time range.
 	column 'Cooking Time To'
 		dataType: int64
 		formatString: 0
@@ -53,6 +57,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The full recipe name in local language.
 	column 'Recipe Name'
 		dataType: string
 		lineageTag: fe9bf7f7-27df-4365-b1ad-e0218690634d
@@ -61,6 +66,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The specified difficulty level of the recipe. I.e. how quick the recipe is to cook.
 	column 'Recipe Difficulty'
 		dataType: string
 		lineageTag: 0001f150-74ec-4b7c-a932-df05b4c62272
@@ -69,6 +75,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the specified main ingredient of the recipe, in local language.
 	column 'Recipe Main Ingredient Name'
 		dataType: string
 		lineageTag: 74688ed6-412e-4ef6-9858-c508efec0bc7
@@ -77,6 +84,9 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The main recipe name in local language.
+	/// All recipes are weekly variations of a main recipe, which is the original recipe.
+	/// The main recipe has its name and the recipe name can differ from this original name. 
 	column 'Main Recipe Name'
 		dataType: string
 		lineageTag: 7f2798ef-8885-4969-8934-2c2be899d39b
@@ -85,6 +95,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Indicates if the actual recipe is a main recipe.
 	column 'Is Main Recipe'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -94,6 +105,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the specified main ingredient of the recipe, in English.
 	column 'Recipe Main Ingredient Name (Eng)'
 		dataType: string
 		lineageTag: d066e4c4-028f-444b-92cd-3f2edaaa867c
@@ -115,6 +127,9 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The id of the main recipe.
+	/// All recipes are weekly variations of a main recipe, which is the original recipe.
+	/// This id is a reference to this original recipe.
 	column 'Main Recipe Id'
 		dataType: int64
 		formatString: 0
@@ -124,6 +139,8 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// A unique id of the actual recipe which is a merger of the Main Recipe Id and the Main Recipe Variaion Suffix with a hyphen in between.
+	/// The main recipe will have no Main Recipe Variation Id (I.e. it wil be NULL).
 	column 'Main Recipe Variation Id'
 		dataType: string
 		lineageTag: c5361d62-b3ca-4475-8af7-6bbe1e6a1ae4
@@ -132,6 +149,9 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The ordinal number of the weekly variation of the main recipe.
+	/// All recipes are weekly variations of a main recipe, which is the original recipe.
+	/// Every time a new variation is created it will get the next ordinal number. The first variation created from the main recipe has ordinal number 00.
 	column 'Main Recipe Variation Suffix'
 		dataType: string
 		lineageTag: 5f85679f-9b62-4f58-8e95-89f670bcacdb
@@ -179,6 +199,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The specified cooking time range of the recipe.
 	column 'Cooking Time'
 		dataType: string
 		lineageTag: 56d08ed4-ea04-4d27-b993-640873c82ae4
@@ -195,6 +216,7 @@ table Recipes
 		summarizeBy: none
 		sourceColumn: cooking_time_sorting
 
+	/// True if a recipe photo has been uploaded in the internal system.
 	column 'Has Recipe Photo'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -204,6 +226,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The specified caption of the recipe photo.
 	column 'Recipe Photo Caption'
 		dataType: string
 		lineageTag: 8b4312df-ca77-44b4-a594-3d7f880e124d
@@ -212,6 +235,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// A comment on the recipe to be published externally.
 	column 'Recipe General Text'
 		dataType: string
 		lineageTag: 29ca386e-232e-40a5-98b8-12d0dd41828e
@@ -220,6 +244,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The description of the recipe to be published externally.
 	column 'Recipe Description'
 		dataType: string
 		lineageTag: 77cf6690-bdd2-4014-bb02-4346f9b95c58
@@ -228,6 +253,8 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// True if the recipe has been selected for the "Recipe Universe".
+	/// The Recipe Universe contains the recipes that Physical Product Team has decided can be used.
 	column 'Is In Recipe Universe'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -237,6 +264,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The maximum number of days that the customer can wait before cooking the recipe.
 	column 'Recipe Shelf Life Days'
 		dataType: int64
 		formatString: 0
@@ -246,6 +274,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The recipe internal comment.
 	column 'Recipe Comment'
 		dataType: string
 		lineageTag: 73348bb0-601b-4f7c-91c7-0f318fa23631
@@ -254,6 +283,7 @@ table Recipes
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The recipe chef's tip to be published externally.
 	column 'Recipe Chef Tip'
 		dataType: string
 		lineageTag: efe9cfc6-0711-4994-ae0e-7db32de8d2b9

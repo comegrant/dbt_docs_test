@@ -1,3 +1,7 @@
+/// This is where all measures relating to menus and recipes are found.
+///
+/// Recipe Ratings
+/// This category contains the measures relating to recipe ratings and comments from customers.
 table 'Menu Measures'
 	lineageTag: 007c46b4-40eb-4dda-b8d8-38aff56cc4ff
 
