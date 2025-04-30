@@ -186,7 +186,7 @@ order_lines as (
     left join grocery_deviations_order_mapping
         on order_lines.billing_agreement_order_id = grocery_deviations_order_mapping.billing_agreement_order_id
         and products.product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }})
-        and order_lines.menu_week_monday_date > '{{ var('basket_split_migration_date')}}'
+        and order_lines.source_created_at > '{{ var('basket_split_migration_date')}}'
 
 )
 
