@@ -1,3 +1,11 @@
+/// The dimensions in this table are to be used for filtering measures at the hour and/or minute granularity.
+///
+/// Applicable for: 
+/// - data that is updating several times a day and it is necessary to understand the progression of a measure hour by hour or minute by minute, or
+/// - when it is desired to drill down on a measure at a certain hour of a day and/or minute of an hour.
+///
+/// This table is not currently set up for use on most measures. 
+/// If you need it to be made available for any measures, please reach out to Analytics.
 table Time
 	lineageTag: 0c99312c-27e7-45c7-9e1e-ee88cf5707e5
 
@@ -9,12 +17,14 @@ table Time
 		summarizeBy: none
 		sourceColumn: pk_dim_time
 
+	/// Hour of timestamp in Central European Time. The timezone used in Sweden, Norway & Denmark.
 	column Hour
 		dataType: int64
 		lineageTag: 138f402c-4123-4f1b-94b6-4172131a00cf
 		summarizeBy: none
 		sourceColumn: hour
 
+	/// Minute of Central European Timestamp. The timezone used in Sweden, Norway & Denmark.
 	column Minute
 		dataType: int64
 		lineageTag: 03186c3d-cbc0-4de8-aaf9-8a589234fa4d
