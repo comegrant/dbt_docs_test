@@ -191,6 +191,14 @@ relationship fact_loyalty_points_to_dim_dates_on_points_expiration
 	fromColumn: 'Loyalty Point Measures'.fk_dim_dates_points_expiration
 	toColumn: Dates.pk_dim_dates
 
+relationship customer_measures_to_loyalty_seasons
+	fromColumn: 'Customer Measures'.fk_dim_loyalty_seasons
+	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
+
+relationship fact_loyalty_points_to_dim_loyalty_seasons
+	fromColumn: 'Loyalty Point Measures'.fk_dim_loyalty_seasons
+	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
+
 relationship bridge_recipes_taxonomies_to_dim_recipes
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_recipes
@@ -198,11 +206,15 @@ relationship bridge_recipes_taxonomies_to_dim_recipes
 
 relationship bridge_recipes_taxonomies_to_dim_taxonomies
 	fromColumn: 'Bridge Recipes Taxonomies'.fk_dim_taxonomies
-	toColumn: 'Taxonomies'.pk_dim_taxonomies
+	toColumn: Taxonomies.pk_dim_taxonomies
 
 relationship fact_orders_to_dim_periods_since
 	fromColumn: 'Order Measures'.fk_dim_periods_since_first_menu_week
 	toColumn: 'Periods Since First Menu Week'.pk_dim_periods_since
+
+relationship fact_orders_to_dim_loyalty_seasons
+	fromColumn: 'Order Measures'.fk_dim_loyalty_seasons
+	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
 
 relationship fact_preselector_to_dim_companies
 	fromColumn: 'Preselector Details'.fk_dim_companies
@@ -285,6 +297,30 @@ relationship fact_recipe_billing_agreement_compliance-to-dim_portions
 relationship fact_orders_to_dim_order_line_details
 	fromColumn: 'Order Measures'.fk_dim_order_line_details
 	toColumn: 'Order Line Details'.pk_dim_order_line_details
+
+relationship fact_loyalty_orders_to_dim_loyalty_order_statuses
+	fromColumn: 'Loyalty Measures'.fk_dim_loyalty_order_statuses
+	toColumn: 'Loyalty Order Statuses'.pk_dim_loyalty_order_statuses
+
+relationship fact_loyalty_orders_to_dim_billing_agreements
+	fromColumn: 'Loyalty Measures'.fk_dim_billing_agreements
+	toColumn: 'Billing Agreements'.pk_dim_billing_agreements
+
+relationship fact_loyalty_orders_to_dim_companies
+	fromColumn: 'Loyalty Measures'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_loyalty_orders_to_dim_dates
+	fromColumn: 'Loyalty Measures'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates
+
+relationship fact_loyalty_orders_to_dim_products
+	fromColumn: 'Loyalty Measures'.fk_dim_products
+	toColumn: Products.pk_dim_products
+
+relationship fact_loyalty_orders_to_dim_loyalty_seasons
+	fromColumn: 'Loyalty Measures'.fk_dim_loyalty_seasons
+	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
 
 relationship fact_orders_to_dim_discounts
     fromColumn: 'Order Measures'.fk_dim_discounts

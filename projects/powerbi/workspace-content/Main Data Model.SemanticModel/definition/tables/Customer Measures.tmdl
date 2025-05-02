@@ -606,6 +606,26 @@ table 'Customer Measures'
 		formatString: #,0
 		displayFolder: Swapping Customers
 
+	/// Number of upgrades in the loyalty program. Measure is calculated here but displayed under 'Loyalty Measures'.
+	measure 'Number of Loyalty Upgrades' =
+			CALCULATE(
+				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
+				'Customer Measures'[has_upgraded_loyalty_level]	
+			)
+		isHidden
+		formatString: #,0
+		lineageTag: number-of-upgrades
+
+	/// Number of downgrades in the loyalty program. Measure is calculated here but displayed under 'Loyalty Measures'.
+	measure 'Number of Loyalty Downgrades' =
+			CALCULATE(
+				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
+				'Customer Measures'[has_downgraded_loyalty_level]	
+			)
+		isHidden
+		formatString: #,0
+		lineageTag: number-of-downgrades
+
 	/// The number of customers with an order in the selected period
 	measure 'Number of Ordering Customers' =
 			CALCULATE(
@@ -932,6 +952,27 @@ table 'Customer Measures'
 		lineageTag: 7b2d0a2b-dfd4-41f1-90d2-f06ad8453859
 		summarizeBy: none
 		sourceColumn: has_updated_loyalty_level
+
+	column has_upgraded_loyalty_level
+		dataType: boolean
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: has_upgraded_loyalty_level
+
+	column has_downgraded_loyalty_level
+		dataType: boolean
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: has_downgraded_loyalty_level
+
+	column fk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		lineageTag: c5e9ea67-ece4-4ed6-99d9-5f06f5540a7a
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_seasons
 
 	partition 'Customer Measures' = m
 		mode: directQuery

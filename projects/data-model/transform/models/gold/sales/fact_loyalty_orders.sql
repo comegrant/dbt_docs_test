@@ -12,6 +12,12 @@ loyalty_order_lines as (
 
 )
 
+, loyalty_seasons as (
+
+    select * from {{ ref('dim_loyalty_seasons') }}
+
+)
+
 , billing_agreement_preferences as (
 
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
@@ -57,6 +63,11 @@ loyalty_order_lines as (
                 add_pk.product_variation_id,
                 agreements.company_id)
             ) as fk_dim_products
+        , md5(
+            concat(
+                loyalty_seasons.company_id,
+                loyalty_seasons.loyalty_season_start_date)
+            ) as fk_dim_loyalty_seasons
     from add_pk
     left join agreements 
         on add_pk.billing_agreement_id = agreements.billing_agreement_id  
@@ -64,6 +75,10 @@ loyalty_order_lines as (
         and add_pk.loyalty_order_created_at < agreements.valid_to
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
+    left join loyalty_seasons 
+        on agreements.company_id = loyalty_seasons.company_id
+        and add_pk.loyalty_order_created_at >= loyalty_seasons.loyalty_season_start_date
+        and add_pk.loyalty_order_created_at < loyalty_seasons.loyalty_season_end_date
 )
 
 

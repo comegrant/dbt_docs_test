@@ -1,0 +1,30 @@
+/// Table containing the names of Loyalty Order Statuses
+table 'Loyalty Order Statuses'
+	isHidden
+	lineageTag: Loyalty-Order-Statuses-table
+
+	column pk_dim_loyalty_order_statuses
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: b7d7c702-6064-4d72-aaf1-f14d5d41d4d8
+		summarizeBy: none
+		sourceColumn: pk_dim_loyalty_order_statuses
+
+	column 'Loyalty Order Status Name'
+		dataType: string
+		lineageTag: 16a2e54d-e0ab-4368-860c-df9b0a500197
+		summarizeBy: none
+		sourceColumn: loyalty_order_status_name
+
+	partition 'Loyalty Order Statuses' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_loyalty_order_statuses_Table = gold_Schema{[Name="dim_loyalty_order_statuses",Kind="Table"]}[Data]
+				in
+				    dim_loyalty_order_statuses_Table
+

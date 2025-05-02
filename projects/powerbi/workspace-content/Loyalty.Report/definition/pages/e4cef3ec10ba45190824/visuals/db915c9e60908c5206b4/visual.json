@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
-  "name": "02302b5a32bddb3dc530",
+  "name": "db915c9e60908c5206b4",
   "position": {
-    "x": 28.888888888888889,
-    "y": 95.555555555555557,
-    "z": 0,
-    "height": 321.11111111111109,
-    "width": 906.66666666666663,
-    "tabOrder": 3000
+    "x": 45.714285714285715,
+    "y": 94.346504559270514,
+    "z": 4000,
+    "height": 302.4924012158055,
+    "width": 935.68389057750767,
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -33,26 +33,6 @@
               },
               "queryRef": "Dates.Financial Date Hierarchy.Year",
               "nativeQueryRef": "Financial Date Hierarchy Year",
-              "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
-                    }
-                  },
-                  "Level": "Quarter"
-                }
-              },
-              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
-              "nativeQueryRef": "Financial Date Hierarchy Quarter",
               "active": true
             },
             {
@@ -123,14 +103,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Order Measures"
+                      "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Orders"
+                  "Property": "Number of Subscribers All Statuses"
                 }
               },
-              "queryRef": "Order Measures.Number of Orders",
-              "nativeQueryRef": "Number of Orders"
+              "queryRef": "Customer Measures.Number of Subscribers All Statuses",
+              "nativeQueryRef": "Number of Subscribers All Statuses"
             }
           ]
         }
@@ -163,6 +143,7 @@
             "queryRefs": [
               "Billing Agreements.Loyalty Level Number"
             ],
+            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -178,20 +159,26 @@
             "isPinned": true
           }
         ],
-        "root": {}
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "4L"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
       }
     ],
     "objects": {
       "subTotals": [
         {
           "properties": {
-            "rowSubtotals": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "columnSubtotals": {
               "expr": {
                 "Literal": {
@@ -210,7 +197,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Number of Orders'"
+                  "Value": "'Number of Subscribers'"
                 }
               }
             }
@@ -230,7 +217,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Per Loyalty Level at CUTOFF per Financial Week'"
+                  "Value": "'Per Loyalty Level At End of Week per Financial Week'"
                 }
               }
             }
@@ -243,33 +230,75 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "cd471f9e1d82d2388e29",
+        "name": "a8be384aea3383b7c637",
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Dates"
               }
             },
-            "Property": "Loyalty Level Number"
+            "Property": "Monday Date"
           }
         },
-        "type": "Categorical",
-        "objects": {
-          "general": [
+        "type": "RelativeDate",
+        "filter": {
+          "Version": 2,
+          "From": [
             {
-              "properties": {
-                "isInvertedSelectionMode": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "true"
+              "Name": "d",
+              "Entity": "Dates",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Between": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "d"
+                        }
+                      },
+                      "Property": "Monday Date"
+                    }
+                  },
+                  "LowerBound": {
+                    "DateSpan": {
+                      "Expression": {
+                        "DateAdd": {
+                          "Expression": {
+                            "DateAdd": {
+                              "Expression": {
+                                "Now": {}
+                              },
+                              "Amount": 1,
+                              "TimeUnit": 0
+                            }
+                          },
+                          "Amount": -1000,
+                          "TimeUnit": 1
+                        }
+                      },
+                      "TimeUnit": 0
+                    }
+                  },
+                  "UpperBound": {
+                    "DateSpan": {
+                      "Expression": {
+                        "Now": {}
+                      },
+                      "TimeUnit": 0
                     }
                   }
                 }
               }
             }
           ]
-        }
+        },
+        "howCreated": "User"
       }
     ]
   }

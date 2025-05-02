@@ -1,0 +1,45 @@
+/// Table containing the names of Loyalty Seasons, which are the periods at the end of which loyalty level downgrades occur.
+table 'Loyalty Seasons'
+	lineageTag: Loyalty-Seasons-Table
+
+	column pk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		lineageTag: 715c24f1-e459-40ec-b80b-2221caf839d2
+		summarizeBy: none
+		sourceColumn: pk_dim_loyalty_seasons
+
+	/// Name of the loyalty season
+	column 'Loyalty Season Name'
+		dataType: string
+		lineageTag: 247119c2-b7df-4c11-bed2-e9f9d7b70175
+		summarizeBy: none
+		sourceColumn: loyalty_season_name
+
+	/// Year in which the loyalty season falls
+	column 'Loyalty Season Year'
+		dataType: int64
+        isHidden
+		lineageTag: ea0da7eb-3c6d-4d08-91df-0f6ecc2b6368
+		summarizeBy: none
+		sourceColumn: loyalty_season_year
+
+	/// Quarter of year in which the loyalty season falls
+	column 'Loyalty Season Quarter'
+		dataType: int64
+        isHidden
+		lineageTag: 127a9e46-58ba-4934-b124-2d6738539b69
+		summarizeBy: none
+		sourceColumn: loyalty_season_quarter
+
+	partition 'Loyalty Seasons' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_loyalty_seasons_Table = gold_Schema{[Name="dim_loyalty_seasons",Kind="Table"]}[Data]
+				in
+					dim_loyalty_seasons_Table
+

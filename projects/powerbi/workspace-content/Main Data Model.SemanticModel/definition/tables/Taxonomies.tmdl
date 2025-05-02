@@ -1,5 +1,5 @@
 /// Taxonomies are connected to recipes and allows for filtering of recipe taxonomies.
-table 'Taxonomies'
+table Taxonomies
     lineageTag: Taxonomies-Table
 
     /// The primary key of the Taxonomies table

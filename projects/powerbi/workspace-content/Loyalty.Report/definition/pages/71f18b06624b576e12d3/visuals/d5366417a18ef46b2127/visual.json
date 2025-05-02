@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "d5366417a18ef46b2127",
   "position": {
-    "x": 28.888888888888889,
-    "y": 440,
-    "z": 8002,
-    "height": 220,
-    "width": 360,
-    "tabOrder": 8002
+    "x": 951.24620060790278,
+    "y": 95.319148936170222,
+    "z": 5000,
+    "height": 320.97264437689972,
+    "width": 292.7659574468085,
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -42,11 +42,11 @@
                       "Entity": "Order Measures"
                     }
                   },
-                  "Property": "ATV Ex Vat"
+                  "Property": "ATV Gross Ex Vat"
                 }
               },
-              "queryRef": "Order Measures.ATV Ex Vat",
-              "nativeQueryRef": "ATV Ex Vat"
+              "queryRef": "Order Measures.ATV Gross Ex Vat",
+              "nativeQueryRef": "ATV Gross Ex Vat"
             }
           ]
         }
@@ -126,7 +126,27 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'ATV Ex Vat per tier'"
+                  "Value": "'ATV Ex Vat'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Per Loyalty Level at CUTOFF'"
                 }
               }
             }

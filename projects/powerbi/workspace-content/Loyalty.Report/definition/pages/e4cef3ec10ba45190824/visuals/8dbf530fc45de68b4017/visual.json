@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "587aa7752e44ba7b4941",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "name": "8dbf530fc45de68b4017",
   "position": {
-    "x": 32.222222222222221,
-    "y": 98.888888888888886,
-    "z": 5001,
-    "height": 296.66666666666669,
-    "width": 997.77777777777771,
-    "tabOrder": 5001
+    "x": 748.936170212766,
+    "y": 405.59270516717328,
+    "z": 6000,
+    "height": 283.03951367781156,
+    "width": 483.40425531914894,
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -33,26 +33,6 @@
               },
               "queryRef": "Dates.Financial Date Hierarchy.Year",
               "nativeQueryRef": "Financial Date Hierarchy Year",
-              "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Financial Date Hierarchy"
-                    }
-                  },
-                  "Level": "Quarter"
-                }
-              },
-              "queryRef": "Dates.Financial Date Hierarchy.Quarter",
-              "nativeQueryRef": "Financial Date Hierarchy Quarter",
               "active": true
             },
             {
@@ -126,11 +106,11 @@
                       "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Subscribers All Statuses"
+                  "Property": "Number of Subscribers Downgraded Loyalty Level"
                 }
               },
-              "queryRef": "Customer Measures.Number of Subscribers All Statuses",
-              "nativeQueryRef": "Number of Subscribers All Statuses"
+              "queryRef": "Customer Measures.Number of Subscribers Downgraded Loyalty Level",
+              "nativeQueryRef": "Number of Subscribers Downgraded Loyalty Level"
             }
           ]
         }
@@ -160,7 +140,7 @@
             "rowSubtotals": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -182,7 +162,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Number of Customers (All Statuses) per tier at the latest timestamp of each week'"
+                  "Value": "'Number of Subscribers Downgraded Loyalty Level'"
                 }
               }
             }
@@ -202,7 +182,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Latest timestamp of each calendar week?'"
+                  "Value": "'Per Financial Week and Loyalty Level Subscriber was Downgraded To'"
                 }
               }
             }
@@ -211,24 +191,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b00a5897eaab1e765c65",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Products"
-              }
-            },
-            "Property": "Product Type Name"
-          }
-        },
-        "type": "Categorical",
-        "howCreated": "User"
-      }
-    ]
   }
 }

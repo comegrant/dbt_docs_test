@@ -4,10 +4,10 @@
   "position": {
     "x": 198,
     "y": 0,
-    "z": 4000,
+    "z": 1000,
     "height": 57.333333333333336,
     "width": 241.33333333333334,
-    "tabOrder": 3000
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "slicer",
@@ -23,11 +23,11 @@
                       "Entity": "Dates"
                     }
                   },
-                  "Property": "Date"
+                  "Property": "Monday Date Previous Week"
                 }
               },
-              "queryRef": "Dates.Date",
-              "nativeQueryRef": "Date",
+              "queryRef": "Dates.Monday Date Previous Week",
+              "nativeQueryRef": "Monday Date Previous Week",
               "active": true
             }
           ]
@@ -43,7 +43,7 @@
                     "Entity": "Dates"
                   }
                 },
-                "Property": "Date"
+                "Property": "Monday Date Previous Week"
               }
             },
             "direction": "Ascending"
@@ -73,14 +73,14 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "15D"
                 }
               }
             },
             "relativePeriod": {
               "expr": {
                 "Literal": {
-                  "Value": "'Years'"
+                  "Value": "'Weeks'"
                 }
               }
             }
@@ -172,7 +172,7 @@
                                 "Source": "d"
                               }
                             },
-                            "Property": "Date"
+                            "Property": "Monday Date Previous Week"
                           }
                         },
                         "LowerBound": {
@@ -188,8 +188,8 @@
                                     "TimeUnit": 0
                                   }
                                 },
-                                "Amount": -1,
-                                "TimeUnit": 3
+                                "Amount": -15,
+                                "TimeUnit": 1
                               }
                             },
                             "TimeUnit": 0

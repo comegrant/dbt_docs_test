@@ -77,6 +77,12 @@ order_lines as (
 
 )
 
+, loyalty_seasons as (
+
+    select * from {{ ref('dim_loyalty_seasons') }}
+
+)
+
 -- TODO: This solution is a bit hacky
 , recommendations_origin as (
 
@@ -754,6 +760,7 @@ order_lines as (
         end as has_finished_order_status
         , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
         , coalesce(md5(concat(subscribed_groceries_flag.order_line_type_name, subscribed_groceries_flag.order_line_details)), '0') as fk_dim_order_line_details
+        , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
     from subscribed_groceries_flag
     left join products
         on subscribed_groceries_flag.fk_dim_products = products.pk_dim_products
@@ -772,6 +779,10 @@ order_lines as (
     left join order_discounts
         on subscribed_groceries_flag.billing_agreement_order_line_id = order_discounts.billing_agreement_order_line_id
         and subscribed_groceries_flag.menu_year > 2020
+    left join loyalty_seasons
+        on subscribed_groceries_flag.company_id = loyalty_seasons.company_id
+        and subscribed_groceries_flag.source_created_at >= loyalty_seasons.loyalty_season_start_date
+        and subscribed_groceries_flag.source_created_at < loyalty_seasons.loyalty_season_end_date
 
 )
 

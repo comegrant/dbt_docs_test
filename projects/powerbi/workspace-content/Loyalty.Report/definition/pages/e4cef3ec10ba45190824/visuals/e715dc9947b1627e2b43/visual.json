@@ -4,7 +4,7 @@
   "position": {
     "x": 198,
     "y": 0,
-    "z": 3000,
+    "z": 2000,
     "height": 57.333333333333336,
     "width": 241.33333333333334,
     "tabOrder": 0
@@ -73,7 +73,7 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "15D"
                 }
               }
             },
@@ -188,7 +188,7 @@
                                     "TimeUnit": 0
                                   }
                                 },
-                                "Amount": -12,
+                                "Amount": -15,
                                 "TimeUnit": 1
                               }
                             },

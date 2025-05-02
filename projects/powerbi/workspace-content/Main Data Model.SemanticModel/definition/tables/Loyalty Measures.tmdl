@@ -1,0 +1,175 @@
+/// Measures related to the loyalty program. Includes the number of upgrades and downgrades and measures related to transactions in the Points Store where customers exchange loyalty points for products.
+table 'Loyalty Measures'
+	isHidden
+	lineageTag: Loyalty-Measures-Table
+
+	/// Number of upgrades that occurred amongst customers in the loyalty program. 
+	/// If you are looking at this measure per week, 1 upgrade represents 1 customer.
+	/// If you are looking at this per period which is longer than a week (e.g. per month), it is possible that the same customer is counted more than once, as they could have been upgraded more than once in the same month.
+	measure 'Number of Loyalty Level Upgrades' =
+				'Customer Measures'[Number of Loyalty Upgrades]
+		isHidden
+		formatString: #,0
+		lineageTag: number-of-subscribers-upgraded-loyalty-level
+
+	/// Number of downgrades that occurred amongst customers in the loyalty program. 
+	/// If you are looking at this measure per week, 1 downgrade represents 1 customer.
+	/// If you are looking at this per period which covers multiple loyalty seasons, it is possible that the same customer is counted more than once, as they could have been downgraded on multiple occassions.
+	measure 'Number of Loyalty Level Downgrades' =
+				'Customer Measures'[Number of Loyalty Downgrades]
+		isHidden
+		formatString: #,0
+		lineageTag: number-of-subscribers-downgraded-loyalty-level
+
+	/// Number of transactions where a customer has spent loyalty points to make a purchase in the Points Store.
+	measure 'Number of Loyalty Orders' =
+			CALCULATE(
+				DISTINCTCOUNT('Loyalty Measures'[loyalty_order_id]),
+				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: number-of-loyalty-orders
+
+	/// The number of units of product purchased with loyalty points in the Points Store.
+	/// E.g. If 2 x 30kr coupons and 1 x 50kr coupon is purchased, this measure will return 3. 
+	/// Before the start of 2023 it was possible to purchase physical products with loyalty points. 
+	measure 'Number of Units of Product Purchased with Loyalty Points' =
+			CALCULATE(
+				SUM('Loyalty Measures'[product_variation_quantity]),
+				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		isHidden
+		lineageTag: number-of-products-purchased-with-points
+
+	/// Number of points earned, spent, expired, etc. on all loyalty points transactions matching any applied filters.
+	measure 'Number of Loyalty Points Exchanged' =
+			'Loyalty Point Measures'[All Loyalty Points]
+		formatString: #,0
+		isHidden
+		displayFolder: Loyalty Points
+		lineageTag: 8737f78b-8329-45ef-baf4-995778c67d08
+
+	/// Number of loyalty points spent in the Points Store, e.g. number of points spent on buying a discount coupon.
+	measure 'Number of Loyalty Points Spent' =
+			CALCULATE(
+				SUM('Loyalty Measures'[total_point_price]),
+				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Loyalty Points
+		lineageTag: sum-of-loyalty-points-spent
+
+	/// Number of spendable loyalty points earned on pointworthy transactions, such as ordering mealboxes or referring friends.
+	/// Spendable points are points that can be spent in the Points Store.
+	measure 'Number of Loyalty Points Earned' =
+			'Loyalty Point Measures'[Loyalty Points Earned]
+		formatString: #,0
+		isHidden
+		displayFolder: Loyalty Points
+		lineageTag: 5e8fa074-ac41-4516-acac-2508cfb505a9
+
+	/// Number of spendable loyalty points that are not spent in the Points Store, but are removed for some reason, e.g. points have passed their expiration date, or there is a manual points correction.
+	measure 'Number of Loyalty Points Lost' =
+			'Loyalty Point Measures'[Loyalty Points Lost]
+		formatString: #,0
+		isHidden
+		displayFolder: Loyalty Points
+		lineageTag: 869635da-16d5-459a-a046-69e7fdf8f3b1
+
+	/// Number of loyalty points that have been earned which have not expired and are yet to be redeemed.
+	measure 'Number of Loyalty Points Remaining in Customer Accounts' =
+			'Loyalty Point Measures'[Loyalty Points Remaining]
+		formatString: #,0
+		isHidden
+		displayFolder: Loyalty Points
+		lineageTag: loyalty-points-in-customer-accounts
+
+	column loyalty_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: loyalty-order-id
+		summarizeBy: none
+		sourceColumn: loyalty_order_id
+	
+	column fk_dim_loyalty_order_statuses
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: f4587a0f-c014-45f3-8659-3ab8ab2e26d7
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_order_statuses
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 97a25ddc-ac10-470d-81f2-96f7dc8f30d3
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a3e92d2b-f3cf-4195-b0e3-3651b5a809e6
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	column fk_dim_dates
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: cc4bae93-147d-45cf-a529-ea12e33a0077
+		summarizeBy: none
+		sourceColumn: fk_dim_dates
+
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 967110e2-721d-4eb4-8458-d39e50f80aad
+		summarizeBy: none
+		sourceColumn: fk_dim_products
+
+	column fk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: e2ce78d8-d110-46da-b2b9-63fda6ec7119
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_seasons
+
+	column product_variation_quantity
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: b11e0e3b-914f-4d77-9bdd-95bf507165a8
+		summarizeBy: sum
+		sourceColumn: product_variation_quantity
+
+	column total_point_price
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		lineageTag: f69d9cbc-f1c6-4195-b750-12855aab3308
+		summarizeBy: sum
+		sourceColumn: total_point_price
+
+	partition 'Loyalty Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_loyalty_orders_Table = gold_Schema{[Name="fact_loyalty_orders",Kind="Table"]}[Data]
+				in
+				    fact_loyalty_orders_Table
+

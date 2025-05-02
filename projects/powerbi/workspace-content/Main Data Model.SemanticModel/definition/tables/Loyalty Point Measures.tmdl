@@ -1,9 +1,11 @@
-/// Table of measures related to all loyalty points transactions
+/// Table of measures related to all loyalty points transactions.
+/// Table is hidden. All measures are displayed in the 'Loyalty Measures' table 
 table 'Loyalty Point Measures'
+	isHidden
 	lineageTag: Loyalty-Point-Measures-Table
 
-	/// Sum of points of all loyalty points transactions
-	measure 'Number of Loyalty Points' =
+	/// Number of points earned, spent, expired, etc. on all loyalty points transactions
+	measure 'All Loyalty Points' =
 			CALCULATE(
 				SUM('Loyalty Point Measures'[Transaction Points])
 			)
@@ -11,43 +13,45 @@ table 'Loyalty Point Measures'
 		isHidden
 		lineageTag: 8737f78b-8329-45ef-baf4-995778c67d08
 
-	/// Sum of all loyalty points earned
-	measure 'Number of Loyalty Points Earned' =
+	/// Number of spendable loyalty points earned on pointworthy transactions, such as ordering mealboxes or referring friends.
+	/// Spendable points are points that can be spent in the Points Store.
+	measure 'Loyalty Points Earned' =
 			CALCULATE(
-			    [Number of Loyalty Points],
+			    [All Loyalty Points],
 			    ISBLANK('Loyalty Point Measures'[loyalty_points_parent_id])
 			)
 		formatString: #,0
 		isHidden
 		lineageTag: 5e8fa074-ac41-4516-acac-2508cfb505a9
 
-	/// Sum of all loyalty points spent
-	measure 'Number of Loyalty Points Spent on Loyalty Orders' =
+	/// Number of loyalty points spent in the Points Store.
+	measure 'Loyalty Points Spent' =
 			CALCULATE(
-			    [Number of Loyalty Points],
+			    [All Loyalty Points],
 			    NOT ISBLANK('Loyalty Point Measures'[loyalty_order_id])
 			)
 		formatString: #,0
 		isHidden
 		lineageTag: d7cb57b0-5563-4441-bb3e-2d8882e2891f
 
-	/// Sum of all loyalty points lost
-	measure 'Number of Loyalty Points Lost' =
+	/// Number of spendable loyalty points that are not spent in the Points Store, but are removed for some reason, e.g. points pass expiration date, or a points correction
+	measure 'Loyalty Points Lost' =
 			CALCULATE(
-			    [Number of Loyalty Points],
+			    [All Loyalty Points],
 			    ISBLANK('Loyalty Point Measures'[loyalty_order_id]) && 'Loyalty Point Measures'[Transaction Points] < 0
 			)
 		formatString: #,0
 		isHidden
 		lineageTag: 869635da-16d5-459a-a046-69e7fdf8f3b1
 
-	column loyalty_points_id
-		dataType: string
+	/// Number of loyalty points that have not expired but are yet to be spent
+	measure 'Loyalty Points Remaining' = 
+			CALCULATE(
+				SUM('Loyalty Point Measures'[Remaining Points])
+			)
+		formatString: #,0
 		isHidden
-		isAvailableInMdx: false
-		lineageTag: 079cd03b-fb0d-4524-8a08-ed5f009c2175
-		summarizeBy: none
-		sourceColumn: loyalty_points_id
+		lineageTag: loyalty-points-remaining
 
 	column loyalty_points_parent_id
 		dataType: string
@@ -56,23 +60,6 @@ table 'Loyalty Point Measures'
 		lineageTag: a56d0906-20e8-4f4a-9c77-3affd48b1918
 		summarizeBy: none
 		sourceColumn: loyalty_points_parent_id
-
-	column billing_agreement_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: c48fe694-3712-474b-a5b2-f6b6ed9bce2a
-		summarizeBy: none
-		sourceColumn: billing_agreement_id
-
-	column loyalty_event_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: c7742b09-72ea-4af1-a1a7-0b7cd22b852b
-		summarizeBy: none
-		sourceColumn: loyalty_event_id
 
 	column loyalty_order_id
 		dataType: string
@@ -195,6 +182,14 @@ table 'Loyalty Point Measures'
 		lineageTag: 2da3bd8c-da9a-4562-8b60-681b44cd5709
 		summarizeBy: none
 		sourceColumn: fk_dim_companies
+
+	column fk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 45ba48b3-c769-430b-9991-82e95f634b26
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_seasons
 
 	partition 'Loyalty Point Measures' = m
 		mode: directQuery

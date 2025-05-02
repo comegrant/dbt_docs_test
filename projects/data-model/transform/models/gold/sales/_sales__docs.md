@@ -640,6 +640,18 @@ True if the loyalty level before and after the update is different.
 
 {% enddocs %}
 
+{% docs column__has_upgraded_loyalty_level %}
+
+True if the loyalty level number after the update is higher than before the update.
+
+{% enddocs %}
+
+{% docs column__has_downgraded_loyalty_level %}
+
+True if the loyalty level number after the update is lower than before the update.
+
+{% enddocs %}
+
 {% docs column__has_updated_onesub_flag %}
 
 True if the OneSub flag for the billing agreement before and after the update is different.

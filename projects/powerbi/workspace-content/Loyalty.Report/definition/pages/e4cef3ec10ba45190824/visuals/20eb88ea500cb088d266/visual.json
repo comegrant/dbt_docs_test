@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
-  "name": "192edb0fb36800459cf1",
+  "name": "20eb88ea500cb088d266",
   "position": {
-    "x": 37.679653679653683,
-    "y": 107.4978354978355,
-    "z": 3000,
-    "height": 436.64069264069263,
-    "width": 1114.8744588744589,
-    "tabOrder": 3000
+    "x": 45.437229437229441,
+    "y": 405.61038961038963,
+    "z": 5000,
+    "height": 282.59740259740261,
+    "width": 678.23376623376623,
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -84,14 +84,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Loyalty Events"
+                      "Entity": "Billing Agreements"
                     }
                   },
-                  "Property": "Loyalty Event Name"
+                  "Property": "Loyalty Level Number"
                 }
               },
-              "queryRef": "Loyalty Events.Loyalty Event Name",
-              "nativeQueryRef": "Loyalty Event Name",
+              "queryRef": "Billing Agreements.Loyalty Level Number",
+              "nativeQueryRef": "Loyalty Level Number",
               "active": true
             }
           ]
@@ -103,17 +103,34 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Loyalty Point Measures"
+                      "Entity": "Customer Measures"
                     }
                   },
-                  "Property": "Number of Loyalty Points"
+                  "Property": "Number of Subscribers Upgraded Loyalty Level"
                 }
               },
-              "queryRef": "Loyalty Point Measures.Number of Loyalty Points",
-              "nativeQueryRef": "Number of Loyalty Points"
+              "queryRef": "Customer Measures.Number of Subscribers Upgraded Loyalty Level",
+              "nativeQueryRef": "Number of Subscribers Upgraded Loyalty Level"
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Billing Agreements"
+                  }
+                },
+                "Property": "Loyalty Level Number"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
       }
     },
     "objects": {
@@ -124,6 +141,13 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -138,7 +162,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Number of Loyalty Points'"
+                  "Value": "'Number of Subscribers Upgraded Loyalty Level'"
                 }
               }
             }
@@ -158,7 +182,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Earned, Spent, Expired per Event per Financial Week'"
+                  "Value": "'Per Financial Week and Loyalty Level Subscriber was Upgraded to'"
                 }
               }
             }

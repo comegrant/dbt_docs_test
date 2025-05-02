@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "fbd631610b16b0de0e46",
+  "name": "ed7b4fc2238e137a6c90",
   "position": {
-    "x": 438.88888888888886,
+    "x": 439.965367965368,
     "y": 0,
-    "z": 4000,
-    "height": 57.777777777777779,
-    "width": 201.11111111111111,
-    "tabOrder": 4000
+    "z": 3001,
+    "height": 57.62770562770563,
+    "width": 201.69696969696969,
+    "tabOrder": 3001
   },
   "visual": {
     "visualType": "slicer",
@@ -48,6 +48,11 @@
           }
         }
       ]
+    },
+    "syncGroup": {
+      "groupName": "Billing Agreement Status",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }

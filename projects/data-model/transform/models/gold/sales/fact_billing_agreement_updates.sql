@@ -54,6 +54,12 @@ dim_billing_agreements as (
     and valid_from >= '2015-01-01'
 )
 
+, loyalty_seasons as (
+
+    select * from {{ ref('dim_loyalty_seasons') }}
+
+)
+
 , updated_and_previous_version_joined as (
 
     select
@@ -66,6 +72,7 @@ dim_billing_agreements as (
     , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
     , billing_agreement_preferences_previous_version.preference_combination_id as fk_dim_preference_combinations_previous_version
     , md5(agreements.company_id) as fk_dim_companies
+    , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
 
     , case
         when agreements.valid_from < agreements.first_menu_week_monday_date then 0
@@ -110,6 +117,16 @@ dim_billing_agreements as (
         else false
     end as has_updated_loyalty_level
 
+    , case 
+        when agreements_previous_version.loyalty_level_number < agreements.loyalty_level_number then true
+        else false
+    end as has_upgraded_loyalty_level
+
+    , case 
+        when agreements_previous_version.loyalty_level_number > agreements.loyalty_level_number then true
+        else false
+    end as has_downgraded_loyalty_level
+
     , case
         when agreements_previous_version.fk_dim_billing_agreements is null then false
         when agreements.onesub_flag <> agreements_previous_version.onesub_flag then true
@@ -124,7 +141,12 @@ dim_billing_agreements as (
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join billing_agreement_preferences as billing_agreement_preferences_previous_version
         on agreements_previous_version.billing_agreement_preferences_updated_id = billing_agreement_preferences_previous_version.billing_agreement_preferences_updated_id
+    left join loyalty_seasons 
+        on agreements.company_id = loyalty_seasons.company_id
+        and agreements.valid_from >= loyalty_seasons.loyalty_season_start_date
+        and agreements.valid_from < loyalty_seasons.loyalty_season_end_date
 
 )
 
-select * from  updated_and_previous_version_joined
+select * from updated_and_previous_version_joined
+

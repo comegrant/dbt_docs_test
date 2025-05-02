@@ -11,7 +11,7 @@ annotation PBI_QueryOrder = ["Date","Brands","Order Statuses","Order Types","Rec
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.140.1351.0 (25.02)+9bb96b6a5aee417774126f3416805b86efac121f
+annotation PBIDesktopVersion = 2.140.1577.0 (25.02)+00af0910c5ca19a229c472b0dfc17a2c488f6b0a
 
 annotation PBI_ProTooling = ["DevMode","TMDL-Extension","CalcGroup"]
 
@@ -48,7 +48,7 @@ ref table 'Time Intelligence'
 ref table 'Loyalty Point Measures'
 ref table 'Loyalty Events'
 ref table 'Bridge Recipes Taxonomies'
-ref table 'Taxonomies'
+ref table Taxonomies
 ref table '(Param) Minimum Number of Ratings Limit'
 ref table '(Param) Recipe Rating Target Score Cheffelo'
 ref table '(Param) Recipe Rating Target Score Adams Matkasse'
@@ -60,6 +60,12 @@ ref table 'Preselector Measures'
 ref table 'Preselector Versions'
 ref table 'Preselector Details'
 ref table 'Portions'
+ref table 'Loyalty Measures'
+ref table 'Loyalty Seasons'
+ref table 'Loyalty Order Statuses'
+ref table '(Param) Number of Deliveries per Customer Target'
+ref table 'Customer Loyalty Updates'
 ref table Discounts
 
 ref cultureInfo en-US
+

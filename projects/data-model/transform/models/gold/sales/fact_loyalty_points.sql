@@ -21,6 +21,12 @@ source as (
 
 )
 
+, loyalty_seasons as (
+
+    select * from {{ ref('dim_loyalty_seasons') }}
+
+)
+
 , billing_agreement_preferences as (
 
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
@@ -49,6 +55,7 @@ source as (
         , cast(date_format(add_pk.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates_transaction
         , cast(date_format(add_pk.points_expiration_date, 'yyyyMMdd') as int) as fk_dim_dates_points_expiration
         , md5(agreements.company_id) as fk_dim_companies
+        , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
     from add_pk
     left join agreements 
         on add_pk.billing_agreement_id = agreements.billing_agreement_id
@@ -56,6 +63,10 @@ source as (
         and add_pk.source_created_at < agreements.valid_to
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
+    left join loyalty_seasons
+        on agreements.company_id = loyalty_seasons.company_id 
+        and add_pk.source_created_at >= loyalty_seasons.loyalty_season_start_date
+        and add_pk.source_created_at < loyalty_seasons.loyalty_season_end_date
 
 )
 

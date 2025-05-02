@@ -4,10 +4,10 @@
   "position": {
     "x": 438.88888888888886,
     "y": 0,
-    "z": 5000,
+    "z": 3000,
     "height": 57.777777777777779,
     "width": 201.11111111111111,
-    "tabOrder": 5000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -48,6 +48,11 @@
           }
         }
       ]
+    },
+    "syncGroup": {
+      "groupName": "Billing Agreement Status",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }

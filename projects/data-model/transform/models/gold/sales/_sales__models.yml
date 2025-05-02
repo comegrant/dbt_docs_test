@@ -427,6 +427,14 @@ models:
         data_type: int
         description: "{{ doc('column__fk_dim_periods_since_first_menu_week') }}"
 
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
+
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
@@ -1109,6 +1117,14 @@ models:
               to: ref('dim_companies')
               field: pk_dim_companies
 
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
+
       - name: fk_dim_periods_since_first_order
         data_type: int
         description: "dimension does not exist yet, so will add description later."
@@ -1168,6 +1184,19 @@ models:
         description: "{{ doc('column__has_updated_loyalty_level') }}"
         data_tests:
           - not_null
+
+      - name: has_upgraded_loyalty_level
+        data_type: boolean
+        description: "{{ doc('column__has_upgraded_loyalty_level') }}"
+        data_tests:
+          - not_null
+
+      - name: has_downgraded_loyalty_level
+        data_type: boolean
+        description: "{{ doc('column__has_downgraded_loyalty_level') }}"
+        data_tests:
+          - not_null
+
 
       - name: has_updated_onesub_flag
         data_type: boolean
@@ -2582,6 +2611,13 @@ models:
               to: ref('dim_products')
               field: pk_dim_products
 
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
 
   - name: dim_loyalty_order_statuses
     description: "Dimension table for loyalty order statuses."
@@ -2875,6 +2911,14 @@ models:
               to: ref('dim_companies')
               field: pk_dim_companies
 
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
+              
   - name: dim_loyalty_seasons
     columns:
       - name: pk_dim_loyalty_seasons

@@ -1908,12 +1908,19 @@ table 'Order Measures'
 		summarizeBy: sum
 		sourceColumn: subscribed_product_variation_amount_ex_vat
 
+	column fk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_seasons
+
 	column fk_dim_discounts
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_discounts
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_discounts
 
 	column has_finished_order_status
 		dataType: boolean
