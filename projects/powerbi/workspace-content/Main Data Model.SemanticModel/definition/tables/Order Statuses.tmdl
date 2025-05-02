@@ -1,3 +1,4 @@
+/// Information about the status that an order can have.
 table 'Order Statuses'
 	lineageTag: 1328111a-5f01-4b3f-8a2c-c02c4dad327c
 
@@ -13,6 +14,11 @@ table 'Order Statuses'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the status of an order. 
+	/// Statuses include: 'Created', 'Hold', 'Processing', 'Cancelled', 'Finished'.
+	/// An order in status 'Created' exists only in CMS. 
+	/// An order in status 'Processing' means it has been sent to logistics. 
+	/// An order in status 'Finished' means the order has been completed.
 	column 'Order Status Name'
 		dataType: string
 		lineageTag: 8fbab1fb-dc08-4292-b902-71c8c29cf93c
@@ -21,6 +27,7 @@ table 'Order Statuses'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Whether or not an order is in a status where it can still be cancelled. Orders that are in status 'Created' or 'Hold' can be cancelled.
 	column 'Can be Cancelled'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""

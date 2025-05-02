@@ -1,3 +1,4 @@
+/// Information about products that exist on menus for purchase by customers. 
 table Products
 	lineageTag: 4ff9201f-5185-4392-bb6c-8c531c115fb3
 
@@ -104,6 +105,7 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the product. Examples of product names are 'Favorittkassen', 'Avokado 1stk'
 	column 'Product Name'
 		dataType: string
 		lineageTag: d0e82a8a-e75a-4798-8aa2-8c571e35d25b
@@ -112,6 +114,8 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The status of the product as it appears in PSL.
+	/// The main statuses being 'Live' or 'Deleted'.
 	column 'Product Status Name'
 		dataType: string
 		lineageTag: d2b6fc73-9a89-4c96-ba32-8a1872086041
@@ -120,6 +124,7 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The name of the variation. Examples of variation names are: 'Matkasse 3 Dager 5 Porsjoner', 'Avokado 1stk'
 	column 'Product Variation Name'
 		dataType: string
 		lineageTag: 08c10034-50aa-4f58-b805-4fb3130f272b
@@ -128,6 +133,7 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Stock Keeping Unit as it appears in PSL.
 	column Sku
 		dataType: string
 		lineageTag: 9430db27-2352-43b5-a569-090687009da2
@@ -136,6 +142,8 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The number of meals that are included in the product variation.
+	/// Example: A product variation with Meals = 4 means the product includes 4 dinners.
 	column Meals
 		dataType: string
 		lineageTag: 0cfd128e-8134-4007-886f-3ed2f44a6279
@@ -146,6 +154,8 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The number of portions that are included in the product variation.
+	/// Example: A product variation with Portions = 2 means the product caters for 2 people.
 	column Portions
 		dataType: string
 		isHidden

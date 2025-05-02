@@ -1,3 +1,4 @@
+/// Information on the type of orders that can be placed.
 table 'Order Types'
 	lineageTag: 6fa76248-580e-4a45-882f-c64c0358e75c
 
@@ -25,6 +26,13 @@ table 'Order Types'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Name of the order type.
+	/// "Recurring" - The regular order type which occurs on a weekly basis. This is the most common type. 
+	/// "Campaign" - An order for a special mealbox such as the Easter mealbox ("Påskbord") or the Christmas mealbox ("Julekassen").
+	/// "Gift Card" - Represents an order in which a gift card is purchased. 
+	/// "Daily Direct Order" - A legacy order type which represented an order with next day delivery. This was common on the Godtlevert Flex brand.
+	/// "Orders After Cutoff" - A legacy order type used by customer service to create an order for a customer after cut-off.
+	/// "Orders After Registration" - A legacy order type which was only used on Godtlevert. It represented an order placed after signup. Only new customers (placing their first order) had this option and could place an order for a week that had already passed cutoff. There was a predetermined number of available orders of this type each week based on the amount of stock in PIM.
 	column 'Order Type Name'
 		dataType: string
 		lineageTag: c23c6a4b-5a82-4b49-84e7-d0b162ee2788
@@ -33,6 +41,7 @@ table 'Order Types'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Whether or not the order type is a direct order type. 'Campaign' and 'Gift Card' order types are direct order types.
 	column 'Is Direct Order'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -42,6 +51,7 @@ table 'Order Types'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Whether or not the order type allows for purchase by logged out customers (customers without an account on any of the Cheffelo brands).
 	column 'Allows Anonymous'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -51,6 +61,7 @@ table 'Order Types'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Whether or not the order type requires payment at the time the order is created.
 	column 'Is Direct Payment'
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""

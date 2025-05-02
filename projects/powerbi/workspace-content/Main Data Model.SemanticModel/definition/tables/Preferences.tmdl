@@ -1,3 +1,5 @@
+/// Information about preferences that customers have set for themselves on their account.
+/// Preferences describe the types of dishes a customer desires and/or the types of ingredients they do not want.
 table Preferences
 	lineageTag: a1fb30ef-72c3-45ad-89e5-2a5341187904
 

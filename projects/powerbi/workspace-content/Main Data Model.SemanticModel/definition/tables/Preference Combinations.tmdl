@@ -1,3 +1,6 @@
+/// Information about the combination of preferences that customers have set for themselves on their account.
+/// Similar to the 'Preferences' dimension table, which describe the combination types of dishes a customer desires and/or the types of ingredients they do not want.
+/// These fields should be used when you want to analyze across the combination of preferences that are selected by customers.
 table 'Preference Combinations'
 	lineageTag: eea593a0-57c3-4b96-bc0b-a198c99514f6
 

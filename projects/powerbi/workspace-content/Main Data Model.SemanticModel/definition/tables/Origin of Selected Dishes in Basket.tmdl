@@ -1,4 +1,7 @@
-/// The origin of the dishes in the customers basket.
+/// The origin of where a dish came from when it is placed in the customers basket for a menu week.
+/// A dish can be added to a basket by the "Preselector" or by the customer themself, creating a "Normal" deviation.
+/// Before OneSub was introduced (October 2024):
+/// A dish could have been added from "No deviation" (which means it was a dish that was set by the Menu Team for a concept for a menu week), or by the "Mealselector" (a system which replaced dishes set by the Menu Team to account for customer preferences, such as e.g. a customer indicating they do not want egg and dairy)
 table 'Origin of Selected Dishes in Basket'
 	lineageTag: 31d6e085-8ba5-4560-b085-27c6cb034f32
 
