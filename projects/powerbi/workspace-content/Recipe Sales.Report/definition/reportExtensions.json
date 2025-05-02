@@ -1,0 +1,133 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "(Param) Measures",
+      "measures": [
+        {
+          "name": "Number of Customers Completed Quiz running total in Date",
+          "dataType": "Double",
+          "expression": "\nCALCULATE(\n\t\t\t[Number of Customers Completed Quiz],\n\t\t\tFILTER(\n\t\t\t\tALLSELECTED('Dates'),\n\t\t\t\t'Dates'[Date] <= MAX('Dates'[Date])\n\t\t\t)\n\t\t)",
+          "measureTemplate": {
+            "daxTemplateName": "RunningTotal",
+            "version": 0
+          },
+          "references": {
+            "measures": [
+              {
+                "entity": "Subscription Quiz Measures",
+                "name": "Number of Customers Completed Quiz"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Measures",
+      "measures": [
+        {
+          "name": "Number of Consumers",
+          "dataType": "Double",
+          "expression": "CALCULATE(\n    SUM('Order Measures'[portions])\n    , 'Products'[Product Type Name] = \"Mealbox\"\n)",
+          "formatString": "#,0"
+        },
+        {
+          "name": "Measure",
+          "dataType": "Double",
+          "expression": "",
+          "annotations": [
+            {
+              "name": "43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "name": "Number of Servings",
+          "dataType": "Double",
+          "expression": "SUM('Order Measures'[mealbox_servings])",
+          "formatString": "#,0"
+        },
+        {
+          "name": "_local Number of Ordered Recipes",
+          "dataType": "Double",
+          "expression": "CALCULATE(\n    SUM('Order Measures'[meals])\n    , 'Products'[Product Type Name] = \"Mealbox\"\n)",
+          "formatString": "#,0"
+        },
+        {
+          "name": "Average Number of Portions per Order",
+          "dataType": "Double",
+          "expression": "[Number of Consumers] / [Number of Orders]",
+          "formatString": "0.00",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "Number of Consumers"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Average Number of Meals per Order",
+          "dataType": "Double",
+          "expression": "[_local Number of Ordered Recipes] / [Number of Orders]",
+          "formatString": "0.00",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "_local Number of Ordered Recipes"
+              },
+              {
+                "entity": "Order Measures",
+                "name": "Number of Orders"
+              }
+            ]
+          }
+        },
+        {
+          "name": "_local Average Consumers per Recipe",
+          "dataType": "Double",
+          "expression": "",
+          "references": {
+            "unrecognizedReferences": true
+          }
+        },
+        {
+          "name": "Number of Distinct Recipes Ordered",
+          "dataType": "Double",
+          "expression": "DISTINCTCOUNTNOBLANK('Order Measures'[recipe_id])"
+        },
+        {
+          "name": "Average Number of Consumers per Dish",
+          "dataType": "Double",
+          "expression": "[Number of Servings] / [Number of Distinct Recipes Ordered]",
+          "formatString": "#,0",
+          "references": {
+            "measures": [
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "Number of Servings"
+              },
+              {
+                "schema": "extension",
+                "entity": "Order Measures",
+                "name": "Number of Distinct Recipes Ordered"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
