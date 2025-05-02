@@ -23,9 +23,10 @@ recipes as (
     select distinct
         recipes.main_recipe_id
         , recipes.recipe_main_ingredient_id
-        --, recipes.recipe_main_ingredient_name_local
+        , lower(recipes.recipe_main_ingredient_name_english)                         as recipe_main_ingredient_name_english
         --, recipes.language_id
-        , preference_combinations.taste_name_combinations_including_allergens as negative_taste_preferences
+        , lower(preference_combinations.taste_name_combinations_including_allergens) as negative_taste_preferences
+        , preference_combinations.taste_preferences_including_allergens_id_list      as negative_taste_preferences_ids
     from recipes
     left join preferences
         on recipes.recipe_id = preferences.recipe_id

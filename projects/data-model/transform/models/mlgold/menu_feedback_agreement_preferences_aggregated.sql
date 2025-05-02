@@ -25,6 +25,7 @@ agreements as (
         , agreements.billing_agreement_id
         , agreements.billing_agreement_status_name
         , preference_combinations.taste_name_combinations_including_allergens
+        , preference_combinations.taste_preferences_including_allergens_id_list
     from agreements
     left join preferences
         on
@@ -48,11 +49,12 @@ agreements as (
             '-'
             , company_id
             , taste_name_combinations_including_allergens
-        ))                                            as negative_taste_preference_combo_id
-        , taste_name_combinations_including_allergens as negative_taste_preferences
-        , count(distinct billing_agreement_id)        as number_of_users
+        ))                                                   as negative_taste_preference_combo_id
+        , lower(taste_name_combinations_including_allergens) as negative_taste_preferences
+        , taste_preferences_including_allergens_id_list      as negative_taste_preferences_ids
+        , count(distinct billing_agreement_id)               as number_of_users
     from billing_agreement_preferences
-    group by 1, 2, 3
+    group by 1, 2, 3, 4
 )
 
 select * from agreement_preferences_aggregated

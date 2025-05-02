@@ -615,6 +615,10 @@ models:
         description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
         data_type: string
 
+      - name: negative_taste_preferences_ids
+        description: "{{ doc('column__taste_preferences_including_allergens_id_list') }}"
+        data_type: array
+
   - name: menu_feedback_agreement_preferences_aggregated
     description: "Table containing aggregated agreement preferences for menu feedback"
 
@@ -634,6 +638,10 @@ models:
       - name: negative_taste_preferences
         description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
         data_type: string
+
+      - name: negative_taste_preferences_ids
+        description: "{{ doc('column__taste_preferences_including_allergens_id_list') }}"
+        data_type: array
 
       - name: number_of_users
         description: "{{ doc('column__menu_feedback_model__column__number_of_users') }}"
