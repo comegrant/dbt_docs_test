@@ -989,6 +989,8 @@ models:
     latest_version: 1
     config:
       alias: dim_portions
+      contract:
+        enforced: true
 
     columns:
       - name: pk_dim_portions
@@ -1043,7 +1045,7 @@ models:
           - not_null
 
       - name: portion_status_code_id
-        data_type: int
+        data_type: string
         description: "{{ doc('column__portion_status_code_id') }}"
         constraints:
           - type: not_null

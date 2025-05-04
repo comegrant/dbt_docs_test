@@ -475,9 +475,7 @@ preselector_successful_output_dishes as (
         , cast(
             date_format(add_aggregated_error_metrics.menu_week_financial_date, 'yyyyMMdd') as int
         ) as fk_dim_dates
-        , cast(
-            date_format(add_aggregated_error_metrics.created_at, 'HHmm') as int
-        ) as fk_dim_time_created_at
+        , date_format(add_aggregated_error_metrics.created_at, 'HHmm') as fk_dim_time_created_at
         , md5(
             add_aggregated_error_metrics.model_version_commit_sha
         )                                      as fk_dim_preselector_versions

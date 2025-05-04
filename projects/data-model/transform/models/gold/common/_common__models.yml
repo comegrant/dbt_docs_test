@@ -15,6 +15,10 @@ models:
       - name: pk_dim_companies
         description: "{{ doc('column__product_concept_id') }}"
         data_type: string
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -256,12 +260,16 @@ models:
     config:
       alias: dim_time
       contract:
-        enforced: false
+        enforced: true
 
     columns:
       - name: pk_dim_time
         description: "{{ doc('column__pk_dim_time') }}"
-        data_type: bigint
+        data_type: string
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
         data_tests:
           - unique
           - not_null

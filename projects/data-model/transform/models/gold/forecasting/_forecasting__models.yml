@@ -175,14 +175,27 @@
     latest_version: 1
     config:
       alias: dim_basket_deviation_origins
+      contract:
+        enforced: true
 
     columns:
       - name: pk_dim_basket_deviation_origins
         data_type: string
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
         data_tests:
           - unique
           - not_null
+
+      - name: billing_agreement_basket_deviation_origin_id
+        data_type: string
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        data_tests:
+          - not_null
+          - unique
 
       - name: basket_deviation_origin_name
         data_type: string

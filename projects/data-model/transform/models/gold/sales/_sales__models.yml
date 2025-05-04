@@ -318,6 +318,9 @@ models:
         description: ""
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_basket_deviation_origins')
+            to_columns: [pk_dim_basket_deviation_origins]
         data_tests:
           - not_null
           - relationships:
@@ -329,6 +332,9 @@ models:
         description: ""
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_basket_deviation_origins')
+            to_columns: [pk_dim_basket_deviation_origins]
         data_tests:
           - not_null
           - relationships:
@@ -340,6 +346,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -351,6 +360,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -362,6 +374,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -373,6 +388,9 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -384,6 +402,9 @@ models:
         description: "{{ doc('column__pk_dim_order_statuses') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_order_statuses')
+            to_columns: [pk_dim_order_statuses]
         data_tests:
           - not_null
           - relationships:
@@ -395,6 +416,9 @@ models:
         description: "{{ doc('column__pk_dim_order_types') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_order_types')
+            to_columns: [pk_dim_order_types]
         data_tests:
           - not_null
           - relationships:
@@ -406,6 +430,9 @@ models:
         description: "{{ doc('column__pk_dim_order_line_details') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_order_line_details')
+            to_columns: [pk_dim_order_line_details]
         data_tests:
           - not_null
           - relationships:
@@ -417,6 +444,9 @@ models:
         description: "{{ doc('column__pk_dim_products') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
         data_tests:
           - not_null
           - relationships:
@@ -426,6 +456,10 @@ models:
       - name: fk_dim_periods_since_first_menu_week
         data_type: int
         description: "{{ doc('column__fk_dim_periods_since_first_menu_week') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_periods_since')
+            to_columns: [pk_dim_periods_since]
 
       - name: fk_dim_loyalty_seasons
         data_type: string
@@ -438,6 +472,10 @@ models:
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
           - relationships:
               to: ref('dim_portions')
@@ -446,6 +484,10 @@ models:
       - name: fk_dim_portions_preselected
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
           - relationships:
               to: ref('dim_portions')
@@ -457,6 +499,9 @@ models:
         description: "{{ doc('column__fk_dim_products_preselected') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
         data_tests:
           - not_null
           - relationships:
@@ -468,6 +513,9 @@ models:
         description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
         data_tests:
           - not_null
           - relationships:
@@ -479,6 +527,9 @@ models:
         description: "{{ doc('column__fk_dim_recipes_preselected') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
         data_tests:
           - not_null
           - relationships:
@@ -488,6 +539,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -496,6 +551,10 @@ models:
       - name: fk_dim_discounts
         data_type: string
         description: "{{ doc('column__pk_dim_discounts') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_discounts')
+            to_columns: [pk_dim_discounts]
         data_tests:
           - relationships:
               to: ref('dim_discounts')
@@ -509,6 +568,43 @@ models:
     latest_version: 1
     config:
       alias: dim_order_statuses
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_order_statuses
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_statuses') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+          - type: primary_key
+        data_tests:
+          - unique
+
+      - name: order_status_id
+        data_type: string
+        description: "{{ doc('column__order_status_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: order_status_name
+        data_type: string
+        description: "{{ doc('column__order_status_name') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: can_be_cancelled
+        data_type: boolean
+        description: "{{ doc('column__can_be_cancelled') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
     versions:
       - v: 1
@@ -518,6 +614,49 @@ models:
     latest_version: 1
     config:
       alias: dim_order_types
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_order_types
+        data_type: string
+        description: "{{ doc('column__pk_dim_order_types') }}"
+        constraints:
+          - type: unique
+          - type: not_null
+          - type: primary_key
+        data_tests:
+          - unique
+
+      - name: order_type_id
+        data_type: string
+        description: "{{ doc('column__order_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: order_type_name
+        data_type: string
+        description: "{{ doc('column__order_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: is_direct_order
+        data_type: boolean
+        description: "{{ doc('column__is_direct_order') }}"
+        data_tests:
+          - not_null
+
+      - name: allows_anonymous
+        data_type: boolean
+        description: "{{ doc('column__allows_anonymous') }}"
+        data_tests:
+          - not_null
+
+      - name: is_direct_payment
+        data_type: boolean
+        description: "{{ doc('column__is_direct_payment') }}"
+        data_tests:
+          - not_null
 
     versions:
       - v: 1
@@ -536,6 +675,8 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: unique
+          - type: not_null
+          - type: primary_key
         data_tests:
           - unique
 
@@ -753,6 +894,8 @@ models:
     latest_version: 1
     config:
       alias: dim_preferences
+      contract:
+        enforced: true
 
     columns:
       - name: pk_dim_preferences
@@ -982,6 +1125,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -993,6 +1139,9 @@ models:
         description: "{{ doc('column__pk_dim_preferences') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_preferences')
+            to_columns: [pk_dim_preferences]
         data_tests:
           - not_null
           - relationships:
@@ -1049,6 +1198,10 @@ models:
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -1058,6 +1211,10 @@ models:
       - name: fk_dim_dates_first_menu_week
         data_type: int
         description: "{{ doc('column__fk_dim_dates_first_menu_week') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - relationships:
               to: ref('dim_dates')
@@ -1069,6 +1226,10 @@ models:
       - name: fk_dim_time
         data_type: string
         description: "{{ doc('column__pk_dim_time') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_time')
+            to_columns: [pk_dim_time]
         data_tests:
           - not_null
           - relationships:
@@ -1078,6 +1239,10 @@ models:
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__fk_dim_billing_agreements_updated') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -1087,6 +1252,10 @@ models:
       - name: fk_dim_billing_agreements_previous_version
         data_type: string
         description: "{{ doc('column__fk_dim_billing_agreements_previous_version') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - relationships:
               to: ref('dim_billing_agreements')
@@ -1095,6 +1264,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -1103,6 +1276,10 @@ models:
       - name: fk_dim_preference_combinations_previous_version
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -1111,6 +1288,10 @@ models:
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -1128,6 +1309,10 @@ models:
       - name: fk_dim_periods_since_first_order
         data_type: int
         description: "dimension does not exist yet, so will add description later."
+        constraints:
+          - type: foreign_key
+            to: ref('dim_periods_since')
+            to_columns: [pk_dim_periods_since]
         data_tests:
           - relationships:
               to: ref('dim_periods_since')
@@ -1245,6 +1430,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -1254,6 +1442,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -1264,6 +1456,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -1275,6 +1470,9 @@ models:
         description: "{{ doc('column__fk_dim_date_source_created_at_segment') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -1286,6 +1484,9 @@ models:
         description: "{{ doc('column__fk_dim_time_source_created_at_segment') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_time')
+            to_columns: [pk_dim_time]
         data_tests:
           - not_null
           - relationships:
@@ -2010,6 +2211,10 @@ models:
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null:
               config:
@@ -2025,6 +2230,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2033,6 +2242,10 @@ models:
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -2042,6 +2255,10 @@ models:
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
         data_tests:
           - not_null
           - relationships:
@@ -2051,6 +2268,10 @@ models:
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
         data_tests:
           - relationships:
               to: ref('dim_recipes')
@@ -2059,6 +2280,10 @@ models:
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
           - not_null
           - relationships:
@@ -2068,6 +2293,10 @@ models:
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__fk_dim_dates_menu_week_monday_date') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2077,6 +2306,10 @@ models:
       - name: fk_dim_dates_created_at
         data_type: int
         description: "{{ doc('column__fk_dim_dates_created_at_preselector_output') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2084,8 +2317,12 @@ models:
               field: pk_dim_dates
 
       - name: fk_dim_time_created_at
-        data_type: int
+        data_type: string
         description: "{{ doc('column__fk_dim_time_created_at_preselector_output') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_time')
+            to_columns: [pk_dim_time]
         data_tests:
           - not_null
           - relationships:
@@ -2095,6 +2332,10 @@ models:
       - name: fk_dim_preselector_versions
         data_type: string
         description: "{{ doc('column__pk_dim_preselector_versions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_preselector_versions')
+            to_columns: [pk_dim_preselector_versions]
         data_tests:
           - not_null
           - relationships:
@@ -2132,6 +2373,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -2143,6 +2387,9 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2154,6 +2401,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -2163,6 +2413,10 @@ models:
       - name: fk_dim_preference_combinations_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2171,6 +2425,10 @@ models:
       - name: fk_dim_preference_combinations_recipes
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2181,6 +2439,9 @@ models:
         description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
         data_tests:
           - not_null
           - relationships:
@@ -2190,6 +2451,10 @@ models:
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
           - relationships:
               to: ref('dim_portions')
@@ -2329,6 +2594,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -2338,6 +2606,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2348,6 +2620,9 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2359,6 +2634,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -2370,6 +2648,9 @@ models:
         description: "{{ doc('column__pk_dim_consent_types') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_consent_types')
+            to_columns: [pk_dim_consent_types]
         data_tests:
           - not_null
           - relationships:
@@ -2553,6 +2834,9 @@ models:
         description: "{{ doc('column__pk_dim_loyalty_order_statuses') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_loyalty_order_statuses')
+            to_columns: [pk_dim_loyalty_order_statuses]
         data_tests:
           - not_null
           - relationships:
@@ -2564,6 +2848,9 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2575,6 +2862,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -2584,6 +2874,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2594,6 +2888,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -2605,6 +2902,9 @@ models:
         description: "{{ doc('column__pk_dim_products') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
         data_tests:
           - not_null
           - relationships:
@@ -2662,6 +2962,8 @@ models:
     latest_version: 1
     config:
       alias: dim_all_preference_combinations
+      contract:
+        enforced: true
 
     versions:
       - v: 1
@@ -2671,29 +2973,31 @@ models:
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
         constraints:
+          - type: primary_key
+          - type: unique
           - type: not_null
         data_tests:
           - not_null
           - unique
 
       - name: all_preference_id_list
-        data_type: array
+        data_type: array<string>
         description: "{{ doc('column__all_preference_id_list') }}"
 
       - name: allergen_preference_id_list
-        data_type: array
+        data_type: array<string>
         description: "{{ doc('column__allergen_preference_id_list') }}"
 
       - name: concept_preference_id_list
-        data_type: array
+        data_type: array<string>
         description: "{{ doc('column__concept_preference_id_list') }}"
 
       - name: taste_preferences_excluding_allergens_id_list
-        data_type: array
+        data_type: array<string>
         description: "{{ doc('column__taste_preferences_excluding_allergens_id_list') }}"
 
       - name: taste_preferences_including_allergens_id_list
-        data_type: array
+        data_type: array<string>
         description: "{{ doc('column__taste_preferences_including_allergens_id_list') }}"
 
       - name: preference_name_combinations
@@ -2859,6 +3163,9 @@ models:
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -2868,6 +3175,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - relationships:
               to: ref('dim_all_preference_combinations')
@@ -2876,6 +3187,10 @@ models:
       - name: fk_dim_loyalty_events
         data_type: string
         description: "{{ doc('column__pk_dim_loyalty_events') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_loyalty_events')
+            to_columns: [pk_dim_loyalty_events]
         data_tests:
           - relationships:
               to: ref('dim_loyalty_events')
@@ -2886,6 +3201,9 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -2895,6 +3213,10 @@ models:
       - name: fk_dim_dates_points_expiration
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - relationships:
               to: ref('dim_dates')
@@ -2905,6 +3227,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -3228,6 +3553,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_preference_combination_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_all_preference_combinations')
+            to_columns: [pk_preference_combination_id]
         data_tests:
           - not_null
           - relationships:
@@ -3237,6 +3566,10 @@ models:
       - name: fk_dim_preferences
         data_type: string
         description: "{{ doc('column__pk_dim_preferences') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_preferences')
+            to_columns: [pk_dim_preferences]
         data_tests:
           - not_null
           - relationships:
