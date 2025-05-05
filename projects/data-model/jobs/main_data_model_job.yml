@@ -63,6 +63,12 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
+        - task_key: bronze_cms_loyalty_points
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_loyalty_points.py
+
         - task_key: bronze_cms_register_info_basket
           depends_on:
             - task_key: start-notification
