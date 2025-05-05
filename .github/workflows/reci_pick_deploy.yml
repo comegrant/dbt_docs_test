@@ -13,6 +13,7 @@ jobs:
   build-reci-pick-databricks-image:
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
+      runs-on: data-runner-4-cores
       working-directory: projects/reci-pick
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: reci-pick-databricks
@@ -20,7 +21,7 @@ jobs:
       push-latest: true
     secrets: inherit
 
-  deploy-ml-example-project:
+  deploy-reci-pick:
     strategy:
       matrix:
         target: [Test, Production]
