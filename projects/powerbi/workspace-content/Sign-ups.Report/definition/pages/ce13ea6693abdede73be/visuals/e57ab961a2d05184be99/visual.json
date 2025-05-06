@@ -23,10 +23,10 @@
                       "Entity": "Preferences"
                     }
                   },
-                  "Property": "Preference Description General"
+                  "Property": "Preference Description"
                 }
               },
-              "queryRef": "Preferences.Preference Description General",
+              "queryRef": "Preferences.Preference Description",
               "nativeQueryRef": "Taste",
               "active": true,
               "displayName": "Taste"

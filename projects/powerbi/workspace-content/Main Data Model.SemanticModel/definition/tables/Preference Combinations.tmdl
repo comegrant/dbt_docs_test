@@ -10,7 +10,7 @@ table 'Preference Combinations'
 		isAvailableInMdx: false
 		lineageTag: d6403533-6a2d-4617-b919-b978c4b18817
 		summarizeBy: none
-		sourceColumn: pk_preference_combination_id
+		sourceColumn: pk_dim_preference_combinations
 
 	/// A list of all preferences and attributes belonging to a customer.
 	/// The names in the list are general across the companies.
@@ -64,7 +64,6 @@ table 'Preference Combinations'
 					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-					dim_preferences_combinations_Table = gold_Schema{[Name="dim_all_preference_combinations",Kind="Table"]}[Data]
+					dim_preferences_combinations_Table = gold_Schema{[Name="dim_preference_combinations",Kind="Table"]}[Data]
 				in
 					dim_preferences_combinations_Table
-

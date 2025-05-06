@@ -151,11 +151,11 @@
 
       - name: fk_dim_preference_combinations
         data_type: string
-        description: "{{ doc('column__pk_preference_combination_id') }}"
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
         data_tests:
           - relationships:
-              to: ref('dim_all_preference_combinations')
-              field: pk_preference_combination_id
+              to: ref('dim_preference_combinations')
+              field: pk_dim_preference_combinations
 
       - name: fk_dim_portions
         data_type: string

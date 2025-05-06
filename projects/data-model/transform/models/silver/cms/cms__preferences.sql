@@ -20,12 +20,12 @@ source as (
         , case
             when name like 'OneSub:%' then initcap(trim(substring(name, 8)))
             else initcap(name)
-          end as preference_name_general
+          end as preference_name
         , case
             when name like 'OneSub:%' then true
             else false
           end as is_onesub_concept_preference
-        , description as preference_description_general
+        , description as preference_description
 
         {# numerics #}
         -- place numerics here

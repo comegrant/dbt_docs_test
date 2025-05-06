@@ -22,10 +22,10 @@ preferences as (
       preferences.preference_id
     , coalesce(preferences_companies.company_id,'0') as company_id
     , preferences.preference_type_id
-    , preferences.preference_name_general
-    , preferences.preference_description_general
-    , coalesce(preferences_companies.preference_name, 'Unknown') as preference_name
-    , coalesce(preferences_companies.preference_description, 'Unknown') as preference_description
+    , preferences.preference_name
+    , preferences.preference_description
+    , coalesce(preferences_companies.preference_name_brand, 'Unknown') as preference_name_brand
+    , coalesce(preferences_companies.preference_description_brand, 'Unknown') as preference_description_brand
     , preference_types.preference_type_name
     , preference_types.preference_type_description
     , coalesce(preferences_companies.is_active_preference, false) as is_active_preference

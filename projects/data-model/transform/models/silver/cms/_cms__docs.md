@@ -583,16 +583,16 @@ This is the primary key of the preference type table in CMS.
 
 {% enddocs %}
 
-{% docs column__preference_name_general %}
+{% docs column__preference_name %}
 
 The general name of preferences and attributes that a customer can choose. Common for the companies and countries.
-For preference names specific for each company use instead the field called `preference_name`.
+For preference names specific for each company use instead the field called `preference_name_brand`.
 
 {% enddocs %}
 
-{% docs column__preference_description_general %}
+{% docs column__preference_description %}
 
-The general description of preferences and attributes that a customer can choose. Common for the companies and countries. For preference descriptions specific for each company use instead the field called `preference_description`.
+The general description of preferences and attributes that a customer can choose. Common for the companies and countries. For preference descriptions specific for each company use instead the field called `preference_description_brand`.
 
 {% enddocs %}
 
@@ -624,15 +624,15 @@ Description of the preference type. This can be used across the companies.
 
 # Preferences Companies
 
-{% docs column__preference_name %}
+{% docs column__preference_name_brand %}
 
-The name of preferences and attributes that a customer can choose. Specific for each company. For the general name that can be used across companies, use instead the field called `preference_name_general`.
+The name of preferences and attributes that a customer can choose. Specific for each company. For the general name that can be used across companies, use instead the field called `preference_name`.
 
 {% enddocs %}
 
-{% docs column__preference_description %}
+{% docs column__preference_description_brand %}
 
-The description of preferences and attributes that a customer can choose. Specific for each company. For the general description that can be used across companies, use instead the field called `preference_description_general`.
+The description of preferences and attributes that a customer can choose. Specific for each company. For the general description that can be used across companies, use instead the field called `preference_description`.
 
 {% enddocs %}
 

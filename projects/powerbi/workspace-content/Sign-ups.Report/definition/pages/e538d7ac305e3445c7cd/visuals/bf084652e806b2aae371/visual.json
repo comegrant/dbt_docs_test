@@ -23,10 +23,10 @@
                       "Entity": "Preferences"
                     }
                   },
-                  "Property": "Preference Name General"
+                  "Property": "Preference Name"
                 }
               },
-              "queryRef": "Preferences.Preference Name General",
+              "queryRef": "Preferences.Preference Name",
               "nativeQueryRef": "Concept",
               "active": true,
               "displayName": "Concept"

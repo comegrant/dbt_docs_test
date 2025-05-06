@@ -9,7 +9,7 @@ dim_recipes as (
 )
 
 , dim_preference_combinations as (
-    select * from {{ ref('dim_all_preference_combinations') }}
+    select * from {{ ref('dim_preference_combinations') }}
 )
 
 , bridge_recipes_taxonomies as (
@@ -126,7 +126,7 @@ dim_recipes as (
     left join dim_preference_combinations
         on
             recipe_preferences_unioned.preference_combination_id
-            = dim_preference_combinations.pk_preference_combination_id
+            = dim_preference_combinations.pk_dim_preference_combinations
 )
 
 , nutrition as (

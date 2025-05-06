@@ -16,8 +16,8 @@ source as (
         , company_id
 
         {# strings #}
-        , initcap(name) as preference_name
-        , description as preference_description
+        , initcap(name) as preference_name_brand
+        , description as preference_description_brand
 
         {# booleans #}
         , is_active as is_active_preference

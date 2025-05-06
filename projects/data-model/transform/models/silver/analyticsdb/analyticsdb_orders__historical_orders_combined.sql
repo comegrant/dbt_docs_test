@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -8,7 +8,7 @@ source as (
 
 , renamed (
 
-   select 
+   select
 
         {# ids #}
         order_id as ops_order_id

@@ -139,6 +139,7 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
 
     select
         billing_agreement_preferences_updated_id
+        , preference_combination_id
         , billing_agreement_id
         , valid_from
         , valid_to
@@ -189,6 +190,7 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , scd2_tables_joined.is_current
         , scd2_tables_joined.billing_agreement_id
         , scd2_tables_joined.billing_agreement_preferences_updated_id
+        , scd2_tables_joined.preference_combination_id
         , scd2_tables_joined.billing_agreement_basket_product_updated_id
         , scd2_tables_joined.loyalty_level_name
         , scd2_tables_joined.loyalty_level_number

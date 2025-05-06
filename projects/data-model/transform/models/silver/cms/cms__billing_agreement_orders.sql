@@ -59,7 +59,7 @@ source as (
         {# ids #}
         -- generate a billing agreement order id as it does not exist in the source table
         md5(ops_order_id) as billing_agreement_order_id
-        , ops_order_id
+        , cast(ops_order_id as bigint) as ops_order_id
         , order_type_id
         , order_status_id
         , billing_agreement_id

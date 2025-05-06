@@ -37,7 +37,7 @@ The total number of mealbox_servings in a mealbox. I.e., ordered portions * orde
 
 {% docs column__has_normal_order_type %}
 
-True if the order type is one of the following: 
+True if the order type is one of the following:
 - Recurring
 - Order After Registration
 - Orders After Cutoff
@@ -50,7 +50,7 @@ This filter will be used in Power BI to only include the orders of interest and 
 
 {% docs column__has_finished_order_status %}
 
-True if the order status is one of the following: 
+True if the order status is one of the following:
 - Finished
 - Processing
 
@@ -262,7 +262,7 @@ The unique id of the rows in Dim Order Line Details
 
 {% docs column__order_line_details %}
 
-Detials on the type of order line. Such as plus price dish, thrifty dish, groceries, mealbox etc.
+Details on the type of order line. Such as plus price dish, thrifty dish, groceries, mealbox etc.
 
 {% enddocs %}
 
@@ -271,69 +271,6 @@ Detials on the type of order line. Such as plus price dish, thrifty dish, grocer
 {% docs column__pk_dim_preferences %}
 
 Primary key of the preferences dimension. It is a composite key of preference_id and company_id.
-
-{% enddocs %}
-
-# Dim Preference Combinations
-
-{% docs column__pk_dim_preference_combinations %}
-
-Primary key of the preference combination dimension. It is the same as the primary key for the billing agreement dimension.
-
-{% enddocs %}
-
-
-{% docs column__preference_combinations %}
-
-A list of all preference and attribute names belonging to a customer. The names in the list are general across the companies.
-
-{% enddocs %}
-
-{% docs column__preference_id_combinations %}
-
-A list of all preference ids belonging to a customer.
-
-{% enddocs %}
-
-{% docs column__concept_combinations %}
-
-A list of concept preference names belonging to a customer. The names in the list are general across the companies.
-
-{% enddocs %}
-
-{% docs column__preference_id_combinations_concept_type %}
-
-A list of concept preference ids belonging to a customer.
-
-{% enddocs %}
-
-{% docs column__taste_preference_combinations %}
-
-A list of taste preference names belonging to a customer. The names in the list are general across the companies.
-
-{% enddocs %}
-
-{% docs column__preference_id_combinations_taste_type %}
-
-A list of taste preference ids belonging to a customer.
-
-{% enddocs %}
-
-{% docs column__number_of_preferences %}
-
-The number of preferences of all types in the preference combination.
-
-{% enddocs %}
-
-{% docs column__number_of_concept_preferences %}
-
-The number of concept preferences in the preference combination.
-
-{% enddocs %}
-
-{% docs column__number_of_taste_preferences %}
-
-The number of taste preferences in the preference combination.
 
 {% enddocs %}
 
@@ -691,15 +628,13 @@ It is calculated by comparing the preference combination of the billing agreemen
 
 {% enddocs %}
 
+# Dim Preference Combinations
 
-# Dim All Preference Combinations
+{% docs column__pk_dim_preference_combinations %}
 
-{% docs column__pk_preference_combination_id %}
-
-Unique primary key for the preference combinations dimension.
+Primary key of the preference combination dimension.
 
 {% enddocs %}
-
 
 {% docs column__all_preference_id_list %}
 
@@ -788,6 +723,18 @@ The number of taste preferences excluding allergens for the preference combinati
 {% docs column__number_of_taste_preferences_including_allergens %}
 
 The number of taste preferences including allergens for the preference combination.
+
+{% enddocs %}
+
+{% docs column__number_of_preferences %}
+
+The number of preferences of all types in the preference combination.
+
+{% enddocs %}
+
+{% docs column__number_of_concept_preferences %}
+
+The number of concept preferences in the preference combination.
 
 {% enddocs %}
 

@@ -14,7 +14,7 @@ agreements as (
 
 , preference_combinations as (
 
-    select * from {{ ref('dim_all_preference_combinations') }}
+    select * from {{ ref('dim_preference_combinations') }}
 
 )
 
@@ -34,7 +34,7 @@ agreements as (
     left join preference_combinations
         on
             preferences.preference_combination_id
-            = preference_combinations.pk_preference_combination_id
+            = preference_combinations.pk_dim_preference_combinations
     where
         agreements.is_current = true
         and agreements.billing_agreement_status_name = 'Active'

@@ -60,7 +60,7 @@ preselector_output as (
 
 , preference_combinations as (
 
-    select * from {{ ref('dim_all_preference_combinations') }}
+    select * from {{ ref('dim_preference_combinations') }}
 
 )
 
@@ -88,7 +88,7 @@ preselector_output as (
     left join preference_combinations
         on
             agreement_preferences.preference_combination_id
-            = preference_combinations.pk_preference_combination_id
+            = preference_combinations.pk_dim_preference_combinations
     where
         dim_billing_agreements.billing_agreement_preferences_updated_id is not null
         and preselector_output.is_most_recent_output = 1
@@ -115,7 +115,7 @@ preselector_output as (
     left join recipe_preferences
         on dim_recipes.recipe_id = recipe_preferences.recipe_id
     left join preference_combinations
-        on recipe_preferences.preference_combination_id = preference_combinations.pk_preference_combination_id
+        on recipe_preferences.preference_combination_id = preference_combinations.pk_dim_preference_combinations
     where
         dim_recipes.recipe_id is not null
 )

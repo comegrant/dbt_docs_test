@@ -67,11 +67,11 @@
                       "Entity": "Preferences"
                     }
                   },
-                  "Property": "Preference Name General"
+                  "Property": "Preference Name"
                 }
               },
-              "queryRef": "Preferences.Preference Name General",
-              "nativeQueryRef": "Preference Name General"
+              "queryRef": "Preferences.Preference Name",
+              "nativeQueryRef": "Preference Name"
             }
           ]
         },
@@ -143,7 +143,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {
@@ -185,7 +185,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {
@@ -227,7 +227,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {
@@ -269,7 +269,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {
@@ -311,7 +311,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {
@@ -353,7 +353,7 @@
                             "Entity": "Preferences"
                           }
                         },
-                        "Property": "Preference Name General"
+                        "Property": "Preference Name"
                       }
                     },
                     "Right": {

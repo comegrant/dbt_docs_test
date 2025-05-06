@@ -1837,17 +1837,17 @@ models:
         data_tests:
           - not_null
 
-      - name: preference_name_general
+      - name: preference_name
         data_type: string
-        description: "{{ doc('column__preference_name_general') }}"
+        description: "{{ doc('column__preference_name') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
-      - name: preference_description_general
+      - name: preference_description
         data_type: string
-        description: "{{ doc('column__preference_description_general') }}"
+        description: "{{ doc('column__preference_description') }}"
 
       - name: is_allergen
         data_type: boolean
@@ -1972,17 +1972,17 @@ models:
         data_tests:
           - not_null
 
-      - name: preference_name
+      - name: preference_name_brand
         data_type: string
-        description: "{{ doc('column__preference_name') }}"
+        description: "{{ doc('column__preference_name_brand') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
-      - name: preference_description
+      - name: preference_description_brand
         data_type: string
-        description: "{{ doc('column__preference_description') }}"
+        description: "{{ doc('column__preference_description_brand') }}"
         constraints:
           - type: not_null
         data_tests:

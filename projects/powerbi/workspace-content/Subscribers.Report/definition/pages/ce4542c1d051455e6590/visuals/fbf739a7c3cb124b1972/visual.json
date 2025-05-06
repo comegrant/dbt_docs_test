@@ -23,10 +23,10 @@
                       "Entity": "Preferences"
                     }
                   },
-                  "Property": "Preference Name General"
+                  "Property": "Preference Name"
                 }
               },
-              "queryRef": "Preferences.Preference Name General",
+              "queryRef": "Preferences.Preference Name",
               "nativeQueryRef": "Preference Name",
               "active": true,
               "displayName": "Preference Name"
@@ -93,7 +93,7 @@
       ]
     },
     "syncGroup": {
-      "groupName": "Preference Name General",
+      "groupName": "Preference Name",
       "fieldChanges": true,
       "filterChanges": true
     },

@@ -28,7 +28,7 @@ perspective 'Meal Adjustments'
 
 	perspectiveTable 'Preferences'
 
-		perspectiveColumn 'Preference Name General'
+		perspectiveColumn 'Preference Name'
 		perspectiveColumn 'Preference Type Name'
 
 	perspectiveTable 'Portions'

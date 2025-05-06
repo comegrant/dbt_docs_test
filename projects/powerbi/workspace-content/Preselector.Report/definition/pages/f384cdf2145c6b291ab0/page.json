@@ -16,7 +16,7 @@
                 "Entity": "Preferences"
               }
             },
-            "Property": "Preference Name General"
+            "Property": "Preference Name"
           }
         },
         "type": "Categorical",
@@ -43,7 +43,7 @@
                                 "Source": "p"
                               }
                             },
-                            "Property": "Preference Name General"
+                            "Property": "Preference Name"
                           }
                         }
                       ],

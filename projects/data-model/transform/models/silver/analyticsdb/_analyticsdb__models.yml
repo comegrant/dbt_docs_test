@@ -67,7 +67,7 @@ models:
     description: "Historical orders for Linas, GodtLevert, Adams and RetNemt stored in AnalyticsDB (previous database for analytics)."
     columns:
       - name: ops_order_id
-        data_type: bigint
+        data_type: string
         description: "{{ doc('column__ops_order_id') }}"
         data_tests:
           - unique

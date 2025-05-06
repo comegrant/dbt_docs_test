@@ -22709,11 +22709,11 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "preference.preference_name_general": {
+			    "preference.preference_name": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Preferences",
-			          "ConceptualProperty": "Preference Name General"
+			          "ConceptualProperty": "Preference Name"
 			        }
 			      },
 			      "State": "Generated",
@@ -22837,11 +22837,11 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "preference.preference_description_general": {
+			    "preference.preference_description": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Preferences",
-			          "ConceptualProperty": "Preference Description General"
+			          "ConceptualProperty": "Preference Description"
 			        }
 			      },
 			      "State": "Generated",
@@ -24064,7 +24064,7 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "preference_has_preference_description_general": {
+			    "preference_has_preference_description": {
 			      "Binding": {
 			        "ConceptualEntity": "Preferences"
 			      },
@@ -24075,9 +24075,9 @@ cultureInfo en-US
 			            "Entity": "preference"
 			          }
 			        },
-			        "preference.preference_description_general": {
+			        "preference.preference_description": {
 			          "Target": {
-			            "Entity": "preference.preference_description_general"
+			            "Entity": "preference.preference_description"
 			          }
 			        }
 			      },
@@ -24088,16 +24088,16 @@ cultureInfo en-US
 			              "Role": "preference"
 			            },
 			            "Object": {
-			              "Role": "preference.preference_description_general"
+			              "Role": "preference.preference_description"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "preferences_have_preference_description_generals"
+			          "ID": "preferences_have_preference_descriptions"
 			        }
 			      ]
 			    },
-			    "preference_has_preference_name_general": {
+			    "preference_has_preference_name": {
 			      "Binding": {
 			        "ConceptualEntity": "Preferences"
 			      },
@@ -24108,9 +24108,9 @@ cultureInfo en-US
 			            "Entity": "preference"
 			          }
 			        },
-			        "preference.preference_name_general": {
+			        "preference.preference_name": {
 			          "Target": {
-			            "Entity": "preference.preference_name_general"
+			            "Entity": "preference.preference_name"
 			          }
 			        }
 			      },
@@ -24121,12 +24121,12 @@ cultureInfo en-US
 			              "Role": "preference"
 			            },
 			            "Object": {
-			              "Role": "preference.preference_name_general"
+			              "Role": "preference.preference_name"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "preferences_have_preference_name_generals"
+			          "ID": "preferences_have_preference_names"
 			        }
 			      ]
 			    },

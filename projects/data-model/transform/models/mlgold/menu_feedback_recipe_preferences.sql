@@ -14,7 +14,7 @@ recipes as (
 
 , preference_combinations as (
 
-    select * from {{ ref('dim_all_preference_combinations') }}
+    select * from {{ ref('dim_preference_combinations') }}
 
 )
 
@@ -31,7 +31,7 @@ recipes as (
     left join preferences
         on recipes.recipe_id = preferences.recipe_id
     left join preference_combinations
-        on preferences.preference_combination_id = preference_combinations.pk_preference_combination_id
+        on preferences.preference_combination_id = preference_combinations.pk_dim_preference_combinations
     where recipes.is_main_recipe = true
 
 )

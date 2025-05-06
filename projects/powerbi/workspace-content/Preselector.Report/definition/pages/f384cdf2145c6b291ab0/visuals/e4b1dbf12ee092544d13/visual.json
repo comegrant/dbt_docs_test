@@ -380,7 +380,7 @@
                 "Entity": "Preferences"
               }
             },
-            "Property": "Preference Name General"
+            "Property": "Preference Name"
           }
         },
         "type": "Categorical",
