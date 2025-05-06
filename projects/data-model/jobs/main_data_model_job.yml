@@ -69,7 +69,7 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest_ingest/bronze_operations_case_lines.py  
 
-         - task_key: bronze_operations_cases
+        - task_key: bronze_operations_cases
           depends_on:
             - task_key: start-notification
           notebook_task:
