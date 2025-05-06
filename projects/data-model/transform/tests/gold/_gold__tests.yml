@@ -8,3 +8,7 @@ data_tests:
   - name: fact_estimations_is_latest_estimations_flag
     description: >
       Makes sure there is one and only one timestamp per company with is_latest_estimation = true
+
+  - name: dim_loyalty_seasons_no_overlaps
+    description: >
+      Ensure there are no overlapping loyalty seasons per company
