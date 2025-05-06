@@ -27,7 +27,8 @@ dim_billing_agreements as (
     select
         pk_dim_billing_agreements,
         billing_agreement_id,
-        billing_agreement_status_name
+        billing_agreement_status_name,
+        preference_combination_id
     from {env}.gold.dim_billing_agreements
     where is_current = true
 ),
@@ -35,11 +36,8 @@ dim_billing_agreements as (
 dim_preference_combinations as (
     select
         pk_dim_preference_combinations,
-        concept_combinations,
-        preference_id_combinations_concept_type,
-        taste_preference_combinations,
-        preference_id_combinations_taste_type,
-        fk_dim_billing_agreements
+        concept_name_combinations as concept_combinations,
+        taste_name_combinations_including_allergens as taste_preference_combinations
     from {env}.gold.dim_preference_combinations
 ),
 
@@ -81,7 +79,7 @@ left join dim_products
 left join dim_billing_agreements
     on finished_orders.billing_agreement_id = dim_billing_agreements.billing_agreement_id
 left join dim_preference_combinations
-    on dim_preference_combinations.fk_dim_billing_agreements = dim_billing_agreements.pk_dim_billing_agreements
+    on dim_preference_combinations.pk_dim_preference_combinations = dim_billing_agreements.preference_combination_id
 where is_dish = true
     and ((is_removed_dish = 0) or (is_removed_dish is null))
     and main_recipe_id is not null
