@@ -9,9 +9,7 @@ from coredb_connector import load_coredb_full
 
 database = "Operations"
 tables = [
-    "cases"
-    ,"case_line"
-    ,"case_line_type"
+    "case_line_type"
     ,"case_line_ingredient"
     ,"case_category"
     ,"case_responsible"
