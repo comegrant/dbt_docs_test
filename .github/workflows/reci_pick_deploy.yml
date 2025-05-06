@@ -35,6 +35,5 @@ jobs:
       should-change-target: true
 
       # Setting the docker image which is needed for python projects
-      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/ml-example-project-databricks:${{ github.sha }}"
-        --var="mode=production"'
+      extra-args: '--var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/reci-pick-databricks:${{ github.sha }}" --var="mode=production"'
     secrets: inherit
