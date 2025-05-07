@@ -16,7 +16,6 @@ from databricks_env import auto_setup_env
 auto_setup_env()
 
 # COMMAND ----------
-import json
 import logging
 import os
 from collections import defaultdict
@@ -160,10 +159,10 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
         [
             GenerateMealkitRequest(
                 agreement_id=row["agreement_id"],  # type: ignore
-                concept_preference_ids=json.loads(row["concept_preference_ids"]),  # type: ignore
+                concept_preference_ids=row["concept_preference_ids"].tolist(),  # type: ignore
                 taste_preferences=[
                     NegativePreference(preference_id=taste_id, is_allergy=taste_id in allergens_map)
-                    for taste_id in (json.loads(row["taste_preference_ids"]) if row["taste_preference_ids"] else [])  # type: ignore
+                    for taste_id in row["taste_preference_ids"].tolist()  # type: ignore
                 ],
                 portion_size=int(row["portion_size"] or 4),
                 number_of_recipes=int(row["number_of_recipes"] or 4),
