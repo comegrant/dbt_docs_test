@@ -1,7 +1,7 @@
 resources:
   jobs:
-    preselector-simulation-tuesday:
-      name: preselector-simulation-tuesday-${bundle.target}
+    preselector-simulation-gl:
+      name: preselector-simulation-GL-${bundle.target}
 
       permissions:
         - group_name: data-scientists
@@ -39,12 +39,12 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
-        - task_key: batch-predict-gl-amk-slack-notification-start
+        - task_key: batch-predict-gl-slack-notification-start
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              body_message: ✅ Preselector forecast job for GL & AMK started
+              body_message: ✅ Preselector forecast job for GL started
               is_error: false
 
         - task_key: materialization
@@ -88,6 +88,60 @@ resources:
               body_message: ✅ Preselector forecast job for GL succeeded
               is_error: false
 
+    preselector-simulation-amk:
+      name: preselector-simulation-AMK-${bundle.target}
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: ${var.cluster_version}
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Preselector"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 0 14 ? * MON'
+        timezone_id: UTC
+
+      email_notifications:
+        on_failure:
+          - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
+        on_success:
+          - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
+
+      tasks:
+        - task_key: batch-predict-amk-slack-notification-start
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for AMK started
+              is_error: false
+
+        - task_key: materialization
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"        
+
         - task_key: batch-predict-amk
           job_cluster_key: preselector
           notebook_task:
@@ -95,8 +149,8 @@ resources:
             base_parameters:
               company_id: "8A613C15-35E4-471F-91CC-972F933331D7"
               environment: "${var.environment}"
-          depends_on:
-            - task_key: batch-predict-gl
+            depends_on:
+            - task_key: materialization
 
         - task_key: batch-predict-amk-slack-notification-end-fail
           depends_on:
@@ -122,8 +176,8 @@ resources:
               body_message: ✅ Preselector forecast job for AMK succeeded
               is_error: false
 
-    preselector-simulation-wednesday:
-      name: preselector-simulation-wednesday-${bundle.target}
+    preselector-simulation-lmk:
+      name: preselector-simulation-LMK-${bundle.target}
 
       permissions:
         - group_name: data-scientists
@@ -161,12 +215,12 @@ resources:
           - sylvia.liu@cheffelo.com
 
       tasks:
-        - task_key: batch-predict-lmk-rt-slack-notification-start
+        - task_key: batch-predict-lmk-slack-notification-start
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
-              body_message: ✅ Preselector forecast job for LMK & RT started
+              body_message: ✅ Preselector forecast job for LMK started
               is_error: false
 
         - task_key: materialization
@@ -210,6 +264,60 @@ resources:
               body_message: ✅ Preselector forecast job for LMK succeeded
               is_error: false
 
+    preselector-simulation-rt:
+      name: preselector-simulation-RT-${bundle.target}
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: preselector
+          new_cluster:
+            num_workers: 1
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: mats
+              tool: preselector
+              env: ${bundle.target}
+              managed_by: manually
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 0 14 ? * TUE'
+        timezone_id: UTC
+
+      email_notifications:
+        on_failure:
+          - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
+        on_success:
+          - mats.mollestad@cheffelo.com
+          - grant.levang@cheffelo.com
+          - sylvia.liu@cheffelo.com
+
+      tasks:
+        - task_key: batch-predict-rt-slack-notification-start
+          run_job_task:
+            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
+            job_parameters:
+              environment: ${bundle.target} #Reads from the target environment as defined in the databricks.yml file
+              body_message: ✅ Preselector forecast job for RT started
+              is_error: false
+
+        - task_key: materialization
+          job_cluster_key: preselector
+          notebook_task:
+            notebook_path: materialize.py
+            base_parameters:
+              environment: "${var.environment}"
+
         - task_key: batch-predict-rt
           job_cluster_key: preselector
           notebook_task:
@@ -217,8 +325,8 @@ resources:
             base_parameters:
               company_id: "5E65A955-7B1A-446C-B24F-CFE576BF52D7"
               environment: "${var.environment}"
-          depends_on:
-            - task_key: batch-predict-lmk
+            depends_on:
+            - task_key: materialization
 
         - task_key: batch-predict-rt-slack-notification-end-fail
           depends_on:
