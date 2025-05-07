@@ -24,12 +24,6 @@ resources:
                 username: "{{secrets/auth_common/docker-registry-username}}"
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-
       tasks:
         - task_key: materialization
           job_cluster_key: preselector

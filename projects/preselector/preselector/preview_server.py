@@ -1,26 +1,17 @@
 import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager, suppress
-from datetime import date
 from typing import Annotated
 
-import polars as pl
 from aligned import ContractStore
-from aligned.data_source.batch_data_source import BatchDataSource
-from aligned.feature_store import ConvertableToLocation
-from aligned.sources.in_mem_source import InMemorySource
 from cheffelo_logging import setup_datadog
 from cheffelo_logging.logging import DataDogConfig
-from data_contracts.preselector.menu import PreselectorYearWeekMenu
-from data_contracts.preselector.store import Preselector as PreselectorOutput
-from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost
 from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field, ValidationError
 
 from preselector.main import GenerateMealkitRequest, duration, run_preselector_for_request
-from preselector.process_stream import load_cache_for
+from preselector.preview_server_store import load_store
 from preselector.schemas.batch_request import NegativePreference, YearWeek
-from preselector.store import preselector_store
 
 logger = logging.getLogger(__name__)
 
@@ -52,64 +43,6 @@ class GeneratePreview(BaseModel):
 class Mealkit(BaseModel):
     main_recipe_ids: list[int]
     model_version: str
-
-
-store: ContractStore | None = None
-
-
-async def load_store() -> ContractStore:
-    global store  # noqa: PLW0603
-    if store is not None:
-        return store
-
-    store = preselector_store()
-
-    today = date.today()
-    this_week = today.isocalendar().week
-
-    cache_sources: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]] = [
-        (
-            RecipeCost.location,
-            InMemorySource.empty(),
-            (pl.col("menu_year") >= today.year) & (pl.col("menu_week") > this_week),
-        ),
-        (
-            PreselectorYearWeekMenu.location,
-            InMemorySource.empty(),
-            (pl.col("menu_year") >= today.year),
-        ),
-        (
-            NormalizedRecipeFeatures.location,
-            InMemorySource.empty(),
-            (pl.col("year") >= today.year),
-        ),
-    ]
-
-    custom_cache = {loc for loc, _, _ in cache_sources}
-
-    depends_on = store.feature_view(PreselectorOutput).view.source.depends_on()
-
-    for dep in depends_on:
-        if dep in custom_cache:
-            continue
-
-        if dep.location_type == "feature_view":
-            entity_names = store.feature_view(dep.name).view.entitiy_names
-        else:
-            entity_names = store.model(dep.name).model.predictions_view.request("").entity_names
-
-        if "agreement_id" in entity_names:
-            # Do not want any user specific data
-            logger.info(dep.name)
-            store.sources.pop(dep, None)
-            continue
-
-        cache_sources.append((dep, InMemorySource.empty(), None))
-
-    logger.info(f"Loading data for {len(cache_sources)}")
-    store = await load_cache_for(store, cache_sources)
-    logger.info("Cache is hot")
-    return store
 
 
 @asynccontextmanager

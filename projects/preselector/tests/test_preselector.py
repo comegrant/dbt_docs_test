@@ -21,8 +21,10 @@ from data_contracts.recipe import RecipeEmbedding, RecipeMainIngredientCategory,
 from data_contracts.recipe_vote import RecipeVote
 from numpy.random import seed as np_seed
 from preselector.main import run_preselector, run_preselector_for_request
+from preselector.preview_server_store import remove_user_sources
 from preselector.schemas.batch_request import GenerateMealkitRequest, YearWeek
 from preselector.store import preselector_store
+from pytest_mock import MockFixture
 
 
 def potential_features() -> list[Feature]:
@@ -37,11 +39,13 @@ def dummy_store() -> ContractStore:
 
 
 @pytest.mark.asyncio()
-async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> None:
+async def test_preselector_run_without_user_data(dummy_store: ContractStore, mocker: MockFixture) -> None:
     """
     Tests that all data is processed in the expected way.
     Therefore, we expect a successful response, but a not a meaningful response.
     """
+    from preselector import main
+
     seed(1)
     np_seed(1)
 
@@ -53,28 +57,10 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
     recipe_pool = 100
 
     features = potential_features()
+    dummy_store, _ = remove_user_sources(dummy_store)
 
-    for loc in list(dummy_store.sources.keys()):
-        if loc.location_type != "feature_view":
-            continue
+    search_spy = mocker.spy(main, "find_best_combination")
 
-        request = dummy_store.feature_view(loc.name).request
-        if "agreement_id" in request.entity_names:
-            del dummy_store.sources[loc]
-
-    dummy_store = dummy_store.update_source_for(
-        RecipeVote,
-        InMemorySource(
-            pl.DataFrame(
-                data={
-                    "main_recipe_id": list(range(recipe_pool)),
-                    "agreement_id": [0] * recipe_pool,
-                    "is_dislike": [False] * recipe_pool,
-                    "is_favorite": [False] * recipe_pool,
-                }
-            )
-        ),
-    )
     output = await run_preselector(
         customer=GenerateMealkitRequest(
             agreement_id=0,
@@ -105,6 +91,7 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore) -> 
         store=dummy_store,
     )
 
+    search_spy.assert_called_once()
     assert len(output.main_recipe_ids) == number_of_recipes
 
 
