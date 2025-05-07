@@ -15,7 +15,7 @@ perspective 'Meal Adjustments'
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Financial Date Hierarchy'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Brands'
 

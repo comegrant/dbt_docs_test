@@ -32,7 +32,7 @@ perspective Orders
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Financial Date Hierarchy'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Discounts'
 

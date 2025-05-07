@@ -15,7 +15,7 @@ perspective Sign-ups
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Calendar Hierarchy with Month'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Subscribed Products'
 

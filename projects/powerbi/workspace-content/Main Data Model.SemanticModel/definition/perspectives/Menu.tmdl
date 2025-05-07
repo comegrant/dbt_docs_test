@@ -10,7 +10,7 @@ perspective Menu
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Financial Date Hierarchy'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Portions'
 

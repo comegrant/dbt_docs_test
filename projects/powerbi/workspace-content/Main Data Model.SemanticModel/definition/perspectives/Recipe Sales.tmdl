@@ -20,7 +20,7 @@ perspective 'Recipe Sales'
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Financial Date Hierarchy'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Preference Combinations'
 

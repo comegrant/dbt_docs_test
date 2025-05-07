@@ -16,7 +16,7 @@ perspective 'Swaps'
 
 	perspectiveTable 'Dates'
 
-		perspectiveHierarchy 'Financial Date Hierarchy'
+		perspectiveHierarchy 'Date Hierarchy'
 
 	perspectiveTable 'Brands'
 
