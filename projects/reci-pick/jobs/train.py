@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Literal, cast
 import mlflow
 from reci_pick.train.train import Args, train_model
 
-logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
 
@@ -52,4 +52,6 @@ if args.is_run_on_databricks:
 
 else:
     mlflow.set_tracking_uri(f"databricks://{args.profile_name}")
+logger.info("Started to train model...")
 train_model(args=args)
+logger.info("Success!")

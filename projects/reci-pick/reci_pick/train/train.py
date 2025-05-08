@@ -16,6 +16,8 @@ from reci_pick.train.metrics import get_recommendation_precisions
 from reci_pick.train.model import train_nn_model
 from reci_pick.train.training_data import get_inputs_for_training, get_recipe_embeddings
 
+logger = logging.getLogger(__name__)
+
 
 class Args(BaseModel):
     company: Literal["LMK", "AMK", "GL", "RT"]
@@ -33,16 +35,16 @@ def train_model(args: Args) -> None:
     company_configs = get_company_train_configs(company_code=company_code)
     start_yyyyww = company_configs.train_start_yyyyww
 
-    logging.info("Downloading data...")
+    logger.info("Downloading data...")
     df_recipes, df_menu_recipes, df_order_history = get_dataframes(
         company_id=company_id, start_yyyyww=start_yyyyww, env=args.env
     )
-    logging.info("Preprocessing recipes...")
+    logger.info("Preprocessing recipes...")
     df_recipes_processed, fitted_preprocessor = preprocess_recipes_dataframe(
         df_recipes=df_recipes.drop(columns=["allergen_id_list"]), company_configs=company_configs
     )
 
-    logging.info("Creating recipe embeddings...")
+    logger.info("Creating recipe embeddings...")
     (
         id_to_recipe_embedding_lookup,
         _,
@@ -53,8 +55,8 @@ def train_model(args: Args) -> None:
     df_order_history_train, df_order_history_test, split_yyyyww = split_train_test(
         df_order_history=df_order_history, num_prediction_weeks=company_configs.num_validation_weeks
     )
-    logging.info(f"First validation week is {split_yyyyww}.")
-    logging.info("Preparing input data for model...")
+    logger.info(f"First validation week is {split_yyyyww}.")
+    logger.info("Preparing input data for model...")
     user_embeddings_input, recipe_embeddings_input, df_train, user_embeddings_pooled_dict = get_inputs_for_training(
         df_order_history_train=df_order_history_train,
         df_menu_recipes=df_menu_recipes,
@@ -73,7 +75,7 @@ def train_model(args: Args) -> None:
     run_name = f"{args.company}_{timestamp_now}"
 
     with mlflow.start_run(run_name=run_name) as run:
-        logging.info("Training model...")
+        logger.info("Training model...")
         trained_model, last_loss, last_accuracy = train_nn_model(
             user_embeddings_input=user_embeddings_input, recipe_embeddings_input=recipe_embeddings_input, target=target
         )
@@ -112,18 +114,18 @@ def train_model(args: Args) -> None:
             ]
         )
 
-        logging.info("Logging model...")
+        logger.info("Logging model...")
         signature_model = ModelSignature(inputs=input_schema, outputs=output_schema)
         mlflow.tensorflow.log_model(model=trained_model, artifact_path="model", signature=signature_model)
 
-        logging.info("Logging preprocessor...")
+        logger.info("Logging preprocessor...")
         signature_preprocessor = infer_signature(
             model_input=df_recipes.head(1), model_output=df_recipes_processed.head(1)
         )
         mlflow.sklearn.log_model(fitted_preprocessor, artifact_path="preprocessor", signature=signature_preprocessor)
         training_params = company_configs.__dict__
         mlflow.log_params(training_params)
-        logging.info("Registering model and preprocessor...")
+        logger.info("Registering model and preprocessor...")
         if args.is_register_model:
             run_uuid = run.info.run_id
             mlflow.set_registry_uri("databricks-uc")

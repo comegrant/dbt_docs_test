@@ -65,4 +65,16 @@ def get_dataframes(
         logging.error(f"Error downloading active users list: {e}")
         raise
 
-    return df_recipes, df_menu_recipes, df_order_history, df_active_users
+    try:
+        logging.info("Downloading concept preferences combinations...")
+        df_concept_preferences = get_data_from_sql(
+            SQL_DIR / "concept_combinations.sql", company_id=kwargs["company_id"], env=kwargs["env"]
+        ).toPandas()
+        df_concept_preferences["concept_combination_list"] = df_concept_preferences[
+            "concept_name_combinations"
+        ].str.split(", ")
+    except Exception as e:
+        logging.error(f"Error downloading concept preference combinations: {e}")
+        raise
+
+    return df_recipes, df_menu_recipes, df_order_history, df_active_users, df_concept_preferences

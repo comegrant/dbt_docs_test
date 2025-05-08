@@ -9,11 +9,10 @@ import os
 from typing import TYPE_CHECKING, Literal, cast
 
 import mlflow
-from reci_pick.predict.predict import Args, predict_recommendations
+from reci_pick.predict.predict import Args, predict_recipes
 
-logger = logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.INFO)
 if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
 
@@ -58,11 +57,10 @@ if args.is_run_on_databricks:
     os.environ["DATABRICKS_TOKEN"] = API_TOKEN
     os.environ["DATABRICKS_HOST"] = API_ROOT
     os.environ["MLFLOW_USE_DATABRICKS_SDK_MODEL_ARTIFACTS_REPO_FOR_UC"] = "true"
-
 try:
-    logging.info(f"Starting prediction for company {args.company} in {args.env} environment")
-    df_scores_list = predict_recommendations(args=args)
-    logging.info(f"Successfully completed predictions, generated {len(df_scores_list)} result sets")
+    logger.info(f"Starting prediction for company {args.company} in {args.env} environment")
+    predict_recipes(args=args)
+    logger.info(f"Successfully completed predictions scores for {company}")
 except Exception as e:
-    logging.error(f"Prediction failed: {e}", exc_info=True)
+    logger.error(f"Prediction failed: {e}", exc_info=True)
     raise

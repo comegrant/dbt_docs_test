@@ -4,6 +4,8 @@ import pandas as pd
 from reci_pick.db import get_data_from_sql
 from reci_pick.paths import SQL_DIR
 
+logger = logging.getLogger(__name__)
+
 
 def get_dataframes(
     **kwargs: dict,
@@ -13,9 +15,9 @@ def get_dataframes(
         if key not in kwargs:
             raise KeyError(f"Missing required kwarg: {key}")
 
-    logging.info("Starting to get dataframes.")
+    logger.info("Starting to get dataframes.")
     try:
-        logging.info("Downloading recipes...")
+        logger.info("Downloading recipes...")
         df_recipes = get_data_from_sql(
             SQL_DIR / "all_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
@@ -24,10 +26,10 @@ def get_dataframes(
         ).toPandas()
         df_recipes = df_recipes.drop_duplicates(subset="main_recipe_id")
     except Exception as e:
-        logging.error(f"Error downloading recipes: {e}")
+        logger.error(f"Error downloading recipes: {e}")
         raise
     try:
-        logging.info("Downloading menus...")
+        logger.info("Downloading menus...")
         df_menu_recipes = get_data_from_sql(
             SQL_DIR / "menu_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
@@ -35,11 +37,11 @@ def get_dataframes(
             env=kwargs["env"],
         ).toPandas()
     except Exception as e:
-        logging.error(f"Error downloading menus: {e}")
+        logger.error(f"Error downloading menus: {e}")
         raise
 
     try:
-        logging.info("Downloading purchase history...")
+        logger.info("Downloading purchase history...")
         df_order_history = get_data_from_sql(
             SQL_DIR / "order_history.sql",
             start_yyyyww=kwargs["start_yyyyww"],
