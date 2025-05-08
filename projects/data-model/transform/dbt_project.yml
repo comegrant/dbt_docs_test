@@ -43,7 +43,7 @@ vars:
 ]
  mealbox_basket_type_id: '550C0EF6-CD4E-487E-9F19-0CC929152497'
  grocery_basket_type_id: '1F72B8C1-D765-426D-88E3-EC412FB7F4B7'
- basket_split_migration_date: '2025-05-07'
+ basket_split_migration_date: '2025-05-08'
  incremental_number_of_days: 30
  full_load_first_date: '2024-01-15'
  subscription_order_type_ids: [
