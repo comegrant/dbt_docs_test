@@ -334,6 +334,12 @@ dates as (
     , '{{current_timestamp}}' as estimation_generated_at
 
     from basket_and_deviations_unioned
+    
+    -- If there are baskets with no subscribed products or deviations
+    -- they will be included in the result set with null as product_variation_id
+    -- We want to exclude these, as they are not relevant for the estimations
+    -- We can not exclude them in the previous steps, as we need the basket id to be able to join with the deviations
+    where product_variation_id is not null
 )
 
 select * from with_timestamp

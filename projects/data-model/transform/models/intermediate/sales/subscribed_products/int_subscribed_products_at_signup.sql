@@ -16,6 +16,7 @@ basket_registered as (
 
     select * from {{ref('cms__billing_agreement_baskets')}}
     where valid_to = '{{ var("future_proof_date") }}'
+    and basket_type_id = '{{ var("mealbox_basket_type_id") }}'
 
 )
 

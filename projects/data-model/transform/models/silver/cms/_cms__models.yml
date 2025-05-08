@@ -1553,7 +1553,7 @@ models:
       - unique:
           column_name: "(billing_agreement_basket_id || '-' || valid_from)"
       - unique:
-          column_name: "(billing_agreement_id || '-' || valid_from)"
+          column_name: "(billing_agreement_id || '-' || basket_type_id || '-' || valid_from)"
     columns:
       - name: billing_agreement_basket_id
         data_type: varchar(36)
