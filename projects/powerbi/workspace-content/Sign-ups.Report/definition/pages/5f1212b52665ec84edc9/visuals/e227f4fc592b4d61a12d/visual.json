@@ -23,11 +23,11 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Portions"
+                  "Property": "Subscribed Portions"
                 }
               },
-              "queryRef": "Subscribed Products.Portions",
-              "nativeQueryRef": "Portions",
+              "queryRef": "Subscribed Products.Subscribed Portions",
+              "nativeQueryRef": "Subscribed Portions",
               "active": true
             }
           ]
@@ -42,7 +42,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Subscribed Products.Portions"
+              "Subscribed Products.Subscribed Portions"
             ],
             "isCollapsed": true,
             "isPinned": true

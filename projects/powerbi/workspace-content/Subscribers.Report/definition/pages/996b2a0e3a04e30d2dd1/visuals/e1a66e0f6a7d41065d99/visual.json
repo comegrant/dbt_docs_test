@@ -23,11 +23,11 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Meals"
+                  "Property": "Subscribed Meals"
                 }
               },
               "queryRef": "Subscribed Products.Meals",
-              "nativeQueryRef": "Meals",
+              "nativeQueryRef": "Subscribed Meals",
               "active": true
             }
           ]
@@ -79,7 +79,7 @@
                     "Entity": "Subscribed Products"
                   }
                 },
-                "Property": "Meals"
+                "Property": "Subscribed Meals"
               }
             },
             "direction": "Ascending"

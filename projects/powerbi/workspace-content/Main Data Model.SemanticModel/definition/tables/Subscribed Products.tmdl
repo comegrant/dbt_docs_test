@@ -28,14 +28,14 @@ table 'Subscribed Products'
 		sourceColumn: company_id
 
 	/// The name of the product type. Examples of product types are 'Mealbox', 'Standalone-groceries'
-	column 'Product Type Name'
+	column 'Subscribed Product Type'
 		dataType: string
 		lineageTag: e612dcb0-beed-43dc-a04b-0d7e939916df
 		summarizeBy: none
 		sourceColumn: product_type_name
 
 	/// The name of the product. Examples of product names are 'Favorittkassen', 'Avokado 1stk'
-	column 'Product Name'
+	column 'Subscribed Product'
 		dataType: string
 		lineageTag: 4214bba7-e509-4a8f-8286-fa684862a264
 		summarizeBy: none
@@ -43,14 +43,14 @@ table 'Subscribed Products'
 
 	/// The status of the product as it appears in PSL.
 	/// The main statuses being 'Live' or 'Deleted'
-	column 'Product Status Name'
+	column 'Subscribed Product Status'
 		dataType: string
 		lineageTag: b6bd503a-2b75-456c-a236-234c02b27853
 		summarizeBy: none
 		sourceColumn: product_status_name
 
 	/// The name of the variation. Examples of variation names are: 'Matkasse 3 Dager 5 Porsjoner', 'Avokado 1stk'
-	column 'Product Variation Name'
+	column 'Subscribed Product Variation'
 		dataType: string
 		lineageTag: a3b78932-5231-4850-b489-be847ea5bc5d
 		summarizeBy: none
@@ -58,7 +58,7 @@ table 'Subscribed Products'
 
 	/// The number of meals that are included in the product variation.
 	/// Example: A product variation with Meals = 4 means the product includes 4 dinners.
-	column Meals
+	column 'Subscribed Meals'
 		dataType: string
 		lineageTag: 30bb1429-f158-443b-b662-66d1f30e7564
 		summarizeBy: none
@@ -66,7 +66,7 @@ table 'Subscribed Products'
 
 	/// The number of portions that are included in the product variation.
 	/// Example: A product variation with Portions = 2 means the product caters for 2 people.
-	column Portions
+	column 'Subscribed Portions'
 		dataType: int64
 		formatString: 0
 		lineageTag: daba447b-4ab0-4c3c-9281-31c94a2508cc
@@ -87,4 +87,3 @@ table 'Subscribed Products'
 					dim_products_Table
 
 	annotation PBI_ResultType = Table
-

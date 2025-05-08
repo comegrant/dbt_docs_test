@@ -42,11 +42,11 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Portions"
+                  "Property": "Subscribed Portions"
                 }
               },
-              "queryRef": "Subscribed Products.Portions",
-              "nativeQueryRef": "Portions"
+              "queryRef": "Subscribed Products.Subscribed Portions",
+              "nativeQueryRef": "Subscribed Portions"
             }
           ]
         },
@@ -554,7 +554,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -596,7 +596,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -638,7 +638,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -680,7 +680,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -722,7 +722,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -764,7 +764,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {

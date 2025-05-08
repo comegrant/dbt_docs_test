@@ -23,11 +23,11 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Meals"
+                  "Property": "Subscribed Meals"
                 }
               },
-              "queryRef": "Subscribed Products.Meals",
-              "nativeQueryRef": "Meals",
+              "queryRef": "Subscribed Products.Subscribed Meals",
+              "nativeQueryRef": "Subscribed Meals",
               "active": true
             }
           ]
@@ -42,7 +42,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Subscribed Products.Meals"
+              "Subscribed Products.Subscribed Meals"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -53,7 +53,7 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Meals"
+                  "Property": "Subscribed Meals"
                 }
               }
             ],

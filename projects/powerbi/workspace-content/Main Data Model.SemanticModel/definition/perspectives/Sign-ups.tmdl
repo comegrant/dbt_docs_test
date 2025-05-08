@@ -19,8 +19,8 @@ perspective Sign-ups
 
 	perspectiveTable 'Subscribed Products'
 
-		perspectiveColumn 'Portions'
-		perspectiveColumn 'Meals'
+		perspectiveColumn 'Subscribed Portions'
+		perspectiveColumn 'Subscribed Meals'
 
 	perspectiveTable 'Preference Combinations'
 

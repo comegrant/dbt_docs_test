@@ -87,11 +87,11 @@
                       "Entity": "Subscribed Products"
                     }
                   },
-                  "Property": "Meals"
+                  "Property": "Subscribed Meals"
                 }
               },
-              "queryRef": "Subscribed Products.Meals",
-              "nativeQueryRef": "Meals"
+              "queryRef": "Subscribed Products.Subscribed Meals",
+              "nativeQueryRef": "Subscribed Meals"
             }
           ]
         },
@@ -176,7 +176,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -218,7 +218,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -260,7 +260,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -302,7 +302,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -344,7 +344,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -385,7 +385,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Portions"
+                        "Property": "Subscribed Portions"
                       }
                     },
                     "Right": {
@@ -427,7 +427,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Meals"
+                        "Property": "Subscribed Meals"
                       }
                     },
                     "Right": {
@@ -469,7 +469,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Meals"
+                        "Property": "Subscribed Meals"
                       }
                     },
                     "Right": {
@@ -511,7 +511,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Meals"
+                        "Property": "Subscribed Meals"
                       }
                     },
                     "Right": {
@@ -552,7 +552,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Meals"
+                        "Property": "Subscribed Meals"
                       }
                     },
                     "Right": {
@@ -594,7 +594,7 @@
                             "Entity": "Subscribed Products"
                           }
                         },
-                        "Property": "Meals"
+                        "Property": "Subscribed Meals"
                       }
                     },
                     "Right": {
