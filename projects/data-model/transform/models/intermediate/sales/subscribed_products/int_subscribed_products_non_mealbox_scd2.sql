@@ -19,6 +19,7 @@ subscribed_products as (
 
     select
         billing_agreement_basket_id
+        , billing_agreement_id
         , product_variation_id
         , product_variation_quantity
         , is_extra_product
@@ -36,6 +37,7 @@ subscribed_products as (
 
   select 
     billing_agreement_basket_id
+    , billing_agreement_id
     , array_sort(
         collect_list(
             struct(
@@ -50,7 +52,7 @@ subscribed_products as (
         , basket_source
         , max(is_grocery) as has_grocery_subscription
   from basket_non_mealbox_products
-  group by billing_agreement_basket_id, valid_from, valid_to, basket_source
+  group by all
 
 )
 
@@ -60,6 +62,7 @@ subscribed_products as (
     
     select 
         billing_agreement_basket_id
+        , billing_agreement_id
         , basket_products_list
         , has_grocery_subscription
         , valid_from
@@ -76,6 +79,7 @@ subscribed_products as (
 , group_periods as (
     select 
         billing_agreement_basket_id
+        , billing_agreement_id
         , basket_products_list
         , has_grocery_subscription
         , valid_from
@@ -90,6 +94,7 @@ subscribed_products as (
 , merge_groups as (
     select
         billing_agreement_basket_id
+        , billing_agreement_id
         , basket_products_list
         , has_grocery_subscription
         , group

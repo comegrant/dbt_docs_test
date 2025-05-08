@@ -26,29 +26,14 @@ basket_mealboxes as (
 , billing_agreements as (
 
     select * from {{ ref('cms__billing_agreements') }}
-
-)
-
-, baskets_scd1 as (
-    
-    select distinct
-        baskets.billing_agreement_basket_id
-        , baskets.billing_agreement_id
-        , billing_agreements.company_id 
-    from baskets
-    left join billing_agreements
-    on 
-        baskets.billing_agreement_id = billing_agreements.billing_agreement_id
-        and billing_agreements.valid_to = '{{ var("future_proof_date") }}'
-    where baskets.valid_to = '{{ var("future_proof_date") }}'
-    and billing_agreements.billing_agreement_id is not null
+    where valid_to = '{{ var("future_proof_date") }}'
 
 )
 
 , baskets_scd2 as (
     select
 
-        billing_agreement_basket_id
+        billing_agreement_id
         , shipping_address_id
         , basket_delivery_week_type_id
         , timeblock_id
@@ -58,13 +43,15 @@ basket_mealboxes as (
         , valid_to
 
     from baskets
+    where basket_type_id = '{{ var("mealbox_basket_type_id") }}'
 )
 
 , mealboxes_scd2 as (
 
     select
 
-        billing_agreement_basket_id
+        billing_agreement_basket_id as mealbox_basket_id
+        , billing_agreement_id
         , product_variation_id as mealbox_product_variation_id
         , valid_from
         , valid_to
@@ -77,7 +64,8 @@ basket_mealboxes as (
 , non_mealboxes_scd2 as (
 
     select
-         billing_agreement_basket_id
+         billing_agreement_basket_id as grocery_basket_id
+        , billing_agreement_id
         , basket_products_list
         , has_grocery_subscription
         , valid_from
@@ -89,7 +77,7 @@ basket_mealboxes as (
 )
 
 -- Use macro to join all scd2 tables
-{% set id_column = 'billing_agreement_basket_id' %}
+{% set id_column = 'billing_agreement_id' %}
 {% set table_names = [
     'baskets_scd2', 
     'mealboxes_scd2',
@@ -105,12 +93,11 @@ basket_mealboxes as (
 , add_scd1 as (
 
     select
-        baskets_scd1.company_id
-        , baskets_scd1.billing_agreement_id
+        billing_agreements.company_id
         , scd2_tables_joined.*
     from scd2_tables_joined
-    left join baskets_scd1
-        on scd2_tables_joined.billing_agreement_basket_id = baskets_scd1.billing_agreement_basket_id
+    left join billing_agreements
+        on scd2_tables_joined.billing_agreement_id = billing_agreements.billing_agreement_id
 )
 
 , add_mealbox_to_product_list as (
@@ -158,10 +145,12 @@ basket_mealboxes as (
 
     select 
         md5(concat(
-                cast(billing_agreement_basket_id as string)
+                cast(billing_agreement_id as string)
                 , cast(valid_from as string)
             )) as billing_agreement_basket_product_updated_id
-        , billing_agreement_basket_id
+        , mealbox_basket_id as billing_agreement_basket_id
+        , mealbox_basket_id
+        , grocery_basket_id
         , company_id
         , billing_agreement_id
         , shipping_address_id

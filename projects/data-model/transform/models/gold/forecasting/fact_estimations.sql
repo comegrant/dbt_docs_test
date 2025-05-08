@@ -62,57 +62,76 @@ products as (
     from estimations
 )
 
+-- During the basket split migration there was some duplicates in the data
+-- This is a temporary fix to remove duplicates in the data
+, handle_duplicates as (
+    select
+        , menu_year
+        , menu_week
+        , menu_week_monday_date
+        , menu_week_financial_date
+        , company_id
+        , billing_agreement_id
+        , product_variation_id
+        , billing_agreement_basket_deviation_origin_id
+        , estimation_generated_at
+        , max(product_variation_quantity) as product_variation_quantity
+
+    from add_financial_date
+    group by all
+)
+
 , add_keys as (
     select
         md5(concat(
             estimation_generated_at
-            , add_financial_date.menu_year
-            , add_financial_date.menu_week
-            , add_financial_date.company_id
-            , add_financial_date.billing_agreement_id
-            , add_financial_date.product_variation_id
+            , handle_duplicates.menu_year
+            , handle_duplicates.menu_week
+            , handle_duplicates.company_id
+            , handle_duplicates.billing_agreement_id
+            , handle_duplicates.product_variation_id
             , billing_agreement_basket_deviation_origin_id
         )) as pk_fact_estimations
 
-        , add_financial_date.menu_year
-        , add_financial_date.menu_week
-        , add_financial_date.menu_week_monday_date
-        , add_financial_date.menu_week_financial_date
-        , add_financial_date.company_id
-        , add_financial_date.billing_agreement_id
-        , add_financial_date.product_variation_id
-        , add_financial_date.billing_agreement_basket_deviation_origin_id
-        , add_financial_date.estimation_generated_at
-        , add_financial_date.product_variation_quantity
+        , handle_duplicates.menu_year
+        , handle_duplicates.menu_week
+        , handle_duplicates.menu_week_monday_date
+        , handle_duplicates.menu_week_financial_date
+        , handle_duplicates.company_id
+        , handle_duplicates.billing_agreement_id
+        , handle_duplicates.product_variation_id
+        , handle_duplicates.billing_agreement_basket_deviation_origin_id
+        , handle_duplicates.estimation_generated_at
+        , handle_duplicates.product_variation_quantity
         , case
-            when add_financial_date.estimation_generated_at = latest_estimation_timestamp.latest_estimation_generated_at
+            when handle_duplicates.estimation_generated_at = latest_estimation_timestamp.latest_estimation_generated_at
             then true
             else false
         end is_latest_estimation
 
         , cast(date_format(estimation_generated_at, 'yyyyMMdd') as int) as fk_dim_date_estimation_generated
         , cast(date_format(estimation_generated_at, 'HHmm') as string) as fk_dim_time_estimation_generated
-        , cast(date_format(add_financial_date.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
-        , md5(add_financial_date.company_id) as fk_dim_companies
-        , md5(concat(add_financial_date.product_variation_id,add_financial_date.company_id)) as fk_dim_products
+        , cast(date_format(handle_duplicates.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
+        , md5(handle_duplicates.company_id) as fk_dim_companies
+        , md5(concat(handle_duplicates.product_variation_id,handle_duplicates.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , portions.pk_dim_portions as fk_dim_portions
 
 
-    from add_financial_date
+    from handle_duplicates
     left join latest_estimation_timestamp
-        on latest_estimation_timestamp.company_id = add_financial_date.company_id
+        on latest_estimation_timestamp.company_id = handle_duplicates.company_id
     left join billing_agreements
-        on billing_agreements.billing_agreement_id = add_financial_date.billing_agreement_id
-        and billing_agreements.valid_from <= add_financial_date.estimation_generated_at
-        and billing_agreements.valid_to > add_financial_date.estimation_generated_at
+        on billing_agreements.billing_agreement_id = handle_duplicates.billing_agreement_id
+        and billing_agreements.valid_from <= handle_duplicates.estimation_generated_at
+        and billing_agreements.valid_to > handle_duplicates.estimation_generated_at
     left join products
-        on add_financial_date.product_variation_id = products.product_variation_id
-        and add_financial_date.company_id = products.company_id
+        on handle_duplicates.product_variation_id = products.product_variation_id
+        and handle_duplicates.company_id = products.company_id
     left join companies
-        on add_financial_date.company_id = companies.company_id
+        on handle_duplicates.company_id = companies.company_id
     left join portions
         on products.portion_name = portions.portion_name_local
         and companies.language_id = portions.language_id

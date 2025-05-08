@@ -143,6 +143,7 @@ dates as (
         , baskets_with_company.billing_agreement_id
         , baskets_with_company.billing_agreement_basket_id
         , baskets_with_company.company_id
+        , baskets_with_company.basket_type_id
         , mealbox_baskets.basket_delivery_week_type_id
 
     from baskets_with_company
@@ -283,7 +284,8 @@ dates as (
 
     from baskets_without_deviations
     left join basket_products
-    on baskets_without_deviations.billing_agreement_basket_id = basket_products.billing_agreement_basket_id
+    on baskets_without_deviations.billing_agreement_id = basket_products.billing_agreement_id
+    where baskets_without_deviations.basket_type_id = '{{ var("mealbox_basket_type_id") }}'
 
 )
 
