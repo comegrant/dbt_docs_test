@@ -38,6 +38,10 @@ jobs:
 
 
 def deploy_project_workflow(project_name: str, file_name: str) -> str:
+    deploy_args = (
+        f'--var="docker_image_url=${{{{ vars.CONTAINER_REGISTRY }}}}'
+        f'/{project_name}:${{{{ github.sha }}}}" --var="mode=production"'
+    )
     return f"""name: {project_name} deploy
 on:
   push:
@@ -56,5 +60,22 @@ jobs:
       registry: ${{{{ vars.CONTAINER_REGISTRY }}}}
       image-name: {project_name}
       dockerfile: docker/Dockerfile.databricks
-      tag: ${{{{ github.sha }}}}
+      tag: "main-latest"
+      push-sha: true
+    secrets: inherit
+
+  deploy-{project_name}:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-{project_name}-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/{project_name}
+      target-env: ${{{{matrix.target}}}}
+      should-change-target: true
+      # Setting the docker image which is needed for python projects
+      extra-args: {deploy_args}
     secrets: inherit"""

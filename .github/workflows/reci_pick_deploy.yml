@@ -18,7 +18,8 @@ jobs:
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: reci-pick-databricks
       dockerfile: docker/Dockerfile.databricks
-      push-latest: true
+      tag: "main-latest"
+      push-sha: true
     secrets: inherit
 
   deploy-reci-pick:
