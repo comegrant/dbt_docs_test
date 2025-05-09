@@ -22,7 +22,7 @@ from collections import defaultdict
 from datetime import date, timedelta
 
 dbutils.widgets.text("company_id", "")
-dbutils.widgets.text("number_of_weeks", "8")
+dbutils.widgets.text("number_of_weeks", "12")
 dbutils.widgets.text("number_of_weeks_from_now", "6")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
