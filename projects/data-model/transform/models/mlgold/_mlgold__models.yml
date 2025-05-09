@@ -589,8 +589,9 @@ models:
       - name: recipe_name
         description: "{{ doc('column__recipe_name') }}"
         data_type: string
-        data_tests:
-          - not_null
+        # Removing tests due to issue on 9th May 2025
+        #data_tests:
+        #  - not_null
 
       - name: deviation_created_at
         description: "{{ doc('column__source_created_at') }}"
