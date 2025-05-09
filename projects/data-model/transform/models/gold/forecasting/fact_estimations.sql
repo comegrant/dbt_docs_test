@@ -66,7 +66,7 @@ products as (
 -- This is a temporary fix to remove duplicates in the data
 , handle_duplicates as (
     select
-        , menu_year
+        menu_year
         , menu_week
         , menu_week_monday_date
         , menu_week_financial_date
