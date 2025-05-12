@@ -752,6 +752,13 @@ The unique key of each row in Fact Loyalty Points.
 
 {% enddocs %}
 
+{% docs column__level_booster_points %}
+
+The number of points that are earned on this transaction due to a multiplier. For example, if a customer earns 150 points with a 1.5x multiplier, the transaction points component earned from this multiplier is 50 points.
+
+{% enddocs %}
+
+
 # Dim Loyalty Periods
 {% docs column__pk_dim_loyalty_seasons %}
 

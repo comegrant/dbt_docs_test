@@ -3052,6 +3052,14 @@ models:
         data_type: int
         description: "{{ doc('column__transaction_points') }}"
 
+      - name: level_multiplier
+        data_type: decimal(3,1)
+        description: "{{ doc('column__point_multiplier_spendable') }}"
+
+      - name: level_booster_points
+        data_type: int
+        description: "{{ doc('column__level_booster_points') }}"
+
       - name: remaining_points
         data_type: int
         description: "{{ doc('column__remaining_points') }}"
