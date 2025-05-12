@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -13,11 +14,46 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class DatabricksKeyVault(KeyVaultInterface):
-
     dbutils: RemoteDbUtils
     scope: str
+    global_key_mappings: dict[str, str]
+
+    async def load_into_env(
+        self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
+    ) -> dict[str, str]:
+        import os
+
+        from pyspark.errors.exceptions.captured import IllegalArgumentException  # type: ignore
+
+        values: dict[str, str] = {}
+        optional_keys = set(optional_keys or [])
+
+        if not isinstance(keys, dict):
+            keys = {self.global_key_mappings.get(key.lower(), key): key for key in keys}
+
+        for db_key, env_key in keys.items():
+            if env_key in os.environ or env_key.upper() in os.environ:
+                logger.info(f"Found value for {env_key} in environments, so will not read from key vault.")
+                continue
+
+            try:
+                logger.info(f"Fetching secret for {env_key}")
+                secret_value = self.dbutils.secrets.get(self.scope, db_key)
+
+                if secret_value:
+                    os.environ[env_key] = secret_value
+                    values[env_key] = secret_value
+
+            except IllegalArgumentException as e:
+                if env_key not in optional_keys:
+                    raise ValueError(f"Did not find secret for {env_key}, tried to load {db_key}") from e
+
+                logger.info(f"Found no value for {env_key}. Will use default value.")
+
+        return values
 
     async def load(
         self,
@@ -51,10 +87,6 @@ class DatabricksKeyVault(KeyVaultInterface):
         >>> datadog_api_key='*****' datadog_service_name='preselector' datadog_tags='env:test,image-tag:dev-latest'
             datadog_site='datadoghq.eu' datadog_source='python'
         """
-        import os
-
-        from pyspark.errors.exceptions.captured import IllegalArgumentException  # type: ignore
-
         if key_map is None:
             key_map = {}
 
@@ -70,10 +102,10 @@ class DatabricksKeyVault(KeyVaultInterface):
             if field.default != PydanticUndefined or field.default_factory is not None:
                 can_be_missing.add(name)
 
-            if isinstance(key_map, Callable):
-                keys_to_load[name] = key_map(name)
+            if callable(key_map):
+                db_key = key_map(name)
             elif name in key_map:
-                keys_to_load[name] = key_map[name]
+                db_key = key_map[name]
             else:
                 splits = name.split("_")
                 if len(splits) != 1:
@@ -81,49 +113,38 @@ class DatabricksKeyVault(KeyVaultInterface):
                 else:
                     new_name = splits[0]
                 # store secrets as kebab-case
-                keys_to_load[name] = new_name
+                db_key = new_name
 
             if env is not None:
-                keys_to_load[name] = keys_to_load[name] + f"-{env}"
+                db_key = db_key + f"-{env}"
 
+            keys_to_load[db_key]
 
-        for key, value in keys_to_load.items():
-            if key in os.environ or key.upper() in os.environ:
-                logger.info(f"Found value for {key} in environments, so will not read from key vault.")
-                continue
-
-            try:
-                logger.info(f"Fetching secret for {key}")
-                secret_value = self.dbutils.secrets.get(self.scope, value)
-
-                if secret_value:
-                    os.environ[key] = secret_value
-                    all_values[key] = secret_value
-
-            except IllegalArgumentException as e:
-                if key not in can_be_missing:
-                    raise ValueError(f"Did not find secret for {key}, tried to load {value}") from e
-
-                logger.info(f"Found no value for {key}. Will use default value.")
-
-        return model(**all_values) # type: ignore
+        loaded_values = await self.load_into_env(keys_to_load, optional_keys=can_be_missing)
+        for key, value in loaded_values.items():
+            all_values[key] = value
+        return model(**all_values)  # type: ignore
 
     @staticmethod
-    def from_scope(scope: str, dbutils: RemoteDbUtils | None = None) -> DatabricksKeyVault:
+    def from_scope(
+        scope: str, dbutils: RemoteDbUtils | None = None, global_key_mappings: dict[str, str] | None = None
+    ) -> DatabricksKeyVault:
         """
-                                        This assumes that you either have logged in through the azure cli,
-                                        or that you have set the env vars for Azure authentication.
-                                        As it uses the `DefaultAzureCredential` auth method by default.
+        This assumes that you either have logged in through the azure cli,
+        or that you have set the env vars for Azure authentication.
+        As it uses the `DefaultAzureCredential` auth method by default.
         """
         if dbutils is not None:
-            return DatabricksKeyVault(scope=scope, dbutils=dbutils)
+            return DatabricksKeyVault(scope=scope, dbutils=dbutils, global_key_mappings=global_key_mappings or {})
 
         try:
             from pyspark.dbutils import dbutils  # type: ignore
+
             # Only works on the databricks runtime
             return DatabricksKeyVault(
-                dbutils=dbutils,
-                scope="auth_common"
+                dbutils=dbutils,  # type: ignore
+                scope="auth_common",
+                global_key_mappings=global_key_mappings or {},
             )
         except ModuleNotFoundError as e:
             raise ValueError("You need to define a dbutils if not running on Databricks") from e

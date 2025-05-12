@@ -8,12 +8,13 @@ packages = [{include = "{{cookiecutter.module_name}}"}]
 [tool.poetry.dependencies]
 python = "^{{cookiecutter.python_version}}"
 pydantic-settings = "^2.1.0"
-
-[tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
+model-registry = {path = "../../packages/model-registry", develop = true}
 
 [tool.poetry.group.databricks.dependencies]
-databricks-env = {path = "../../packages/databricks-env", develop = true}
+nest_asyncio = "1.6.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"

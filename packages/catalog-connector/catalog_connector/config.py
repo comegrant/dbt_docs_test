@@ -96,6 +96,11 @@ class DatabricksConnectionConfig:
     ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(cluster_id=cluster_id, token=token, workspace=workspace)
 
+    @property
+    def env_keys(self) -> list[str]:
+        potential_vars = [self.workspace, self.cluster_id, self.token]
+        return [env_var.env for env_var in potential_vars if isinstance(env_var, EnvironmentValue)]
+
     def sql(self, query: str) -> DataFrame:
         """
         Returns a spark dataframe that will load the provided SQL query.

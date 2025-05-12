@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "databricks_connector"
+name = "catalog_connector"
 version = "0.1.0"
 description = "A package that makes it easy to connect to databricks"
 authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]

@@ -1,11 +1,29 @@
-
+from collections.abc import Iterable
 from typing import Any, Callable, Protocol, TypeVar
 
 from pydantic_settings import BaseSettings
 
-T = TypeVar('T', bound=BaseSettings)
+T = TypeVar("T", bound=BaseSettings)
+
 
 class KeyVaultInterface(Protocol):
+    async def load_into_env(
+        self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
+    ) -> dict[str, str]:
+        """
+        Loads the external keys into the environment variables
+
+        ```python
+        await vault.load_into_env(
+            keys={
+                "azure-storageAccount-experimental-key": "DATALAKE_SERVICE_ACCOUNT_NAME",
+                "azure-storageAccount-experimental-name": "DATALAKE_STORAGE_ACCOUNT_KEY",
+            }
+        )
+        ```
+
+        """
+        ...
 
     async def load(
         self,
@@ -15,7 +33,7 @@ class KeyVaultInterface(Protocol):
         custom_values: dict[str, Any] | None = None,
     ) -> T:
         """
-        Loads a set of settings variables from the Azure key valut.
+        Loads a set of settings variables from the Azure key vault.
 
         ```python
         class DataDogConfig(BaseSettings):
@@ -40,3 +58,20 @@ class KeyVaultInterface(Protocol):
             datadog_site='datadoghq.eu' datadog_source='python'
         """
         ...
+
+class NoopVault(KeyVaultInterface):
+
+    async def load_into_env(
+        self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
+    ) -> dict[str, str]:
+        return {}
+
+
+    async def load(
+        self,
+        model: type[T],
+        env: str | None = None,
+        key_map: dict[str, str] | Callable[[str], str] | None = None,
+        custom_values: dict[str, Any] | None = None,
+    ) -> T:
+        raise NotImplementedError()

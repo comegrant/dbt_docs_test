@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import mlflow
 import pandas as pd
 import pytest
@@ -8,12 +10,10 @@ from model_registry import ModelMetadata
 async def test_mlflow() -> None:
     from model_registry.mlflow import mlflow_registry
 
-    run_url = "https://test.com"
+    alias = "champion"
+    run_url = f"https://test.com/{uuid4()}"
     model_name = "test"
-    example_input = pd.DataFrame({
-        "a": [1, 2, 3],
-        "b": [2, 3, 1]
-    })
+    example_input = pd.DataFrame({"a": [1, 2, 3], "b": [2, 3, 1]})
 
     def function(data: pd.DataFrame) -> pd.Series:
         return data.sum(axis=1, numeric_only=True)
@@ -21,12 +21,13 @@ async def test_mlflow() -> None:
     registry = mlflow_registry()
 
     await (
-        registry.training_run_url(run_url)
-            .training_dataset(example_input)
-            .register_as(model_name, function) # type: ignore
+        registry.alias(alias)
+        .training_run_url(run_url)
+        .training_dataset(example_input)
+        .register_as(model_name, function)  # type: ignore
     )
 
-    latest_version = mlflow.MlflowClient().get_latest_versions(model_name)[0]
+    latest_version = mlflow.MlflowClient().get_model_version_by_alias(model_name, alias)
     uri = f"models:/{model_name}/{latest_version.version}"
     model = mlflow.pyfunc.load_model(uri)
 

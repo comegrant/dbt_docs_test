@@ -1,6 +1,7 @@
+mlflow
+mlruns
 models/*.pkl
 connection.json
-.mlflow
 
 ### Python template
 # Byte-compiled / optimized / DLL files

@@ -1,6 +1,9 @@
 models/*.pkl
 connection.json
 
+*.parquet
+*.csv
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/

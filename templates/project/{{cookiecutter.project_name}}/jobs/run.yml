@@ -7,6 +7,12 @@ resources:
         - group_name: data-scientists
           level: CAN_MANAGE_RUN
 
+      parameters:
+        - name: environment
+          default: "${var.environment}"
+        - name: table
+          default: "mloutputs.attribute_scoring"
+
       job_clusters:
         - job_cluster_key: {{cookiecutter.project_name}}
           new_cluster:
@@ -21,8 +27,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "{{ "{{" }}secrets/auth_common/docker-registry-username{{ "}}" }}"
-                password: "{{ "{{" }}secrets/auth_common/docker-registry-password{{ "}}" }}"
+                username: "{{"{{"}}secrets/auth_common/docker-registry-username{{"}}"}}"
+                password: "{{"{{"}}secrets/auth_common/docker-registry-password{{"}}"}}"
 
       schedule:
         quartz_cron_expression: '0 0 2 ? * MON'
@@ -31,10 +37,13 @@ resources:
       tasks:
         - task_key: run
           job_cluster_key: {{cookiecutter.project_name}}
-          notebook_task:
-            notebook_path: run.py
-            base_parameters:
-              environment: "${var.environment}"
+          spark_python_task:
+            python_file: run.py
+            parameters:
+              - "--environment"
+              - "{{"{{"}}job.parameters.environment{{"}}"}}"
+              - "--table"
+              - "{{"{{"}}job.parameters.table{{"}}"}}"
 
         - task_key: run-fail
           depends_on:

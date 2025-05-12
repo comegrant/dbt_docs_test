@@ -4,8 +4,8 @@ FROM python:{{cookiecutter.python_version}}-slim-buster
 RUN pip install --no-cache-dir poetry
 
 # set the home directory
-ENV APP_HOME /opt
-ENV SERVICE_HOME $APP_HOME/projects/{{cookiecutter.project_name}}
+ENV APP_HOME=/opt
+ENV SERVICE_HOME=$APP_HOME/projects/{{cookiecutter.project_name}}
 
 # copy source code
 WORKDIR $APP_HOME
@@ -20,7 +20,7 @@ RUN mkdir -p {{cookiecutter.module_name}} && touch {{cookiecutter.module_name}}/
 
 # install requirements
 RUN poetry config virtualenvs.create false
-RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry/cache
+RUN poetry install --without=dev -n && rm -rf ~/.cache/pypoetry
 
 # copy source code
 COPY projects/{{cookiecutter.project_name}} .

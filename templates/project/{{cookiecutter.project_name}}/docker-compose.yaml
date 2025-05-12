@@ -1,29 +1,29 @@
-version: '3'
 services:
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    command: "mlflow server --backend-store-uri file:///app/mlflow-server/experiments --artifacts-destination file:///app/mlflow-server/artifacts --host 0.0.0.0 --port 8000"
+    volumes:
+      - ../../.mlflow:/app/mlflow-server
+    ports:
+      - 9000:8000
 
   # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
   # It will also be used when starting a shell
-  base:
-    image: {{cookiecutter.project_name}}-base
+  run:
+    image: {{cookiecutter.project_name}}-databricks
     platform: linux/amd64
     build:
       context: ../../
-      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile
-    command: ["echo", "'Hello from {{cookiecutter.project_name}}'"]
+      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile.databricks
+    command: "python -m jobs.run --table=mloutputs.attribute_scoring"
     volumes:
       - ./:/opt/projects/{{cookiecutter.project_name}}
       - ./../../packages:/opt/packages
-
-  test:
-    image: {{cookiecutter.project_name}}-test
-    platform: linux/amd64
-    build:
-      context: ../../
-      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile.testing
-    command: ["python", "-m", "pytest", "-rav", "tests"]
-    volumes:
-      - ./:/opt/projects/{{cookiecutter.project_name}}
-      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:8000
+      - MLFLOW_REGISTRY_URI=http://mlflow:8000
     depends_on:
-      - base
-    profiles: ["test"]
+      - mlflow

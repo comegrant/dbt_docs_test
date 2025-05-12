@@ -14,14 +14,14 @@ if TYPE_CHECKING:
     from model_registry.interface import DatasetTypes, Model
 
 
-logger = logging.getLevelName(__name__)
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class DatabricksFeatureStoreRegistryBuilder(ModelRegistryBuilder):
-
     _dataset: TrainingSet | None = field(default=None)
 
-    def training_dataset(self, dataset: DatasetTypes | TrainingSet) -> ModelRegistryBuilder:
+    def training_dataset(self, dataset: DatasetTypes | TrainingSet) -> DatabricksFeatureStoreRegistryBuilder:
         if isinstance(dataset, TrainingSet):
             self._dataset = dataset
         else:
@@ -34,19 +34,14 @@ class DatabricksFeatureStoreRegistryBuilder(ModelRegistryBuilder):
         flavor = None
         if isinstance(model, BaseEstimator):
             flavor = mlflow.sklearn
-        elif isinstance(model, mlflow.models.PythonModel): # type: ignore
+        elif isinstance(model, mlflow.models.PythonModel):  # type: ignore
             flavor = mlflow.pyfunc
 
         assert flavor
 
         client = FeatureStoreClient()
-        client.log_model(
-            model,
-            model_name,
-            flavor=flavor,
-            training_set=self._dataset,
-            registered_model_name=model_name
-        )
+        client.log_model(model, model_name, flavor=flavor, training_set=self._dataset, registered_model_name=model_name)
 
-def databricks_registry() -> DatabricksFeatureStoreRegistryBuilder:
+
+def databricks_feature_store() -> DatabricksFeatureStoreRegistryBuilder:
     return DatabricksFeatureStoreRegistryBuilder()

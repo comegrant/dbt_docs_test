@@ -17,7 +17,6 @@ jobs:
     secrets: inherit
 
   build-{project_name}-databricks-image:
-    needs: test-{project_name}
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:
       working-directory: projects/{project_name}
