@@ -26,9 +26,12 @@ def filter_out_unwanted_preselected_recipes(recipes: Annotated[pl.DataFrame, Nor
     """
 
     return recipes.filter(
-        pl.col("is_adams_signature").not_() & pl.col("is_cheep").not_() & pl.col("is_red_cross").not_()
+        pl.col("is_adams_signature").not_()
+        & pl.col("is_cheep").not_()
+        & pl.col("is_red_cross").not_()
+        & pl.col("is_slow_grown_chicken").not_()
     ).select(
-        pl.exclude(["is_adams_signature", "is_cheep", "is_red_cross"]),
+        pl.exclude(["is_adams_signature", "is_cheep", "is_red_cross", "is_slow_grown_chicken"]),
     )
 
 
