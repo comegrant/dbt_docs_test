@@ -38,6 +38,7 @@ resources:
               is_run_on_databricks: true
               is_from_workflow: true
               num_weeks: 4
+              topk: 20
 
         - task_key: slack-notification-success
           depends_on:

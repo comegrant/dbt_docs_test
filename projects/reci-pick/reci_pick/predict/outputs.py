@@ -7,7 +7,7 @@ def prepare_outputs(
     identifier_col: str,
     score_col: str,
     timestamp_prediction: str,
-    company_code: str,
+    company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
     df_scores_output = df_scores[
@@ -20,9 +20,9 @@ def prepare_outputs(
     df_scores_output["model_version"] = model_version
     df_scores_output["created_at"] = timestamp_prediction
     df_scores_output["run_id"] = run_id
-    df_scores_output["company_code"] = company_code
+    df_scores_output["company_id"] = company_id
     columns_rearranged = [
-        "company_code",
+        "company_id",
         identifier_col,
         "main_recipe_id",
         "score",
@@ -40,13 +40,11 @@ def prepare_recommendations_for_output(
     score_col: str,
     model_version: str,
     timestamp_prediction: str,
-    company_code: str,
+    company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
     df_rec_outputs = (
-        df_topk_recommendations.groupby([identifier_col, "menu_year", "menu_week"])[
-            ["main_recipe_id", "product_id", score_col]
-        ]
+        df_topk_recommendations.groupby([identifier_col, "menu_year", "menu_week"])[["main_recipe_id", score_col]]
         .agg(list)
         .reset_index()
     )
@@ -54,14 +52,14 @@ def prepare_recommendations_for_output(
     df_rec_outputs["model_version"] = model_version
     df_rec_outputs["created_at"] = timestamp_prediction
     df_rec_outputs["run_id"] = run_id
-    df_rec_outputs["company_code"] = company_code
+    df_rec_outputs["company_id"] = company_id
     columns_rearranged = [
-        "company_code",
+        "company_id",
         identifier_col,
         "menu_year",
         "menu_week",
-        "product_id",
         "main_recipe_id",
+        "score",
         "model_version",
         "run_id",
         "created_at",
@@ -75,7 +73,7 @@ def prepare_concept_user_scores_for_output(
     df_concept_preferences: pd.DataFrame,
     model_version: str,
     timestamp_prediction: str,
-    company_code: str,
+    company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
     df_scores_concept = df_scores_concept.merge(df_concept_users)
@@ -99,7 +97,7 @@ def prepare_concept_user_scores_for_output(
         identifier_col="concept_id_combinations",
         score_col="score",
         timestamp_prediction=timestamp_prediction,
-        company_code=company_code,
+        company_id=company_id,
         run_id=run_id,
     )
     return df_scores_concept_outputs
@@ -111,7 +109,7 @@ def prepare_concept_recommendations(
     df_concept_preferences: pd.DataFrame,
     model_version: str,
     timestamp_prediction: str,
-    company_code: str,
+    company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
     df_recs_concept = df_recs_concept.merge(df_concept_users)
@@ -132,7 +130,7 @@ def prepare_concept_recommendations(
         score_col="score",
         model_version=model_version,
         timestamp_prediction=timestamp_prediction,
-        company_code=company_code,
+        company_id=company_id,
         run_id=run_id,
     )
 
@@ -140,11 +138,11 @@ def prepare_concept_recommendations(
 
 
 def prepare_meta_data_menus_predicted(
-    df_menus_predicted: pd.DataFrame, company_code: str, run_id: str, timestamp_prediction: str, num_users: int
+    df_menus_predicted: pd.DataFrame, company_id: str, run_id: str, timestamp_prediction: str, num_users: int
 ) -> pd.DataFrame:
     df_menus_predicted = df_menus_predicted[["menu_year", "menu_week"]].drop_duplicates()
     df_menus_predicted["run_id"] = run_id
-    df_menus_predicted["company_code"] = company_code
+    df_menus_predicted["company_id"] = company_id
     df_menus_predicted["created_at"] = timestamp_prediction
     df_menus_predicted["num_users_predicted"] = num_users
     return df_menus_predicted

@@ -138,7 +138,7 @@ def predict_recipes(args: Args) -> None:
                 model_version=model_version,
                 identifier_col="billing_agreement_id",
                 score_col="score_modified",
-                company_code=company_code,
+                company_id=company_id,
                 timestamp_prediction=timestamp_prediction,
                 run_id=run_id,
             )
@@ -161,7 +161,7 @@ def predict_recipes(args: Args) -> None:
                 identifier_col="billing_agreement_id",
                 score_col="score_modified",
                 model_version=model_version,
-                company_code=company_code,
+                company_id=company_id,
                 timestamp_prediction=timestamp_prediction,
                 run_id=run_id,
             )
@@ -201,7 +201,7 @@ def predict_recipes(args: Args) -> None:
         df_concept_preferences=df_concept_preferences,
         model_version=model_version,
         timestamp_prediction=timestamp_prediction,
-        company_code=company_code,
+        company_id=company_id,
         run_id=run_id,
     )
     append_pandas_df_to_catalog(
@@ -219,7 +219,7 @@ def predict_recipes(args: Args) -> None:
         df_concept_preferences=df_concept_preferences,
         model_version=model_version,
         timestamp_prediction=timestamp_prediction,
-        company_code=company_code,
+        company_id=company_id,
         run_id=run_id,
     )
     append_pandas_df_to_catalog(
@@ -231,7 +231,7 @@ def predict_recipes(args: Args) -> None:
         df_menus_predicted=menus_to_predict,
         run_id=run_id,
         timestamp_prediction=timestamp_prediction,
-        company_code=company_code,
+        company_id=company_id,
         num_users=np.array([len(i) for i in user_chunks]).sum(),
     )
     append_pandas_df_to_catalog(
