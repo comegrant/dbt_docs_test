@@ -188,7 +188,7 @@ async def run_preselector_for_request(
     # main_recipe_id: year_week it was last ordered
     generated_recipe_ids: dict[int, int] = {}
 
-    if WeeksSinceRecipe.location.identifier in store.feature_views:
+    if WeeksSinceRecipe.location.name in store.feature_views:
         quarantining_data = (
             await store.feature_view(WeeksSinceRecipe)
             .select({"last_order_year_week"})
@@ -198,6 +198,12 @@ async def run_preselector_for_request(
         if not quarantining_data.is_empty():
             for row in quarantining_data.iter_rows(named=True):
                 generated_recipe_ids[row["main_recipe_id"]] = row["last_order_year_week"]
+
+    if should_explain:
+        import streamlit as st
+
+        st.write("Quarantining data")
+        st.write(generated_recipe_ids)
 
     if request.ordered_weeks_ago:
         for main_recipe_id, yearweek in request.ordered_weeks_ago.items():

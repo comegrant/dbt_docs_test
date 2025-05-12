@@ -112,8 +112,11 @@ class CurrentSelectedRecipes:
     main_recipe_id = Int32()
 
 
+quarantining_week_interval = 12
+
+
 async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | None = None) -> pl.LazyFrame:
-    from datetime import date
+    from datetime import date, timedelta
 
     def query(view_wrapper: FeatureViewWrapper) -> FeatureViewStore:
         """
@@ -125,9 +128,12 @@ async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | 
             return view_wrapper.query()
 
     today = date.today()
+    beginning_date = (today - timedelta(weeks=quarantining_week_interval)).isocalendar()
+    beginning_yyyyww = beginning_date.year * 100 + beginning_date.week
+
     orders = (
         await query(HistoricalRecipeOrders)
-        .filter(today.year * 100 + today.isocalendar().week - 6 <= pl.col("year") * 100 + pl.col("week"))
+        .filter(beginning_yyyyww <= pl.col("year") * 100 + pl.col("week"))
         .to_polars()
     )
     current_selection = (await query(CurrentSelectedRecipes).all().to_polars()).rename(
@@ -144,9 +150,6 @@ async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | 
         .agg(pl.col("year_week").max().alias("last_order_year_week"))
         .lazy()
     )
-
-
-quarantining_week_interval = 8
 
 
 def week_to_date(col: str) -> pl.Expr:
