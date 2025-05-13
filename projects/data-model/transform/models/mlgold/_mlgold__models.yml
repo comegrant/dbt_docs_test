@@ -674,6 +674,8 @@ models:
       - name: main_recipe_id
         description: "{{ doc('column__main_recipe_id') }}"
         data_type: int
+        data_tests:
+          - not_null
 
       - name: recipe_id
         description: "{{ doc('column__recipe_id') }}"
@@ -704,6 +706,8 @@ models:
       - name: cumulated_times_on_menu
         description: "{{ doc('column__cumulated_times_on_menu') }}"
         data_type: int
+        data_tests:
+          - not_null
 
       - name: cumulated_number_of_ratings
         description: "{{ doc('column__cumulated_number_of_ratings') }}"
