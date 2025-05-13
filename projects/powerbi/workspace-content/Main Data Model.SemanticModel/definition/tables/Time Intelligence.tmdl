@@ -46,23 +46,26 @@ table 'Time Intelligence'
 				VAR SelectedFinancialQuarter = SELECTEDVALUE(Dates[Financial Quarter])
 				VAR SelectedFinancialMonth = SELECTEDVALUE(Dates[Financial Month Number])
 				VAR SelectedFinancialWeek = SELECTEDVALUE(Dates[Financial Week])
+				VAR SelectedCalendarYear = SELECTEDVALUE(Dates[Calendar Year])
+				VAR SelectedCalendarMonth = SELECTEDVALUE(Dates[Calendar Month Number])
+				VAR SelectedCalendarMonth = SELECTEDVALUE(Dates[Calendar Quarter Number])
 
 				RETURN
 				    SWITCH(
 				        TRUE(),
 
-				        ISINSCOPE(Dates[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]),
-						CALCULATE(
-				            SELECTEDMEASURE(),
-				            DATEADD(Dates[Date], -1, YEAR),
-				            REMOVEFILTERS(Dates)
-				        ),
-
-				        ISINSCOPE(Dates[Financial Week]),
+						ISINSCOPE(Dates[Financial Week]),
 						CALCULATE(
 				            SELECTEDMEASURE(),
 				            Dates[Financial Year] = SelectedFinancialYear - 1,
 				            Dates[Financial Week] = SelectedFinancialWeek,
+				            REMOVEFILTERS(Dates)
+				        ),
+
+				        ISINSCOPE(Dates[Date]) || ISINSCOPE(Dates[Calendar Quarter]) || ISINSCOPE(Dates[Calendar Month Number]) || ISINSCOPE(Dates[Calendar Year]),
+						CALCULATE(
+				            SELECTEDMEASURE(),
+				            DATEADD(Dates[Date], -1, YEAR),
 				            REMOVEFILTERS(Dates)
 				        ),
 
@@ -235,8 +238,8 @@ table 'Time Intelligence'
 					SELECTEDMEASURE(),
 					'Time Intelligence'[Time Calculation]="Rolling X days (PY)"
 				)
-			
-			VAR PY = 
+
+			VAR PY =
 				CALCULATE(
 					SELECTEDMEASURE(),
 					'Time Intelligence'[Time Calculation]="Rolling X days (PY)"

@@ -26,6 +26,7 @@ table 'Customer Measures'
 		lineageTag: bb5e3faf-1d2a-4b8e-be86-438d234cebb5
 
 	/// Number of Active Subscribers, i.e. a distinct count of all agreements with status "Active".
+	/// It will count the number of active subscribers at the end of the selected period.
 	measure 'Number of Active Subscribers' =
 			CALCULATE(
 				[Number of Subscribers All Statuses],
@@ -92,6 +93,7 @@ table 'Customer Measures'
 
 	/// Number of subscribers included all selected statuses (also included deleted if not filtered otherwise).
 	/// This should be used together with the [Billing Agreement Status] filter in the [Billing Agreements] table.
+	/// It will count the number of subscribers at the end of the selected period.
 	measure 'Number of Subscribers All Statuses' =
 			VAR OneStatus = HASONEVALUE('Billing Agreements'[Billing Agreement Status])
 			VAR StatusIsBlank = ISBLANK(SELECTEDVALUE('Billing Agreements'[Billing Agreement Status]))
@@ -238,10 +240,16 @@ table 'Customer Measures'
 		lineageTag: 214a91d8-fc9a-4084-8144-625b9cb7a7f6
 
 	/// Number of new registered agreements on the day they signed up. They do not need to have had a delivery.
+	/// This measure will be blank when used on weekly level.
+	/// Instead of looking at sign-ups by week, one could use the measure "Number of Sign-ups (7 Days Rolling)"
 	measure 'Number of Sign-ups' =
-			CALCULATE(
-				COUNTROWS('Customer Measures'),
-				'Customer Measures'[is_signup]=TRUE()
+			IF(
+				ISFILTERED(Dates[Financial Week]),
+				BLANK(),
+				CALCULATE(
+					COUNTROWS('Customer Measures'),
+					'Customer Measures'[is_signup]=TRUE()
+				)
 			)
 		formatString: #,0
 		displayFolder: Sign-ups
@@ -610,7 +618,7 @@ table 'Customer Measures'
 	measure 'Number of Loyalty Upgrades' =
 			CALCULATE(
 				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
-				'Customer Measures'[has_upgraded_loyalty_level]	
+				'Customer Measures'[has_upgraded_loyalty_level]
 			)
 		isHidden
 		formatString: #,0
@@ -620,7 +628,7 @@ table 'Customer Measures'
 	measure 'Number of Loyalty Downgrades' =
 			CALCULATE(
 				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
-				'Customer Measures'[has_downgraded_loyalty_level]	
+				'Customer Measures'[has_downgraded_loyalty_level]
 			)
 		isHidden
 		formatString: #,0
