@@ -48,7 +48,6 @@ table 'Time Intelligence'
 				VAR SelectedFinancialWeek = SELECTEDVALUE(Dates[Financial Week])
 				VAR SelectedCalendarYear = SELECTEDVALUE(Dates[Calendar Year])
 				VAR SelectedCalendarMonth = SELECTEDVALUE(Dates[Calendar Month Number])
-				VAR SelectedCalendarMonth = SELECTEDVALUE(Dates[Calendar Quarter Number])
 
 				RETURN
 				    SWITCH(
