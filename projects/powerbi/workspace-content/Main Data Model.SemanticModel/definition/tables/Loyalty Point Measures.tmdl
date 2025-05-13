@@ -62,42 +62,6 @@ table 'Loyalty Point Measures'
 		isHidden
 		lineageTag: points-from-level-boost
 
-	/// Number of spendable points earned from a Gold level boost. These are only earned on Mealboxes orders. Orders for gift cards are not included. 
-	measure 'Points from Gold Level Boost' = 
-			CALCULATE(
-				[Points from Level Boost],
-				'Loyalty Point Measures'[loyalty_level_number] = 4
-			)
-		formatString: #,0
-		isHidden
-		lineageTag: points-from-gold-boost
-
-	/// Number of spendable points earned from a level boost. These are only earned on Mealboxes orders. Orders for gift cards are not included. 
-	measure 'Points from Silver Level Boost' = 
-			CALCULATE(
-				[Points from Level Boost],
-				'Loyalty Point Measures'[loyalty_level_number] = 3
-			)
-		formatString: #,0
-		isHidden
-		lineageTag: points-from-silver-boost
-
-	column 'Level Booster Points'
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		summarizeBy: none
-		sourceColumn: level_booster_points
-	
-	column loyalty_level_number
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		summarizeBy: none
-		sourceColumn: loyalty_level_number
-
 	column loyalty_points_parent_id
 		dataType: string
 		isHidden

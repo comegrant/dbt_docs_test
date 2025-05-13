@@ -87,35 +87,6 @@ table 'Loyalty Measures'
 		displayFolder: Loyalty Points
 		lineageTag: loyalty-points-in-customer-accounts
 
-	/// Number of spendable points earned from a points boost based on loyalty level.
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
-	measure 'Number of Loyalty Points Earned from any Level Boost' =
-			'Loyalty Point Measures'[Points from Level Boost]
-		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
-		lineageTag: points-from-multiplier-measure
-
-	/// Number of spendable points earned from a gold level points boost. 
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
-	/// Points for customers in the gold level are only earned and boosted on 'Debit' order line types.
-	measure 'Number of Loyalty Points Earned from a Gold Level Boost' =
-			'Loyalty Point Measures'[Points from Gold Level Boost]
-		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
-		lineageTag: points-from-gold-boost-measure
-
-	/// Number of spendable points earned from a silver level points boost. 
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
-	/// Points for customers in the silver level are earned and boosted on 'Debit' and 'Transport' order line types.
-	measure 'Number of Loyalty Points Earned from a Silver Level Boost' =
-			'Loyalty Point Measures'[Points from Silver Level Boost]
-		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
-		lineageTag: points-from-silver-boost-measure
-
 	column loyalty_order_id
 		dataType: string
 		isHidden
