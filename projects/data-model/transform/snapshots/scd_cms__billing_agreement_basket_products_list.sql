@@ -13,9 +13,15 @@
 
 with 
 
-source as (
+basket_products as (
 
   select * from {{ source('cms', 'cms__billing_agreement_basket_product') }}
+
+)
+
+, baskets as (
+
+  select * from {{ source('cms', 'cms__billing_agreement_basket') }}
 
 )
 
@@ -31,7 +37,7 @@ source as (
   , updated_by
   , created_at
   , row_number() over (partition by billing_agreement_basket_id order by coalesce(updated_at, created_at) desc) as rank
-  from source
+  from basket_products
 )
 
 , latest_updates as (
@@ -45,29 +51,33 @@ source as (
 
 , basket_products_list as (
   select 
-  billing_agreement_basket_id
+  baskets.id as billing_agreement_basket_id
   , array_sort(
       collect_list(
         struct(
-          subscribed_product_variation_id as product_variation_id 
-          , quantity as product_variation_quantity
-          , is_extra
+          basket_products.subscribed_product_variation_id as product_variation_id 
+          , basket_products.quantity as product_variation_quantity
+          , basket_products.is_extra
           )
       )
    ) as products_list
-  from source
-  group by billing_agreement_basket_id
+  from baskets
+  left join basket_products
+    on baskets.id = basket_products.billing_agreement_basket_id
+  group by all
 )
 
 , list_and_updates_joined as (
   select 
   basket_products_list.billing_agreement_basket_id
   , basket_products_list.products_list
-  , latest_updates.updated_at
-  , latest_updates.updated_by
+  , coalesce(latest_updates.updated_at, baskets.updated_at) as updated_at
+  , coalesce(latest_updates.updated_by, baskets.updated_by) as updated_by
   from basket_products_list
   left join latest_updates
   on basket_products_list.billing_agreement_basket_id = latest_updates.billing_agreement_basket_id
+  left join baskets
+  on basket_products_list.billing_agreement_basket_id = baskets.id
 )
 
 , updated_at_column_modified as (
