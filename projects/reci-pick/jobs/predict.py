@@ -31,7 +31,7 @@ dbutils.widgets.text("env", "dev")
 dbutils.widgets.text("company", "AMK")
 dbutils.widgets.text("is_run_on_databricks", "True")
 dbutils.widgets.text("is_from_workflow", "True")
-dbutils.widgets.text("topk", "10")
+dbutils.widgets.text("topk", "20")
 # COMMAND ----------
 env = cast(Literal["dev", "test", "prod"], dbutils.widgets.get("env"))
 company = cast(Literal["LMK", "AMK", "GL", "RT"], dbutils.widgets.get("company"))

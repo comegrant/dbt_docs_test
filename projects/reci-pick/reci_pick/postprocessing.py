@@ -127,8 +127,8 @@ def check_for_preference_violation(
     )
     score_df["recipe_main_ingredient_name_english"] = score_df["recipe_main_ingredient_name_english"].fillna("Unknown")
     # Check for main ingredient violations
-    score_df["is_main_ingredient_violation"] = score_df["recipe_main_ingredient_name_english"].isin(
-        score_df["taste_preference_combinations"]
+    score_df["is_main_ingredient_violation"] = score_df.apply(
+        lambda x: x["recipe_main_ingredient_name_english"] in x["taste_preference_combinations"], axis=1
     )
     score_df.loc[score_df["is_violate_allergens"], score_col] = allergen_penalization_factor
     score_df.loc[score_df["is_main_ingredient_violation"], score_col] = (
