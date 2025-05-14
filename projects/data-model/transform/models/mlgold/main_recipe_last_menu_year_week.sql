@@ -46,7 +46,7 @@ deviations as (
     left join menus
         on
             deviations_add_fks.fk_dim_products = menus.fk_dim_products
-            and deviations_add_fks.fk_dim_date = menus.fk_dim_date
+            and deviations_add_fks.fk_dim_date = menus.fk_dim_dates
     left join recipes
         on menus.fk_dim_recipes = recipes.pk_dim_recipes
 

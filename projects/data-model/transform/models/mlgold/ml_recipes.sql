@@ -1,19 +1,26 @@
 with
 
-fact_menu as (
+fact_menus as (
     select
         fk_dim_companies
         , fk_dim_recipes
+        , fk_dim_portions
         , menu_id
         , recipe_portion_id
-        , portion_quantity
-        , portion_id
     from {{ ref('fact_menus') }}
     -- only include menu variations with recipe_id and portion_id
     where
-        has_menu_recipes is true
-        and has_recipe_portions is true
-        and fk_dim_date >= 20190101
+        is_dish is true
+        and menu_recipe_id is not null
+        and fk_dim_dates >= 20190101
+)
+
+, dim_portions as (
+    select
+        pk_dim_portions
+        , portion_id
+        , portions
+    from {{ ref('dim_portions') }}
 )
 
 , dim_companies as (
@@ -152,13 +159,13 @@ fact_menu as (
 
 , distinct_recipes as (
     select distinct
-        fact_menu.fk_dim_companies
-        , fact_menu.fk_dim_recipes
+        fact_menus.fk_dim_companies
+        , fact_menus.fk_dim_recipes
         , dim_companies.company_id
         , dim_companies.language_id
         , dim_recipes.main_recipe_id
         , dim_recipes.recipe_id
-        , fact_menu.recipe_portion_id
+        , fact_menus.recipe_portion_id
         , dim_recipes.recipe_name
         , dim_recipes.cooking_time_from
         , dim_recipes.cooking_time_to
@@ -172,28 +179,30 @@ fact_menu as (
         , generic_ingredients_list.number_of_ingredients
         , recipe_steps_list.recipe_step_id_list
         , recipe_steps_list.number_of_recipe_steps
-    from fact_menu
+    from fact_menus
     left join dim_companies
-        on fact_menu.fk_dim_companies = dim_companies.pk_dim_companies
+        on fact_menus.fk_dim_companies = dim_companies.pk_dim_companies
     left join dim_recipes
-        on fact_menu.fk_dim_recipes = dim_recipes.pk_dim_recipes
+        on fact_menus.fk_dim_recipes = dim_recipes.pk_dim_recipes
     left join taxonomies_list
         on dim_recipes.recipe_id = taxonomies_list.recipe_id
     left join generic_ingredients_list
         on dim_recipes.recipe_id = generic_ingredients_list.recipe_id
     left join recipe_steps_list
-        on fact_menu.recipe_portion_id = recipe_steps_list.recipe_portion_id
+        on fact_menus.recipe_portion_id = recipe_steps_list.recipe_portion_id
     left join menu_products
-        on fact_menu.menu_id = menu_products.menu_id
+        on fact_menus.menu_id = menu_products.menu_id
     left join products
         on menu_products.product_id = products.product_id
+    left join dim_portions
+        on fact_menus.fk_dim_portions = dim_portions.pk_dim_portions
     where
         products.product_type_id in (
             'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- single dishes
             , '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealboxes
         )
-        and fact_menu.portion_quantity = 4
-        and fact_menu.portion_id <> 15 -- plus portions for Retnemt
+        and dim_portions.portions = 4
+        and dim_portions.portion_id <> 15 -- plus portions for Retnemt
         and dim_companies.company_id in (
             '5E65A955-7B1A-446C-B24F-CFE576BF52D7' -- Retnemt
             , '8A613C15-35E4-471F-91CC-972F933331D7' -- Adams Matkasse

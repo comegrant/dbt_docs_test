@@ -195,19 +195,18 @@ models:
         
   - name: pim__ingredient_prices
     description: "Contains information on the planning purchasing price of ingredients."
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_price_id
         data_type: char(36)
         description: "{{ doc('column__ingredient_price_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
-          - not_null 
-  
+          - not_null
+
       - name: ingredient_id
         data_type: int
         description: "{{ doc('column__ingredient_id') }}"
@@ -240,8 +239,8 @@ models:
 
       - name: ingredient_price_valid_to
         data_type: date
-        description: "{{ doc('column__ingredient_price_valid_to') }}"        
-        
+        description: "{{ doc('column__ingredient_price_valid_to') }}"
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
@@ -265,15 +264,18 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
-   
+
   - name: pim__procurement_cycles
     description: "Holds information on distribution center and company used for ingredient orders."
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: company_id
         data_type: char(36)
         description: "{{ doc('column__company_id') }}"
-        
+
       - name: purchasing_company_id
         data_type: char(36)
         description: "{{ doc('column__purchasing_company_id') }}"
@@ -303,23 +305,23 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
-          
+
       - name: source_updated_by
-        data_type: timestamp
-        description: "{{ doc('column__source_updated_at') }}"
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
         data_tests:
           - not_null
 
   - name: pim__recipe_favorite_types
     description: "Holds information about the different types of favoriting that is possible to select on the frontend."
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_favorite_type_id
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -327,53 +329,43 @@ models:
       - name: recipe_favorite_type_name
         data_type: string
         description: "{{ doc('column__recipe_favorite_type_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
   - name: pim__recipe_favorites
     description: "Contains information about recipes that have been hearted and disliked by customers"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_favorite_id
         data_type: varchar(36)
         description: "{{ doc('column__recipe_favorite_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -381,40 +373,30 @@ models:
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: main_recipe_id
         data_type: int
         description: "{{ doc('column__main_recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_favorite_type_id
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_active_reaction
         data_type: boolean
         description: "{{ doc('column__is_active_reaction') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -433,21 +415,21 @@ models:
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
   - name: pim__menu_recipes
     description: "Bridge table to link menus and recipes"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: menu_recipe_id
         data_type: int
@@ -476,6 +458,10 @@ models:
 
   - name: pim__menu_variations
     description: "This table links menus to variations. Hence there is one row per menu_id and product_variation_id."
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: menu_variation_id
         data_type: int
@@ -545,6 +531,9 @@ models:
 
   - name: pim__menus
     description: "All menus per weekly menu. Each menu relates to a product."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: menu_id
         data_type: int
@@ -579,7 +568,6 @@ models:
               config:
                 severity: warn
 
-
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
@@ -588,7 +576,6 @@ models:
               config:
                 severity: warn
 
-
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
@@ -596,7 +583,6 @@ models:
           - not_null:
               config:
                 severity: warn
-
 
       - name: source_updated_at
         data_type: timestamp
@@ -615,15 +601,15 @@ models:
         description: "{{ doc('column__is_locked_recipe') }}"
 
   - name: pim__portions
-    description: ""
+    description: "All the different portions that exists"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -631,39 +617,28 @@ models:
       - name: main_portion_id
         data_type: int
         description: "{{ doc('column__main_portion_id') }}"
-        constraints:
-          - type: foreign_key
 
       - name: portion_status_code_id
         data_type: int
         description: "{{ doc('column__portion_status_code_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_size
         data_type: int
         description: "{{ doc('column__portion_size') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -677,14 +652,14 @@ models:
 
   - name: pim__recipe_portions
     description: "Links recipes to the possible portion variations"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_portion_id
         data_type: int
         description: "{{ doc('column__recipe_portion_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -692,34 +667,24 @@ models:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -732,8 +697,13 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__weekly_menus
-    description: "This table holds information about each menu week (delivery week). There is one row per company per week\
-      \ of the year."
+    description: >
+      This table holds information about each menu week (delivery week). There is one row per company per week\
+      of the year.
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: weekly_menu_id
         data_type: int
@@ -773,15 +743,18 @@ models:
           - not_null
 
   - name: pim__recipes
-    description: ""
+    description: >
+      All recipes that has ever been created for the menu weeks.
+      Recipes exist both for all dishes and sometimes for other product types such as standalone products and groceries.
+      The recipe_id for a dish should never occur in several menu weeks
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -789,10 +762,6 @@ models:
       - name: recipe_metadata_id
         data_type: int
         description: "{{ doc('column__recipe_metadata_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -804,9 +773,6 @@ models:
       - name: recipe_status_code_id
         data_type: int
         description: "{{ doc('column__recipe_status_code_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
@@ -837,8 +803,6 @@ models:
       - name: main_recipe_variation_suffix
         data_type: string
         description: "{{ doc('column__main_recipe_variation_suffix') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -853,32 +817,44 @@ models:
       - name: recipe_shelf_life_days
         data_type: int
         description: "{{ doc('column__recipe_shelf_life_days') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_in_recipe_universe
         data_type: boolean
         description: "{{ doc('column__is_in_recipe_universe') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
   - name: pim__recipe_companies
-    description: ""
+    description: "Table that maps recipe_ids to companies. A recipe_id can be used across companies."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
 
   - name: pim__recipe_metadata
-    description: ""
+    description: "Metadata for recipes that are not specific for any languages."
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_metadata_id
         data_type: int
         description: "{{ doc('column__recipe_metadata_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -886,31 +862,22 @@ models:
       - name: recipe_main_ingredient_id
         data_type: int
         description: "{{ doc('column__recipe_main_ingredient_id') }}"
-        constraints:
-          - type: foreign_key
 
       - name: recipe_difficulty_level_id
         data_type: int
         description: "{{ doc('column__recipe_difficulty_level_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: cooking_time_from
         data_type: smallint
         description: "{{ doc('column__cooking_time_from') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: cooking_time_to
         data_type: smallint
         description: "{{ doc('column__cooking_time_to') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -921,32 +888,24 @@ models:
       - name: cooking_time
         data_type: string
         description: "{{ doc('column__cooking_time') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_recipe_photo
         data_type: boolean
         description: "{{ doc('column__has_recipe_photo') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -959,32 +918,27 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
 
   - name: pim__recipe_metadata_translations
-    description: "Miscellaneous text information along with each recipe, used on frontend."
+    description: "Metadata for recipes that are specific to each language."
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: recipe_metadata_id
         data_type: int
         description: "{{ doc('column__recipe_metadata_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_name
         data_type: string
         description: "{{ doc('column__recipe_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1044,6 +998,9 @@ models:
 
   - name: pim__taxonomy_translations
     description: "Table mapping taxonomy ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: taxonomy_id
@@ -1068,17 +1025,22 @@ models:
 
   - name: pim__taxonomies
     description: "Table with taxonomy information"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: taxonomy_id
         data_type: int
         description: "{{ doc('column__taxonomy_id') }}"
-        constraints:
-          - type: primary_key
-          - type: unique
-          - type: not_null
         data_tests:
           - unique
+          - not_null
+
+      - name: taxonomy_type_id
+        data_type: int
+        description: "{{ doc('column__taxonomy_type_id') }}"
+        data_tests:
           - not_null
 
       - name: taxonomy_status_code_id
@@ -1088,7 +1050,7 @@ models:
           - not_null
 
       - name: country_id
-        data_type: int
+        data_type: char(36)
         description: "{{ doc('column__country_id') }}"
         data_tests:
           - not_null
@@ -1117,6 +1079,9 @@ models:
 
   - name: pim__recipe_taxonomies
     description: "Table mapping a recipe id to its taxonomy ids"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: recipe_id
@@ -1129,6 +1094,9 @@ models:
 
   - name: pim__generic_ingredient_translations
     description: "Table mapping generic ingredient ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: generic_ingredient_id
@@ -1145,6 +1113,9 @@ models:
 
   - name: pim__chef_ingredient_sections
     description: "Table mapping chef ingredient sections to recipe portions"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: chef_ingredient_section_id
@@ -1157,6 +1128,9 @@ models:
 
   - name: pim__chef_ingredients
     description: "Table containing chef ingredient information (an instance of generic ingredient)"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: chef_ingredient_id
@@ -1181,6 +1155,9 @@ models:
 
   - name: pim__ingredient_category_translations
     description: "Table mapping ingredient category ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_category_id
@@ -1201,6 +1178,9 @@ models:
 
   - name: pim__ingredients
     description: "Table with ingredient information"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_id
@@ -1252,11 +1232,14 @@ models:
         description: ""
 
       - name: netto_weight
-        data_type: float
+        data_type: decimal
         description: "{{ doc('column__netto_weight') }}"
 
   - name: pim__order_ingredients
     description: "Table connecting ingredient to a specific recipe variation"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: order_ingredient_id
@@ -1292,11 +1275,14 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
 
       - name: nutrition_units
-        data_type: float
+        data_type: decimal
         description: "{{ doc('column__nutrition_units') }}"
 
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_category_id
@@ -1333,25 +1319,23 @@ models:
 
   - name: pim__recipe_ratings
     description: "Reported ratings (1-5) by the customer on purchased recipes"
+    config:
+      contract:
+        enforced: true
     data_tests:
       - unique:
           column_name: "(billing_agreement_id || '-' || recipe_id)"
+
     columns:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1366,8 +1350,6 @@ models:
       - name: is_not_cooked_dish
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1378,8 +1360,6 @@ models:
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1393,33 +1373,29 @@ models:
 
   - name: pim__recipe_comments
     description: "Free text comments by the customer on purchased recipes"
+    config:
+      contract:
+        enforced: true
     data_tests:
       - unique:
           column_name: "(billing_agreement_id || '-' || recipe_id)"
+
     columns:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_comment
         data_type: string
         description: "{{ doc('column__recipe_comment') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1430,8 +1406,6 @@ models:
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1445,22 +1419,20 @@ models:
 
   - name: pim__recipe_translations
     description: "Additional internal or customer facing text information accompanying the recipes. See also pim__recipe_metadata_translations."
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1474,16 +1446,35 @@ models:
 
   - name: pim__portion_translations
     description: "Additional text information to the portion sizes"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_name
+        data_type: string
+        description: "{{ doc('column__portion_name') }}"
+        data_tests:
+          - not_null
 
   - name: pim__taxonomy_types
     description: "Table of taxonomy type information"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: taxonomy_type_id
         data_type: int
@@ -1500,6 +1491,10 @@ models:
 
   - name: pim__status_code_translations
     description: "Table mapping status code ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
+
     columns:
       - name: status_code_id
         data_type: int
@@ -1510,9 +1505,6 @@ models:
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: foreign_key
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1528,6 +1520,9 @@ models:
 
   - name: pim__allergy_preferences
     description: "Table connecting allergy ids to preference ids"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: allergy_id
@@ -1544,6 +1539,9 @@ models:
 
   - name: pim__ingredient_allergies
     description: "Table connecting ingredient ids to allergy ids"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_id
@@ -1566,6 +1564,9 @@ models:
 
   - name: pim__ingredient_category_preferences
     description: "Table connecting ingredient category ids to preference ids"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_category_id
@@ -1582,6 +1583,9 @@ models:
 
   - name: pim__ingredient_translations
     description: "Table mapping ingredient ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_id
@@ -1604,6 +1608,9 @@ models:
 
   - name: pim__allergy_translations
     description: "Table mapping allergy ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: allergy_id
@@ -1626,6 +1633,9 @@ models:
 
   - name: pim__recipe_step_translations
     description: "Table mapping recipe step ids to their descriptions in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: recipe_step_id
@@ -1646,6 +1656,9 @@ models:
 
   - name: pim__ingredient_nutrient_facts
     description: "Table mapping ingredient ids to their nutritional values"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_nutrient_fact_id
@@ -1661,7 +1674,7 @@ models:
           - not_null
 
       - name: ingredient_nutritional_value
-        data_type: double
+        data_type: decimal
         description: "{{ doc('column__ingredient_nutritional_value') }}"
         data_tests:
           - not_null
@@ -1688,6 +1701,9 @@ models:
 
   - name: pim__generic_ingredients
     description: "Table of generic ingredients information"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: generic_ingredient_id
@@ -1727,6 +1743,9 @@ models:
 
   - name: pim__nutrient_fact_translations
     description: "Table mapping nutrient fact ids to their names in different languages"
+    config:
+      contract:
+        enforced: true
 
     columns:
       - name: ingredient_nutrient_fact_id

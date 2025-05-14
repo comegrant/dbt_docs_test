@@ -23,7 +23,7 @@ relationship d648b7a6-f119-c136-ba54-ac54c3f14b5f
 	toColumn: Recipes.pk_dim_recipes
 
 relationship a1002545-30a8-ce0e-a17d-0837e2a4454c
-	fromColumn: 'Menu Measures'.fk_dim_date
+	fromColumn: 'Menu Measures'.fk_dim_dates
 	toColumn: Dates.pk_dim_dates
 
 relationship AutoDetected_709c4193-69a1-47d4-a268-669e1fbc9d79

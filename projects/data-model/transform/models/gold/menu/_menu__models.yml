@@ -743,35 +743,29 @@ models:
           - type: unique
           - type: not_null
         data_tests:
-      # Is not unique due to problems with menu_id = 36 in source
-          - unique:
-              config:
-                severity: error
-                error_if: ">203"
-                warn_if: "<203"
           - not_null
 
       - name: weekly_menu_id
         data_type: int
         description: "{{ doc('column__weekly_menu_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: char(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
         data_tests:
           - not_null
 
       - name: menu_id
         data_type: int
         description: "{{ doc('column__menu_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -782,13 +776,8 @@ models:
       - name: product_variation_id
         data_type: char(36)
         description: "{{ doc('column__product_variation_id') }}"
-        # some old data is missing product variation ids
         data_tests:
-          - not_null:
-              config:
-                severity: error
-                error_if: ">44"
-                warn_if: "<44"
+          - not_null
 
       - name: menu_recipe_id
         data_type: int
@@ -818,24 +807,18 @@ models:
         data_type: int
         description: "{{ doc('column__portion_id') }}"
         data_tests:
-          - not_null:
-              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+          - not_null
 
       - name: portion_id_menus
         data_type: int
-        description: "{{ doc('column__portion_id_menu_variations') }}"
+        description: "{{ doc('column__portion_id_menus') }}"
         data_tests:
-          - not_null:
-              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+          - not_null
           - equal_to_column:
               value: portion_id_products
               config:
                 # There are known issues before 2023-05-08
-                where: 'portion_id_products is not null and menu_week_monday_date > DATE("2023-05-08")'
-
-      - name: portion_id_recipes
-        data_type: int
-        description: "This column can be removed as it is duplicate with portion_id_menus, but we keep it for debugging reasons for now."
+                where: 'portion_id_products is not null and menu_week_monday_date > date("2023-05-08")'
 
       - name: portion_id_products
         data_type: int
@@ -843,29 +826,23 @@ models:
         data_tests:
           - not_null:
               # There are known issues before 2023-07-17
-              where: 'menu_week_monday_date > DATE("2023-07-17")'
+              where: 'menu_week_monday_date > date("2023-07-17")'
 
       - name: menu_year
         data_type: smallint
         description: "{{ doc('column__menu_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week
         data_type: smallint
         description: "{{ doc('column__menu_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -887,77 +864,74 @@ models:
               config:
                 severity: warn
 
-      - name: portion_quantity
-        data_type: int
-        description: "{{ doc('column__portion_quantity') }}"
-
-      - name: portion_name
-        data_type: string
-        description: "{{ doc('column__portion_name') }}"
-
       - name: is_selected_menu
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_selected_menu') }}"
 
       - name: is_locked_recipe
         data_type: boolean
-        description: ""
-
-      - name: is_artificial_week
-        data_type: boolean
-        description: "{{ doc('column__is_artificial_week') }}"
+        description: "{{ doc('column__is_locked_recipe') }}"
 
       - name: is_dish
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
 
-      - name: has_menu_recipes
+      - name: is_future_menu_week
         data_type: boolean
-        description: "{{ doc('column__has_menu_recipes') }}"
-
-      - name: has_recipe_portions
-        data_type: boolean
-        description: "{{ doc('column__has_recipe_portions') }}"
+        description: "{{ doc('column__is_future_menu_week') }}"
 
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
-        # has missing recipe ids
-        #constraints:
-        #  - type: not_null
-        #data_tests:
-        #  - not_null
-        #  - relationships:
-        #      to: ref('dim_recipes')
-        #      field: pk_dim_recipes
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
 
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
-        # has missing product variations due to some old data
-        #constraints:
-        #  - type: not_null
-        #data_tests:
-        #  - not_null
-        #  - relationships:
-        #      to: ref('dim_products')
-        #      field: pk_dim_products
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
+              config:
+                severity: warn
 
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
-          - not_null:
-              where: "menu_year >= 2019" # can be removed after filter to fact menus is added
+          - not_null
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
 
-      - name: fk_dim_date
+      - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -969,6 +943,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:

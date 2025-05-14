@@ -5,60 +5,58 @@ fact_menus as (
         menu_year
         , menu_week
         , company_id
+        , language_id
         , weekly_menu_id
         , menu_id
         , product_variation_id
         , menu_recipe_id
         , recipe_id
         , recipe_portion_id
-        , portion_id
-        , portion_quantity
         , menu_recipe_order
         , menu_number_days
+        , fk_dim_products
+        , fk_dim_portions
     from
         {{ ref('fact_menus') }}
     -- only include menu variations with recipe_id and portion_id
     where
-        has_menu_recipes is true
-        and has_recipe_portions is true
+        is_dish is true
 )
 
 , dim_products as (
     select
-        product_type_id
+        pk_dim_products
+        , product_type_id
         , product_id
         , product_variation_id
         , product_variation_name
-        , company_id
     from
         {{ ref('dim_products') }}
 )
 
-, dim_companies as (
+, dim_portions as (
     select
-        company_id
-        , language_id
-    from {{ ref('dim_companies') }}
+        pk_dim_portions
+        , portion_id
+        , portions as portion_quantity
+    from {{ ref('dim_portions') }}
 )
 
 , joined as (
     select
         fact_menus.*
-        , dim_companies.language_id
+        , dim_portions.portion_id
+        , dim_portions.portion_quantity
         , dim_products.product_type_id
         , dim_products.product_variation_name
     from
         fact_menus
     left join dim_products
-        on
-            fact_menus.product_variation_id = dim_products.product_variation_id
-            and fact_menus.company_id = dim_products.company_id
-    left join dim_companies
-        on fact_menus.company_id = dim_companies.company_id
-    where
-        dim_products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- dishes
-        and fact_menus.recipe_id is not null
-    order by menu_year, menu_week, product_variation_name
+        on fact_menus.fk_dim_products = dim_products.pk_dim_products
+    left join dim_portions  
+        on fact_menus.fk_dim_portions = dim_portions.pk_dim_portions
+    where fact_menus.recipe_id is not null
+    order by fact_menus.menu_year, fact_menus.menu_week, dim_products.product_variation_name
 )
 
 select * from joined

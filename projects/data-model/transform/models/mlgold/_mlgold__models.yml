@@ -48,7 +48,7 @@ models:
         data_type: int
 
       - name: portion_quantity
-        description: "{{ doc('column__portion_quantity') }}"
+        description: "{{ doc('column__portion_size') }}"
         data_type: int
 
       - name: menu_recipe_order

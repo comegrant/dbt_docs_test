@@ -16197,11 +16197,11 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "menu_measure.fk_dim_date": {
+			    "menu_measure.fk_dim_dates": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Menu Measures",
-			          "ConceptualProperty": "fk_dim_date"
+			          "ConceptualProperty": "fk_dim_dates"
 			        }
 			      },
 			      "State": "Generated",
@@ -16215,7 +16215,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "fk_dim_date": {
+			          "fk_dim_dates": {
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99

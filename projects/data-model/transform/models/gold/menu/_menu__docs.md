@@ -15,41 +15,19 @@ Primary key of the fact_recipe_reaction_types table.
 # Fact Menus
 {% docs column__pk_fact_menus %}
 
-...
+Primary key of the fact_menus table. 
 
-{% enddocs %}
-
-{% docs column__has_menu_recipes %}
-
-...
-
-{% enddocs %}
-
-{% docs column__has_recipe_portions %}
-
-...
+Created by concatenating weekly_menu_id, menu_id, product_variation_id, recipe_id, menu_recipe_id, potion_id, menu_number_days and menu_recipe_order.
 
 {% enddocs %}
 
 {% docs column__is_dish %}
 
-...
+Is true if the product variation is a dish (i.e., velg & vrak product type). Some groceries and other product types also have recipes.
 
 {% enddocs %}
 
-{% docs column__is_artificial_week %}
-
-...
-
-{% enddocs %}
-
-{% docs column__portion_quantity %}
-
-...
-
-{% enddocs %}
-
-{% docs column__portion_id_menu_variations %}
+{% docs column__portion_id_menus %}
 
 portion_id obtained from the menu variations.
 

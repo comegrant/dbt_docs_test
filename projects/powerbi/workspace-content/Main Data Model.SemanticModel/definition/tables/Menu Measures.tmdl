@@ -168,32 +168,6 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column portion_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 7cfd0814-ebf2-4ab4-b49b-b298e8ecdad4
-		summarizeBy: sum
-		sourceColumn: portion_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column portion_quantity
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: bd336b8a-e970-4983-9843-81cefd77bdb3
-		summarizeBy: sum
-		sourceColumn: portion_quantity
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column fk_dim_recipes
 		dataType: string
 		isHidden
@@ -206,14 +180,14 @@ table 'Menu Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column fk_dim_date
+	column fk_dim_dates
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		lineageTag: 3a2fe65b-2943-4dbc-bf84-f0292bd6183a
 		summarizeBy: none
-		sourceColumn: fk_dim_date
+		sourceColumn: fk_dim_dates
 
 		changedProperty = IsHidden
 
@@ -228,105 +202,6 @@ table 'Menu Measures'
 		sourceColumn: fk_dim_companies
 
 		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column company_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: f4f1f340-16fd-4179-8637-046bba14ff83
-		summarizeBy: none
-		sourceColumn: company_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column product_variation_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 67682412-4cef-484f-8d46-5a195726629e
-		summarizeBy: none
-		sourceColumn: product_variation_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_recipe_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 5974aec6-df70-407c-8ae2-1efbbd68884c
-		summarizeBy: sum
-		sourceColumn: menu_recipe_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column recipe_portion_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: bcc28c3d-0fc4-4a3f-9e51-e79a20d0ea9e
-		summarizeBy: sum
-		sourceColumn: recipe_portion_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_year
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: f6705598-0c5e-4dff-a29c-42e91f495981
-		summarizeBy: sum
-		sourceColumn: menu_year
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_week
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 8f39ea6f-011c-4fa3-b76e-e86f89d9571b
-		summarizeBy: sum
-		sourceColumn: menu_week
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_week_monday_date
-		dataType: dateTime
-		isHidden
-		formatString: Long Date
-		isAvailableInMdx: false
-		lineageTag: b8629559-5ffc-4f8e-81a8-68b8824d7ce0
-		summarizeBy: none
-		sourceColumn: menu_week_monday_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column menu_number_days
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: dccf110d-d008-40db-a269-749d43cc33da
-		summarizeBy: sum
-		sourceColumn: menu_number_days
-
-		annotation SummarizationSetBy = Automatic
-
-	column menu_recipe_order
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 36b478e8-619b-40b8-9a37-ff72e8d2defa
-		summarizeBy: sum
-		sourceColumn: menu_recipe_order
 
 		annotation SummarizationSetBy = Automatic
 
@@ -346,65 +221,6 @@ table 'Menu Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: fk_dim_portions
-
-	column is_dish
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 715a6e6f-0a07-45b7-9e19-4d3664060e7e
-		summarizeBy: none
-		sourceColumn: is_dish
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column has_menu_recipes
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: b8611432-9d98-4047-9746-7e14ff0aba77
-		summarizeBy: none
-		sourceColumn: has_menu_recipes
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column has_recipe_portions
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: d648721a-64d1-4cb9-b7db-2b29b37aa872
-		summarizeBy: none
-		sourceColumn: has_recipe_portions
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column is_artificial_week
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: 1873f07a-e127-4f1a-9b02-5bc047abbbb5
-		summarizeBy: none
-		sourceColumn: is_artificial_week
-
-		annotation SummarizationSetBy = Automatic
-
-	column portion_name
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 1d7fcaaf-803a-47b5-9352-22f10ca0b149
-		summarizeBy: none
-		sourceColumn: portion_name
-
-		annotation SummarizationSetBy = Automatic
 
 	partition 'Menu Measures' = m
 		mode: directQuery

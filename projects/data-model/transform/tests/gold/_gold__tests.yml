@@ -8,6 +8,10 @@ data_tests:
   - name: fact_estimations_is_latest_estimations_flag
     description: >
       Makes sure there is one and only one timestamp per company with is_latest_estimation = true
+  
+  - name: fact_menus_one_menu_id_per_product_variation_id
+    description: >
+      Test that there is only one menu_id per product_variation_id for a menu week in Fact Menus
 
   - name: dim_loyalty_seasons_no_overlaps
     description: >

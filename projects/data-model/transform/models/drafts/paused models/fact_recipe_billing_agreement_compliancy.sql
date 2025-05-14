@@ -106,7 +106,7 @@ preselector_output as (
         , menu_weeks.menu_week                                                  as recipe_menu_week
         , menu_weeks.menu_year                                                  as recipe_menu_year
         , menu_weeks.company_id                                                 as recipe_company_id
-        , coalesce(menu_weeks.portion_id,0)                                     as portion_id
+        , coalesce(menu_weeks.portion_id_menus,0)                                     as portion_id
     from menu_weeks
     left join dim_recipes
         on

@@ -128,7 +128,7 @@ Is true if date is in the future, else false.
 
 {% docs column__is_future_menu_week  %}
 
-Is true if the menu week the ordering week of the menu week has not started yet. The ordering week of the menu week is the week where orders are placed for an upcoming menu week. This is currently in the week before the menu week.
+Is true if the menu week is in the future. A menu week is in the future if orders for that week has not yet been placed. Orders for a menu week is placed in the previous week.
 
 {% enddocs %}
 

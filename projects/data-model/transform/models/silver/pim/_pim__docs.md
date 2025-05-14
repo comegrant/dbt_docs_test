@@ -16,7 +16,7 @@ The set purchasing date for the ingredients to be supplied for a specific menu w
 # Menus
 {% docs column__menu_id %}
 
-The primary key of a menu in the pim database. 
+The primary key of a menu in the pim database.
 
 {% enddocs %}
 
@@ -35,7 +35,7 @@ If the recipes of the menu are ready for purchasing.
 # Menu Variations
 {% docs column__menu_variation_id %}
 
-The primary key of a menu variation in the pim database. 
+The primary key of a menu variation in the pim database.
 
 {% enddocs %}
 
@@ -85,25 +85,26 @@ The creation timestamp of the main recipe which the recipe variation was created
 
 {% docs column__source_created_at_recipes %}
 
-The creator user name of the recipe variation.
+The creation timestamp of the recipe variation.
 
 {% enddocs %}
 
 {% docs column__source_created_by_recipes %}
 
-The creation timestamp of the recipe variation.
+The creator user name of the recipe variation.
 
 {% enddocs %}
 
 {% docs column__source_updated_at_recipes %}
 
-The user who made the last update to the recipe variation.
+The last updated timestamp of the recipe variation.
 
 {% enddocs %}
 
 {% docs column__source_updated_by_recipes %}
 
-The last updated timestamp of the recipe variation.
+The user who made the last update to the recipe variation.
+
 
 {% enddocs %}
 
@@ -288,39 +289,39 @@ Free text comment made by a customer when rating the recipe.
 {% enddocs %}
 
 # Ingredient Categories
-{% docs column__ingredient_category_id %} 
+{% docs column__ingredient_category_id %}
 
-Identifier for each ingredient category 
-
-{% enddocs %}
-
-{% docs column__ingredient_category_name %} 
-
-Name of ingredient category 
+Identifier for each ingredient category
 
 {% enddocs %}
 
-{% docs column__parent_category_id %} 
+{% docs column__ingredient_category_name %}
 
-Identifier for the ingredient category parent, indicating the hierarchy within ingredient categories. If null, the ingredient category is at the top of the hierarchy. 
+Name of ingredient category
 
 {% enddocs %}
 
-{% docs column__ingredient_category_description %} 
+{% docs column__parent_category_id %}
+
+Identifier for the ingredient category parent, indicating the hierarchy within ingredient categories. If null, the ingredient category is at the top of the hierarchy.
+
+{% enddocs %}
+
+{% docs column__ingredient_category_description %}
 
 Description of the ingredient category, e.g. "main group"
 
 {% enddocs %}
 # Taxonomies
-{% docs column__taxonomy_id %} 
+{% docs column__taxonomy_id %}
 
 Identifier for each taxonomy
 
 {% enddocs %}
 
-{% docs column__taxonomy_name %} 
+{% docs column__taxonomy_name %}
 
-Name of the taxonomy 
+Name of the taxonomy
 
 {% enddocs %}
 
@@ -332,38 +333,51 @@ Identifier for each taxonomy type
 
 {% docs column__taxonomy_type_name %}
 
-The name of each taxonomy type 
+The name of each taxonomy type
 
 {% enddocs %}
 
 # Ingredients
-{% docs column__ingredient_content %} 
 
-Description of an ingredient's composition, e.g. "oil, egg, salt" for "mayonnaise" 
+{% docs column__ingredient_id %} 
+
+Identifier for an ingredient.
+
+{% enddocs %}
+
+{% docs column__ingredient_type %}
+
+Parameter for production-line placement of products
+
+{% enddocs %}
+
+{% docs column__ingredient_content %}
+
+Description of an ingredient's composition, e.g. "oil, egg, salt" for "mayonnaise"
 
 {% enddocs %}
 
 # Generic Ingredient Translations
-{% docs column__generic_ingredient_id %} 
+{% docs column__generic_ingredient_id %}
 
-Identifier for each generic ingredient, i.e. "soy-sauce"  
+Identifier for each generic ingredient, i.e. "soy-sauce"
 
 {% enddocs %}
 
 {% docs column__generic_ingredient_name %}
 
-Name of the generic ingredient 
+Name of the generic ingredient
 
 {% enddocs %}
 
 # Recipe Translations
-{% docs column__recipe_translations_recipe_comment %} 
+{% docs column__recipe_translations_recipe_comment %}
 
 Internal comment on each recipe for menu team follow-up
 
 {% enddocs %}
 
-{% docs column__recipe_chef_tip %} 
+{% docs column__recipe_chef_tip %}
 
 Customer facing comment to the recipe
 
@@ -476,12 +490,6 @@ The unique identifier for purchase order lines in cms.
 
 {% enddocs %}
 
-{% docs column__ingredient_id %} 
-
-Identifier for an ingredient.
-
-{% enddocs %}
-
 {% docs column__purchase_order_line_status_id %}
 
 Id of status of purchase order. Status can be found in procurement_status in pim. Statuses include:
@@ -545,7 +553,10 @@ This is the primary key of the ingredient_price table in PIM.
 
 {% docs column__ingredient_price_type_id %}
 
-Key to know if the type of price./- 0: Regular/- 1: Campaign/- 2: Marketing Contribution
+Identifier of the type of price:
+* 0: Regular
+* 1: Campaign
+* 2: Marketing Contribution
 
 {% enddocs %}
 
@@ -588,37 +599,43 @@ Id of the distribution center where the ingredients are delivered to.
 {% enddocs %}
 
 # Not Organized
-{% docs column__is_main_protein %} 
+{% docs column__is_main_protein %}
 
-If an ingredient is used as the main protein in a recipe 
-
-{% enddocs %}
-
-{% docs column__is_main_carbohydrate %} 
-
-If an ingredient is used as the main carbohydrate in a recipe 
+If an ingredient is used as the main protein in a recipe
 
 {% enddocs %}
 
-{% docs column__ingredient_amount %} 
+{% docs column__is_main_carbohydrate %}
 
-Amount of specific ingredient in a recipe variation 
-
-{% enddocs %}
-
-{% docs column__order_ingredient_id %} 
-
-Identifier for an ingredient connected to a specific recipe variation 
+If an ingredient is used as the main carbohydrate in a recipe
 
 {% enddocs %}
 
-{% docs column__ingredient_internal_reference %} 
+{% docs column__supplier_id %}
 
-Used to join ingredient ids across different databases 
+Identifier for each ingredient supplier
 
 {% enddocs %}
 
-{% docs column__chef_ingredient_section_id %}  
+{% docs column__ingredient_amount %}
+
+Amount of specific ingredient in a recipe variation
+
+{% enddocs %}
+
+{% docs column__order_ingredient_id %}
+
+Identifier for an ingredient connected to a specific recipe variation
+
+{% enddocs %}
+
+{% docs column__ingredient_internal_reference %}
+
+Used to join ingredient ids across different databases
+
+{% enddocs %}
+
+{% docs column__chef_ingredient_section_id %}
 
 Identifier for each ingredient section, where an ingredient section is i.e. "pan-fried vegetables" contains the ingredient "carrots" and "broccoli"
 
@@ -630,13 +647,7 @@ Identifier for chef ingredient, which is an instance of generic ingredient with 
 
 {% enddocs %}
 
-{% docs column__ingredient_type %}
-
-Parameter for production-line placement of products
-
-{% enddocs %}
-
-{% docs column__is_external_taxonomy %} 
+{% docs column__is_external_taxonomy %}
 
 If the taxonomy is used in frontend, i.e. a user-friendly taxonomy
 
@@ -690,7 +701,6 @@ The description of a recipe step, i.e. "Boil the pasta"
 
 {% enddocs %}
 
----------
 {% docs column__ingredient_nutrient_fact_id %}
 
 The identifier for an ingredient's nutritional fact in the source system.
@@ -738,4 +748,3 @@ The name of the ingredient's nutritional fact id, e.g. "Fat"
 The netto weight of an ingredient.
 
 {% enddocs %}
-
