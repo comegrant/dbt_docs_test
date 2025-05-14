@@ -742,6 +742,12 @@ models:
         data_tests:
           - not_null
 
+      - name: ingredient_purchase_date
+        data_type: date
+        description: "..."
+        data_tests:
+          - not_null
+
   - name: pim__recipes
     description: >
       All recipes that has ever been created for the menu weeks.
