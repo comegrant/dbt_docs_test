@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
   "name": "564ef7df475842db9b06",
   "position": {
     "x": 570.16328602180647,
@@ -170,7 +170,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Budget'"
+                                "Value": "'F1'"
                               }
                             }
                           ]

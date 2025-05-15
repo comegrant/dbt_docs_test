@@ -62,19 +62,6 @@
         },
         {
           "location": {
-            "x": 539.88607855780833,
-            "y": 1146.5907288871679
-          },
-          "nodeIndex": "Bridge Billing Agreements Preferences",
-          "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
-          "size": {
-            "height": 224,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 1664.7380118958349,
             "y": 1123.2540807850517
           },
@@ -555,6 +542,96 @@
           "nodeLineageTag": "Order-Line-Details",
           "size": {
             "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7082.1106408155865,
+            "y": 1458.3997290208724
+          },
+          "nodeIndex": "Bridge Preference Combinations Preferences",
+          "nodeLineageTag": "Bridge-Preference-Combinations-Preferences-Table",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7366.1106408155865,
+            "y": 1384.3997290208724
+          },
+          "nodeIndex": "Discounts",
+          "nodeLineageTag": "Discounts-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7650.1106408155865,
+            "y": 1470.3997290208724
+          },
+          "nodeIndex": "Grand Total Calculations",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6563.9337525808569,
+            "y": 1334.3997290208724
+          },
+          "nodeIndex": "Loyalty Measures",
+          "nodeLineageTag": "Loyalty-Measures-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6848.1106408155865,
+            "y": 1433.7247216533069
+          },
+          "nodeIndex": "Loyalty Order Statuses",
+          "nodeLineageTag": "Loyalty-Order-Statuses-table",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6279.7490014002269,
+            "y": 1377.4648381982138
+          },
+          "nodeIndex": "Loyalty Seasons",
+          "nodeLineageTag": "Loyalty-Seasons-Table",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7934.1106408155865,
+            "y": 1446.3997290208724
+          },
+          "nodeIndex": "Portions",
+          "nodeLineageTag": "Portions-Table",
+          "size": {
+            "height": 176,
             "width": 234
           },
           "zIndex": 0

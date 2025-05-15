@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
   "name": "2eaa6fd2784ea6378404",
   "position": {
     "x": 553.227742872644,
@@ -163,7 +163,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Budget'"
+                                "Value": "'F1'"
                               }
                             }
                           ]
@@ -228,6 +228,20 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "cccbabfb7ec09073288e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Budget Types"
+              }
+            },
+            "Property": "Budget Type"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

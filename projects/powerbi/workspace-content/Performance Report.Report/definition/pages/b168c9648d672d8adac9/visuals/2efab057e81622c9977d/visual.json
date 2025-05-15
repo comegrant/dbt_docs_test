@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
   "name": "2efab057e81622c9977d",
   "position": {
     "x": 321.7753198340888,
@@ -53,7 +53,7 @@
               },
               "queryRef": "Dates.Financial Date Hierarchy.Quarter",
               "nativeQueryRef": "Financial Date Hierarchy Quarter",
-              "active": true
+              "active": false
             },
             {
               "field": {
@@ -118,20 +118,7 @@
             "isCollapsed": true
           }
         ],
-        "root": {
-          "children": [
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "2025L"
-                  }
-                }
-              ],
-              "isToggled": true
-            }
-          ]
-        }
+        "root": {}
       }
     ],
     "objects": {
