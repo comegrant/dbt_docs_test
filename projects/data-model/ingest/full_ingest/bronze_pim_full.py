@@ -32,6 +32,7 @@ tables = [
     "portions_translations",
     "order_ingredients",
     "portions",
+    "price_category",
     "procurement_cycle",
     "recipes",
     "recipes_comments",
