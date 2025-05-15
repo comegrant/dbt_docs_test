@@ -61,3 +61,7 @@ table = "budget_parameter_split"
 
 schema = "shared"
 table = "budget_type"
+
+# COMMAND ----------
+schema = "shared"
+table = "budget_marketing_input"

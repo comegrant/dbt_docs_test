@@ -16,3 +16,4 @@ sources:
       - name: analyticsdb_shared__budget
       - name: analyticsdb_shared__budget_parameter_split
       - name: analyticsdb_shared__budget_type
+      - name: analyticsdb_shared__budget_marketing_input

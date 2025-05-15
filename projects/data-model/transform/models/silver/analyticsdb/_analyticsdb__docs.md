@@ -69,3 +69,21 @@ The names of the different customer segemnts that the data is split on (New, Act
 A description of what the different customer segments are and what they include
 
 {% enddocs %}
+
+# Budget Aquisition Targets
+
+{% enddocs %}
+
+{% docs column__monthly_aquisition_target %}
+
+The target number of customers which Growth&Customer are expecting to aquire/reactivate during specified month
+
+{% enddocs %}
+
+
+{% docs column__budget_marketing_input_id %}
+
+The corresponding id to which marketing input estimate it belongs to (E.g. New customers and Reactivated customers).
+
+{% enddocs %}
+

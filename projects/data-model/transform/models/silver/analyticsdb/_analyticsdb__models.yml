@@ -292,10 +292,6 @@ models:
         data_tests:
           - not_null
 
-
-
-
-
   - name: analyticsdb_shared__budget_types
     description: "Table containing the 4 different budget types that is completed every year. Static table"
     columns:
@@ -358,7 +354,6 @@ models:
         data_tests:
           - not_null
 
-
   - name: analyticsdb_shared__budget_segments
     description: "Table containing the types customer segments that orders/atv are split on. Static table"        
     alias: analyticsdb_shared__budget_segments        
@@ -420,3 +415,93 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+  - name: analyticsdb_shared__budget_aquisition_targets
+    description: "Table containing the input from growth/customer on target number of aquisitions"        
+    alias: analyticsdb_shared__budget_aquisition_targets 
+    columns:
+
+      - name: monthly_aquisition_target
+        data_type: int
+        description: "{{ doc('column__monthly_aquisition_target') }}"
+
+      - name: financial_year
+        data_type: int
+        description: "{{ doc('column__financial_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: financial_month_number
+        data_type: int
+        description: "{{ doc('column__financial_month_number') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: budget_year
+        data_type: int
+        description: "{{ doc('column__budget_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: budget_marketing_input_id
+        data_type: varchar(36)
+        description: "{{ doc('column__budget_marketing_input_id') }}"
+        constraints:
+          - type: not_null
+          - type: unique
+        data_tests:
+          - not_null
+          - unique
+      
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        constraints:
+          - type: not_null
+
+      - name: budget_type_id
+        data_type: varchar(36)
+        description: "{{ doc('column__budget_type_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null  
+      
