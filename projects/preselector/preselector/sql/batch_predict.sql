@@ -52,14 +52,16 @@ preferences as (
 
 valid_portions as (
 	select distinct
-		portion_quantity
+		gold.dim_portions.portions
 	from gold.fact_menus
+	join gold.dim_portions 
+		on gold.fact_menus.fk_dim_portions = gold.dim_portions.pk_dim_portions 
 	where
-		is_locked_recipe
-		and menu_week_monday_date > current_date()
-		and is_dish
-		and has_recipe_portions
-		and company_id = '{company_id}'
+		gold.fact_menu.is_locked_recipe
+		and gold.fact_menu.menu_week_monday_date > current_date()
+		and gold.fact_menu.is_dish
+		and gold.fact_menu.company_id = '{company_id}'
+		and gold.dim_portions.portions > 0 -- only select items in fact menus that have a portion size
 
 ),
 
@@ -91,7 +93,7 @@ final as (
 		and days_since_last_delivery <= 12*7 -- 12 weeks
 		and is_current = true
 		and portions in (
-			select portion_quantity from valid_portions
+			select portions from valid_portions
 		)
 )
 
