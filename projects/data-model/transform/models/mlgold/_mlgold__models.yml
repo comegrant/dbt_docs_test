@@ -187,6 +187,14 @@ models:
         data_type: int
         description: "{{ doc('column__number_of_recipe_steps') }}"
 
+      - name: allergen_preference_id_list
+        data_type: string
+        description: "{{ doc('column__allergen_preference_id_list') }}"
+
+      - name: allergen_name_combinations
+        data_type: string
+        description: "{{ doc('column__allergen_name_combinations') }}"
+
   - name: estimations_log
     description: Showing what would have been ordered for the next 14 weeks if the cutoff was when the estimation was generated
 

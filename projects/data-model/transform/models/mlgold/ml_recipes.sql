@@ -46,6 +46,14 @@ fact_menus as (
     from {{ ref('dim_recipes') }}
 )
 
+, dim_preference_combinations as (
+    select * from {{ ref('dim_preference_combinations') }}
+)
+
+, recipe_preferences_unioned as (
+    select * from {{ ref('int_recipe_preferences_unioned') }}
+)
+
 , menu_products as (
     select
         menu_id
@@ -151,6 +159,20 @@ fact_menus as (
 
 )
 
+, recipe_allergies_list as (
+    select
+        dim_recipes.recipe_id
+        , dim_preference_combinations.allergen_preference_id_list
+        , dim_preference_combinations.allergen_name_combinations
+    from dim_recipes
+    left join recipe_preferences_unioned
+        on dim_recipes.recipe_id = recipe_preferences_unioned.recipe_id
+    left join dim_preference_combinations
+        on
+            recipe_preferences_unioned.preference_combination_id
+            = dim_preference_combinations.pk_dim_preference_combinations
+)
+
 , excluded_recipes as (
     select recipe_id
     from recipes_taxonomies
@@ -179,6 +201,8 @@ fact_menus as (
         , generic_ingredients_list.number_of_ingredients
         , recipe_steps_list.recipe_step_id_list
         , recipe_steps_list.number_of_recipe_steps
+        , recipe_allergies_list.allergen_preference_id_list
+        , recipe_allergies_list.allergen_name_combinations
     from fact_menus
     left join dim_companies
         on fact_menus.fk_dim_companies = dim_companies.pk_dim_companies
@@ -188,6 +212,8 @@ fact_menus as (
         on dim_recipes.recipe_id = taxonomies_list.recipe_id
     left join generic_ingredients_list
         on dim_recipes.recipe_id = generic_ingredients_list.recipe_id
+    left join recipe_allergies_list
+        on dim_recipes.recipe_id = recipe_allergies_list.recipe_id
     left join recipe_steps_list
         on fact_menus.recipe_portion_id = recipe_steps_list.recipe_portion_id
     left join menu_products
