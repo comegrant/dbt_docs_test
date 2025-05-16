@@ -1,0 +1,268 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
+
+version: 2
+
+models:
+  - name: operations__cases
+    description: >
+      Table containing info about cases. A case can be a redelivery or a complaint. 
+      Complaints are incidents where something is wrong with an order (e.g., a rotten or missing ingredient). 
+      Redeliveries are cases where we have been unable to deliver an order and we have to try to deliver again or reimburse the customer.
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_id
+        data_type: char(36)
+        description: "{{ doc('column__case_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ops_order_id
+        data_type: decimal(18,0)
+        description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_redelivery_timeblock_id
+        data_type: decimal(18,0)
+        description: "{{ doc('column__case_redelivery_timeblock_id') }}"
+
+      - name: case_status_id
+        data_type: int
+        description: "{{ doc('column__case_status_id') }}"
+        data_tests:
+          - not_null
+
+      - name: case_redelivery_id
+        data_type: int
+        description: "{{ doc('column__case_redelivery_id') }}"
+        data_tests:
+          - not_null
+
+      - name: case_redelivery_comment
+        data_type: string
+        description: "{{ doc('column__case_redelivery_comment') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: operations__case_lines
+    description: "Table containing info about cases on a case line granularity"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_line_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_id') }}"
+
+      - name: billing_agreement_order_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_line_id') }}"
+
+      - name: case_line_type_id
+        data_type: int
+        description: "{{ doc('column__case_line_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: case_line_cause_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_line_cause_id') }}"
+
+      - name: case_line_responsible_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_line_responsible_id') }}"
+
+      - name: case_line_category_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_line_category_id') }}"
+
+      - name: case_line_comment
+        data_type: string
+        description: "{{ doc('column__case_line_comment') }}"
+
+      - name: case_line_amount
+        data_type: decimal(19,4)
+        description: "{{ doc('column__case_line_amount') }}"
+
+      - name: is_active_case_line
+        data_type: boolean
+        description: "{{ doc('column__is_active_case_line') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__case_line_types
+    description: "Table containing the different types of cases"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_line_type_id
+        data_type: int
+        description: "{{ doc('column__case_line_type_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_line_type_name
+        data_type: string
+        description: "{{ doc('column__case_line_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__case_line_ingredients
+    description: "Table containing info about ingredients related to cases"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_line_id
+        data_type: char(36)
+        description: "{{ doc('column__case_line_id') }}"
+
+      - name: product_type_id
+        data_type: char(36)
+        description: "{{ doc('column__product_type_id') }}"
+
+      - name: ingredient_name
+        data_type: string
+        description: "{{ doc('column__ingredient_name') }}"
+        data_tests:
+          - not_null
+
+      - name: supplier_name
+        data_type: string
+        description: "{{ doc('column__supplier_name') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_internal_reference
+        data_type: string
+        description: "{{ doc('column__ingredient_internal_reference') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_price
+        data_type: decimal(18,0)
+        description: "{{ doc('column__ingredient_price') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_quantity
+        data_type: int
+        description: "{{ doc('column__ingredient_quantity') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__case_causes
+    description: "Table containing the different causes of cases"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_cause_id
+        data_type: char(36)
+        description: "{{ doc('column__case_cause_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_cause_name
+        data_type: string
+        description: "{{ doc('column__case_cause_name') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__case_categories
+    description: "Table containing the different case categories"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_category_id
+        data_type: char(36)
+        description: "{{ doc('column__case_category_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_category_name
+        data_type: string
+        description: "{{ doc('column__case_category_name') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__case_responsible
+    description: "Table containing the different responsible parties for cases"
+    config:
+      contract:
+        enforced: false
+    columns:
+      - name: case_responsible_id
+        data_type: char(36)
+        description: "{{ doc('column__case_responsible_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_responsible_description
+        data_type: string
+        description: "{{ doc('column__case_responsible_description') }}"
+        data_tests:
+          - not_null
