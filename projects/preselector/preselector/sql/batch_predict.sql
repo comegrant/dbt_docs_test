@@ -57,10 +57,10 @@ valid_portions as (
 	join gold.dim_portions 
 		on gold.fact_menus.fk_dim_portions = gold.dim_portions.pk_dim_portions 
 	where
-		gold.fact_menu.is_locked_recipe
-		and gold.fact_menu.menu_week_monday_date > current_date()
-		and gold.fact_menu.is_dish
-		and gold.fact_menu.company_id = '{company_id}'
+		gold.fact_menus.is_locked_recipe
+		and gold.fact_menus.menu_week_monday_date > current_date()
+		and gold.fact_menus.is_dish
+		and gold.fact_menus.company_id = '{company_id}'
 		and gold.dim_portions.portions > 0 -- only select items in fact menus that have a portion size
 
 ),
