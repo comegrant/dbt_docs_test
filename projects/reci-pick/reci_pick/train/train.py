@@ -41,7 +41,8 @@ def train_model(args: Args) -> None:
     )
     logger.info("Preprocessing recipes...")
     df_recipes_processed, fitted_preprocessor = preprocess_recipes_dataframe(
-        df_recipes=df_recipes.drop(columns=["allergen_id_list"]), company_configs=company_configs
+        df_recipes=df_recipes.drop(columns=["allergen_preference_id_list", "allergen_name_combinations"]),
+        company_configs=company_configs,
     )
 
     logger.info("Creating recipe embeddings...")

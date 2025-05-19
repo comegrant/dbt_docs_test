@@ -43,50 +43,15 @@ recipe_features as (
     from {env}.mlfeatures.ft_ml_recipes
 ),
 
-dim_ingredients as (
-    select distinct
-        ingredient_id,
-        allergy_id,
-        ingredient_name,
-        allergy_name
-    from {env}.gold.dim_ingredients
-    where allergy_id is not null
-),
-
-recipe_ingredients as (
+recipe_allergies_prefs as (
     select
-        recipe_portion_id,
-        explode(split(ingredient_id_list, ',')) as ingredient_id
-    from {env}.mlfeatures.ft_recipe_ingredients
-),
-
-allergens as (
-    select
-        ingredient_id,
-        allergy_id
-    from {env}.gold.dim_ingredients
-    where allergy_id is not null
-),
-
-recipe_allergies as (
-    select
-        recipe_portion_id,
-        recipe_ingredients.ingredient_id,
-        allergy_id
-    from recipe_ingredients
-    inner join
-        allergens
-    on allergens.ingredient_id = recipe_ingredients.ingredient_id
-),
-
-recipe_allergy_agged as (
-    select
-        recipe_portion_id,
-        array_agg(distinct(allergy_id)) as allergen_id_list
-    from recipe_allergies
-    group by recipe_portion_id
+    fk_dim_recipes,
+    fk_dim_companies,
+    main_recipe_id,
+    allergen_preference_id_list,
+    allergen_name_combinations
+    from {env}.mlgold.ml_recipes
 )
-
 
 select distinct
     main_recipe_ids.main_recipe_id,
@@ -101,7 +66,8 @@ select distinct
     has_quick_and_easy_taxonomy,
     has_vegetarian_taxonomy,
     has_low_calorie_taxonomy,
-    allergen_id_list
+    allergen_preference_id_list,
+    allergen_name_combinations
 from
     dim_companies
 left join
@@ -114,5 +80,6 @@ left join
     recipe_features
     on dim_companies.pk_dim_companies = recipe_features.fk_dim_companies
     and main_recipe_ids.pk_dim_recipes = recipe_features.fk_dim_recipes
-left join recipe_allergy_agged
-on recipe_allergy_agged.recipe_portion_id = recipe_features.recipe_portion_id
+left join recipe_allergies_prefs
+on recipe_allergies_prefs.fk_dim_recipes = recipe_features.fk_dim_recipes
+    and recipe_allergies_prefs.fk_dim_companies = recipe_features.fk_dim_companies

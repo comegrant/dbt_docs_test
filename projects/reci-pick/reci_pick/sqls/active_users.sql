@@ -2,7 +2,8 @@ with dim_preference_combinations as (
     select
         pk_dim_preference_combinations,
         concept_name_combinations as concept_combinations,
-        taste_name_combinations_including_allergens as taste_preference_combinations
+        taste_name_combinations_including_allergens as taste_preference_combinations,
+        allergen_preference_id_list as allergen_preference_id_list
     from {env}.gold.dim_preference_combinations
 ),
 
@@ -28,7 +29,8 @@ dim_companies as (
 select
     dim_billing_agreements.*,
     concept_combinations,
-    taste_preference_combinations
+    taste_preference_combinations,
+    allergen_preference_id_list
 from dim_billing_agreements
 left join
     dim_preference_combinations

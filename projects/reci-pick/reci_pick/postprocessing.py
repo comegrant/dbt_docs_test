@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from reci_pick.allergens_mapping import allergen_id_to_name_mapping
-from reci_pick.helpers import get_date_from_year_week, get_dict_values_as_list
+from reci_pick.helpers import get_date_from_year_week, has_two_columns_intersection
 from reci_pick.train.baseline import make_top_n_recommendations
 
 
@@ -106,24 +105,18 @@ def check_for_preference_violation(
     preference_penalization_factor: float = 0.1,
 ) -> pd.DataFrame:
     # Check for allergens
-    df_recipes["allergen_name_list"] = df_recipes.apply(
-        lambda x: get_dict_values_as_list(look_up_dict=allergen_id_to_name_mapping, key_list=x["allergen_id_list"])
-        if x["allergen_id_list"] is not None
-        else [],  # Updated line
-        axis=1,
-    )
-    # Replace "Lactose" with "Dairy" in taste preferences
-    df_taste_preference["taste_preference_combinations"] = df_taste_preference[
-        "taste_preference_combinations"
-    ].str.replace("Lactose", "Dairy")
-    score_df = score_df.merge(df_taste_preference[["billing_agreement_id", "taste_preference_combinations"]])
     score_df = score_df.merge(
-        df_recipes[["main_recipe_id", "recipe_main_ingredient_name_english", "allergen_name_list"]]
+        df_taste_preference[["billing_agreement_id", "taste_preference_combinations", "allergen_preference_id_list"]]
+    )
+    score_df = score_df.merge(
+        df_recipes[["main_recipe_id", "recipe_main_ingredient_name_english", "allergen_preference_id_list"]].rename(
+            columns={"allergen_preference_id_list": "allergen_preference_id_recipe"}
+        )
     )
     score_df["taste_preference_combinations_list"] = score_df["taste_preference_combinations"].str.split(", ")
     # Check for allergen violations using sets
     score_df["is_violate_allergens"] = score_df.apply(
-        lambda x: len(set(x["taste_preference_combinations_list"]) & set(x["allergen_name_list"])) > 0, axis=1
+        has_two_columns_intersection, col1="allergen_preference_id_list", col2="allergen_preference_id_recipe", axis=1
     )
     score_df["recipe_main_ingredient_name_english"] = score_df["recipe_main_ingredient_name_english"].fillna("Unknown")
     # Check for main ingredient violations

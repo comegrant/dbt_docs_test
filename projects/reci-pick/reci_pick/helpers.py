@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Any
 
 import numpy as np
+import pandas as pd
 import pytz
 from dateutil.relativedelta import MO, relativedelta
 
@@ -72,3 +73,15 @@ def get_date_from_year_week(
     # Get the specified weekday's date
     weekday_date = first_day_of_week + relativedelta(days=weekday - 1)
     return weekday_date.date()
+
+
+def has_two_columns_intersection(
+    row: pd.Series,
+    col1: str,
+    col2: str,
+) -> pd.Series:
+    col1_cleaned = row[col1] if row[col1] is not None else []
+    col2_cleaned = row[col2] if row[col2] is not None else []
+    intersects = set(col1_cleaned) & set(col2_cleaned)
+    has_intersect = len(intersects) > 0
+    return has_intersect

@@ -21,7 +21,7 @@ def modify_scores_for_recommendations(
         score_df=df_scores,
         df_taste_preference=df_taste_preferences,
         df_recipes=df_recipes[
-            ["main_recipe_id", "recipe_main_ingredient_name_english", "allergen_id_list"]
+            ["main_recipe_id", "recipe_main_ingredient_name_english", "allergen_preference_id_list"]
         ].drop_duplicates(subset="main_recipe_id"),
         score_col="score_modified",
     )

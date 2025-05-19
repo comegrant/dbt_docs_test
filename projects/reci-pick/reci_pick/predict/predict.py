@@ -61,7 +61,7 @@ def predict_recipes(args: Args) -> None:
     preprocessor_uri = company_predict_configs.preprocessor_uri[args.env]
     recipe_preprocessor = mlflow.sklearn.load_model(preprocessor_uri)
     df_recipes_processed, _ = preprocess_recipes_dataframe(
-        df_recipes=df_recipes.drop(columns=["allergen_id_list"]),
+        df_recipes=df_recipes.drop(columns=["allergen_preference_id_list", "allergen_name_combinations"]),
         company_configs=company_predict_configs,
         fitted_recipe_transformer=recipe_preprocessor,
     )
