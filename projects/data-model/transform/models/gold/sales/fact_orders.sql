@@ -154,6 +154,11 @@ order_lines as (
             grocery_deviations_order_mapping.billing_agreement_basket_deviation_origin_id
             , deviations_order_mapping.billing_agreement_basket_deviation_origin_id
         ) as billing_agreement_basket_deviation_origin_id
+        , case 
+            when grocery_deviations_order_mapping.billing_agreement_basket_deviation_origin_id is not null
+            then 'Grocery Basket'
+            else 'Mealbox Basket'
+            end as basket_type
         , recommendations_origin.billing_agreement_basket_deviation_origin_id as billing_agreement_basket_deviation_origin_id_preselected
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_deviations.billing_agreement_preferences_updated_id, billing_agreements_ordergen.billing_agreement_preferences_updated_id) as billing_agreement_preferences_updated_id
@@ -551,6 +556,7 @@ order_lines as (
     left join order_line_dimensions_joined
         on ordered_and_preselected_recipes_joined.billing_agreement_order_id = order_line_dimensions_joined.billing_agreement_order_id
     where ordered_and_preselected_recipes_joined.billing_agreement_order_line_id is null
+    and order_line_dimensions_joined.basket_type = 'Mealbox Basket'
     -- quickfix to remove campaign orders
     and order_line_dimensions_joined.order_type_id in (
                     '1C182E51-ECFA-4119-8928-F2D9F57C5FCC',
