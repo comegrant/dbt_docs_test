@@ -158,12 +158,6 @@ def pyspark_schema_from_request(request: RetrievalRequest) -> StructType:
     )
 
 
-def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
-    from pyspark.sql.types import StructField, StructType
-
-    return StructType([StructField(name=name, dataType=polars_dtype_to_spark(dtype)) for name, dtype in schema.items()])
-
-
 def raise_on_invalid_pyspark_schema(schema: DataType) -> None:
     from pyspark.sql.types import ArrayType, NullType, StructType
 
@@ -176,52 +170,6 @@ def raise_on_invalid_pyspark_schema(schema: DataType) -> None:
 
     if isinstance(schema, NullType):
         raise ValueError("Found a NullType in the schema. This will lead to issues.")
-
-
-def polars_dtype_to_spark(data_type: pl.PolarsDataType) -> DataType:  # noqa: PLR0911
-    from pyspark.sql.types import (
-        ArrayType,
-        BooleanType,
-        ByteType,
-        DoubleType,
-        FloatType,
-        IntegerType,
-        LongType,
-        ShortType,
-        StringType,
-        StructField,
-        StructType,
-        TimestampType,
-    )
-
-    if isinstance(data_type, pl.String):
-        return StringType()
-    if isinstance(data_type, pl.Float32):
-        return FloatType()
-    if isinstance(data_type, pl.Float64):
-        return DoubleType()
-    if isinstance(data_type, pl.Int8):
-        return ByteType()
-    if isinstance(data_type, pl.Int16):
-        return ShortType()
-    if isinstance(data_type, pl.Int32):
-        return IntegerType()
-    if isinstance(data_type, pl.Int64):
-        return LongType()
-    if isinstance(data_type, pl.Boolean):
-        return BooleanType()
-    if isinstance(data_type, pl.Datetime):
-        return TimestampType()
-    if isinstance(data_type, (pl.Array, pl.List)):
-        if data_type.inner:
-            return ArrayType(polars_dtype_to_spark(data_type.inner))
-        return ArrayType(StringType())
-    if isinstance(data_type, pl.Struct):
-        return StructType(
-            [StructField(name=field.name, dataType=polars_dtype_to_spark(field.dtype)) for field in data_type.fields]
-        )
-
-    raise ValueError(f"Unsupported type {data_type}")
 
 
 @dataclass
@@ -751,11 +699,23 @@ class UnityCatalogTableAllJob(RetrievalJob):
 
     def filter(self, condition: str | Feature | pl.Expr) -> RetrievalJob:
         if isinstance(condition, Feature):
-            self.where = condition.name
+            new_where = condition.name
         elif isinstance(condition, str):
-            self.where = condition
+            new_where = condition
+        elif isinstance(condition, pl.Expr):
+            from data_contracts.polars_to_spark import polars_expression_to_spark
+
+            spark_expr = polars_expression_to_spark(condition)
+            if not spark_expr:
+                return RetrievalJob.filter(self, condition)
+
+            new_where = spark_expr
+
+        if self.where:
+            self.where = f"({self.where}) AND ({new_where})"
         else:
-            return RetrievalJob.filter(self, condition)
+            self.where = new_where
+
         return self
 
     async def to_pyspark(self) -> DataFrame:
