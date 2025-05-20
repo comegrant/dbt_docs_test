@@ -3060,6 +3060,10 @@ models:
         data_type: int
         description: "{{ doc('column__level_booster_points') }}"
 
+      - name: loyalty_level_number
+        data_type: int
+        description: "{{ doc('column__loyalty_level_number') }}"
+
       - name: remaining_points
         data_type: int
         description: "{{ doc('column__remaining_points') }}"

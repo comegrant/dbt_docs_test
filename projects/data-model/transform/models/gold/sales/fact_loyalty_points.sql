@@ -75,6 +75,7 @@ loyalty_points as (
 
         , points_from_multipliers.level_multiplier
         , points_from_multipliers.level_booster_points
+        , agreements.loyalty_level_number
         
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
