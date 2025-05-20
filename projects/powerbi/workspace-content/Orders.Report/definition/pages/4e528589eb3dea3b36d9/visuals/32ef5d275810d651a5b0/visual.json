@@ -84,13 +84,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Payment Method"
                 }
               },
-              "queryRef": "Billing Agreements.Payment Method",
+              "queryRef": "Customer and Subscriber Details.Payment Method",
               "nativeQueryRef": "Payment Method"
             }
           ]

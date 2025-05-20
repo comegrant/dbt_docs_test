@@ -64,13 +64,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "First Menu Year"
                 }
               },
-              "queryRef": "Billing Agreements.First Menu Year",
+              "queryRef": "Customer and Subscriber Details.First Menu Year",
               "nativeQueryRef": "First Menu Year"
             }
           ]
@@ -83,13 +83,13 @@
                   "Expression": {
                     "SourceRef": {
                       "Schema": "extension",
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Rolling Gross Revenue"
                 }
               },
-              "queryRef": "Billing Agreements.Rolling 12 Month Gross Revenue",
+              "queryRef": "Customer and Subscriber Details.Rolling 12 Month Gross Revenue",
               "nativeQueryRef": "Rolling 12 Month Gross Revenue",
               "format": "#,0"
             }
@@ -213,7 +213,7 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Billing Agreements"
+                            "Entity": "Customer and Subscriber Details"
                           }
                         },
                         "Property": "Signup Year"
@@ -407,7 +407,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "First Menu Year"
@@ -423,7 +423,7 @@
             "Expression": {
               "SourceRef": {
                 "Schema": "extension",
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Rolling Gross Revenue"

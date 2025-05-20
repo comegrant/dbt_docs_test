@@ -67,10 +67,10 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Type Name"
+                  "Property": "Product Type"
                 }
               },
-              "queryRef": "Products.Product Type Name",
+              "queryRef": "Products.Product Type",
               "nativeQueryRef": "Product Type",
               "active": true,
               "displayName": "Product Type"
@@ -83,10 +83,10 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Country Name"
+                  "Property": "Country"
                 }
               },
-              "queryRef": "Brands.Country Name",
+              "queryRef": "Brands.Country",
               "nativeQueryRef": "Country",
               "active": true,
               "displayName": "Country"
@@ -99,10 +99,10 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Variation Name"
+                  "Property": "Product Variation"
                 }
               },
-              "queryRef": "Products.Product Variation Name",
+              "queryRef": "Products.Product Variation",
               "nativeQueryRef": "Variation",
               "active": true,
               "displayName": "Variation"
@@ -115,10 +115,10 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Name"
+                  "Property": "Product"
                 }
               },
-              "queryRef": "Products.Product Name",
+              "queryRef": "Products.Product",
               "nativeQueryRef": "Product",
               "active": false,
               "displayName": "Product"
@@ -132,13 +132,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Estimations"
+                      "Entity": "Active Baskets"
                     }
                   },
                   "Property": "Number of Units in Baskets if Cutoff is Now"
                 }
               },
-              "queryRef": "Estimations.Number of Units in Baskets if Cutoff is Now",
+              "queryRef": "Active Baskets.Number of Units in Baskets if Cutoff is Now",
               "nativeQueryRef": "Number of Units in Baskets if Cutoff is Now"
             }
           ]
@@ -154,7 +154,7 @@
                     "Entity": "Brands"
                   }
                 },
-                "Property": "Country Name"
+                "Property": "Country"
               }
             },
             "direction": "Descending"
@@ -170,7 +170,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Products.Product Type Name"
+              "Products.Product Type"
             ],
             "identityKeys": [
               {
@@ -180,7 +180,7 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Type Name"
+                  "Property": "Product Type"
                 }
               }
             ],
@@ -188,20 +188,20 @@
           },
           {
             "queryRefs": [
-              "Brands.Country Name"
+              "Brands.Country"
             ],
             "isPinned": true
           },
           {
             "queryRefs": [
-              "Products.Product Variation Name"
+              "Products.Product Variation"
             ],
             "isCollapsed": true,
             "isPinned": true
           },
           {
             "queryRefs": [
-              "Products.Product Name"
+              "Products.Product"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -212,7 +212,7 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Name"
+                  "Property": "Product"
                 }
               }
             ],
@@ -246,7 +246,7 @@
                         "Measure": {
                           "Expression": {
                             "SourceRef": {
-                              "Entity": "Estimations"
+                              "Entity": "Active Baskets"
                             }
                           },
                           "Property": "Number of Units in Baskets if Cutoff is Now"
@@ -291,7 +291,7 @@
                 }
               }
             ],
-            "metadata": "Estimations.Number of Units in Baskets if Cutoff is Now"
+            "metadata": "Active Baskets.Number of Units in Baskets if Cutoff is Now"
           }
         }
       ],
@@ -360,7 +360,7 @@
             }
           },
           "selector": {
-            "metadata": "Products.Product Name"
+            "metadata": "Products.Product"
           }
         },
         {
@@ -374,7 +374,7 @@
             }
           },
           "selector": {
-            "metadata": "Products.Product Type Name"
+            "metadata": "Products.Product Type"
           }
         }
       ]

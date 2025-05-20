@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups (Diff PY)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups (Diff PY)",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups (Diff PY)",
               "nativeQueryRef": "Number of Sign-ups (Diff PY)"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Customer Measures"
+                    "Entity": "Customer and Subscriber Measures"
                   }
                 },
                 "Property": "Number of Sign-ups (Diff PY)"

@@ -64,13 +64,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Signup Year"
                 }
               },
-              "queryRef": "Billing Agreements.Signup Year",
+              "queryRef": "Customer and Subscriber Details.Signup Year",
               "nativeQueryRef": "Signup Year",
               "active": true
             },
@@ -79,13 +79,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Signup Week"
                 }
               },
-              "queryRef": "Billing Agreements.Signup Week",
+              "queryRef": "Customer and Subscriber Details.Signup Week",
               "nativeQueryRef": "Signup Week",
               "active": false
             }
@@ -119,7 +119,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Billing Agreements.Signup Year"
+              "Customer and Subscriber Details.Signup Year"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -127,7 +127,7 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Signup Year"
@@ -138,7 +138,7 @@
           },
           {
             "queryRefs": [
-              "Billing Agreements.Signup Week"
+              "Customer and Subscriber Details.Signup Week"
             ],
             "isCollapsed": true,
             "isPinned": true

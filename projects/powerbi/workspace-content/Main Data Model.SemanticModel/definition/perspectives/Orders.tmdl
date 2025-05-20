@@ -20,7 +20,7 @@ perspective Orders
 		perspectiveMeasure 'Order Value Gross Ex Vat (AoB%)'
 		perspectiveMeasure 'Order Value Gross Ex Vat (Target)'
 
-	perspectiveTable 'Billing Agreements'
+	perspectiveTable 'Customer and Subscriber Details'
 
 		perspectiveColumn 'First Menu Week'
 		perspectiveColumn 'First Menu Month'
@@ -28,7 +28,7 @@ perspective Orders
 
 	perspectiveTable 'Brands'
 
-		perspectiveColumn 'Brand Name'
+		perspectiveColumn 'Brand'
 
 	perspectiveTable 'Dates'
 

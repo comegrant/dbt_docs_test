@@ -3,12 +3,12 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Estimations",
+      "name": "Active Baskets",
       "measures": [
         {
           "name": "Table Title",
           "dataType": "Double",
-          "expression": "\"Number of units in baskets if Cutiff is Now for \" & SELECTEDVALUE(Products[Product Type Name])"
+          "expression": "\"Number of units in baskets if Cutiff is Now for \" & SELECTEDVALUE(Products[Product Type])"
         }
       ]
     }

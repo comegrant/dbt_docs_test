@@ -24,7 +24,7 @@ table Brands
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Brand Name'
+	column 'Brand'
 		dataType: string
 		lineageTag: 10650cc4-9738-4853-ac78-25e87facc476
 		summarizeBy: none
@@ -32,7 +32,7 @@ table Brands
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Country Name'
+	column 'Country'
 		dataType: string
 		lineageTag: f4673059-815e-4434-8dca-5319e86ea0ad
 		summarizeBy: none
@@ -40,7 +40,7 @@ table Brands
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Country Currency'
+	column 'Currency'
 		dataType: string
 		lineageTag: 6575a8f8-985e-46ac-8cb2-f1ba94453368
 		summarizeBy: none

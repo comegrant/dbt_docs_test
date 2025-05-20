@@ -67,11 +67,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -83,13 +83,13 @@
                   "Expression": {
                     "SourceRef": {
                       "Schema": "extension",
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "_Local Change in Active Customers"
                 }
               },
-              "queryRef": "Customer Measures.Netto Activation 2",
+              "queryRef": "Customer and Subscriber Measures.Netto Activation 2",
               "nativeQueryRef": "_Local Change in Active Customers"
             }
           ]
@@ -282,7 +282,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Billing Agreement Status"

@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups",
               "nativeQueryRef": "Number of Sign-ups in Period",
               "displayName": "Number of Sign-ups in Period"
             }
@@ -40,7 +40,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Customer Measures"
+                    "Entity": "Customer and Subscriber Measures"
                   }
                 },
                 "Property": "Number of Sign-ups"

@@ -24,7 +24,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -49,7 +49,7 @@
                             "Source": "b"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],

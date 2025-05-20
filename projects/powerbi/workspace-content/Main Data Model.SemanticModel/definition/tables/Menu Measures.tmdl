@@ -61,11 +61,11 @@ table 'Menu Measures'
 
 	/// The number of unique customer posting a rating divided by the total number of orders.
 	/// Customers marking "dish not cooked" are included.
-	/// The purpose of this measure is to be able to compare the number of customers posting a rating between weeks when the number of ordering customers varies.
+	/// The purpose of this measure is to be able to compare the number of customers posting a rating between weeks when the number of Customers varies.
 	/// When more customers are ordering the number of customers posting a rating will also be higher.
-	measure 'Share of Ordering Customers with Dish Rating' =
+	measure 'Share of Customers with Dish Rating' =
 			CALCULATE(
-				[Number of Rating Customers] / [Number of Ordering Customers]
+				[Number of Rating Customers] / [Number of Customers]
 			)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		lineageTag: 30040681-4c5e-4a2f-88eb-7648269b6b95

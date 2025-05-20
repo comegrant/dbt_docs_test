@@ -38,7 +38,7 @@
                                   "Source": "c"
                                 }
                               },
-                              "Property": "Brand Name"
+                              "Property": "Brand"
                             }
                           }
                         ],
@@ -84,7 +84,7 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
               "howCreated": 1
@@ -101,7 +101,7 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Country Name"
+                  "Property": "Country"
                 }
               },
               "howCreated": 1
@@ -201,7 +201,7 @@
                                   "Source": "o"
                                 }
                               },
-                              "Property": "Order Type Name"
+                              "Property": "Order Type"
                             }
                           }
                         ],
@@ -226,7 +226,7 @@
                       "Entity": "Order Types"
                     }
                   },
-                  "Property": "Order Type Name"
+                  "Property": "Order Type"
                 }
               },
               "howCreated": 1
@@ -255,7 +255,7 @@
                                   "Source": "p"
                                 }
                               },
-                              "Property": "Product Type Name"
+                              "Property": "Product Type"
                             }
                           }
                         ],
@@ -287,7 +287,7 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Type Name"
+                  "Property": "Product Type"
                 }
               },
               "howCreated": 1
@@ -302,7 +302,7 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
               "howCreated": 1
@@ -343,7 +343,7 @@
                           "Entity": "Brands"
                         }
                       },
-                      "Property": "Brand Name"
+                      "Property": "Brand"
                     }
                   },
                   {
@@ -353,7 +353,7 @@
                           "Entity": "Products"
                         }
                       },
-                      "Property": "Product Name"
+                      "Property": "Product"
                     }
                   }
                 ],
@@ -378,7 +378,7 @@
                   "levels": [
                     {
                       "queryRefs": [
-                        "Brands.Brand Name"
+                        "Brands.Brand"
                       ],
                       "isCollapsed": true,
                       "identityKeys": [
@@ -389,7 +389,7 @@
                                 "Entity": "Brands"
                               }
                             },
-                            "Property": "Brand Name"
+                            "Property": "Brand"
                           }
                         }
                       ],
@@ -397,7 +397,7 @@
                     },
                     {
                       "queryRefs": [
-                        "Products.Product Name"
+                        "Products.Product"
                       ],
                       "isCollapsed": true,
                       "identityKeys": [
@@ -408,7 +408,7 @@
                                 "Entity": "Products"
                               }
                             },
-                            "Property": "Product Name"
+                            "Property": "Product"
                           }
                         }
                       ],
@@ -416,7 +416,7 @@
                     },
                     {
                       "queryRefs": [
-                        "Products.Product Variation Name"
+                        "Products.Product Variation"
                       ],
                       "isCollapsed": true,
                       "isPinned": true

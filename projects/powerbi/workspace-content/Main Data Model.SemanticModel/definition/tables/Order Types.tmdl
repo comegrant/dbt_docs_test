@@ -33,7 +33,7 @@ table 'Order Types'
 	/// "Daily Direct Order" - A legacy order type which represented an order with next day delivery. This was common on the Godtlevert Flex brand.
 	/// "Orders After Cutoff" - A legacy order type used by customer service to create an order for a customer after cut-off.
 	/// "Orders After Registration" - A legacy order type which was only used on Godtlevert. It represented an order placed after signup. Only new customers (placing their first order) had this option and could place an order for a week that had already passed cutoff. There was a predetermined number of available orders of this type each week based on the amount of stock in PIM.
-	column 'Order Type Name'
+	column 'Order Type'
 		dataType: string
 		lineageTag: c23c6a4b-5a82-4b49-84e7-d0b162ee2788
 		summarizeBy: none

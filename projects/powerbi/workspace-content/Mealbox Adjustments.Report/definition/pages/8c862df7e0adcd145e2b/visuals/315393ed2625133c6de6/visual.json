@@ -23,11 +23,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand",
               "active": true
             },
             {
@@ -186,7 +186,7 @@
         "levels": [
           {
             "queryRefs": [
-              "Brands.Brand Name"
+              "Brands.Brand"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -197,7 +197,7 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               }
             ],
@@ -410,7 +410,7 @@
             }
           },
           "selector": {
-            "metadata": "Brands.Brand Name"
+            "metadata": "Brands.Brand"
           }
         }
       ],

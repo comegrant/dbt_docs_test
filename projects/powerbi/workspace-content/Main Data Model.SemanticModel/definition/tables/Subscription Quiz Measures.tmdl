@@ -23,9 +23,9 @@ table 'Subscription Quiz Measures'
 	/// Number of distinct customers who have started the quiz.
 	measure 'Number of Customers Started Quiz' =
 			CALCULATE(
-			    DISTINCTCOUNTNOBLANK('Billing Agreements'[Agreement Id]),
+			    DISTINCTCOUNTNOBLANK('Customer and Subscriber Details'[Agreement Id]),
 			    'Subscription Quiz Measures'[has_started_subscription_quiz] = 1,
-			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
+			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Customer and Subscriber Details'[pk_dim_billing_agreements], BOTH)
 			)
 		isHidden
 		formatString: #,0
@@ -34,9 +34,9 @@ table 'Subscription Quiz Measures'
 	/// Number of distinct customers who have completed the quiz.
 	measure 'Number of Customers Completed Quiz' =
 			CALCULATE(
-			    DISTINCTCOUNTNOBLANK('Billing Agreements'[Agreement Id]),
+			    DISTINCTCOUNTNOBLANK('Customer and Subscriber Details'[Agreement Id]),
 			    'Subscription Quiz Measures'[has_completed_subscription_quiz] = 1,
-			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Billing Agreements'[pk_dim_billing_agreements], BOTH)
+			    CROSSFILTER('Subscription Quiz Measures'[fk_dim_billing_agreements], 'Customer and Subscriber Details'[pk_dim_billing_agreements], BOTH)
 			)
 		isHidden
 		formatString: #,0

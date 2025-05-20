@@ -23,11 +23,11 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Name"
+                  "Property": "Product"
                 }
               },
-              "queryRef": "Products.Product Name",
-              "nativeQueryRef": "Product Name"
+              "queryRef": "Products.Product",
+              "nativeQueryRef": "Product"
             },
             {
               "field": {
@@ -106,7 +106,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Type Name"
+            "Property": "Product Type"
           }
         },
         "type": "Categorical",

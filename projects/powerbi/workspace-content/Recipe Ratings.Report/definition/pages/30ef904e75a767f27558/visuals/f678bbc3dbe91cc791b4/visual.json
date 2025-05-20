@@ -57,11 +57,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -158,7 +158,7 @@
             "titleText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Brand Name'"
+                  "Value": "'Brand'"
                 }
               }
             },

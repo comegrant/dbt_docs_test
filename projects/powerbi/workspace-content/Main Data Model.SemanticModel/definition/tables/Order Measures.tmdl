@@ -12,7 +12,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 
@@ -35,7 +35,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -50,15 +50,15 @@ table 'Order Measures'
 	measure 'Number of Orders' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -77,15 +77,15 @@ table 'Order Measures'
 
 			CALCULATE(
 			    SUM('Order Measures'[product_variation_quantity]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -101,15 +101,15 @@ table 'Order Measures'
 
 			CALCULATE(
 			    SUM('Order Measures'[subscribed_product_variation_quantity]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -124,15 +124,15 @@ table 'Order Measures'
 
 			CALCULATE(
 				SUM('Order Measures'[subscribed_product_variation_amount_ex_vat]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements Deviation'[pk_dim_billing_agreements]
 				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-					'Billing Agreements'[pk_dim_billing_agreements],
+					'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -167,8 +167,8 @@ table 'Order Measures'
 	measure 'Number of Sold Gift Cards' =
 			CALCULATE(
 				[Number of Orders],
-				'Order Types'[Order Type Name] = "Gift Card",
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Types'[Order Type] = "Gift Card",
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		displayFolder: Gift Cards
@@ -179,8 +179,8 @@ table 'Order Measures'
 	measure 'Order Value Net Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Types'[Order Type] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
 				)
 		displayFolder: Orders
 		lineageTag: 94703f73-cb72-4c7c-ba82-9d480c9385ca
@@ -192,8 +192,8 @@ table 'Order Measures'
 	measure 'Order Value Net Inc Vat' =
 			CALCULATE(
 				[Total Order Value Inc Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
 				)
 		displayFolder: Orders
 		lineageTag: 47be5d17-2f0a-42c6-8b21-24dea811838e
@@ -205,8 +205,8 @@ table 'Order Measures'
 	measure 'Order Value Gross Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"DEBIT", "TRANSPORT"}
 				)
 		displayFolder: Orders
@@ -244,8 +244,8 @@ table 'Order Measures'
 	measure 'Number of Ordered Units' =
 			CALCULATE(
 				[Product Variation Quantity],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		displayFolder: Ordered Units
@@ -295,8 +295,8 @@ table 'Order Measures'
 	measure 'Gift Card Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] = "Gift Card",
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"}
+				'Order Types'[Order Type] = "Gift Card",
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
 			)
 		isHidden
 		displayFolder: Gift Cards
@@ -309,8 +309,8 @@ table 'Order Measures'
 	measure 'Discount Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
 			)
 		displayFolder: Discount
@@ -323,8 +323,8 @@ table 'Order Measures'
 	measure 'Transport Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"TRANSPORT"}
 			)
 		displayFolder: Transport
@@ -337,8 +337,8 @@ table 'Order Measures'
 	measure 'Sum PRP Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				'Order Measures'[order_line_type_name] IN {"PRP"}
 			)
 		displayFolder: Credit and PRP
@@ -351,9 +351,9 @@ table 'Order Measures'
 	measure 'Credit Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
-				'Products'[Product Name] = "Credits"
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Products'[Product] = "Credits"
 			)
 		displayFolder: Credit and PRP
 		lineageTag: 1fe11954-5b54-4c34-9abb-796297d4ecee
@@ -405,8 +405,8 @@ table 'Order Measures'
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes] <> "0",
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 			    USERELATIONSHIP(
 			        'Order Measures'[fk_dim_billing_agreements_deviations],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -417,7 +417,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -431,8 +431,8 @@ table 'Order Measures'
 	measure 'Number of Added Dishes' =
 			CALCULATE(
 				SUM('Order Measures'[is_added_dish]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 			    USERELATIONSHIP(
 			        'Order Measures'[fk_dim_billing_agreements_deviations],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -443,7 +443,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -456,8 +456,8 @@ table 'Order Measures'
 	measure 'Number of Removed Dishes' =
 			CALCULATE(
 					SUM('Order Measures'[is_removed_dish]),
-					'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-					'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+					'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+					'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 					USERELATIONSHIP(
 						'Order Measures'[fk_dim_recipes_preselected],
 						Recipes[pk_dim_recipes]
@@ -472,7 +472,7 @@ table 'Order Measures'
 				   ),
 				   CROSSFILTER(
 					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-					   'Billing Agreements'[pk_dim_billing_agreements],
+					   'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					   None
 				   )
 			)
@@ -498,8 +498,8 @@ table 'Order Measures'
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes_preselected] <> "0",
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 					'Order Measures'[fk_dim_recipes_preselected],
 					Recipes[pk_dim_recipes]
@@ -513,7 +513,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -719,8 +719,8 @@ table 'Order Measures'
 			                BLANK(),
 			                CALCULATE(
 			    	            SUM('Order Measures'[meal_adjustment_subscription]),
-			    	            'Order Types'[Order Type Name] IN {"Recurring",     "Order After Registration", "Orders After Cutoff",  "Daily Direct Order",    "Campaign"},
-			    	            'Order Statuses'[Order Status Name] IN {"Finished",     "Processing"}
+			    	            'Order Types'[Order Type] IN {"Recurring",     "Order After Registration", "Orders After Cutoff",  "Daily Direct Order",    "Campaign"},
+			    	            'Order Statuses'[Order Status] IN {"Finished",     "Processing"}
 			                )
 			            )
 			    ),
@@ -730,7 +730,7 @@ table 'Order Measures'
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -767,15 +767,15 @@ table 'Order Measures'
 	measure 'Portion Adjustments' =
 			CALCULATE(
 				SUM('Order Measures'[portion_adjustment_subscription]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-			        'Billing Agreements'[pk_dim_billing_agreements],
+			        'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
@@ -788,7 +788,7 @@ table 'Order Measures'
 	measure 'Average Number of Orders per Customer' =
 			DIVIDE(
 				[Number of Orders],
-				[Number of Ordering Customers]
+				[Number of Customers]
 			)
 		formatString: #,0.00
 		displayFolder: Order Frequency
@@ -809,7 +809,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Number of Orders],
 				FILTER(
-					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 					[Number of Orders] < '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
@@ -823,7 +823,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Number of Orders],
 				FILTER(
-					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 					[Number of Orders] >= '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
@@ -831,7 +831,7 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Order Frequency
 
-	/// Order frequency for ordering customers who have had fewer than x orders in the selected period.
+	/// Order frequency for Customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Average Number of Orders per Customer with Fewer than X Orders' =
 			DIVIDE(
@@ -854,7 +854,7 @@ table 'Order Measures'
 		displayFolder: Order Frequency
 
 	/// Number of order that has one or more grocery purchases
-	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
 		displayFolder: Groceries
 		lineageTag: 907b81be-d98c-476b-9b88-c0b53f1d2608
@@ -883,7 +883,7 @@ table 'Order Measures'
 
 	/// Number of ordered groceries.
 	/// Sums the product variation quantity for all ordered products that are groceries.
-	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
 		displayFolder: Groceries
 
@@ -900,7 +900,7 @@ table 'Order Measures'
 
 	/// Revenue from groceries
 	/// Excluding VAT
-	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], Products[Product Type Name] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
 		formatString: #,0
 		displayFolder: Groceries
 		lineageTag: ad346d06-f70c-436e-960b-33738cb969e1
@@ -936,13 +936,13 @@ table 'Order Measures'
 		displayFolder: Groceries
 
 	/// Number of orders done by customers who have swapped at least once during the selected period.
-	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
+	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer and Subscriber Measures' table.
 	/// Not to be confused with 'Number of Orders with Swaps', which is a different measure.
 	measure 'Number of Orders by Swapping Customers' =
 						CALCULATE(
 			    			[Number of Orders],
 			    			FILTER(
-			    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+			    			    SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 			    			    [Number of Orders with Swaps] > 0
 			    			)
 						)
@@ -951,7 +951,7 @@ table 'Order Measures'
 		lineageTag: 78a09f39-38ac-4d50-ad7e-8393bbe61796
 
 	/// Order frequency for swapping customers, i.e. average number of orders per unique swapping customer.
-	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer Measures' table.
+	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer and Subscriber Measures' table.
 	/// To see the definition of orders by swapping customers, see the measure 'Number of Orders by Swapping Customers' in the 'Order Measures' table.
 	measure 'Average Number of Orders per Swapping Customer' =
 			DIVIDE(
@@ -1226,7 +1226,7 @@ table 'Order Measures'
 	measure 'Number of Consumers' =
 			CALCULATE(
 				SUM('Order Measures'[portions])
-				, 'Products'[Product Type Name] = "Mealbox"
+				, 'Products'[Product Type] = "Mealbox"
 			)
 		formatString: #,0
 		displayFolder: Recipe Sales

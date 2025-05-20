@@ -101,7 +101,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -126,7 +126,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],
@@ -174,7 +174,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Estimations"
+                "Entity": "Active Baskets"
               }
             },
             "Property": "is_latest_estimation"
@@ -186,7 +186,7 @@
           "From": [
             {
               "Name": "e",
-              "Entity": "Estimations",
+              "Entity": "Active Baskets",
               "Type": 0
             }
           ],

@@ -63,11 +63,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name",
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand",
               "active": false
             }
           ]
@@ -143,7 +143,7 @@
                     "Entity": "Brands"
                   }
                 },
-                "Property": "Brand Name"
+                "Property": "Brand"
               }
             },
             "direction": "Ascending"
@@ -197,7 +197,7 @@
           },
           {
             "queryRefs": [
-              "Brands.Brand Name"
+              "Brands.Brand"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -208,7 +208,7 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               }
             ],
@@ -417,7 +417,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Name"
+            "Property": "Product"
           }
         },
         "type": "Categorical",
@@ -432,7 +432,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Type Name"
+            "Property": "Product Type"
           }
         },
         "type": "Categorical",

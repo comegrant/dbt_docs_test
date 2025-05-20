@@ -1,11 +1,11 @@
 /// A snapshot of how the baskets of the customers look like if the cutoff is now for the next 12 weeks.
-table Estimations
+table 'Active Baskets'
 	lineageTag: 945865dc-66a2-4d6b-ba62-6f324c4bc648
 
 	/// Counting number of units of products in the customers baskets. Also called Estimations.
 	/// This is what would have been ordered if cutoff is now for the next 12 weeks.
-	/// See "Estimation generated at" for the timestamp of the estimation.
-	measure 'Number of Units in Baskets if Cutoff is Now' = SUM('Estimations'[product_variation_quantity])
+	/// See "Active Baskets Generated At" for the timestamp of the estimation.
+	measure 'Number of Units in Baskets if Cutoff is Now' = SUM('Active Baskets'[product_variation_quantity])
 		formatString: #,0
 		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
 
@@ -67,7 +67,7 @@ table Estimations
 		summarizeBy: none
 		sourceColumn: fk_dim_basket_deviation_origins
 
-	/// The unique id of each row in Dim Billing Agreements
+	/// The unique id of each row in Dim Customer and Subscriber Details
 	column fk_dim_billing_agreements
 		dataType: string
 		isHidden
@@ -113,15 +113,15 @@ table Estimations
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Timestamp of estimations
-	column 'Estimation generated at'
+	/// Timestamp of when the snapshot of the active baskets was taken.
+	column 'Active Baskets Generated At'
 		dataType: dateTime
 		formatString: 'yyyy-mm-dd hh:mm:ss'
 		lineageTag: 8cab2d83-3dd0-46e3-9631-f334a17e26b7
 		summarizeBy: none
 		sourceColumn: estimation_generated_at
 
-	partition Estimations = m
+	partition 'Active Baskets' = m
 		mode: directQuery
 		source =
 				let

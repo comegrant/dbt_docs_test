@@ -1175,7 +1175,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Brands",
-			          "ConceptualProperty": "Brand Name"
+			          "ConceptualProperty": "Brand"
 			        }
 			      },
 			      "State": "Generated",
@@ -1298,7 +1298,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Brands",
-			          "ConceptualProperty": "Country Name"
+			          "ConceptualProperty": "Country"
 			        }
 			      },
 			      "State": "Generated",
@@ -1400,7 +1400,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Brands",
-			          "ConceptualProperty": "Country Currency"
+			          "ConceptualProperty": "Currency"
 			        }
 			      },
 			      "State": "Generated",
@@ -1781,7 +1781,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Statuses",
-			          "ConceptualProperty": "Order Status Name"
+			          "ConceptualProperty": "Order Status"
 			        }
 			      },
 			      "State": "Generated",
@@ -2507,7 +2507,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Types",
-			          "ConceptualProperty": "Order Type Name"
+			          "ConceptualProperty": "Order Type"
 			        }
 			      },
 			      "State": "Generated",
@@ -5448,7 +5448,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Product Type Name"
+			          "ConceptualProperty": "Product Type"
 			        }
 			      },
 			      "State": "Generated",
@@ -5582,7 +5582,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Product Name"
+			          "ConceptualProperty": "Product"
 			        }
 			      },
 			      "State": "Generated",
@@ -5678,7 +5678,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Product Status Name"
+			          "ConceptualProperty": "Product Status"
 			        }
 			      },
 			      "State": "Generated",
@@ -5812,7 +5812,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Product Variation Name"
+			          "ConceptualProperty": "Product Variation"
 			        }
 			      },
 			      "State": "Generated",
@@ -6316,7 +6316,7 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Preselected Mealbox Product Name"
+			          "ConceptualProperty": "Preselected Mealbox Product"
 			        }
 			      },
 			      "State": "Generated",
@@ -18575,7 +18575,7 @@ cultureInfo en-US
 			    "billing_agreement": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements"
+			          "ConceptualEntity": "Customer and Subscriber Details"
 			        }
 			      },
 			      "State": "Generated",
@@ -18696,7 +18696,7 @@ cultureInfo en-US
 			    "billing_agreement.pk_dim_billing_agreement": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "pk_dim_billing_agreements"
 			        }
 			      },
@@ -18834,7 +18834,7 @@ cultureInfo en-US
 			    "billing_agreement.agreement_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "billing_agreement_id"
 			        }
 			      },
@@ -18956,7 +18956,7 @@ cultureInfo en-US
 			    "billing_agreement.company_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "company_id"
 			        }
 			      },
@@ -19082,7 +19082,7 @@ cultureInfo en-US
 			    "billing_agreement.sales_point_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "sales_point_id"
 			        }
 			      },
@@ -19210,7 +19210,7 @@ cultureInfo en-US
 			    "billing_agreement.valid_from": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "valid_from"
 			        }
 			      },
@@ -19243,7 +19243,7 @@ cultureInfo en-US
 			    "billing_agreement.valid_to": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "valid_to"
 			        }
 			      },
@@ -19276,7 +19276,7 @@ cultureInfo en-US
 			    "billing_agreement.payment_method": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "payment_method"
 			        }
 			      },
@@ -19398,7 +19398,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_source": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_source"
 			        }
 			      },
@@ -19520,7 +19520,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_sales_person": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "Signup Sales Person"
 			        }
 			      },
@@ -19642,7 +19642,7 @@ cultureInfo en-US
 			    "billing_agreement.billing_agreement_status": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "billing_agreement_status_name"
 			        }
 			      },
@@ -19770,7 +19770,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_date": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_date"
 			        }
 			      },
@@ -19816,7 +19816,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_year_day": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_year_day"
 			        }
 			      },
@@ -19868,7 +19868,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_month_day": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_month_day"
 			        }
 			      },
@@ -19920,7 +19920,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_week_day": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_week_day"
 			        }
 			      },
@@ -19952,7 +19952,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_week": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_week"
 			        }
 			      },
@@ -19968,7 +19968,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_month": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_month"
 			        }
 			      },
@@ -19994,7 +19994,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_quarter": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_quarter"
 			        }
 			      },
@@ -20020,7 +20020,7 @@ cultureInfo en-US
 			    "billing_agreement.signup_year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "signup_year"
 			        }
 			      },
@@ -20053,7 +20053,7 @@ cultureInfo en-US
 			    "billing_agreement.first_menu_date": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "first_menu_week_monday_date"
 			        }
 			      },
@@ -20125,7 +20125,7 @@ cultureInfo en-US
 			    "billing_agreement.first_menu_week": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "first_menu_week_week"
 			        }
 			      },
@@ -20147,7 +20147,7 @@ cultureInfo en-US
 			    "billing_agreement.first_menu_month": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "first_menu_week_month"
 			        }
 			      },
@@ -20189,7 +20189,7 @@ cultureInfo en-US
 			    "billing_agreement.first_menu_quarter": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "first_menu_week_quarter"
 			        }
 			      },
@@ -20231,7 +20231,7 @@ cultureInfo en-US
 			    "billing_agreement.first_menu_year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "first_menu_week_year"
 			        }
 			      },
@@ -20280,7 +20280,7 @@ cultureInfo en-US
 			    "billing_agreement.is_current": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "is_current"
 			        }
 			      },
@@ -20356,7 +20356,7 @@ cultureInfo en-US
 			    "billing_agreement.billing_agreement_preferences_updated_id": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "billing_agreement_preferences_updated_id"
 			        }
 			      },
@@ -20429,7 +20429,7 @@ cultureInfo en-US
 			    "billing_agreement.meal": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "Meals"
 			        }
 			      },
@@ -20545,7 +20545,7 @@ cultureInfo en-US
 			    "billing_agreement.portion": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "Portions"
 			        }
 			      },
@@ -20661,7 +20661,7 @@ cultureInfo en-US
 			    "billing_agreement.subscribed_mealbox": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "Subscribed Mealbox"
 			        }
 			      },
@@ -23350,7 +23350,7 @@ cultureInfo en-US
 			    "billing_agreement.is_OneSub": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Billing Agreements",
+			          "ConceptualEntity": "Customer and Subscriber Details",
 			          "ConceptualProperty": "Is OneSub"
 			        }
 			      },
@@ -23835,7 +23835,7 @@ cultureInfo en-US
 			  "Relationships": {
 			    "billing_agreement_has_is_OneSub": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24376,7 +24376,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_subscribed_mealbox": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24409,7 +24409,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_portion": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24442,7 +24442,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_meal": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24475,7 +24475,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_first_menu_year": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24508,7 +24508,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_first_menu_quarter": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24541,7 +24541,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_first_menu_month": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24574,7 +24574,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_first_menu_week": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24607,7 +24607,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_year": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24640,7 +24640,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_quarter": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24673,7 +24673,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_month": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24706,7 +24706,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_week": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24739,7 +24739,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_billing_agreement_status": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24772,7 +24772,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_sales_person": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24805,7 +24805,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_signup_source": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24838,7 +24838,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_payment_method": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24871,7 +24871,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_sales_point_id": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -24904,7 +24904,7 @@ cultureInfo en-US
 			    },
 			    "billing_agreement_has_agreement_id": {
 			      "Binding": {
-			        "ConceptualEntity": "Billing Agreements"
+			        "ConceptualEntity": "Customer and Subscriber Details"
 			      },
 			      "State": "Generated",
 			      "Roles": {

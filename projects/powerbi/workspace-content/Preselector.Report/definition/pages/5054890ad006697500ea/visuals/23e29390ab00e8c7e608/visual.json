@@ -229,7 +229,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",

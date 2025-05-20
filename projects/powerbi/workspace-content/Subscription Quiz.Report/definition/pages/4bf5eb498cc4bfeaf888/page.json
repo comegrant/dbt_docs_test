@@ -13,7 +13,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Signup Year"

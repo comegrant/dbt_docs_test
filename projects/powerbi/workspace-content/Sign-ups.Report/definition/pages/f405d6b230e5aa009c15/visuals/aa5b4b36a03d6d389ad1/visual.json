@@ -40,13 +40,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups (Rolling 7 Days YOY%)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups (Rolling 7 Days YOY%)",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups (Rolling 7 Days YOY%)",
               "nativeQueryRef": "Rolling 7 Days YOY%",
               "displayName": "Rolling 7 Days YOY%",
               "format": "0.00 %;-0.00 %;0.00 %"
@@ -60,13 +60,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups (7 Days Rolling PY)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups (7 Days Rolling PY)",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups (7 Days Rolling PY)",
               "nativeQueryRef": "Previous Year",
               "displayName": "Previous Year"
             },
@@ -75,13 +75,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups (7 Days Rolling)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups (7 Days Rolling)",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups (7 Days Rolling)",
               "nativeQueryRef": "Current Year",
               "displayName": "Current Year"
             }
@@ -670,7 +670,7 @@
             }
           },
           "selector": {
-            "metadata": "Customer Measures.Number of Sign-ups (7 Days Rolling)"
+            "metadata": "Customer and Subscriber Measures.Number of Sign-ups (7 Days Rolling)"
           }
         },
         {
@@ -689,7 +689,7 @@
             }
           },
           "selector": {
-            "metadata": "Customer Measures.Number of Sign-ups (7 Days Rolling PY)"
+            "metadata": "Customer and Subscriber Measures.Number of Sign-ups (7 Days Rolling PY)"
           }
         }
       ],
@@ -750,7 +750,7 @@
             }
           },
           "selector": {
-            "metadata": "Customer Measures.Number of Sign-ups (Rolling 7 Days YOY%)"
+            "metadata": "Customer and Subscriber Measures.Number of Sign-ups (Rolling 7 Days YOY%)"
           }
         }
       ]

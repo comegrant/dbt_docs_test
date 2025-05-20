@@ -52,7 +52,7 @@
             "x": 1118.400918609635,
             "y": 1339.0318919975236
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
@@ -182,7 +182,7 @@
             "x": 1633.0012548745908,
             "y": 139.80110976454807
           },
-          "nodeIndex": "Estimations",
+          "nodeIndex": "Active Baskets",
           "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
           "size": {
             "height": 300,
@@ -260,7 +260,7 @@
             "x": 1378.1983547815582,
             "y": 768.2737538796539
           },
-          "nodeIndex": "Customer Measures",
+          "nodeIndex": "Customer and Subscriber Measures",
           "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
           "size": {
             "height": 300,

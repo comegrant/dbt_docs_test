@@ -11,7 +11,7 @@ table 'Loyalty Order Statuses'
 		summarizeBy: none
 		sourceColumn: pk_dim_loyalty_order_statuses
 
-	column 'Loyalty Order Status Name'
+	column 'Loyalty Order Status'
 		dataType: string
 		lineageTag: 16a2e54d-e0ab-4368-860c-df9b0a500197
 		summarizeBy: none

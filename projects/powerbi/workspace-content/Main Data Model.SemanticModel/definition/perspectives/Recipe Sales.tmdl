@@ -8,7 +8,7 @@ perspective 'Recipe Sales'
 		perspectiveMeasure 'Average Number of Orders per Customer'
 		perspectiveMeasure 'Number of Ordered Dishes'
 
-	perspectiveTable 'Billing Agreements'
+	perspectiveTable 'Customer and Subscriber Details'
 
 		perspectiveColumn 'First Menu Week'
 		perspectiveColumn 'First Menu Month'
@@ -16,7 +16,7 @@ perspective 'Recipe Sales'
 
 	perspectiveTable 'Brands'
 
-		perspectiveColumn 'Brand Name'
+		perspectiveColumn 'Brand'
 
 	perspectiveTable 'Dates'
 

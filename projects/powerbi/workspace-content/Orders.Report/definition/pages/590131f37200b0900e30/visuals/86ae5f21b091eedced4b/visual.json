@@ -23,10 +23,10 @@
                       "Entity": "Order Types"
                     }
                   },
-                  "Property": "Order Type Name"
+                  "Property": "Order Type"
                 }
               },
-              "queryRef": "Order Types.Order Type Name",
+              "queryRef": "Order Types.Order Type",
               "nativeQueryRef": "Order Type",
               "active": true,
               "displayName": "Order Type"
@@ -86,7 +86,7 @@
                                   "Source": "o"
                                 }
                               },
-                              "Property": "Order Type Name"
+                              "Property": "Order Type"
                             }
                           }
                         ],

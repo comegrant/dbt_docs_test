@@ -57,11 +57,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -107,11 +107,11 @@
                       "Entity": "Menu Measures"
                     }
                   },
-                  "Property": "Share of Ordering Customers with Dish Rating"
+                  "Property": "Share of Customers with Dish Rating"
                 }
               },
-              "queryRef": "Menu Measures.Share of Ordering Customers with Dish Rating",
-              "nativeQueryRef": "Share of Ordering Customers with Dish Rating"
+              "queryRef": "Menu Measures.Share of Customers with Dish Rating",
+              "nativeQueryRef": "Share of Customers with Dish Rating"
             }
           ]
         }
@@ -321,7 +321,7 @@
                 "Aggregation": {
                   "Expression": {
                     "SelectRef": {
-                      "ExpressionName": "Menu Measures.Share of Ordering Customers with Dish Rating"
+                      "ExpressionName": "Menu Measures.Share of Customers with Dish Rating"
                     }
                   },
                   "Function": 1
@@ -374,7 +374,7 @@
             }
           },
           "selector": {
-            "metadata": "Menu Measures.Share of Ordering Customers with Dish Rating",
+            "metadata": "Menu Measures.Share of Customers with Dish Rating",
             "id": "2"
           }
         }

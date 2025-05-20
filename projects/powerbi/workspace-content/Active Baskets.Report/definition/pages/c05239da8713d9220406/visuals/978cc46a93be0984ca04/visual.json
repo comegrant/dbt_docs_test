@@ -162,7 +162,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Estimations"
+                "Entity": "Active Baskets"
               }
             },
             "Property": "Number of Units in Baskets if Cutoff is Now"
@@ -174,7 +174,7 @@
           "From": [
             {
               "Name": "e",
-              "Entity": "Estimations",
+              "Entity": "Active Baskets",
               "Type": 0
             }
           ],

@@ -36,7 +36,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "OneSub Flag"
@@ -48,7 +48,7 @@
           "From": [
             {
               "Name": "b",
-              "Entity": "Billing Agreements",
+              "Entity": "Customer and Subscriber Details",
               "Type": 0
             }
           ],
@@ -93,7 +93,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -118,7 +118,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],

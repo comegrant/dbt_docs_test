@@ -42,11 +42,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -57,13 +57,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Sign-ups"
                 }
               },
-              "queryRef": "Customer Measures.Number of Sign-ups",
+              "queryRef": "Customer and Subscriber Measures.Number of Sign-ups",
               "nativeQueryRef": "Number of Sign-ups"
             }
           ]
@@ -76,7 +76,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Customer Measures"
+                    "Entity": "Customer and Subscriber Measures"
                   }
                 },
                 "Property": "Number of Sign-ups"
@@ -145,7 +145,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -187,7 +187,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -229,7 +229,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -271,7 +271,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -336,7 +336,7 @@
                       },
                       {
                         "Name": "c",
-                        "Entity": "Customer Measures",
+                        "Entity": "Customer and Subscriber Measures",
                         "Type": 0
                       }
                     ],

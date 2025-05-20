@@ -176,7 +176,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Advanced",
@@ -203,7 +203,7 @@
                               "Source": "b"
                             }
                           },
-                          "Property": "Brand Name"
+                          "Property": "Brand"
                         }
                       },
                       "Right": {
@@ -280,7 +280,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Customer Measures"
+                "Entity": "Customer and Subscriber Measures"
               }
             },
             "Property": "Number of Sign-ups"
@@ -292,7 +292,7 @@
           "From": [
             {
               "Name": "c",
-              "Entity": "Customer Measures",
+              "Entity": "Customer and Subscriber Measures",
               "Type": 0
             }
           ],

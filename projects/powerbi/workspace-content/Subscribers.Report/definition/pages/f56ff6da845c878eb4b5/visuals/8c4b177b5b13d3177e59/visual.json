@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Active Subscribers"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Subscribers",
+              "queryRef": "Customer and Subscriber Measures.Number of Active Subscribers",
               "nativeQueryRef": "Active Subscribers at End of Period",
               "displayName": "Active Subscribers at End of Period"
             }
@@ -40,7 +40,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Customer Measures"
+                    "Entity": "Customer and Subscriber Measures"
                   }
                 },
                 "Property": "Number of Active Subscribers"
@@ -224,7 +224,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Billing Agreement Status"
@@ -236,7 +236,7 @@
           "From": [
             {
               "Name": "b",
-              "Entity": "Billing Agreements",
+              "Entity": "Customer and Subscriber Details",
               "Type": 0
             }
           ],

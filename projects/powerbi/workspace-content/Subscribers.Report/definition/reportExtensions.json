@@ -116,7 +116,7 @@
       ]
     },
     {
-      "name": "Customer Measures",
+      "name": "Customer and Subscriber Measures",
       "measures": [
         {
           "name": "_Local Number of Active Customers % Diff PY",
@@ -126,11 +126,11 @@
           "references": {
             "measures": [
               {
-                "entity": "Customer Measures",
+                "entity": "Customer and Subscriber Measures",
                 "name": "Number of Active Subscribers"
               },
               {
-                "entity": "Customer Measures",
+                "entity": "Customer and Subscriber Measures",
                 "name": "Number of Active Subscribers (PY)"
               }
             ]
@@ -139,11 +139,11 @@
         {
           "name": "_Local Number of Active Customers In Beginning of Period",
           "dataType": "Double",
-          "expression": "\nCALCULATE(\n    [Number of Subscribers All Statuses], \n    FILTER(\n        'Dates',\n        Dates[Date]=MIN(Dates[Date])\n    ), \n    'Billing Agreements'[Billing Agreement Status]=\"Active\"\n)",
+          "expression": "\nCALCULATE(\n    [Number of Subscribers All Statuses], \n    FILTER(\n        'Dates',\n        Dates[Date]=MIN(Dates[Date])\n    ), \n    'Customer and Subscriber Details'[Billing Agreement Status]=\"Active\"\n)",
           "references": {
             "measures": [
               {
-                "entity": "Customer Measures",
+                "entity": "Customer and Subscriber Measures",
                 "name": "Number of Subscribers All Statuses"
               }
             ]
@@ -156,12 +156,12 @@
           "references": {
             "measures": [
               {
-                "entity": "Customer Measures",
+                "entity": "Customer and Subscriber Measures",
                 "name": "Number of Active Subscribers"
               },
               {
                 "schema": "extension",
-                "entity": "Customer Measures",
+                "entity": "Customer and Subscriber Measures",
                 "name": "_Local Number of Active Customers In Beginning of Period"
               }
             ]

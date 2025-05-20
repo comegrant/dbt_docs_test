@@ -64,13 +64,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "First Menu Year"
                 }
               },
-              "queryRef": "Billing Agreements.First Menu Year",
+              "queryRef": "Customer and Subscriber Details.First Menu Year",
               "nativeQueryRef": "Sum of First Menu Year"
             }
           ]
@@ -137,7 +137,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Billing Agreements"
+                    "Entity": "Customer and Subscriber Details"
                   }
                 },
                 "Property": "First Menu Year"

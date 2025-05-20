@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Billing Agreement Status"
                 }
               },
-              "queryRef": "Billing Agreements.Billing Agreement Status",
+              "queryRef": "Customer and Subscriber Details.Billing Agreement Status",
               "nativeQueryRef": "Billing Agreement Status",
               "active": true
             }

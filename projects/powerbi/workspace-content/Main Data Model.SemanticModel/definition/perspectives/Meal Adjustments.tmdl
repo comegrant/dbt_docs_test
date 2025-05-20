@@ -7,7 +7,7 @@ perspective 'Meal Adjustments'
 		perspectiveMeasure 'Number of Ordered Dishes'
 		perspectiveMeasure 'Number of Swapped Dishes'
 
-	perspectiveTable 'Billing Agreements'
+	perspectiveTable 'Customer and Subscriber Details'
 
 		perspectiveColumn 'First Menu Week'
 		perspectiveColumn 'First Menu Month'
@@ -19,7 +19,7 @@ perspective 'Meal Adjustments'
 
 	perspectiveTable 'Brands'
 
-		perspectiveColumn 'Brand Name'
+		perspectiveColumn 'Brand'
 
 	perspectiveTable 'Preference Combinations'
 

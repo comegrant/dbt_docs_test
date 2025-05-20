@@ -82,13 +82,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Estimations"
+                      "Entity": "Active Baskets"
                     }
                   },
                   "Property": "Number of Units in Baskets if Cutoff is Now"
                 }
               },
-              "queryRef": "Estimations.Number of Units in Baskets if Cutoff is Now",
+              "queryRef": "Active Baskets.Number of Units in Baskets if Cutoff is Now",
               "nativeQueryRef": "Number of Units in Baskets if Cutoff is Now"
             }
           ]

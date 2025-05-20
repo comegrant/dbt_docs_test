@@ -44,13 +44,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Signup Year"
                 }
               },
-              "queryRef": "Billing Agreements.Signup Year",
+              "queryRef": "Customer and Subscriber Details.Signup Year",
               "nativeQueryRef": "Signup Year"
             }
           ]
@@ -221,7 +221,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Signup Year"

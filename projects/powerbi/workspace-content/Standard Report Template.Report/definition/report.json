@@ -39,7 +39,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -64,7 +64,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],

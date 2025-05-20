@@ -1,4 +1,8 @@
-table 'Customer Measures'
+/// This table contains measures related to customers, subscribers and their billing agreements.
+/// A customer is a person who has had at least one order in the selected period.
+/// A subscriber does not need to have had an order, but has a billing agreement.
+/// The customer journey model is not implemented yet, but once it is, measures related to the customer journey can be found here.
+table 'Customer and Subscriber Measures'
 	isHidden
 	lineageTag: d05b49b2-fb42-46e1-9a85-76404c8a551e
 
@@ -6,7 +10,7 @@ table 'Customer Measures'
 	/// It will be a count of changes related to agreements, and represent the agreements after the change.
 	/// The change could be anything, e.g. status, preferences, subscribed products, loyalty level etc.
 	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
-	measure 'Number of Agreement Changes to Filtered State' = COUNTROWS('Customer Measures')
+	measure 'Number of Agreement Changes to Filtered State' = COUNTROWS('Customer and Subscriber Measures')
 		formatString: #,0
 		isHidden
 		lineageTag: 098c92f8-30b6-4563-a7ec-b556839eceef
@@ -17,9 +21,9 @@ table 'Customer Measures'
 	/// Since the change could be anything, the measure is hidden and should be used to create other measures where the change is specified.
 	measure 'Number of Agreement Changes from Filtered State' =
 			CALCULATE(
-				COUNTROWS('Customer Measures'),
-				USERELATIONSHIP('Customer Measures'[fk_dim_billing_agreements_previous_version],'Billing Agreements'[pk_dim_billing_agreements]),
-				USERELATIONSHIP('Customer Measures'[fk_dim_preference_combinations_previous_version],'Preference Combinations'[pk_dim_preference_combinations])
+				COUNTROWS('Customer and Subscriber Measures'),
+				USERELATIONSHIP('Customer and Subscriber Measures'[fk_dim_billing_agreements_previous_version],'Customer and Subscriber Details'[pk_dim_billing_agreements]),
+				USERELATIONSHIP('Customer and Subscriber Measures'[fk_dim_preference_combinations_previous_version],'Preference Combinations'[pk_dim_preference_combinations])
 			)
 		formatString: #,0
 		isHidden
@@ -30,7 +34,7 @@ table 'Customer Measures'
 	measure 'Number of Active Subscribers' =
 			CALCULATE(
 				[Number of Subscribers All Statuses],
-				'Billing Agreements'[Billing Agreement Status]="Active"
+				'Customer and Subscriber Details'[Billing Agreement Status]="Active"
 			)
 		formatString: #,0
 		displayFolder: Active Subscribers
@@ -92,11 +96,11 @@ table 'Customer Measures'
 		displayFolder: Active Subscribers
 
 	/// Number of subscribers included all selected statuses (also included deleted if not filtered otherwise).
-	/// This should be used together with the [Billing Agreement Status] filter in the [Billing Agreements] table.
+	/// This should be used together with the [Billing Agreement Status] filter in the [Customer and Subscriber Details] table.
 	/// It will count the number of subscribers at the end of the selected period.
 	measure 'Number of Subscribers All Statuses' =
-			VAR OneStatus = HASONEVALUE('Billing Agreements'[Billing Agreement Status])
-			VAR StatusIsBlank = ISBLANK(SELECTEDVALUE('Billing Agreements'[Billing Agreement Status]))
+			VAR OneStatus = HASONEVALUE('Customer and Subscriber Details'[Billing Agreement Status])
+			VAR StatusIsBlank = ISBLANK(SELECTEDVALUE('Customer and Subscriber Details'[Billing Agreement Status]))
 			RETURN
 			IF(
 			    OneStatus && StatusIsBlank,
@@ -175,10 +179,10 @@ table 'Customer Measures'
 	/// Number of customers having their first delivery on the corresponding menu week.
 	measure 'Number of Customers with First Delivery' =
 			CALCULATE(
-				COUNTROWS('Customer Measures'),
-				'Customer Measures'[has_first_delivery]=TRUE(),
+				COUNTROWS('Customer and Subscriber Measures'),
+				'Customer and Subscriber Measures'[has_first_delivery]=TRUE(),
 				USERELATIONSHIP(
-					'Customer Measures'[fk_dim_dates_first_menu_week],
+					'Customer and Subscriber Measures'[fk_dim_dates_first_menu_week],
 					'Dates'[pk_dim_dates]
 				)
 			)
@@ -247,8 +251,8 @@ table 'Customer Measures'
 				ISFILTERED(Dates[Financial Week]),
 				BLANK(),
 				CALCULATE(
-					COUNTROWS('Customer Measures'),
-					'Customer Measures'[is_signup]=TRUE()
+					COUNTROWS('Customer and Subscriber Measures'),
+					'Customer and Subscriber Measures'[is_signup]=TRUE()
 				)
 			)
 		formatString: #,0
@@ -340,44 +344,44 @@ table 'Customer Measures'
 	/// and was in another status at the end of the selected period.
 	measure 'Number of Subscribers Changed from Active' =
 			SUMX(
-				VALUES('Billing Agreements'[Agreement Id]),
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
 
 				VAR min_updated_at = CALCULATE(
-					MIN('Customer Measures'[updated_at]),
-					'Customer Measures'[has_updated_status]=TRUE(),
-					ALL('Customer Measures'[updated_at]),
-					'Customer Measures'[updated_at]>MIN('Dates'[Date])
+					MIN('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+					ALL('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[updated_at]>MIN('Dates'[Date])
 				)
 
 				VAR max_updated_at = CALCULATE(
-					MAX('Customer Measures'[updated_at]),
-					'Customer Measures'[has_updated_status]=TRUE(),
-					ALL('Customer Measures'[updated_at]),
-					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
+					MAX('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+					ALL('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[updated_at]<=MAX('Dates'[Date])
 				)
 
 				VAR CountStart =
 					CALCULATE(
-						COUNTROWS('Customer Measures'),
-						'Customer Measures'[has_updated_status]=TRUE(),
-						'Customer Measures'[updated_at] = min_updated_at,
+						COUNTROWS('Customer and Subscriber Measures'),
+						'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+						'Customer and Subscriber Measures'[updated_at] = min_updated_at,
 						USERELATIONSHIP(
-							'Customer Measures'[fk_dim_billing_agreements_previous_version],
-							'Billing Agreements'[pk_dim_billing_agreements]
+							'Customer and Subscriber Measures'[fk_dim_billing_agreements_previous_version],
+							'Customer and Subscriber Details'[pk_dim_billing_agreements]
 						),
 						USERELATIONSHIP(
-							'Customer Measures'[fk_dim_preference_combinations_previous_version],
+							'Customer and Subscriber Measures'[fk_dim_preference_combinations_previous_version],
 							'Preference Combinations'[pk_dim_preference_combinations]
 						),
-						'Billing Agreements'[Billing Agreement Status] = "Active"
+						'Customer and Subscriber Details'[Billing Agreement Status] = "Active"
 					)
 
 				VAR CountEnd =
 					CALCULATE(
-						COUNTROWS('Customer Measures'),
-						'Customer Measures'[has_updated_status]=TRUE(),
-						'Customer Measures'[updated_at] = max_updated_at,
-						'Billing Agreements'[Billing Agreement Status] <> "Active"
+						COUNTROWS('Customer and Subscriber Measures'),
+						'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+						'Customer and Subscriber Measures'[updated_at] = max_updated_at,
+						'Customer and Subscriber Details'[Billing Agreement Status] <> "Active"
 					)
 
 				RETURN
@@ -445,44 +449,44 @@ table 'Customer Measures'
 	/// but was active at the end of the selected period.
 	measure 'Number of Subscribers Changed to Active' =
 			SUMX(
-				VALUES('Billing Agreements'[Agreement Id]),
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
 
 				VAR min_updated_at = CALCULATE(
-					MIN('Customer Measures'[updated_at]),
-					'Customer Measures'[has_updated_status]=TRUE(),
-					ALL('Customer Measures'[updated_at]),
-					'Customer Measures'[updated_at]>MIN('Dates'[Date])
+					MIN('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+					ALL('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[updated_at]>MIN('Dates'[Date])
 				)
 
 				VAR max_updated_at = CALCULATE(
-					MAX('Customer Measures'[updated_at]),
-					'Customer Measures'[has_updated_status]=TRUE(),
-					ALL('Customer Measures'[updated_at]),
-					'Customer Measures'[updated_at]<=MAX('Dates'[Date])
+					MAX('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+					ALL('Customer and Subscriber Measures'[updated_at]),
+					'Customer and Subscriber Measures'[updated_at]<=MAX('Dates'[Date])
 				)
 
 				VAR CountStart =
 					CALCULATE(
-						COUNTROWS('Customer Measures'),
-						'Customer Measures'[has_updated_status]=TRUE(),
-						'Customer Measures'[updated_at] = min_updated_at,
+						COUNTROWS('Customer and Subscriber Measures'),
+						'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+						'Customer and Subscriber Measures'[updated_at] = min_updated_at,
 						USERELATIONSHIP(
-							'Customer Measures'[fk_dim_billing_agreements_previous_version],
-							'Billing Agreements'[pk_dim_billing_agreements]
+							'Customer and Subscriber Measures'[fk_dim_billing_agreements_previous_version],
+							'Customer and Subscriber Details'[pk_dim_billing_agreements]
 						),
 						USERELATIONSHIP(
-							'Customer Measures'[fk_dim_preference_combinations_previous_version],
+							'Customer and Subscriber Measures'[fk_dim_preference_combinations_previous_version],
 							'Preference Combinations'[pk_dim_preference_combinations]
 						),
-						'Billing Agreements'[Billing Agreement Status] <> "Active"
+						'Customer and Subscriber Details'[Billing Agreement Status] <> "Active"
 					)
 
 				VAR CountEnd =
 					CALCULATE(
-						COUNTROWS('Customer Measures'),
-						'Customer Measures'[has_updated_status]=TRUE(),
-						'Customer Measures'[updated_at] = max_updated_at,
-						'Billing Agreements'[Billing Agreement Status] = "Active"
+						COUNTROWS('Customer and Subscriber Measures'),
+						'Customer and Subscriber Measures'[has_updated_status]=TRUE(),
+						'Customer and Subscriber Measures'[updated_at] = max_updated_at,
+						'Customer and Subscriber Details'[Billing Agreement Status] = "Active"
 					)
 
 				RETURN
@@ -550,9 +554,9 @@ table 'Customer Measures'
 	/// If the customer switched out dishes in a week, but never placed the order for the week, it will not be counted as a swap.
 	measure 'Number of Swapping Customers' =
 						CALCULATE(
-			    			[Number of Ordering Customers],
+			    			[Number of Customers],
 			    			FILTER(
-			    			    SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+			    			    SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 			    			    'Order Measures'[Number of Orders with Swaps] > 0
 			    			)
 						)
@@ -617,8 +621,8 @@ table 'Customer Measures'
 	/// Number of upgrades in the loyalty program. Measure is calculated here but displayed under 'Loyalty Measures'.
 	measure 'Number of Loyalty Upgrades' =
 			CALCULATE(
-				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
-				'Customer Measures'[has_upgraded_loyalty_level]
+				DISTINCTCOUNT('Customer and Subscriber Measures'[billing_agreement_id]),
+				'Customer and Subscriber Measures'[has_upgraded_loyalty_level]
 			)
 		isHidden
 		formatString: #,0
@@ -627,106 +631,106 @@ table 'Customer Measures'
 	/// Number of downgrades in the loyalty program. Measure is calculated here but displayed under 'Loyalty Measures'.
 	measure 'Number of Loyalty Downgrades' =
 			CALCULATE(
-				DISTINCTCOUNT('Customer Measures'[billing_agreement_id]),
-				'Customer Measures'[has_downgraded_loyalty_level]
+				DISTINCTCOUNT('Customer and Subscriber Measures'[billing_agreement_id]),
+				'Customer and Subscriber Measures'[has_downgraded_loyalty_level]
 			)
 		isHidden
 		formatString: #,0
 		lineageTag: number-of-downgrades
 
 	/// The number of customers with an order in the selected period
-	measure 'Number of Ordering Customers' =
+	measure 'Number of Customers' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id]),
-				'Order Types'[Order Type Name] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status Name] IN {"Finished", "Processing"},
+				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
 				USERELATIONSHIP(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements Deviation'[pk_dim_billing_agreements]
 				),
 				CROSSFILTER(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
-					'Billing Agreements'[pk_dim_billing_agreements],
+					'Customer and Subscriber Details'[pk_dim_billing_agreements],
 					None
 				)
 			)
 		formatString: #,0
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 		lineageTag: 3571b433-1c30-49d4-9a71-58d46e446c50
 
 	/// Number of customers who have placed an order in the same period last year.
-	measure 'Number of Ordering Customers (PY)' =
+	measure 'Number of Customers (PY)' =
 			CALCULATE(
-				[Number of Ordering Customers],
+				[Number of Customers],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
-	/// % change in number of ordering customers
+	/// % change in number of Customers
 	/// comparing current period to same period last year
 	/// (CY-PY)/PY
-	measure 'Number of Ordering Customers (YOY%)' =
+	measure 'Number of Customers (YOY%)' =
 			CALCULATE(
-				[Number of Ordering Customers],
+				[Number of Customers],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
 	/// Number of customers (with at least one order) who have had fewer than x orders, in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Number of Customers with Fewer than X Orders' =
 			CALCULATE(
-				[Number of Ordering Customers],
+				[Number of Customers],
 				FILTER(
-					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 					[Number of Orders] < '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
 		formatString: #,0
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
 	/// Number of customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Number of Customers with X or More Orders' =
 			CALCULATE(
-				[Number of Ordering Customers],
+				[Number of Customers],
 				FILTER(
-					SELECTCOLUMNS('Billing Agreements',[Agreement Id]),
+					SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
 					[Number of Orders] >= '(Param) Number of Orders per Customer Target'[Number of Orders per Customer Target Value]
 				)
 			)
 		formatString: #,0
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
 	/// Share of customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Share of Customers with Fewer than X Orders' =
 			DIVIDE(
 				[Number of Customers with Fewer than X Orders],
-				[Number of Ordering Customers],
+				[Number of Customers],
 				BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
 	/// Share of customers who have had x or more orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Share of Customers with X or More Orders' =
 			DIVIDE(
 				[Number of Customers with X or More Orders],
-				[Number of Ordering Customers],
+				[Number of Customers],
 				BLANK()
 			)
 		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Ordering Customers
+		displayFolder: Customers
 
 	/// Number of Active Subscribers that have a grocery subscription
 	measure 'Number of Active Grocery Subscribers' =
 			CALCULATE(
 				[Number of Active Subscribers],
-				'Billing Agreements'[has_grocery_subscription]=true
+				'Customer and Subscriber Details'[has_grocery_subscription]=true
 			)
 		formatString: #,0
 		displayFolder: Grocery Subscribers
@@ -758,8 +762,8 @@ table 'Customer Measures'
 	/// look at [Order Measures] and [Number of Orders with Subscribed Groceries].
 	measure 'Number of Ordering Grocery Subscribers' =
 			CALCULATE(
-				[Number of Ordering Customers],
-				'Billing Agreements'[has_grocery_subscription]=true
+				[Number of Customers],
+				'Customer and Subscriber Details'[has_grocery_subscription]=true
 			)
 		formatString: #,0
 		displayFolder: Grocery Subscribers
@@ -778,7 +782,7 @@ table 'Customer Measures'
 	/// (CY-PY)/PY
 	measure 'Number of Ordering Grocery Subscribers (YOY%)' =
 			CALCULATE(
-				[Number of Ordering Customers],
+				[Number of Customers],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
@@ -786,11 +790,11 @@ table 'Customer Measures'
 
 
 	/// Number of Grocery Subscribers including all selected agreement statuses (also included deleted).
-	/// This should be used together with the [Billing Agreement Status] filter in the [Billing Agreements] table.
+	/// This should be used together with the [Billing Agreement Status] filter in the [Customer and Subscriber Details] table.
 	measure 'Number of Grocery Subscribers All Statuses' =
             CALCULATE(
                 [Number of Subscribers All Statuses],
-                'Billing Agreements'[has_grocery_subscription]=true
+                'Customer and Subscriber Details'[has_grocery_subscription]=true
             )
 		formatString: #,0
 		displayFolder: Grocery Subscribers
@@ -982,7 +986,7 @@ table 'Customer Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_loyalty_seasons
 
-	partition 'Customer Measures' = m
+	partition 'Customer and Subscriber Measures' = m
 		mode: directQuery
 		source =
 				let

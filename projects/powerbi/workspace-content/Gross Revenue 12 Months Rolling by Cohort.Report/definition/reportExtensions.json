@@ -3,7 +3,7 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Billing Agreements",
+      "name": "Customer and Subscriber Details",
       "measures": [
         {
           "name": "Rolling Gross Revenue",
@@ -30,7 +30,7 @@
             "measures": [
               {
                 "schema": "extension",
-                "entity": "Billing Agreements",
+                "entity": "Customer and Subscriber Details",
                 "name": "Rolling Gross Revenue"
               }
             ]
@@ -49,12 +49,12 @@
             "measures": [
               {
                 "schema": "extension",
-                "entity": "Billing Agreements",
+                "entity": "Customer and Subscriber Details",
                 "name": "Rolling Gross Revenue"
               },
               {
                 "schema": "extension",
-                "entity": "Billing Agreements",
+                "entity": "Customer and Subscriber Details",
                 "name": "Total Last 12 Months Gross Revenue"
               }
             ]

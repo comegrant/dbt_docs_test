@@ -309,7 +309,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Advanced",
@@ -336,7 +336,7 @@
                               "Source": "b"
                             }
                           },
-                          "Property": "Brand Name"
+                          "Property": "Brand"
                         }
                       },
                       "Right": {

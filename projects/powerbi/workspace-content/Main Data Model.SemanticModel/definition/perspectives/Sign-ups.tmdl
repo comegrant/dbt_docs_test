@@ -1,6 +1,6 @@
 perspective Sign-ups
 
-	perspectiveTable 'Customer Measures'
+	perspectiveTable 'Customer and Subscriber Measures'
 
 		perspectiveMeasure 'Number of Sign-ups'
 		perspectiveMeasure 'Number of Sign-ups (PY)'
@@ -11,7 +11,7 @@ perspective Sign-ups
 
 	perspectiveTable 'Brands'
 
-		perspectiveColumn 'Brand Name'
+		perspectiveColumn 'Brand'
 
 	perspectiveTable 'Dates'
 

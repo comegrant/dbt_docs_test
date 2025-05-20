@@ -23,10 +23,10 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
+              "queryRef": "Brands.Brand",
               "nativeQueryRef": "Brand",
               "active": true,
               "displayName": "Brand"
@@ -84,7 +84,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "filter": {
@@ -110,7 +110,7 @@
                                 "Source": "c"
                               }
                             },
-                            "Property": "Brand Name"
+                            "Property": "Brand"
                           }
                         }
                       ],

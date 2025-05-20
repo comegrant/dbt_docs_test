@@ -99,13 +99,13 @@
                   "Expression": {
                     "SourceRef": {
                       "Schema": "extension",
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "_Local Number of Active Customers % Diff PY"
                 }
               },
-              "queryRef": "Customer Measures._Temp_Anna Number of Customers % Diff PY",
+              "queryRef": "Customer and Subscriber Measures._Temp_Anna Number of Customers % Diff PY",
               "nativeQueryRef": "% Diff PY",
               "displayName": "% Diff PY"
             }
@@ -118,13 +118,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Active Subscribers"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Subscribers",
+              "queryRef": "Customer and Subscriber Measures.Number of Active Subscribers",
               "nativeQueryRef": "Number of Active Subscribers"
             },
             {
@@ -132,13 +132,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer Measures"
+                      "Entity": "Customer and Subscriber Measures"
                     }
                   },
                   "Property": "Number of Active Subscribers (PY)"
                 }
               },
-              "queryRef": "Customer Measures.Number of Active Subscribers (PY)",
+              "queryRef": "Customer and Subscriber Measures.Number of Active Subscribers (PY)",
               "nativeQueryRef": "Number of Active Subscribers (PY)"
             }
           ]
@@ -401,7 +401,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -420,7 +420,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Billing Agreement Status"

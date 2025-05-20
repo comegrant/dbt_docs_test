@@ -30,7 +30,7 @@
         {
           "name": "Number of Consumers",
           "dataType": "Double",
-          "expression": "CALCULATE(\n    SUM('Order Measures'[portions])\n    , 'Products'[Product Type Name] = \"Mealbox\"\n)",
+          "expression": "CALCULATE(\n    SUM('Order Measures'[portions])\n    , 'Products'[Product Type] = \"Mealbox\"\n)",
           "formatString": "#,0"
         },
         {
@@ -53,7 +53,7 @@
         {
           "name": "_local Number of Ordered Recipes",
           "dataType": "Double",
-          "expression": "CALCULATE(\n    SUM('Order Measures'[meals])\n    , 'Products'[Product Type Name] = \"Mealbox\"\n)",
+          "expression": "CALCULATE(\n    SUM('Order Measures'[meals])\n    , 'Products'[Product Type] = \"Mealbox\"\n)",
           "formatString": "#,0"
         },
         {

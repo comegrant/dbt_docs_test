@@ -19,7 +19,7 @@ table 'Order Statuses'
 	/// An order in status 'Created' exists only in CMS. 
 	/// An order in status 'Processing' means it has been sent to logistics. 
 	/// An order in status 'Finished' means the order has been completed.
-	column 'Order Status Name'
+	column 'Order Status'
 		dataType: string
 		lineageTag: 8fbab1fb-dc08-4292-b902-71c8c29cf93c
 		summarizeBy: none

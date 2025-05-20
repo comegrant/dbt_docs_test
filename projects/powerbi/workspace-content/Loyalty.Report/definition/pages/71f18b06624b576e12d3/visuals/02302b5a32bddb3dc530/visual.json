@@ -104,13 +104,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Loyalty Level Number"
                 }
               },
-              "queryRef": "Billing Agreements.Loyalty Level Number",
+              "queryRef": "Customer and Subscriber Details.Loyalty Level Number",
               "nativeQueryRef": "Loyalty Level Number",
               "active": true
             }
@@ -142,7 +142,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Billing Agreements"
+                    "Entity": "Customer and Subscriber Details"
                   }
                 },
                 "Property": "Loyalty Level Number"
@@ -161,14 +161,14 @@
         "levels": [
           {
             "queryRefs": [
-              "Billing Agreements.Loyalty Level Number"
+              "Customer and Subscriber Details.Loyalty Level Number"
             ],
             "identityKeys": [
               {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Billing Agreements"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
                   "Property": "Loyalty Level Number"
@@ -248,7 +248,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Billing Agreements"
+                "Entity": "Customer and Subscriber Details"
               }
             },
             "Property": "Loyalty Level Number"

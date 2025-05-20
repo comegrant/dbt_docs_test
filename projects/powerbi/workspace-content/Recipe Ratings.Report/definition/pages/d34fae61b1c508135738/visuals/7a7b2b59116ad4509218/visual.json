@@ -57,11 +57,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -214,7 +214,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -239,7 +239,7 @@
                             "Source": "b"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],

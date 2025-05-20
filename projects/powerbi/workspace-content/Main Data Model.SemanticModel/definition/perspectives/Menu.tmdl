@@ -6,7 +6,7 @@ perspective Menu
 
 	perspectiveTable 'Brands'
 
-		perspectiveColumn 'Brand Name'
+		perspectiveColumn 'Brand'
 
 	perspectiveTable 'Dates'
 

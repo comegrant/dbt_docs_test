@@ -23,10 +23,10 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Type Name"
+                  "Property": "Product Type"
                 }
               },
-              "queryRef": "Products.Product Type Name",
+              "queryRef": "Products.Product Type",
               "nativeQueryRef": "Product Type",
               "active": true,
               "displayName": "Product Type"
@@ -74,7 +74,7 @@
                                   "Source": "p"
                                 }
                               },
-                              "Property": "Product Type Name"
+                              "Property": "Product Type"
                             }
                           }
                         ],
@@ -133,7 +133,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Estimations"
+                "Entity": "Active Baskets"
               }
             },
             "Property": "Number of Units in Baskets if Cutoff is Now"
@@ -145,7 +145,7 @@
           "From": [
             {
               "Name": "e",
-              "Entity": "Estimations",
+              "Entity": "Active Baskets",
               "Type": 0
             }
           ],

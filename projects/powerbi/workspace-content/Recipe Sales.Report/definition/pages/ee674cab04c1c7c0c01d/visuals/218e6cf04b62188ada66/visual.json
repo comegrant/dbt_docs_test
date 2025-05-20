@@ -861,7 +861,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Type Name"
+            "Property": "Product Type"
           }
         },
         "type": "Categorical",
@@ -886,7 +886,7 @@
                             "Source": "p"
                           }
                         },
-                        "Property": "Product Type Name"
+                        "Property": "Product Type"
                       }
                     }
                   ],

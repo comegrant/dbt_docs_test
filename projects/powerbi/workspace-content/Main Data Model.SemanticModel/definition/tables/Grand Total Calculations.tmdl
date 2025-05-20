@@ -12,7 +12,7 @@
 /// Dimensions supported:
 /// - Recipes
 /// - Taxonomies
-/// - Billing Agreements
+/// - Customer and Subscriber Details
 /// - Preferences
 /// - Preference Combinations
 /// - Periods Since First Menu Week
@@ -114,38 +114,38 @@ table 'Grand Total Calculations'
             	)
             formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-        calculationItem 'All Billing Agreements' =
+        calculationItem 'All Customer and Subscriber Details' =
             	CALCULATE(
             	    SELECTEDMEASURE(),
-            	    REMOVEFILTERS('Billing Agreements')
+            	    REMOVEFILTERS('Customer and Subscriber Details')
             	)
 
-        calculationItem 'Other Billing Agreements' =
+        calculationItem 'Other Customer and Subscriber Details' =
             	CALCULATE(
             	    SELECTEDMEASURE(),
-            	    REMOVEFILTERS('Billing Agreements')
+            	    REMOVEFILTERS('Customer and Subscriber Details')
             	) -
             	SELECTEDMEASURE()
 
-        calculationItem '% Selected Billing Agreements' =
+        calculationItem '% Selected Customer and Subscriber Details' =
             	DIVIDE(
             	    SELECTEDMEASURE(),
             	    CALCULATE(
             	        SELECTEDMEASURE(),
-            	        'Grand Total Calculations'[Grand Total Calculations] = "All Billing Agreements"
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Customer and Subscriber Details"
             	    )
             	)
             formatStringDefinition = "0.00%;-0.00%;0.00%"
 
-        calculationItem '% Other Billing Agreements' =
+        calculationItem '% Other Customer and Subscriber Details' =
             	DIVIDE(
             	    CALCULATE(
             	        SELECTEDMEASURE(),
-            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Billing Agreements"
+            	        'Grand Total Calculations'[Grand Total Calculations] = "Other Customer and Subscriber Details"
             	    ),
             	    CALCULATE(
             	        SELECTEDMEASURE(),
-            	        'Grand Total Calculations'[Grand Total Calculations] = "All Billing Agreements"
+            	        'Grand Total Calculations'[Grand Total Calculations] = "All Customer and Subscriber Details"
             	    )
             	)
             formatStringDefinition = "0.00%;-0.00%;0.00%"

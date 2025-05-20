@@ -7,7 +7,7 @@ table 'Loyalty Measures'
 	/// If you are looking at this measure per week, 1 upgrade represents 1 customer.
 	/// If you are looking at this per period which is longer than a week (e.g. per month), it is possible that the same customer is counted more than once, as they could have been upgraded more than once in the same month.
 	measure 'Number of Loyalty Level Upgrades' =
-				'Customer Measures'[Number of Loyalty Upgrades]
+				'Customer and Subscriber Measures'[Number of Loyalty Upgrades]
 		isHidden
 		formatString: #,0
 		lineageTag: number-of-subscribers-upgraded-loyalty-level
@@ -16,7 +16,7 @@ table 'Loyalty Measures'
 	/// If you are looking at this measure per week, 1 downgrade represents 1 customer.
 	/// If you are looking at this per period which covers multiple loyalty seasons, it is possible that the same customer is counted more than once, as they could have been downgraded on multiple occassions.
 	measure 'Number of Loyalty Level Downgrades' =
-				'Customer Measures'[Number of Loyalty Downgrades]
+				'Customer and Subscriber Measures'[Number of Loyalty Downgrades]
 		isHidden
 		formatString: #,0
 		lineageTag: number-of-subscribers-downgraded-loyalty-level
@@ -25,7 +25,7 @@ table 'Loyalty Measures'
 	measure 'Number of Loyalty Orders' =
 			CALCULATE(
 				DISTINCTCOUNT('Loyalty Measures'[loyalty_order_id]),
-				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		isHidden
@@ -37,7 +37,7 @@ table 'Loyalty Measures'
 	measure 'Number of Units of Product Purchased with Loyalty Points' =
 			CALCULATE(
 				SUM('Loyalty Measures'[product_variation_quantity]),
-				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		isHidden
@@ -55,7 +55,7 @@ table 'Loyalty Measures'
 	measure 'Number of Loyalty Points Spent' =
 			CALCULATE(
 				SUM('Loyalty Measures'[total_point_price]),
-				'Loyalty Order Statuses'[Loyalty Order Status Name] IN {"Finished", "Processing"}
+				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
 		isHidden

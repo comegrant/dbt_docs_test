@@ -13,7 +13,7 @@
             "x": 748.51051978077749,
             "y": 711.9295072021655
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
@@ -181,7 +181,7 @@
             "x": 2880.6124506488472,
             "y": 87.2940029749791
           },
-          "nodeIndex": "Estimations",
+          "nodeIndex": "Active Baskets",
           "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
           "size": {
             "height": 300,
@@ -297,7 +297,7 @@
             "x": 4692.6883874300147,
             "y": 458.10810144268748
           },
-          "nodeIndex": "Customer Measures",
+          "nodeIndex": "Customer and Subscriber Measures",
           "nodeLineageTag": "d05b49b2-fb42-46e1-9a85-76404c8a551e",
           "size": {
             "height": 300,
@@ -455,7 +455,7 @@
             "x": 422.91920790585016,
             "y": 1021.9372975194528
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
@@ -574,7 +574,7 @@
             "x": 330.67780196268427,
             "y": 256.75317317508711
           },
-          "nodeIndex": "Estimations",
+          "nodeIndex": "Active Baskets",
           "nodeLineageTag": "945865dc-66a2-4d6b-ba62-6f324c4bc648",
           "size": {
             "height": 300,
@@ -587,7 +587,7 @@
             "x": 10,
             "y": 26.240761281638811
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
@@ -661,7 +661,7 @@
           "zIndex": 0
         }
       ],
-      "name": "Estimations",
+      "name": "Active Baskets",
       "zoomValue": 100,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
@@ -693,7 +693,7 @@
             "x": 10,
             "y": 242.94698960127261
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
@@ -760,7 +760,7 @@
             "x": 1109.7896101809283,
             "y": 410.61580025257035
           },
-          "nodeIndex": "Billing Agreements",
+          "nodeIndex": "Customer and Subscriber Details",
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,

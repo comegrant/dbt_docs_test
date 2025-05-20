@@ -23,11 +23,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Country Name"
+                  "Property": "Country"
                 }
               },
-              "queryRef": "Brands.Country Name",
-              "nativeQueryRef": "Country Name",
+              "queryRef": "Brands.Country",
+              "nativeQueryRef": "Country",
               "active": true
             }
           ]
@@ -73,7 +73,7 @@
                                   "Source": "b"
                                 }
                               },
-                              "Property": "Country Name"
+                              "Property": "Country"
                             }
                           }
                         ],
@@ -123,7 +123,7 @@
       ]
     },
     "syncGroup": {
-      "groupName": "Country Name",
+      "groupName": "Country",
       "fieldChanges": true,
       "filterChanges": true
     },

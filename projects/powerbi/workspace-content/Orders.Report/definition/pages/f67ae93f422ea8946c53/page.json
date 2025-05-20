@@ -17,7 +17,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -42,7 +42,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     }
                   ],
@@ -111,7 +111,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -357,7 +357,7 @@
                 "Entity": "Order Types"
               }
             },
-            "Property": "Order Type Name"
+            "Property": "Order Type"
           }
         },
         "type": "Categorical",
@@ -388,7 +388,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Type Name"
+            "Property": "Product Type"
           }
         },
         "type": "Categorical",

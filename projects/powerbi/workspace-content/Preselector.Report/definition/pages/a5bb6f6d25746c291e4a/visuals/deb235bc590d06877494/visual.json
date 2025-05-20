@@ -67,11 +67,11 @@
                       "Entity": "Brands"
                     }
                   },
-                  "Property": "Brand Name"
+                  "Property": "Brand"
                 }
               },
-              "queryRef": "Brands.Brand Name",
-              "nativeQueryRef": "Brand Name"
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
             }
           ]
         },
@@ -156,7 +156,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -198,7 +198,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -240,7 +240,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {
@@ -282,7 +282,7 @@
                             "Entity": "Brands"
                           }
                         },
-                        "Property": "Brand Name"
+                        "Property": "Brand"
                       }
                     },
                     "Right": {

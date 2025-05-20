@@ -97,7 +97,7 @@ table Products
 		annotation SummarizationSetBy = Automatic
 
 	/// The name of the product type, note that the Financial product type name is renamed to be Mealbox to avoid confusion when filtering
-	column 'Product Type Name'
+	column 'Product Type'
 		dataType: string
 		lineageTag: 456bd8d7-d4ac-46e9-b1f6-e96f873ff591
 		summarizeBy: none
@@ -106,7 +106,7 @@ table Products
 		annotation SummarizationSetBy = Automatic
 
 	/// The name of the product. Examples of product names are 'Favorittkassen', 'Avokado 1stk'
-	column 'Product Name'
+	column 'Product'
 		dataType: string
 		lineageTag: d0e82a8a-e75a-4798-8aa2-8c571e35d25b
 		summarizeBy: none
@@ -116,7 +116,7 @@ table Products
 
 	/// The status of the product as it appears in PSL.
 	/// The main statuses being 'Live' or 'Deleted'.
-	column 'Product Status Name'
+	column 'Product Status'
 		dataType: string
 		lineageTag: d2b6fc73-9a89-4c96-ba32-8a1872086041
 		summarizeBy: none
@@ -125,7 +125,7 @@ table Products
 		annotation SummarizationSetBy = Automatic
 
 	/// The name of the variation. Examples of variation names are: 'Matkasse 3 Dager 5 Porsjoner', 'Avokado 1stk'
-	column 'Product Variation Name'
+	column 'Product Variation'
 		dataType: string
 		lineageTag: 08c10034-50aa-4f58-b805-4fb3130f272b
 		summarizeBy: none

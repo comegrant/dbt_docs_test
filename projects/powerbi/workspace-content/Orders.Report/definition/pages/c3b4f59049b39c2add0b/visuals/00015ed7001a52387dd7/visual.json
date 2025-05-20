@@ -22,11 +22,11 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Name"
+                  "Property": "Product"
                 }
               },
-              "queryRef": "Products.Product Name",
-              "nativeQueryRef": "Product Name",
+              "queryRef": "Products.Product",
+              "nativeQueryRef": "Product",
               "active": true
             }
           ]
@@ -98,7 +98,7 @@
                                 "Source": "p"
                               }
                             },
-                            "Property": "Product Name"
+                            "Property": "Product"
                           }
                         },
                         "Right": {

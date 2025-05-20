@@ -527,7 +527,7 @@
                 "Entity": "Brands"
               }
             },
-            "Property": "Brand Name"
+            "Property": "Brand"
           }
         },
         "type": "Categorical",
@@ -638,7 +638,7 @@
                 "Entity": "Products"
               }
             },
-            "Property": "Product Type Name"
+            "Property": "Product Type"
           }
         },
         "type": "Categorical",

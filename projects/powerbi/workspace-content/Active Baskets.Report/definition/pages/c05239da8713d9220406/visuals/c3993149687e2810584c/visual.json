@@ -22,16 +22,16 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Estimations"
+                          "Entity": "Active Baskets"
                         }
                       },
-                      "Property": "Estimation generated at"
+                      "Property": "Active Baskets Generated At"
                     }
                   },
                   "Function": 4
                 }
               },
-              "queryRef": "Min(Estimations.Estimation generated at)",
+              "queryRef": "Min(Active Baskets.Active Baskets Generated At)",
               "nativeQueryRef": "Last Updated",
               "displayName": "Last Updated"
             }
@@ -47,10 +47,10 @@
                   "Column": {
                     "Expression": {
                       "SourceRef": {
-                        "Entity": "Estimations"
+                        "Entity": "Active Baskets"
                       }
                     },
-                    "Property": "Estimation generated at"
+                    "Property": "Active Baskets Generated At"
                   }
                 },
                 "Function": 4
