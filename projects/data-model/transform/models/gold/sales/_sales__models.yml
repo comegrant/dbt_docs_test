@@ -2260,6 +2260,7 @@ models:
     description: "Information about the compliancy between billing agreements and recipes"
     latest_version: 1
     config:
+      enabled: false
       alias: fact_recipe_billing_agreement_compliancy
       contract:
         enforced: true
