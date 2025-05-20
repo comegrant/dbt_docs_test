@@ -1,7 +1,7 @@
 {% macro generate_data_test_yaml(column_name, column_type) %}
     {% set tests = '' %}
 
-    {% if '_id' in column_name or 'pk' in column_name %}
+    {% if 'pk_' in column_name %}
         {% set tests = 
             "        constraints:\n" ~
             "          - type: primary_key\n" ~ 
@@ -11,11 +11,22 @@
             "          - unique\n" ~
             "          - not_null" 
         %}
-        
-    {% elif 'fk' in column_name %}
+
+    {% elif '_id' in column_name %}
+        {% set tests = 
+            "        data_tests:\n" ~
+            "          - unique\n" ~
+            "          - not_null" 
+        %}
+
+    {% elif 'fk_' in column_name %}
         {% set related_model = column_name.replace('fk_', '') %}
         {% set pk_column = column_name.replace('fk', 'pk') %}
-        {% set tests = 
+        {% set tests =
+            "        constraints:\n" ~
+            "          - type: foreign_key\n" ~ 
+            "            to: ref('" ~ related_model ~ "')\n" ~
+            "            to_columns: [" ~ pk_column ~ "]\n" ~
             "        data_tests:\n" ~
             "          - not_null\n" ~
             "          - relationships:\n" ~
