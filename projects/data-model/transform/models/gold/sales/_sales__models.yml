@@ -3234,6 +3234,39 @@ models:
         data_tests:
           - not_null
 
+
+  - name: dim_addresses
+    description: "Contains the postal code and whether or not the address is geo restricted (0 if the address can receive deliveries, 1 otherwise) for all current shipping addresses."
+    columns: 
+      - name: pk_dim_addresses
+        data_type: string
+        description: "{{ doc('column__pk_dim_addresses') }}"
+        constraints:
+          - type: primary_key
+        data_tests:
+          - not_null
+          - unique
+      
+      - name: shipping_address_id
+        data_type: string
+        description: "{{ doc('column__shipping_address_id') }}"
+        data_tests:
+          - not_null
+          - unique
+  
+      - name: postal_code
+        data_type: string
+        description: "{{ doc('column__postal_code') }}"
+        data_tests:
+          - not_null
+
+      - name: is_geo_restricted
+        data_type: boolean
+        description: "{{ doc('column__is_geo_restricted') }}"
+        data_tests:
+          - not_null
+
+
   - name: dim_discounts
     description: "Contains information on all discounts which customers can add to their account"
     latest_version: 1

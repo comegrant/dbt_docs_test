@@ -1,8 +1,215 @@
-# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
-
-version: 2
-
 models:
+  - name: operations__timeblocks_blacklisted
+    description: Contains blacklisted timeblocks for given menu year and menu week.
+    columns:
+      - name: timeblocks_blacklisted_id
+        data_type: varchar(36)
+        description: "{{ doc('column__timeblocks_blacklisted_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: fallback_timeblock_id
+        data_type: int
+        description: "{{ doc('column__fallback_timeblock_id') }}"
+        
+
+  - name: operations__timeblocks_blacklisted_zones
+    description: Table of zones that belong to a blacklisted timeblock.
+    columns:
+      - name: timeblocks_blacklisted_id
+        data_type: varchar(36)
+        description: "{{ doc('column__timeblocks_blacklisted_id') }}"
+        data_tests:
+          - not_null
+
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__zones_postal_codes
+    description: Table that maps postal codes to delivery zones. Each row represents a postal code that is serviced by a specific delivery zone.
+    columns:
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+        data_tests:
+          - not_null
+
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: country_id
+        data_type: varchar(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        
+  - name: operations__postal_codes
+    description: Table of postal codes in the operations database.
+    data_tests:
+      - unique:
+          column_name: "(postal_code_id || '-' || country_id)"
+    columns:
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: country_id
+        data_type: varchar(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: postal_code
+        data_type: string
+        description: "{{ doc('column__postal_code') }}"
+        data_tests:
+          - not_null
+
+      - name: city_name
+        data_type: string
+        description: "{{ doc('column__city_name') }}"
+
+      - name: county_name
+        data_type: string
+        description: "{{ doc('column__county_name') }}"
+
+      - name: municipality_name
+        data_type: string
+        description: "{{ doc('column__municipality_name') }}"
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_postal_code') }}"
+        data_tests:
+          - not_null
+
+      - name: has_geofence
+        data_type: boolean
+        description: "{{ doc('column__has_geofence') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+
+  - name: operations__zones
+    description: > 
+      A zone is a logistics construct defining which postal codes will be covered by a certain transport company, for a certain timeblock, for a certain brand. 
+      Each zone has a period_from and period_to that determines the menu weeks for which it is valid. 
+      This table contains all zones in the operations database.
+    columns:
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: transport_company_id
+        data_type: int
+        description: "{{ doc('column__transport_company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_zone') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year_week_from
+        data_type: int
+        description: "{{ doc('column__menu_year_week_from_zones') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year_week_to
+        data_type: int
+        description: "{{ doc('column__menu_year_week_to_zones') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        
   - name: operations__cases
     description: >
       Table containing info about cases. A case can be a redelivery or a complaint. 

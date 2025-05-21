@@ -1,0 +1,5 @@
+data_tests:
+  - name: postal_codes_have_correct_length
+    description: >
+      Test to ensure postal codes have the correct number of characters after cleaning.
+      

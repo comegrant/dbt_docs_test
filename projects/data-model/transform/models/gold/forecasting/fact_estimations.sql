@@ -30,29 +30,36 @@ products as (
         distinct estimation_generated_at
     from {{ this }}
     where is_latest_estimation = true
+
 )
 
 , estimations as (
+
     select
-    estimations.*
+        estimations.*
     from {{ ref('int_estimations') }} as estimations
     {% if is_incremental() %}
     inner join latest_estimation_in_fact
         -- We include the last estimation since we need to update the is_latest_estimation flag
         on estimations.estimation_generated_at >= latest_estimation_in_fact.estimation_generated_at
     {% endif %}
+
 )
 
 , latest_estimation_timestamp as (
+
     select
         company_id
         , max(estimation_generated_at) as latest_estimation_generated_at
     from estimations
     group by company_id
+
 )
 
 , billing_agreements as (
+
     select * from {{ ref('dim_billing_agreements') }}
+
 )
 
 , add_financial_date as (
@@ -74,6 +81,7 @@ products as (
         , billing_agreement_id
         , product_variation_id
         , billing_agreement_basket_deviation_origin_id
+        , shipping_address_id
         , estimation_generated_at
         , max(product_variation_quantity) as product_variation_quantity
 
@@ -101,6 +109,7 @@ products as (
         , handle_duplicates.billing_agreement_id
         , handle_duplicates.product_variation_id
         , handle_duplicates.billing_agreement_basket_deviation_origin_id
+        , handle_duplicates.shipping_address_id
         , handle_duplicates.estimation_generated_at
         , handle_duplicates.product_variation_quantity
         , case
@@ -116,6 +125,7 @@ products as (
         , md5(concat(handle_duplicates.product_variation_id,handle_duplicates.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , md5(handle_duplicates.shipping_address_id) as fk_dim_addresses
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , portions.pk_dim_portions as fk_dim_portions
 

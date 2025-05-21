@@ -716,9 +716,10 @@ The unique identifier for a specific menu week for a billing agreement basket. T
 {% enddocs %}
 
 
-{% docs column__timeblock %}
+{% docs column__timeblock_id_basket_scheduler %}
 
-The id of the timeblock as it would appear in the OPS system.
+The id of the timeblock if a customer has changed their timeblock for a particular week.
+Corresponds to a timeblock in operations__timeblocks. 
 
 {% enddocs %}
 
@@ -1025,6 +1026,27 @@ The name of the channel of the discount which is the first step in the discount 
 {% docs column__discount_coupon_type_id %}
 
 ...
+
+{% enddocs %}
+
+# Addresses
+{% docs column__shipping_address_id %}
+
+The id of the shipping address in the subscription of the billing agreement.
+
+{% enddocs %}
+
+{% docs column__postal_code_shipping_address %}
+
+The postal code of the shipping address as in cms.
+Postal codes have been transformed to ensure they have the correct length by appending leading zeroes where applicable.
+
+{% enddocs %}
+
+
+{% docs column__is_geo_restricted %}
+
+If the value is 0 then the address is valid and can have deliveries. If 1, it means deliveries cannot be made to this address.
 
 {% enddocs %}
 

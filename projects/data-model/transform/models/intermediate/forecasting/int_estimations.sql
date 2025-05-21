@@ -54,26 +54,21 @@ dates as (
 
 )
 
-, orders as (
+, addresses as (
 
-    select * from {{ref('cms__billing_agreement_orders')}}
+    select * from {{ ref('cms__addresses') }}
+
+)
+
+, timeblock_postal_code_blacklist as (
+
+    select * from {{ ref('int_upcoming_blacklisted_timeblocks_and_postal_codes') }}
+
 )
 
 , last_menu_week as (
 
-    select 
-    agreements.company_id
-    , max(menu_week_monday_date) as menu_week_monday_date
-    from orders
-    left join agreements
-        on orders.billing_agreement_id = agreements.billing_agreement_id
-    where 
-        order_type_id = '5F34860B-7E61-46A0-80F7-98DCDC53BA9E' -- Recurring
-        and order_status_id in (
-            '4508130E-6BA1-4C14-94A4-A56B074BB135' --Finished
-            , '38A5CC25-A639-4433-A8E6-43FB35DABFD9' --Processing
-        )
-    group by 1
+    select * from {{ ref('int_latest_menu_week_passed_cutoff') }}
 
 )
 
@@ -145,6 +140,8 @@ dates as (
         , baskets_with_company.company_id
         , baskets_with_company.basket_type_id
         , mealbox_baskets.basket_delivery_week_type_id
+        , mealbox_baskets.shipping_address_id
+        , mealbox_baskets.timeblock_id
 
     from baskets_with_company
     left join relevant_period
@@ -161,6 +158,9 @@ dates as (
     select 
     
     basket_and_period_joined.*
+    -- get shipping_address_id and/or timeblock_id in the mealbox_basket_scheduler if they exist else use the shipping_address_id and/or timeblock_id in the mealbox_basket
+    , coalesce(mealbox_basket_scheduler.shipping_address_id, basket_and_period_joined.shipping_address_id) as scheduled_shipping_address_id
+    , coalesce(mealbox_basket_scheduler.timeblock_id, basket_and_period_joined.timeblock_id) as scheduled_timeblock_id
     
     from basket_and_period_joined
     left join mealbox_basket_scheduler
@@ -178,6 +178,9 @@ dates as (
     select 
     
     basket_and_period_joined.*
+    -- get shipping_address_id and/or timeblock_id in the mealbox_basket_scheduler if they exist else use the shipping_address_id and/or timeblock_id in the mealbox_basket
+    , coalesce(mealbox_basket_scheduler.shipping_address_id, basket_and_period_joined.shipping_address_id) as scheduled_shipping_address_id
+    , coalesce(mealbox_basket_scheduler.timeblock_id, basket_and_period_joined.timeblock_id) as scheduled_timeblock_id
     
     from basket_and_period_joined
     left join mealbox_basket_scheduler
@@ -196,6 +199,9 @@ dates as (
     select 
     
     basket_and_period_joined.*
+    -- get shipping_address_id and/or timeblock_id in the mealbox_basket_scheduler if they exist else use the shipping_address_id and/or timeblock_id in the mealbox_basket 
+    , coalesce(mealbox_basket_scheduler.shipping_address_id, basket_and_period_joined.shipping_address_id) as scheduled_shipping_address_id
+    , coalesce(mealbox_basket_scheduler.timeblock_id, basket_and_period_joined.timeblock_id) as scheduled_timeblock_id
     
     from basket_and_period_joined
     left join mealbox_basket_scheduler
@@ -214,6 +220,9 @@ dates as (
     select 
     
     basket_and_period_joined.*
+    -- get shipping_address_id and/or timeblock_id in the mealbox_basket_scheduler if they exist else use the shipping_address_id and/or timeblock_id in the mealbox_basket
+    , coalesce(mealbox_basket_scheduler.shipping_address_id, basket_and_period_joined.shipping_address_id) as scheduled_shipping_address_id
+    , coalesce(mealbox_basket_scheduler.timeblock_id, basket_and_period_joined.timeblock_id) as scheduled_timeblock_id
     
     from basket_and_period_joined
     left join mealbox_basket_scheduler
@@ -244,6 +253,8 @@ dates as (
 
       deviations.*
     , basket_filtered_by_scheduler.billing_agreement_id
+    , basket_filtered_by_scheduler.scheduled_shipping_address_id
+    , basket_filtered_by_scheduler.scheduled_timeblock_id
     
     from deviations
     left join basket_filtered_by_scheduler
@@ -281,6 +292,8 @@ dates as (
         , baskets_without_deviations.company_id
         , '00000000-0000-0000-0000-000000000000' as billing_agreement_basket_deviation_origin_id
         , baskets_without_deviations.billing_agreement_id
+        , baskets_without_deviations.scheduled_shipping_address_id
+        , baskets_without_deviations.scheduled_timeblock_id
 
     from baskets_without_deviations
     left join basket_products
@@ -302,6 +315,8 @@ dates as (
         , baskets_with_company.company_id
         , deviations_filtered_by_basket.billing_agreement_basket_deviation_origin_id
         , deviations_filtered_by_basket.billing_agreement_id
+        , deviations_filtered_by_basket.scheduled_shipping_address_id
+        , deviations_filtered_by_basket.scheduled_timeblock_id
 
     from deviations_filtered_by_basket
     left join deviation_products
@@ -321,6 +336,37 @@ dates as (
 
 )
 
+, with_postal_codes_not_geo_restricted as (
+
+    select 
+        basket_and_deviations_unioned.*
+        , addresses.postal_code
+
+    from basket_and_deviations_unioned
+    left join addresses 
+        on basket_and_deviations_unioned.scheduled_shipping_address_id = addresses.shipping_address_id
+    where addresses.is_geo_restricted = 0 -- when this is 0, the address is able to receive deliveries
+
+)
+
+, baskets_in_timeblocks_not_blacklisted as (
+
+    select 
+        with_postal_codes_not_geo_restricted.*
+
+    from with_postal_codes_not_geo_restricted
+    left join timeblock_postal_code_blacklist 
+        on with_postal_codes_not_geo_restricted.scheduled_timeblock_id = timeblock_postal_code_blacklist.timeblock_id
+        and with_postal_codes_not_geo_restricted.menu_year = timeblock_postal_code_blacklist.menu_year
+        and with_postal_codes_not_geo_restricted.menu_week = timeblock_postal_code_blacklist.menu_week
+        and with_postal_codes_not_geo_restricted.company_id = timeblock_postal_code_blacklist.company_id
+        and with_postal_codes_not_geo_restricted.postal_code = timeblock_postal_code_blacklist.postal_code
+    where 
+        timeblock_postal_code_blacklist.timeblocks_blacklisted_id is null -- either the scheduled timeblock is not on the blacklist
+        or timeblock_postal_code_blacklist.fallback_timeblock_id is not null -- or there is a fallback timeblock
+
+)
+
 , with_timestamp as (
     select
 
@@ -332,10 +378,12 @@ dates as (
     , menu_week_monday_date
     , product_variation_id
     , product_variation_quantity
+    , scheduled_shipping_address_id as shipping_address_id
+    , postal_code
     , billing_agreement_basket_deviation_origin_id
     , '{{current_timestamp}}' as estimation_generated_at
 
-    from basket_and_deviations_unioned
+    from baskets_in_timeblocks_not_blacklisted
     
     -- If there are baskets with no subscribed products or deviations
     -- they will be included in the result set with null as product_variation_id

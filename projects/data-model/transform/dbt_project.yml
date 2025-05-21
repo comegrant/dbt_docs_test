@@ -114,6 +114,19 @@ vars:
  nutrient_id_processed_fruit_veg: 13
  nutrient_id_added_sugars: 14
  nutrient_id_added_salt: 15
+ countries:
+    norway:
+      country_id: '55BBF40F-3693-478E-948A-FB2321DB7771'
+      pickup_location_postal_code_id: 9876
+      postal_code_length: 4
+    sweden:
+      country_id: '4298F454-C79C-45E7-8FAF-3DDFE9440F46'
+      pickup_location_postal_code_id: 99999
+      postal_code_length: 5
+    denmark:
+      country_id: 'D08EA478-447C-4A66-B9EC-D6ABD3697C02'
+      pickup_location_postal_code_id: 1
+      postal_code_length: 4
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models

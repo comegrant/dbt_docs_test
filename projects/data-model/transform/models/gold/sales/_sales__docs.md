@@ -801,6 +801,13 @@ The end date of the loyalty period.
 
 {% enddocs %}
 
+# Dim Addresses
+{% docs column__pk_dim_addresses %}
+
+The unique key of each row in Dim Addresses.
+
+{% enddocs %}
+
 # Dim Discounts
 
 {% docs column__pk_dim_discounts %}

@@ -24,11 +24,12 @@ source as (
         , billing_agreement_basket_id
         , order_delivery_type as delivery_week_type_id
         , concat(billing_agreement_basket_id, cast(year as string), cast(week as string)) as billing_agreement_basket_menu_week_id
+        , shipping_address as shipping_address_id
 
         {# numerics #}
         , year as menu_year
         , week as menu_week
-        , timeblock
+        , timeblock as timeblock_id
 
         
         {# booleans #}

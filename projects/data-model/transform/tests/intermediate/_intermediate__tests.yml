@@ -4,3 +4,8 @@ data_tests:
   - name: unique__int_billing_agreement_preferences_unioned__billing_agreement_preferences_updated_id
     description: >
       Make sure that billing_agreement_preferences_updated_id in int_billing_agreement_preferences_unioned is unique.
+
+  - name: int_upcoming_blacklisted_timeblocks_and_postal_codes_uniqueness
+    description: >
+      Tests that the combination of columns timeblock_id + menu_year + menu_week + company_id + zone_id + postal_code is unique in int_blacklisted_timeblocks_and_postal_codes.
+      This to ensure there are no duplicates.

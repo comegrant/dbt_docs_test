@@ -73,6 +73,14 @@
         data_tests:
           - not_null
 
+      - name: shipping_address_id
+        data_type: string
+        description: "{{ doc('column__shipping_address_id') }}"
+      
+      - name: postal_code
+        data_type: string
+        description: "{{ doc('column__postal_code_shipping_address') }}"
+
       - name: product_variation_quantity
         data_type: int
         description: "{{ doc('column__estimations_product_variation_quantity') }}"
@@ -165,6 +173,10 @@
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
+
+      - name: fk_dim_addresses
+        data_type: string
+        description: "{{ doc('column__pk_dim_addresses') }}"
 
     versions:
       - v: 1

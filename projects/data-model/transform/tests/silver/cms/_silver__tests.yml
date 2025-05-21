@@ -4,3 +4,7 @@ data_tests:
   - name: loyalty_order_lines_points_match_order_total
     description: >
       Test to ensure that all loyalty order lines points sum to the total number of points on the order
+
+  - name: address_postal_codes_have_correct_length
+    description: >
+      Test to ensure that all postal codes have a valid number of characters

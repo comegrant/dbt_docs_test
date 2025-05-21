@@ -1,3 +1,97 @@
+# Timeblocks
+{% docs column__timeblock_id %}
+
+The ID of the timeblock. A timeblock describes a delivery window that consists of a day of the week and a time range during that day when deliveries can be made.
+
+{% enddocs %}
+
+# Timeblock Blacklist
+{% docs column__timeblocks_blacklisted_id %}
+
+The unique identifier for a blacklisted timeblock.
+
+{% enddocs %}
+
+{% docs column__fallback_timeblock_id %}
+
+The ID of the alternative timeblock to use when the primary timeblock is blacklisted.
+
+{% enddocs %}
+
+# Postal Codes
+{% docs column__postal_code_id %}
+
+ID of a postal code as it appears in operations database.
+
+{% enddocs %}
+
+{% docs column__postal_code %}
+
+Postal code as it would be read or written by a human.
+
+{% enddocs %}
+
+{% docs column__city_name %}
+
+The name of the city associated with this postal code.
+
+{% enddocs %}
+
+{% docs column__county_name %}
+
+The name of the county associated with this postal code.
+
+{% enddocs %}
+
+{% docs column__municipality_name %}
+
+The name of the municipality associated with this postal code.
+
+{% enddocs %}
+
+{% docs column__is_active_postal_code %}
+
+True if this postal code is currently active, false otherwise.
+
+{% enddocs %}
+
+{% docs column__has_geofence %}
+
+True if this postal code has an associated geofence, false otherwise.
+
+{% enddocs %}
+
+# Zones
+{% docs column__zone_id %}
+
+The unique identifier for a delivery zone.
+
+{% enddocs %}
+
+{% docs column__is_active_zone %}
+
+True if this zone is currently active, false otherwise.
+
+{% enddocs %}
+
+{% docs column__transport_company_id %}
+
+The unique identifier for a transport company that operates in this zone.
+
+{% enddocs %}
+
+{% docs column__menu_year_week_from_zones %}
+
+The first menu week that this zone is valid for, formatted as YYYYWW (ISO).
+
+{% enddocs %}
+
+{% docs column__menu_year_week_to_zones %}
+
+The last menu week that this zone is valid for, formatted as YYYYWW (ISO).
+
+{% enddocs %}
+
 # Cases
 
 {% docs column__case_id %}
