@@ -17,7 +17,6 @@ models:
         data_type: string
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -71,7 +70,6 @@ models:
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -268,7 +266,6 @@ models:
         data_type: string
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -303,7 +300,6 @@ models:
         description: "{{ doc('column__pk_dim_periods_since') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

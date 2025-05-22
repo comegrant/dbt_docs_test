@@ -168,7 +168,6 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__budget_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -299,7 +298,6 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__budget_type_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -362,7 +360,6 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__budget_segment_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -486,7 +483,6 @@ models:
         description: "{{ doc('column__budget_marketing_input_id') }}"
         constraints:
           - type: not_null
-          - type: unique
         data_tests:
           - not_null
           - unique

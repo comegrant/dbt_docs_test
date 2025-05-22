@@ -13,7 +13,6 @@
         description: "{{ doc('column__pk_fact_estimations') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -196,7 +195,6 @@
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

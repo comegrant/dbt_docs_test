@@ -11,7 +11,6 @@ models:
         description: "{{ doc('column__preference_updated_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -73,7 +72,6 @@ models:
         description: "{{ doc('column__event_id_segment') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -116,7 +114,6 @@ models:
         description: "{{ doc('column__event_id_segment') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

@@ -12,7 +12,6 @@ models:
         description: "{{ doc('column__purchase_order_line_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -107,7 +106,6 @@ models:
         description: "{{ doc('column__purchase_order_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

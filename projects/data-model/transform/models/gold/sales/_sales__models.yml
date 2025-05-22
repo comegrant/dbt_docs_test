@@ -15,7 +15,6 @@ models:
         description: "{{ doc('column__pk_fact_orders') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -576,7 +575,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_order_statuses') }}"
         constraints:
-          - type: unique
           - type: not_null
           - type: primary_key
         data_tests:
@@ -622,7 +620,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_order_types') }}"
         constraints:
-          - type: unique
           - type: not_null
           - type: primary_key
         data_tests:
@@ -674,7 +671,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
-          - type: unique
           - type: not_null
           - type: primary_key
         data_tests:
@@ -907,7 +903,6 @@ models:
         description: "{{ doc('column__pk_dim_preferences') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1025,7 +1020,6 @@ models:
         data_type: string
         description: "{{ doc('column__pk_bridge_billing_agreements_preferences') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1100,7 +1094,6 @@ models:
         description: "{{ doc('column__pk_fact_billing_agreement_updates') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1330,7 +1323,6 @@ models:
         description: "{{ doc('column__pk_fact_subscription_quiz') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1443,7 +1435,6 @@ models:
         description: "{{ doc('column__pk_dim_preselector_versions') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1519,7 +1510,6 @@ models:
         description: "{{ doc('column__pk_fact_preselector') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2274,7 +2264,6 @@ models:
         description: "{{ doc('column__pk_fact_recipe_billing_agreement_compliancy') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2455,7 +2444,6 @@ models:
         description: "{{ doc('column__pk_fact_billing_agreement_consents') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2585,7 +2573,6 @@ models:
         description: "{{ doc('column__pk_dim_consent_types') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2642,7 +2629,6 @@ models:
         description: "{{ doc('column__pk_fact_loyalty_orders') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2847,7 +2833,6 @@ models:
         description: "{{ doc('column__pk_dim_loyalty_order_statuses') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2886,7 +2871,6 @@ models:
         description: "{{ doc('column__pk_dim_preference_combinations') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - not_null
@@ -2975,7 +2959,6 @@ models:
         description: "{{ doc('column__pk_dim_loyalty_events') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -3015,7 +2998,6 @@ models:
         description: "{{ doc('column__pk_fact_loyalty_points') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -3281,7 +3263,6 @@ models:
         description: "{{ doc('column__pk_dim_discounts') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -3473,7 +3454,6 @@ models:
         description: "{{ doc('column__pk_dim_order_line_details') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -3508,7 +3488,6 @@ models:
         description: "{{ doc('column__pk_bridge_preference_combinations_preferences') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

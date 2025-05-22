@@ -13,7 +13,6 @@ models:
         description: "{{ doc('column__billing_agreement_order_discount_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -42,8 +41,6 @@ models:
       - name: discount_order_cancelled_relation_id
         data_type: varchar(36)
         description: "{{ doc('column__discount_order_cancelled_relation_id') }}"
-        constraints:
-          - type: unique
         data_tests:
           - unique
 
@@ -110,7 +107,6 @@ models:
         description: "{{ doc('column__discount_sub_category_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -120,7 +116,6 @@ models:
         data_type: string
         description: "{{ doc('column__discount_sub_category_name') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -163,7 +158,6 @@ models:
         description: "{{ doc('column__discount_channel_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -173,7 +167,6 @@ models:
         data_type: string
         description: "{{ doc('column__discount_channel_name') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -216,7 +209,6 @@ models:
         description: "{{ doc('column__discount_category_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -226,7 +218,6 @@ models:
         data_type: string
         description: "{{ doc('column__discount_category_name') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -273,7 +264,6 @@ models:
         description: "{{ doc('column__discount_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -608,7 +598,6 @@ models:
         description: "{{ doc('column__loyalty_event_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1823,7 +1812,6 @@ models:
         description: "{{ doc('column__preference_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -1899,7 +1887,6 @@ models:
         description: "{{ doc('column__preference_type_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2106,7 +2093,6 @@ models:
         description: "{{ doc('column__register_info_basket_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2116,7 +2102,6 @@ models:
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2154,7 +2139,6 @@ models:
         description: "{{ doc('column__register_info_product_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2479,7 +2463,6 @@ models:
         description: "{{ doc('column__consent_category_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -2533,7 +2516,6 @@ models:
         description: "{{ doc('column__consent_id') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique

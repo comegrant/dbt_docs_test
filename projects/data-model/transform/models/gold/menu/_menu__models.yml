@@ -15,7 +15,6 @@ models:
         description: "{{ doc('column__pk_dim_products') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -125,7 +124,6 @@ models:
         description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -135,7 +133,6 @@ models:
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -167,7 +164,6 @@ models:
         description: "{{ doc('column__pk_fact_recipe_reactions') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -177,7 +173,6 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__recipe_favorite_id') }}"
         constraints:
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -320,7 +315,6 @@ models:
         description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -484,7 +478,6 @@ models:
         description: "{{ doc('column__pk_dim_ingredients') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -563,7 +556,6 @@ models:
         description: "{{ doc('column__pk_dim_taxonomies') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -624,7 +616,6 @@ models:
         description: "{{ doc('column__pk_bridge_dim_recipes_dim_taxonomies') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -667,7 +658,6 @@ models:
         description: "{{ doc('column__pk_bridge_recipes_ingredients') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
@@ -740,7 +730,6 @@ models:
         description: "{{ doc('column__pk_fact_menus') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - not_null
@@ -975,7 +964,6 @@ models:
         description: "{{ doc('column__pk_dim_portions') }}"
         constraints:
           - type: primary_key
-          - type: unique
           - type: not_null
         data_tests:
           - unique
