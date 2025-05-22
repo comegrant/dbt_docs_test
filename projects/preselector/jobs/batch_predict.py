@@ -136,6 +136,7 @@ def strategies(requests: list[GenerateMealkitRequest], size: int | None = None) 
         f"Started with {len(requests)} requests, filtered it down to {len(reqs)}"
         f" with {len(ret_requests)} different combinations"
     )
+
     return reqs
 
 
