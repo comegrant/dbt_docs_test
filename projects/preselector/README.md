@@ -2,18 +2,19 @@
 
 The preselector project selects out the **optimal combination** of recipes through out a week.
 
+
 ## The Problem to solve
 
 Even though we recommend the default selection that a customer will get for a week, is this not a classical recommendation problem.
 This is due the the nature where the recommendation of the recipe $n$ is dependent on the recipes $0 \rightarrow n - 1$.
 
-Therefore, at the time of this writing is this more of an optimalisation problem then a ml problem, even tho a few of the optimalisation dimentions are outputs of other ml models.
+Therefore, at the time of this writing is this more of an optimalisation problem then a ml problem, even tho a few of the optimalisation dimensions are outputs of other ml models.
 
 ### The high-level concept
 
-This have lead to an approach where we do a bredth first search through a multi dimentional space.
+This have lead to an approach where we do a bredth first search through a multi dimensional space.
 
-Bellow is an image that tries to indicate how the pre-selector computes the different dimentions for all recipes and selects the closes one. And then goes through an iteritive process by adding one by one.
+Below is an image that tries to indicate how the pre-selector computes the different dimensions for all recipes and selects the closes one. And then goes through an iteritive process by adding one by one.
 
 ![Preselector Search](assets/vector-search.png)
 Here are the blue arrows candicates, the green is the target vector and the orange is the closes recipe for a given iteration.
@@ -36,7 +37,7 @@ E.g. it is 20% important to get cost of food correct, 10% to get number of chick
 ![Importance Vector](assets/importance-vector.png)
 
 Such a vector is used when computing what the error will be for all recipes.
-This also means that we can inject business logic into the algorithm, such as hittin the cost of food, which is important to make sure we do not spend too much.
+This also means that we can inject business logic into the algorithm, such as hitting the cost of food, which is important to make sure we do not spend too much.
 
 
 ## Get started
@@ -46,7 +47,7 @@ The pre-selector contains many moving parts. However, the most important file is
 This contains all of the logic that computes the best recipes, how we load the data, and how we validate data.
 
 The second most important file is the `preselector/process_stream.py` which is the worker node that process every request in production.
-This will read from an Azure Servicebus, making it easy to compleate tasks async and meaks it easy to scale up processing power if needed.
+This will read from an Azure Servicebus, making it easy to complete tasks async and meaks it easy to scale up processing power if needed.
 
 ### Run the pre-selector
 Before you manage to get started you will need to set the following environment variables in a `.env` file.
@@ -89,7 +90,7 @@ This should hopefully make it easier to understand what each component do, in a 
 ## Debugging
 If any customers have any issues in production, then startup the `debug` app, again through `docker compose`.
 This will find the generation request that the customer had, and try to reproduce the results as closely as possible.
-There is a posibility of data drift, so a 1:1 recreation is probably not possible.
+There is a possibility of data drift, so a 1:1 recreation is probably not possible.
 
 ### Logging
 All of the logs can be found in `DataDog`. Here can we filter on the company worker, the environment, and get some insights into the performance and when something errored.

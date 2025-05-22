@@ -136,7 +136,7 @@ class ExpressionNode(BaseModel):
         if self.binary_expr:
             return self.binary_expr.to_spark_expression()
         elif self.column:
-            return f'"{self.column}"'
+            return self.column
         elif self.literal:
             return self.literal.to_spark_expression()
         elif self.cast:

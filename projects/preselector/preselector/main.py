@@ -108,8 +108,6 @@ async def run_preselector_for_request(
     Runs the preselector for one generation request.
 
     Therefore, potentially generating multiple mealkits.
-
-
     """
     results: list[PreselectorYearWeekResponse] = []
 
