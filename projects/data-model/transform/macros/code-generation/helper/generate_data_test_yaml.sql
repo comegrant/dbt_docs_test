@@ -5,7 +5,6 @@
         {% set tests = 
             "        constraints:\n" ~
             "          - type: primary_key\n" ~ 
-            "          - type: unique\n" ~ 
             "          - type: not_null\n" ~ 
             "        data_tests:\n" ~
             "          - unique\n" ~
