@@ -1900,3 +1900,80 @@ models:
           - not_null:
               config:
                 severity: warn
+
+  - name: pim__price_categories
+    description: "Table defining the price category, and the additional price, of a dish based on its total ingredient cost."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_level_id
+        data_type: int
+        description: "{{ doc('column__price_category_level_id') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_min_total_ingredient_cost
+        data_type: int
+        description: "{{ doc('column__price_category_min_total_ingredient_cost') }}"
+
+      - name: price_category_max_total_ingredient_cost
+        data_type: int
+        description: "{{ doc('column__price_category_max_total_ingredient_cost') }}"
+
+      - name: price_category_price_inc_vat
+        data_type: decimal(6,2)
+        description: "{{ doc('column__price_category_price_inc_vat') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_level_name
+        data_type: string
+        description: "{{ doc('column__price_category_level_name') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_valid_from
+        data_type: date
+        description: "{{ doc('column__price_category_valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_valid_to
+        data_type: date
+        description: "{{ doc('column__price_category_valid_to') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"

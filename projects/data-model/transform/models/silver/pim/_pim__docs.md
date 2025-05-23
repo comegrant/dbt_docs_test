@@ -597,6 +597,50 @@ Date until which the price of the ingredient is valid.
 
 {% enddocs %}
 
+# Price Categories
+
+{% docs column__price_category_level_id %}
+
+The level id of the price category.
+
+{% enddocs %}
+
+{% docs column__price_category_min_total_ingredient_cost %}
+
+The lowest recipe cost (in whole units) for a recipe to fit in to the price category.
+
+{% enddocs %}
+
+{% docs column__price_category_max_total_ingredient_cost %}
+
+The highest recipe cost (in whole units) for a recipe to fit into the price category.
+
+{% enddocs %}
+
+{% docs column__price_category_price_inc_vat %}
+
+The additional price to be charged from the customer for a recipe in the price category. The price can also be negative for thrifty dishes.
+
+{% enddocs %}
+
+{% docs column__price_category_level_name %}
+
+The name of the price category level.
+
+{% enddocs %}
+
+{% docs column__price_category_valid_from %}
+
+The date from which the price category row is valid.
+
+{% enddocs %}
+
+{% docs column__price_category_valid_to %}
+
+The date until which the price category row is valid.
+
+{% enddocs %}
+
 # Order Ingredients
 {% docs column__order_ingredient_id %}
 
