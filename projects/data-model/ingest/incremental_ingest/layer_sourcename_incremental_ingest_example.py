@@ -29,7 +29,7 @@ days = 30
 
 # COMMAND ----------
 
-# From date is 30 days before max date of corresponding silver table
+# Find the date X days before max date of corresponding silver table
 try: 
     spark.table(f"{silver_table}")
     from_date_df = spark.sql(f"SELECT DATE_SUB(MAX({silver_date_column}), {days}) AS {days}d_before_max_date FROM {silver_table}")
@@ -40,9 +40,9 @@ except Exception as e:
 # COMMAND ----------
 
 # Query to be sent to source database
-query_orders = f"(SELECT * FROM {source_table} WHERE {source_date_column} >= '{from_date}')"
+query = f"(SELECT * FROM {source_table} WHERE {source_date_column} >= '{from_date}')"
 
 # COMMAND ----------
 
 # Extract data
-load_coredb_query(dbutils, database, source_table, query_orders)
+load_coredb_query(dbutils, database, source_table, query)

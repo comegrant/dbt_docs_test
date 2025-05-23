@@ -69,6 +69,12 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
+        - task_key: bronze_operations_orders_history
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_operations_orders_history.py
+
         - task_key: bronze_operations_case_lines
           depends_on:
             - task_key: start-notification
@@ -92,6 +98,12 @@ resources:
             - task_key: start-notification
           notebook_task:
             notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
+
+        - task_key: bronze_operations_orders
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/selected_columns_ingest/bronze_operations_orders.py
 
         - task_key: dbt-snapshot-all
           dbt_task:
