@@ -1,4 +1,4 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
@@ -13,7 +13,7 @@ models:
 
     columns:
       - name: pk_dim_companies
-        description: "{{ doc('column__product_concept_id') }}"
+        description: "{{ doc('column__pk_dim_companies') }}"
         data_type: string
         constraints:
           - type: primary_key
@@ -23,7 +23,7 @@ models:
           - not_null
 
       - name: company_id
-        description: "{{ doc('column__product_concept_id') }}"
+        description: "{{ doc('column__company_id') }}"
         data_type: string
         data_tests:
           - not_null
@@ -35,19 +35,19 @@ models:
           - not_null
 
       - name: company_name
-        description: "{{ doc('column__product_concept_id') }}"
+        description: "{{ doc('column__company_name') }}"
         data_type: string
         data_tests:
           - not_null
 
       - name: country_name
-        description: "{{ doc('column__product_concept_id') }}"
+        description: "{{ doc('column__country_name') }}"
         data_type: string
         data_tests:
           - not_null
 
       - name: country_currency
-        description: "{{ doc('column__product_concept_id') }}"
+        description: "{{ doc('column__country_currency') }}"
         data_type: string
         data_tests:
           - not_null

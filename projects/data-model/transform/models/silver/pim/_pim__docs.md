@@ -1,5 +1,24 @@
 # Common
 
+# Chef Ingredients
+{% docs column__chef_ingredient_id %}
+
+Identifier for chef ingredient, which is an instance of generic ingredient with a 1-1 mapping with order ingredient.
+
+{% enddocs %}
+
+{% docs column__chef_ingredient_section_id %}
+
+Identifier for each ingredient section, where an ingredient section is i.e. "pan-fried vegetables" contains the ingredient "carrots" and "broccoli"
+
+{% enddocs %}
+
+{% docs column__ingredient_amount %}
+
+Amount of specific ingredient in a recipe variation
+
+{% enddocs %}
+
 # Weekly Menus
 {% docs column__weekly_menu_id %}
 
@@ -476,12 +495,6 @@ When purchase order was done.
 
 {% enddocs %}
 
-{% docs column__ingredient_supplier_id %} 
-
-Identifier for each ingredient supplier 
-
-{% enddocs %}
-
 # Weekly Order Lines
 
 {% docs column__purchase_order_line_id %}
@@ -584,6 +597,43 @@ Date until which the price of the ingredient is valid.
 
 {% enddocs %}
 
+# Order Ingredients
+{% docs column__order_ingredient_id %}
+
+Identifier for an ingredient connected to a specific recipe variation
+
+{% enddocs %}
+
+{% docs column__ingredient_internal_reference %}
+
+An alternative unique ingredient id number which is sometimes used as link between tables. Typically starts with either GL, bhub or basis with or without '-' followed by a number.
+
+{% enddocs %}
+
+{% docs column__is_main_protein %}
+
+If an ingredient is used as the main protein in a recipe
+
+{% enddocs %}
+
+{% docs column__is_main_carbohydrate %}
+
+If an ingredient is used as the main carbohydrate in a recipe
+
+{% enddocs %}
+
+{% docs column__nutrition_units %}
+
+The amount of an ingredient which is included in nutritional calculations. The unit is specified by the unit label.
+
+{% enddocs %}
+
+{% docs column__order_ingredient_quantity %}
+
+The amount of an ingredient to be ordered for a recipe. The unit is specified by the unit label.
+
+{% enddocs %}
+
 # Procurement Cycles
 
 {% docs column__purchasing_company_id %}
@@ -598,55 +648,51 @@ Id of the distribution center where the ingredients are delivered to.
 
 {% enddocs %}
 
+# Suppliers
+{% docs column__ingredient_supplier_id %} 
+
+Identifier for each ingredient supplier 
+
+{% enddocs %}
+
+{% docs column__ingredient_supplier_status_code_id %} 
+
+The status id of the supplier.
+
+{% enddocs %}
+
+{% docs column__ingredient_supplier_name %} 
+
+The name of the ingredient supplier.
+
+{% enddocs %}
+
+# Weekly Ingredients
+{% docs column__weekly_ingredient_id %} 
+
+Unique identifier for each row in the table.
+
+{% enddocs %}
+
+{% docs column__weekly_ingredient_quantity %} 
+
+The ingredient quantity for each of the menu variations of that menu week
+
+{% enddocs %}
+
+{% docs column__is_fetched_from_recipes %} 
+
+Indicates if the ingredient quantity is derived from a recipe or not.
+
+{% enddocs %}
+
+{% docs column__is_active_weekly_ingredient %} 
+
+Indicates if the weekly ingredient rows is active or not. If not active they will not be sent to purchasing or production, but will still be in the recipe.
+
+{% enddocs %}
+
 # Not Organized
-{% docs column__is_main_protein %}
-
-If an ingredient is used as the main protein in a recipe
-
-{% enddocs %}
-
-{% docs column__is_main_carbohydrate %}
-
-If an ingredient is used as the main carbohydrate in a recipe
-
-{% enddocs %}
-
-{% docs column__supplier_id %}
-
-Identifier for each ingredient supplier
-
-{% enddocs %}
-
-{% docs column__ingredient_amount %}
-
-Amount of specific ingredient in a recipe variation
-
-{% enddocs %}
-
-{% docs column__order_ingredient_id %}
-
-Identifier for an ingredient connected to a specific recipe variation
-
-{% enddocs %}
-
-{% docs column__ingredient_internal_reference %}
-
-Used to join ingredient ids across different databases
-
-{% enddocs %}
-
-{% docs column__chef_ingredient_section_id %}
-
-Identifier for each ingredient section, where an ingredient section is i.e. "pan-fried vegetables" contains the ingredient "carrots" and "broccoli"
-
-{% enddocs %}
-
-{% docs column__chef_ingredient_id %}
-
-Identifier for chef ingredient, which is an instance of generic ingredient with a 1-1 mapping with order ingredient.
-
-{% enddocs %}
-
 {% docs column__is_external_taxonomy %}
 
 If the taxonomy is used in frontend, i.e. a user-friendly taxonomy
@@ -738,9 +784,6 @@ Indicates if the ingredient has nutrition calculation
 
 The name of the ingredient's nutritional fact id, e.g. "Fat"
 
-{% enddocs %}
-
-{% docs column__nutrition_units %}
 {% enddocs %}
 
 {% docs column__netto_weight %}

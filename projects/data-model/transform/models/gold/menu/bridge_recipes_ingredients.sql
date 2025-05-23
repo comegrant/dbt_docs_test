@@ -37,7 +37,6 @@ recipes as (
         , int_recipe_ingredients.recipe_portion_id
         , ingredients.language_id
         , ingredients.ingredient_id
-        , ingredients.allergy_id
     from recipes
     left join int_recipe_ingredients
         on recipes.recipe_id = int_recipe_ingredients.recipe_id

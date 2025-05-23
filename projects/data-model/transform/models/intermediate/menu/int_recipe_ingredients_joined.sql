@@ -59,6 +59,11 @@ recipes as (
         , ingredients.ingredient_id
         , ingredient_translations.ingredient_name
         , ingredient_translations.language_id
+        , chef_ingredients.ingredient_amount as recipe_ingredient_amount
+        , order_ingredients.is_main_carbohydrate as is_recipe_main_carbohydrate
+        , order_ingredients.is_main_protein as is_recipe_main_protein
+        , order_ingredients.nutrition_units as ingredient_nutrition_units
+        , order_ingredients.order_ingredient_quantity as ingredient_order_quantity
     from recipes
     left join recipe_portions
         on recipes.recipe_id = recipe_portions.recipe_id

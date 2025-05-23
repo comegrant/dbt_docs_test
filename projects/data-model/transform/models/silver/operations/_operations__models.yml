@@ -393,9 +393,9 @@ models:
         data_tests:
           - not_null
 
-      - name: supplier_name
+      - name: ingredient_supplier_name
         data_type: string
-        description: "{{ doc('column__supplier_name') }}"
+        description: "{{ doc('column__ingredient_supplier_name') }}"
         data_tests:
           - not_null
 

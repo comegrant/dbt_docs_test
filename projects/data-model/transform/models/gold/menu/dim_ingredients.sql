@@ -1,15 +1,11 @@
 with 
 
-recipe_ingredients as (
-    select * from {{ ref('int_recipe_ingredients_joined') }}
+ingredients as (
+    select * from {{ ref('pim__ingredients') }}
 )
 
-, ingredient_allergies as (
-    select * from {{ ref('pim__ingredient_allergies') }}
-)
-
-, allergy_translations as (
-    select * from {{ ref('pim__allergy_translations') }}
+, ingredient_translations as (
+    select * from {{ ref('pim__ingredient_translations') }}
 )
 
 , category_hierarchy as (
@@ -17,22 +13,15 @@ recipe_ingredients as (
 )
 
 , ingredient_info as (
-    select distinct
-        ingredient_id
-        , ingredient_name
-        , language_id
-    from recipe_ingredients
-)
-
-, allergy_info as (
     select
-        allergies.ingredient_id
-        , allergies.allergy_id
-        , translations.allergy_name
-        , translations.language_id
-    from ingredient_allergies as allergies
-    left join allergy_translations as translations
-        on allergies.allergy_id = translations.allergy_id
+        ingredients.ingredient_id
+        , ingredients.ingredient_internal_reference
+        , ingredient_translations.ingredient_name
+        , ingredient_translations.language_id
+    from ingredients
+    
+    left join ingredient_translations
+        on ingredients.ingredient_id = ingredient_translations.ingredient_id
 )
 
 , group_name_extraction as (
@@ -65,14 +54,13 @@ recipe_ingredients as (
         md5(concat_ws(
             '-'
             , ingredient_info.ingredient_id
-            , allergy_info.allergy_id
+            , ingredient_info.ingredient_internal_reference
             , ingredient_info.language_id
         )) as pk_dim_ingredients
         , ingredient_info.ingredient_id
-        , allergy_info.allergy_id
+        , ingredient_info.ingredient_internal_reference
         , ingredient_info.language_id
         , ingredient_info.ingredient_name
-        , allergy_info.allergy_name
         , group_name_extraction.main_group
         , group_name_extraction.category_group
         , group_name_extraction.product_group
@@ -82,10 +70,7 @@ recipe_ingredients as (
         , flat_hierarchy.category_level4
         , flat_hierarchy.category_level5
     from ingredient_info
-    left join allergy_info
-        on
-            ingredient_info.ingredient_id = allergy_info.ingredient_id
-            and ingredient_info.language_id = allergy_info.language_id
+
     left join group_name_extraction
         on
             ingredient_info.ingredient_id = group_name_extraction.ingredient_id

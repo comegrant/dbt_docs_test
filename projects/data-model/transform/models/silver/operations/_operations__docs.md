@@ -184,12 +184,6 @@ Contains the description of the different case line types.
 
 # Case Line Ingredients
 
-{% docs column__supplier_name %}
-
-The name of the ingredient supplier.
-
-{% enddocs %}
-
 {% docs column__ingredient_price %}
 
 The price of the ingredient in a case line. Price is set per ingredient by customer service. From 2025 there can be more than one ingredient per case line. Ingredient price multiplied by ingredient quantity is equal to the amount paid to customer for a case.

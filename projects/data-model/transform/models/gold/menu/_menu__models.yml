@@ -132,8 +132,6 @@ models:
       - name: recipe_reaction_type_id
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -141,8 +139,6 @@ models:
       - name: recipe_reaction_type_name
         data_type: string
         description: "{{ doc('column__recipe_favorite_type_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -172,8 +168,6 @@ models:
       - name: recipe_reaction_id
         data_type: varchar(36)
         description: "{{ doc('column__recipe_favorite_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -181,40 +175,30 @@ models:
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: main_recipe_id
         data_type: int
         description: "{{ doc('column__main_recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_reaction_type_id
         data_type: int
         description: "{{ doc('column__recipe_favorite_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_active_reaction
         data_type: boolean
         description: "{{ doc('column__is_active_reaction') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -228,6 +212,9 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
           - type: not_null
         data_tests:
           - not_null
@@ -238,6 +225,10 @@ models:
       - name: fk_dim_preference_combinations
         data_type: string
         description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_preference_combinations')
+            to_columns: [pk_dim_preference_combinations]
         data_tests:
           - relationships:
               to: ref('dim_preference_combinations')
@@ -247,6 +238,9 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
           - type: not_null
         data_tests:
           - not_null
@@ -258,6 +252,9 @@ models:
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
           - type: not_null
         data_tests:
           - not_null
@@ -270,6 +267,9 @@ models:
         description: "{{ doc('column__pk_dim_companies') }}"
         constraints:
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -277,9 +277,12 @@ models:
               field: pk_dim_companies
 
       - name: fk_dim_time
-        data_type: int
+        data_type: string
         description: "{{ doc('column__pk_dim_time') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_time')
+            to_columns: [pk_dim_time]
           - type: not_null
         data_tests:
           - not_null
@@ -291,6 +294,9 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_recipe_reaction_types')
+            to_columns: [pk_dim_recipe_reaction_types]
           - type: not_null
         data_tests:
           - not_null
@@ -323,8 +329,6 @@ models:
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -359,24 +363,18 @@ models:
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: cooking_time_from
         data_type: int
         description: "{{ doc('column__cooking_time_from') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: cooking_time_to
         data_type: int
         description: "{{ doc('column__cooking_time_to') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -393,16 +391,12 @@ models:
       - name: has_recipe_photo
         data_type: boolean
         description: "{{ doc('column__has_recipe_photo') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_name
         data_type: string
         description: "{{ doc('column__recipe_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -437,16 +431,12 @@ models:
       - name: is_main_recipe
         data_type: boolean
         description: "{{ doc('column__is_main_recipe') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_in_recipe_universe
         data_type: boolean
         description: "{{ doc('column__is_in_recipe_universe') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -465,12 +455,13 @@ models:
     versions:
       - v: 1
 
-
   - name: dim_ingredients
     description: ""
     latest_version: 1
     config:
       alias: dim_ingredients
+      contract:
+        enforced: true
 
     columns:
       - name: pk_dim_ingredients
@@ -489,9 +480,11 @@ models:
         data_tests:
           - not_null
 
-      - name: allergy_id
-        data_type: int
-        description: "{{ doc('column__allergy_id') }}"
+      - name: ingredient_internal_reference
+        data_type: string
+        description: "{{ doc('column__ingredient_internal_reference') }}"
+        data_tests:
+          - not_null
 
       - name: language_id
         data_type: int
@@ -502,10 +495,6 @@ models:
       - name: ingredient_name
         data_type: string
         description: "{{ doc('column__ingredient_name') }}"
-
-      - name: allergy_name
-        data_type: string
-        description: "{{ doc('column__allergy_name') }}"
 
       - name: main_group
         data_type: string
@@ -625,6 +614,9 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
           - type: not_null
         data_tests:
           - not_null
@@ -636,6 +628,9 @@ models:
         data_type: string
         description: "{{ doc('column__pk_dim_taxonomies') }}"
         constraints:
+          - type: foreign_key
+            to: ref('dim_taxonomies')
+            to_columns: [pk_dim_taxonomies]
           - type: not_null
         data_tests:
           - not_null
@@ -662,28 +657,6 @@ models:
         data_tests:
           - unique
           - not_null
-
-      - name: fk_dim_recipes
-        data_type: string
-        description: "{{ doc('column__pk_dim_recipes') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_recipes')
-              field: pk_dim_recipes
-
-      - name: fk_dim_ingredients
-        data_type: string
-        description: "{{ doc('column__fk_dim_ingredients') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_ingredients')
-              field: pk_dim_ingredients
 
       - name: recipe_id
         data_type: int
@@ -712,6 +685,34 @@ models:
       - name: allergy_id
         data_type: int
         description: "{{ doc('column__allergy_id') }}"
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+
+      - name: fk_dim_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredients') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredients')
+            to_columns: [pk_dim_ingredients]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredients')
+              field: pk_dim_ingredients
 
     versions:
       - v: 1
@@ -972,66 +973,304 @@ models:
       - name: portion_id
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portions
         data_type: int
         description: "{{ doc('column__portion_size') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_name_local
         data_type: string
         description: "{{ doc('column__portion_name_local') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_name_english
         data_type: string
         description: "{{ doc('column__portion_name_english') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_status_code_id
         data_type: string
         description: "{{ doc('column__portion_status_code_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_status_name_local
         data_type: string
         description: "{{ doc('column__portion_status_name_local') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: portion_status_name_english
         data_type: string
         description: "{{ doc('column__portion_status_name_english') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
+    versions:
+      - v: 1
+
+  - name: fact_recipes_ingredients
+    description: "Contains the ingredients of each weekly recipe, together with ingredient costs."
+    latest_version: 1
+    config:
+      alias: fact_recipes_ingredients
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_recipes_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_fact_recipes_ingredients') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+
+      - name: menu_variation_id
+        data_type: int
+        description: "{{ doc('column__menu_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_recipe_id
+        data_type: int
+        description: "{{ doc('column__menu_recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_portion_id
+        data_type: int
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: weekly_menu_id
+        data_type: int
+        description: "{{ doc('column__weekly_menu_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_id
+        data_type: int
+        description: "{{ doc('column__menu_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+        data_tests:
+          - not_null
+
+      - name: main_recipe_variation_id
+        data_type: string
+        description: "{{ doc('column__main_recipe_variation_id') }}"
+
+      - name: portion_id_menus
+        data_type: int
+        description: "{{ doc('column__portion_id_menus') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: smallint
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: smallint
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_number_days
+        data_type: smallint
+        description: "{{ doc('column__menu_number_days') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_recipe_order
+        data_type: smallint
+        description: "{{ doc('column__menu_recipe_order') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_name_products
+        data_type: string
+        description: "{{ doc('column__portion_name_products') }}"
+        data_tests:
+          - not_null
+
+      - name: is_selected_menu
+        data_type: boolean
+        description: "{{ doc('column__is_selected_menu') }}"
+
+      - name: is_locked_recipe
+        data_type: boolean
+        description: "{{ doc('column__is_locked_recipe') }}"
+
+      - name: is_recipe_main_carbohydrate
+        data_type: boolean
+        description: "{{ doc('column__is_recipe_main_carbohydrate') }}"
+
+      - name: is_recipe_main_protein
+        data_type: boolean
+        description: "{{ doc('column__is_recipe_main_protein') }}"
+
+      - name: ingredient_nutrition_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_nutrition_units') }}"
+
+      - name: ingredient_order_quantity
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_order_quantity') }}"
+
+      - name: ingredient_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_planned_cost') }}"
+
+      - name: total_ingredient_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost') }}"
+
+      - name: total_ingredient_planned_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
+
+      - name: ingredient_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_expected_cost') }}"
+
+      - name: total_ingredient_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost') }}"
+
+      - name: total_ingredient_expected_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
+
+      - name: ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"        
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+
+      - name: fk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
+        data_tests:
+          - not_null
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_recipes')
+            to_columns: [pk_dim_recipes]
+        data_tests:
+          - not_null
+
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
+        data_tests:
+          - not_null
+
+      - name: fk_dim_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredients') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_ingredients')
+            to_columns: [pk_dim_ingredients]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredients')
+              field: pk_dim_ingredients
+    
     versions:
       - v: 1

@@ -42,7 +42,7 @@ recipe_favorites as (
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , cast(date_format(recipe_favorites.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates
         , md5(cast(recipe_favorites.recipe_favorite_type_id as string)) as fk_dim_recipe_reaction_types
-        , cast(date_format(recipe_favorites.source_created_at, 'HHmm') as int) as fk_dim_time
+        , cast(date_format(recipe_favorites.source_created_at, 'HHmm') as string) as fk_dim_time
         
     from recipe_favorites
     left join billing_agreements 

@@ -52,3 +52,5 @@ sources:
       - name: pim__weekly_orders
       - name: pim__weekly_orders_lines
       - name: pim__procurement_cycle
+      - name: pim__suppliers
+      - name: pim__weekly_ingredients

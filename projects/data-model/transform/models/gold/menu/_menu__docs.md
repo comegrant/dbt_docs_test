@@ -140,8 +140,7 @@ Primary key of the dim_ingredients table.
 
 {% enddocs %}
 
-
-{% docs  column__main_group %}
+{% docs column__main_group %}
 
 Ingredient category name of the main group of an ingredient.
 
@@ -205,12 +204,6 @@ Primary key of the bridge table which connects dim_recipes and dim_ingredients
 
 {% enddocs %}
 
-{% docs column__fk_dim_ingredients %}
-
-Foreign key to dim_ingredients
-
-{% enddocs %}
-
 # Dim Portions
 
 {% docs column__pk_dim_portions %}
@@ -247,5 +240,96 @@ The name of the number of portions on the local language.
 {% docs column__portion_name_english %}
 
 The name of the number of portions on English.
+
+{% enddocs %}
+
+# Fact Recipes Ingredients
+{% docs column__pk_fact_recipes_ingredients %}
+
+Primary key of Fact Recipes Ingredients. Is a composite of menu_variation_id, menu_recipe_id, recipe_portion_id and weekly_ingredient_id.
+
+{% enddocs %}
+
+{% docs column__portion_name_products %}
+
+The name of the number of portions in local language.
+
+{% enddocs %}
+
+{% docs column__is_recipe_main_carbohydrate %}
+
+Indicates if the ingredient is the main carbohydrate of the actual recipe (True) or not (False).
+
+{% enddocs %}
+
+{% docs column__is_recipe_main_protein %}
+
+Indicates if the ingredient is the main protein of the actual recipe (True) or not (False).
+
+{% enddocs %}
+
+{% docs column__ingredient_nutrition_units %}
+
+The amount of the actual ingredient which is included in nutritional calculations. The unit is specified by the unit label.
+
+{% enddocs %}
+
+{% docs column__ingredient_order_quantity %}
+
+The amount of the actual ingredient to be ordered for this recipe. The unit is specified by the unit label.
+
+{% enddocs %}
+
+{% docs column__ingredient_planned_cost %}
+
+The menu planning purchasing cost for one unit of the ingredient, valid for the menu week of the recipe.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_planned_cost %}
+
+The menu planning purchasing cost for the total ingredient amount of the recipe, valid for the menu week of the recipe.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_planned_cost_whole_units %}
+
+The menu planning purchasing cost for the total ingredient amount of the recipe, rounded up to the nearest integer, valid for the menu week of the recipe.
+
+{% enddocs %}
+
+{% docs column__ingredient_expected_cost %}
+
+The expected purchasing cost for one unit of the ingredient, valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_expected_cost %}
+
+The expected purchasing cost for the total ingredient amount of the recipe, valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_expected_cost_whole_units %}
+
+The expected purchasing cost for the total ingredient amount of the recipe, rounded up to the nearest integer, which is valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+
+{% enddocs %}
+
+{% docs column__ingredient_actual_cost %}
+
+The actual purchasing cost for one unit of the ingredient, fetched from the purchasing order(s) for the menu week of the recipe.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_actual_cost %}
+
+The actual purchasing cost for the total ingredient amount of the recipe, fetched from the purchasing order(s) for the menu week of the recipe.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_actual_cost_whole_units %}
+
+The actual purchasing cost for the total ingredient amount of the recipe, fetched from the purchasing order(s) for the menu week of the recipe. The total ingredient amount is rounded up to the nearest integer.
 
 {% enddocs %}

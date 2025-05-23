@@ -29,8 +29,8 @@ renamed as (
         , modified_by as source_updated_by
         , modified_date as source_updated_at
             
-        --{# numerics #}
-        --, order_ingredient_qty
+        {# numerics #}
+        , order_ingredient_qty as order_ingredient_quantity
         , nutrition_units
         
     from source

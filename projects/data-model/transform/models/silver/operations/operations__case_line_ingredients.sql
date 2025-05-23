@@ -16,7 +16,7 @@ source as (
         
         {# strings #}
         , initcap(ingredient_name)  as ingredient_name
-        , initcap(supplier_name) as supplier_name
+        , initcap(supplier_name) as ingredient_supplier_name
         -- We are keeping internal_reference for now, but will get ingredient_id in future.
         , upper(ingredient_internal_reference) as ingredient_internal_reference 
 
