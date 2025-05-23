@@ -1,7 +1,3 @@
-{{ config(
-  materialized="table"
-) }}
-
 with 
 
 subscribed_products as (

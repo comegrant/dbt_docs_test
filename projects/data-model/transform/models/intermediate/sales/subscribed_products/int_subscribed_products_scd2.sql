@@ -1,8 +1,3 @@
-{{ config(
-  materialized="table"
-) }}
-
-
 with 
 
 basket_mealboxes as (

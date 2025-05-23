@@ -152,7 +152,7 @@ models:
 
     intermediate:
       +schema: intermediate
-      +materialized: "{{ 'table' if target.database == 'dev' else 'ephemeral' }}"
+      +materialized: table
 
     gold:
       +schema: gold
