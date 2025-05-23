@@ -3,7 +3,8 @@ from collections import Counter
 from typing import Callable, Optional
 
 import polars as pl
-from catalog_connector import connection
+from constants.companies import get_company_by_id
+from data_contracts.sources import azure_dl_creds
 from pydantic import BaseModel, alias_generators
 
 AVAILABLE_PREFS = {
@@ -34,6 +35,7 @@ PREVIOUS_WEEKS = 3
 MAX_PORTION_SIZE = 5
 ENTROPY_THRESHOLD = 0.75
 MIN_PERC_USERS = 0.01
+PORTION_ID = 2
 
 
 class ConfigModel(BaseModel):
@@ -90,45 +92,15 @@ class MenuFeedbackResponseModel(ConfigModel):
     status: str = "success"
 
 
-def get_user_preferences(company_id: str) -> pl.DataFrame:
-    """Get user preferences for a company."""
+async def get_data(filename: str) -> pl.DataFrame:
+    df = (
+        await azure_dl_creds.directory("data-science")
+        .directory("preselector/menu_feedback/")
+        .parquet_at(f"{filename}")
+        .to_polars()
+    )
 
-    df = connection.sql(
-        f"""
-        select
-        company_id,
-        negative_taste_preference_combo_id,
-        negative_taste_preferences,
-        negative_taste_preferences_ids,
-        number_of_users
-        from mlgold.menu_feedback_agreement_preferences_aggregated
-        where company_id = '{company_id}'
-    """
-    ).toPandas()
-
-    return pl.from_pandas(df)
-
-
-def get_recipe_preferences(main_recipe_ids: list[int]) -> pl.DataFrame:
-    """Get preferences for a list of main recipe ids."""
-
-    if not main_recipe_ids:
-        raise ValueError("main_recipe_ids must be a list of integers")
-
-    main_recipe_ids_str = ", ".join(str(main_recipe_id) for main_recipe_id in main_recipe_ids)
-    df = connection.sql(
-        f"""
-        select
-        main_recipe_id,
-        recipe_main_ingredient_id,
-        negative_taste_preferences,
-        recipe_main_ingredient_name_english as recipe_main_ingredient_name
-        from mlgold.menu_feedback_recipe_preferences
-        where main_recipe_id in ({main_recipe_ids_str})
-    """
-    ).toPandas()
-
-    return pl.from_pandas(df)
+    return df
 
 
 def get_previous_week_recipe_ids(payload: MenuFeedbackRequestModel, portion_id: int) -> dict[int, list[int]]:
@@ -269,7 +241,7 @@ def build_protein_issue(row: dict) -> IssueModel:
         ]
         issue = (
             f"The protein distribution is heavily skewed, with {top_protein} "
-            "appearing most frequently ({top_count/total*100:.1f}%)"
+            f"appearing most frequently ({top_count/total*100:.1f}%)"
         )
         action = f"Consider adding more diversity in the lower-represented proteins: {', '.join(other_protein_shares)}."
     else:
@@ -323,16 +295,19 @@ def response_from_df(df: pl.DataFrame, year: int, week: int, company_id: str) ->
     return MenuFeedbackResponseModel(target_menu_week=menu_week)
 
 
-def create_warnings(
+async def create_warnings(
     payload: MenuFeedbackRequestModel,
     target_week: int,
     company_id: str,
     portion_id: int,
 ) -> pl.DataFrame:
-    customers = get_user_preferences(company_id)
-    recipes = get_recipe_preferences(
-        next(p.main_recipe_ids for p in payload.target_menu_week.portions if p.portion_id == portion_id),
-    )
+    company = get_company_by_id(company_id)
+    customers = await get_data(f"user_preferences_{company.company_code}")
+    customers = customers.filter(pl.col("company_id") == company_id)
+
+    recipes = await get_data("recipe_preferences")
+    recipes = recipes.filter(pl.col("main_recipe_id").is_in(payload.target_menu_week.portions[0].main_recipe_ids))
+
     old_recipes = get_previous_week_recipe_ids(payload, portion_id)
 
     recipes = recipes.with_columns(
@@ -342,26 +317,23 @@ def create_warnings(
     )
 
     recipe_ids = recipes["main_recipe_id"].to_list()
-    recipe_preferences = [set(x) for x in recipes["preference_set"].to_list()]
     recipe_main_ingredient_ids = recipes["recipe_main_ingredient_id"].to_list()
     recipe_main_ingredient_names = recipes["recipe_main_ingredient_name"].to_list()
+    recipe_preferences = [set(x) for x in recipes["preference_set"].to_list()]
 
     customers = customers.with_columns(
-        (pl.col("number_of_users") / pl.col("number_of_users").sum()).alias("perc_of_users")
-    )
-
-    customers = customers.with_columns(pl.lit(portion_id).alias("portion_id"))
-
-    customers = customers.with_columns(
-        pl.col("negative_taste_preferences")
-        .map_elements(create_preference_set, return_dtype=pl.List(pl.Utf8))
-        .alias("preference_set")
-    )
-
-    customers = customers.with_columns(
-        pl.col("negative_taste_preferences_ids")
-        .map_elements(lambda x: None if x is None else [str(item).strip() for item in x], return_dtype=pl.List(pl.Utf8))
-        .alias("preference_set_ids")
+        [
+            (pl.col("number_of_users") / pl.col("number_of_users").sum()).alias("perc_of_users"),
+            pl.lit(portion_id).alias("portion_id"),
+            pl.col("negative_taste_preferences")
+            .map_elements(create_preference_set, return_dtype=pl.List(pl.Utf8))
+            .alias("preference_set"),
+            pl.col("negative_taste_preferences_ids")
+            .map_elements(
+                lambda x: None if x is None else [str(item).strip() for item in x], return_dtype=pl.List(pl.Utf8)
+            )
+            .alias("preference_set_ids"),
+        ]
     )
 
     customers = customers.with_columns(
@@ -477,7 +449,7 @@ def create_warnings(
     return customers
 
 
-def create_menu_feedback(payload: MenuFeedbackRequestModel) -> MenuFeedbackResponseModel:
+async def create_menu_feedback(payload: MenuFeedbackRequestModel) -> MenuFeedbackResponseModel:
     assert payload is not None, "Payload is None"
 
     target_year = payload.target_menu_week.menu_year
@@ -486,8 +458,11 @@ def create_menu_feedback(payload: MenuFeedbackRequestModel) -> MenuFeedbackRespo
 
     results = []
     for portion in payload.target_menu_week.portions:
+        # only run for portion id 2
+        if portion.portion_id != PORTION_ID:
+            continue
         portion_id = portion.portion_id
-        res = create_warnings(payload, target_week, company_id.upper(), portion_id)
+        res = await create_warnings(payload, target_week, company_id.upper(), portion_id)
         results.append(res)
     conc_results = pl.concat(results, how="vertical")
 

@@ -16,7 +16,7 @@ async def get_menu_feedback(request: MenuFeedbackRequestModel) -> JSONResponse:
     try:
         logger.info("Received request for menu feedback analysis")
 
-        response = create_menu_feedback(request)
+        response = await create_menu_feedback(request)
 
         logger.info("Menu feedback analysis completed")
         response = response.model_dump(by_alias=True, exclude_none=False)
