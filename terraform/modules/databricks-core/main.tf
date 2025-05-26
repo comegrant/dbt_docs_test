@@ -525,6 +525,61 @@ resource "databricks_token" "pat_bundle_sp" {
   lifetime_seconds = 60 * 24 * 60 * 60
 }
 
+
+
+####################################################
+### Service Principal for Databricks Forecasting ###
+####################################################
+
+resource "databricks_service_principal" "databricks_forecasting_sp" {
+  display_name = "databricks_forecasting_sp_${terraform.workspace}"
+}
+
+resource "databricks_service_principal_secret" "databricks_forecasting_sp" {
+  provider             = databricks.accounts
+  service_principal_id = databricks_service_principal.databricks_forecasting_sp.id
+}
+
+resource "databricks_group_member" "databricks_forecasting_service_principal" {
+  group_id = databricks_group.service-principals.id
+  member_id = databricks_service_principal.databricks_forecasting_sp.id
+}
+
+resource "databricks_group_member" "databricks_forecasting_external_readers" {
+  group_id = databricks_group.external-readers.id
+  member_id = databricks_service_principal.databricks_forecasting_sp.id
+}
+
+resource "databricks_access_control_rule_set" "automation_sp_databricks_forecasting_rule_set" {
+  provider = databricks.accounts
+  name = "accounts/${var.databricks_account_id}/servicePrincipals/${databricks_service_principal.databricks_forecasting_sp.application_id}/ruleSets/default"
+
+  grant_rules {
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.user"
+  }
+
+  grant_rules {
+    principals = [data.databricks_service_principal.resource-sp.acl_principal_id]
+    role       = "roles/servicePrincipal.manager"
+  }
+}
+
+
+provider "databricks" {
+  alias = "databricks-forecasting-sp"
+  auth_type = "oauth-m2m"
+  host = azurerm_databricks_workspace.this.workspace_url
+  client_id = databricks_service_principal.databricks_forecasting_sp.application_id
+  client_secret = databricks_service_principal_secret.databricks_forecasting_sp.secret
+}
+
+resource "databricks_token" "pat_databricks_forecasting_sp" {
+  provider = databricks.databricks-forecasting-sp
+  comment  = "Managed by Terraform, not rotated."
+}
+
+
 ##########################################
 ###     Add secrets to key vault       ###
 ##########################################
@@ -574,6 +629,22 @@ resource "azurerm_key_vault_secret" "databricks_reader_sp_pat" {
   expiration_date = "2050-01-01T00:00:00Z"
 }
 
+resource "azurerm_key_vault_secret" "databricks_forecasting_sp_secret" {
+  name            = "databricks-sp-forecasting-secret-${terraform.workspace}"
+  value           = databricks_service_principal_secret.databricks_forecasting_sp.secret
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. OAuth secret for databricks forecasting service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
+resource "azurerm_key_vault_secret" "databricks_forecasting_sp_pat" {
+  name            = "databricks-sp-forecasting-pat-${terraform.workspace}"
+  value           = databricks_token.pat_databricks_forecasting_sp.token_value
+  key_vault_id    = data.azurerm_key_vault.this.id
+  content_type    = "Managed by Terraform. Personal access token for databricks forecasting service principal."
+  expiration_date = "2050-01-01T00:00:00Z"
+}
+
 resource "azurerm_key_vault_secret" "dbt_warehouse_id" {
   name            = "databricks-warehouse-dbt-id-${terraform.workspace}"
   value           = databricks_sql_endpoint.db_wh_dbt.id
@@ -616,6 +687,11 @@ resource "databricks_grants" "catalog" {
 
   grant {
     principal = databricks_service_principal.databricks_reader_sp.application_id
+    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+  }
+
+  grant {
+    principal = databricks_service_principal.databricks_forecasting_sp.application_id
     privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
   }
 
@@ -719,6 +795,11 @@ resource "databricks_grants" "schemas" {
   grant {
     principal = "data-analysts"
     privileges = ["USE_SCHEMA"]
+  }
+
+  grant {
+    principal = databricks_service_principal.databricks_forecasting_sp.application_id
+    privileges = each.key == "forecasting" ? ["ALL_PRIVILEGES"] : ["USE_SCHEMA"]
   }
 
 }
