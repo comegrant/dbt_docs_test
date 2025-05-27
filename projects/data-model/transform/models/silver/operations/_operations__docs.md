@@ -96,7 +96,7 @@ The last menu week that this zone is valid for, formatted as YYYYWW (ISO).
 
 {% docs column__case_id %}
 
-The primary key of the case table. Contains a unique id for each case.
+The unique id of the case table. Contains a unique id for each case.
 
 {% enddocs %}
 
@@ -128,25 +128,7 @@ Comment connected to redelivery. Can come from external partners or internally f
 
 {% docs column__case_line_id %}
 
-The primary key of the case lines table.
-
-{% enddocs %}
-
-{% docs column__case_line_cause_id %}
-
-The foreign key to the case line causes table.
-
-{% enddocs %}
-
-{% docs column__case_line_responsible_id %}
-
-The foreign key to the case line responsible table.
-
-{% enddocs %}
-
-{% docs column__case_line_category_id %}
-
-The foreign key to the case line categories table.
+The unique id of the case lines table.
 
 {% enddocs %}
 
@@ -172,7 +154,7 @@ Describes whether or not the case line is active. Is active unless a line is can
 
 {% docs column__case_line_type_id %}
 
-The primary key for the case line types table. 
+The unique id for the case line types table. 
 
 {% enddocs %}
 
@@ -201,7 +183,7 @@ The quantity of ingredients registered in the case.
 
 {% docs column__case_cause_id %}
 
-The primary key for the case cause table.
+The unique id for the case cause table.
 
 {% enddocs %}
 
@@ -215,7 +197,7 @@ Contains the cause name related to the case. From week 2 2025 cause name refers 
 
 {% docs column__case_category_id %}
 
-The primary key for the case category table.
+The unique id for the case category table.
 
 {% enddocs %}
 
@@ -229,7 +211,7 @@ Contains the name of the category or department which can be related to the case
 
 {% docs column__case_responsible_id %}
 
-The primary key of the case responsible table.
+The unique id of the case responsible table.
 
 {% enddocs %}
 

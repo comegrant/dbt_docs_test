@@ -1,0 +1,153 @@
+version: 2
+
+models:
+  - name: dim_case_details
+    description: >
+      Contains information about cause, category, type, and responsible party for a case line related to a delivery. 
+      A case can be reported by the customer, customer service or a partner. One order can only have one case, but 
+      a case can have several case lines.
+    latest_version: 1
+    config:
+      alias: dim_case_details
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_case_details
+        data_type: string
+        description: "{{ doc('column__pk_dim_case_details') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_category_id
+        data_type: string
+        description: "{{ doc('column__case_category_id') }}"
+
+      - name: case_category_name
+        data_type: string
+        description: "{{ doc('column__case_category_name') }}"
+
+      - name: case_cause_id
+        data_type: string
+        description: "{{ doc('column__case_cause_id') }}"
+
+      - name: case_cause_name
+        data_type: string
+        description: "{{ doc('column__case_cause_name') }}"
+
+      - name: case_responsible_id
+        data_type: string
+        description: "{{ doc('column__case_responsible_id') }}"
+
+      - name: case_responsible_description
+        data_type: string
+        description: "{{ doc('column__case_responsible_description') }}"
+
+      - name: case_line_type_id
+        data_type: int
+        description: "{{ doc('column__case_line_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: case_line_type_name
+        data_type: string
+        description: "{{ doc('column__case_line_type_name') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: fact_cases
+    description: >
+      Cases and case lines reltated to deliveries reported by the customer, customer service or partners.
+      A case line includes communication records (SMS and notes), redelivery events, and complaints with reimbursement options.
+      A delivery can only have one related case, but a case can have several case lines. 
+    latest_version: 1
+    config:
+      alias: fact_cases
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_cases
+        data_type: string
+        description: "{{ doc('column__pk_fact_cases') }}"
+        constraints:
+          - type: primary_key
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_id
+        data_type: char(36)
+        description: "{{ doc('column__case_id') }}"
+
+      - name: case_line_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_line_id') }}"
+
+      - name: case_line_amount
+        data_type: decimal(19,4)
+        description: "{{ doc('column__case_line_amount') }}"
+
+      - name: case_line_comment
+        data_type: string
+        description: "{{ doc('column__case_line_comment') }}"
+
+      - name: is_active_case_line
+        data_type: boolean
+        description: "{{ doc('column__is_active_case_line') }}"
+        data_tests:
+          - not_null
+
+      - name: case_line_type_id
+        data_type: int
+        description: "{{ doc('column__case_line_type_id') }}"
+
+      - name: case_cause_id
+        data_type: string
+        description: "{{ doc('column__case_cause_id') }}"
+
+      - name: case_responsible_id
+        data_type: string
+        description: "{{ doc('column__case_responsible_id') }}"
+
+      - name: case_category_id
+        data_type: string
+        description: "{{ doc('column__case_category_id') }}"
+
+      - name: case_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: case_line_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_case_details
+        data_type: string
+        description: "{{ doc('column__pk_dim_case_details') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_case_details')
+            to_columns: [pk_dim_case_details]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_case_details')
+              field: pk_dim_case_details
+
+    versions:
+      - v: 1

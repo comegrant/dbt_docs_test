@@ -23,9 +23,9 @@ source as (
         , case_line_case_id as case_id
         , case_line_order_line_id as billing_agreement_order_line_id
         , case_line_type_id 
-        , case_line_cause as case_line_cause_id
-        , case_line_responsible as case_line_responsible_id
-        , case_line_category as case_line_category_id
+        , case_line_cause as case_cause_id
+        , case_line_responsible as case_responsible_id
+        , case_line_category as case_category_id
         
         {# strings #}
         , case_line_comment as case_line_comment

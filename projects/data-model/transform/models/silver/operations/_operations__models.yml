@@ -212,9 +212,8 @@ models:
         
   - name: operations__cases
     description: >
-      Table containing info about cases. A case can be a redelivery or a complaint. 
-      Complaints are incidents where something is wrong with an order (e.g., a rotten or missing ingredient). 
-      Redeliveries are cases where we have been unable to deliver an order and we have to try to deliver again or reimburse the customer.
+      Cases related to deliveries reported by the customer, customer service or partners. 
+      Each delivery can only have one case, but a case can have several case lines.
     config:
       contract:
         enforced: false
@@ -268,7 +267,9 @@ models:
         description: "{{ doc('column__source_updated_by') }}"
 
   - name: operations__case_lines
-    description: "Table containing info about cases on a case line granularity"
+    description: >
+      Cases lines related to cases that are connected to a delivery. 
+      Each delivery can only have one case, but a case can have several case lines.
     config:
       contract:
         enforced: false
@@ -294,17 +295,17 @@ models:
         data_tests:
           - not_null
 
-      - name: case_line_cause_id
+      - name: case_cause_id
         data_type: varchar(36)
-        description: "{{ doc('column__case_line_cause_id') }}"
+        description: "{{ doc('column__case_cause_id') }}"
 
-      - name: case_line_responsible_id
+      - name: case_responsible_id
         data_type: varchar(36)
-        description: "{{ doc('column__case_line_responsible_id') }}"
+        description: "{{ doc('column__case_responsible_id') }}"
 
-      - name: case_line_category_id
+      - name: case_category_id
         data_type: varchar(36)
-        description: "{{ doc('column__case_line_category_id') }}"
+        description: "{{ doc('column__case_category_id') }}"
 
       - name: case_line_comment
         data_type: string
