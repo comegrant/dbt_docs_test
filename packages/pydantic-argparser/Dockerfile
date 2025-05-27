@@ -1,7 +1,7 @@
 FROM python:3.10-slim-buster
 
 # install Poetry
-RUN pip install --no-cache-dir poetry
+RUN pip install --no-cache-dir poetry==1.8.2
 
 # set the home directory
 ENV APP_HOME /opt
@@ -12,7 +12,7 @@ COPY packages packages
 
 WORKDIR $PACKAGE_HOME
 
-# Only copy the package file for imporoved build caching
+# Only copy the package file for improved build caching
 COPY packages/pydantic-argparser/pyproject.toml .
 COPY packages/pydantic-argparser/poetry.lock .
 

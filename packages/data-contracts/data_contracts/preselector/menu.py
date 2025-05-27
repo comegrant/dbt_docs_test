@@ -2,7 +2,6 @@ from datetime import timedelta
 
 import polars as pl
 from aligned import (
-    CustomMethodDataSource,
     EventTimestamp,
     Float,
     Int32,
@@ -154,26 +153,6 @@ async def transform_recipe_cost(req, limit) -> pl.LazyFrame:  # noqa: ANN001
         mean_cost_of_food=pl.col("recipe_cost_whole_units").mean(),
         median_cost_of_food=pl.col("recipe_cost_whole_units").median(),
     )
-
-
-@feature_view(
-    name="menu_week_recipe_stats",
-    source=CustomMethodDataSource.from_methods(all_data=transform_recipe_cost).with_loaded_at(),
-    materialized_source=materialized_data.parquet_at("meny_week_recipe_stats.parquet"),
-    acceptable_freshness=timedelta(days=6),
-)
-class MenuWeekRecipeNormalization:
-    menu_year = Int32().as_entity()
-    menu_week = Int32().as_entity()
-    portion_size = Int32().as_entity()
-    company_id = String().as_entity()
-
-    loaded_at = EventTimestamp()
-
-    min_cost_of_food = Float()
-    max_cost_of_food = Float()
-    mean_cost_of_food = Float()
-    median_cost_of_food = Float()
 
 
 @feature_view(

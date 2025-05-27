@@ -18,9 +18,8 @@ orders = HistoricalRecipeOrders()
     name="user_recipe_likability",
     description="The score of a recipe per user.",
     contacts=[
-        Owner.niladri().markdown(),
-        Owner.jose().markdown(),
-        Owner.matsmoll().markdown(),
+        Owner.niladri().name,
+        Owner.matsmoll().name,
     ],
     input_features=[
         ingredient.all_ingredients,
@@ -31,7 +30,7 @@ orders = HistoricalRecipeOrders()
     ],
     output_source=recommendations_dir.partitioned_parquet_at(
         "user_recipe_likability", partition_keys=["company_id", "year_week"]
-    )
+    ),
 )
 class UserRecipeLikability:
     agreement_id = Int32().as_entity()

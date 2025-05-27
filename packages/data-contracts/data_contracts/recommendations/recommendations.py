@@ -15,15 +15,12 @@ from project_owners.owner import Owner
 likability = UserRecipeLikability()
 cluster = RecipeCluster()
 
-rec_contacts = [
-    Owner.niladri().markdown(),
-    Owner.jose().markdown(),
-    Owner.matsmoll().markdown(),
-]
+rec_contacts = [Owner.niladri().name, Owner.matsmoll().name]
 
 
 delivered_recipes = HistoricalRecipeOrders()
 behavioral_ratings = MealboxChangesAsRating()
+
 
 @model_contract(
     name="rec_engine",
@@ -55,12 +52,11 @@ class RecommendatedDish:
     company_id = String()
 
     order_rank = (
-        Int32()
-        .lower_bound(1)
-        .description("The rank of the recipe in the recommendation. 1 is the best.")
+        Int32().lower_bound(1).description("The rank of the recipe in the recommendation. 1 is the best.")
         # .as_recommendation_target()
         # .estemating_rank(behavioral_ratings.rating)
     )
+
 
 rec_engine = RecommendatedDish()
 

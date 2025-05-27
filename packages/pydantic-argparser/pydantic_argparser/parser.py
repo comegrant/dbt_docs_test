@@ -1,6 +1,6 @@
 import argparse
-import datetime
 import logging
+from datetime import date, datetime
 from types import UnionType
 from typing import Literal, TypeVar, get_args, get_origin
 
@@ -18,53 +18,54 @@ def is_list_annotation(dtype: type) -> bool:
     if isinstance(dtype, list):
         return True
 
-    return get_origin(dtype) == list
+    return get_origin(dtype) is list
+
+
+optional_union_type_langth = 2
 
 
 def add_model(parser: argparse.ArgumentParser, model: type[BaseModel]) -> None:
     "Add Pydantic model to an ArgumentParser"
-
-    optional_union_type_langth = 2
 
     for name, field in model.model_fields.items():
         if not field.annotation:
             logger.info(f"Skipping {name} as it has no type annotation")
             continue
 
-        nargs = 1
-        if is_list_annotation(field.annotation):
-            nargs = "*"
+        if field.annotation is datetime:
+            field.annotation = str
 
-        if field.annotation == datetime.datetime:
-            field.annotation = lambda x: datetime.datetime.strptime(
-                x,
-                "%Y-%m-%d %H:%M:%S",
-            ).astimezone(tz=datetime.UTC)
-
-        if field.annotation == datetime.date:
-            field.annotation = (
-                lambda x: datetime.datetime.strptime(x, "%Y-%m-%d")
-                .astimezone(tz=datetime.UTC)
-                .date()
-            )
+        if field.annotation is date:
+            field.annotation = str
 
         annotation = field.annotation
+
         if isinstance(field.annotation, UnionType):
             sub_types = list(get_args(field.annotation))
 
             if len(sub_types) == optional_union_type_langth and type(None) in sub_types:
-                annotation = (
-                    sub_types[0] if sub_types[0] != type(None) else sub_types[1]
-                )
+                annotation = sub_types[0] if sub_types[0] is not type(None) else sub_types[1]
         elif get_origin(annotation) == Literal:
-            annotation = None
+            annotation = type(get_args(annotation)[0])
+
+        nargs = 1
+        if is_list_annotation(annotation):
+            nargs = "*"
+
+        default_value = None
+        if field.default_factory:
+            default_value = field.default_factory()  # type: ignore
+        elif field.default != PydanticUndefined:
+            default_value = field.default
+
+        assert annotation is not None, f"Found no annotation for {field}"
 
         parser.add_argument(
-            f"--{name}",
+            f"--{name.replace('_', '-')}",
             dest=name,
             nargs=nargs,
             type=annotation,
-            default=field.default,
+            default=default_value,
             help=field.description,
         )
 
@@ -92,10 +93,23 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
         if value == PydanticUndefined:
             raise ValueError(f"Got an undefined value for '{name}'")
 
-        if is_list_annotation(field.annotation):
+        if field.annotation is None:
+            continue
+
+        if isinstance(field.annotation, UnionType):
+            sub_types = list(get_args(field.annotation))
+
+            if len(sub_types) == optional_union_type_langth and type(None) in sub_types:
+                annotation = next(sub_type for sub_type in sub_types if sub_type is not None)
+            else:
+                annotation = field.annotation
+        else:
+            annotation = field.annotation
+
+        if is_list_annotation(annotation):
             value = ["".join(sub_value) for sub_value in value]
             values[name] = value
-        elif field.annotation == str or get_origin(field.annotation) == Literal:
+        elif annotation is str or get_origin(annotation) == Literal:
             values[name] = "".join(value)
         elif isinstance(value, list):
             values[name] = value[0]

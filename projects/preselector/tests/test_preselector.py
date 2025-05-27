@@ -244,6 +244,12 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
         .update_source_for(ImportanceVector, RandomDataSource(partial_data=target_data))
         .update_source_for(PredefinedVectors, RandomDataSource(partial_data=defined_vectors))
         .update_source_for(
+            RecipeMainIngredientCategory,
+            RandomDataSource.with_values(
+                {"recipe_id": list(range(recipe_pool)), "main_carbohydrate_category_id": [1] * recipe_pool}
+            ),
+        )
+        .update_source_for(
             WeeksSinceRecipe,
             InMemorySource(
                 pl.DataFrame(

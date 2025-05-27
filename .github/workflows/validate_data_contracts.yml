@@ -1,0 +1,94 @@
+name: Validate Data Contracts
+
+on:
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+  pull_request:
+    paths:
+      - '.github/workflows/validate_data_contracts.yml'
+      - 'packages/data-contracts/**'
+      - 'projects/data-model/**'
+
+permissions:
+  contents: read # Needed to read the repo
+  actions: read
+  issues: write # Needed to write comments
+  pull-requests: write
+  id-token: write
+
+jobs:
+  validate-data-catalog:
+    name: Validate data contracts
+    runs-on: ubuntu-22.04
+
+    defaults:
+      run:
+        working-directory: 'packages/data-contracts'
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.8.2
+
+      - name: Install dbt
+        working-directory: 'projects/data-model'
+        run: |
+          python -m venv .dbt-venv --upgrade-deps
+          source .dbt-venv/bin/activate
+          poetry install --with dev
+          poetry run dbt deps --project-dir ./transform
+
+      - name: Parse dbt models
+        working-directory: 'projects/data-model'
+        run: |
+          source .dbt-venv/bin/activate
+          poetry run dbt parse --project-dir ./transform --profiles-dir ./transform/profiles --target prod
+        env:
+          DATABRICKS_HOST: some-value-to-make-it-parse
+          DATABRICKS_HTTP_PATH: some-value-to-make-it-parse
+          DATABRICKS_DBT_TOKEN: some-value-to-make-it-parse
+
+      - name: Install data catalog
+        run: |
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
+          poetry install --no-interaction --all-extras
+          echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      - name: Validate contracts
+        run: |
+          python -m data_contracts.dbt_validate \
+            --output-file=report.md \
+            --sql-dirs=../../projects/preselector/preselector/sql
+
+          echo $(cat report.md)
+
+
+      - name: Notify about issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'packages/data-contracts/report.md';
+
+            if (!fs.existsSync(path)) {
+              console.log('File is empty, no comment created.');
+              return;
+            }
+            const body = fs.readFileSync(path, 'utf8').trim();
+
+            console.log('Sending message.')
+            const response = await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+            console.log('Message sent');
+            process.exit(1)

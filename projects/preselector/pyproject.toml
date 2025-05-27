@@ -18,8 +18,8 @@ fsspec = "^2024.6.1"
 adlfs = "^2024.4.1"
 sqlglot = "^25.7.1"
 azure-keyvault-secrets = "^4.8.0"
-polars = "1.16.0"
-polars-lts-cpu = "1.16.0"
+polars = "1.18.0"
+polars-lts-cpu = "1.18.0"
 fastapi = { version = "^0.113.0", extras=["standard"] }
 pyodbc = "5.1.0"
 ruff = "^0.6.6"
@@ -30,7 +30,7 @@ virtualenv = "20.24.2"
 slack-connector = {path = "../../packages/slack-connector", develop = true}
 constants = {path = "../../packages/constants", develop = true}
 key-vault = {path = "../../packages/key-vault", develop = true}
-databricks-connector = {path = "../../packages/catalog-connector", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 
 [tool.poetry.group.worker.dependencies]
 azure-servicebus = "^7.12.2"

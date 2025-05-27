@@ -1,4 +1,3 @@
----
 name: CI packages/pydantic-argparser
 
 on:
@@ -11,8 +10,8 @@ on:
 
 jobs:
   ci-libs-pydantic-argparser:
-    uses:
-      ./.github/workflows/python_reusable.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
+      python-version: "3.10.13"
       working-directory: packages/pydantic-argparser
     secrets: inherit

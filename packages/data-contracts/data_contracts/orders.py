@@ -26,7 +26,7 @@ mealbox_id = "2F163D69-8AC1-6E0C-8793-FF0000804EB3"
 recommendation_engine_origin_id = "9e016a92-9e5c-4b5b-ac5d-739cefd6f07b".upper()
 user_origin_id = "25017d0e-f788-48d7-8dc4-62581d58b698".upper()
 
-contacts = [Owner.matsmoll().markdown(), Owner.niladri().markdown()]
+contacts = [Owner.matsmoll().name, Owner.niladri().name]
 
 historical_orders_sql = """
 WITH velgandvrak AS (

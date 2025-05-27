@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -8,6 +8,7 @@ class Owner:
     name: str
     email: str
     slack_member_id: str
+    github_handle: str | None = field(default=None)
 
     def markdown(self) -> str:
         full_markdown = f" - **{self.name}**"
@@ -15,6 +16,9 @@ class Owner:
             full_markdown += f"\n    - Email: *{self.email}*"
         if self.slack_member_id:
             full_markdown += f"\n    - Slack Member ID: *{self.slack_member_id}*"
+        if self.github_handle:
+            full_markdown += f"\n    - Github Handle: *@{self.github_handle}*"
+
         return full_markdown
 
     @staticmethod
@@ -23,6 +27,7 @@ class Owner:
             name="Mats Eikeland Mollestad",
             slack_member_id="U05Q1RUDC20",
             email="mats.mollestad@cheffelo.com",
+            github_handle="MatsMoll",
         )
 
     @staticmethod
@@ -53,8 +58,9 @@ class Owner:
     def sylvia() -> Owner:
         return Owner(
             name="Sylvia Liu",
-            slack_member_id="U04TRPCUKGD",
             email="sylvia.liu@cheffelo.com",
+            slack_member_id="U04TRPCUKGD",
+            github_handle="sylvia-liu-qinghua",
         )
 
     @staticmethod
@@ -63,6 +69,7 @@ class Owner:
             name="Grant Levang",
             slack_member_id="U058KUJC1PV",
             email="grant.levang@cheffelo.com",
+            github_handle="grantlevang",
         )
 
     @staticmethod

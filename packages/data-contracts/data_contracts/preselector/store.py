@@ -13,6 +13,7 @@ from aligned import (
 from aligned.schemas.date_formatter import DateFormatter
 from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.mealkits import OneSubMealkits
+from data_contracts.menu import MenuWeekRecipeNormalization
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import (
     ImportanceVector,
@@ -20,7 +21,7 @@ from data_contracts.preselector.basket_features import (
     PreselectorErrorStructure,
     TargetVectors,
 )
-from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, MenuWeekRecipeNormalization, PreselectorYearWeekMenu
+from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, PreselectorYearWeekMenu
 from data_contracts.recipe import (
     NormalizedRecipeFeatures,
     RecipeCost,
@@ -188,12 +189,9 @@ class FailedPreselectorOutput:
 def preselector_contracts() -> FeatureStore:
     store = FeatureStore.experimental()
 
-    views = [
-        RecipePreferences,
-        Preselector,
-    ]
+    views = [RecipePreferences, Preselector, SuccessfulPreselectorOutput, FailedPreselectorOutput, RecipeVote]
 
     for view in views:
-        store.add_compiled_view(view.compile())
+        store.add(view)
 
     return store

@@ -14,10 +14,11 @@ from aligned.data_source.batch_data_source import (
     RequestResult,
 )
 from aligned.feature_source import WritableFeatureSource
-from aligned.retrieval_job import RetrievalJob, RetrievalRequest
+from aligned.retrieval_job import FilterRepresentable, RetrievalJob, RetrievalRequest
 from aligned.schemas.constraints import MaxLength, MinLength
 from aligned.schemas.feature import Constraint, Feature
 from aligned.sources.local import FileFactualJob
+from sqlglot import exp, parse_one
 
 from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 from data_contracts.helper import snake_to_pascal
@@ -136,19 +137,22 @@ def pyspark_schema_changes(from_schema: StructType, to_schema: StructType) -> Sc
     return SchemaChange(adding=new_fields, changes=alter_field, deletes=deletes)
 
 
-def pyspark_schema_from_request(request: RetrievalRequest) -> StructType:
+def spark_type(dtype: FeatureType) -> DataType:
     from pyspark.sql.types import StructField, StructType
 
-    def spark_type(dtype: FeatureType) -> DataType:
-        if dtype.is_struct and dtype.has_structured_fields:
-            sub_fields = dtype.struct_fields()
-            return StructType(
-                [
-                    StructField(name=key, dataType=dtype.spark_type)
-                    for key, dtype in sorted(sub_fields.items(), key=lambda field: field[0])
-                ]
-            )
-        return dtype.spark_type
+    if dtype.is_struct and dtype.has_structured_fields:
+        sub_fields = dtype.struct_fields()
+        return StructType(
+            [
+                StructField(name=key, dataType=dtype.spark_type)
+                for key, dtype in sorted(sub_fields.items(), key=lambda field: field[0])
+            ]
+        )
+    return dtype.spark_type
+
+
+def pyspark_schema_from_request(request: RetrievalRequest) -> StructType:
+    from pyspark.sql.types import StructField, StructType
 
     return StructType(
         [
@@ -407,6 +411,43 @@ class DatabricksSource:
 
 
 @dataclass
+class UCSqlJob(RetrievalJob):
+    config: DatabricksConnectionConfig
+    query: exp.Select
+    request: RetrievalRequest
+
+    @property
+    def request_result(self) -> RequestResult:
+        return self.request.request_result
+
+    @property
+    def retrieval_requests(self) -> list[RetrievalRequest]:
+        return [self.request]
+
+    async def to_lazy_polars(self) -> pl.LazyFrame:
+        return pl.from_pandas(await self.to_pandas()).lazy()
+
+    async def to_pandas(self) -> pd.DataFrame:
+        client = self.config.connection()
+
+        spark_df = client.sql(self.query.sql(dialect="spark"))
+
+        return spark_df.toPandas()
+
+    def filter(self, condition: FilterRepresentable) -> RetrievalJob:
+        new_query = self.query
+
+        if isinstance(condition, str):
+            new_query = new_query.where(condition)
+        elif isinstance(condition, pl.Expr):
+            raise NotImplementedError("Not added support for filtering on exp yet.")
+        else:
+            new_query = new_query.where(condition.name)
+
+        return UCSqlJob(config=self.config, query=new_query, request=self.request)
+
+
+@dataclass
 class UCSqlSource(CodableBatchDataSource, DatabricksSource):
     config: DatabricksConnectionConfig
     query: str
@@ -420,17 +461,16 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
         return await self.all_columns().to_polars()
 
     def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
-        client = self.config.connection()
+        expression = parse_one(self.query, read="spark")
 
-        async def load() -> pl.LazyFrame:
-            spark_df = client.sql(self.query)
+        assert isinstance(expression, exp.Select), (
+            f"Unable to read a spark query that is not a SELECT. Got {type(expression)}"
+        )
 
-            if limit:
-                spark_df = spark_df.limit(limit)
+        if limit:
+            expression = expression.limit(limit)
 
-            return pl.from_pandas(spark_df.toPandas()).lazy()
-
-        return RetrievalJob.from_lazy_function(load, request)
+        return UCSqlJob(self.config, expression, request)
 
     def all_between_dates(
         self,
@@ -697,7 +737,7 @@ class UnityCatalogTableAllJob(RetrievalJob):
     def retrieval_requests(self) -> list[RetrievalRequest]:
         return [self.request]
 
-    def filter(self, condition: str | Feature | pl.Expr) -> RetrievalJob:
+    def filter(self, condition: FilterRepresentable) -> RetrievalJob:
         if isinstance(condition, Feature):
             new_where = condition.name
         elif isinstance(condition, str):
@@ -710,6 +750,8 @@ class UnityCatalogTableAllJob(RetrievalJob):
                 return RetrievalJob.filter(self, condition)
 
             new_where = spark_expr
+        else:
+            new_where = condition.name
 
         if self.where:
             self.where = f"({self.where}) AND ({new_where})"

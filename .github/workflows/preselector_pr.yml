@@ -10,8 +10,7 @@ on:
 
 jobs:
   test-preselector:
-    uses:
-      ./.github/workflows/template_test_python.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
       python-version: "3.10.13"
       working-directory: projects/preselector

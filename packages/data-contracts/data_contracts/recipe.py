@@ -25,7 +25,7 @@ from project_owners.owner import Owner
 
 from data_contracts.sources import adb, adb_ml, materialized_data, pim_core
 
-contacts = [Owner.matsmoll().markdown(), Owner.niladri().markdown()]
+contacts = [Owner.matsmoll().name, Owner.niladri().name]
 
 taxonomies_sql = """
 SELECT recipe_id, recipe_taxonomies, GETDATE() as loaded_at
