@@ -19,6 +19,7 @@ aiocache = "^0.12.3"
 python-jose = {version = "^3.4.0", extras = ["cryptography"]}
 menu-optimiser = {path = "../../projects/menu-optimiser", develop = true}
 preselector = {path = "../../projects/preselector", develop = true}
+scikit-learn = "^1.6.1"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

@@ -12,6 +12,7 @@ pandas = "2.2.2"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 numpy = "1.26.4"
 code2flow = "^2.5.1"
+scikit-learn = "^1.6.1"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
@@ -24,6 +25,7 @@ pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
 pyright = "*"
+ipykernel = "^6.29.5"
 
 [build-system]
 requires = ["poetry-core"]
