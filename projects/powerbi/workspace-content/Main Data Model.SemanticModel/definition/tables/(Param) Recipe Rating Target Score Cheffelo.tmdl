@@ -1,3 +1,5 @@
+/// This parameter defines the target recipe rating score. The default is 77. 
+/// It will affect the measure "Share of Recipes with Rating Above Target"
 table '(Param) Recipe Rating Target Score Cheffelo'
 
     
@@ -6,8 +8,9 @@ table '(Param) Recipe Rating Target Score Cheffelo'
         formatString: 0
         lineageTag: dc203142-72b4-4e74-936d-34cd261f1ceb
 
+    /// This parameter defines the target recipe rating score. The default is 77. 
+    /// It will affect the measure "Share of Recipes with Rating Above Target"
     column 'Recipe Rating Target Score Cheffelo'
-        isHidden
         formatString: 0
         lineageTag: a664b724-8e3d-4667-9bd4-d18322380604
         summarizeBy: none

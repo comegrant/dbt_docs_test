@@ -16,6 +16,24 @@ table 'Menu Measures'
 		isHidden
 		lineageTag: 1f670f36-e0c8-4565-acf8-ba11a315573d
 
+	/// Returns the share of recipes with recipe rating above the target rating.
+	/// The target rating is defined in the parameter 
+	///'(Param) Recipe Rating Target Score Cheffelo' which by default is 77.
+	measure 'Share of Recipes with Rating Above Target' =
+			DIVIDE(
+			    SUMX(
+			        SELECTCOLUMNS(Recipes,Recipes[Recipe Id]),
+			        IF(
+						[Average Recipe Rating Score] > '(Param) Recipe Rating Target Score Cheffelo'[Recipe Rating Target Score Cheffelo Value], 
+						1, 
+						0
+					)
+			    ),
+			    [Number of Recipes with Rating]
+			)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Recipe Ratings
+
 	/// The average value of the rating score.
 	/// The rating score is the original rating 1-5 recalculated to a 0-100 scale.
 	measure 'Average Recipe Rating Score' =
