@@ -52,6 +52,8 @@ tables = [
     "suppliers",
     "taxonomies_translations",
     "taxonomy_types",
+    "unit_labels",
+    "unit_labels_translations",
     "weekly_ingredients",
     "weekly_menus",
     "weekly_orders",
