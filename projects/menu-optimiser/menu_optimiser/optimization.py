@@ -6,6 +6,7 @@ from menu_optimiser.common import (
     RequestMenu,
     RequestTaxonomy,
     ResponseMenu,
+    ResponseAverageRating,
     ResponseTaxonomy,
     ResponseMainIngredient,
     ResponsePriceCategory,
@@ -342,7 +343,11 @@ async def generate_menu_companies(
                     ResponseCookingTime(**ct)
                     for ct in output_tax["cooking_times"]  # type: ignore
                 ],
-                average_rating=taxonomy.min_average_rating,
+                average_rating=ResponseAverageRating(
+                    average_rating=taxonomy.min_average_rating,
+                    wanted=taxonomy.quantity,
+                    actual=len(final_tax),
+                ),
             )
         )
 

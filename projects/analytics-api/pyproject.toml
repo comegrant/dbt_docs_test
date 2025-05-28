@@ -8,7 +8,6 @@ packages = [{include = "analytics_api"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic-settings = "^2.1.0"
-polars-lts-cpu = "1.16.0"
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 numpy = "1.26.4"
 fastapi = {version= "^0.113", extras = ["standard"]}

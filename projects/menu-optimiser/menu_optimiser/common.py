@@ -112,12 +112,18 @@ class ResponseCookingTime(ConfigModel):
     actual: int
 
 
+class ResponseAverageRating(ConfigModel):
+    average_rating: float
+    wanted: int
+    actual: int
+
+
 class ResponseTaxonomy(ConfigModel):
     taxonomy_id: int
     main_ingredients: list[ResponseMainIngredient]
     price_categories: list[ResponsePriceCategory]
     cooking_times: list[ResponseCookingTime]
-    average_rating: float
+    average_rating: ResponseAverageRating
     wanted: int
     actual: int
 
