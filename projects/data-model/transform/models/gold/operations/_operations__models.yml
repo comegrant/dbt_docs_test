@@ -94,6 +94,16 @@ models:
         data_type: varchar(36)
         description: "{{ doc('column__case_line_id') }}"
 
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+
       - name: case_line_amount
         data_type: decimal(19,4)
         description: "{{ doc('column__case_line_amount') }}"
@@ -101,12 +111,6 @@ models:
       - name: case_line_comment
         data_type: string
         description: "{{ doc('column__case_line_comment') }}"
-
-      - name: is_active_case_line
-        data_type: boolean
-        description: "{{ doc('column__is_active_case_line') }}"
-        data_tests:
-          - not_null
 
       - name: case_line_type_id
         data_type: int
@@ -124,6 +128,62 @@ models:
         data_type: string
         description: "{{ doc('column__case_category_id') }}"
 
+      - name: case_status_id
+        data_type: int
+        description: "{{ doc('column__case_status_id') }}"
+        data_tests:
+          - not_null
+  
+      - name: ingredient_id
+        data_type: int
+        description: "{{ doc('column__ingredient_id') }}"
+
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: redelivery_timeblock_id
+        data_type: int
+        description: "{{ doc('column__redelivery_timeblock_id') }}"
+
+      - name: redelivery_id
+        data_type: int
+        description: "{{ doc('column__redelivery_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active_case_line
+        data_type: boolean
+        description: "{{ doc('column__is_active_case_line') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_internal_reference
+        data_type: string
+        description: "{{ doc('column__ingredient_internal_reference') }}"
+
+      - name: redelivery_comment
+        data_type: string
+        description: "{{ doc('column__redelivery_comment') }}"
+
+      - name: redelivery_user
+        data_type: string
+        description: "{{ doc('column__redelivery_comment') }}"
+
+      - name: menu_week_financial_date
+        data_type: date
+        description: "{{ doc('column__menu_week_financial_date') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: redelivery_at
+        data_type: timestamp
+        description: "{{ doc('column__redelivery_at') }}"
+
       - name: case_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
@@ -135,6 +195,34 @@ models:
         description: "{{ doc('column__source_updated_at') }}"
         data_tests:
           - not_null
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
 
       - name: fk_dim_case_details
         data_type: string
@@ -148,6 +236,36 @@ models:
           - relationships:
               to: ref('dim_case_details')
               field: pk_dim_case_details
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+    
+      - name: fk_dim_ingredients
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredients') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredients')
+            to_columns: [pk_dim_ingredients]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredients')
+              field: pk_dim_ingredients
+              config:
+                severity: warn
 
     versions:
       - v: 1

@@ -15,3 +15,5 @@ sources:
       - name: operations__zones_blacklist
       - name: operations__zone_postcode
       - name: operations__zones
+      - name: operations__orders
+      - name: operations__orders_history

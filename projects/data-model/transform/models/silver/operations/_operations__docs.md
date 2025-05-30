@@ -100,7 +100,7 @@ The unique id of the case table. Contains a unique id for each case.
 
 {% enddocs %}
 
-{% docs column__case_redelivery_timeblock_id %}
+{% docs column__redelivery_timeblock_id %}
 
 The new timeblock assigned to an order that could not be delivered in the original timeblock and has been assigned a redelivery. 
 
@@ -112,15 +112,21 @@ The status of the case. Foreign key to the case status table. Can have status id
 
 {% enddocs %}
 
-{% docs column__case_redelivery_id %}
+{% docs column__redelivery_id %}
 
 The status of the redelivery. Foreign key to the case status table. Can have status id 0-4.
 
 {% enddocs %}
 
-{% docs column__case_redelivery_comment %}
+{% docs column__redelivery_comment %}
 
 Comment connected to redelivery. Can come from external partners or internally from logistics/customer service, which is defined by source_updated_by.
+
+{% enddocs %}
+
+{% docs column__redelivery_at %}
+
+Timestamp of the redelivery.
 
 {% enddocs %}
 

@@ -1,4 +1,8 @@
 models:
+  - name: operations__orders_history
+
+  - name: operations__orders
+  
   - name: operations__timeblocks_blacklisted
     description: Contains blacklisted timeblocks for given menu year and menu week.
     columns:
@@ -226,15 +230,15 @@ models:
           - not_null
 
       - name: ops_order_id
-        data_type: decimal(18,0)
+        data_type: bigint
         description: "{{ doc('column__ops_order_id') }}"
         data_tests:
           - unique
           - not_null
 
-      - name: case_redelivery_timeblock_id
-        data_type: decimal(18,0)
-        description: "{{ doc('column__case_redelivery_timeblock_id') }}"
+      - name: redelivery_timeblock_id
+        data_type: int
+        description: "{{ doc('column__redelivery_timeblock_id') }}"
 
       - name: case_status_id
         data_type: int
@@ -242,15 +246,15 @@ models:
         data_tests:
           - not_null
 
-      - name: case_redelivery_id
+      - name: redelivery_id
         data_type: int
-        description: "{{ doc('column__case_redelivery_id') }}"
+        description: "{{ doc('column__redelivery_id') }}"
         data_tests:
           - not_null
 
-      - name: case_redelivery_comment
+      - name: redelivery_comment
         data_type: string
-        description: "{{ doc('column__case_redelivery_comment') }}"
+        description: "{{ doc('column__redelivery_comment') }}"
 
       - name: source_updated_at
         data_type: timestamp
@@ -258,9 +262,9 @@ models:
         data_tests:
           - not_null
 
-      - name: source_created_at
+      - name: redelivery_at
         data_type: timestamp
-        description: "{{ doc('column__source_created_at') }}"
+        description: "{{ doc('column__redelivery_at') }}"
 
       - name: source_updated_by
         data_type: string
