@@ -112,9 +112,9 @@ def predict_recipes(args: Args) -> None:
     user_chunks = divide_users_into_chunks(user_id_list=users_list, num_chunks=company_predict_configs.num_user_chunks)
     logger.info(f"Total num users = {n_users}, divided into {company_predict_configs.num_user_chunks} chunks.")
     # df_topk_recommendations_ls = []
-    timestamp_prediction = datetime.now(tz=timezone("UTC")).strftime("%Y-%m-%d %H:%M:%S")
+    timestamp_prediction = datetime.now(tz=timezone("UTC"))
     run_id = str(uuid.uuid4())
-    logger.info(f"Start prediction at {timestamp_prediction}.")
+    logger.info(f"Start prediction at {timestamp_prediction.strftime('%Y-%m-%d %H:%M:%S')}.")
     for i, users in enumerate(user_chunks):
         try:
             logging.info(f"Predicting for {i}/{company_predict_configs.num_user_chunks} chunks of users...")

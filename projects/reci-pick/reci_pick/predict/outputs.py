@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 
 
@@ -6,7 +8,7 @@ def prepare_outputs(
     model_version: str,
     identifier_col: str,
     score_col: str,
-    timestamp_prediction: str,
+    timestamp_prediction: datetime,
     company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
@@ -39,7 +41,7 @@ def prepare_recommendations_for_output(
     identifier_col: str,  # billing_agreement_id or concept_combinations
     score_col: str,
     model_version: str,
-    timestamp_prediction: str,
+    timestamp_prediction: datetime,
     company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
@@ -48,7 +50,12 @@ def prepare_recommendations_for_output(
         .agg(list)
         .reset_index()
     )
-    df_rec_outputs = df_rec_outputs.rename(columns={score_col: "score"})
+    df_rec_outputs = df_rec_outputs.rename(
+        columns={
+            score_col: "scores",
+            "main_recipe_id": "main_recipe_ids",
+        }
+    )
     df_rec_outputs["model_version"] = model_version
     df_rec_outputs["created_at"] = timestamp_prediction
     df_rec_outputs["run_id"] = run_id
@@ -58,8 +65,8 @@ def prepare_recommendations_for_output(
         identifier_col,
         "menu_year",
         "menu_week",
-        "main_recipe_id",
-        "score",
+        "main_recipe_ids",
+        "scores",
         "model_version",
         "run_id",
         "created_at",
@@ -72,7 +79,7 @@ def prepare_concept_user_scores_for_output(
     df_concept_users: pd.DataFrame,
     df_concept_preferences: pd.DataFrame,
     model_version: str,
-    timestamp_prediction: str,
+    timestamp_prediction: datetime,
     company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
@@ -108,7 +115,7 @@ def prepare_concept_recommendations(
     df_concept_users: pd.DataFrame,
     df_concept_preferences: pd.DataFrame,
     model_version: str,
-    timestamp_prediction: str,
+    timestamp_prediction: datetime,
     company_id: str,
     run_id: str,
 ) -> pd.DataFrame:
@@ -138,7 +145,7 @@ def prepare_concept_recommendations(
 
 
 def prepare_meta_data_menus_predicted(
-    df_menus_predicted: pd.DataFrame, company_id: str, run_id: str, timestamp_prediction: str, num_users: int
+    df_menus_predicted: pd.DataFrame, company_id: str, run_id: str, timestamp_prediction: datetime, num_users: int
 ) -> pd.DataFrame:
     df_menus_predicted = df_menus_predicted[["menu_year", "menu_week"]].drop_duplicates()
     df_menus_predicted["run_id"] = run_id
