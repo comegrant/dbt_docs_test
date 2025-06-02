@@ -72,7 +72,7 @@ procurement_cycles as (
     group by all
 )
 
-, ingredient_prices_joined as (
+, ingredient_costs_joined as (
 
     select
         weekly_menus.menu_year
@@ -126,4 +126,4 @@ procurement_cycles as (
 
 )
 
-select * from ingredient_prices_joined
+select * from ingredient_costs_joined

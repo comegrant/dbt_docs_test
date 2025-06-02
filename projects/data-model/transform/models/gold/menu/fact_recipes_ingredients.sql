@@ -50,7 +50,7 @@ menu_weeks_recipes_portions as (
 
 , ingredient_prices as (
 
-    select * from {{ ref('int_ingredient_prices_joined') }}
+    select * from {{ ref('int_ingredient_costs_joined') }}
 
 )
 

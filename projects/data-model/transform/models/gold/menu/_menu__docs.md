@@ -39,6 +39,42 @@ portion_id obtained from product variations.
 
 {% enddocs %}
 
+{% docs column__recipe_planned_cost %}
+
+The menu planning recipe cost, calculated as the sum of the cost of the recipe ingredients based on the exact quantity used in the recipe.
+
+{% enddocs %}
+
+{% docs column__recipe_planned_cost_whole_units %}
+
+The menu planning recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
+
+{% enddocs %}
+
+{% docs column__recipe_expected_cost %}
+
+The expected recipe cost, calculated as the sum of the cost of the recipe ingredients based on the exact quantity used in the recipe. This is the expected purchasing cost which takes any special cost (variable cost unit) into account if set.
+
+{% enddocs %}
+
+{% docs column__recipe_expected_cost_whole_units %}
+
+The expected recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. This is the expected purchasing cost which takes any special cost (variable cost unit) into account if set.
+
+{% enddocs %}
+
+{% docs column__recipe_actual_cost %}
+
+The actual recipe cost, calculated as the sum of the cost of the ingredients in the recipe based on the exact quantity used in the recipe. The cost used for the calculation is the ingredient cost on the purchase order.
+
+{% enddocs %}
+
+{% docs column__recipe_actual_cost_whole_units %}
+
+The actual recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. The cost used for the calculation is the ingredient cost on the purchase order.
+
+{% enddocs %}
+
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 

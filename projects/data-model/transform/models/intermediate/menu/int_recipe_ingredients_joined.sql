@@ -64,7 +64,9 @@ recipes as (
         , order_ingredients.is_main_protein as is_recipe_main_protein
         , order_ingredients.nutrition_units as ingredient_nutrition_units
         , order_ingredients.order_ingredient_quantity as ingredient_order_quantity
+
     from recipes
+
     left join recipe_portions
         on recipes.recipe_id = recipe_portions.recipe_id
     left join chef_ingredient_sections
@@ -79,7 +81,9 @@ recipes as (
         on order_ingredients.ingredient_internal_reference = ingredients.ingredient_internal_reference
     left join ingredient_translations
         on ingredients.ingredient_id = ingredient_translations.ingredient_id
+
     where generic_ingredient_translations.language_id = ingredient_translations.language_id
+
     order by 
         recipes.recipe_id
         , recipe_portions.portion_id

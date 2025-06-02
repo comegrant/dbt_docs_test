@@ -870,6 +870,42 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_future_menu_week') }}"
 
+      - name: recipe_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_planned_cost') }}"
+
+      - name: recipe_planned_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_planned_cost_whole_units') }}"
+
+      - name: recipe_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_expected_cost') }}"
+
+      - name: recipe_expected_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_expected_cost_whole_units') }}"
+
+      - name: recipe_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_actual_cost') }}"
+
+      - name: recipe_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__recipe_actual_cost_whole_units') }}"
+
+      - name: price_category_level_id
+        data_type: int
+        description: "{{ doc('column__price_category_level_id') }}"
+
+      - name: price_category_level_name
+        data_type: string
+        description: "{{ doc('column__price_category_level_name') }}"
+
+      - name: price_category_price_inc_vat
+        data_type: decimal(6,2)
+        description: "{{ doc('column__price_category_price_inc_vat') }}"
+
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
