@@ -186,7 +186,7 @@ async def run() -> None:
         for req in data:
             assert isinstance(req, PreselectorFailedResponse)
             if req.error_code > 100:  # noqa: PLR2004
-                raise ValueError(f"The preselector failed with an unknown error code: {data}")
+                raise ValueError(f"The preselector failed with an unknown error: {req}")
 
     write_schema, write_table_name = write_table.split(".")
     db_source = PreselectorResultWriter(
