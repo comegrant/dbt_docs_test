@@ -685,6 +685,14 @@ resource "databricks_grants" "catalog" {
     privileges = ["ALL_PRIVILEGES"]
   }
 
+  dynamic "grant" {
+    for_each = terraform.workspace == "test" || terraform.workspace == "prod" ? [1] : []
+    content {
+      principal = "bundle_sp_dev"
+      privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+    }
+  }
+
   grant {
     principal = databricks_service_principal.databricks_reader_sp.application_id
     privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]

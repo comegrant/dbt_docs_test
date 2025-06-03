@@ -1,0 +1,15 @@
+resources:
+  jobs:
+    delete_pr_schemas:
+      name: delete_pr_schemas
+
+      tasks: 
+        - task_key: delete_pr_schemas
+          notebook_task: 
+            notebook_path: ../envops/delete_pr_schemas.py
+
+      parameters:
+        - name: pr_number
+          default: "Insert PR number here"
+
+      edit_mode: EDITABLE

@@ -6,6 +6,12 @@
     )
 }}
 
+{% set relation = adapter.get_relation(
+    database=this.database,
+    schema=this.schema,
+    identifier=this.identifier
+) %}
+
 
 with
 
@@ -25,20 +31,35 @@ products as (
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
 )
 
-, latest_estimation_in_fact as (
-    select
-        distinct estimation_generated_at
-    from {{ this }}
-    where is_latest_estimation = true
+-- Checking if fact_estimations already exist, in which case {{ this }} is a valid relation.
+-- If it does not exist, we will use the int_estimations table to get the latest estimation.
+{% if relation %}
 
-)
+    , latest_estimation_in_fact as (
+        select
+            distinct estimation_generated_at
+        from {{ this }}
+        where is_latest_estimation = true
+
+    )
+
+{% else %}
+
+    , latest_estimation_in_fact as (
+
+        select
+           max(estimation_generated_at) as estimation_generated_at
+        from {{ ref('int_estimations') }}
+
+    )
+{% endif %}
 
 , estimations as (
 
     select
         estimations.*
     from {{ ref('int_estimations') }} as estimations
-    {% if is_incremental() %}
+    {% if not flags.FULL_REFRESH %}
     inner join latest_estimation_in_fact
         -- We include the last estimation since we need to update the is_latest_estimation flag
         on estimations.estimation_generated_at >= latest_estimation_in_fact.estimation_generated_at

@@ -20,4 +20,5 @@ jobs:
       python-version: "3.11"
       target-env: Development
       ci-timeout: 90
+      dbt-target: prdev
     secrets: inherit

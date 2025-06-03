@@ -253,7 +253,7 @@ dbt-chef generate-yaml --model-name <model_name>
 > To generate accepted values easily you can do a select distinct on the field after builidng the model to your personal silver schema and then use ChatGPT to format it for you as a list
 
 ## 2.9 Create pull request
-When everything works as it should you can create a pull request in GitHub and assign reviewers. When a pull request is created the models you have created will be moved to our the schemas in our developoment workspace. After the PR is merged it will be moved to the test workspace. After this it will be moved to the prod workspace when some of the admins approve the deployment.
+When everything works as it should you can create a pull request in GitHub and assign reviewers. When a pull request is created the models you have modified and all downstream models will be built in a pull request schema prefixed with `~PR####_` where `####` is the number of your PR. After the PR is merged, the pull request schemas will be dropped. The code will be moved to the test workspace, but not built automatically. After this it will be moved to the prod workspace when some of the admins approve the deployment.
 
 >[!NOTE]
 >Even though you should not create a pull request before the code are finished and tested you should still create commits and push when making changes. Pushing the code will make sure that its stored online and not only locally on your computer. Doing commits make it possible to go back in time in your code, i.e. every time you do a commit you save a new version of your code which can be reverted back to later if needed.

@@ -1,0 +1,70 @@
+name: Delete PR Schema ...
+
+on:
+  pull_request:
+    types: [closed]
+    paths:
+      - '.github/workflows/delete_pr_schemas.yml'
+      - 'projects/data-model**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  delete-schema:
+    name: 'Delete Schema'
+    runs-on: ubuntu-22.04
+    environment: Development
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure Azure credentials
+      uses: azure/login@v1.4.7
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Secrets from Key Vault
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+          DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
+
+          echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
+          echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
+
+    - name: Setup Databricks CLI
+      uses: databricks/setup-cli@v0.224.1
+
+    - name: Extract PR number
+      id: extract_pr
+      run: echo "PR_NUMBER=${GITHUB_REF#refs/pull/}" | cut -d'/' -f1 >> $GITHUB_ENV
+
+    - name: Get ID of delete_pr_schemas job
+      id: get_job_id
+      run: |
+        job_id=$(databricks jobs list --output JSON | jq -r '.[] | select(.settings.name == "[dev afa25b66_d0ac_476c_a8e1_6db8ca327030] delete_pr_schemas") | .job_id')
+        echo "job_id=${job_id}" >> $GITHUB_ENV
+      env:
+        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
+
+    - name: Delete Schema
+      run: |
+        databricks jobs run-now --json '{"job_id": ${{ env.job_id }},"job_parameters":{"pr_number":"${{ env.PR_NUMBER }}"}}'
+      env:
+        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}

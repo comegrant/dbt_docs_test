@@ -32,3 +32,13 @@ transform:
       http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
       host: "{{ env_var('DATABRICKS_HOST') }}"
       token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
+
+    prdev:
+      type: databricks
+      method: http
+      catalog: dev
+      schema: prdev
+      threads: 4 # Threads used for the data-model CI workflow
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      token: "{{ env_var('DATABRICKS_DBT_TOKEN') }}"
