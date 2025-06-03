@@ -1,6 +1,5 @@
 /// Measures related to the loyalty program. Includes the number of upgrades and downgrades and measures related to transactions in the Points Store where customers exchange loyalty points for products.
 table 'Loyalty Measures'
-	isHidden
 	lineageTag: Loyalty-Measures-Table
 
 	/// Number of upgrades that occurred amongst customers in the loyalty program. 
@@ -8,8 +7,8 @@ table 'Loyalty Measures'
 	/// If you are looking at this per period which is longer than a week (e.g. per month), it is possible that the same customer is counted more than once, as they could have been upgraded more than once in the same month.
 	measure 'Number of Loyalty Level Upgrades' =
 				'Customer and Subscriber Measures'[Number of Loyalty Upgrades]
-		isHidden
 		formatString: #,0
+		displayFolder: Upgrades & Downgrades
 		lineageTag: number-of-subscribers-upgraded-loyalty-level
 
 	/// Number of downgrades that occurred amongst customers in the loyalty program. 
@@ -17,8 +16,8 @@ table 'Loyalty Measures'
 	/// If you are looking at this per period which covers multiple loyalty seasons, it is possible that the same customer is counted more than once, as they could have been downgraded on multiple occassions.
 	measure 'Number of Loyalty Level Downgrades' =
 				'Customer and Subscriber Measures'[Number of Loyalty Downgrades]
-		isHidden
 		formatString: #,0
+		displayFolder: Upgrades & Downgrades
 		lineageTag: number-of-subscribers-downgraded-loyalty-level
 
 	/// Number of transactions where a customer has spent loyalty points to make a purchase in the Points Store.
@@ -28,7 +27,7 @@ table 'Loyalty Measures'
 				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
-		isHidden
+		displayFolder: Points Store Purchases
 		lineageTag: number-of-loyalty-orders
 
 	/// The number of units of product purchased with loyalty points in the Points Store.
@@ -40,15 +39,14 @@ table 'Loyalty Measures'
 				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
-		isHidden
+		displayFolder: Points Store Purchases
 		lineageTag: number-of-products-purchased-with-points
 
 	/// Number of points earned, spent, expired, etc. on all loyalty points transactions matching any applied filters.
-	measure 'Number of Loyalty Points Exchanged' =
+	measure 'Number of Loyalty Points Exchanged in Transactions' =
 			'Loyalty Point Measures'[All Loyalty Points]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: 8737f78b-8329-45ef-baf4-995778c67d08
 
 	/// Number of loyalty points spent in the Points Store, e.g. number of points spent on buying a discount coupon.
@@ -58,8 +56,7 @@ table 'Loyalty Measures'
 				'Loyalty Order Statuses'[Loyalty Order Status] IN {"Finished", "Processing"}
 			)
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: sum-of-loyalty-points-spent
 
 	/// Number of spendable loyalty points earned on pointworthy transactions, such as ordering mealboxes or referring friends.
@@ -67,53 +64,49 @@ table 'Loyalty Measures'
 	measure 'Number of Loyalty Points Earned' =
 			'Loyalty Point Measures'[Loyalty Points Earned]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: 5e8fa074-ac41-4516-acac-2508cfb505a9
 
 	/// Number of spendable loyalty points that are not spent in the Points Store, but are removed for some reason, e.g. points have passed their expiration date, or there is a manual points correction.
 	measure 'Number of Loyalty Points Lost' =
 			'Loyalty Point Measures'[Loyalty Points Lost]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: 869635da-16d5-459a-a046-69e7fdf8f3b1
 
 	/// Number of loyalty points that have been earned which have not expired and are yet to be redeemed.
 	measure 'Number of Loyalty Points Remaining in Customer Accounts' =
 			'Loyalty Point Measures'[Loyalty Points Remaining]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: loyalty-points-in-customer-accounts
 
 	/// Number of spendable points earned from a points boost based on loyalty level.
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
+	/// Loyalty level boosters are only applied to orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
+	/// Points from both gold and silver level boosters are included in this measure.
 	measure 'Number of Loyalty Points Earned from any Level Boost' =
 			'Loyalty Point Measures'[Points from Level Boost]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: points-from-multiplier-measure
 
 	/// Number of spendable points earned from a gold level points boost. 
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
+	/// Loyalty level boosters are only applied to orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
 	/// Points for customers in the gold level are only earned and boosted on 'Debit' order line types.
 	measure 'Number of Loyalty Points Earned from a Gold Level Boost' =
 			'Loyalty Point Measures'[Points from Gold Level Boost]
 		formatString: #,0
-		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: points-from-gold-boost-measure
 
 	/// Number of spendable points earned from a silver level points boost. 
-	/// Loyalty level boosters only apply and result in the earning of additional points orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
+	/// Loyalty level boosters are only applied to orders which are not cancelled and are of type 'Recurring' or 'Campaign'.
 	/// Points for customers in the silver level are earned and boosted on 'Debit' and 'Transport' order line types.
 	measure 'Number of Loyalty Points Earned from a Silver Level Boost' =
 			'Loyalty Point Measures'[Points from Silver Level Boost]
 		formatString: #,0
 		isHidden
-		displayFolder: Loyalty Points
+		displayFolder: Points
 		lineageTag: points-from-silver-boost-measure
 
 	column loyalty_order_id

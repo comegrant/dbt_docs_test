@@ -22,7 +22,8 @@ loyalty_ledger as (
     select 
         loyalty_ledger.*,
         loyalty_level_companies.company_id,
-        loyalty_level_companies.loyalty_level_name,
+        loyalty_level_companies.loyalty_level_name_brand,
+        loyalty_level_companies.loyalty_level_name_english,
         loyalty_levels.loyalty_level_id,
         loyalty_levels.loyalty_level_number
     from loyalty_ledger
@@ -54,7 +55,7 @@ loyalty_ledger as (
     select 
         loyalty_levels_group.* 
         , row_number() over (
-            partition by billing_agreement_id, group, loyalty_level_name
+            partition by billing_agreement_id, group, loyalty_level_name_brand
             order by points_generated_at
         ) as row_number
     from loyalty_levels_group
@@ -68,7 +69,8 @@ loyalty_ledger as (
         loyalty_level_company_id,
         loyalty_level_id,
         loyalty_level_number,
-        loyalty_level_name,
+        loyalty_level_name_brand,
+        loyalty_level_name_english,
         points_generated_at as valid_from,
         {{ get_scd_valid_to('points_generated_at', 'billing_agreement_id') }} as valid_to
     from loyalty_levels_change

@@ -16,7 +16,7 @@ source as (
         , level_id as loyalty_level_id
 
         {# strings #}
-        , name as loyalty_level_name
+        , name as loyalty_level_name_brand
         , name_en as loyalty_level_name_english
 
         {# numerics #}

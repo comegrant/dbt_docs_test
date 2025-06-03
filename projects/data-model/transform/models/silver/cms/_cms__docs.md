@@ -506,7 +506,7 @@ This is the primary key of the loyalty level company table in CMS.
 
 {% enddocs %}
 
-{% docs column__loyalty_level_name %}
+{% docs column__loyalty_level_name_brand %}
 
 The name of the loyalty level in the language of the related company/brand.
 

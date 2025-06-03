@@ -151,7 +151,8 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
 
     select
         billing_agreement_id
-        , loyalty_level_name
+        , loyalty_level_name_brand
+        , loyalty_level_name_english
         , loyalty_level_number
         , valid_from
         , valid_to
@@ -192,7 +193,8 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , scd2_tables_joined.billing_agreement_preferences_updated_id
         , scd2_tables_joined.preference_combination_id
         , scd2_tables_joined.billing_agreement_basket_product_updated_id
-        , scd2_tables_joined.loyalty_level_name
+        , scd2_tables_joined.loyalty_level_name_brand
+        , scd2_tables_joined.loyalty_level_name_english
         , scd2_tables_joined.loyalty_level_number
         , billing_agreements_scd1.company_id
         , billing_agreements_scd1.payment_method

@@ -341,6 +341,12 @@ table 'Customer and Subscriber Details'
 		summarizeBy: none
 		sourceColumn: loyalty_level_number
 
+	/// The customer's Loyalty Level (e.g. "Gold", "Silver", "Bronze", "Start") 
+	column 'Loyalty Level'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: loyalty_level_name_english
+
 	partition 'Customer and Subscriber Details' = m
 		mode: directQuery
 		source =

@@ -850,9 +850,13 @@ models:
         data_type: int
         description: "{{ doc('column__first_menu_week_year') }}"
 
-      - name: loyalty_level_name
+      - name: loyalty_level_name_brand
         data_type: string
-        description: "{{ doc('column__loyalty_level_name') }}"
+        description: "{{ doc('column__loyalty_level_name_brand') }}"
+
+      - name: loyalty_level_name_english
+        data_type: string
+        description: "{{ doc('column__loyalty_level_name_english') }}"
 
       - name: loyalty_level_number
         data_type: int

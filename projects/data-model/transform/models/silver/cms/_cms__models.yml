@@ -501,9 +501,9 @@ models:
         data_tests:
           - not_null
 
-      - name: loyalty_level_name
+      - name: loyalty_level_name_brand
         data_type: string
-        description: "{{ doc('column__loyalty_level_name') }}"
+        description: "{{ doc('column__loyalty_level_name_brand') }}"
         constraints:
           - type: not_null
         data_tests:
