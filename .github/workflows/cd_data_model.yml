@@ -21,7 +21,6 @@ jobs:
       working-directory: projects/data-model
       target-env: Development
       should-change-target: false
-      dbt-target: dev
     secrets: inherit
 
   upload-manifest-test:
@@ -42,7 +41,6 @@ jobs:
       working-directory: projects/data-model
       target-env: Test
       should-change-target: true
-      dbt-target: test
     secrets: inherit
 
   deploy-dab-production:
@@ -53,5 +51,4 @@ jobs:
       working-directory: projects/data-model
       target-env: Production
       should-change-target: true
-      dbt-target: prod
     secrets: inherit

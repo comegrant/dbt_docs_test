@@ -49,7 +49,7 @@ jobs:
 
     - name: Extract PR number
       id: extract_pr
-      run: echo "PR_NUMBER=${GITHUB_REF#refs/pull/}" | cut -d'/' -f1 >> $GITHUB_ENV
+      run: echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
 
     - name: Get ID of delete_pr_schemas job
       id: get_job_id
