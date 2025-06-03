@@ -146,7 +146,7 @@ async def quarantined_recipes(request: RetrievalRequest, store: ContractStore | 
             current_selection.cast(subset.schema)  # type: ignore
         )
         .with_columns(year_week=pl.col("year") * 100 + pl.col("week"))
-        .filter(pl.col("year_week").is_not_null())
+        .filter(pl.col("year_week").is_not_null() & pl.col("main_recipe_id").is_not_null())
         .group_by(["agreement_id", "company_id", "main_recipe_id"])
         .agg(pl.col("year_week").max().alias("last_order_year_week"))
         .lazy()

@@ -23,7 +23,7 @@ async def get_output_data(
     model_version: str | None = None,
 ) -> pl.DataFrame:
     """
-    Returns the output that should be validated
+    Returns the output that should be validated.
     """
     if start_yyyyww is None:
         start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=5)
