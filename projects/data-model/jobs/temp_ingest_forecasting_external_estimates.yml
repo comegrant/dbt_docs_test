@@ -1,0 +1,42 @@
+resources:
+  jobs:
+    temp_ingest_forecasting_external_estimates:
+      name: temp_ingest_forecasting_external_estimates
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+
+      timeout_seconds: 1800 # Timeout after 30 mins
+      edit_mode: EDITABLE
+
+      schedule:
+        quartz_cron_expression: 0 0 * ? * * * # Run every hour
+        timezone_id: Europe/Oslo
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: forecasting_adb_external_estimates_temp
+          notebook_task:
+            notebook_path: ../ingest/full_ingest/forecasting_adb_external_estimates_temp.py
+
+        - task_key: fail-notification
+          depends_on:
+            - task_key: forecasting_adb_external_estimates_temp
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Failed to ingest external estimates in NDP
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: grant
