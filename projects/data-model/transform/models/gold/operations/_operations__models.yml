@@ -210,7 +210,6 @@ models:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
               config:
-              config:
                 where: "fk_dim_billing_agreements != 0"
 
       - name: fk_dim_companies
