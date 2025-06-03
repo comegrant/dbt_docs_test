@@ -23,7 +23,7 @@ renamed as (
         --, ingredient_customer_category_id
         
         {# strings #}
-        , ingredient_internal_reference
+        , upper(ingredient_internal_reference) as ingredient_internal_reference
         --, ingredient_external_reference
         --, ingredient_brand
         --, ingredient_photo

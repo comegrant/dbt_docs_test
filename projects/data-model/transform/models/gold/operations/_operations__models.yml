@@ -209,6 +209,9 @@ models:
           - relationships:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
+              config:
+              config:
+                where: "fk_dim_billing_agreements != 0"
 
       - name: fk_dim_companies
         data_type: string
@@ -265,7 +268,7 @@ models:
               to: ref('dim_ingredients')
               field: pk_dim_ingredients
               config:
-                severity: warn
+                where: "fk_dim_ingredients != 0"
 
     versions:
       - v: 1

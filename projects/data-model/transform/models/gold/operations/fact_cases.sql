@@ -50,7 +50,6 @@ cases as (
             concat_ws('-'
                 , case_lines.case_line_id
                 , case_line_ingredients.ingredient_internal_reference
-                -- TODO: Need to investigate further if its correct to include this
                 , case_line_ingredients.product_type_id
             )
         ) as pk_fact_cases
@@ -78,7 +77,7 @@ cases as (
         , cases.source_updated_at as case_updated_at
         , case_lines.source_updated_at as case_line_updated_at
         , cast(date_format(orders_operations.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
-        , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
+        , coalesce(agreements.pk_dim_billing_agreements, '0') as fk_dim_billing_agreements
         , companies.pk_dim_companies as fk_dim_companies
         , md5(
             concat_ws(
@@ -90,7 +89,7 @@ cases as (
             )
         ) as fk_dim_case_details
         , case 
-            when case_line_ingredients.ingredient_internal_reference is null or ingredients.ingredient_id is null 
+            when case_line_ingredients.ingredient_internal_reference is null
             then '0' 
             else md5(
                     concat_ws(
@@ -114,7 +113,6 @@ cases as (
         on orders_operations.company_id = companies.company_id
     left join case_line_ingredients
         on case_lines.case_line_id = case_line_ingredients.case_line_id
-    -- TODO: Figure out how to deal with ingredient_internal_reference that does not have a matching ingredient_id
     left join ingredients
         on case_line_ingredients.ingredient_internal_reference = ingredients.ingredient_internal_reference
     -- only include cases with case lines
