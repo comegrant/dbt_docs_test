@@ -13,7 +13,7 @@ renamed as (
         order_ingredient_id
         
         {# strings #}
-        , ingredient_internal_reference
+        , upper(ingredient_internal_reference) as ingredient_internal_reference
 
         {# booleans #}
         , is_main_protein
