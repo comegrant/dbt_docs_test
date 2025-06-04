@@ -673,6 +673,7 @@ output "azure_common_key_vault_id" {
 ##########################################
 
 data "databricks_service_principal" "bundle_sp_dev" {
+  provider      = databricks.accounts
   display_name  = "bundle_sp_dev"
 }
 
