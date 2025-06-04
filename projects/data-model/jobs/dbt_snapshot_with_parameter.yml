@@ -1,7 +1,15 @@
 resources:
   jobs:
     dbt_snapshot_with_parameter:
-      name: dbt_snapshot_with_parameter 
+      name: dbt_snapshot_with_parameter
+
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_MANAGE_RUN
 
       environments:
         - environment_key: dbt-default

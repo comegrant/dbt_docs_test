@@ -1,0 +1,37 @@
+resources:
+  jobs:
+    copy_tables:
+      name: copy_tables
+
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_VIEW
+
+      timeout_seconds: 4500 #Timeout after 75 mins
+      edit_mode: EDITABLE
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: copy_tables
+          notebook_task:
+            notebook_path: ../envops/copy_tables.py
+
+      parameters:
+        - name: source_database
+          default: prod
+        - name: source_schema
+          default: 'add valid schema here'
+        - name: sink_schema
+          default: 'add valid schema here'
+        - name: tables
+          default: 'add valid tables as comma separated list here'

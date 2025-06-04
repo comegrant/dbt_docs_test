@@ -20,6 +20,9 @@ variables:
     description: The id of the slack notification job to call
   preselector_materialization_job_id:
     description: The id of the preselector materialization job to call
+  copy_from_prod_daily_pause_status:
+    description: "Whether the copy_from_prod_daily job should be paused or unpaused."
+    default: PAUSED
 
 targets:
   dev:
@@ -31,16 +34,36 @@ targets:
       warehouse_id: 45100b61eb7ee2f5
       slack_notification_job_id: 221967110790300
       preselector_materialization_job_id: 98557615197253
+    resources:
+      jobs:
+        copy_from_prod_daily:
+          schedule:
+            pause_status: ${var.copy_from_prod_daily_pause_status}
 
   test:
+    # We want test to be a production-like environment, but with paused jobs.
+    # Data in test will be updated by the copy_from_prod_daily job.
     mode: production
+    presets:
+      trigger_pause_status: PAUSED
     variables:
       warehouse_id: 76c581aa18fb7b4f
       slack_notification_job_id: 823927532277018
       preselector_materialization_job_id: 1030627407532831
+    resources:
+      jobs:
+        copy_from_prod_daily:
+          schedule:
+            pause_status: ${var.copy_from_prod_daily_pause_status}
+    
   prod:
     mode: production
     variables:
       warehouse_id: 1a2fc265706df5fb
       slack_notification_job_id: 808732355997444
       preselector_materialization_job_id: 148734131753684
+    resources:
+      jobs:
+        copy_from_prod_daily:
+          schedule:
+            pause_status: ${var.copy_from_prod_daily_pause_status}

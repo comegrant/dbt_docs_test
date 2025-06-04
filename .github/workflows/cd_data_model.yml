@@ -21,6 +21,7 @@ jobs:
       working-directory: projects/data-model
       target-env: Development
       should-change-target: false
+      extra-args: '--var="copy_from_prod_daily_pause_status=UNPAUSED"'
     secrets: inherit
 
   upload-manifest-test:
@@ -41,6 +42,7 @@ jobs:
       working-directory: projects/data-model
       target-env: Test
       should-change-target: true
+      extra-args: '--var="copy_from_prod_daily_pause_status=UNPAUSED"'
     secrets: inherit
 
   deploy-dab-production:

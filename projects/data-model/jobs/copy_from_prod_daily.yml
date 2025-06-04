@@ -1,0 +1,76 @@
+resources:
+  jobs:
+    copy_from_prod_daily:
+      name: copy_from_prod_daily
+
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_VIEW
+
+      timeout_seconds: 4500 #Timeout after 75 mins
+      edit_mode: EDITABLE
+
+      schedule:
+       #Run every day at 5:45 (local time)
+        quartz_cron_expression: 0 45 5 ? * * *
+        timezone_id: Europe/Oslo
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+
+        - task_key: start-notification
+          run_job_task:
+              job_id: ${var.slack_notification_job_id}
+              job_parameters:
+                  environment: ${bundle.target}
+                  body_message: 🚀 Copy from prod has started
+                  is_error: "false"
+
+        - task_key: copy_schemas
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../envops/copy_schemas.py
+
+        - task_key: success-notification
+          depends_on:
+            - task_key: copy_schemas
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Copy from prod completed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on:
+            - task_key: copy_schemas
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Copy from prod failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: stephen, engineering
+
+      parameters:
+        - name: source_database
+          default: prod
+        - name: source_schema_prefix
+          default: ''
+        - name: sink_schema_prefix
+          default: ''
+        - name: schemas
+          default: 'bronze,silver,intermediate,gold,mlgold,mlfeatures,mloutputs,dbt_snapshots,forecasting'

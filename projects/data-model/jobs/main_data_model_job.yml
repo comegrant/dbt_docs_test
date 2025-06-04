@@ -3,6 +3,14 @@ resources:
     main_data_model_job:
       name: main-data-model-job
 
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_VIEW
+        - group_name: data-analysts
+          level: CAN_VIEW
+
       timeout_seconds: 12000 #Timeout after 100 mins
       edit_mode: EDITABLE
 

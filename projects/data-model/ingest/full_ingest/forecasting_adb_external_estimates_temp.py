@@ -1,6 +1,6 @@
 # Databricks notebook source
 import sys
-sys.path.append('../helper_functions')
+sys.path.append('../../reusable')
 
 from analyticsdb_connector import load_analyticsdb_query
 
