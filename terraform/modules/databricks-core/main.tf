@@ -672,6 +672,10 @@ output "azure_common_key_vault_id" {
 ###               Grants               ###
 ##########################################
 
+data "databricks_service_principal" "bundle_sp_dev" {
+  display_name  = "bundle_sp_dev"
+}
+
 resource "databricks_grants" "catalog" {
   catalog = terraform.workspace
 
@@ -688,7 +692,7 @@ resource "databricks_grants" "catalog" {
   dynamic "grant" {
     for_each = terraform.workspace == "test" || terraform.workspace == "prod" ? [1] : []
     content {
-      principal = "bundle_sp_dev"
+      principal = data.databricks_service_principal.bundle_sp_dev.application_id
       privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
     }
   }
