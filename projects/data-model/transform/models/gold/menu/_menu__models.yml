@@ -496,6 +496,172 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_name') }}"
 
+      - name: ingredient_full_name
+        data_type: string
+        description: "{{ doc('column__ingredient_full_name') }}"
+
+      - name: unit_label_short_name
+        data_type: string
+        description: "{{ doc('column__unit_label_short_name') }}"
+
+      - name: unit_label_full_name
+        data_type: string
+        description: "{{ doc('column__unit_label_full_name') }}"
+
+      - name: ingredient_supplier_id
+        data_type: int
+        description: "{{ doc('column__ingredient_supplier_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_category_id
+        data_type: int
+        description: "{{ doc('column__ingredient_category_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_status_code_id
+        data_type: int
+        description: "{{ doc('column__pim_status_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_content_list
+        data_type: string
+        description: "{{ doc('column__ingredient_content_list') }}"
+
+      - name: ingredient_type_id
+        data_type: string
+        description: "{{ doc('column__ingredient_type_id') }}"
+
+      - name: is_active
+        data_type: boolean
+        description: ""
+
+      - name: ingredient_net_weight
+        data_type: decimal(34,2)
+        description: "{{ doc('column__ingredient_net_weight') }}"
+      
+      - name: unit_label_id
+        data_type: int
+        description: "{{ doc('column__unit_label_id') }}"
+
+      - name: pack_type_id
+        data_type: int
+        description: "{{ doc('column__pack_type_id') }}"
+
+      - name: epd_id_number
+        data_type: decimal(34,2)
+        description: "{{ doc('column__epd_id_number') }}"
+
+      - name: ingredient_manufacturer_supplier_id
+        data_type: int
+        description: "{{ doc('column__ingredient_manufacturer_supplier_id') }}"
+
+      - name: has_customer_photo
+        data_type: boolean
+        description: "{{ doc('column__has_customer_photo') }}"
+
+      - name: has_internal_photo
+        data_type: boolean
+        description: "{{ doc('column__has_internal_photo') }}"
+
+      - name: has_packaging_photo
+        data_type: boolean
+        description: "{{ doc('column__has_packaging_photo') }}"
+        
+      - name: is_available_for_use
+        data_type: boolean
+        description: "{{ doc('column__is_available_for_use') }}"
+        
+      - name: is_cold_storage
+        data_type: boolean
+        description: "{{ doc('column__is_cold_storage') }}"
+        
+      - name: is_consumer_cold_storage
+        data_type: boolean
+        description: "{{ doc('column__is_consumer_cold_storage') }}"
+        
+      - name: is_fragile_ingredient
+        data_type: boolean
+        description: "{{ doc('column__is_fragile_ingredient') }}"
+        
+      - name: is_organic
+        data_type: boolean
+        description: "{{ doc('column__is_organic') }}"
+        
+      - name: is_outgoing
+        data_type: boolean
+        description: "{{ doc('column__is_outgoing') }}"
+        
+      - name: is_special_packing
+        data_type: boolean
+        description: "{{ doc('column__is_special_packing') }}"
+        
+      - name: is_to_register_batch_number
+        data_type: boolean
+        description: "{{ doc('column__is_to_register_batch_number') }}"
+        
+      - name: is_to_register_expiration_date
+        data_type: boolean
+        description: "{{ doc('column__is_to_register_expiration_date') }}"
+        
+      - name: is_to_register_ingredient_weight
+        data_type: boolean
+        description: "{{ doc('column__is_to_register_ingredient_weight') }}"
+        
+      - name: is_to_register_temperature
+        data_type: boolean
+        description: "{{ doc('column__is_to_register_temperature') }}"
+        
+      - name: ingredient_gross_weight
+        data_type: decimal(34,2)
+        description: "{{ doc('column__ingredient_gross_weight') }}"
+
+      - name: ingredient_shelf_life
+        data_type: decimal(34,2)
+        description: "{{ doc('column__ingredient_shelf_life') }}"
+
+      - name: distribution_packages_per_pallet
+        data_type: int
+        description: "{{ doc('column__distribution_packages_per_pallet') }}"
+
+      - name: ingredient_distribution_packaging_size
+        data_type: int
+        description: "{{ doc('column__ingredient_distribution_packaging_size') }}"
+
+      - name: ingredient_packaging_depth
+        data_type: int
+        description: "{{ doc('column__ingredient_packaging_depth') }}"
+
+      - name: ingredient_packaging_height
+        data_type: int
+        description: "{{ doc('column__ingredient_packaging_height') }}"
+
+      - name: ingredient_packaging_width
+        data_type: int
+        description: "{{ doc('column__ingredient_packaging_width') }}"
+
+      - name: ingredient_size
+        data_type: int
+        description: "{{ doc('column__ingredient_size') }}"
+
+      - name: ean_code_consumer_packaging
+        data_type: string
+        description: "{{ doc('column__ean_code_consumer_packaging') }}"
+
+      - name: ean_code_distribution_packaging
+        data_type: string
+        description: "{{ doc('column__ean_code_distribution_packaging') }}"
+
+      - name: ingredient_brand
+        data_type: string
+        description: "{{ doc('column__ingredient_brand') }}"
+
+      - name: ingredient_external_reference
+        data_type: string
+        description: "{{ doc('column__ingredient_external_reference') }}"
+
       - name: main_group
         data_type: string
         description: "{{ doc('column__main_group') }}"

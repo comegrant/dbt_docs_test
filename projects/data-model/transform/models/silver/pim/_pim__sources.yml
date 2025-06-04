@@ -55,3 +55,5 @@ sources:
       - name: pim__price_category
       - name: pim__suppliers
       - name: pim__weekly_ingredients
+      - name: pim__unit_labels
+      - name: pim__unit_labels_translations

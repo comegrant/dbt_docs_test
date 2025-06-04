@@ -72,64 +72,64 @@ recipes as (
             order_ingredients.nutrition_units
         ) as nutrition_units
         , coalesce(
-            max(ingredients.netto_weight), -1
-        ) as netto_weight
+            max(ingredients.ingredient_net_weight), -1
+        ) as ingredient_net_weight
         , sum(
-            coalesce(order_ingredients.nutrition_units, 0) * coalesce(ingredients.netto_weight, -1)
-        ) as total_netto_weight
+            coalesce(order_ingredients.nutrition_units, 0) * coalesce(ingredients.ingredient_net_weight, -1)
+        ) as total_ingredient_net_weight
         -- grams per energy source
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_protein") }}' then nutrients.nutrient_value else 0 end
         ) as protein_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_carbs") }}' then nutrients.nutrient_value else 0 end
         ) as carbs_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_fat") }}' then nutrients.nutrient_value else 0 end
         ) as fat_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_saturated_fat") }}' then nutrients.nutrient_value else 0 end
         ) as sat_fat_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_sugar") }}' then nutrients.nutrient_value else 0 end
         ) as sugar_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_added_sugars") }}' then nutrients.nutrient_value else 0 end
         ) as sugar_added_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_fiber") }}' then nutrients.nutrient_value else 0 end
         ) as fiber_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_salt") }}' then nutrients.nutrient_value else 0 end
         ) as salt_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_added_salt") }}' then nutrients.nutrient_value else 0 end
         ) as salt_added_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_fresh_fruit_veg") }}' then nutrients.nutrient_value else 0 end
         ) as fg_fresh_g
         , sum(
-            (coalesce(ingredients.netto_weight, -1) / 100.0)
+            (coalesce(ingredients.ingredient_net_weight, -1) / 100.0)
             * coalesce(order_ingredients.nutrition_units, 0)
             * case when nutrients.nutrient_id = '{{ var("nutrient_id_processed_fruit_veg") }}' then nutrients.nutrient_value else 0 end
         ) as fg_proc_g

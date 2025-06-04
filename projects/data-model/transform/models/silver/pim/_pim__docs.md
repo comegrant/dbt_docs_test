@@ -159,7 +159,7 @@ Tells if the recipe is in the "recipe universe".
 
 {% docs column__recipe_status_code_id %}
 
-...
+The status code of the recipe_id. Connects to the pim status codes table.
 
 {% enddocs %}
 
@@ -364,15 +364,201 @@ Identifier for an ingredient.
 
 {% enddocs %}
 
-{% docs column__ingredient_type %}
+{% docs column__ingredient_type_id %}
 
 Parameter for production-line placement of products
 
 {% enddocs %}
 
-{% docs column__ingredient_content %}
+{% docs column__ingredient_content_list %}
 
 Description of an ingredient's composition, e.g. "oil, egg, salt" for "mayonnaise"
+
+{% enddocs %}
+
+{% docs column__ingredient_net_weight %}
+
+The netto weight of an ingredient.
+
+{% enddocs %}
+
+{% docs column__ingredient_internal_reference %}
+
+An alternative unique ingredient id number which is sometimes used as link between tables. Typically starts with either GL, bhub or basis with or without '-' followed by a number.
+
+{% enddocs %}
+
+{% docs column__pack_type_id %}
+
+Id of the pack type, unique identifier of the pack type table.
+
+{% enddocs %}
+
+{% docs column__epd_id_number %}
+
+Id number that serves as a link to external product information database.
+
+{% enddocs %}
+
+{% docs column__ingredient_manufacturer_supplier_id %}
+
+Id number of the manufacturer of the ingredient. Links to the ingredient_suppliers table 
+
+{% enddocs %}
+
+{% docs column__has_customer_photo %}
+
+Indicates if there is a linked photo of the ingredient that is displayed for customers.
+
+{% enddocs %}
+
+{% docs column__has_internal_photo %}
+
+Indicates if there is a linked photo of the ingredient for internal use.
+
+{% enddocs %}
+
+{% docs column__has_packaging_photo %}
+
+Indicates if there is a packaging photo linked.
+
+{% enddocs %}
+
+{% docs column__is_available_for_use %}
+
+Indicates if the ingredient is available for use in menu planning.
+
+{% enddocs %}
+
+{% docs column__is_cold_storage %}
+
+Indicates if the ingredient should handled in cold storage in production.
+
+{% enddocs %}
+
+{% docs column__is_consumer_cold_storage %}
+
+Indicates if the ingredient is to be stored cold by the customer/consumer.
+
+{% enddocs %}
+
+{% docs column__is_fragile_ingredient %}
+
+Indicates if the ingredient is fragile and should be handled carefully in production.
+
+{% enddocs %}
+
+{% docs column__is_organic %}
+
+Indicates if the ingredient is classified as organic.
+
+{% enddocs %}
+
+{% docs column__is_outgoing %}
+
+Indicates if the ingredient is soon not to be used in menu planning.
+
+{% enddocs %}
+
+{% docs column__is_special_packing %}
+
+Indicates if the ingredient is a special packaging ingredient.
+
+{% enddocs %}
+
+{% docs column__is_to_register_batch_number %}
+
+Indicates if the batch number should be registered upon reception at the production site.
+
+{% enddocs %}
+
+{% docs column__is_to_register_expiration_date %}
+
+Indicates if the expiration date should be registered upon reception at the production site.
+
+{% enddocs %}
+
+{% docs column__is_to_register_ingredient_weight %}
+
+Indicates if the ingredient weight should be registered upon reception at the production site.
+
+{% enddocs %}
+
+{% docs column__is_to_register_temperature %}
+
+Indicates if the temperature should be registered upon reception at the production site.
+
+{% enddocs %}
+
+{% docs column__ingredient_gross_weight %}
+
+The gross weight of the ingredient, i.e. including packaging.
+
+{% enddocs %}
+
+{% docs column__ingredient_shelf_life %}
+
+The maximum number of days until "use by" date is due.
+
+{% enddocs %}
+
+{% docs column__distribution_packages_per_pallet %}
+
+The number of distribution packages of the ingredient that are packed on a pallet.
+
+{% enddocs %}
+
+{% docs column__ingredient_distribution_packaging_size %}
+
+The number of consumer packages that are contained in one distribution package.
+
+{% enddocs %}
+
+{% docs column__ingredient_packaging_depth %}
+
+The depth in mm of the ingredient consumer packaging.
+
+{% enddocs %}
+
+{% docs column__ingredient_packaging_height %}
+
+The height in mm of the ingredient consumer packaging.
+
+{% enddocs %}
+
+{% docs column__ingredient_packaging_width %}
+
+The width in mm of the ingredient consumer packaging.
+
+{% enddocs %}
+
+{% docs column__ingredient_size %}
+
+The amount contained in the ingredient package, in the unit specified by the unit_label_id
+
+{% enddocs %}
+
+{% docs column__ean_code_consumer_packaging %}
+
+The EAN code for the consumer packaging.
+
+{% enddocs %}
+
+{% docs column__ean_code_distribution_packaging %}
+
+The EAN code for the districution packaging.
+
+{% enddocs %}
+
+{% docs column__ingredient_brand %}
+
+The brand of the ingredient.
+
+{% enddocs %}
+
+{% docs column__ingredient_external_reference %}
+
+A reference number to the article number used by the supplier.
 
 {% enddocs %}
 
@@ -413,7 +599,7 @@ The text name of each portion size
 
 {% docs column__pim_status_code_id %}
 
-Identifier for the status
+Identifier for the status.
 
 {% enddocs %}
 
@@ -648,12 +834,6 @@ Identifier for an ingredient connected to a specific recipe variation
 
 {% enddocs %}
 
-{% docs column__ingredient_internal_reference %}
-
-An alternative unique ingredient id number which is sometimes used as link between tables. Typically starts with either GL, bhub or basis with or without '-' followed by a number.
-
-{% enddocs %}
-
 {% docs column__is_main_protein %}
 
 If an ingredient is used as the main protein in a recipe
@@ -701,13 +881,44 @@ Identifier for each ingredient supplier
 
 {% docs column__ingredient_supplier_status_code_id %} 
 
-The status id of the supplier.
+The status id of the supplier. Connects to the pim status codes table.
 
 {% enddocs %}
 
 {% docs column__ingredient_supplier_name %} 
 
 The name of the ingredient supplier.
+
+{% enddocs %}
+
+# Unit Labels
+{% docs column__unit_label_id %} 
+
+Unique identifier for each unit label.
+
+{% enddocs %}
+
+{% docs column__unit_label_status_code_id %} 
+
+The status code of the unit label. Connects to the pim status codes table. 
+
+{% enddocs %}
+
+{% docs column__unit_label_short_name %} 
+
+The unit label name in short form in local language. 
+
+{% enddocs %}
+
+{% docs column__unit_label_short_name_plural %} 
+
+The unit label name in short form, plural, in local language.
+
+{% enddocs %}
+
+{% docs column__unit_label_full_name %} 
+
+The full unit label name in local language.
 
 {% enddocs %}
 
@@ -827,11 +1038,5 @@ Indicates if the ingredient has nutrition calculation
 {% docs column__ingredient_nutrient_fact_name %}
 
 The name of the ingredient's nutritional fact id, e.g. "Fat"
-
-{% enddocs %}
-
-{% docs column__netto_weight %}
-
-The netto weight of an ingredient.
 
 {% enddocs %}

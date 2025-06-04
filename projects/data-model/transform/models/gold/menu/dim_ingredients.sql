@@ -1,27 +1,99 @@
 with 
 
 ingredients as (
+
     select * from {{ ref('pim__ingredients') }}
+
 )
 
 , ingredient_translations as (
+
     select * from {{ ref('pim__ingredient_translations') }}
+
+)
+
+, unit_label_translations as (
+
+    select * from {{ ref('pim__unit_label_translations') }}
+
 )
 
 , category_hierarchy as (
+
     select * from {{ ref('int_ingredient_category_hierarchies') }}
+
 )
 
 , ingredient_info as (
+
     select
+        -- basic ids and names
         ingredients.ingredient_id
         , ingredients.ingredient_internal_reference
-        , ingredient_translations.ingredient_name
         , ingredient_translations.language_id
+        , ingredient_translations.ingredient_name
+        , concat(ingredient_translations.ingredient_name
+            ,' '
+            , ingredients.ingredient_size
+            , unit_label_translations.unit_label_short_name
+        ) as ingredient_full_name
+        , unit_label_translations.unit_label_short_name
+        , unit_label_translations.unit_label_full_name
+        
+        -- other ids
+        , ingredients.ingredient_supplier_id
+        , ingredients.unit_label_id
+        , ingredients.ingredient_category_id
+        , ingredients.ingredient_status_code_id
+        , ingredients.ingredient_type_id
+        , ingredients.pack_type_id
+        , ingredients.epd_id_number
+        , ingredients.ingredient_manufacturer_supplier_id
+        
+        -- strings
+        , ingredients.ingredient_brand
+        , ingredients.ingredient_content_list
+        , ingredients.ean_code_consumer_packaging
+        , ingredients.ean_code_distribution_packaging
+        , ingredients.ingredient_external_reference
+
+        -- numerics
+        , ingredients.ingredient_size
+        , ingredients.ingredient_shelf_life
+        , ingredients.ingredient_net_weight
+        , ingredients.ingredient_gross_weight
+        , ingredients.ingredient_distribution_packaging_size
+        , ingredients.distribution_packages_per_pallet
+        , ingredients.ingredient_packaging_depth
+        , ingredients.ingredient_packaging_height
+        , ingredients.ingredient_packaging_width
+
+        -- booleans
+        , ingredients.is_active
+        , ingredients.is_available_for_use
+        , ingredients.is_outgoing
+        , ingredients.is_cold_storage
+        , ingredients.is_consumer_cold_storage
+        , ingredients.is_organic
+        , ingredients.is_fragile_ingredient
+        , ingredients.is_special_packing
+        , ingredients.has_customer_photo
+        , ingredients.has_packaging_photo
+        , ingredients.has_internal_photo
+        , ingredients.is_to_register_batch_number
+        , ingredients.is_to_register_expiration_date
+        , ingredients.is_to_register_temperature
+        , ingredients.is_to_register_ingredient_weight
+
     from ingredients
     
     left join ingredient_translations
         on ingredients.ingredient_id = ingredient_translations.ingredient_id
+
+    left join unit_label_translations
+        on ingredients.unit_label_id = unit_label_translations.unit_label_id
+        and ingredient_translations.language_id = unit_label_translations.language_id
+
 )
 
 , group_name_extraction as (
@@ -57,10 +129,7 @@ ingredients as (
             , ingredient_info.ingredient_internal_reference
             , ingredient_info.language_id
         )) as pk_dim_ingredients
-        , ingredient_info.ingredient_id
-        , ingredient_info.ingredient_internal_reference
-        , ingredient_info.language_id
-        , ingredient_info.ingredient_name
+        , ingredient_info.*
         , group_name_extraction.main_group
         , group_name_extraction.category_group
         , group_name_extraction.product_group
@@ -69,16 +138,17 @@ ingredients as (
         , flat_hierarchy.category_level3
         , flat_hierarchy.category_level4
         , flat_hierarchy.category_level5
+    
     from ingredient_info
 
     left join group_name_extraction
-        on
-            ingredient_info.ingredient_id = group_name_extraction.ingredient_id
-            and ingredient_info.language_id = group_name_extraction.language_id
+        on ingredient_info.ingredient_id = group_name_extraction.ingredient_id
+        and ingredient_info.language_id = group_name_extraction.language_id
+    
     left join flat_hierarchy
-        on
-            ingredient_info.ingredient_id = flat_hierarchy.ingredient_id
-            and ingredient_info.language_id = flat_hierarchy.language_id
+        on ingredient_info.ingredient_id = flat_hierarchy.ingredient_id
+        and ingredient_info.language_id = flat_hierarchy.language_id
+    
     order by ingredient_info.ingredient_id
 )
 

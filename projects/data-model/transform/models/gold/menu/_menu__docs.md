@@ -176,6 +176,12 @@ Primary key of the dim_ingredients table.
 
 {% enddocs %}
 
+{% docs column__ingredient_full_name %}
+
+The ingredient name in local language with size and unit label appended.
+
+{% enddocs %}
+
 {% docs column__main_group %}
 
 Ingredient category name of the main group of an ingredient.
