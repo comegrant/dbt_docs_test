@@ -54,7 +54,7 @@ jobs:
     - name: Get ID of delete_pr_schemas job
       id: get_job_id
       run: |
-        job_id=$(databricks jobs list --output JSON | jq -r '.[] | select(.settings.name == "[dev afa25b66_d0ac_476c_a8e1_6db8ca327030] delete_pr_schemas") | .job_id')
+        job_id=$(databricks jobs list --output JSON | jq -r '.[] | select(.settings.name == "[dev bundle_sp_dev] delete_pr_schemas") | .job_id')
         echo "job_id=${job_id}" >> $GITHUB_ENV
       env:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
