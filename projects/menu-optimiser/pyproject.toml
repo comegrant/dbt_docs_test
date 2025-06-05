@@ -13,6 +13,11 @@ data-contracts = {path = "../../packages/data-contracts", develop = true}
 numpy = "1.26.4"
 code2flow = "^2.5.1"
 scikit-learn = "^1.6.1"
+streamlit = "^1.45.1"
+constants = {path = "../../packages/constants", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
+seaborn = "^0.13.2"
+plotly = "^6.1.2"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
@@ -36,3 +41,10 @@ chef = 'chef.cli:cli'
 
 [tool.ruff.lint.per-file-ignores]
 "menu_optimiser/optimization.py" = ["PLC0206"]
+
+[tool.pyright]
+exclude = [
+    "**/jobs/**.py",
+    ".venv",
+    "streamlit_app/**",
+]

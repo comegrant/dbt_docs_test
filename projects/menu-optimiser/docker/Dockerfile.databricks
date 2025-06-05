@@ -8,7 +8,7 @@ ENV LC_ALL C.UTF-8
 
 # set the home directory
 ENV APP_HOME /opt
-ENV SERVICE_HOME $APP_HOME/projects/nulambda
+ENV SERVICE_HOME $APP_HOME/projects/menu-optimiser
 
 RUN /databricks/python3/bin/pip install poetry
 

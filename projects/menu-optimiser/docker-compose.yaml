@@ -27,3 +27,23 @@ services:
     depends_on:
       - base
     profiles: ["test"]
+
+  app:
+    image: menu-optimiser-app
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/menu-optimiser/docker/Dockerfile
+    volumes:
+      - ./:/opt/projects/menu-optimiser
+      - ./../../packages:/opt/packages
+    command: "python -m streamlit run streamlit_app/Menu_Optimiser.py --server.fileWatcherType poll"
+
+    depends_on:
+      - base
+    ports:
+      - 8500:8501
+      - 8888:8888
+    env_file:
+      - ../../.env
+      - .env
