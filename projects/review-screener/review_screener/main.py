@@ -1,0 +1,87 @@
+import logging
+from typing import Literal, Optional
+
+from openai import OpenAI
+from pydantic import BaseModel, model_validator
+
+from review_screener.config import CONTEXT, MODEL
+
+logger = logging.getLogger(__name__)
+
+
+class ReviewRequest(BaseModel):
+    review: str
+    source: Literal["RECIPE_RATING", "DELIVERY_RATING"]
+    country: str
+    rating: int
+    recipe_id: Optional[int] = None
+    agreement_id: Optional[int] = None
+    order_id: Optional[int] = None
+
+    @model_validator(mode="before")
+    def validate_fields(cls, values):  # noqa
+        source = values.get("source")
+
+        if source == "RECIPE_RATING":
+            required = ["recipe_id", "agreement_id"]
+        elif source == "DELIVERY_RATING":
+            required = ["order_id"]
+        else:
+            raise ValueError(f"Unknown source: {source}")
+
+        missing = [field for field in required if values.get(field) is None]
+        if missing:
+            raise ValueError(f"Missing fields for {source}: {', '.join(missing)}")
+
+        return values
+
+
+class Response(BaseModel):
+    label: int
+    score: float
+
+
+class CustomerReviewResponse(Response):
+    model_version: str
+
+
+async def get_customer_review_response(review: str, client: OpenAI) -> Response:
+    response = client.responses.parse(
+        model=MODEL,
+        input=[
+            {"role": "system", "content": CONTEXT},
+            {"role": "user", "content": f"Customer review: {review}"},
+        ],
+        text_format=Response,
+    )
+    if response.output_parsed is None:
+        raise ValueError("No response from OpenAI")
+
+    return response.output_parsed
+
+
+async def create_customer_review_response(request: ReviewRequest, client: OpenAI) -> CustomerReviewResponse:
+    response = await get_customer_review_response(request.review, client)
+    return CustomerReviewResponse(**response.model_dump(), model_version=MODEL)
+
+
+if __name__ == "__main__":
+    import asyncio
+    import os
+
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    request = ReviewRequest(
+        review="The food was great",
+        source="RECIPE_RATING",
+        country="US",
+        rating=5,
+        recipe_id=123,
+        agreement_id=456,
+    )
+
+    response = asyncio.run(create_customer_review_response(request, client))

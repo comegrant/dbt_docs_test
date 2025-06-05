@@ -8,10 +8,12 @@ from typing import Literal
 
 from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI, Form
+from key_vault import key_vault
 from pydantic_settings import BaseSettings
 
 from analytics_api.routers.menu_feedback import mf_router as mf_app_router
 from analytics_api.routers.menu_generator import mop_router as mop_app_router
+from analytics_api.routers.review_screener import rs_router as rs_app_router
 from analytics_api.utils.auth import AuthToken, raise_on_invalid_token, retrieve_token
 from analytics_api.utils.datadog_logger import datadog_logger, setup_logger
 
@@ -48,6 +50,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if settings.environment != "dev":
         await datadog_logger(env=settings.environment)
 
+    vault = key_vault()
+    await vault.load_into_env({"openai-preselector-key": "OPENAI_API_KEY"})
+
     logger.info("Application started")
     yield
 
@@ -55,6 +60,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="Analytics API", lifespan=lifespan)
 app.include_router(mop_app_router)
 app.include_router(mf_app_router)
+app.include_router(rs_app_router)
 
 
 @app.get("/")
