@@ -106,14 +106,21 @@ def create_or_replace_table(
     
     print(f"⏳ Starting: {table}")
 
+    success = True
+
     for query in constraint_sqls:
         print(f"Executing query: {query}")
         try:
             spark.sql(query)
         except Exception as e:
-            print(f"Failed to execute: {query}\nError: {e}")
+            print(f"❌ Failed to execute: {query}\nError: {e}")
+            success = False
     
-    print(f"✅ Completed: {table}")
+    if success:
+        print(f"✅ Completed: {table}")
+    else:
+        print(f"⚠️ Failed to complete all queries for: {table}")
+    
 
 def create_or_replace_tables(
     source_database: str,
