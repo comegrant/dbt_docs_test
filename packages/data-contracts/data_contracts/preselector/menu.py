@@ -39,6 +39,7 @@ preselector_menu_sql = """WITH menu (
   INNER JOIN pim.recipe_portions rp ON rp.RECIPE_ID = r.recipe_id AND rp.portion_id = mv.PORTION_ID
   where m.RECIPE_STATE = 1
   AND (wm.menu_year * 100 + wm.menu_week) > 202340
+  and wm.status_code_id = 3
 )
 
 SELECT
