@@ -38,6 +38,12 @@ The currency code of the currency used in the country.
 
 {% enddocs %}
 
+{% docs column__main_vat_rate %}
+
+The standard vat rate for the product with most revenue in the country, normally food.
+
+{% enddocs %}
+
 # Billing Agreement Baskets
 {% docs column__billing_agreement_basket_id %}
 

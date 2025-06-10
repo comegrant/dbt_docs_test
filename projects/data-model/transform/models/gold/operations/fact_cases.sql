@@ -42,6 +42,19 @@ cases as (
 
 )
 
+-- find each ingredients share of the ingredient price
+-- to be able to distribute the case line amount to each ingredient
+, find_ingredients_price_share as (
+
+    select
+        case_line_id
+        , ingredient_internal_reference
+        , product_type_id
+        , (ingredient_price * ingredient_quantity) / sum(ingredient_price * ingredient_quantity) over (partition by case_line_id) as ingredient_price_share
+    from case_line_ingredients
+
+)
+
 -- TODO: Need to distribute amount to ingredients
 , tables_joined as (
 
@@ -56,10 +69,20 @@ cases as (
         , cases.case_id
         , cases.ops_order_id
         , orders_operations.billing_agreement_id
+        , orders_operations.billing_agreement_order_id
         , ingredients.ingredient_id
+        , case_line_ingredients.product_type_id
         , companies.language_id
         , case_lines.case_line_id
-        , case_lines.case_line_amount
+        , case when find_ingredients_price_share.ingredient_price_share is null
+            then case_lines.case_line_amount
+            else case_lines.case_line_amount * find_ingredients_price_share.ingredient_price_share 
+            end as case_line_amount_inc_vat
+        , case when find_ingredients_price_share.ingredient_price_share is null
+            then case_lines.case_line_amount / (1 + companies.main_vat_rate)
+            else case_lines.case_line_amount * find_ingredients_price_share.ingredient_price_share / (1 + companies.main_vat_rate)
+            end as case_line_amount_ex_vat
+        , case_lines.case_line_amount as case_line_total_amount_inc_vat
         , case_lines.case_line_comment
         , case_lines.is_active_case_line
         , case_lines.case_line_type_id
@@ -67,7 +90,7 @@ cases as (
         , case_lines.case_responsible_id
         , case_lines.case_category_id
         , cases.case_status_id
-        , cases.redelivery_id
+        , cases.redelivery_status_id
         , cases.redelivery_comment
         , cases.redelivery_timeblock_id
         , cases.redelivery_at
@@ -115,10 +138,13 @@ cases as (
         on case_lines.case_line_id = case_line_ingredients.case_line_id
     left join ingredients
         on case_line_ingredients.ingredient_internal_reference = ingredients.ingredient_internal_reference
+    left join find_ingredients_price_share
+        on case_lines.case_line_id = find_ingredients_price_share.case_line_id
+        and case_line_ingredients.ingredient_internal_reference = find_ingredients_price_share.ingredient_internal_reference
+        and case_line_ingredients.product_type_id = find_ingredients_price_share.product_type_id
     -- only include cases with case lines
     where case_lines.case_id is not null
-    -- TODO: Need to handle this better
-    and orders_operations.billing_agreement_id != 0
+    and orders_operations.company_id!= '1A6819EF-CFD1-43E1-BBB0-F49001AE5562' -- God Matlyst
 
 )
 

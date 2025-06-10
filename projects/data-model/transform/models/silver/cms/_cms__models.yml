@@ -694,6 +694,12 @@ models:
         data_tests:
           - not_null
 
+      - name: main_vat_rate
+        data_type: decimal(38,2)
+        description: "{{ doc('column__main_vat_rate') }}"
+        data_tests:
+          - not_null
+
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"

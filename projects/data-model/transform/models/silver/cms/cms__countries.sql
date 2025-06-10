@@ -10,6 +10,9 @@ renamed as (
         {# ids #}
         id as country_id
         ,default_language_id as language_id
+
+        {# numerics #}
+        , main_vat_rate / 100 as main_vat_rate
         
         {# strings #}
         , name as country_name

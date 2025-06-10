@@ -112,9 +112,9 @@ The status of the case. Foreign key to the case status table. Can have status id
 
 {% enddocs %}
 
-{% docs column__redelivery_id %}
+{% docs column__redelivery_status_id %}
 
-The status of the redelivery. Foreign key to the case status table. Can have status id 0-4.
+The status of the redelivery. Can have status id 0-4. There is currently no related table with the name or descriprtion of each status. Status = 2 means accepted and is currently the only status that is relevant for reporting.
 
 {% enddocs %}
 

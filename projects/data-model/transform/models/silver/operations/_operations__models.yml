@@ -246,9 +246,9 @@ models:
         data_tests:
           - not_null
 
-      - name: redelivery_id
+      - name: redelivery_status_id
         data_type: int
-        description: "{{ doc('column__redelivery_id') }}"
+        description: "{{ doc('column__redelivery_status_id') }}"
         data_tests:
           - not_null
 

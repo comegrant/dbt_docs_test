@@ -100,13 +100,27 @@ models:
         data_tests:
           - not_null
 
+      - name: billing_agreement_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+
       - name: ops_order_id
         data_type: bigint
         description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - not_null
 
-      - name: case_line_amount
+      - name: case_line_amount_ex_vat
         data_type: decimal(19,4)
-        description: "{{ doc('column__case_line_amount') }}"
+        description: "{{ doc('column__case_line_amount_ex_vat') }}"
+
+      - name: case_line_amount_inc_vat
+        data_type: decimal(19,4)
+        description: "{{ doc('column__case_line_amount_inc_vat') }}"
+
+      - name: case_line_total_amount_inc_vat
+        data_type: decimal(19,4)
+        description: "{{ doc('column__case_line_total_amount_inc_vat') }}"
 
       - name: case_line_comment
         data_type: string
@@ -138,6 +152,10 @@ models:
         data_type: int
         description: "{{ doc('column__ingredient_id') }}"
 
+      - name: product_type_id
+        data_type: string
+        description: "{{ doc('column__product_type_id') }}"
+
       - name: language_id
         description: "{{ doc('column__language_id') }}"
         data_type: int
@@ -148,9 +166,9 @@ models:
         data_type: int
         description: "{{ doc('column__redelivery_timeblock_id') }}"
 
-      - name: redelivery_id
+      - name: redelivery_status_id
         data_type: int
-        description: "{{ doc('column__redelivery_id') }}"
+        description: "{{ doc('column__redelivery_status_id') }}"
         data_tests:
           - not_null
 

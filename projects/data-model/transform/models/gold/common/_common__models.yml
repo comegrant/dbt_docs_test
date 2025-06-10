@@ -29,7 +29,7 @@ models:
           - not_null
 
       - name: language_id
-        description: ""
+        description: "{{ doc('column__language_id') }}"
         data_type: int
         data_tests:
           - not_null
@@ -49,6 +49,12 @@ models:
       - name: country_currency
         description: "{{ doc('column__country_currency') }}"
         data_type: string
+        data_tests:
+          - not_null
+
+      - name: main_vat_rate
+        data_type: decimal(38,2)
+        description: "{{ doc('column__main_vat_rate') }}"
         data_tests:
           - not_null
 

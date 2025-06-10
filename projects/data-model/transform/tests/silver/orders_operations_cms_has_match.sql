@@ -2,13 +2,13 @@ with
 
 orders_operations as (
 
-    select * from {{ref('operations_orders')}}
+    select * from {{ref('operations__orders')}}
 
 )
 
 , orders_cms as (
 
-    select * from {{ref('cms_billing_agreement_orders')}}
+    select * from {{ref('cms__billing_agreement_orders')}}
 
 )
 
