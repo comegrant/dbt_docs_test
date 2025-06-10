@@ -19,7 +19,7 @@ orders_operations as (
 
 )
 
-, mismathces as ( 
+, mismatches as ( 
   select 
     orders_cms.ops_order_id
     , orders_operations.ops_order_id

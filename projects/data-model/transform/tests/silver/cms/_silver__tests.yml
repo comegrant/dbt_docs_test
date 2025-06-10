@@ -8,3 +8,7 @@ data_tests:
   - name: address_postal_codes_have_correct_length
     description: >
       Test to ensure that all postal codes have a valid number of characters
+  
+  - name: orders_operations_cms_is_matching
+    description: >
+      Test to check if fields are matching across cms and operations orders table
