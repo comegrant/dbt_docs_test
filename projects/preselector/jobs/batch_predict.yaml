@@ -28,16 +28,6 @@ resources:
         quartz_cron_expression: '0 0 2 ? * MON'
         timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-
       tasks:
         - task_key: batch-predict-gl-slack-notification-start
           run_job_task:
@@ -75,7 +65,7 @@ resources:
               header_message: ❌ Preselector forecast job failed for GL
               body_message: Check Databricks for more details
               is_error: true
-              relevant_people: mats, sylvia, grant, lina, synne
+              relevant_people: mats, sylvia, grant
 
         - task_key: batch-predict-gl-slack-notification-end-success
           depends_on:
@@ -116,16 +106,6 @@ resources:
         quartz_cron_expression: '0 0 6 ? * MON'
         timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-
       tasks:
         - task_key: batch-predict-amk-slack-notification-start
           run_job_task:
@@ -163,7 +143,7 @@ resources:
               header_message: ❌ Preselector forecast job failed for AMK
               body_message: Check Databricks for more details
               is_error: true
-              relevant_people: mats, sylvia, grant, lina, synne
+              relevant_people: mats, sylvia, grant
 
         - task_key: batch-predict-amk-slack-notification-end-success
           depends_on:
@@ -204,16 +184,6 @@ resources:
         quartz_cron_expression: '0 0 10 ? * MON'
         timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-
       tasks:
         - task_key: batch-predict-lmk-slack-notification-start
           run_job_task:
@@ -251,7 +221,7 @@ resources:
               header_message: ❌ Preselector forecast job failed for LMK
               body_message: Check Databricks for more details
               is_error: true
-              relevant_people: mats, sylvia, grant, lina, synne
+              relevant_people: mats, sylvia, grant
 
         - task_key: batch-predict-lmk-slack-notification-end-success
           depends_on:
@@ -292,16 +262,6 @@ resources:
         quartz_cron_expression: '0 0 14 ? * MON'
         timezone_id: UTC
 
-      email_notifications:
-        on_failure:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-        on_success:
-          - mats.mollestad@cheffelo.com
-          - grant.levang@cheffelo.com
-          - sylvia.liu@cheffelo.com
-
       tasks:
         - task_key: batch-predict-rt-slack-notification-start
           run_job_task:
@@ -339,7 +299,7 @@ resources:
               header_message: ❌ Preselector forecast job failed for RT
               body_message: Check Databricks for more details
               is_error: true
-              relevant_people: mats, sylvia, grant, lina, synne
+              relevant_people: mats, sylvia, grant
 
         - task_key: batch-predict-rt-slack-notification-end-success
           depends_on:
