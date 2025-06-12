@@ -105,7 +105,6 @@ table 'Loyalty Measures'
 	measure 'Number of Loyalty Points Earned from a Silver Level Boost' =
 			'Loyalty Point Measures'[Points from Silver Level Boost]
 		formatString: #,0
-		isHidden
 		displayFolder: Points
 		lineageTag: points-from-silver-boost-measure
 
