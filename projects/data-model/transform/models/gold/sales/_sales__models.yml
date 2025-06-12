@@ -3438,6 +3438,18 @@ models:
         data_type: string
         description: "{{ doc('column__discount_sub_category_name') }}"
 
+      - name: discount_chain_order
+        data_type: int
+        description: "{{ doc('column__discount_chain_order') }}"
+
+      - name: discount_parent_id
+        data_type: string
+        description: "{{ doc('column__discount_parent_id') }}"
+
+      - name: is_discount_chain
+        data_type: boolean
+        description: "{{ doc('column__is_discount_chain') }}"
+        
     versions:
       - v: 1
 

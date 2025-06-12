@@ -816,6 +816,12 @@ The primary key of dim_discounts.
 
 {% enddocs %}
 
+{% docs column__is_discount_chain %}
+
+Defines if the discount is part of a discount chain or not.
+
+{% enddocs %}
+
 # Bridge Preference Combinations Preferences
 
 {% docs column__pk_bridge_preference_combinations_preferences %}

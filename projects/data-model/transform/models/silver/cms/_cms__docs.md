@@ -1085,3 +1085,31 @@ This is the primary key of the discount_criteria table in CMS.
 This is the primary key of the discount_coupon table in CMS.
 
 {% enddocs %}
+
+# Discount Chains
+
+{% docs column__discount_parent_id %}
+
+For chained discounts, the parent discounts are the first discount in the discount chain.
+Example of a chained discount could be: (1) 30% on your first delivery, (2) 25% on your second delivery and (3) 20% on your third delivery.
+
+{% enddocs %}
+
+{% docs column__discount_child_id %}
+
+For chained discounts, the child discounts are the discount following the parent discount in the discount chain with the chain order defining which order they come after the parent discount.
+
+{% enddocs %}
+
+{% docs column__discount_chain_order %}
+
+The order the child discount has in the discount chain. 
+The chain order is connected to the child discount, not the parent, so when a child has chain order = 1, it means that it's the second discount in the chain, following the parent discount which is the first.
+
+{% enddocs %}
+
+{% docs column__is_active_discount_chain %}
+
+True if the discount chain is active.
+
+{% enddocs %}

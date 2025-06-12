@@ -4,6 +4,38 @@ version: 2
 
 models:
 
+  - name: cms__discount_chains
+    description: "Contains information on discounts which are part of a discount chain, meaning one discount is followed by another."
+
+    columns:
+      - name: discount_parent_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_parent_id') }}"
+        data_tests:
+          - not_null
+
+      - name: discount_id
+        data_type: char(36)
+        description: "{{ doc('column__discount_id') }}"
+        data_tests:
+          - not_null
+
+      - name: discount_chain_order
+        data_type: int
+        description: "{{ doc('column__discount_chain_order') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active_discount_chain
+        data_type: boolean
+        description: "{{ doc('column__is_active_discount_chain') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: date
+        description: "{{ doc('column__source_created_at') }}"
+
   - name: cms__billing_agreement_order_discounts
     description: "Discount data on all order lines with a discount. Gets populated at order gen."
 

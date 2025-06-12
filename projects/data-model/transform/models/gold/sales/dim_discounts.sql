@@ -24,10 +24,16 @@ discounts as (
 
 )
 
+, discount_chains as (
+
+    select * from {{ ref('int_discount_chains_unioned') }}
+
+)
+
 , discount_tables_joined as (
 
     select
-        md5(discounts.discount_id) as pk_dim_discounts
+    md5(discounts.discount_id) as pk_dim_discounts
         , discounts.discount_id
         , discounts.discount_usage_type_id
         , discounts.discount_type_id
@@ -51,10 +57,18 @@ discounts as (
         , discounts.is_registration_discount
         , discounts.is_disabled_on_freeze
         , discounts.is_highest_price_discount
+        , discount_chains.discount_parent_id
+        , discount_chains.discount_chain_order
+        , case when discount_chains.discount_parent_id is not null
+            then true
+            else false
+            end as is_discount_chain
+
     from discounts
     left join discount_channels on discounts.discount_channel_id = discount_channels.discount_channel_id
     left join discount_categories on discounts.discount_category_id = discount_categories.discount_category_id
     left join discount_sub_categories on discounts.discount_sub_category_id = discount_sub_categories.discount_sub_category_id
+    left join discount_chains on discounts.discount_id = discount_chains.discount_id
 
 )
 
@@ -90,6 +104,9 @@ discounts as (
         , false as is_registration_discount
         , false as is_disabled_on_freeze
         , false as is_highest_price_discount
+        , 0 as discount_parent_id
+        , 0 as discount_chain_order
+        , false as is_discount_chain
 
 )
 
