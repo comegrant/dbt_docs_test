@@ -1,5 +1,5 @@
 # This is a Databricks asset bundle definition for attribute-scoring.
-# The file was generated automatically by the Databricks extension. 
+# The file was generated automatically by the Databricks extension.
 # It's based on the configuration located in `.databricks/project.json`.
 # If you don't want this file to be created automatically, remove the `.databricks/project.json`.
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
@@ -31,7 +31,7 @@ targets:
     variables:
       slack_notification_job_id: 221967110790300
   test:
-    mode: "${var.mode}"
+    mode: "development"
     variables:
       slack_notification_job_id: 823927532277018
   prod:
