@@ -37,7 +37,7 @@ class ReviewRequest(BaseModel):
 
 
 class Response(BaseModel):
-    label: int
+    label: bool
     score: float
 
 
@@ -46,6 +46,18 @@ class CustomerReviewResponse(Response):
 
 
 async def get_customer_review_response(review: str, client: OpenAI) -> Response:
+    """Get a response from OpenAI for a customer review.
+
+    Args:
+        review (str): The customer review text to analyze.
+        client (OpenAI): An initialized OpenAI client.
+
+    Returns:
+        Response: A Response object containing the label and score from OpenAI.
+
+    Raises:
+        ValueError: If no response is received from OpenAI.
+    """
     response = client.responses.parse(
         model=MODEL,
         input=[
@@ -61,6 +73,15 @@ async def get_customer_review_response(review: str, client: OpenAI) -> Response:
 
 
 async def create_customer_review_response(request: ReviewRequest, client: OpenAI) -> CustomerReviewResponse:
+    """Create response for a customer review with model version information.
+
+    Args:
+        request (ReviewRequest): The review request containing review text and metadata.
+        client (OpenAI): An initialized OpenAI client.
+
+    Returns:
+        CustomerReviewResponse: A response object containing the label, score, and model version.
+    """
     response = await get_customer_review_response(request.review, client)
     return CustomerReviewResponse(**response.model_dump(), model_version=MODEL)
 

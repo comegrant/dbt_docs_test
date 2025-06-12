@@ -1,6 +1,6 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 bundle:
-  name: review_screener
+  name: review-screener
 
 include:
   - "jobs/**.yml"

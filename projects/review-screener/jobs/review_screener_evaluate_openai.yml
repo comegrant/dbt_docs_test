@@ -12,7 +12,7 @@ resources:
           default: "${var.environment}"
 
       job_clusters:
-        - job_cluster_key: review-screener
+        - job_cluster_key: review-screener-evaluate-openai
           new_cluster:
             num_workers: 1
             spark_version: ${var.cluster_version}
@@ -34,11 +34,12 @@ resources:
 
       tasks:
         - task_key: evaluate_openai
-          job_cluster_key: review-screener
-          notebook_task:
-            notebook_path: ./review_screener_evaluate_openai.py
-            base_parameters:
-              environment: ${bundle.target}
+          job_cluster_key: review-screener-evaluate-openai
+          spark_python_task:
+            python_file: review_screener_evaluate_openai.py
+            parameters:
+              - "--environment"
+              - "{{job.parameters.environment}}"
 
         - task_key: evaluate_openai-fail
           depends_on:
@@ -48,7 +49,7 @@ resources:
             job_id: ${var.slack_notification_job_id} # Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} # Reads from the target environment as defined in the databricks.yml file
-              header_message: ❌ review-screener job failed
+              header_message: ❌ Evaluation of Review Screener job failed
               body_message: Check Databricks for more details
               is_error: true
               relevant_people: Agathe Raaum
@@ -61,5 +62,5 @@ resources:
             job_id: ${var.slack_notification_job_id} # Reads from the variable defined in the databricks.yml file
             job_parameters:
               environment: ${bundle.target} # Reads from the target environment as defined in the databricks.yml file
-              body_message: ✅ review-screener job succeeded
+              body_message: ✅ Evaluation of Review Screener job succeeded
               is_error: false
