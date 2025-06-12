@@ -62,17 +62,23 @@ def create_or_replace_table(
     source_fk_constraints = source_fk_constraints_df.collect()
     
     pk_constraints = set()
+    pk_constraints_str = ''
     fk_constraints = set()
 
     for row in source_pk_constraints:
         pk_constraints.add((row.column_name))
+        pk_constraints_str += f"{row.column_name},"
+    if pk_constraints_str:
+        pk_constraints_str = pk_constraints_str[:-1] # Remove trailing comma
+    pk_constraint_name = pk_constraints_str.replace(',','_')
     
     for row in source_fk_constraints:
         fk_constraints.add((row.column_name, row.referenced_table_name, row.referenced_column_name))
 
     for column in pk_constraints:
         constraint_sqls.append(f"ALTER TABLE `{sink_database}`.`{sink_schema}`.`{table}` ALTER COLUMN {column} SET NOT NULL;")
-        constraint_sqls.append(f"ALTER TABLE `{sink_database}`.`{sink_schema}`.`{table}` ADD CONSTRAINT {column} PRIMARY KEY ({column});")
+    if pk_constraint_name:
+        constraint_sqls.append(f"ALTER TABLE `{sink_database}`.`{sink_schema}`.`{table}` ADD CONSTRAINT {pk_constraint_name} PRIMARY KEY ({pk_constraints_str});")
 
     for fk_column, ref_table, ref_column in fk_constraints:
         # Check if referenced table exists
@@ -119,7 +125,7 @@ def create_or_replace_table(
     if success:
         print(f"✅ Completed: {table}")
     else:
-        print(f"⚠️ Failed to complete all queries for: {table}")
+        raise Exception(f"⚠️ Failed to complete all queries for: {table}")
     
 
 def create_or_replace_tables(
@@ -176,6 +182,7 @@ def create_or_replace_tables(
     rest_tables = [t for t in table_list if not t.startswith("dim") and t not in excluded_tables_set]
 
     def run_in_parallel(tables_to_run: list[str]) -> None:
+        success = True
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {
                 executor.submit(create_or_replace_table, source_database, source_schema, sink_database, sink_schema, table): table for table in tables_to_run
@@ -187,12 +194,27 @@ def create_or_replace_tables(
                     future.result()
                 except Exception as e:
                     print(f"❌ Error when copying {table}: {e}")
-
+                    success = False
+        if not success:
+            raise Exception("Copy of one or more tables failed.")
+    
+    success = True
     print("🔷 Starting copy of dim tables first ...")
-    run_in_parallel(dim_tables)
+    try:
+        run_in_parallel(dim_tables)
+    except Exception as e:
+        print(f"⚠️ Error during dim table copy: {e}")
+        success = False
 
     print("🔷 Starting copy of remaining tables (FACT, BRIDGE, etc.)...")
-    run_in_parallel(rest_tables)
+    try:
+        run_in_parallel(rest_tables)
+    except Exception as e:
+        print(f"⚠️ Error during remaining table copy: {e}")
+        success = False
+
+    if not success:
+        raise Exception("⚠️ Copy of one or more tables failed.")
 
 def create_or_replace_schemas(
     source_database: str, 
@@ -240,6 +262,7 @@ def create_or_replace_schemas(
 
     final_schemas = [schema for schema in schema_list if schema not in excluded_schema_list]
 
+    success = True
     for schema in final_schemas:
 
         source_schema = f"{source_schema_prefix}{schema}"
@@ -250,10 +273,17 @@ def create_or_replace_schemas(
             continue
 
         print(f"Copying schema: {schema}")
-        create_or_replace_tables(
-            source_database=source_database,
-            source_schema=source_schema,
-            sink_database=sink_database,
-            sink_schema=sink_schema,
-            max_workers=max_workers
-        )
+        try:
+            create_or_replace_tables(
+                source_database=source_database,
+                source_schema=source_schema,
+                sink_database=sink_database,
+                sink_schema=sink_schema,
+                max_workers=max_workers
+            )
+        except Exception as e:
+            print(f"❌ Error copying schema {schema}: {e}")
+            success = False
+    if not success:
+        raise Exception("⚠️ Copy of one or more schemas failed.")
+            
