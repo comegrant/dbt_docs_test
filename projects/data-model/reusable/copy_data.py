@@ -113,19 +113,22 @@ def create_or_replace_table(
     print(f"⏳ Starting: {table}")
 
     success = True
+    error_messages = []
 
     for query in constraint_sqls:
-        print(f"Executing query: {query}")
         try:
             spark.sql(query)
         except Exception as e:
-            print(f"❌ Failed to execute: {query}\nError: {e}")
+            msg = f"❌ Failed to execute: {query}\nError: {e}"
+            print(msg)
+            error_messages.append(msg)
             success = False
     
     if success:
         print(f"✅ Completed: {table}")
     else:
-        raise Exception(f"⚠️ Failed to complete all queries for: {table}")
+        all_errors = "\n\n".join(error_messages)
+        raise Exception(f"⚠️ Failed to complete all queries for: {table}\n\nError messages:\n{all_errors}")
     
 
 def create_or_replace_tables(
@@ -199,22 +202,28 @@ def create_or_replace_tables(
             raise Exception("Copy of one or more tables failed.")
     
     success = True
+    error_messages = []
     print("🔷 Starting copy of dim tables first ...")
     try:
         run_in_parallel(dim_tables)
     except Exception as e:
-        print(f"⚠️ Error during dim table copy: {e}")
+        msg = f"⚠️ Error during dim table copy: {e}"
+        print(msg)
+        error_messages.append(msg)
         success = False
 
     print("🔷 Starting copy of remaining tables (FACT, BRIDGE, etc.)...")
     try:
         run_in_parallel(rest_tables)
     except Exception as e:
-        print(f"⚠️ Error during remaining table copy: {e}")
+        msg = f"⚠️ Error during remaining table copy: {e}"
+        print(msg)
+        error_messages.append(msg)
         success = False
 
     if not success:
-        raise Exception("⚠️ Copy of one or more tables failed.")
+        all_errors = "\n\n".join(error_messages)
+        raise Exception(f"⚠️ Copy of one or more tables failed.\n\nError messages:\n{all_errors}")
 
 def create_or_replace_schemas(
     source_database: str, 
@@ -263,6 +272,7 @@ def create_or_replace_schemas(
     final_schemas = [schema for schema in schema_list if schema not in excluded_schema_list]
 
     success = True
+    error_messages = []
     for schema in final_schemas:
 
         source_schema = f"{source_schema_prefix}{schema}"
@@ -282,8 +292,11 @@ def create_or_replace_schemas(
                 max_workers=max_workers
             )
         except Exception as e:
-            print(f"❌ Error copying schema {schema}: {e}")
+            msg = f"❌ Error copying schema {schema}: {e}"
+            print(msg)
+            error_messages.append(msg)
             success = False
     if not success:
-        raise Exception("⚠️ Copy of one or more schemas failed.")
+        all_errors = "\n\n".join(error_messages)
+        raise Exception(f"⚠️ Copy of one or more schemas failed.\n\nError messages:\n{all_errors}")
             
