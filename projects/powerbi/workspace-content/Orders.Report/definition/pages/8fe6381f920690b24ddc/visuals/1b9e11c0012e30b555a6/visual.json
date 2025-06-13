@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "1b9e11c0012e30b555a6",
   "position": {
     "x": 32,
@@ -186,6 +186,40 @@
           }
         }
       ],
+      "zoom": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showOnValueAxis": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "categoryMax": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "categorySize": {
+              "expr": {
+                "Literal": {
+                  "Value": "33.55462331531867D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "dataPoint": [
         {
           "properties": {
@@ -194,7 +228,7 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 5,
+                      "ColorId": 2,
                       "Percent": 0
                     }
                   }
@@ -215,54 +249,12 @@
                             "Entity": "Dates"
                           }
                         },
-                        "Property": "Calendar Year"
+                        "Property": "Financial Year"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "2024L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 4,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Dates"
-                          }
-                        },
-                        "Property": "Calendar Year"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "2023L"
+                        "Value": "2022L"
                       }
                     }
                   }
@@ -299,12 +291,12 @@
                             "Entity": "Dates"
                           }
                         },
-                        "Property": "Calendar Year"
+                        "Property": "Financial Year"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "2022L"
+                        "Value": "2023L"
                       }
                     }
                   }
@@ -320,7 +312,7 @@
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 2,
+                      "ColorId": 5,
                       "Percent": 0
                     }
                   }
@@ -341,12 +333,12 @@
                             "Entity": "Dates"
                           }
                         },
-                        "Property": "Calendar Year"
+                        "Property": "Financial Year"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "2021L"
+                        "Value": "2025L"
                       }
                     }
                   }
@@ -361,8 +353,9 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#B59077'"
+                    "ThemeDataColor": {
+                      "ColorId": 4,
+                      "Percent": 0
                     }
                   }
                 }
@@ -382,93 +375,18 @@
                             "Entity": "Dates"
                           }
                         },
-                        "Property": "Calendar Year"
+                        "Property": "Financial Year"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "2020L"
+                        "Value": "2024L"
                       }
                     }
                   }
                 }
               }
             ]
-          }
-        },
-        {
-          "properties": {
-            "fill": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#F17EDC'"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Dates"
-                          }
-                        },
-                        "Property": "Calendar Year"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "2019L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "zoom": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "showOnValueAxis": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "categoryMax": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "categorySize": {
-              "expr": {
-                "Literal": {
-                  "Value": "33.55462331531867D"
-                }
-              }
-            }
           }
         }
       ]
