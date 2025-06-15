@@ -186,6 +186,7 @@ def create_or_replace_tables(
 
     def run_in_parallel(tables_to_run: list[str]) -> None:
         success = True
+        error_messages = []
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {
                 executor.submit(create_or_replace_table, source_database, source_schema, sink_database, sink_schema, table): table for table in tables_to_run
@@ -196,10 +197,13 @@ def create_or_replace_tables(
                 try:
                     future.result()
                 except Exception as e:
-                    print(f"❌ Error when copying {table}: {e}")
+                    msg = f"❌ Error when copying {table}: {e}"
+                    print(msg)
+                    error_messages.append(msg)
                     success = False
         if not success:
-            raise Exception("Copy of one or more tables failed.")
+            all_errors = "\n\n".join(error_messages)
+            raise Exception(f"Copy of one or more tables failed.\n\nError messages:\n{all_errors}")
     
     success = True
     error_messages = []
