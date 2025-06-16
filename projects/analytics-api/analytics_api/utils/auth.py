@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 import aiohttp
 from fastapi import Depends, status
@@ -34,6 +35,7 @@ class AuthToken(BaseModel):
 class TokenContent(BaseModel):
     billing_agreement_id: int = Field(alias="AgreementId")
     company_id: str = Field(alias="CompanyId")
+    expires_at: datetime = Field(alias="TimeStamp")
 
 
 credentials_exception = HTTPException(
@@ -111,7 +113,16 @@ def extract_token_content(token: str = Depends(oauth2_scheme)) -> TokenContent:
             auth_settings.auth_public_key,
             algorithms=[auth_settings.auth_algorithm],
         )
-        return TokenContent.model_validate(payload)
+        token_content = TokenContent.model_validate(payload)
+        now = datetime.now(tz=timezone.utc)
+
+        if now > token_content.expires_at:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has expired. Generate a new one.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return token_content
     except JWTError:
         raise credentials_exception from JWTError
 
