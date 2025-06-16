@@ -16,11 +16,15 @@ fsspec = "^2024.3.1"
 adlfs = "^2024.2.0"
 numpy = "^1.0.0"
 streamlit-deeplinker = "^0.1.2"
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+nest_asyncio = "1.6.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
 pre-commit = "*"
 pytest = "*"
+pyright = "*"
 pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}

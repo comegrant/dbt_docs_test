@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import polars as pl
+from aligned.config_value import ConfigValue, LiteralValue
 from aligned.data_source.batch_data_source import CodableBatchDataSource, ColumnFeatureMappable
 from aligned.exceptions import UnableToFindFileException
 from aligned.feature_source import WritableFeatureSource
@@ -33,8 +34,6 @@ from aligned.sources.local import (
 from aligned.storage import Storage
 from httpx import HTTPStatusError
 
-from data_contracts.config_values import LiteralValue, ValueRepresentable
-
 if TYPE_CHECKING:
     from azure.storage.blob import BlobServiceClient
 
@@ -54,7 +53,7 @@ def azure_container_blob(path: str) -> AzurePath:
 
 @dataclass
 class PathResolver(Codable):
-    components: list[ValueRepresentable]
+    components: list[ConfigValue]
 
     @property
     def path(self) -> Path:
@@ -72,16 +71,16 @@ class PathResolver(Codable):
     def as_posix(self) -> str:
         return self.path.as_posix()
 
-    def replace(self, find: ValueRepresentable | str, new_value: ValueRepresentable | str) -> PathResolver:
+    def replace(self, find: ConfigValue | str, new_value: ConfigValue | str) -> PathResolver:
         find_comp = LiteralValue.from_value(find)
         new_value_comp = LiteralValue.from_value(new_value)
         return PathResolver([new_value_comp if find_comp == comp else comp for comp in self.components])
 
-    def append(self, value: ValueRepresentable | str) -> PathResolver:
+    def append(self, value: ConfigValue | str) -> PathResolver:
         return PathResolver([*self.components, LiteralValue.from_value(value)])
 
     @staticmethod
-    def from_value(values: ValueRepresentable | list[ValueRepresentable] | str | PathResolver) -> PathResolver:
+    def from_value(values: ConfigValue | list[ConfigValue] | str | PathResolver) -> PathResolver:
         if isinstance(values, PathResolver):
             return values
         elif isinstance(values, str):
@@ -94,11 +93,11 @@ class PathResolver(Codable):
 
 @dataclass
 class AzureBlobConfig(Directory):
-    account_id: ValueRepresentable
-    tenant_id: ValueRepresentable
-    client_id: ValueRepresentable
-    client_secret: ValueRepresentable
-    account_name: ValueRepresentable
+    account_id: ConfigValue
+    tenant_id: ConfigValue
+    client_id: ConfigValue
+    client_secret: ConfigValue
+    account_name: ConfigValue
 
     @property
     def to_markdown(self) -> str:
@@ -182,10 +181,10 @@ You can choose between two ways of authenticating with Azure Blob Storage.
             date_formatter=date_formatter or DateFormatter.unix_timestamp(),
         )
 
-    def directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:
+    def directory(self, path: str | ConfigValue) -> AzureBlobDirectory:
         return AzureBlobDirectory(self, PathResolver.from_value(path))
 
-    def sub_directory(self, path: str | ValueRepresentable) -> Directory:  # type: ignore
+    def sub_directory(self, path: str | ConfigValue) -> Directory:  # type: ignore
         return self.directory(path)
 
     def client(self) -> BlobServiceClient:
@@ -306,13 +305,13 @@ class AzureBlobDirectory(Directory):
             date_formatter=date_formatter,
         )
 
-    def sub_directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:  # type: ignore
+    def sub_directory(self, path: str | ConfigValue) -> AzureBlobDirectory:  # type: ignore
         return AzureBlobDirectory(self.config, self.components.append(path))
 
-    def directory(self, path: str | ValueRepresentable) -> AzureBlobDirectory:  # type: ignore
+    def directory(self, path: str | ConfigValue) -> AzureBlobDirectory:  # type: ignore
         return AzureBlobDirectory(self.config, self.components.append(path))
 
-    def with_schema_version(self, sub_directory: str | ValueRepresentable | None = None) -> Directory:  # type: ignore
+    def with_schema_version(self, sub_directory: str | ConfigValue | None = None) -> Directory:  # type: ignore
         if sub_directory:
             return AzureBlobDirectory(
                 self.config, self.components.append(sub_directory).append(AzureBlobDirectory.schema_placeholder())

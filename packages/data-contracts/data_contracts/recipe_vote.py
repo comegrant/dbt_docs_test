@@ -11,8 +11,8 @@ select
 favorites.billing_agreement_id as agreement_id
 ,favorites.recipe_id
 ,favorites.main_recipe_id
-, case when types.recipe_favorite_type_name = "favorite" then 1 else 0 end as is_favorite
-, case when types.recipe_favorite_type_name = "dislike" then 1 else 0 end as is_dislike
+, case when types.recipe_favorite_type_name = "Favorite" then 1 else 0 end as is_favorite
+, case when types.recipe_favorite_type_name = "Dislike" then 1 else 0 end as is_dislike
 from silver.pim__recipe_favorites favorites
 left join silver.pim__recipe_favorite_types types on favorites.recipe_favorite_type_id = types.recipe_favorite_type_id
 )

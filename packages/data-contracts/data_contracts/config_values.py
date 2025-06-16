@@ -1,87 +1,24 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
-from aligned.schemas.codable import Codable
-from mashumaro.types import SerializableType
+from aligned import ContractStore, FeatureLocation
 
 
-class ValueRepresentable(Codable, SerializableType):
+def needed_environment_vars(store: ContractStore) -> list[str]:
+    from aligned.config_value import EnvironmentValue
 
-    type_name: str
+    all_configs: list[EnvironmentValue] = []
+    for view_name in store.feature_views:
+        all_configs.extend(
+            config
+            for config in store.needed_configs_for(FeatureLocation.feature_view(view_name))
+            if isinstance(config, EnvironmentValue)
+        )
 
-    def read(self) -> str:
-        ...
+    for model_name in store.models:
+        all_configs.extend(
+            config
+            for config in store.needed_configs_for(FeatureLocation.model(model_name))
+            if isinstance(config, EnvironmentValue)
+        )
 
-    def _serialize(self) -> dict:
-        assert (
-            self.type_name in SupportedValueFactory.shared().supported_values
-        ), f'Unknown type_name: {self.type_name}'
-        return self.to_dict()
-
-    @classmethod
-    def _deserialize(cls, value: dict) -> ValueRepresentable:
-        name_type = value['type_name']
-        if name_type not in SupportedValueFactory.shared().supported_values:
-            raise ValueError(
-                f"Unknown batch data source id: '{name_type}'.\nRemember to add the"
-                ' data source to the SupportedValueFactory.supported_values if'
-                ' it is a custom type.'
-            )
-        del value['type_name']
-        data_class = SupportedValueFactory.shared().supported_values[name_type]
-        return data_class.from_dict(value)
-
-
-class SupportedValueFactory:
-
-    supported_values: dict[str, type[ValueRepresentable]]
-
-    _shared: SupportedValueFactory | None = None
-
-    def __init__(self) -> None:
-        types = [EnvironmentValue, LiteralValue]
-
-        self.supported_values = {
-            val_type.type_name: val_type
-            for val_type in types
-        }
-
-    @classmethod
-    def shared(cls) -> SupportedValueFactory:
-        if cls._shared:
-            return cls._shared
-        cls._shared = SupportedValueFactory()
-        return cls._shared
-
-
-@dataclass
-class EnvironmentValue(ValueRepresentable, Codable):
-
-    env: str
-    default_value: str | None = field(default=None)
-    type_name: str = "env"
-
-    def read(self) -> str:
-        import os
-        if self.default_value and self.env not in os.environ:
-            return self.default_value
-
-        return os.environ[self.env]
-
-
-@dataclass
-class LiteralValue(ValueRepresentable, Codable):
-
-    value: str
-    type_name = "literal"
-
-    def read(self) -> str:
-        return self.value
-
-    @staticmethod
-    def from_value(value: str | ValueRepresentable) -> ValueRepresentable:
-        if isinstance(value, ValueRepresentable):
-            return value
-        else:
-            return LiteralValue(value)
+    return list({env_var.env for env_var in all_configs})

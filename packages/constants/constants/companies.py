@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Literal
 
 
 @dataclasses.dataclass
@@ -54,6 +55,13 @@ company_rt = Company(
     language="Danish",
     language_id=6,
 )
+
+CompanyID = Literal[
+    "8A613C15-35E4-471F-91CC-972F933331D7",
+    "09ECD4F0-AE58-4539-8E8F-9275B1859A19",
+    "6A2D0B60-84D6-4830-9945-58D518D27AC2",
+    "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
+]
 
 
 def get_all_companies() -> list[Company]:

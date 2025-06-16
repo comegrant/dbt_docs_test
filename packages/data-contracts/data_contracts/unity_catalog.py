@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import polars as pl
+from aligned.config_value import ConfigValue, EnvironmentValue, LiteralValue
 from aligned.data_source.batch_data_source import (
     BatchDataSource,
     CodableBatchDataSource,
@@ -20,7 +21,6 @@ from aligned.schemas.feature import Constraint, Feature
 from aligned.sources.local import FileFactualJob
 from sqlglot import exp, parse_one
 
-from data_contracts.config_values import EnvironmentValue, LiteralValue, ValueRepresentable
 from data_contracts.helper import snake_to_pascal
 
 if TYPE_CHECKING:
@@ -189,6 +189,7 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
         ByteType,
         CharType,
         DateType,
+        DecimalType,
         DoubleType,
         FloatType,
         IntegerType,
@@ -246,32 +247,34 @@ def convert_pyspark_type(data_type: DataType) -> SparkDataType:  # noqa: PLR0911
         return no_constraints(FeatureType.json())
     if isinstance(data_type, MapType):
         return no_constraints(FeatureType.json())
+    if isinstance(data_type, DecimalType):
+        return no_constraints(FeatureType.float64())
 
     raise ValueError(f"Unsupported type {data_type}")
 
 
 @dataclass(init=False)
 class DatabricksConnectionConfig:
-    host: ValueRepresentable
-    cluster_id: ValueRepresentable | None
-    token: ValueRepresentable | None
+    host: ConfigValue
+    cluster_id: ConfigValue | None
+    token: ConfigValue | None
 
     def __init__(
         self,
-        host: str | ValueRepresentable,
-        cluster_id: str | ValueRepresentable | None,
-        token: str | ValueRepresentable | None,
+        host: str | ConfigValue,
+        cluster_id: str | ConfigValue | None,
+        token: str | ConfigValue | None,
     ) -> None:
         self.host = LiteralValue.from_value(host)
         self.cluster_id = LiteralValue.from_value(cluster_id) if isinstance(cluster_id, str) else cluster_id
         self.token = LiteralValue(token) if isinstance(token, str) else token
 
-    def with_auth(self, token: str | ValueRepresentable, host: str | ValueRepresentable) -> DatabricksConnectionConfig:
+    def with_auth(self, token: str | ConfigValue, host: str | ConfigValue) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(cluster_id=self.cluster_id, token=token, host=host)
 
     @staticmethod
     def databricks_or_serverless(
-        host: str | ValueRepresentable | None = None, token: str | ValueRepresentable | None = None
+        host: str | ConfigValue | None = None, token: str | ConfigValue | None = None
     ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id=None,
@@ -281,7 +284,7 @@ class DatabricksConnectionConfig:
 
     @staticmethod
     def serverless(
-        host: str | ValueRepresentable | None = None, token: str | ValueRepresentable | None = None
+        host: str | ConfigValue | None = None, token: str | ConfigValue | None = None
     ) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(
             cluster_id="serverless",
@@ -290,12 +293,10 @@ class DatabricksConnectionConfig:
         )
 
     @staticmethod
-    def with_cluster_id(
-        cluster_id: str | ValueRepresentable, host: str | ValueRepresentable
-    ) -> DatabricksConnectionConfig:
+    def with_cluster_id(cluster_id: str | ConfigValue, host: str | ConfigValue) -> DatabricksConnectionConfig:
         return DatabricksConnectionConfig(cluster_id=cluster_id, token=None, host=host)
 
-    def catalog(self, catalog: str | ValueRepresentable) -> UnityCatalog:
+    def catalog(self, catalog: str | ConfigValue) -> UnityCatalog:
         return UnityCatalog(self, LiteralValue.from_value(catalog))
 
     def sql_file(self, file_path: str | Path, format_values: dict[str, str] | None = None) -> UCSqlSource:
@@ -364,9 +365,9 @@ class DatabricksConnectionConfig:
 class UnityCatalog:
     config: DatabricksConnectionConfig
 
-    catalog: ValueRepresentable
+    catalog: ConfigValue
 
-    def schema(self, schema: str | ValueRepresentable) -> UnityCatalogSchema:
+    def schema(self, schema: str | ConfigValue) -> UnityCatalogSchema:
         return UnityCatalogSchema(self.config, self.catalog, LiteralValue.from_value(schema))
 
     def sql(self, query: str) -> UCSqlSource:
@@ -377,20 +378,20 @@ class UnityCatalog:
 class UnityCatalogSchema:
     config: DatabricksConnectionConfig
 
-    catalog: ValueRepresentable
-    schema: ValueRepresentable
+    catalog: ConfigValue
+    schema: ConfigValue
 
     async def list_tables(self) -> list[str]:
         con = self.config.connection()
         tables = con.sql(f"SHOW TABLES {self.catalog.read()}.{self.schema.read()};").toPandas()
         return tables["tableName"].to_list()
 
-    def table(self, table: str | ValueRepresentable) -> UCTableSource:
+    def table(self, table: str | ConfigValue) -> UCTableSource:
         return UCTableSource(
             self.config, UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
 
-    def feature_table(self, table: str | ValueRepresentable) -> UCFeatureTableSource:
+    def feature_table(self, table: str | ConfigValue) -> UCFeatureTableSource:
         return UCFeatureTableSource(
             self.config, UnityCatalogTableConfig(self.catalog, self.schema, LiteralValue.from_value(table))
         )
@@ -398,9 +399,9 @@ class UnityCatalogSchema:
 
 @dataclass
 class UnityCatalogTableConfig:
-    catalog: ValueRepresentable
-    schema: ValueRepresentable
-    table: ValueRepresentable
+    catalog: ConfigValue
+    schema: ConfigValue
+    table: ConfigValue
 
     def identifier(self) -> str:
         return f"{self.catalog.read()}.{self.schema.read()}.{self.table.read()}"
@@ -463,9 +464,9 @@ class UCSqlSource(CodableBatchDataSource, DatabricksSource):
     def all_data(self, request: RetrievalRequest, limit: int | None) -> RetrievalJob:
         expression = parse_one(self.query, read="spark")
 
-        assert isinstance(expression, exp.Select), (
-            f"Unable to read a spark query that is not a SELECT. Got {type(expression)}"
-        )
+        assert isinstance(
+            expression, exp.Select
+        ), f"Unable to read a spark query that is not a SELECT. Got {type(expression)}"
 
         if limit:
             expression = expression.limit(limit)

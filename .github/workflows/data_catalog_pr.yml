@@ -1,0 +1,36 @@
+name: Data Catalog PR Pipeline
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/data_catalog_pr.yml'
+      - 'projects/data-catalog/**'
+      - 'packages/data-contracts/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-data-catalog:
+    uses: ./.github/workflows/template_test_python.yml
+    with:
+      python-version: "3.10.13"
+      working-directory: projects/data-catalog
+    secrets: inherit
+
+  build-data-catalog-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/data-catalog
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: data-catalog
+      dockerfile: Dockerfile
+      tag: dev-latest
+    secrets: inherit
+
+  deploy-to-dev:
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/data-catalog
+      target-env: Development
+      docker-image-name: data-catalog
+      docker-image-tag: dev-latest
+    secrets: inherit

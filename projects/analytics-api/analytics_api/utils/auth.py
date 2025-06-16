@@ -31,6 +31,18 @@ class AuthToken(BaseModel):
     access_token: str
 
 
+class TokenContent(BaseModel):
+    billing_agreement_id: int = Field(alias="AgreementId")
+    company_id: str = Field(alias="CompanyId")
+
+
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
 def get_auth_config() -> AuthConfig:
     """
     Retrieve the authentication configuration for the application.
@@ -77,9 +89,36 @@ async def retrieve_token(username: str, password: str) -> AuthToken:
             return AuthToken(access_token=await response.json())
 
 
+def extract_token_content(token: str = Depends(oauth2_scheme)) -> TokenContent:
+    """
+    Extracts the contents of the token.
+
+    Args:
+        token (str): The token to validate. Defaults to the token provided in the
+            Authorization header of the request.
+
+    Raises:
+        HTTPException: If the token is invalid, aka. unable to decode it.
+
+    Returns:
+        TokenContent: The content of the token.
+    """
+    auth_settings = get_auth_config()
+
+    try:
+        payload = jwt.decode(
+            token,
+            auth_settings.auth_public_key,
+            algorithms=[auth_settings.auth_algorithm],
+        )
+        return TokenContent.model_validate(payload)
+    except JWTError:
+        raise credentials_exception from JWTError
+
+
 async def raise_on_invalid_token(token: str = Depends(oauth2_scheme)) -> None:
     """
-    Validate a given token.
+    Validates that a given token is a server-to-server token.
 
     This function takes a token as an argument (which defaults to the token provided
     in the Authorization header of the request) and checks if it is valid. It does
@@ -96,23 +135,7 @@ async def raise_on_invalid_token(token: str = Depends(oauth2_scheme)) -> None:
         HTTPException: If the token is invalid or does not contain the expected
             CompanyId.
     """
-    auth_settings = get_auth_config()
+    token_content = extract_token_content(token=token)
 
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    try:
-        payload = jwt.decode(
-            token,
-            auth_settings.auth_public_key,
-            algorithms=[auth_settings.auth_algorithm],
-        )
-        company_id = payload["CompanyId"]
-        if company_id != "00000000-0000-0000-0000-000000000000":
-            raise credentials_exception
-
-    except JWTError:
-        raise credentials_exception from JWTError
+    if token_content.company_id != "00000000-0000-0000-0000-000000000000":
+        raise credentials_exception

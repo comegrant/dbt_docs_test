@@ -1,21 +1,22 @@
-FROM python:3.11-slim-buster
+FROM databricksruntime/python:15.4-LTS
 
-# install Poetry
-RUN pip install --no-cache-dir poetry
+SHELL ["/bin/bash", "-c"]
+
+# Defaulting to utf-8 to fix a few charset bugs
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # set the home directory
-ENV APP_HOME /app
-ENV SERVICE_HOME $APP_HOME/projects/data-catalog
+ENV APP_HOME=/opt
+ENV SERVICE_HOME=$APP_HOME/projects/data-catalog
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y g++ make libc6-dev unixodbc-dev libpq-dev curl gnupg2
+RUN /databricks/python3/bin/pip install poetry==1.8.2
 
 # Install Microsoft ODBC driver for SQL Server
-RUN apt-get install -y apt-transport-https && \
-    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
-    ACCEPT_EULA=Y apt-get install --no-install-recommends -y msodbcsql18 mssql-tools18
+    ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 # copy source code
 WORKDIR $APP_HOME
@@ -28,13 +29,16 @@ COPY projects/data-catalog/poetry.lock .
 # create a dummy package to satisfy Poetry
 RUN mkdir -p data_catalog && touch data_catalog/__init__.py
 
-# install requirements
-RUN poetry config virtualenvs.create false
-RUN poetry install --only main -n && rm -rf ~/.cache/pypoetry/cache
-RUN pip install polars-lts-cpu==0.20.31
+ARG POETRY_ARGS=--only=main
 
-# copy source code
-COPY projects/data-catalog .
+RUN source /databricks/python3/bin/activate \
+	&& echo "$(which poetry)" \
+	&& poetry config virtualenvs.create false \
+	&& pip install virtualenv==20.31.2 \
+	&& poetry install $POETRY_ARGS && rm -rf ~/.cache/pypoetry/cache
+
+ENV PYTHONPATH=/databricks/python3/bin
+ENV PATH=/databricks/python3/bin:$PATH
 
 # store the git branch and commit hash as env variables
 ARG GIT_BRANCH
@@ -42,13 +46,5 @@ ARG GIT_COMMIT_HASH
 ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
-# set starting command
-WORKDIR $SERVICE_HOME
-
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/catalog /app/catalog
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/app.py /app/app.py
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/mermaid /app/mermaid
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/mermiad /app/mermiad
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/tabs /app/tabs
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/src /app/src
-COPY --from=matsmoll/aligned-catalog-free:experimental-latest /app/pages /app/pages
+# copy source code
+COPY projects/data-catalog .

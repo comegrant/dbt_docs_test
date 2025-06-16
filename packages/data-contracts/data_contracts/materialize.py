@@ -3,13 +3,12 @@ from collections.abc import Callable
 from datetime import datetime
 
 from aligned import ContractStore, FeatureLocation
+from aligned.feature_store import WritableFeatureSource
 
 file_logger = logging.getLogger(__name__)
 
 
-def dependency_level(
-    location: FeatureLocation, store: ContractStore
-) -> dict[FeatureLocation, int]:
+def dependency_level(location: FeatureLocation, store: ContractStore) -> dict[FeatureLocation, int]:
     deps = {}
 
     loc_deps = set()
@@ -18,7 +17,6 @@ def dependency_level(
         view = store.feature_view(location.name).view
         source = view.source
         loc_deps = source.depends_on()
-
 
     elif location.location_type == "model":
         model = store.model(location.name)
@@ -37,11 +35,13 @@ def dependency_level(
 
     return deps
 
+
 async def materialize_view(
     location: FeatureLocation,
     should_force_update: bool,
     store: ContractStore,
-    logger: Callable[[object], None]
+    logger: Callable[[object], None],
+    sample_size: int | None = None,
 ) -> None:
     logger(location.name)
 
@@ -70,26 +70,29 @@ async def materialize_view(
                     location,
                     store.feature_view(location.name)
                     .using_source(view.source)
-                    .between_dates(start_date=freshness, end_date=now)
+                    .between_dates(start_date=freshness, end_date=now),
                 )
                 return
     else:
         logger(
-            "Did not check freshness since one of the following was evaluated to false"
-            f"Force Upadate: {should_force_update}\n"
+            "Did not check freshness since one of the following was evaluated to `False`.\n"
+            f"Force Update: {should_force_update}\n"
             f"Event Timestamp: {view.event_timestamp}\n"
             f"Freshness: {view.acceptable_freshness}"
         )
 
-    await store.overwrite(
-        location, store.feature_view(location.name).using_source(view.source).all()
-    )
+    if sample_size:
+        job = store.feature_view(location.name).using_source(view.source).all(limit=sample_size)
+        write_data = await job.to_polars()
+        logger(f"Sample {write_data}")
+    else:
+        write_data = store.feature_view(location.name).using_source(view.source).all()
+
+    await store.overwrite(location, write_data)
+
 
 async def materialize_model(
-    location: FeatureLocation,
-    should_force_update: bool,
-    store: ContractStore,
-    logger: Callable[[object], None]
+    location: FeatureLocation, should_force_update: bool, store: ContractStore, logger: Callable[[object], None]
 ) -> None:
     logger(location.name)
 
@@ -116,8 +119,7 @@ async def materialize_model(
     input_loc = input_request.location
     if input_loc.location_type != "feature_view":
         logger(
-            f"Expected a feature view as input, but got {input_loc.location_type}. "
-            f"Will therefore skip {location.name}"
+            f"Expected a feature view as input, but got {input_loc.location_type}. Will therefore skip {location.name}"
         )
         return
 
@@ -137,24 +139,20 @@ async def materialize_model(
             else:
                 await store.upsert_into(
                     location,
-                    store.model(location.name).predict_over(
-                        store.feature_view(input_loc.name).between_dates(
-                            start_date=freshness, end_date=now
-                        )
-                    ).with_subfeatures()
+                    store.model(location.name)
+                    .predict_over(store.feature_view(input_loc.name).between_dates(start_date=freshness, end_date=now))
+                    .with_subfeatures(),
                 )
                 return
     else:
         logger(
             "Did not check freshness since one of the following was evaluated to false"
-            f"Force Upadate: {should_force_update}\n"
+            f"Force Update: {should_force_update}\n"
             f"Event Timestamp: {pred_view.event_timestamp}\n"
             f"Freshness: {pred_view.acceptable_freshness}"
         )
 
-    preds = store.model(location.name).predict_over(
-        store.feature_view(input_loc.name).all()
-    ).with_subfeatures()
+    preds = store.model(location.name).predict_over(store.feature_view(input_loc.name).all()).with_subfeatures()
     await store.overwrite(location, preds)
 
 
@@ -163,6 +161,7 @@ async def materialize_data(
     locations: list[FeatureLocation],
     should_force_update: bool,
     logger: Callable[[object], None] | None = None,
+    sample_size: int | None = None,
 ) -> list[tuple[FeatureLocation, int]]:
     if logger is None:
         logger = file_logger.info
@@ -174,19 +173,34 @@ async def materialize_data(
 
     sorted_deps = sorted(deps.items(), key=lambda x: x[1], reverse=True)
 
-    logger(
-        "Materialization order: \n\n- "
-        + "\n- ".join([loc.name for loc, _ in sorted_deps])
-    )
+    logger("Materialization order: \n\n- " + "\n- ".join([loc.name for loc, _ in sorted_deps]))
 
     for location, _ in sorted_deps:
         if location.location_type == "feature_view":
             await materialize_view(
-                location, should_force_update=should_force_update, store=store, logger=logger
+                location, should_force_update=should_force_update, store=store, logger=logger, sample_size=sample_size
             )
         else:
-            await materialize_model(
-                location, should_force_update=should_force_update, store=store, logger=logger
-            )
+            await materialize_model(location, should_force_update=should_force_update, store=store, logger=logger)
 
     return sorted_deps
+
+
+async def materialize_sources_of_type(
+    source_type: type[WritableFeatureSource],
+    store: ContractStore,
+    logger: Callable[[object], None] | None = None,
+    should_force_update: bool = False,
+    sample_size: int | None = None,
+) -> list[tuple[FeatureLocation, int]]:
+    if logger is None:
+        logger = file_logger.info
+
+    sources = store.sources_of_type(source_type)  # type: ignore
+
+    if not sources:
+        logger(f"Found no sources of type '{source_type}'. Exiting early.")
+        return []
+
+    locations = [loc for _, loc in sources]
+    return await materialize_data(store, locations, should_force_update=should_force_update, sample_size=sample_size)

@@ -9,23 +9,22 @@ from pathlib import Path
 from typing import Protocol
 
 from aligned import ContractStore
+from aligned.compiler.feature_factory import FeatureFactory
 from aligned.schemas.feature import Feature, FeatureType
 from aligned.schemas.feature_view import CompiledFeatureView
 from dbt.artifacts.resources.v1.components import ColumnInfo
 from dbt.contracts.graph.manifest import Manifest
 from dbt.contracts.graph.nodes import ManifestNode, ModelNode
 from pydantic import BaseModel, Field
+from pyspark.sql.types import CharType, DecimalType, VarcharType
 
+from data_contracts.tags import Tags
 from data_contracts.unity_catalog import UCSqlSource, UCTableSource
 
 logger = logging.getLogger(__name__)
 
 
 DBTModels = dict[str, dict[str, ColumnInfo]]
-
-
-class StaticTags:
-    is_dbt_model = "dbt_model"
 
 
 class Issue(Protocol):
@@ -154,7 +153,73 @@ def columns_per_table(nodes: Iterable[ManifestNode], prefix: str = "~matsei_") -
 
 
 def feature_type_from(data_type: str) -> FeatureType:
-    return {"int": FeatureType.int64(), "string": FeatureType.string(), "timestamp": FeatureType.datetime()}[data_type]
+    from pyspark.sql.types import (
+        BooleanType,
+        ByteType,
+        DataType,
+        DateType,
+        DoubleType,
+        FloatType,
+        IntegerType,
+        LongType,
+        ShortType,
+        StringType,
+        TimestampNTZType,
+        TimestampType,
+    )
+
+    from data_contracts.unity_catalog import convert_pyspark_type
+
+    if data_type == "array":
+        data_type = "array<string>"
+
+    if data_type.startswith("array"):
+        rest = data_type.removeprefix("array")
+
+        if rest:
+            return FeatureType.array(feature_type_from(rest[1:-1]))
+        else:
+            return FeatureType.array()
+
+    if data_type.startswith("struct"):
+        struct_content = data_type.removeprefix("struct")[1:-1]
+
+        raw_fields = [prop.split(":") for prop in struct_content.split(",")]
+        fields = {vals[0]: feature_type_from(vals[1]) for vals in raw_fields}
+        return FeatureType.struct(fields)
+
+    if data_type.startswith("map"):
+        return FeatureType.json()
+
+    if data_type.startswith("varchar"):
+        args = data_type.removeprefix("varchar")
+        spark_type = VarcharType(int(args[1:-1]))
+    elif data_type.startswith("char"):
+        args = data_type.removeprefix("char")
+        spark_type = CharType(int(args[1:-1]))
+    elif data_type.startswith("decimal"):
+        args = data_type.removeprefix("decimal")
+        int_args = [int(val) for val in args[1:-1].split(",") if val]
+        spark_type = DecimalType(*int_args)
+    else:
+        data_type = data_type.replace(" - not_null", "")
+
+        simple_types: list[DataType] = [
+            BooleanType(),
+            ByteType(),
+            DateType(),
+            DoubleType(),
+            FloatType(),
+            IntegerType(),
+            LongType(),
+            ShortType(),
+            StringType(),
+            TimestampType(),
+            TimestampNTZType(),
+        ]
+        simple_map = {dtype.simpleString(): dtype for dtype in simple_types}
+        spark_type = simple_map[data_type]
+    return convert_pyspark_type(spark_type).dtype
 
 
 def issues_for_sql(
@@ -209,7 +274,7 @@ def issues_for_table(
     if identifier not in dbt_models:
         logger.info(f"Unable to find identifier {identifier}")
 
-        if StaticTags.is_dbt_model in (view.tags or []):
+        if Tags.is_dbt_model in (view.tags or []):
             return MissingModel(view, identifier)
         else:
             return None
@@ -287,6 +352,8 @@ def conflicts_for(store: ContractStore, dbt_models: DBTModels) -> Conflicts | No
     all_contracts.extend([model.predictions_view.as_view(model.name) for model in store.models.values()])
 
     for view in all_contracts:
+        if view.tags and Tags.skip_dbt_check in view.tags:
+            continue
         issues = issues_for_contract(view, dbt_models)
 
         conflicts.missing_models.extend(issue for issue in issues or [] if isinstance(issue, MissingModel))
@@ -296,6 +363,85 @@ def conflicts_for(store: ContractStore, dbt_models: DBTModels) -> Conflicts | No
         return conflicts
     else:
         return None
+
+
+def view_for_model(model: ModelNode) -> CompiledFeatureView:
+    from data_contracts.sources import databricks_catalog
+
+    def feature_for(column: ColumnInfo) -> Feature:
+        return Feature(
+            column.name,
+            dtype=feature_type_from(column.data_type) if column.data_type else FeatureType.string(),
+            tags=column.tags,
+            description=column.description,
+        )
+
+    schema = model.config.schema or model.schema
+
+    return CompiledFeatureView(
+        name=model.name,
+        source=databricks_catalog.schema(schema).table(model.identifier),
+        entities=set(),
+        features={feature_for(col) for col in model.columns.values()},
+        derived_features=set(),
+        tags=[*model.tags, "auto-generated"],
+        description=model.description,
+    )
+
+
+def code_for_view(view: CompiledFeatureView) -> str:
+    from data_contracts.helper import snake_to_pascal
+
+    source = view.source
+    assert isinstance(source, UCTableSource)
+
+    table_config = source.table
+
+    def feature_code_for(fact: FeatureFactory) -> str:
+        code = f"{fact._name} = {fact.__class__.__name__}()"
+
+        if fact.tags:
+            for tag in fact.tags:
+                code += f'.with_tag("{tag}")'
+
+        return code
+
+    feature_facts: list[FeatureFactory] = []
+
+    for feature in sorted(view.features, key=lambda feat: feat.name):
+        fact = feature.dtype.feature_factory
+        fact._name = feature.name
+
+        if feature.tags:
+            fact.tags = set(feature.tags)
+
+        if feature.description:
+            fact = fact.description(feature.description)
+
+        feature_facts.append(fact)
+
+    feature_code = "\n    ".join(feature_code_for(fact) for fact in feature_facts)
+
+    all_feature_types = {feat.__class__.__name__ for feat in feature_facts}
+    all_feature_types.add("feature_view")
+
+    all_feature_imports = ", ".join(sorted(all_feature_types))
+
+    aligned_import = f"from aligned import {all_feature_imports}"
+
+    return f"""{aligned_import}
+from data_contracts.sources import databricks_catalog
+
+
+@feature_view(
+    source=databricks_catalog.schema("{table_config.schema.read()}").table("{table_config.table.read()}"),
+    tags={view.tags}
+)
+class {snake_to_pascal(view.name)}:
+    \"\"\"{view.description}\"\"\"
+
+    {feature_code}
+"""
 
 
 def dtype_to_dbt_type(dtype: FeatureType) -> str:
@@ -451,6 +597,30 @@ def sql_contracts_from_directory(directory: Path) -> ContractStore:
     return all_contracts
 
 
+def generate_contracts_from_dbt(manifest_content: Manifest, schema: str = "gold") -> None:
+    generate_path = Path("data_contracts/dbt")
+    generate_path.mkdir(exist_ok=True)
+
+    for model in manifest_content.nodes.values():
+        if not isinstance(model, ModelNode):
+            continue
+
+        if model.config.schema != schema:
+            continue
+
+        dir_path = generate_path / schema
+
+        dir_path.mkdir(exist_ok=True)
+        view = view_for_model(model)
+
+        if not view.features:
+            continue
+
+        code = code_for_view(view)
+        file_path = dir_path / f"{view.name}.py"
+        file_path.write_text(code)
+
+
 async def validate(args: ValidateArgs) -> None:
     """
     Validates that the different contracts is compatible with the dbt models
@@ -462,7 +632,7 @@ async def validate(args: ValidateArgs) -> None:
 
     if args.sql_dirs:
         for sql_dir in args.sql_dirs:
-            print(sql_dir.absolute()) # noqa
+            print(sql_dir.absolute())  # noqa
             contracts = contracts.combined_with(sql_contracts_from_directory(sql_dir))
 
     issues = conflicts_for(contracts, models)

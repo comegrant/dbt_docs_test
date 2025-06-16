@@ -1,0 +1,46 @@
+resources:
+  jobs:
+    contract-materialize:
+      name: contract-materialize
+
+      parameters:
+        - name: should_force_update
+          default: "false"
+        - name: environment
+          default: "${var.environment}"
+
+      permissions:
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+
+      job_clusters:
+        - job_cluster_key: data-contracts
+          new_cluster:
+            num_workers: 1
+            spark_version: ${var.cluster_version}
+            node_type_id: Standard_DS4_v2
+            custom_tags:
+              user: "Data scientists"
+              tool: "Data Contracts"
+              env: ${bundle.target}
+              managed_by: "manually"
+            docker_image:
+              url: "${var.docker_image_url}"
+              basic_auth:
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
+
+      schedule:
+        quartz_cron_expression: '0 0 7 ? * SUN'
+        timezone_id: UTC
+
+      tasks:
+        - task_key: materialization
+          job_cluster_key: data-contracts
+          spark_python_task:
+            python_file: materialize.py
+            parameters:
+              - "--should-force-update"
+              - "{{job.parameters.should_force_update}}"
+              - "--environment"
+              - "{{job.parameters.environment}}"

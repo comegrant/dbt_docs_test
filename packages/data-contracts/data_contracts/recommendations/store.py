@@ -39,6 +39,7 @@ def recommendation_feature_contracts() -> FeatureStore:
         TargetVectors,
     )
     from data_contracts.preselector.menu import PreselectorYearWeekMenu
+    from data_contracts.reci_pick import DefaultRecommendations, LatestRecommendations, Recommendations
     from data_contracts.recipe import (
         IngredientCategories,
         MainIngredients,
@@ -95,6 +96,9 @@ def recommendation_feature_contracts() -> FeatureStore:
         UserCompletedQuiz,
         CurrentSelectedRecipes,
         AttributeScoring,
+        Recommendations,
+        LatestRecommendations,
+        DefaultRecommendations,
     ]
     models: list[ModelContractWrapper] = [
         RecommendatedDish,

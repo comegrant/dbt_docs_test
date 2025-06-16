@@ -1,35 +1,25 @@
 """Define FastAPI app"""
 
 import logging
+import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from http import HTTPStatus
-from typing import Literal
 
+from data_contracts.recommendations.store import recommendation_feature_contracts
 from dotenv import find_dotenv, load_dotenv
-from fastapi import FastAPI, Form
+from fastapi import Depends, FastAPI, Form, Request
 from key_vault import key_vault
-from pydantic_settings import BaseSettings
 
 from analytics_api.routers.menu_feedback import mf_router as mf_app_router
 from analytics_api.routers.menu_generator import mop_router as mop_app_router
+from analytics_api.routers.recommendations import rec_router
 from analytics_api.routers.review_screener import rs_router as rs_app_router
+from analytics_api.settings import EnvSettings, load_settings
 from analytics_api.utils.auth import AuthToken, raise_on_invalid_token, retrieve_token
 from analytics_api.utils.datadog_logger import datadog_logger, setup_logger
 
 logger = logging.getLogger(__name__)
-
-
-class EnvSettings(BaseSettings):
-    """
-    Settings for the application environment.
-
-    Attributes:
-        environment (Literal["dev", "test", "prod"]): The environment the application is running in.
-            Defaults to "dev".
-    """
-
-    environment: Literal["dev", "test", "prod"] = "dev"
 
 
 @asynccontextmanager
@@ -42,13 +32,21 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     Yields:
         None
     """
+    from aligned.proxy_api import router_for_store
+
     load_dotenv(find_dotenv())
 
     settings = EnvSettings()
 
+    app.dependency_overrides[load_settings] = lambda: settings
+
+    store = recommendation_feature_contracts()
+
     setup_logger()
     if settings.environment != "dev":
         await datadog_logger(env=settings.environment)
+
+    app.include_router(router_for_store(store), dependencies=[Depends(raise_on_invalid_token)])
 
     vault = key_vault()
     await vault.load_into_env({"openai-preselector-key": "OPENAI_API_KEY"})
@@ -60,11 +58,26 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="Analytics API", lifespan=lifespan)
 app.include_router(mop_app_router)
 app.include_router(mf_app_router)
+app.include_router(rec_router)
 app.include_router(rs_app_router)
 
 
+@app.middleware("http")
+async def monitor_processing_time(request: Request, call_next):  # noqa
+    logger.info(f"Starting to process '{request.url.path}'")
+
+    start_time = time.monotonic()
+    response = await call_next(request)
+    process_time = time.monotonic() - start_time
+
+    # Using logger for now, but should move to metrics
+    logger.info(f"Processing time for url '{request.url.path}' {process_time:.4f}")
+
+    return response
+
+
 @app.get("/")
-async def hello() -> Literal["Hello from the new site again!!"]:
+async def hello() -> str:
     """
     Default landing page to test if page is up
     """

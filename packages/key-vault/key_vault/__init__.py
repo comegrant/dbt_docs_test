@@ -12,16 +12,17 @@ def datalake_vault_keys() -> dict[str, str]:
     }
 
 
-def databricks_vault_keys(env: str) -> dict[str, str]:
+def default_env_keys(env: str) -> dict[str, str]:
     return {
         "databricks_host": f"databricks-workspace-url-{env}",
         "databricks_token": f"databricks-sp-databricksReader-pat-{env}",
+        "redis_url": f"analyticsApi-redisUrl-{env}",
     }
 
 
 def key_vault(env: str | None = None, global_key_mappings: dict[str, str] | None = None) -> KeyVaultInterface:
     if global_key_mappings is None:
-        global_key_mappings = {**datalake_vault_keys(), **databricks_vault_keys(env or "dev")}
+        global_key_mappings = {**datalake_vault_keys(), **default_env_keys(env or "dev")}
 
     with suppress(ImportError):
         from pyspark.errors.exceptions.base import PySparkRuntimeError  # type: ignore

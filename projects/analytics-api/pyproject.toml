@@ -24,9 +24,6 @@ scikit-learn = "^1.6.1"
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
 
-[tool.poetry.group.databricks.dependencies]
-databricks-env = {path = "../../packages/databricks-env", develop = true}
-
 [tool.poetry.group.dev.dependencies]
 pre-commit = "*"
 pytest = "*"
@@ -34,6 +31,11 @@ pytest-asyncio = "*"
 ruff = "*"
 pyright = "*"
 chef = {path = "../../packages/chef", develop = true}
+
+[tool.poetry.group.deploy.dependencies]
+azure-identity = "^1.23.0"
+azure-mgmt-resource = "^23.4.0"
+azure-mgmt-appcontainers = "^3.2.0"
 
 [build-system]
 requires = ["poetry-core"]

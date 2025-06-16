@@ -106,7 +106,7 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
         else:
             annotation = field.annotation
 
-        if is_list_annotation(annotation):
+        if is_list_annotation(annotation) and value:
             value = ["".join(sub_value) for sub_value in value]
             values[name] = value
         elif annotation is str or get_origin(annotation) == Literal:

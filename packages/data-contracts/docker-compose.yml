@@ -1,0 +1,24 @@
+services:
+
+  valkey:
+    image: valkey/valkey:8.1
+    environment:
+      - VALKEY_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    volumes:
+      - '${PWD}/.data/valkey:/data'
+
+  contracts:
+    image: data-contracts-image
+      # platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: packages/data-contracts/Dockerfile
+    environment:
+      - REDIS_URL=valkey:6379
+    command: ["echo", "'Hello from data-contracts'"]
+    depends_on:
+      - valkey
+    volumes:
+      - ./../../packages:/opt/packages

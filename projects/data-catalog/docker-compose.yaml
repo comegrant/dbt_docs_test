@@ -15,47 +15,40 @@ services:
     env_file:
       - ../../.env
 
-  data-catalog:
-    image: data-catalog-data-catalog-app
-    platform: linux/amd64
-    build:
-      context: ../../
-      dockerfile: ./projects/data-catalog/Dockerfile
-    command: ["echo", "'Hello from data-catalog'"]
-    volumes:
-      - ./:/opt/projects/data-catalog
-      - ./../../packages:/opt/packages
-    working_dir: "/app"
-
-  data-catalog-app:
-    platform: linux/amd64
-    image: data-catalog-data-catalog-app
-    build:
-      context: ../../
-      dockerfile: ./projects/data-catalog/Dockerfile
-    command: ["python", "-m", "streamlit", "run", "/app/app.py", "--server.fileWatcherType", "poll"]
-    profiles: ["catalog"]
+  valkey:
+    image: valkey/valkey:8.1
+    environment:
+      - VALKEY_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     ports:
-      - 8001:8501
+      - '6379:6379'
     volumes:
-      - ./data_catalog/load_contracts.py:/app/custom_store.py
-      - ./../../packages:/app/packages
-    env_file:
-      - ../../.env
-    working_dir: "/app"
-    deploy:
-      resources:
-        limits:
-          # Max 14 GB of memory
-          memory: 20GB
+      - '${PWD}/../../.data/valkey:/data'
+
 
   data-catalog-test:
+    image: data-contracts-test
+    platform: linux/amd64
     build:
       context: ../../
-      dockerfile: ./projects/data-catalog/Dockerfile.testing
+      dockerfile: ./projects/data-catalog/Dockerfile
+      args:
+        POETRY_ARGS: --with=dev
     command: ["python", "-m", "pytest", "-rav", "tests"]
     volumes:
       - ./:/opt/projects/data-catalog
       - ./../../packages:/opt/packages
+    environment:
+      - REDIS_URL=redis://valkey:6379
     depends_on:
-      - data-catalog
+      - valkey
+
+  databricks:
+    image: data-contracts-databricks
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: ./projects/data-catalog/Dockerfile
+    command: ["python", "-m", "jobs.materialize"]
+    volumes:
+      - ./:/opt/projects/data-catalog
+      - ./../../packages:/opt/packages

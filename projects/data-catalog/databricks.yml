@@ -1,0 +1,37 @@
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: data-catalog
+
+include:
+  - "jobs/**.yml"
+  - "jobs/**.yaml"
+
+variables:
+  environment:
+    description: The environment that the code is running in
+  docker_image_url:
+    description: The url of the source code. in the form as a Docker image.
+  mode:
+    description: The mode to deploy in
+    default: development
+  slack_notification_job_id:
+    description: The id of the slack notification job to call
+  cluster_version:
+    default: 15.4.x-scala2.12
+  git_sha:
+    description: The sha of the current version
+
+targets:
+  dev:
+    default: true
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 221967110790300
+  test:
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 823927532277018
+  prod:
+    mode: "${var.mode}"
+    variables:
+      slack_notification_job_id: 808732355997444
