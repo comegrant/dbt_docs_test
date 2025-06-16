@@ -26,6 +26,7 @@ with loyalty_orders as (
         , loyalty_order_lines.total_point_price
         , loyalty_orders.source_created_at as loyalty_order_created_at
         , loyalty_orders.source_updated_at as loyalty_order_updated_at
+        , "anna-testing-pr" as anna_testing_pr
     
     from loyalty_orders
     left join loyalty_order_lines 
