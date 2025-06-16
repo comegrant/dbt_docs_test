@@ -17,13 +17,6 @@ resources:
         quartz_cron_expression: 0 30 6-2/1,0 ? * * *
         timezone_id: Europe/Oslo
 
-      environments:
-        - environment_key: dbt-default
-          spec:
-            client: "1"
-            dependencies:
-              - dbt-databricks>=1.0.0,<2.0.0
-
       tasks:
 
         - task_key: bronze_psl_full
@@ -56,7 +49,10 @@ resources:
               - 'dbt snapshot'
               - 'dbt run -s +estimations_log +active_basket_deviations_recent_weeks'
               - 'dbt test -s +estimations_log +active_basket_deviations_recent_weeks --indirect-selection cautious'
-          environment_key: dbt-default
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
           depends_on: [
             {task_key: bronze_cms_full},
             {task_key: bronze_psl_full}
@@ -88,3 +84,25 @@ resources:
               body_message: Check the Databricks logs for more details
               is_error: true
               relevant_people: stephen, mats, sylvia, grant, engineering
+              
+      job_clusters:
+        - job_cluster_key: dbt_CLI
+          new_cluster:
+            cluster_name: ""
+            spark_version: 15.4.x-scala2.12
+            spark_conf:
+              spark.master: local[*, 4]
+              spark.databricks.cluster.profile: singleNode
+            azure_attributes:
+              first_on_demand: 1
+              availability: SPOT_WITH_FALLBACK_AZURE
+              spot_bid_max_price: -1
+            node_type_id: Standard_D4ds_v5
+            custom_tags:
+              ResourceClass: SingleNode
+            spark_env_vars:
+              PYSPARK_PYTHON: /databricks/python3/bin/python3
+            enable_elastic_disk: true
+            data_security_mode: SINGLE_USER
+            runtime_engine: PHOTON
+            num_workers: 0

@@ -19,13 +19,6 @@ resources:
        quartz_cron_expression: 0 0 4 * * ?
        timezone_id: Europe/Oslo
 
-      environments:
-        - environment_key: dbt-default
-          spec:
-            client: "1"
-            dependencies:
-              - dbt-databricks>=1.0.0,<2.0.0
-
       tasks:
         - task_key: start-notification
           run_job_task:
@@ -121,7 +114,10 @@ resources:
             commands:
               - 'dbt deps'
               - 'dbt snapshot'
-          environment_key: dbt-default
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
           depends_on:
             - task_key: bronze_coredb_snapshot_full
 
@@ -150,7 +146,10 @@ resources:
             commands:
               - 'dbt deps'
               - 'dbt snapshot -s scd_cms__billing_agreements'
-          environment_key: dbt-default
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
           depends_on:
             - task_key: bronze_coredb_snapshot_billing_agreements
 
@@ -163,7 +162,10 @@ resources:
               - 'dbt deps'
               - 'dbt snapshot'
               - 'dbt run --exclude drafts.*'
-          environment_key: dbt-default
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
           depends_on: [
             {task_key: dbt-snapshot-billing-agreements},
             {task_key: bronze_cms_full},
@@ -182,7 +184,10 @@ resources:
             commands:
               - 'dbt deps'
               - 'dbt test --exclude drafts.*'
-          environment_key: dbt-default
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
           depends_on: [
             {task_key: dbt-run}
           ]
@@ -229,3 +234,25 @@ resources:
               body_message: Check the Databricks logs for more details
               is_error: true
               relevant_people: stephen, engineering
+
+      job_clusters:
+        - job_cluster_key: dbt_CLI
+          new_cluster:
+            cluster_name: ""
+            spark_version: 15.4.x-scala2.12
+            spark_conf:
+              spark.master: local[*, 4]
+              spark.databricks.cluster.profile: singleNode
+            azure_attributes:
+              first_on_demand: 1
+              availability: SPOT_WITH_FALLBACK_AZURE
+              spot_bid_max_price: -1
+            node_type_id: Standard_D4ds_v5
+            custom_tags:
+              ResourceClass: SingleNode
+            spark_env_vars:
+              PYSPARK_PYTHON: /databricks/python3/bin/python3
+            enable_elastic_disk: true
+            data_security_mode: SINGLE_USER
+            runtime_engine: PHOTON
+            num_workers: 0
