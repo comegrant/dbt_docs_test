@@ -9,6 +9,7 @@ def datalake_vault_keys() -> dict[str, str]:
     return {
         "datalake_service_account_name": "azure-storageAccount-experimental-name",
         "datalake_storage_account_key": "azure-storageAccount-experimental-key",
+        "openai_api_key": "openai-preselector-key",
     }
 
 

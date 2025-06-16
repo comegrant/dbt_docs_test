@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Iterable
+from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -24,6 +25,23 @@ class AzureKeyVault(KeyVaultInterface):
     client: SecretClient
     global_key_mappings: dict[str, str] = field(default_factory=dict)
 
+    async def load_key(self, secret_key: str) -> str | None:
+        with suppress(ResourceNotFoundError):
+            logger.info(f"Fetching secret {secret_key}")
+            return self.client.get_secret(secret_key).value
+
+    async def load_env_keys(self, keys: list[str]) -> None:
+        import os
+
+        for key in keys:
+            lower_key = key.lower()
+            if lower_key in self.global_key_mappings:
+                secret_key = self.global_key_mappings[lower_key]
+                secret_value = await self.load_key(secret_key)
+
+                if secret_value:
+                    os.environ[key] = secret_value
+
     async def load_into_env(
         self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
     ) -> dict[str, str]:
@@ -40,17 +58,15 @@ class AzureKeyVault(KeyVaultInterface):
                 logger.info(f"Found value for {env_key} in environments, so will not read from key vault.")
                 continue
 
-            try:
-                logger.info(f"Fetching secret for {env_key}")
-                secret_value = self.client.get_secret(azure_key).value
+            logger.info(f"Fetching secret for {env_key}")
+            secret_value = await self.load_key(azure_key)
 
-                if secret_value:
-                    os.environ[env_key] = secret_value
-                    values[env_key] = secret_value
-
-            except ResourceNotFoundError as e:
+            if secret_value:
+                os.environ[env_key] = secret_value
+                values[env_key] = secret_value
+            else:
                 if env_key not in optional_keys:
-                    raise ValueError(f"Did not find secret for {env_key}, tried to load {azure_key}") from e
+                    raise ValueError(f"Did not find secret for {env_key}, tried to load {azure_key}")
 
                 logger.info(f"Found no value for {env_key}. Will use default value.")
 

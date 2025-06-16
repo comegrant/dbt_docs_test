@@ -4,6 +4,7 @@ from contextlib import suppress
 from typing import Literal
 
 from aligned.sources.redis import RedisSource
+from data_contracts.config_values import needed_environment_vars
 from data_contracts.materialize import materialize_sources_of_type
 from data_contracts.recommendations.store import recommendation_feature_contracts
 from key_vault import key_vault
@@ -34,8 +35,10 @@ async def main(args: MaterializeArgs, vault: KeyVaultInterface | None = None) ->
         if env_key not in os.environ:
             os.environ[env_key] = args.environment
 
-    await vault.load_into_env({f"analyticsApi-redisUrl-{args.environment}": "REDIS_URL"})
     store = recommendation_feature_contracts()
+
+    needed_envs = needed_environment_vars(store)
+    await vault.load_env_keys(needed_envs)
 
     updated_views = await materialize_sources_of_type(RedisSource, store, should_force_update=args.should_force_update)
     logger.info(updated_views)

@@ -36,6 +36,9 @@ sql_query = """with runs as (
         created_at,
         row_number() OVER(partition by menu_year, menu_week, company_id order by created_at desc) AS row_num
     from mloutputs.reci_pick_scores_metadata_menus_predicted
+    where
+        menu_year >= year(next_day(current_date(), 'Monday') - INTERVAL 3 DAYS)
+        and menu_week >= weekofyear(current_date() + INTERVAL 1 WEEK)
 ),
 
 latest_run as (
@@ -113,6 +116,8 @@ default_chefs_recs = """with runs as (
         row_number() OVER(partition by menu_year, menu_week, company_id order by created_at desc) AS row_num
     from mloutputs.reci_pick_recommendations_concept_default
     where concept_id_combinations = 'C94BCC7E-C023-40CE-81E0-C34DA3D79545'
+        and menu_year >= year(next_day(current_date(), 'Monday') - INTERVAL 3 DAYS)
+        and menu_week >= weekofyear(current_date() + INTERVAL 1 WEEK)
 )
 
 select company_id, menu_week, menu_year, arrays_zip(main_recipe_id, score) as recipes, model_version, created_at

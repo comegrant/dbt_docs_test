@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Iterable
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -21,12 +22,29 @@ class DatabricksKeyVault(KeyVaultInterface):
     scope: str
     global_key_mappings: dict[str, str]
 
+    async def load_key(self, secret_key: str) -> str | None:
+        from pyspark.errors.exceptions.captured import IllegalArgumentException  # type: ignore
+
+        with suppress(IllegalArgumentException):
+            logger.info(f"Fetching secret {secret_key}")
+            return self.dbutils.secrets.get(self.scope, secret_key)
+
+    async def load_env_keys(self, keys: list[str]) -> None:
+        import os
+
+        for key in keys:
+            lower_key = key.lower()
+            if lower_key in self.global_key_mappings:
+                secret_key = self.global_key_mappings[lower_key]
+                secret_value = await self.load_key(secret_key)
+
+                if secret_value:
+                    os.environ[key] = secret_value
+
     async def load_into_env(
         self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
     ) -> dict[str, str]:
         import os
-
-        from pyspark.errors.exceptions.captured import IllegalArgumentException  # type: ignore
 
         values: dict[str, str] = {}
         optional_keys = set(optional_keys or [])
@@ -39,17 +57,15 @@ class DatabricksKeyVault(KeyVaultInterface):
                 logger.info(f"Found value for {env_key} in environments, so will not read from key vault.")
                 continue
 
-            try:
-                logger.info(f"Fetching secret for {env_key}")
-                secret_value = self.dbutils.secrets.get(self.scope, db_key)
+            logger.info(f"Fetching secret for {env_key}")
+            secret_value = self.dbutils.secrets.get(self.scope, db_key)
 
-                if secret_value:
-                    os.environ[env_key] = secret_value
-                    values[env_key] = secret_value
-
-            except IllegalArgumentException as e:
+            if secret_value:
+                os.environ[env_key] = secret_value
+                values[env_key] = secret_value
+            else:
                 if env_key not in optional_keys:
-                    raise ValueError(f"Did not find secret for {env_key}, tried to load {db_key}") from e
+                    raise ValueError(f"Did not find secret for {env_key}, tried to load {db_key}")
 
                 logger.info(f"Found no value for {env_key}. Will use default value.")
 

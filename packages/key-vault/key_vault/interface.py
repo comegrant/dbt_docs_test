@@ -7,6 +7,16 @@ T = TypeVar("T", bound=BaseSettings)
 
 
 class KeyVaultInterface(Protocol):
+    async def load_env_keys(self, keys: list[str]) -> None:
+        """
+        Fills in all keys that have a default mapping in the key vault secret.
+
+        ```python
+        await vault.load_env_keys(["DATABRICKS_TOKEN", "REDIS_URL", "OPENAI_KEY"])
+        ```
+        """
+        ...
+
     async def load_into_env(
         self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
     ) -> dict[str, str]:
@@ -59,13 +69,12 @@ class KeyVaultInterface(Protocol):
         """
         ...
 
-class NoopVault(KeyVaultInterface):
 
+class NoopVault(KeyVaultInterface):
     async def load_into_env(
         self, keys: dict[str, str] | Iterable[str], optional_keys: Iterable[str] | None = None
     ) -> dict[str, str]:
         return {}
-
 
     async def load(
         self,
