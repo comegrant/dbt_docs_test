@@ -1476,3 +1476,31 @@ models:
     
     versions:
       - v: 1
+
+  - name: dim_meals
+    description: "Dimension that lets the user filter on number of meals in a product variation."
+    latest_version: 1
+    config:
+      alias: dim_meals
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_meals
+        data_type: int
+        description: "{{ doc('column__pk_dim_meals') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1

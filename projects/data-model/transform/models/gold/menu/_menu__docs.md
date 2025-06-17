@@ -125,12 +125,6 @@ Primary key of dim_products. It is a composite of product_variation_id and compa
 
 {% enddocs %}
 
-{% docs column__meals %}
-
-Number of meals in the product (e.g. in the mealbox). One can also have information about meals for other product types, like Velg&Vrak and Standalone-Groceries. However, for these the meals is usually 1.
-
-{% enddocs %}
-
 {% docs column__is_financial %}
 
 product_type_name is renamed from Financial to Mealbox in Gold to avoid confusion when filtering, so this is a flag to indicate whether this product originally had a Financial product_type_name in the silver layer.
@@ -373,5 +367,19 @@ The actual purchasing cost for the total ingredient amount of the recipe, fetche
 {% docs column__total_ingredient_actual_cost_whole_units %}
 
 The actual purchasing cost for the total ingredient amount of the recipe, fetched from the purchasing order(s) for the menu week of the recipe. The total ingredient amount is rounded up to the nearest integer.
+
+{% enddocs %}
+
+# Meals
+
+{% docs column__pk_dim_meals %}
+
+Primary key of dim_meals. Has the same value as the meals column.
+
+{% enddocs %}
+
+{% docs column__meals %}
+
+Number of meals related to the product. Mainly relevant for mealbox product, but does also hold information about meals for other product types such as Velg&Vrak and Groceries. However, for these meals are usually 1.
 
 {% enddocs %}
