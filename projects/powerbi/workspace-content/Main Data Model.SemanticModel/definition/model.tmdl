@@ -66,6 +66,8 @@ ref table 'Loyalty Order Statuses'
 ref table '(Param) Number of Deliveries per Customer Target'
 ref table 'Customer Loyalty Updates'
 ref table Discounts
+ref table 'Case Measures'
+ref table 'Case Details'
 
 ref cultureInfo en-US
 

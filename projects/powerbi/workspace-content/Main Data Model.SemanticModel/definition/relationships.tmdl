@@ -312,11 +312,11 @@ relationship fact_loyalty_orders_to_dim_companies
 
 relationship fact_loyalty_orders_to_dim_dates
 	fromColumn: 'Loyalty Measures'.fk_dim_dates
-	toColumn: Dates.pk_dim_dates
+	toColumn: 'Dates'.pk_dim_dates
 
 relationship fact_loyalty_orders_to_dim_products
 	fromColumn: 'Loyalty Measures'.fk_dim_products
-	toColumn: Products.pk_dim_products
+	toColumn: 'Products'.pk_dim_products
 
 relationship fact_loyalty_orders_to_dim_loyalty_seasons
 	fromColumn: 'Loyalty Measures'.fk_dim_loyalty_seasons
@@ -324,4 +324,19 @@ relationship fact_loyalty_orders_to_dim_loyalty_seasons
 
 relationship fact_orders_to_dim_discounts
     fromColumn: 'Order Measures'.fk_dim_discounts
-    toColumn: Discounts.pk_dim_discounts
+    toColumn: 'Discounts'.pk_dim_discounts
+relationship fact_cases_to_dim_billing_agreements
+	fromColumn: 'Case Measures'.fk_dim_billing_agreements
+	toColumn: 'Customer and Subscriber Details'.pk_dim_billing_agreements
+
+relationship fact_cases_to_dim_companies
+	fromColumn: 'Case Measures'.fk_dim_companies
+	toColumn: 'Brands'.pk_dim_companies
+
+relationship fact_cases_to_dim_dates
+	fromColumn: 'Case Measures'.fk_dim_dates
+	toColumn: 'Dates'.pk_dim_dates
+
+relationship fact_cases_to_dim_case_details
+	fromColumn: 'Case Measures'.fk_dim_case_details
+	toColumn: 'Case Details'.pk_dim_case_details

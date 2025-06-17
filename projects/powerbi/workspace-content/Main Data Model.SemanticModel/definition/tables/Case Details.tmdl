@@ -1,0 +1,49 @@
+/// Contains information about cause, category, type, and responsible party for a case line related to a delivery. 
+/// A case can be reported by the customer, customer service or a partner. One order can only have one case, but a case can have several case lines.
+table 'Case Details'
+    lineageTag: Case-Details-Table
+
+    /// Primary key of the dim_case_details table.
+    column pk_dim_case_details
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_case_details
+
+    /// Contains the name of the category or department which can be related to the cases.
+    column 'Case Category'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: case_category_name
+
+    /// Contains the cause name related to the case. 
+    /// From week 2 2025 cause name refers to the priority of the case.
+    column 'Case Cause'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: case_cause_name
+
+    /// Contains what reason or which company/supplier was responsible for a case happening.
+    /// From 2025 this only contains the reason/explanation for a case, not company/supplier.
+    column 'Case Responsible Description'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: case_responsible_description
+
+    /// Contains the description of the different case line types.
+    column 'Case Line Type'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: case_line_type_name
+
+    partition 'Case Details' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_case_details_Table = gold_Schema{[Name="dim_case_details",Kind="Table"]}[Data]
+                in
+                    dim_case_details_Table

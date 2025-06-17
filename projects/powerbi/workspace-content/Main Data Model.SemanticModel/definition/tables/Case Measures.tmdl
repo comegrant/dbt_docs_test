@@ -1,0 +1,161 @@
+/// Cases and case lines reltated to deliveries reported by the customer, customer service or partners.
+/// A case line includes communication records (SMS and notes), redelivery events, and complaints with reimbursement options.
+/// A delivery can only have one related case, but a case can have several case lines.
+table 'Case Measures'
+    lineageTag: Case-Measures-Table
+
+    /// The number of cases.
+    measure 'Number of Orders With Cases' = DISTINCTCOUNTNOBLANK('Case Measures'[ops_order_id])
+		formatString: #,0
+        isHidden
+     
+    /// The number of case lines.
+    measure 'Number of Case Lines' = DISTINCTCOUNTNOBLANK('Case Measures'[case_line_id])
+        formatString: #,0
+        isHidden
+    
+    /// The number of cases per 1000 orders.
+    measure 'Number of Cases per 1000 Orders' = DIVIDE([Number of Orders With Cases], [Number of Orders])*1000
+        formatString: #,0
+        isHidden
+
+    /// The number of orders without a case
+    measure 'Number of Orders Without Case' = [Number of Orders] - [Number of Orders With Cases]   
+        formatString: #,0
+        isHidden
+
+    ///The share of orders that have a case.
+    measure 'Share of Orders With Cases' = DIVIDE([Number of Orders With Cases], [Number of Orders])
+        formatString: 0.00%;-0.00%;0.00%
+        isHidden
+
+    /// The total cost of cases, including VAT.
+    measure 'Case Cost (Inc VAT)' = SUM('Case Measures'[Case Line Amount Inc VAT])
+        formatString: #,0
+        isHidden
+        
+    /// The average cost of caese per delivery, including VAT.
+    measure 'Average Case Cost (Inc VAT)' = DIVIDE([Case Cost (Inc VAT)], [Number of Orders])
+        formatString: #,0
+        isHidden
+        
+    /// Primary key of the fact_case table.
+    column pk_fact_cases
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_fact_cases
+    
+    /// The unique id of the case table. Contains a unique id for each case.
+    column case_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: case_id
+
+    /// The unique id of the case lines table.
+    column case_line_id
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: case_line_id
+
+    /// This is the primary key in the OPS database for each placed order.
+    /// Is null if there was no order generated in OPS. 
+    /// This could for instance be if a customer only buy a gift card or an order was cancelled.
+    column ops_order_id
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: ops_order_id
+
+    /// The amount the customer will get in reimbursement. I.e., the cost of the case.
+    column 'Case Line Amount Inc VAT'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: case_line_amount_inc_vat
+
+    /// Comments regarding the case. 
+    /// Can come from external partners or internally from logistics/customer service, 
+    /// which is defined by source_updated_by.
+    column 'Case Line Comment'
+        dataType: string
+        isHidden
+        summarizeBy: none
+        sourceColumn: case_line_comment
+
+    /// Describes whether or not the case line is active.
+    /// Is active unless a line is cancelled or deleted. 
+    /// 1 is active and 0 is inactive.
+    column 'Is Active Case Line'
+        dataType: boolean
+        isHidden
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_active_case_line
+
+    /// Comment connected to redelivery. 
+    /// Can come from external partners or internally from logistics/customer service,
+    /// which is defined by source_updated_by.
+    column 'Redelivery Comment'
+        dataType: string
+        isHidden
+        summarizeBy: none
+        sourceColumn: redelivery_comment
+
+    /// The unique id of each row in dim billing agreements.
+    column fk_dim_billing_agreements
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_billing_agreements
+    
+    /// The unique id of each row in dim companies.
+    column fk_dim_companies
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_companies
+    
+    /// Primary key of the dim case details table.
+    column fk_dim_case_details
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_case_details
+    
+    /// Primary key of the dim dates table.This is an integer on the form YYYYMMDD (e.g. 20250117).
+    column fk_dim_dates
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: fk_dim_dates
+    
+    /// Primary key of the dim ingredients table.
+    column fk_dim_ingredients
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_ingredients
+
+    partition 'Case Measures' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    fact_cases_Table = gold_Schema{[Name="fact_cases",Kind="Table"]}[Data]
+                in
+                    fact_cases_Table
