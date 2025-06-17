@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "container_cleaner"
+version = "0.1.0"
+description = "A package used to clean up all container packages in our container registry"
+authors = ["Mats Eikeland Mollestad <mats.mollestad@cheffelo.com>"]
+packages = [{include = "container_cleaner"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+azure-identity = "^1.23.0"
+azure-containerregistry = "^1.2.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pyright = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

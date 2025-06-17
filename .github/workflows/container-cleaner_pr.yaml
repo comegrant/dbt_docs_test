@@ -1,0 +1,15 @@
+name: container cleaner - Package PR
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/container-cleaner_pr.yaml'
+      - 'packages/container-cleaner/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-container-cleaner:
+    uses: ./.github/workflows/template_test_python.yml
+    with:
+      python-version: "3.10"
+      working-directory: packages/container-cleaner
+    secrets: inherit
