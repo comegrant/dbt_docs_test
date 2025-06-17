@@ -53,6 +53,7 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks==1.10.0
+          disable_auto_optimization: true
           depends_on: [
             {task_key: bronze_cms_full},
             {task_key: bronze_psl_full}

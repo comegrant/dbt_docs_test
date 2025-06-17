@@ -75,6 +75,7 @@ resources:
           environment_key: dbt-default
           depends_on:
             - task_key: bronze_coredb_snapshot_full
+          disable_auto_optimization: true
 
         # perform an extra ingest of billing agreements to
         # capture agreements that has been created during the job
@@ -104,6 +105,7 @@ resources:
           environment_key: dbt-default
           depends_on:
             - task_key: bronze_coredb_snapshot_billing_agreements
+          disable_auto_optimization: true
 
         - task_key: success-notification
           depends_on:

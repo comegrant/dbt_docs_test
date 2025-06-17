@@ -7,6 +7,7 @@ resources:
         - task_key: delete_pr_schemas
           notebook_task: 
             notebook_path: ../envops/delete_pr_schemas.py
+          disable_auto_optimization: true
 
       parameters:
         - name: pr_number

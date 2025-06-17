@@ -27,7 +27,8 @@ resources:
             commands:
               - 'dbt deps'
               - 'dbt build {{job.parameters.dbt_extra_command}}'
-          environment_key: dbt-default 
+          environment_key: dbt-default
+          disable_auto_optimization: true
       parameters:
         - name: dbt_extra_command
           default:  -s +dim_recipes

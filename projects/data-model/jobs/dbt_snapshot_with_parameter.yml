@@ -27,6 +27,7 @@ resources:
             commands:
               - 'dbt snapshot {{job.parameters.snapshot}}'
           environment_key: dbt-default 
+          disable_auto_optimization: true
       parameters:
         - name: snapshot
           default:  -s

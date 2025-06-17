@@ -15,6 +15,7 @@ resources:
         - task_key: ingest_silver_tables
           notebook_task: 
             notebook_path: ../useful/dbt_development/bulk_ingest_silver_tables.py
+          disable_auto_optimization: true
 
       parameters:
         - name: firstname_lastname

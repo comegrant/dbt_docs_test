@@ -41,6 +41,7 @@ resources:
             - task_key: start-notification
           notebook_task:
             notebook_path: ../envops/copy_schemas.py
+          disable_auto_optimization: true
 
         - task_key: success-notification
           depends_on:

@@ -15,6 +15,7 @@ resources:
         - task_key: delete_tables_per_schema
           notebook_task: 
             notebook_path: ../useful/dbt_development/bulk_empty_schema.py
+          disable_auto_optimization: true
 
       parameters:
         - name: firstname_lastname

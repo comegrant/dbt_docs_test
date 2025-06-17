@@ -120,6 +120,7 @@ resources:
                 package: dbt-databricks==1.10.0
           depends_on:
             - task_key: bronze_coredb_snapshot_full
+          disable_auto_optimization: true
 
         # perform an extra ingest of billing agreements to
         # capture agreements that has been created during the job
@@ -152,6 +153,7 @@ resources:
                 package: dbt-databricks==1.10.0
           depends_on:
             - task_key: bronze_coredb_snapshot_billing_agreements
+          disable_auto_optimization: true
 
         - task_key: dbt-run
           dbt_task:
@@ -175,6 +177,7 @@ resources:
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
             {task_key: bronze_cms_register_info_basket}
           ]
+          disable_auto_optimization: true
 
         - task_key: dbt-test
           dbt_task:
@@ -191,6 +194,7 @@ resources:
           depends_on: [
             {task_key: dbt-run}
           ]
+          disable_auto_optimization: true
 
         - task_key: refresh-powerbi
           notebook_task:

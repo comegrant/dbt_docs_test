@@ -33,6 +33,7 @@ resources:
           depends_on: [
             {task_key: bronze_coredb_snapshot_full}
           ]
+          disable_auto_optimization: true
 
         - task_key: fail-notification
           depends_on: [
