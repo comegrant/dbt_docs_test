@@ -31,7 +31,7 @@ targets:
     variables:
       slack_notification_job_id: 221967110790300
   test:
-    mode: "${var.mode}"
+    mode: "development"
     variables:
       slack_notification_job_id: 823927532277018
   prod:
