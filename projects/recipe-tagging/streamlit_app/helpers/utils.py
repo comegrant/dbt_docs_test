@@ -7,6 +7,9 @@ language_mapped = {
 }
 
 img_url = "https://pimimages.azureedge.net/images/resized/"
+default_image_url = (
+    "https://upload.wikimedia.org/wikipedia/commons/5/50/Black_colour.jpg"
+)
 
 
 def get_image_df(data, spark):
@@ -15,6 +18,7 @@ def get_image_df(data, spark):
         select distinct
             dr.recipe_name,
             dr.recipe_id,
+            dr.is_in_recipe_universe,
             rm.recipe_photo
         from gold.dim_recipes dr
         left join silver.pim__recipe_metadata rm
@@ -92,9 +96,17 @@ def process_data(df: pd.DataFrame, language: str, spark) -> pd.DataFrame:
 
     # images
     img_df = get_image_df(df, spark)
-    df_with_image = df.merge(img_df, on="recipe_id", how="inner")
-    df_with_image["image_url"] = img_url + df_with_image["recipe_photo"]
-    df_with_image = df_with_image.dropna()
+    df_with_image = df.merge(img_df, on="recipe_id", how="left")
+    df_with_image["image_url"] = df_with_image.apply(
+        lambda row: img_url + row["recipe_photo"]
+        if pd.notna(row["recipe_photo"])
+        else default_image_url,
+        axis=1,
+    )
+
+    df_with_image = df_with_image.dropna(
+        subset=["recipe_name", "taxonomy_name_local", "taxonomy_type_name"]
+    )
 
     return df_with_image[
         [
@@ -105,5 +117,6 @@ def process_data(df: pd.DataFrame, language: str, spark) -> pd.DataFrame:
             "taxonomy_name_local",
             "taxonomy_type_name",
             "image_url",
+            "is_in_recipe_universe",
         ]
     ]

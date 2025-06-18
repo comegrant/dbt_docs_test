@@ -4,14 +4,13 @@ from pyspark.sql import SparkSession
 from recipe_tagging.db import get_data_from_sql
 from recipe_tagging.paths import PREDICT_SQL_DIR
 
-
 recipe_schema = pa.DataFrameSchema(
     {
-        "generic_ingredient_name_list": pa.Column(object),
-        "recipe_main_ingredient_name_local": pa.Column(str),
-        "taxonomy_name_list": pa.Column(object),
-        "preference_name_combinations": pa.Column(object),
-        "recipe_name": pa.Column(str),
+        "generic_ingredient_name_list": pa.Column(object, nullable=True),
+        "recipe_main_ingredient_name_local": pa.Column(str, nullable=True),
+        "taxonomy_name_list": pa.Column(object, nullable=True),
+        "preference_name_combinations": pa.Column(object, nullable=True),
+        "recipe_name": pa.Column(str, nullable=True),
     },
     strict=False,
     coerce=True,

@@ -89,9 +89,9 @@ def predict_pipeline(spark: SparkSession, args: Args) -> pd.DataFrame:
     logger.info("Getting recipe data.")
     recipe_data = get_recipe_data(spark=spark, language_id=args.language_id)
     recipe_data = preprocess_data(recipe_data)
-    taxonomy_data = get_seo_taxonomy(spark=spark, language_id=args.language_id)
 
     logger.info("Getting taxonomy data.")
+    taxonomy_data = get_seo_taxonomy(spark=spark, language_id=args.language_id)
 
     taxonomy_by_type = {
         seo_type: pd.DataFrame(

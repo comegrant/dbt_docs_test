@@ -23,6 +23,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         )
         df[col] = df[col].apply(set)
 
+    df["recipe_name"] = df["recipe_name"].fillna("")
     df["recipe_name"] = (
         df["recipe_name"].str.strip().str.lower().apply(lambda x: set(x.split()))
     )
