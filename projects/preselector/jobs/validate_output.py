@@ -139,7 +139,7 @@ async def run() -> None:
             environment=env,
             header_message=header_message,
             body_message=body_message_error,
-            relevant_people="mats, niladri",
+            relevant_people="mats",
             is_error=True,
         )
 
@@ -149,7 +149,7 @@ async def run() -> None:
             environment=env,
             header_message=header_message,
             body_message=body_message_warning,
-            relevant_people="mats, niladri",
+            relevant_people="mats",
             is_error=False,
         )
 

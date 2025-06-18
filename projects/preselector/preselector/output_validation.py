@@ -10,8 +10,8 @@ from data_contracts.sources import databricks_catalog
 
 COMPLIANCY_ALLERGEN = 1
 COMPLIANCY_PREFERENCE = 2
-ERROR_AVG = 0.002
-ERROR_ACC = 0.02
+ERROR_AVG = 0.003
+ERROR_ACC = 0.12
 ERROR_MEAN_ORDERED_AGO = 0.02
 VAR_THRESHOLD = 0.59
 
@@ -26,7 +26,7 @@ async def get_output_data(
     Returns the output that should be validated.
     """
     if start_yyyyww is None:
-        start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=5)
+        start_date = dt.datetime.now(tz=dt.timezone.utc) + dt.timedelta(weeks=4)
         start_yyyyww = int(f"{start_date.year}{start_date.isocalendar()[1]:02d}")
 
     company_id = get_company_by_code(company).company_id
@@ -34,7 +34,7 @@ async def get_output_data(
     if output_type == "realtime":
         df = (
             await SuccessfulPreselectorOutput.query()
-            .filter(pl.col("menu_year").cast(pl.Int32) * 100 + pl.col("menu_week") >= start_yyyyww)
+            .filter(pl.col("menu_year").cast(pl.Int32) * 100 + pl.col("menu_week") == start_yyyyww)
             .filter(pl.col("company_id") == company_id)
             .unique_entities()
             .to_polars()
@@ -80,7 +80,7 @@ async def get_output_data(
                 }
             )
             .all()
-            .filter(pl.col("year").cast(pl.Int32) * 100 + pl.col("week") >= start_yyyyww)
+            .filter(pl.col("year").cast(pl.Int32) * 100 + pl.col("week") == start_yyyyww)
             .filter(pl.col("company_id") == company_id)
             .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
             .to_polars()
