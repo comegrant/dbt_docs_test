@@ -35,9 +35,9 @@ COPY projects/preselector/poetry.lock .
 
 # install requirements
 ARG DEP_GROUP
+RUN pip install virtualenv=="20.31.2"
 RUN poetry config virtualenvs.create false
-RUN pip install virtualenv=="20.31.2" \
-    & poetry install --with=worker --with=databricks -n && rm -rf ~/.cache/pypoetry/cache
+RUN poetry install --with=worker --with=databricks -n && rm -rf ~/.cache/pypoetry/cache
 
 # copy source code
 COPY projects/preselector .
