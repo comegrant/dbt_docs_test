@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "192edb0fb36800459cf1",
   "position": {
     "x": 37.679653679653683,
@@ -97,22 +97,7 @@
           ]
         },
         "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Loyalty Point Measures"
-                    }
-                  },
-                  "Property": "Number of Loyalty Points"
-                }
-              },
-              "queryRef": "Loyalty Point Measures.Number of Loyalty Points",
-              "nativeQueryRef": "Number of Loyalty Points"
-            }
-          ]
+          "projections": []
         }
       }
     },
@@ -167,5 +152,80 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "b2eef944a087416c9e8a",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b3b1fd27769a32aa1612",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "df2c854c8537a660710c",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3d44a1560e2bcd84056e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Loyalty Events"
+              }
+            },
+            "Property": "Loyalty Event Name"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

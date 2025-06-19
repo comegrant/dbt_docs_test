@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "564ef7df475842db9b06",
   "position": {
     "x": 570.16328602180647,
-    "y": 8.8709987924184883,
+    "y": 0.12099879241848832,
     "z": 5000,
     "height": 66.129263725301456,
     "width": 241.93633070232241,
@@ -242,6 +242,20 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "261f6401a20407229bbd",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Budget Types"
+              }
+            },
+            "Property": "Budget Type"
+          }
+        },
+        "type": "Categorical"
       }
     ],
     "filterSortOrder": "Custom"

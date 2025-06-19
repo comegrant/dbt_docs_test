@@ -430,19 +430,6 @@
         },
         {
           "location": {
-            "x": 1612.1002917145536,
-            "y": 955.385066360524
-          },
-          "nodeIndex": "Subscribed Portions",
-          "nodeLineageTag": "Portions-Table",
-          "size": {
-            "height": 176,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 1361.0561614423573,
             "y": 652.37570784355148
           },
@@ -629,6 +616,19 @@
           },
           "nodeIndex": "Loyalty Seasons",
           "nodeLineageTag": "Loyalty-Seasons-Table",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1612.1002917145536,
+            "y": 955.385066360524
+          },
+          "nodeIndex": "Portions",
+          "nodeLineageTag": "Portions-Table",
           "size": {
             "height": 176,
             "width": 234

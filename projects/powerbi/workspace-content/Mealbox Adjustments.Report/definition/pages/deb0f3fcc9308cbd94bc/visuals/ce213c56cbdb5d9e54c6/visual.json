@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "ce213c56cbdb5d9e54c6",
   "position": {
-    "x": 216,
-    "y": 8,
+    "x": 217.09777801973232,
+    "y": 4.7066659408030276,
     "z": 7000,
     "height": 56,
     "width": 312,
@@ -312,5 +312,28 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "33e1d98f715258550012",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Calendar Hierarchy with Week"
+              }
+            },
+            "Level": "Date"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

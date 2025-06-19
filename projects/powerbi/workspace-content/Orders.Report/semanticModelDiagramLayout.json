@@ -4,8 +4,8 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 2,
-        "y": 1213
+        "x": 2.4000000953674316,
+        "y": 1212.800048828125
       },
       "nodes": [
         {
@@ -632,6 +632,26 @@
           "nodeLineageTag": "4067c429-0c5a-430e-a01b-a002f6b8a92c",
           "size": {
             "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Case Details",
+          "nodeLineageTag": "Case-Details-Table",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Case Measures",
+          "nodeLineageTag": "Case-Measures-Table",
+          "size": {
+            "height": 300,
             "width": 234
           },
           "zIndex": 0

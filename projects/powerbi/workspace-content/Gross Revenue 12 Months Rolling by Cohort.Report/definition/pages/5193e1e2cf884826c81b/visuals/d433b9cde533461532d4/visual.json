@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "d433b9cde533461532d4",
   "position": {
-    "x": 32,
-    "y": 80,
+    "x": 31.560997671652792,
+    "y": 89.194123854670934,
     "z": 0,
-    "height": 608,
-    "width": 1216,
+    "height": 607.89225950183425,
+    "width": 1215.7845190036685,
     "tabOrder": 0
   },
   "visual": {
@@ -245,6 +245,39 @@
         "type": "Advanced",
         "howCreated": "User",
         "isHiddenInViewMode": true
+      },
+      {
+        "name": "8685d9bc230c32047add",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Financial Date Hierarchy"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "defb915a44bddd45cab8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

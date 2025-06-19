@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "78220f8ea8e2cd4ad7e5",
   "position": {
     "x": 152.15101185996744,
-    "y": 8.5185577138725428,
+    "y": 0.33007470280774243,
     "z": 1000,
     "height": 57.777777777777779,
     "width": 181.11111111111111,
@@ -97,5 +97,23 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "517fb0591cace8a87a00",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }
