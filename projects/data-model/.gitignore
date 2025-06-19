@@ -1,2 +1,3 @@
 **/transform/logs/**
 **/transform/dbt_packages/**
+**/transform/states/**

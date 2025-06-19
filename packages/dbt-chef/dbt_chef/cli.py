@@ -85,6 +85,33 @@ def run_model(model_name: str) -> None:
     build_command = f"dbt run -s {model_name}"
     subprocess.run(build_command, shell=True, check=True)
 
+@cli.command()
+def prepare_local_development() -> None:
+    click.echo("Dropping tables in personal schemas")
+    drop_tables_command = 'dbt run-operation drop_tables_in_personal_schemas --args "dry_run: false"'
+    subprocess.run(drop_tables_command, shell=True, check=True)
+    prepare_states()
+
+@cli.command()
+def update_states() -> None:
+    prepare_states()
+
+def prepare_states() -> None:
+    click.echo("Updating states")
+
+    states_paths = ["states/dev", "states/test", "states/prod"]
+
+    for path_str in states_paths:
+        path = Path(path_str)
+        path.mkdir(parents=True, exist_ok=True)
+
+    subprocess.run("dbt parse --target dev", shell=True, check=True)
+    subprocess.run("cp target/manifest.json states/dev", shell=True, check=True)
+    subprocess.run("dbt parse --target test", shell=True, check=True)
+    subprocess.run("cp target/manifest.json states/test", shell=True, check=True)
+    subprocess.run("dbt parse --target prod", shell=True, check=True)
+    subprocess.run("cp target/manifest.json states/prod", shell=True, check=True)
+
 def generate_column_docs(model_name: str) -> None:
     click.echo(f"Generating column documentation for {model_name}")
     docs_command = f'dbt run-operation generate_column_docs --args "model_name: {model_name}"'

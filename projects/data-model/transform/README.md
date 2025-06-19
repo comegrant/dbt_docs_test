@@ -195,8 +195,8 @@ When the transformations are done you can deploy the model to Databricks. Each d
 
 >[!TIP]
 >Here are some other commands that you may find useful:
->- `dbt run -s +model_name` to run a specific model and all the models that it depends on
->- `dbt run -s model_name+` to run a specific model and all the models that are depending on it
+>- `dbt run -s model_name --defer --state states/prod` to run a specific model and defer to all the models that it depends on
+>- `dbt run -s model_name+ --defer --state states/prod` to run a specific model and all the models that are depending on it, while defering to prod for upstream models.
 >
 >Run `dbt` in the terminal to see all the other available commands. Or read more about the commands [in dbts docs](https://docs.getdbt.com/reference/dbt-commands).
 
@@ -268,33 +268,39 @@ The development schema is set when creating the [local profile for dbt]((#4-sett
 
 You are not supposed to have all the tables of the data model in your development schema, but rather those that are needed for what you are working on in the moment.
 
-## 3.1 Insert tables from dev.silver to ~firstname_lastname_silver
-When deploying models in dbt (i.e. when running `dbt run` or `dbt build` silver tables will be populated based on the data in the bronze layer. For some tables we have an incremental load, meaning that we only fetch a smaller amount of data at a time from the source system and insert it incrementally to silver. For these tables you will not get all the data when deploying the silver models, hence to be able to fetch all the data (if needed - often its not) we have created a job in Databricks that insert tables from dev.silver to your developer schema. Read instructiions below for how to use it.
+## 3.1 Prepare your developer schema
+To ensure a smooth and consistent experience when developing with dbt locally, we provide a helper command:
+`dbt-chef prepare-local-development`
+This command performs two key actions:
 
-1. Go to the the job called [dbt_developer_bulk_ingest_silver_tables](https://adb-4291784437205825.5.azuredatabricks.net/jobs/509482350039207?o=4291784437205825) in the Databricks Dev Workspace.
-2. Select the arrow next to `run` up in the left corner and chose `run now with different parameters`
-3. Fill in the parameters
-   * `firstname_lastname`: Write your firstname and lastname (same as for the developer schema). Its not needed to add ~.
-   * `table_list`: Leave empty if you want to ingest all tables or specify which tables you want to ingest in the following format: cms__companies, cms__billing_agreements.
-4. Run the job
+### 3.1.1 Drops Tables in your personal schemas
+It scans available schemas and removes all tables and views that match your personal schema prefix. This is especially useful for cleaning up stale or temporary development artifacts. NB! This will **permanently drop** all tables and views in your personal schemas.
 
-## 3.2 Bulk delete tables in developer schema
-After having worked with dbt for a while the developer schema can become messy. Then its handy to be able to bulk delete tables from the schemas. Follow the steps below.
-1. Go to the job called [dbt_developer_bulk_delete_tables](https://adb-4291784437205825.5.azuredatabricks.net/jobs/335350526735126?o=4291784437205825).
-2. Select the arrow next to `run` up in the left corner and chose `run now with different parameters`
-3. Fill in the parameters
-   * `firstname_lastname`: Write your firstname and lastname (same as for the developer schema). Its not needed to add ~.
-   * `layer`: Suffix of the schema you want to empty (i.e. silver, intermediate, gold or mlgold)
-4. Run the job
+### 3.1.2 Prepares states for deferred builds
+After cleaning up, the script regenerates `manifest.json` files for the three targets `dev`, `test` and `prod`, and place them in the folders `states/dev`, `states/test` and `states/prod`, respectively. 
+These states are used for deferred resolution in dbt, allowing you to:
+- Run and test only your own models locally.
+- Reference dependencies from test or prod without needing to build everything locally.
+Please notice how to use the dbt `defer` functions in the following sections.
 
-## 3.3 Bulk delete all tables from developer schema
-If you want to empty all your development schemas you can follow these steps:
+## 3.2 Use defer
+This section requires that you have prepared your developer schema as explained in sectopm 3.1.
+When deploying models in dbt (i.e. when running `dbt run` or `dbt build`) the models usually reads from a referenced model. Usually you will start with an empty developer schema, but you still rely on existin models. Instead of having to run the upstream parent models we can leverage the dbt `defer` function. 
+❌ Don't do this: `dbt build -s +model_c`
+✅ Do this: `dbt build -s model_c --defer --state states/prod`
+In the defer way of building your `model_c`, it will look for the referenced models in your developer schema, but if it can not find it there it will use the state provided (in this example prod).
+This way we will save a lot of time and resources, and get more reliable data.
 
-1. Go to the job called [dbt_developer_schema_full_delete](https://adb-4291784437205825.5.azuredatabricks.net/jobs/479188651788245?o=4291784437205825)
-2. Select the arrow next to `run` up in the left corner and chose `run now with different parameters`
-3. Fill in the parameters
-   * `firstname_lastname`: Write your firstname and lastname (same as for the developer schema). Its not needed to add ~.
-3. Run the job
+## 3.3 Use clone
+In some scenarios it is convenient to not only defer to another schema, but to actually move all tables into your personal schema. In those cases the command `dbt clone` can be useful. The command clones selected nodes from the specified state to the target schema(s).  
+Scenarios where this could be useful is if you want to connect Power BI to your `~firstname_lastname_gold` schema, in order to test changed models along with existing models. 
+In those cases you would run 
+`dbt clone -s models/gold --exclude "model_c model_b" --state states/prod`
+The command clones all tables from the gold schema in prod into your personal gold schema, except model_c and model_b. It is recommended to exclude the models that you have changed in your working branch and rather build them seperatly. 
+A full development process would look like this: 
+`dbt-chef prepare-local-development`
+`dbt clone -s models/gold --exclude "model_c model_b" --state states/prod`
+`dbt build -s model_c model_b --defer --state states/prod`
 
 # 4 Setting up dbt for the first time
 To get started developing in dbt follow the steps described in this section. This assumes that you have [git and sous-chef](https://github.com/cheffelo/sous-chef) set up in your local development environment (using Visual Studio Code or another IDE).
@@ -320,6 +326,33 @@ Your local dbt profile is used to connect to Databricks from your local developm
       host: adb-4291784437205825.5.azuredatabricks.net
       http_path: /sql/1.0/warehouses/45100b61eb7ee2f5
       token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you
+      threads: 4
+
+    dev:
+      type: databricks
+      catalog: dev
+      schema: dev
+      host: adb-4291784437205825.5.azuredatabricks.net
+      http_path: /sql/1.0/warehouses/45100b61eb7ee2f5
+      token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you, same as in local_dev
+      threads: 4
+
+    test:
+      type: databricks
+      catalog: test
+      schema: test
+      host: adb-4291784437205825.5.azuredatabricks.net
+      http_path: /sql/1.0/warehouses/45100b61eb7ee2f5
+      token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you, same as in local_dev
+      threads: 4
+
+    prod:
+      type: databricks
+      catalog: prod
+      schema: prod
+      host: adb-4291784437205825.5.azuredatabricks.net
+      http_path: /sql/1.0/warehouses/45100b61eb7ee2f5
+      token: dapiXXXXXXXXXXXXXXXXXXXXXXX # Need to be configured configured by you, same as in local_dev
       threads: 4
 ```
 Replace with the following:
