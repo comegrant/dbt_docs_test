@@ -386,7 +386,7 @@ provider "databricks" {
 }
 
 resource "time_rotating" "this" {
-  rotation_days = 30
+  rotation_days = 60
 }
 
 #####################################
@@ -520,9 +520,9 @@ provider "databricks" {
 resource "databricks_token" "pat_bundle_sp" {
   provider = databricks.bundle-sp
   comment  = "Terraform (created: ${time_rotating.this.rfc3339})"
-  # Token is valid for 60 days but is rotated after 30 days.
-  # Run `terraform apply` within 60 days to refresh before it expires.
-  lifetime_seconds = 60 * 24 * 60 * 60
+  # Token is valid for 90 days but is rotated after 60 days, if terraform apply is run.
+  # Run `terraform apply` within 90 days to refresh before it expires.
+  lifetime_seconds = 90 * 24 * 60 * 60
 }
 
 
@@ -601,7 +601,7 @@ resource "azurerm_key_vault_secret" "bundle_sp_secret" {
   name            = "databricks-sp-bundle-secret-${terraform.workspace}"
   value           = databricks_service_principal_secret.bundle_sp.secret
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform. OAuth secret for bundle service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  content_type    = "Managed by Terraform. OAuth secret for bundle service principal."
   expiration_date = "2050-01-01T00:00:00Z"
 }
 
@@ -609,7 +609,7 @@ resource "azurerm_key_vault_secret" "bundle_sp_pat" {
   name            = "databricks-sp-bundle-pat-${terraform.workspace}"
   value           = databricks_token.pat_bundle_sp.token_value
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform. Personal access token for bundle service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  content_type    = "Managed by Terraform. Personal access token for bundle service principal. Run `terraform apply` within 90 days to refresh before it expires."
   expiration_date = timeadd("${time_rotating.this.rfc3339}", "1440h")
 }
 
@@ -617,7 +617,7 @@ resource "azurerm_key_vault_secret" "databricks_reader_sp_secret" {
   name            = "databricks-sp-databricksReader-secret-${terraform.workspace}"
   value           = databricks_service_principal_secret.databricks_reader_sp.secret
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform. OAuth secret for databricks reader service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  content_type    = "Managed by Terraform. OAuth secret for databricks reader service principal."
   expiration_date = "2050-01-01T00:00:00Z"
 }
 
@@ -633,7 +633,7 @@ resource "azurerm_key_vault_secret" "databricks_forecasting_sp_secret" {
   name            = "databricks-sp-forecasting-secret-${terraform.workspace}"
   value           = databricks_service_principal_secret.databricks_forecasting_sp.secret
   key_vault_id    = data.azurerm_key_vault.this.id
-  content_type    = "Managed by Terraform. OAuth secret for databricks forecasting service principal. Run `terraform apply` within 60 days to refresh before it expires."
+  content_type    = "Managed by Terraform. OAuth secret for databricks forecasting service principal."
   expiration_date = "2050-01-01T00:00:00Z"
 }
 
