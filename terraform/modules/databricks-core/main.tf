@@ -387,6 +387,9 @@ provider "databricks" {
 
 resource "time_rotating" "this" {
   rotation_days = 60
+  triggers = {
+    force_refresh = timestamp()
+  }
 }
 
 #####################################
