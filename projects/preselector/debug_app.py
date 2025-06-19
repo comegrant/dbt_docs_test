@@ -141,7 +141,7 @@ async def select(
     responses: list[PreselectorSuccessfulResponse],
 ) -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
     with st.form("Select Response"):
-        response = st.selectbox("Response", options=responses, format_func=lambda res: res.generated_at)
+        response = st.selectbox("Response", options=responses, format_func=lambda res: res.generated_at.isoformat())
 
         st.form_submit_button()
 

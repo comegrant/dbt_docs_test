@@ -1004,7 +1004,10 @@ async def join_recipe_and_allergies(request: RetrievalRequest, store: ContractSt
 
     recipes_with_allergies = (
         await query(AllRecipeIngredients)
-        .filter(pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"]))
+        .filter(
+            pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"])
+            & pl.col("is_house_hold_ingredient").not_()
+        )
         .to_lazy_polars()
     )
 
