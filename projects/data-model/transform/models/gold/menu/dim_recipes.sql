@@ -1,11 +1,32 @@
 with
 
+-- SILVER
 recipes as (
 
     select * from {{ ref('pim__recipes') }}
 
 )
 
+, recipe_companies as (
+
+    select * from {{ ref('pim__recipe_companies') }}
+
+)
+
+, recipe_translations as (
+
+    select * from {{ ref('pim__recipe_translations') }}
+
+)
+
+-- ASSUMPTION: Only local languages for the brands we deliver to is found in this table
+, local_languages as (
+
+    select distinct language_id from {{ ref('cms__countries') }}
+
+)
+
+-- INTERMEDIATE
 , recipe_metadata as (
 
     select * from {{ ref('int_recipe_metadata_joined') }}
@@ -18,31 +39,20 @@ recipes as (
 
 )
 
-, recipe_translations as (
+, main_recipes_in_menus as (
 
-    select * from {{ ref('pim__recipe_translations') }}
+    select * from {{ ref('int_weekly_menu_variations_main_recipes_distinct') }}
 
 )
 
+-- GOLD
 , companies as (
 
     select * from {{ ref('dim_companies') }}
 
 )
 
-, recipe_companies as (
-
-    select * from {{ ref('pim__recipe_companies') }}
-
-)
-
--- ASSUMPTION: Only local languages for the brands we deliver to is found in this table
-, local_languages as (
-
-    select distinct language_id from {{ ref('cms__countries') }}
-
-)
-
+-- TRANSFORMATION
 , recipe_companies_find_local_language_id as (
 
     select distinct
@@ -126,34 +136,44 @@ recipes as (
         on
             recipes.recipe_id = recipe_translations.recipe_id
             and recipe_metadata.language_id = recipe_translations.language_id
-
-)
-
--- Filter to keep only language_ids which are used as brand language
--- and to keep only language_ids for companies connected to recipes in recipe_companies
-, recipe_tables_filtered_to_only_keep_brand_language as (
-
-    select recipe_tables_joined.*
-
-    from recipe_tables_joined
-
+    
     left join recipe_companies_find_local_language_id
-        on recipe_tables_joined.recipe_id = recipe_companies_find_local_language_id.recipe_id
+        on recipes.recipe_id = recipe_companies_find_local_language_id.recipe_id
 
     left join local_languages
-        on recipe_tables_joined.language_id = local_languages.language_id
+        on recipe_metadata.language_id = local_languages.language_id
 
+    -- Filter to keep only language_ids which are used as brand language
+    -- and to keep only language_ids for companies connected to recipes in recipe_companies
     where local_languages.language_id is not null
         and (
             recipe_companies_find_local_language_id.recipe_id is null
             or recipe_companies_find_local_language_id.language_id = local_languages.language_id
         )
+
+)
+
+, recipes_tables_add_menu_week_information as (
+
+    select 
+        recipe_tables_joined.*
+        , main_recipes_in_menus.menu_week_count_main_recipe
+        , main_recipes_in_menus.previous_menu_week_main_recipe
+        , main_recipes_in_menus.weeks_since_first_menu_week_main_recipe
+    from recipe_tables_joined
+    left join main_recipes_in_menus
+        on recipe_tables_joined.main_recipe_id = main_recipes_in_menus.main_recipe_id
+    -- filter out recipes that are not in recipe universe or menu week
+    where 
+        main_recipes_in_menus.main_recipe_id is not null 
+        or recipe_tables_joined.is_in_recipe_universe is true
+
 )
 
 , add_unknown_row as (
 
     select *
-    from recipe_tables_filtered_to_only_keep_brand_language
+    from recipes_tables_add_menu_week_information
 
     union all
 
@@ -186,6 +206,9 @@ recipes as (
         , 0              as recipe_shelf_life_days
         , 'Not relevant' as recipe_comment
         , 'Not relevant' as recipe_chef_tip
+        , 0 as menu_week_count_main_recipe
+        , 0 as previous_menu_week_main_recipe
+        , 0 as weeks_since_first_menu_week_main_recipe
 )
 
 select * from add_unknown_row

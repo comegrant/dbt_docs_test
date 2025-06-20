@@ -78,13 +78,7 @@ The actual recipe cost based on ingredient quantity in whole units. It is calcul
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 
-...
-
-{% enddocs %}
-
-{% docs column__recipe_difficulty_name %}
-
-...
+The primary key of Dim Recipes. A composite key of recipe_id and langauge.
 
 {% enddocs %}
 
@@ -102,19 +96,37 @@ The main ingredient of the recipe in english language.
 
 {% docs column__main_recipe_name %}
 
-...
+The name of the main recipe that the recipe is based on.
 
 {% enddocs %}
 
 {% docs column__is_main_recipe %}
 
-...
+True if recipe is main recipe. False if recipe is a variation of a main recipe.
 
 {% enddocs %}
 
 {% docs column__cooking_time_sorting %}
 
 A column used for sorting the column cooking_time. It is calculated as cooking_time_from*1000+cooking_time_to.
+
+{% enddocs %}
+
+{% docs column__menu_week_count_main_recipe %}
+
+Number of times the main recipe has been present in a menu week.
+
+{% enddocs %}
+
+{% docs column__previous_menu_week_main_recipe %}
+
+The last menu week where the main recipe id was present in the format YYYYWW. For example week 3 in year 2025 will be 202503.
+
+{% enddocs %}
+
+{% docs column__weeks_since_first_menu_week_main_recipe %}
+
+Number of weeks since the first time the main recipe id was present in a menu week. Is 0 if the main recipe was present for the first time in the menu for the current calendar week.
 
 {% enddocs %}
 

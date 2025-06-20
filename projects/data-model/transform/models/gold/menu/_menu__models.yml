@@ -114,6 +114,7 @@ models:
       \ the different types of reactions a customer can make."
     latest_version: 1
     config:
+      enabled: false
       alias: dim_recipe_reaction_types
       contract:
         enforced: true
@@ -150,6 +151,7 @@ models:
       \ by customers."
     latest_version: 1
     config:
+      enabled: false
       alias: fact_recipe_reactions
       contract:
         enforced: true
@@ -451,6 +453,18 @@ models:
       - name: recipe_chef_tip
         data_type: string
         description: "{{ doc('column__recipe_chef_tip') }}"
+
+      - name: menu_week_count_main_recipe
+        data_type: bigint
+        description: "{{ doc('column__menu_week_count_main_recipe') }}"
+
+      - name: previous_menu_week_main_recipe
+        data_type: int
+        description: "{{ doc('column__previous_menu_week_main_recipe') }}"
+
+      - name: weeks_since_first_menu_week_main_recipe
+        data_type: bigint
+        description: "{{ doc('column__weeks_since_first_menu_week_main_recipe') }}"
 
     versions:
       - v: 1

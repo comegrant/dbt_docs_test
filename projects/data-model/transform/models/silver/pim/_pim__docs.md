@@ -1,4 +1,9 @@
-# Common
+# Recipe Difficulty Level Translations
+{% docs column__recipe_difficulty_name %}
+
+...
+
+{% enddocs %}
 
 # Chef Ingredients
 {% docs column__chef_ingredient_id %}
