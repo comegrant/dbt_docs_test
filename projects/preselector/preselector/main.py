@@ -66,6 +66,10 @@ class Menu:
 
 @dataclass
 class PreselectorResult:
+    """
+    The result of a preselector run
+    """
+
     success: list[PreselectorYearWeekResponse]
     failures: list[PreselectorFailure]
     request: GenerateMealkitRequest
