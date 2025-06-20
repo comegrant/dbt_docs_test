@@ -66,9 +66,11 @@ def tags_to_keep(tags: list[ImageTag], ttl: timedelta) -> list[ImageTag]:
 
         if is_sha1(tag.name):
             sha_images.append(tag)
+            upper_index = min((n_sha_images_to_keep - 1), len(sha_images))
+
             # Not the most efficient, but oh well
-            sha_images = sorted(sha_images, key=lambda tag: tag.updated_at)
-            sha_images = sha_images[0 : min((n_sha_images_to_keep - 1), len(sha_images))]
+            sha_images = sorted(sha_images, key=lambda tag: tag.updated_at, reverse=True)
+            sha_images = sha_images[0:upper_index]
 
         if time_since_update < ttl:
             other_images.append(tag)
@@ -78,6 +80,7 @@ def tags_to_keep(tags: list[ImageTag], ttl: timedelta) -> list[ImageTag]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    logging.getLogger("azure").setLevel(logging.ERROR)
 
     url = "bhregistry.azurecr.io"
     credential = DefaultAzureCredential()
@@ -89,12 +92,14 @@ if __name__ == "__main__":
         if not is_sous_chef_project(repo):
             continue
 
-        logging.info(f"Cleaning up for repo named: '{repo}'")
+        logger.info(f"Cleaning up for repo named: '{repo}'")
         tags = tags_for(repo, client)
         keep = tags_to_keep(tags, ttl=ttl)
         keep_tag_names = {tag.name for tag in keep}
 
+        logger.info(f"Keeping {keep_tag_names}")
+
         for tag in tags:
             if tag.name not in keep_tag_names:
-                logging.info(f"Deleting '{tag.name}' from '{repo}'")
+                logger.info(f"Deleting '{tag.name}' from '{repo}'")
                 client.delete_tag(repo, tag.name)
