@@ -30,6 +30,9 @@ def test_next_vector_equal_importance() -> None:
 
 
 def test_next_vector() -> None:
+    """
+    Testing if the next vector logic is correct
+    """
     columns = ["a", "b", "c"]
     expected_vector = [1, 1, 1]
     potential_vectors = [
