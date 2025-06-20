@@ -420,43 +420,43 @@ class RecipeFeatures:
     taxonomies = List(String()).description("The taxonomies for a recipe")
     taxonomy_ids = List(Int32()).description("The taconomy ids for a recipe")
 
-    is_addon_kit = taxonomy_ids.contains(2164)
-    is_adams_signature = taxonomy_ids.contains(2146)
-    is_weight_watchers = taxonomy_ids.contains(1878)
+    is_addon_kit = taxonomy_ids.contains("2164")
+    is_adams_signature = taxonomy_ids.contains("2146")
+    is_weight_watchers = taxonomy_ids.contains("1878")
 
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains("2109") | pl.col("taxonomy_ids").list.contains("2104"), as_dtype=Bool()
     )
 
     is_roede = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2015) | pl.col("taxonomy_ids").list.contains(2096), as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains("2015") | pl.col("taxonomy_ids").list.contains("2096"), as_dtype=Bool()
     )
 
     is_cheep = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2195)
-        | pl.col("taxonomy_ids").list.contains(2196)
-        | pl.col("taxonomy_ids").list.contains(2197),
+        pl.col("taxonomy_ids").list.contains("2195")
+        | pl.col("taxonomy_ids").list.contains("2196")
+        | pl.col("taxonomy_ids").list.contains("2197"),
         as_dtype=Bool(),
     )
 
     is_chefs_choice = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2011)
-        | pl.col("taxonomy_ids").list.contains(2147)
-        | pl.col("taxonomy_ids").list.contains(2152),
+        pl.col("taxonomy_ids").list.contains("2011")
+        | pl.col("taxonomy_ids").list.contains("2147")
+        | pl.col("taxonomy_ids").list.contains("2152"),
         as_dtype=Bool(),
     ).description("Also known as inspirational in some places")
 
     is_family_friendly = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2148)
-        | pl.col("taxonomy_ids").list.contains(2014)
-        | pl.col("taxonomy_ids").list.contains(2153),
+        pl.col("taxonomy_ids").list.contains("2148")
+        | pl.col("taxonomy_ids").list.contains("2014")
+        | pl.col("taxonomy_ids").list.contains("2153"),
         as_dtype=Bool(),
     )
 
     is_low_calorie = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2156)
-        | pl.col("taxonomy_ids").list.contains(2013)
-        | pl.col("taxonomy_ids").list.contains(2151),
+        pl.col("taxonomy_ids").list.contains("2156")
+        | pl.col("taxonomy_ids").list.contains("2013")
+        | pl.col("taxonomy_ids").list.contains("2151"),
         as_dtype=Bool(),
     )
 
@@ -774,10 +774,10 @@ class NormalizedRecipeFeatures:
     cooking_time_from = Float().lower_bound(0).upper_bound(1)
 
     is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(2109) | pl.col("taxonomy_ids").list.contains(2104), as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains("2109") | pl.col("taxonomy_ids").list.contains("2104"), as_dtype=Bool()
     )
     is_red_cross = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains(3663) | pl.col("taxonomy_ids").list.contains(3664), as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains("3663") | pl.col("taxonomy_ids").list.contains("3664"), as_dtype=Bool()
     )
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
