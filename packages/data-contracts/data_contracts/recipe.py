@@ -485,12 +485,14 @@ class RecipeFeatures:
 
 @feature_view(
     name="main_recipe_features",
-    source=RecipeFeatures.metadata.materialized_source.transform_with_polars(  # type: ignore
-        lambda df: df.filter(
+    source=RecipeFeatures.as_source().transform_with_polars(  # type: ignore
+        lambda df: df.collect()
+        .filter(
             pl.col("year") * 100 + pl.col("week") >= 202430  # noqa: PLR2004
         )
         .sort("recipe_id")
         .unique("main_recipe_id", keep="first", maintain_order=True)
+        .lazy()
     ),
 )
 class MainRecipeFeature:
@@ -523,6 +525,13 @@ class RecipeEmbedding:
     recipe_name = String()
     embedding = Embedding(1536)
     predicted_at = EventTimestamp()
+
+
+# store = RecipeEmbedding.query([MainRecipeFeature]).store
+# preds = await RecipeEmbedding.query([MainRecipeFeature]).predict_over(
+#     MainRecipeFeature.query().all()
+# ).with_subfeatures().to_polars()
+# await store.insert_into(RecipeEmbedding.location, preds)
 
 
 @feature_view(
