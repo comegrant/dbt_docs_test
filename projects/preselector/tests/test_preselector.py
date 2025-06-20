@@ -33,6 +33,9 @@ def potential_features() -> list[Feature]:
 
 @pytest.fixture()
 def dummy_store() -> ContractStore:
+    """
+    A store that contains random data.
+    """
     store = preselector_store()
 
     return store.dummy_store()

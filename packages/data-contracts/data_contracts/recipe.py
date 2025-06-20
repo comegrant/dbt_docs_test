@@ -901,7 +901,7 @@ class AllRecipeIngredients:
     ingredient_name = String()
     supplier_name = String()
 
-    is_house_hold_ingredient = supplier_name == "Basis"
+    is_house_hold_ingredient = supplier_name == "BASIS"
 
 
 recipe_preferences_sql = """WITH distinct_recipe_preferences AS (
