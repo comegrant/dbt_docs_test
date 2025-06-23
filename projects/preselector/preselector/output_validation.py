@@ -256,6 +256,12 @@ async def variation_metrics(df: pl.DataFrame, dummy: Optional[ContractStore] = N
     return result.sort(["company_id", "portion_size"], descending=[True, True])
 
 
+def extract_first_10(value: list | str) -> list[str]:
+    if isinstance(value, list):
+        return [str(x) for x in value[:10]]
+    return [str(value)]
+
+
 def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFrame, df_variation: pl.DataFrame) -> str:
     df = df_compliancy.join(df_error_vector, on=["company_id", "portion_size"], how="left", suffix="_1", coalesce=True)
     df = df.join(df_variation, on=["company_id", "portion_size"], how="left", suffix="_2", coalesce=True)
@@ -282,46 +288,18 @@ def validation_summary(df_compliancy: pl.DataFrame, df_error_vector: pl.DataFram
                 f"     Broken protein variation: {row['protein_warnings']} "
                 f"({row['percentage_protein_warnings']}%)\n"
             )
-            errors_compliance = (
-                row["agreement_id_broken_allergen"][0][:10]
-                if isinstance(row["agreement_id_broken_allergen"], list)
-                else row["agreement_id_broken_allergen"]
-            )
-            warnings_compliancy = (
-                row["agreement_id_broken_preference"][0][:10]
-                if isinstance(row["agreement_id_broken_preference"], list)
-                else row["agreement_id_broken_preference"]
-            )
+            errors_compliance = extract_first_10(row["agreement_id_broken_allergen"])
+            warnings_compliancy = extract_first_10(row["agreement_id_broken_preference"])
 
-            error_dim = (
-                row["agreement_id_mean_ordered_ago"][0][:10]
-                if isinstance(row["agreement_id_mean_ordered_ago"], list)
-                else row["agreement_id_mean_ordered_ago"]
-            )
+            error_dim = extract_first_10(row["agreement_id_mean_ordered_ago"])
 
-            warnings_dim_1 = (
-                row["agreement_id_avg_error"][0][:10]
-                if isinstance(row["agreement_id_avg_error"], list)
-                else row["agreement_id_avg_error"]
-            )
+            warnings_dim_1 = extract_first_10(row["agreement_id_avg_error"])
 
-            warnings_dim_2 = (
-                row["agreement_id_acc_error"][0][:10]
-                if isinstance(row["agreement_id_acc_error"], list)
-                else row["agreement_id_acc_error"]
-            )
+            warnings_dim_2 = extract_first_10(row["agreement_id_acc_error"])
 
-            carb_warnings = (
-                row["agreement_id_carb_warnings"][0][:10]
-                if isinstance(row["agreement_id_carb_warnings"], list)
-                else row["agreement_id_carb_warnings"]
-            )
+            carb_warnings = extract_first_10(row["agreement_id_carb_warnings"])
 
-            protein_warnings = (
-                row["agreement_id_protein_warnings"][0][:10]
-                if isinstance(row["agreement_id_protein_warnings"], list)
-                else row["agreement_id_protein_warnings"]
-            )
+            protein_warnings = extract_first_10(row["agreement_id_protein_warnings"])
 
             group_str += "     ---\n"
             group_str += f"     Agreement ids with broken allergens: {errors_compliance}\n"
