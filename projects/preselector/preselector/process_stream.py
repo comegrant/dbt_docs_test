@@ -134,12 +134,7 @@ async def load_cache_for(
             job = store.model(location.name).all_predictions().remove_derived_features()
 
         if pl_filter is not None:
-
-            def filter_df(df: pl.LazyFrame) -> pl.LazyFrame:
-                assert pl_filter is not None  # noqa: B023
-                return df.filter(pl_filter)  # noqa: B023
-
-            job = job.polars_method(filter_df)
+            job = job.filter(pl_filter)
 
         if isinstance(source, WritableFeatureSource):
             await source.overwrite(job, request)
@@ -177,11 +172,7 @@ async def load_cache(
     partition_recs = cache_dir.partitioned_parquet_at(f"{company_id}/recs", partition_keys=["year", "week"])
 
     cache_sources: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]] = [
-        (
-            RecipeCost.location,
-            cache_dir.parquet_at("recipe_cost.parquet"),
-            (pl.col("menu_year") >= this_year) & (pl.col("menu_week") > this_week),
-        ),
+        (RecipeCost.location, cache_dir.parquet_at("recipe_cost.parquet"), (pl.col("menu_year") >= this_year)),
         (
             PreselectorYearWeekMenu.location,
             cache_dir.parquet_at(f"{company_id}/menus.parquet"),
