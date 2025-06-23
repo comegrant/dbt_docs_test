@@ -1,7 +1,16 @@
-/// This is where all recipe dimensions are found.
+/// Includes information about all main recipes that exist in the recipe universe or
+/// has been used in a menu week after 2019, and all the variations of the main recipe.
+/// Can be used to filter measures on different recipe dimensions such as cooking time, main ingredient etc.
 table Recipes
 	lineageTag: bd92b28f-2317-4cec-b83c-99b43a1927d2
 
+	/// Number of Main Recipe Ids that exist in the recipe universe or menu variations (after 2019)
+	/// This measure can only be used together with other field in the same table.
+	/// I.e., can not be filtered using other tables such as Date or Products. 
+	measure 'Number of Main Recipe Ids in Table' = DISTINCTCOUNTNOBLANK('Recipes'[Main Recipe Id])
+		formatString: #,0
+		displayFolder: Recipes Table Measures
+	
 	column pk_dim_recipes
 		dataType: string
 		isHidden
@@ -16,11 +25,22 @@ table Recipes
 
 	/// The unique identifier of a weekly variation of a main recipe.
 	column 'Recipe Id'
-		dataType: int64
+		dataType: string
 		formatString: 0
 		lineageTag: 48e9feba-edf6-45fa-8bde-6e41295105b4
-		summarizeBy: none
+		summarizeBy: distinctCount
 		sourceColumn: recipe_id
+		sortByColumn: 'Recipe Id - Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The unique identifier of a weekly variation of a main recipe.
+	column 'Recipe Id - Sort'
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: Recipe Id - Sort
 
 		annotation SummarizationSetBy = Automatic
 
@@ -131,11 +151,50 @@ table Recipes
 	/// All recipes are weekly variations of a main recipe, which is the original recipe.
 	/// This id is a reference to this original recipe.
 	column 'Main Recipe Id'
-		dataType: int64
+		dataType: string
 		formatString: 0
 		lineageTag: c3fc7509-3987-48cd-87e7-ddb502a6bc02
-		summarizeBy: none
+		summarizeBy: distinctCount
 		sourceColumn: main_recipe_id
+		sortByColumn: 'Main Recipe Id - Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Column use for sorting the menu recipe id
+	column 'Main Recipe Id - Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Main Recipe Id - Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Number of times the main recipe has been present in a menu week 
+	column 'Menu Week Count (Main Recipe)'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: menu_week_count_main_recipe
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The previous menu week the main recipe was present on the format YYYYWW.
+	/// I.e., year 2025 and week 3 is represented as 202503
+	column 'Previous Menu Week (Main Recipe)'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: previous_menu_week_main_recipe
+
+	/// Number of weeks since the first menu week where the main recipe id was present
+	/// Is 0 if the current calendar week is the first menu week with the main recipe id
+	/// Is a negative number if the menu week is in the future
+	column 'Weeks Since First Menu Week (Main Recipe)'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: weeks_since_first_menu_week_main_recipe
 
 		annotation SummarizationSetBy = Automatic
 
@@ -299,8 +358,10 @@ table Recipes
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    dim_recipes_Table = gold_Schema{[Name="dim_recipes",Kind="Table"]}[Data]
+				    dim_recipes_Table = gold_Schema{[Name="dim_recipes",Kind="Table"]}[Data],
+					#"Added Recipe Sort Col" = Table.DuplicateColumn(dim_recipes_Table, "recipe_id", "Recipe Id - Sort"),
+				    #"Added Main Recipe Sort Col" = Table.DuplicateColumn(#"Added Recipe Sort Col", "main_recipe_id", "Main Recipe Id - Sort")
 				in
-					dim_recipes_Table
+					#"Added Main Recipe Sort Col"
 
 	annotation PBI_ResultType = Table
