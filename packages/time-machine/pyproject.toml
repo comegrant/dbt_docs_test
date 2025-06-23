@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "time_machine"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Python pacakge relating to dates, holidays, and calendars"
 authors = ["Stephen ALlwright <stephen.allwright@cheffelo.com>"]
 packages = [{include = "time_machine"}]
@@ -9,6 +9,10 @@ packages = [{include = "time_machine"}]
 python = "^3.10"
 holidays = "^0.47"
 pandas = "^2.1.0"
+pip = "^25.1.1"
+ipykernel = "^6.29.5"
+pyright = "^1.1.402"
+pytz = "^2024.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
