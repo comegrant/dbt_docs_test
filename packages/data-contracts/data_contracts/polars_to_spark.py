@@ -107,11 +107,14 @@ class BinaryExpression(BaseModel):
 class LiteralPolarsValue(BaseModel):
     string: str | None = Field(None, alias="String")
     integer: int | None = Field(None, alias="Int")
+    dynamic: LiteralPolarsValue | None = Field(None, alias="Dyn")
 
     def to_spark_expression(self) -> str:
+        if self.dynamic:
+            return self.dynamic.to_spark_expression()
         if self.string:
             return f"'{self.string}'"
-        elif self.integer:
+        if self.integer:
             return f"{self.integer}"
 
         raise ValueError(f"Unable to format '{self}'")
