@@ -13,59 +13,59 @@ The normal calendar year of the date.
 
 {% docs column__year_of_calendar_week %}
 
-The year corresponding to the ISO week of the date. 
+The year corresponding to the ISO week of the date.
 For example, December 30th, 2024, falls within ISO week 1 of 2025. Therefore, this column will display 2025 for that date, as it reflects the year associated with the ISO week, even though the calendar year of the date is 2024.
 
 {% enddocs %}
 
 {% docs column__calendar_quarter %}
 
-Quarter of the year (1-4), holding three iso months each. 
+Quarter of the year (1-4), holding three iso months each.
 
 {% enddocs %}
 
 {% docs column__calendar_month_number %}
 
-Month of the date (1-12). This follows the normal iso calendar which is the normal calendar in Scandinavia. 
+Month of the date (1-12). This follows the normal iso calendar which is the normal calendar in Scandinavia.
 
 {% enddocs %}
 
 {% docs column__calendar_month_name %}
 
-Full name of the month. This follows the normal iso calendar which is the normal calendar in Scandinavia. 
+Full name of the month. This follows the normal iso calendar which is the normal calendar in Scandinavia.
 
 {% enddocs %}
 
 {% docs column__calendar_week %}
 
-The iso week of the year. This follows the normal iso calendar which is the normal calendar in Scandinavia. 
+The iso week of the year. This follows the normal iso calendar which is the normal calendar in Scandinavia.
 
 {% enddocs %}
 
 {% docs column__financial_year %}
 
-The year corresponding to the Monday of the same week. 
+The year corresponding to the Monday of the same week.
 For example, January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial year for January 1st, 2025, is 2024, as it follows the year of the corresponding Monday.
 
 {% enddocs %}
 
 {% docs column__financial_quarter %}
 
-The quarter corresponding to the Monday of the same week. 
+The quarter corresponding to the Monday of the same week.
 For example, January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial quarter for January 1st, 2025, is 4, as it follows the quarter of the corresponding Monday.
 
 {% enddocs %}
 
 {% docs column__financial_month_number %}
 
-The number of the month corresponding to the Monday of the same week. 
+The number of the month corresponding to the Monday of the same week.
 For example, January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month number for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
 
 {% enddocs %}
 
 {% docs column__financial_month_name %}
 
-The full name of the month corresponding to the Monday of the same week. 
+The full name of the month corresponding to the Monday of the same week.
 For example, January 1st, 2025, falls on a Wednesday, and the Monday of that week is December 30th, 2024. Therefore, the financial month name for January 1st, 2025, is December, as it follows the quarter of the corresponding Monday.
 
 {% enddocs %}
@@ -92,7 +92,7 @@ Name of the weekday.
 
 {% docs column__monday_date %}
 
-The date of the Monday in the week. 
+The date of the Monday in the week.
 
 {% enddocs %}
 
@@ -135,5 +135,53 @@ Is true if the menu week is in the future. A menu week is in the future if order
 {% docs column__weeks_offset_from_current_monday %}
 
 The difference in number of weeks between the monday date of the current week and the monday date of the actual week. A historical week will have a negative number, a future week a positive number, and the current week will be 0.
+
+{% enddocs %}
+
+# Customer Journey Segments
+{% docs column__customer_journey_main_segment_id %}
+
+The unique ID of the main segments in the customer journey model. These are defined in the seeds.
+
+{% enddocs %}
+
+{% docs column__customer_journey_sub_segment_id %}
+
+The unique ID of the sub segments in the customer journey model. These are defined in the seeds.
+
+{% enddocs %}
+
+{% docs column__customer_journey_main_segment_name %}
+
+The name of the main segments in the customer journey model. Can be one of the following values
+- Buyer
+- Prospect
+
+{% enddocs %}
+
+{% docs column__customer_journey_sub_segment_name %}
+
+The name of the sub segments in the customer journey model. Each name can only be related to one main segment. The sub segments can have one of the following values:
+- Churned
+- Pending Onboarding
+- Regret
+- Onboarding
+- Reactivated
+- Always On
+- Frequent
+- Regular
+- Occasional
+
+{% enddocs %}
+
+{% docs column__customer_journey_main_segment_description %}
+
+The description of how the main segments are defined in the customer journey model.
+
+{% enddocs %}
+
+{% docs column__customer_journey_sub_segment_description %}
+
+The description of how the sub segments are defined in the customer journey model.
 
 {% enddocs %}

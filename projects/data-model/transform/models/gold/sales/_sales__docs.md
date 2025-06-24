@@ -829,3 +829,11 @@ Defines if the discount is part of a discount chain or not.
 The primary key of the bridge_preference_combinations_preferences.
 
 {% enddocs %}
+
+# Dim Customer Journey Segments
+
+{% docs column__pk_dim_customer_journey_segments %}
+
+The primary key of the dim_customer_journey_segments. It is a hash of the column customer_joruney_sub_segment_id.
+
+{% enddocs %}

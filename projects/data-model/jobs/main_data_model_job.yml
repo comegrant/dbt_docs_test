@@ -162,6 +162,7 @@ resources:
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
+              - 'dbt seed'
               - 'dbt snapshot'
               - 'dbt run --exclude drafts.*'
           job_cluster_key: dbt_CLI

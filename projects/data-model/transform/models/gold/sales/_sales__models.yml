@@ -3549,3 +3549,61 @@ models:
 
     versions:
       - v: 1
+
+  - name: dim_customer_journey_segments
+    description: "Customer journey segments table that is used to categorize customers and prospects based on their behavior in the past 8 weeks"
+    latest_version: 1
+    config:
+      alias: dim_customer_journey_segments
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_customer_journey_segments
+        data_type: string
+        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_journey_main_segment_id
+        data_type: int
+        description: "{{ doc('column__customer_journey_main_segment_id') }}"
+        data_tests:
+          - not_null
+
+      - name: customer_journey_sub_segment_id
+        data_type: int
+        description: "{{ doc('column__customer_journey_sub_segment_id') }}"
+        data_tests:
+          - not_null
+
+      - name: customer_journey_main_segment_name
+        data_type: string
+        description: "{{ doc('column__customer_journey_main_segment_name') }}"
+        data_tests:
+          - not_null
+
+      - name: customer_journey_sub_segment_name
+        data_type: string
+        description: "{{ doc('column__customer_journey_sub_segment_name') }}"
+        data_tests:
+          - not_null
+
+      - name: customer_journey_main_segment_description
+        data_type: string
+        description: "{{ doc('column__customer_journey_main_segment_description') }}"
+        data_tests:
+          - not_null
+
+      - name: customer_journey_sub_segment_description
+        data_type: string
+        description: "{{ doc('column__customer_journey_sub_segment_description') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1

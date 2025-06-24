@@ -164,3 +164,7 @@ models:
       +schema: draft
       +materialized: ephemeral
       +enabled: false
+
+seeds:
+  +schema: seeds
+  +delimiter: ';'

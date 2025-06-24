@@ -1,11 +1,11 @@
-# DOUCMENTATION: https://docs.getdbt.com/reference/model-properties
+# DOCUMENTATION: https://docs.getdbt.com/reference/model-properties
 
 version: 2
 
 models:
 
   - name: data_platform__dates
-    description: "Date table generated in a notebook using a python script. Must be updated manually if needed." 
+    description: "Date table generated in a notebook using a python script. Must be updated manually if needed."
     columns:
 
       - name: date
@@ -142,14 +142,14 @@ models:
           - type: not_null
         data_tests:
           - not_null
-  
+
       - name: is_future_menu_week
         data_type: boolean
         constraints:
           - type: not_null
         data_tests:
           - not_null
-      
+
       - name: weeks_offset_from_current_monday
         data_type: bigint
         description: "{{ doc('column__weeks_offset_from_current_monday') }}"
@@ -157,3 +157,55 @@ models:
           - type: not_null
         data_tests:
           - not_null
+
+  - name: data_platform__customer_journey_segments
+    description: "Customer journey segments table that is used to categorize customers based on their journey with the company."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+    - name: customer_journey_main_segment_id
+      data_type: int
+      description: "{{ doc('column__customer_journey_main_segment_id') }}"
+      data_tests:
+        - not_null
+
+    - name: customer_journey_sub_segment_id
+      data_type: int
+      description: "{{ doc('column__customer_journey_sub_segment_id') }}"
+      data_tests:
+        - unique
+        - not_null
+
+    - name: customer_journey_main_segment_name
+      data_type: string
+      description: "{{ doc('column__customer_journey_main_segment_name') }}"
+      data_tests:
+        - not_null
+        - accepted_values:
+            values: ['Buyer', 'Prospect']
+            config:
+              severity: warn
+
+    - name: customer_journey_sub_segment_name
+      data_type: string
+      description: "{{ doc('column__customer_journey_sub_segment_name') }}"
+      data_tests:
+        - not_null
+        - accepted_values:
+            values: ['Churned','Pending Onboarding','Regret','Onboarding','Reactivated','Always On','Frequent','Regular','Occasional']
+            config:
+              severity: warn
+
+    - name: customer_journey_main_segment_description
+      data_type: string
+      description: "{{ doc('column__customer_journey_main_segment_description') }}"
+      data_tests:
+        - not_null
+
+    - name: customer_journey_sub_segment_description
+      data_type: string
+      description: "{{ doc('column__customer_journey_sub_segment_description') }}"
+      data_tests:
+        - not_null
