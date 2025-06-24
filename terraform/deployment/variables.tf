@@ -27,7 +27,6 @@ variable "medallion_layers" {
     "gold",
     "mltesting",
     "mlfeaturetesting",
-    "snapshots",
     "mlgold",
     "mlfeatures",
     "mloutputs",

@@ -84,7 +84,6 @@ variable "schemas" {
     "mloutputs",
     "mltesting",
     "mlfeaturetesting",
-    "snapshots",
     "forecasting"
   ]
   description = "Names of schemas within the Databricks catalogs."
