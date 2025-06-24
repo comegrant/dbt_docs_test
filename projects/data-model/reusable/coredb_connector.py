@@ -5,7 +5,15 @@ from pyspark.sql import SparkSession
 from pyspark.dbutils import DBUtils
 
 
-def create_or_replace_table_query(host: str, database: str, table: str, query: str, user: str, password: str) -> None:
+def create_or_replace_table_query(
+    host: str, 
+    database: str, 
+    table: str, 
+    query: str, 
+    user: str, 
+    password: str,
+    sink_schema: str = "bronze"
+) -> None:
     """
     Extract data from CoreDB and load it into a table the bronze layer in Databricks.
 
@@ -16,6 +24,7 @@ def create_or_replace_table_query(host: str, database: str, table: str, query: s
         query (str): Query to run towards the database in CoreDB
         user (str): The username for CoreDB
         password (str): The password for CoreDB
+        sink_schema (str): The schema to save the table in. Default is bronze
     """
 
     spark = SparkSession.builder.getOrCreate()
@@ -32,7 +41,7 @@ def create_or_replace_table_query(host: str, database: str, table: str, query: s
 
     database = database.lower()
 
-    remote_table.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"bronze.{database}__{table}")
+    remote_table.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{sink_schema}.{database}__{table}")
 
 def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     """
@@ -56,8 +65,31 @@ def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, h
         table (str): The table to extract
         query (str): Query to run towards datab
     """
-
     username = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-username" )
     password = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-password" )
 
     create_or_replace_table_query(host, database, table, query, username, password)
+
+    
+    spark = SparkSession.builder.getOrCreate()
+    catalog = spark.sql("select current_catalog()").collect()[0]['current_catalog()']
+
+    #Letting retention duration of delta tables be longer than default in prod.bronze
+    if catalog == 'prod':
+        alter_query = f"""
+            ALTER TABLE bronze.{database}__{table}
+            SET TBLPROPERTIES (
+                delta.deletedFileRetentionDuration = "interval 30 days",
+                delta.logRetentionDuration = "interval 30 days"
+            )
+            """
+    #If not prod, then we reset the retention duration to default
+    else:
+        alter_query = f"""
+            ALTER TABLE bronze.{database}__{table}
+            UNSET TBLPROPERTIES (
+                'delta.deletedFileRetentionDuration',
+                'delta.logRetentionDuration'
+            )
+            """
+    spark.sql(alter_query)
