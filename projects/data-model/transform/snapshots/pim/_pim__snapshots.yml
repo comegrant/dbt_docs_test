@@ -12,3 +12,14 @@ snapshots:
       updated_at: created_at
       hard_deletes: 'invalidate'
       dbt_valid_to_current: "to_date('9999-12-31')"
+  - name: scd_pim__price_categories
+    description: Track updates performed to the recipe_categories table in PIM.
+    config:
+      unique_key: ck_price_category
+      strategy: timestamp
+      # The reason for using created_at and not updated as is because 
+      # the source table does not have updates, only inserts and deletes.
+      # The valid from will hence always be the same as created at.
+      updated_at: updated_at
+      hard_deletes: 'invalidate'
+      dbt_valid_to_current: "to_date('9999-12-31')"
