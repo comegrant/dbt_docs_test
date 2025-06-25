@@ -308,13 +308,29 @@ table 'Order Measures'
 	/// Excluding VAT
 	measure 'Discount Value Ex Vat' =
 			CALCULATE(
-				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				[Order Value Net Ex Vat'],
 				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
 			)
 		displayFolder: Discount
 		lineageTag: a27fd9f8-407b-49fb-bdee-29f4121fffd5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Number of Order with Discounts
+	measure 'Number of Orders With Discounts' =
+			CALCULATE(
+				[Number of Orders],
+				'Order Measures'[fk_dim_discounts] <> '0'
+			)
+		displayFolder: Discount
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Share of Orders With Discounts
+	/// Is currently on a order line level, meaning that it can not be combined with the Product table or Recipes table since 
+	/// those are related to other order lines. This can be changed if needed.
+	measure 'Share of Orders With Discounts' = DIVIDE([Number of Orders With Discounts], [Number of Orders])
+		displayFolder: Discount
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
