@@ -342,8 +342,8 @@ relationship fact_billing_agreements_daily_to_dim_loyalty_seasons
 	fromColumn: 'Fact Billing Agreements'.fk_dim_loyalty_seasons
 	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
 
-relationship fact_billing_agreements_daily_to_dim_periods_since_first_order
-	fromColumn: 'Fact Billing Agreements'.fk_dim_periods_since_first_order
+relationship fact_billing_agreements_daily_to_dim_periods_since_first_menu_week
+	fromColumn: 'Fact Billing Agreements'.fk_dim_periods_since_first_menu_week
 	toColumn: 'Periods Since First Menu Week'.pk_dim_periods_since
 
 relationship fact_billing_agreements_daily_to_dim_preference_combinations

@@ -185,12 +185,12 @@ table 'Fact Billing Agreements'
 		summarizeBy: none
 		sourceColumn: fk_dim_companies
 
-	column fk_dim_periods_since_first_order
+	column fk_dim_periods_since_first_menu_week
 		dataType: int64
 		isHidden
 		formatString: 0
 		summarizeBy: none
-		sourceColumn: fk_dim_periods_since_first_order
+		sourceColumn: fk_dim_periods_since_first_menu_week
 
 	/// Primary key for the preference combinations dimension.
 	column fk_dim_preference_combinations
