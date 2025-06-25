@@ -308,7 +308,7 @@ table 'Order Measures'
 	/// Excluding VAT
 	measure 'Discount Value Ex Vat' =
 			CALCULATE(
-				[Order Value Net Ex Vat'],
+				[Order Value Net Ex Vat],
 				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
 			)
 		displayFolder: Discount
@@ -320,7 +320,7 @@ table 'Order Measures'
 	measure 'Number of Orders With Discounts' =
 			CALCULATE(
 				[Number of Orders],
-				'Order Measures'[fk_dim_discounts] <> '0'
+				'Order Measures'[fk_dim_discounts] <> "0"
 			)
 		displayFolder: Discount
 
