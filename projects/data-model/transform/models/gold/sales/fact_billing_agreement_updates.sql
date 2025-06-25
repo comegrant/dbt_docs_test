@@ -72,7 +72,7 @@ dim_billing_agreements as (
     , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
     , billing_agreement_preferences_previous_version.preference_combination_id as fk_dim_preference_combinations_previous_version
     , md5(agreements.company_id) as fk_dim_companies
-    , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
+    , loyalty_seasons.pk_dim_loyalty_seasons as fk_dim_loyalty_seasons
 
     , case
         when agreements.valid_from < agreements.first_menu_week_monday_date then 0

@@ -1,0 +1,244 @@
+/// This table contains measures related to customers, subscribers and their billing agreements.
+/// It will be used in the measures found in [Customer and Subscriber Measures], in order to get better
+/// performance and more functionality.
+/// A customer is a person who has had at least one order in the selected period.
+/// A subscriber does not need to have had an order, but has a billing agreement.
+/// The customer journey model is not implemented yet, but once it is, measures related to the customer journey can be found here.
+table 'Fact Billing Agreements'
+	isHidden
+	lineageTag: fact-billing-agreements
+
+
+	/// Number of subscribers included all selected statuses (also included deleted if not filtered otherwise).
+	/// This should be used together with the [Billing Agreement Status] filter in the [Customer and Subscriber Details] table.
+	/// It will count the number of subscribers at the end of the selected period.
+	measure 'Number of Subscribers All Statuses from fact_billing_agreements' =
+			CALCULATE(
+				DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+				'Dates'[Date] = MAX('Fact Billing Agreements'[date])
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Selected Statuses
+
+	measure 'Number of Subscribers Changed from Active from fact_billing_agreements daily' =
+			VAR start_date = MIN('Dates'[Date]) - 1
+			VAR end_date = MAX('Dates'[Date])
+			RETURN
+			SUMX(
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
+
+				VAR agreement_got_deleted = 
+					ISBLANK(
+						CALCULATE(
+							DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+							'Dates'[Date] = end_date,
+							ALL('Dates'[Date])
+						)
+					)
+				
+				VAR agreements_starting_as_active = 
+					CALCULATE(
+						DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+						'Customer and Subscriber Details'[Billing Agreement Status] = "Active",
+						'Dates'[Date] = start_date,
+						ALL('Dates'[Date])
+					) 
+
+				VAR agreements_ending_as_inactive = 
+					IF(
+						agreement_got_deleted,
+						1,
+						CALCULATE(
+							DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+							'Customer and Subscriber Details'[Billing Agreement Status] <> "Active",
+							'Dates'[Date] = end_date,
+							ALL('Dates'[Date])
+						)
+					)
+					
+				RETURN agreements_starting_as_active * agreements_ending_as_inactive
+				
+			)
+			
+		formatString: #,0
+		isHidden
+		displayFolder: Active Subscribers
+
+	measure 'Number of Subscribers Changed from Active from fact_billing_agreements weekly' =
+			VAR start_week_end = MIN('Dates'[Date]) - 1
+			VAR start_week_start = start_week_end - 6
+			VAR end_week_end = MAX('Dates'[Date])
+			VAR end_week_start = end_week_end - 6
+			RETURN
+			SUMX(
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
+
+				VAR agreement_got_deleted = 
+					ISBLANK(
+						CALCULATE(
+							DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+							'Dates'[Date] >= end_week_start,
+							'Dates'[Date] <= end_week_end,
+							ALL('Dates'[Date])
+						)
+					)
+				
+				VAR agreements_starting_as_active = 
+					CALCULATE(
+						DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+						'Customer and Subscriber Details'[Billing Agreement Status] = "Active",
+						'Dates'[Date] >= start_week_start,
+						'Dates'[Date] <= start_week_end,
+						ALL('Dates'[Date])
+					) 
+
+				VAR agreements_ending_as_inactive = 
+					IF(
+						agreement_got_deleted,
+						1,
+						CALCULATE(
+							DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+							'Customer and Subscriber Details'[Billing Agreement Status] <> "Active",
+							'Dates'[Date] >= end_week_start,
+							'Dates'[Date] <= end_week_end,
+							ALL('Dates'[Date])
+						)
+					)
+					
+				RETURN agreements_starting_as_active * agreements_ending_as_inactive
+				
+			)
+			
+		formatString: #,0
+		isHidden
+		displayFolder: Active Subscribers
+
+	measure 'Number of Subscribers Changed to Active from fact_billing_agreements daily' =
+			VAR start_date = MIN('Dates'[Date]) - 1
+			VAR end_date = MAX('Dates'[Date])
+			RETURN
+			SUMX(
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
+				CALCULATE(
+					DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+					'Customer and Subscriber Details'[Billing Agreement Status] <> "Active",
+					'Dates'[Date] = start_date,
+					ALL('Dates'[Date])
+				) *
+				CALCULATE(
+					DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+					'Customer and Subscriber Details'[Billing Agreement Status] = "Active",
+					'Dates'[Date] = end_date,
+					ALL('Dates'[Date])
+				)
+			)
+			
+		formatString: #,0
+		isHidden
+		displayFolder: Active Subscribers
+
+	measure 'Number of Subscribers Changed to Active from fact_billing_agreements weekly' =
+			VAR start_week_end = MIN('Dates'[Date]) - 1
+			VAR start_week_start = start_week_end - 6
+			VAR end_week_end = MAX('Dates'[Date])
+			VAR end_week_start = end_week_end - 6
+			RETURN
+			SUMX(
+				VALUES('Customer and Subscriber Details'[Agreement Id]),
+				CALCULATE(
+					DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+					'Customer and Subscriber Details'[Billing Agreement Status] <> "Active",
+					'Dates'[Date] >= start_week_start,
+					'Dates'[Date] <= start_week_end,
+					ALL('Dates'[Date])
+				) *
+				CALCULATE(
+					DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
+					'Customer and Subscriber Details'[Billing Agreement Status] = "Active",
+					'Dates'[Date] >= end_week_start,
+					'Dates'[Date] <= end_week_end,
+					ALL('Dates'[Date])
+				)
+			)
+			
+		formatString: #,0
+		isHidden
+		displayFolder: Active Subscribers
+
+	column fk_dim_dates
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: fk_dim_dates
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	column fk_dim_periods_since_first_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: fk_dim_periods_since_first_order
+
+	/// Primary key for the preference combinations dimension.
+	column fk_dim_preference_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_preference_combinations
+
+	column fk_dim_loyalty_seasons
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: fk_dim_loyalty_seasons
+
+	column billing_agreement_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: billing_agreement_id
+
+	column is_monday
+		dataType: boolean
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_monday
+
+	column date
+		dataType: dateTime
+		formatString: Short Date
+		isHidden
+		summarizeBy: none
+		sourceColumn: date
+
+	partition 'fact Billing Agreements' = m
+		mode: directQuery
+		source =
+				let
+					Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+					fact_billing_agreements_daily_Table = gold_Schema{[Name="fact_billing_agreements_daily",Kind="Table"]}[Data],
+					FilteredRows = Table.SelectRows(
+        				fact_billing_agreements_daily_Table,
+						each [is_monday] = true or [date] >= Date.AddDays(Date.From(DateTime.FixedLocalNow()), -30)											
+					),
+					FilteredRowsIncremental = Table.SelectRows(FilteredRows, each [date] >= RangeStart and [date] < RangeEnd)
+				in
+					FilteredRowsIncremental

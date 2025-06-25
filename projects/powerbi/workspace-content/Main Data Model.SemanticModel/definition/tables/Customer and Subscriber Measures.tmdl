@@ -99,6 +99,39 @@ table 'Customer and Subscriber Measures'
 	/// This should be used together with the [Billing Agreement Status] filter in the [Customer and Subscriber Details] table.
 	/// It will count the number of subscribers at the end of the selected period.
 	measure 'Number of Subscribers All Statuses' =
+			// If there is a filter on the 'Periods Since First Menu Week' table,
+			// or if the date range is less than or equal to 30 days,
+			// or if the date range is less than or equal to 2 years and there are multiple days selected,
+			// then use the fact_billing_agreements table which is on a daily level for the past 30 days,
+			// and on a weekly level for the past 2 years.
+			// Else use the fact_billing_agreements_updates table, which is can be used on a daily level, 
+			// but has slower performance and cannot be used together with 'Periods Since First Menu Week'.
+			IF(
+				ISFILTERED('Periods Since First Menu Week') 
+				||
+				DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						DAY
+					) <= 30 
+					&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
+				||
+				(
+					DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						YEAR
+					) <= 2
+					&& NOT HASONEVALUE('Dates'[Date])
+					&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
+				),
+				'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
+				'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
+			)
+		formatString: #,0
+		displayFolder: Selected Statuses
+
+	measure 'Number of Subscribers All Statuses from fact_billing_agreement_updates' =
 			VAR OneStatus = HASONEVALUE('Customer and Subscriber Details'[Billing Agreement Status])
 			VAR StatusIsBlank = ISBLANK(SELECTEDVALUE('Customer and Subscriber Details'[Billing Agreement Status]))
 			RETURN
@@ -108,8 +141,8 @@ table 'Customer and Subscriber Measures'
 			    [Number of Subscribers All Statuses Included Blanks]
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Selected Statuses
-		lineageTag: fd14e082-b1f9-477a-8dfc-6ac06324ce11
 
 	/// Number of subscribers included all statuses (also included deleted and blanks).
 	measure 'Number of Subscribers All Statuses Included Blanks' =
@@ -343,6 +376,33 @@ table 'Customer and Subscriber Measures'
 	/// It will count number of subscribers that was in a active state at the beginning of the selected period
 	/// and was in another status at the end of the selected period.
 	measure 'Number of Subscribers Changed from Active' =
+			IF(
+
+				DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						YEAR
+					) <= 2 &&
+					NOT HASONEVALUE('Dates'[Date]),
+
+				'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements weekly],
+				
+				IF(
+					DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						DAY
+					) <= 30,
+					'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements daily],
+					'Customer and Subscriber Measures'[Number of Subscribers Changed from Active from fact_billing_agreement_updates]
+				)
+
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+
+	measure 'Number of Subscribers Changed from Active from fact_billing_agreement_updates' =
 			SUMX(
 				VALUES('Customer and Subscriber Details'[Agreement Id]),
 
@@ -389,6 +449,7 @@ table 'Customer and Subscriber Measures'
 			)
 		formatString: #,0
 		displayFolder: Active Subscribers
+		isHidden
 		lineageTag: a950a2a5-a013-47d2-b69e-01e8337bf788
 
 	/// Number of subscribers changing status from active to another status in the same period last year.
@@ -448,6 +509,32 @@ table 'Customer and Subscriber Measures'
 	/// It will count number of subscribers that was not in a active state at the beginning of the selected period
 	/// but was active at the end of the selected period.
 	measure 'Number of Subscribers Changed to Active' =
+			IF(
+
+				DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						YEAR
+					) <= 2 &&
+					NOT HASONEVALUE('Dates'[Date]),
+
+				'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements weekly],
+				
+				IF(
+					DATEDIFF(
+						MIN('Dates'[Date]),
+						TODAY(),
+						DAY
+					) <= 30,
+					'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements daily],
+					'Customer and Subscriber Measures'[Number of Subscribers Changed to Active from fact_billing_agreement_updates]
+				)
+
+			)
+		formatString: #,0
+		displayFolder: Active Subscribers
+
+	measure 'Number of Subscribers Changed to Active from fact_billing_agreement_updates' =
 			SUMX(
 				VALUES('Customer and Subscriber Details'[Agreement Id]),
 
@@ -494,6 +581,7 @@ table 'Customer and Subscriber Measures'
 			)
 		formatString: #,0
 		displayFolder: Active Subscribers
+		isHidden
 		lineageTag: 60ba4403-dc9a-4221-b046-d3dea3afa7bb
 
 	/// Number of subscribers changes their status to active in the same period previous year.

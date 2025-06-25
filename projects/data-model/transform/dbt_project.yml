@@ -45,7 +45,7 @@ vars:
  grocery_basket_type_id: '1F72B8C1-D765-426D-88E3-EC412FB7F4B7'
  basket_split_migration_date: '2025-05-08'
  incremental_number_of_days: 30
- full_load_first_date: '2024-01-15'
+ full_load_first_date: '2023-01-01'
  subscription_order_type_ids: [
           "'1C182E51-ECFA-4119-8928-F2D9F57C5FCC'", #Orders after cutoff
           "'5F34860B-7E61-46A0-80F7-98DCDC53BA9E'", #Recurring

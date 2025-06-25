@@ -324,7 +324,32 @@ relationship fact_loyalty_orders_to_dim_loyalty_seasons
 
 relationship fact_orders_to_dim_discounts
     fromColumn: 'Order Measures'.fk_dim_discounts
-    toColumn: 'Discounts'.pk_dim_discounts
+    toColumn: Discounts.pk_dim_discounts
+
+relationship fact_billing_agreements_daily_to_dim_billing_agreements
+	fromColumn: 'Fact Billing Agreements'.fk_dim_billing_agreements
+	toColumn: 'Customer and Subscriber Details'.pk_dim_billing_agreements
+
+relationship fact_billing_agreements_daily_to_dim_dates
+	fromColumn: 'Fact Billing Agreements'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates
+
+relationship fact_billing_agreements_daily_to_dim_companies
+	fromColumn: 'Fact Billing Agreements'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_billing_agreements_daily_to_dim_loyalty_seasons
+	fromColumn: 'Fact Billing Agreements'.fk_dim_loyalty_seasons
+	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
+
+relationship fact_billing_agreements_daily_to_dim_periods_since_first_order
+	fromColumn: 'Fact Billing Agreements'.fk_dim_periods_since_first_order
+	toColumn: 'Periods Since First Menu Week'.pk_dim_periods_since
+
+relationship fact_billing_agreements_daily_to_dim_preference_combinations
+	fromColumn: 'Fact Billing Agreements'.fk_dim_preference_combinations
+	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
+
 relationship fact_cases_to_dim_billing_agreements
 	fromColumn: 'Case Measures'.fk_dim_billing_agreements
 	toColumn: 'Customer and Subscriber Details'.pk_dim_billing_agreements
