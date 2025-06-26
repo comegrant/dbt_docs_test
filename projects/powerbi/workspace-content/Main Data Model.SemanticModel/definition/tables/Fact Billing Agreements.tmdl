@@ -225,7 +225,7 @@ table 'Fact Billing Agreements'
 		formatString: General Date
 		isHidden
 		summarizeBy: none
-		sourceColumn: date
+		sourceColumn: date_
 
 	partition 'fact Billing Agreements' = m
 		mode: directQuery

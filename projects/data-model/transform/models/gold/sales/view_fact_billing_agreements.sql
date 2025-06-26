@@ -15,7 +15,8 @@ all_days as (
 , last_30_days_or_mondays as (
 
     select 
-    * 
+    * except (date),
+    date as date_
     from all_days
     where 
         date >= current_date() - interval '30 days'
