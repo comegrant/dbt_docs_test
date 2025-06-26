@@ -320,8 +320,9 @@ table 'Order Measures'
 	measure 'Number of Orders With Discounts' =
 			CALCULATE(
 				[Number of Orders],
-				'Order Measures'[fk_dim_discounts] <> "0"
+				'Order Measures'[order_line_type_name] IN {"DISCOUNT"}
 			)
+		formatString: #,0
 		displayFolder: Discount
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -330,6 +331,7 @@ table 'Order Measures'
 	/// Is currently on a order line level, meaning that it can not be combined with the Product table or Recipes table since 
 	/// those are related to other order lines. This can be changed if needed.
 	measure 'Share of Orders With Discounts' = DIVIDE([Number of Orders With Discounts], [Number of Orders])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		displayFolder: Discount
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
