@@ -15,7 +15,7 @@ table 'Fact Billing Agreements'
 	measure 'Number of Subscribers All Statuses from fact_billing_agreements' =
 			CALCULATE(
 				DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
-				'Dates'[Date] = MAX('Fact Billing Agreements'[date])
+				'Dates'[Date] = MAX('Fact Billing Agreements'[date_])
 			)
 		formatString: #,0
 		isHidden
@@ -220,9 +220,9 @@ table 'Fact Billing Agreements'
 		summarizeBy: none
 		sourceColumn: is_monday
 
-	column date
+	column date_
 		dataType: dateTime
-		formatString: Short Date
+		formatString: General Date
 		isHidden
 		summarizeBy: none
 		sourceColumn: date
@@ -235,6 +235,6 @@ table 'Fact Billing Agreements'
 					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 					fact_billing_agreements_daily_Table = gold_Schema{[Name="view_fact_billing_agreements",Kind="Table"]}[Data],
-					FilteredRows = Table.SelectRows(fact_billing_agreements_daily_Table, each [date] >= RangeStart and [date] < RangeEnd)
+					FilteredRows = Table.SelectRows(fact_billing_agreements_daily_Table, each [date_] >= RangeStart and [date] < RangeEnd)
 				in
 					FilteredRows
