@@ -15,6 +15,7 @@ model-registry = {path = "../../packages/model-registry", develop = true}
 openai = "^1.82.0"
 scikit-learn = "^1.6.1"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
+slack-connector = {path = "../../packages/slack-connector", develop = true}
 
 [tool.poetry.group.databricks.dependencies]
 nest_asyncio = "1.6.0"

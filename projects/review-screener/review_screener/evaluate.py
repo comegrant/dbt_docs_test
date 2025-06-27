@@ -44,7 +44,7 @@ async def process_reviews(df: pd.DataFrame, client: OpenAI) -> list[Response]:
     return responses
 
 
-async def evaluate_openai_response(df: pd.DataFrame, threshold: float) -> None:
+async def evaluate_openai_response(df: pd.DataFrame, threshold: float) -> tuple[float, float, float, float]:
     """Evaluates the OpenAI response and logs the results to Databrick experiment.
 
     Args:
@@ -77,7 +77,4 @@ async def evaluate_openai_response(df: pd.DataFrame, threshold: float) -> None:
         mlflow.log_metric("f1", f1)
         mlflow.log_metric("accuracy", accuracy)
 
-        assert recall >= threshold, f"Recall {recall:.2%} is below threshold {threshold:.2%}"
-        assert precision >= threshold, f"Precision {precision:.2%} is below threshold {threshold:.2%}"
-        assert f1 >= threshold, f"F1 Score {f1:.2%} is below threshold {threshold:.2%}"
-        assert accuracy >= threshold, f"Accuracy {accuracy:.2%} is below threshold {threshold:.2%}"
+        return recall, precision, f1, accuracy

@@ -52,7 +52,7 @@ resources:
               header_message: ❌ Evaluation of Review Screener job failed
               body_message: Check Databricks for more details
               is_error: true
-              relevant_people: Agathe Raaum
+              relevant_people: agathe
 
         - task_key: evaluate_openai-success
           depends_on:
