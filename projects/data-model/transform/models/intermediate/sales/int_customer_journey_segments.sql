@@ -223,44 +223,44 @@ agreements_with_history as (
         when agreements_and_weeks_joined.weeks_since_signup < 3 
             and weeks_since_first_order is null
             and agreements_first_freeze_date.first_freeze_date < agreements_and_weeks_joined.menu_week_monday_date
-            then 'Regret'
+            then {{ var("customer_journey_sub_segment_ids")["regret"] }}
         when agreements_and_weeks_joined.weeks_since_signup < 3 
             and agreements_and_weeks_joined.weeks_since_first_order is null 
-            then 'Pending Onboarding'
+            then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
         when agreements_and_weeks_joined.weeks_since_signup >= 3 
             and agreements_and_weeks_joined.weeks_since_first_order is null 
-            then 'Regret'
+            then {{ var("customer_journey_sub_segment_ids")["regret"] }}
         when (agreements_and_weeks_joined.weeks_since_first_order < 3 
             and agreements_and_weeks_joined.weeks_since_first_order is not null) 
-            then 'Onboarding'
+            then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
         when (agreements_and_weeks_joined.weeks_since_first_order < 7 
             and orders_past_8_weeks.number_of_orders <4) 
-            then 'Onboarding'
+            then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
         when (weeks_since_reactivation.weeks_since_reactivation < 7 
             and orders_past_8_weeks.number_of_orders < 4 ) 
-            then 'Reactivated'
+            then {{ var("customer_journey_sub_segment_ids")["reactivated"] }}
         when orders_past_8_weeks.number_of_orders < 4
             and agreements_and_weeks_joined.weeks_since_first_order >= 7 
-            then 'Occasional'
+            then {{ var("customer_journey_sub_segment_ids")["occasional"] }}
         when orders_past_8_weeks.number_of_orders >= 4 
             and orders_past_8_weeks.number_of_orders < 6 
             and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
                 or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then 'Regular'
+            then {{ var("customer_journey_sub_segment_ids")["regular"] }}
         when orders_past_8_weeks.number_of_orders >= 6 
             and orders_past_8_weeks.number_of_orders < 8
             and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
                 or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then 'Frequent'
+            then {{ var("customer_journey_sub_segment_ids")["frequent"] }}
         when orders_past_8_weeks.number_of_orders >= 7
             and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
                 or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then 'Always On'
+            then {{ var("customer_journey_sub_segment_ids")["always_on"] }}
         when (agreements_and_weeks_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null) 
-            then 'Churned'
+            then {{ var("customer_journey_sub_segment_ids")["churned"] }}
         else 
-            'unknown'
-        end as sub_segment_name
+            0 --unknown
+        end as sub_segment_id
     from agreements_and_weeks_joined
     left join orders_past_8_weeks 
         on agreements_and_weeks_joined.billing_agreement_id = orders_past_8_weeks.billing_agreement_id
@@ -279,12 +279,12 @@ agreements_with_history as (
 , agreement_previous_segment as (
     select
         billing_agreement_id
-        , menu_yearweek
-        , sub_segment_name
-        , lag(sub_segment_name) over (
+        , menu_week_monday_date
+        , sub_segment_id
+        , lag(sub_segment_id) over (
             partition by billing_agreement_id
-            order by menu_yearweek
-        ) as previous_sub_segment_name
+            order by menu_week_monday_date
+        ) as previous_sub_segment_id
     from sub_segments
 
 )
@@ -292,23 +292,26 @@ agreements_with_history as (
 , segment_with_valid_from as (
     select
         billing_agreement_id
-        , sub_segment_name
-        , menu_yearweek as menu_year_week_from
+        , sub_segment_id
+        , menu_week_monday_date as menu_week_monday_date_from
     from agreement_previous_segment
-    where previous_sub_segment_name is null
-       or sub_segment_name != previous_sub_segment_name
+    where previous_sub_segment_id is null
+       or sub_segment_id != previous_sub_segment_id
 
 )
 
 , segment_valid_to_and_from as (
     select
         segment_with_valid_from.billing_agreement_id
-        , segment_with_valid_from.sub_segment_name
-        , segment_with_valid_from.menu_year_week_from
-        , lead (menu_year_week_from) over (
-            partition by segment_with_valid_from.billing_agreement_id
-            order by menu_year_week_from
-        ) as menu_year_week_to
+        , segment_with_valid_from.sub_segment_id
+        , segment_with_valid_from.menu_week_monday_date_from
+        , coalesce(
+            lead (menu_week_monday_date_from) over (
+                partition by segment_with_valid_from.billing_agreement_id
+                order by menu_week_monday_date_from
+            ),
+            '{{var("future_proof_date")}}'
+         ) as menu_week_monday_date_to
     from segment_with_valid_from
 
 )

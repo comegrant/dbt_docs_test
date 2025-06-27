@@ -34,6 +34,12 @@ dates as (
 
 )
 
+, customer_journey_segments as (
+
+    select * from {{ ref('int_customer_journey_segments') }}
+
+)
+
 , billing_agreements as (
 
     select * from {{ ref('dim_billing_agreements') }}
@@ -150,6 +156,7 @@ dates as (
     ) as fk_dim_periods_since_first_menu_week
     , billing_agreements_not_deleted.preference_combination_id as fk_dim_preference_combinations
     , loyalty_seasons.pk_dim_loyalty_seasons as fk_dim_loyalty_seasons
+    , md5( cast( customer_journey_segments.sub_segment_id as string) ) as fk_dim_customer_journey_segments
 
     from dates
 
@@ -169,6 +176,11 @@ dates as (
         on billing_agreements_not_deleted.company_id = loyalty_seasons.company_id
         and dates.date >= loyalty_seasons.loyalty_season_start_date
         and dates.date < loyalty_seasons.loyalty_season_end_date
+
+    left join customer_journey_segments
+        on billing_agreements_not_deleted.billing_agreement_id = customer_journey_segments.billing_agreement_id
+        and dates.date >= customer_journey_segments.menu_week_monday_date_from
+        and dates.date < customer_journey_segments.menu_week_monday_date_to
 
     where billing_agreements_not_deleted.billing_agreement_id is not null
 )

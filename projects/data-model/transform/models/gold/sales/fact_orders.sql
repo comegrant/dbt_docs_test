@@ -83,6 +83,12 @@ order_lines as (
 
 )
 
+, customer_journey_segments as (
+
+    select * from {{ ref('int_customer_journey_segments') }}
+
+)
+
 -- TODO: This solution is a bit hacky
 , recommendations_origin as (
 
@@ -767,6 +773,7 @@ order_lines as (
         , coalesce(md5(order_discounts.discount_id), '0') as fk_dim_discounts
         , coalesce(md5(concat(subscribed_groceries_flag.order_line_type_name, subscribed_groceries_flag.order_line_details)), '0') as fk_dim_order_line_details
         , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
+        , md5( cast( customer_journey_segments.sub_segment_id as string) ) as fk_dim_customer_journey_segments
     from subscribed_groceries_flag
     left join products
         on subscribed_groceries_flag.fk_dim_products = products.pk_dim_products
@@ -789,6 +796,10 @@ order_lines as (
         on subscribed_groceries_flag.company_id = loyalty_seasons.company_id
         and subscribed_groceries_flag.source_created_at >= loyalty_seasons.loyalty_season_start_date
         and subscribed_groceries_flag.source_created_at < loyalty_seasons.loyalty_season_end_date
+    left join customer_journey_segments
+        on subscribed_groceries_flag.billing_agreement_id = customer_journey_segments.billing_agreement_id
+        and subscribed_groceries_flag.menu_week_monday_date >= customer_journey_segments.menu_week_monday_date_from
+        and subscribed_groceries_flag.menu_week_monday_date < customer_journey_segments.menu_week_monday_date_to
 
 )
 

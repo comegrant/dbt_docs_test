@@ -559,6 +559,18 @@ models:
               to: ref('dim_discounts')
               field: pk_dim_discounts
 
+      - name: fk_dim_customer_journey_segments
+        data_type: string
+        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_customer_journey_segments')
+            to_columns: [pk_dim_customer_journey_segments]
+        data_tests:
+          - relationships:
+              to: ref('dim_customer_journey_segments')
+              field: pk_dim_customer_journey_segments
+
     versions:
       - v: 1
 

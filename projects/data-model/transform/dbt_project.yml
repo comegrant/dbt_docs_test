@@ -127,6 +127,16 @@ vars:
       country_id: 'D08EA478-447C-4A66-B9EC-D6ABD3697C02'
       pickup_location_postal_code_id: 1
       postal_code_length: 4
+ customer_journey_sub_segment_ids:
+    churned: 1
+    pending_onboarding: 2
+    regret: 3
+    onboarding: 4
+    reactivated: 5
+    always_on: 6
+    frequent: 7
+    regular: 8
+    occasional: 9
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
