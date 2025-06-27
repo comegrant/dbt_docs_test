@@ -226,3 +226,41 @@ The unique id of the case responsible table.
 Contains what reason or which company/supplier was responsible for a case happening. From 2025 this only contains the reason/explanation for a case, not company/supplier.
 
 {% enddocs %}
+
+# Cutoff Calendar
+{% docs column__cutoff_calendar_id %}
+
+The unique identifier for a row in the cutoff calendar.
+
+{% enddocs %}
+
+{% docs column__cutoff_at_local_time %}
+
+The local timestamp when cutoff takes place for the corresponding menu week.
+
+{% enddocs %}
+
+{% docs column__cutoff_at_utc %}
+
+The UTC timestamp when cutoff takes place for the corresponding menu week.
+
+{% enddocs %}
+
+# Cutoff
+{% docs column__cutoff_id %}
+
+The unique identifier for a row in the cutoffs table.
+
+{% enddocs %}
+
+{% docs column__cutoff_name %}
+
+The name of the cutoff. There is a cutoff for each country and an additional cutoff for Godt Matlyst (external company). Cutoff is a timestamp when orders become locked for a particular menu week and country. It is usually scheduled for the same time every week. Changes are often enforced around red days. 
+
+{% enddocs %}
+
+{% docs column__cutoff_description %}
+
+Describes when in the week cutoff usually occurs.  
+
+{% enddocs %}

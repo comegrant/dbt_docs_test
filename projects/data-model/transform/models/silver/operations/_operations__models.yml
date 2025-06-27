@@ -478,3 +478,101 @@ models:
         description: "{{ doc('column__case_responsible_description') }}"
         data_tests:
           - not_null
+
+  - name: operations__cutoffs
+    description: "Names and descriptions of all cutoffs. Cutoff is a timestamp when orders become locked for a particular menu week and country. There is a cutoff for each country and an additional cutoff for Godt Matlyst (external company). It is usually scheduled for the same time every week. Changes are often enforced around red days."
+    columns:
+      - name: cutoff_id
+        data_type: char(36)
+        description: "{{ doc('column__cutoff_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country_id
+        data_type: char(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: cutoff_name
+        data_type: string
+        description: "{{ doc('column__cutoff_name') }}"
+        data_tests:
+          - not_null
+
+      - name: cutoff_description
+        data_type: string
+        description: "{{ doc('column__cutoff_description') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: operations__cutoff_calendar
+    description: "The timestamps of all cutoffs for each menu year and menu week in both local time and utc time. Cutoff is a timestamp when orders become locked for a particular menu week and country. There is a cutoff for each country and an additional cutoff for Godt Matlyst (external company). It is usually scheduled for the same time every week. Changes are often enforced around red days."
+    columns:
+      - name: cutoff_calendar_id
+        data_type: char(36)
+        description: "{{ doc('column__cutoff_calendar_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: cutoff_id
+        data_type: char(36)
+        description: "{{ doc('column__cutoff_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: cutoff_at_local_time
+        data_type: timestamp
+        description: "{{ doc('column__cutoff_at_local_time') }}"
+        data_tests:
+          - not_null
+
+      - name: cutoff_at_utc
+        data_type: timestamp
+        description: "{{ doc('column__cutoff_at_utc') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"

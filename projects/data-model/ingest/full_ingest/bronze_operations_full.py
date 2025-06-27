@@ -13,6 +13,8 @@ tables = [
         , "case_line_ingredient"
         , "case_line_type"
         , "case_responsible"
+        , "cutoff"
+        , "cutoff_calendar"
         , "postal_codes"
         , "timeblock_blacklist"
         , "zones"

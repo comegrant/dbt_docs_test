@@ -10,6 +10,8 @@ sources:
       - name: operations__case_line_ingredient
       - name: operations__case_responsible
       - name: operations__cases
+      - name: operations__cutoff
+      - name: operations__cutoff_calendar
       - name: operations__postal_codes
       - name: operations__timeblock_blacklist
       - name: operations__zones_blacklist
