@@ -16,7 +16,7 @@ all_days as (
 
     select 
     * except (date),
-    date as date_
+    cast(date as timestamp) as date
     from all_days
     where 
         date >= current_date() - interval '30 days'

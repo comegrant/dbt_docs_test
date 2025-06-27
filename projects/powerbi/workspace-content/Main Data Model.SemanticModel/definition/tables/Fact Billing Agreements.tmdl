@@ -220,12 +220,12 @@ table 'Fact Billing Agreements'
 		summarizeBy: none
 		sourceColumn: is_monday
 
-	column date_
+	column date
 		dataType: dateTime
 		formatString: General Date
 		isHidden
 		summarizeBy: none
-		sourceColumn: date_
+		sourceColumn: date
 
 	partition 'fact Billing Agreements' = m
 		mode: directQuery
@@ -235,6 +235,6 @@ table 'Fact Billing Agreements'
 					catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 					gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
 					fact_billing_agreements_daily_Table = gold_Schema{[Name="view_fact_billing_agreements",Kind="Table"]}[Data],
-					FilteredRows = Table.SelectRows(fact_billing_agreements_daily_Table, each [date_] >= RangeStart and [date_] < RangeEnd)
+					FilteredRows = Table.SelectRows(fact_billing_agreements_daily_Table, each [date] >= RangeStart and [date] < RangeEnd)
 				in
 					FilteredRows
