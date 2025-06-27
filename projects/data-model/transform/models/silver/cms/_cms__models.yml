@@ -1246,7 +1246,8 @@ models:
                     'Locked',
                     'Leads',
                     'Bad Player (avida)',
-                    'Postal Area Closed'
+                    'Postal Area Closed',
+                    'User'
                 ]
 
       - name: source_created_at
