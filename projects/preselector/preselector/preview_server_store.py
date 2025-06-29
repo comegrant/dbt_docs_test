@@ -37,7 +37,6 @@ async def load_store() -> ContractStore:
 
 def remove_user_sources(store: ContractStore) -> tuple[ContractStore, list[CacheSourceConfig]]:
     today = date.today()
-    this_week = today.isocalendar().week
 
     depends_on = store.feature_view(PreselectorOutput).view.source.depends_on()
 
@@ -45,7 +44,7 @@ def remove_user_sources(store: ContractStore) -> tuple[ContractStore, list[Cache
         (
             RecipeCost.location,
             InMemorySource.empty(),
-            (pl.col("menu_year") >= today.year) & (pl.col("menu_week") > this_week),
+            (pl.col("menu_year") >= today.year),
         ),
         (
             PreselectorYearWeekMenu.location,
