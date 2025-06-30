@@ -15,7 +15,7 @@ table 'Fact Billing Agreements'
 	measure 'Number of Subscribers All Statuses from fact_billing_agreements' =
 			CALCULATE(
 				DISTINCTCOUNT('Fact Billing Agreements'[billing_agreement_id]),
-				'Dates'[Date] = MAX('Fact Billing Agreements'[date_])
+				'Dates'[Date] = MAX('Fact Billing Agreements'[date])
 			)
 		formatString: #,0
 		isHidden
