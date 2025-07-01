@@ -106,28 +106,29 @@ table 'Customer and Subscriber Measures'
 			// and on a weekly level for the past 2 years.
 			// Else use the fact_billing_agreements_updates table, which is can be used on a daily level, 
 			// but has slower performance and cannot be used together with 'Periods Since First Menu Week'.
-			IF(
-				ISFILTERED('Periods Since First Menu Week') 
-				||
-				DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						DAY
-					) <= 30 
-					&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
-				||
-				(
-					DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						YEAR
-					) <= 2
-					&& NOT HASONEVALUE('Dates'[Date])
-					&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
-				),
-				'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
-				'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
-			)
+			//IF(
+			//	ISFILTERED('Periods Since First Menu Week') 
+			//	||
+			//	DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			DAY
+			//		) <= 30 
+			//		&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
+			//	||
+			//	(
+			//		DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			YEAR
+			//		) <= 2
+			//		&& NOT HASONEVALUE('Dates'[Date])
+			//		&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
+			//	),
+			//	'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
+			//	'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
+			//)
+			'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
 		formatString: #,0
 		displayFolder: Selected Statuses
 
@@ -376,28 +377,29 @@ table 'Customer and Subscriber Measures'
 	/// It will count number of subscribers that was in a active state at the beginning of the selected period
 	/// and was in another status at the end of the selected period.
 	measure 'Number of Subscribers Changed from Active' =
-			'IF(Add commentMore actions
-
-				DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						YEAR
-					) <= 2 &&
-					NOT HASONEVALUE('Dates'[Date]),
-
-				'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements weekly],
-				
-				IF(
-					DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						DAY
-					) <= 30,
-					'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements daily],
-					'Customer and Subscriber Measures'[Number of Subscribers Changed from Active from fact_billing_agreement_updates]
-				)
-
-			)
+			//IF(
+			//
+			//	DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			YEAR
+			//		) <= 2 &&
+			//		NOT HASONEVALUE('Dates'[Date]),
+			//
+			//	'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements weekly],
+			//	
+			//	IF(
+			//		DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			DAY
+			//		) <= 30,
+			//		'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements daily],
+			//		'Customer and Subscriber Measures'[Number of Subscribers Changed from Active from fact_billing_agreement_updates]
+			//	)
+			//
+			//)
+			'Customer and Subscriber Measures'[Number of Subscribers Changed from Active from fact_billing_agreement_updates]
 		formatString: #,0
 		displayFolder: Active Subscribers
 
@@ -509,28 +511,29 @@ table 'Customer and Subscriber Measures'
 	/// It will count number of subscribers that was not in a active state at the beginning of the selected period
 	/// but was active at the end of the selected period.
 	measure 'Number of Subscribers Changed to Active' =
-			IF(
-
-				DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						YEAR
-					) <= 2 &&
-					NOT HASONEVALUE('Dates'[Date]),
-
-				'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements weekly],
-				
-				IF(
-					DATEDIFF(
-						MIN('Dates'[Date]),
-						TODAY(),
-						DAY
-					) <= 30,
-					'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements daily],
-					'Customer and Subscriber Measures'[Number of Subscribers Changed to Active from fact_billing_agreement_updates]
-				)
-
-			)
+			//IF(
+			//
+			//	DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			YEAR
+			//		) <= 2 &&
+			//		NOT HASONEVALUE('Dates'[Date]),
+			//
+			//	'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements weekly],
+			//	
+			//	IF(
+			//		DATEDIFF(
+			//			MIN('Dates'[Date]),
+			//			TODAY(),
+			//			DAY
+			//		) <= 30,
+			//		'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements daily],
+			//		'Customer and Subscriber Measures'[Number of Subscribers Changed to Active from fact_billing_agreement_updates]
+			//	)
+			//
+			//)
+			'Customer and Subscriber Measures'[Number of Subscribers Changed to Active from fact_billing_agreement_updates]
 		formatString: #,0
 		displayFolder: Active Subscribers
 
