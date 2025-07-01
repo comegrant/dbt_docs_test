@@ -16,3 +16,9 @@ data_tests:
   - name: dim_loyalty_seasons_no_overlaps
     description: >
       Ensure there are no overlapping loyalty seasons per company
+  
+  - name: fact_forecast_variations_recipes_exist_for_dishes
+    description: >
+      Ensure that all forecasted dishes have an associated recipe
+    config:
+      severity: warn

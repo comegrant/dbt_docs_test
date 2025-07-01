@@ -75,7 +75,7 @@
       - name: shipping_address_id
         data_type: string
         description: "{{ doc('column__shipping_address_id') }}"
-      
+
       - name: postal_code
         data_type: string
         description: "{{ doc('column__postal_code_shipping_address') }}"
@@ -355,3 +355,266 @@
           - not_null
     versions:
       - v: 1
+
+  - name: fact_forecast_variations
+    description: "All forecasts per forecast group, product variation and menu week produced by the analytics team and including overwrites made by external teams."
+    config:
+      alias: fact_forecast_variations
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_forecast_variations
+        data_type: string
+        description: "{{ doc('column__pk_fact_forecast_variations') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_run_id
+        data_type: string
+        description: "{{ doc('column__forecast_job_run_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_job_id
+        data_type: string
+        description: "{{ doc('column__forecast_job_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: string
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_model_id
+        data_type: string
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - not_null
+
+      - name: horizon_index
+        data_type: int
+        description: "{{ doc('column__horizon_index') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_horizon
+        data_type: int
+        description: "{{ doc('column__forecast_horizon') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: string
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity_forecast_analytics
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity_forecast_analytics') }}"
+
+      - name: product_variation_quantity_forecast
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity_forecast') }}"
+
+      - name: order_quantity_forecast
+        data_type: int
+        description: "{{ doc('column__order_quantity_forecast') }}"
+
+      - name: forecast_generated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: is_most_recent_for_menu_week_and_horizon_index
+        data_type: boolean
+        description: "{{ doc('column__is_most_recent_for_menu_week_and_horizon_index') }}"
+        data_tests:
+          - not_null
+
+      - name: is_most_recent_for_menu_week
+        data_type: boolean
+        description: "{{ doc('column__is_most_recent_for_menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_products
+        data_type: string
+        description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: pk_dim_products
+
+      - name: fk_dim_dates_menu_week
+        data_type: int
+        description: "{{ doc('column__fk_dim_dates_menu_week') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_dates_forecast_generated_at
+        data_type: int
+        description: "{{ doc('column__fk_dim_dates_forecast_generated_at') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_recipes
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_recipes')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_recipes')
+              field: pk_dim_recipes
+
+      - name: fk_dim_forecast_runs
+        data_type: string
+        description: "{{ doc('column__pk_dim_forecast_runs') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_forecast_runs')
+            to_columns: [pk_dim_forecast_runs]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_forecast_runs')
+              field: pk_dim_forecast_runs
+
+  - name: dim_forecast_runs
+    description: "Contains all combinations of jobs, forecast groups, forecast models, horizon_index and forecast_horizon that produce forecasts."
+    config:
+      alias: dim_forecast_runs
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_forecast_runs
+        data_type: string
+        description: "{{ doc('column__pk_dim_forecast_runs') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_id
+        data_type: string
+        description: "{{ doc('column__forecast_job_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: string
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_model_id
+        data_type: string
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - not_null
+
+      - name: horizon_index
+        data_type: int
+        description: "{{ doc('column__horizon_index') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_horizon
+        data_type: int
+        description: "{{ doc('column__forecast_horizon') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_job_name
+        data_type: string
+        description: "{{ doc('column__forecast_job_name') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_name
+        data_type: string
+        description: "{{ doc('column__forecast_group_name') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_model_name
+        data_type: string
+        description: "{{ doc('column__forecast_model_name') }}"
+        data_tests:
+          - not_null

@@ -1,0 +1,407 @@
+models:
+
+
+  - name: forecasting__forecast_jobs
+    description: "Names of jobs performed in the forecasting domain to create forecasts. A forecast job comprises of one or more forecast models being applied to one or more forecast groups to produce output in forecasting."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_job_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_name
+        data_type: string
+        description: "{{ doc('column__forecast_job_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: forecasting__forecast_job_run_metadata
+    description: "Table of metadata associated with the job runs performed within the forecasting domain."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_job_run_metadata_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_run_metadata_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_run_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_run_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_job_run_parent_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_run_parent_id') }}"
+
+      - name: forecast_job_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_jobs')
+              field: forecast_job_id
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('forecasting__forecast_groups')
+              field: forecast_group_id
+
+      - name: forecast_model_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - relationships:
+              to: ref('forecasting__forecast_models')
+              field: forecast_model_id
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+
+      - name: next_cutoff_menu_week
+        data_type: integer
+        description: "{{ doc('column__next_cutoff_menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_horizon
+        data_type: integer
+        description: "{{ doc('column__forecast_horizon') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: menu_week_monday_date_next_cutoff
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date_next_cutoff') }}"
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+
+      - name: horizon_index
+        data_type: integer
+        description: "{{ doc('column__horizon_index') }}"
+
+      - name: is_most_recent_for_menu_week_and_horizon_index
+        data_type: boolean
+        description: "{{ doc('column__is_most_recent_for_menu_week_and_horizon_index') }}"
+
+      - name: is_most_recent_for_menu_week
+        data_type: boolean
+        description: "{{ doc('column__is_most_recent_for_menu_week') }}"
+
+  - name: forecasting__forecast_groups
+    description: "Constructs representing subsets of customers who are expected to perform an action, such as make adjustments to their mealbox. A forecast group is also used as a component to determine which forecast model will be applied."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_group_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_group_name
+        data_type: string
+        description: "{{ doc('column__forecast_group_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: forecasting__forecast_models
+    description: "Information about algorithms used to create forecasts."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_model_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_model_name
+        data_type: string
+        description: "{{ doc('column__forecast_model_name') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: forecasting__forecast_orders
+    description: "Forecasted number of orders for each forecast group and menu week."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_orders_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_orders_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_run_metadata_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_run_metadata_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_job_run_metadata')
+              field: forecast_job_run_metadata_id
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_groups')
+              field: forecast_group_id
+
+      - name: forecast_model_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_models')
+              field: forecast_model_id
+
+      - name: menu_year
+        data_type: integer
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: integer
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: order_quantity_forecast
+        data_type: integer
+        description: "{{ doc('column__order_quantity_forecast') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+  - name: forecasting__forecast_variations
+    description: "Forecasted quantities for product variations of all product types for each forecast group and menu week."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: forecast_variations_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_variations_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: forecast_job_run_metadata_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_job_run_metadata_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_job_run_metadata')
+              field: forecast_job_run_metadata_id
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_groups')
+              field: forecast_group_id
+
+      - name: forecast_model_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_models')
+              field: forecast_model_id
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: integer
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: integer
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_quantity_forecast_analytics
+        data_type: integer
+        description: "{{ doc('column__product_variation_quantity_forecast_analytics') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+  - name: forecasting__forecast_external_estimates
+    description: "Forecast quantities provided by external teams for certain product variations and menu weeks which are used to overwrite forecasts created by the data team. External estimates are provided in cases where e.g. groceries are put on sale for certain weeks and certain sales volumes are expected."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: forecast_group_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_group_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_groups')
+              field: forecast_group_id
+
+      - name: forecast_model_id
+        data_type: varchar(36)
+        description: "{{ doc('column__forecast_model_id') }}"
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('forecasting__forecast_models')
+              field: forecast_model_id
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: integer
+        description: "{{ doc('column__menu_year') }}"
+
+      - name: menu_week
+        data_type: integer
+        description: "{{ doc('column__menu_week') }}"
+
+      - name: product_variation_quantity_forecast
+        data_type: integer
+        description: "{{ doc('column__product_variation_quantity_forecast') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"

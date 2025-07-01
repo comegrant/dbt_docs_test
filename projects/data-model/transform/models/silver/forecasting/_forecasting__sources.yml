@@ -1,0 +1,12 @@
+sources:
+  - name: forecasting
+    schema: forecasting
+    description: "Tables of output populated by forecasting processes in the forecasting schema in Databricks prod workspace"
+    tables:
+      - name: forecast_jobs
+      - name: forecast_job_run_metadata
+      - name: forecast_groups
+      - name: forecast_models
+      - name: forecast_orders
+      - name: forecast_variations
+      - name: forecast_external_estimates
