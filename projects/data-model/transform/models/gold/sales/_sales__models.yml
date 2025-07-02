@@ -59,10 +59,10 @@ models:
           - type: not_null
         data_tests:
           - not_null
-
-      - name: source_updated_at
+  
+      - name: fact_updated_at
         data_type: timestamp
-        description: "{{ doc('column__source_updated_at') }}"
+        description: "{{ doc('column__fact_updated_at') }}"
         constraints:
           - type: not_null
         data_tests:
@@ -71,18 +71,14 @@ models:
       - name: product_variation_quantity
         data_type: int
         description: "{{ doc('column__product_variation_quantity') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
 
-      - name: subscribed_product_variation_quantity
+      - name: product_variation_quantity_subscription
         data_type: int
-        description: "{{ doc('column__subscribed_product_variation_quantity') }}"
+        description: "{{ doc('column__product_variation_quantity_subscription') }}"
 
-      - name: subscribed_product_variation_amount_ex_vat
+      - name: total_amount_ex_vat_subscription
         data_type: decimal(20,6)
-        description: "{{ doc('column__subscribed_product_variation_amount_ex_vat') }}"
+        description: "{{ doc('column__total_amount_ex_vat_subscription') }}"
 
       - name: vat
         data_type: decimal(10,8)
@@ -107,14 +103,54 @@ models:
       - name: order_line_type_name
         data_type: string
         description: "{{ doc('column__order_line_type_name') }}"
+
+      - name: order_line_details
+        data_type: string
+        description: "{{ doc('column__order_line_details') }}"
         constraints:
           - type: not_null
         data_tests:
           - not_null
 
-      - name: order_line_details
-        data_type: string
-        description: "{{ doc('column__order_line_details') }}"
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: meals_subscription
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: meals_mealbox
+        data_type: int
+        description: "{{ doc('column__meals_mealbox') }}"
+
+      - name: meals_mealbox_subscription
+        data_type: int
+        description: "{{ doc('column__meals_mealbox_subscription') }}"
+
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portion_size') }}"
+  
+      - name: portions_subscription
+        data_type: int
+        description: "{{ doc('column__portion_size') }}"
+
+      - name: mealbox_portions
+        data_type: int
+        description: "{{ doc('column__mealbox_portions') }}"
+
+      - name: portions_mealbox_subscription
+        data_type: int
+        description: "{{ doc('column__portions_mealbox_subscription') }}"
+
+      - name: mealbox_servings
+        data_type: int
+        description: "{{ doc('column__mealbox_servings') }}"
+
+      - name: mealbox_servings_subscription
+        data_type: int
+        description: "{{ doc('column__mealbox_servings') }}"
 
       - name: meal_adjustment_subscription
         data_type: int
@@ -124,17 +160,13 @@ models:
         data_type: int
         description: "{{ doc('column__portion_adjustment_subscription') }}"
 
-      - name: meals
-        data_type: int
-        description: "{{ doc('column__meals') }}"
+      - name: sum_added_dish
+        data_type: bigint
+        description: "{{ doc('column__sum_added_dish') }}"
 
-      - name: portions
-        data_type: int
-        description: "{{ doc('column__portion_size') }}"
-
-      - name: mealbox_servings
-        data_type: int
-        description: "{{ doc('column__mealbox_servings') }}"
+      - name: sum_removed_dish
+        data_type: bigint
+        description: "{{ doc('column__sum_removed_dish') }}"
 
       - name: is_added_dish
         data_type: int
@@ -148,13 +180,9 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_dish') }}"
 
-      - name: is_onesub_migration
-        data_type: int
-        description: "{{ doc('column__is_onesub_migration') }}"
-
-      - name: is_missing_preselector_output
-        data_type: int
-        description: "{{ doc('column__is_missing_preselector_output') }}"
+      - name: is_preselected_dish
+        data_type: boolean
+        description: "{{ doc('column__is_preselected_dish') }}"
 
       - name: is_thrifty_dish
         data_type: int
@@ -164,25 +192,29 @@ models:
         data_type: int
         description: "{{ doc('column__is_plus_price_dish') }}"
 
+      - name: is_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_mealbox') }}"
+
+      - name: is_subscribed_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_subscribed_mealbox') }}"
+
+      - name: is_grocery
+        data_type: boolean
+        description: "{{ doc('column__is_grocery') }}"
+
       - name: is_subscribed_grocery
         data_type: boolean
         description: "{{ doc('column__is_subscribed_grocery') }}"
 
-      - name: has_recipe_leaflets
-        data_type: boolean
-        description: "{{ doc('column__has_recipe_leaflets') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
+      - name: is_onesub_migration
+        data_type: int
+        description: "{{ doc('column__is_onesub_migration') }}"
 
-      - name: has_delivery
-        data_type: boolean
-        description: "{{ doc('column__has_delivery') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
+      - name: is_missing_preselector_output
+        data_type: int
+        description: "{{ doc('column__is_missing_preselector_output') }}"
 
       - name: has_swap
         data_type: boolean
@@ -192,17 +224,37 @@ models:
         data_tests:
           - not_null
 
-      - name: is_adjusted_by_customer
-        data_type: boolean
-        description: "{{ doc('column__is_adjusted_by_customer') }}"
-
       - name: has_normal_order_type
         data_type: boolean
         description: "{{ doc('column__has_normal_order_type') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
       - name: has_finished_order_status
         data_type: boolean
         description: "{{ doc('column__has_finished_order_status') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_subscription_order_type
+        data_type: boolean
+        description: "{{ doc('column__has_subscription_order_type') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: has_recipe_leaflets
+        data_type: boolean
+        description: "{{ doc('column__has_recipe_leaflets') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
       - name: recipe_comment
         data_type: string
@@ -220,14 +272,6 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
 
-      - name: billing_agreement_basket_deviation_origin_id
-        data_type: varchar(36)
-        description: "..."
-
-      - name: billing_agreement_basket_deviation_origin_id_preselected
-        data_type: varchar(36)
-        description: "..."
-
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
@@ -236,9 +280,9 @@ models:
         data_tests:
           - not_null
 
-      - name: billing_agreement_preferences_updated_id
+      - name: billing_agreement_basket_deviation_origin_id
         data_type: string
-        description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
+        description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
 
       - name: billing_agreement_order_id
         data_type: varchar(36)
@@ -288,21 +332,41 @@ models:
         data_tests:
           - not_null
 
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+
+      - name: portion_id_subscription
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+    
+      - name: portion_id_mealbox
+        data_type: int
+        description: "{{ doc('column__portion_id_mealbox') }}"
+
+      - name: portion_id_mealbox_subscription
+        data_type: int
+        description: "{{ doc('column__portion_id_mealbox_subscription') }}"
+
+      - name: orders_subscriptions_match_key 
+        data_type: string
+        description: "{{ doc('column__orders_subscriptions_match_key') }}"
+
       - name: product_variation_id
         data_type: varchar(36)
         description: "{{ doc('column__product_variation_id') }}"
 
-      - name: preselected_product_variation_id
+      - name: product_variation_id_subscription
         data_type: varchar(36)
-        description: "{{ doc('column__preselected_product_variation_id') }}"
+        description: "{{ doc('column__product_variation_id') }}"
 
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
 
-      - name: preselected_recipe_id
+      - name: recipe_id_subscription
         data_type: int
-        description: "{{ doc('column__preselected_recipe_id') }}"
+        description: "{{ doc('column__recipe_id') }}"
 
       - name: recipe_rating_id
         data_type: string
@@ -312,35 +376,7 @@ models:
         data_type: string
         description: "{{ doc('column__recipe_comment_id') }}"
 
-      - name: fk_dim_basket_deviation_origins
-        data_type: string
-        description: ""
-        constraints:
-          - type: not_null
-          - type: foreign_key
-            to: ref('dim_basket_deviation_origins')
-            to_columns: [pk_dim_basket_deviation_origins]
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_basket_deviation_origins')
-              field: pk_dim_basket_deviation_origins
-
-      - name: fk_dim_basket_deviation_origins_preselected
-        data_type: string
-        description: ""
-        constraints:
-          - type: not_null
-          - type: foreign_key
-            to: ref('dim_basket_deviation_origins')
-            to_columns: [pk_dim_basket_deviation_origins]
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_basket_deviation_origins')
-              field: pk_dim_basket_deviation_origins
-
-      - name: fk_dim_billing_agreements_deviations
+      - name: fk_dim_billing_agreements_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
         constraints:
@@ -437,6 +473,62 @@ models:
           - relationships:
               to: ref('dim_order_line_details')
               field: pk_dim_order_line_details
+    
+      - name: fk_dim_meals
+        data_type: int
+        description: "{{ doc('column__pk_dim_meals') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_meals')
+            to_columns: [pk_dim_meals]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_meals')
+              field: pk_dim_meals
+
+      - name: fk_dim_meals_subscription
+        data_type: int
+        description: "{{ doc('column__pk_dim_meals') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_meals')
+            to_columns: [pk_dim_meals]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_meals')
+              field: pk_dim_meals
+
+      - name: fk_dim_meals_mealbox
+        data_type: int
+        description: "{{ doc('column__pk_dim_meals') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_meals')
+            to_columns: [pk_dim_meals]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_meals')
+              field: pk_dim_meals
+
+      - name: fk_dim_meals_mealbox_subscription
+        data_type: int
+        description: "{{ doc('column__pk_dim_meals') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_meals')
+            to_columns: [pk_dim_meals]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_meals')
+              field: pk_dim_meals
 
       - name: fk_dim_products
         data_type: string
@@ -451,6 +543,10 @@ models:
           - relationships:
               to: ref('dim_products')
               field: pk_dim_products
+              config:
+                # TODO: Two known cases where the ordered product variation does not exist in Dim Products
+                severity: error
+                error_if: ">2"
 
       - name: fk_dim_periods_since_first_menu_week
         data_type: int
@@ -479,8 +575,32 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
+  
+      - name: fk_dim_portions_subscription
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
+        data_tests:
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+  
+      - name: fk_dim_portions_mealbox
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
+        data_tests:
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
 
-      - name: fk_dim_portions_preselected
+      - name: fk_dim_portions_mealbox_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
         constraints:
@@ -493,9 +613,9 @@ models:
               field: pk_dim_portions
 
 
-      - name: fk_dim_products_preselected
+      - name: fk_dim_products_subscription
         data_type: string
-        description: "{{ doc('column__fk_dim_products_preselected') }}"
+        description: "{{ doc('column__fk_dim_products_subscription') }}"
         constraints:
           - type: not_null
           - type: foreign_key
@@ -521,9 +641,9 @@ models:
               to: ref('dim_recipes')
               field: pk_dim_recipes
 
-      - name: fk_dim_recipes_preselected
+      - name: fk_dim_recipes_subscription
         data_type: string
-        description: "{{ doc('column__fk_dim_recipes_preselected') }}"
+        description: "{{ doc('column__fk_dim_recipes_subscription') }}"
         constraints:
           - type: not_null
           - type: foreign_key
@@ -559,17 +679,17 @@ models:
               to: ref('dim_discounts')
               field: pk_dim_discounts
 
-      - name: fk_dim_customer_journey_segments
-        data_type: string
-        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
-        constraints:
-          - type: foreign_key
-            to: ref('dim_customer_journey_segments')
-            to_columns: [pk_dim_customer_journey_segments]
-        data_tests:
-          - relationships:
-              to: ref('dim_customer_journey_segments')
-              field: pk_dim_customer_journey_segments
+      #- name: fk_dim_customer_journey_segments
+      #  data_type: string
+      #  description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+      #  constraints:
+      #    - type: foreign_key
+      #      to: ref('dim_customer_journey_segments')
+      #      to_columns: [pk_dim_customer_journey_segments]
+      #  data_tests:
+      #    - relationships:
+      #        to: ref('dim_customer_journey_segments')
+      #        field: pk_dim_customer_journey_segments
 
     versions:
       - v: 1
@@ -877,14 +997,6 @@ models:
       - name: has_grocery_subscription
         data_type: boolean
         description: "{{ doc('column__has_grocery_subscription') }}"
-
-      - name: preselector_flag
-        data_type: string
-        description: "{{ doc('column__preselector_flag') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
 
       - name: onesub_flag
         data_type: string
@@ -3500,8 +3612,6 @@ models:
       - name: order_line_type_name
         data_type: string
         description: "{{ doc('column__order_line_type_name') }}"
-        data_tests:
-          - not_null
 
       - name: order_line_details
         data_type: string

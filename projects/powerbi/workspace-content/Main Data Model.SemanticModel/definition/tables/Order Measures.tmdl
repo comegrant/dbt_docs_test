@@ -50,8 +50,8 @@ table 'Order Measures'
 	measure 'Number of Orders' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_order_id]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -72,13 +72,18 @@ table 'Order Measures'
 		displayFolder: Digital Recipes
 		lineageTag: cf598a2d-2b0e-4370-959f-3d0dab5bbcec
 
+	/// Share of orders where the customers order included a printed recipe leaflet.
+	measure 'Share of Orders with Recipe Leaflet' = DIVIDE([Number of Orders], [Number of Orders with Recipe Leaflet])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Digital Recipes
+
 	/// Sum of Product Variation Quantity
 	measure 'Product Variation Quantity' =
 
 			CALCULATE(
 			    SUM('Order Measures'[product_variation_quantity]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -100,9 +105,9 @@ table 'Order Measures'
 	measure 'Subscribed Product Variation Quantity' =
 
 			CALCULATE(
-			    SUM('Order Measures'[subscribed_product_variation_quantity]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+			    SUM('Order Measures'[product_variation_quantity_subscription]),
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -123,9 +128,9 @@ table 'Order Measures'
 	measure 'Subscribed Product Variation Amount Ex Vat' =
 
 			CALCULATE(
-				SUM('Order Measures'[subscribed_product_variation_amount_ex_vat]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				SUM('Order Measures'[total_amount_ex_vat_subscription]),
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -168,7 +173,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Number of Orders],
 				'Order Types'[Order Type] = "Gift Card",
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
+				'Order Measures'[has_finished_order_status] = TRUE()
 			)
 		formatString: #,0
 		displayFolder: Gift Cards
@@ -180,7 +185,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Total Order Value Ex Vat],
 				'Order Types'[Order Type] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
+				'Order Measures'[has_finished_order_status] = TRUE()
 				)
 		displayFolder: Orders
 		lineageTag: 94703f73-cb72-4c7c-ba82-9d480c9385ca
@@ -192,8 +197,8 @@ table 'Order Measures'
 	measure 'Order Value Net Inc Vat' =
 			CALCULATE(
 				[Total Order Value Inc Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE()
 				)
 		displayFolder: Orders
 		lineageTag: 47be5d17-2f0a-42c6-8b21-24dea811838e
@@ -205,8 +210,8 @@ table 'Order Measures'
 	measure 'Order Value Gross Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				'Order Measures'[order_line_type_name] IN {"DEBIT", "TRANSPORT"}
 				)
 		displayFolder: Orders
@@ -244,8 +249,8 @@ table 'Order Measures'
 	measure 'Number of Ordered Units' =
 			CALCULATE(
 				[Product Variation Quantity],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE()
 			)
 		formatString: #,0
 		displayFolder: Ordered Units
@@ -296,7 +301,7 @@ table 'Order Measures'
 			CALCULATE(
 				[Total Order Value Ex Vat],
 				'Order Types'[Order Type] = "Gift Card",
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"}
+				'Order Measures'[has_finished_order_status] = TRUE()
 			)
 		isHidden
 		displayFolder: Gift Cards
@@ -341,8 +346,8 @@ table 'Order Measures'
 	measure 'Transport Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				'Order Measures'[order_line_type_name] IN {"TRANSPORT"}
 			)
 		displayFolder: Transport
@@ -355,8 +360,8 @@ table 'Order Measures'
 	measure 'Sum PRP Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				'Order Measures'[order_line_type_name] IN {"PRP"}
 			)
 		displayFolder: Credit and PRP
@@ -369,8 +374,8 @@ table 'Order Measures'
 	measure 'Credit Value Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				'Products'[Product] = "Credits"
 			)
 		displayFolder: Credit and PRP
@@ -423,10 +428,10 @@ table 'Order Measures'
 				COUNTROWS('Order Measures'),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes] <> "0",
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 			    USERELATIONSHIP(
-			        'Order Measures'[fk_dim_billing_agreements_deviations],
+			        'Order Measures'[fk_dim_billing_agreements_subscription],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				USERELATIONSHIP(
@@ -449,10 +454,10 @@ table 'Order Measures'
 	measure 'Number of Added Dishes' =
 			CALCULATE(
 				SUM('Order Measures'[is_added_dish]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 			    USERELATIONSHIP(
-			        'Order Measures'[fk_dim_billing_agreements_deviations],
+			        'Order Measures'[fk_dim_billing_agreements_subscription],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
 			    ),
 				USERELATIONSHIP(
@@ -474,14 +479,14 @@ table 'Order Measures'
 	measure 'Number of Removed Dishes' =
 			CALCULATE(
 					SUM('Order Measures'[is_removed_dish]),
-					'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-					'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+					'Order Measures'[has_normal_order_type] = TRUE(),
+					'Order Measures'[has_finished_order_status] = TRUE(),
 					USERELATIONSHIP(
-						'Order Measures'[fk_dim_recipes_preselected],
+						'Order Measures'[fk_dim_recipes_subscription],
 						Recipes[pk_dim_recipes]
 					),
 					USERELATIONSHIP(
-						'Order Measures'[fk_dim_products_preselected],
+						'Order Measures'[fk_dim_products_subscription],
 						Products[pk_dim_products]
 					),
 				   USERELATIONSHIP(
@@ -514,16 +519,16 @@ table 'Order Measures'
 	measure 'Number of Preselected Dishes' = ```
 			CALCULATE(
 				COUNTROWS('Order Measures'),
-				'Order Measures'[is_dish] = TRUE(),
-				'Order Measures'[fk_dim_recipes_preselected] <> "0",
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[is_preselected_dish] = TRUE(),
+				'Order Measures'[fk_dim_recipes_subscription] <> "0",
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
-					'Order Measures'[fk_dim_recipes_preselected],
+					'Order Measures'[fk_dim_recipes_subscription],
 					Recipes[pk_dim_recipes]
 				),
 				USERELATIONSHIP(
-					'Order Measures'[fk_dim_products_preselected],
+					'Order Measures'[fk_dim_products_subscription],
 					Products[pk_dim_products]),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
@@ -553,8 +558,7 @@ table 'Order Measures'
 			            BLANK(),
 			            CALCULATE(
 			                [Number of Orders],
-			                'Order Measures'[has_swap] = True,
-							'Order Measures'[is_missing_preselector_output] = 0
+			                'Order Measures'[has_swap] = True
 			            )
 			        )
 			)
@@ -785,8 +789,8 @@ table 'Order Measures'
 	measure 'Portion Adjustments' =
 			CALCULATE(
 				SUM('Order Measures'[portion_adjustment_subscription]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 			        'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 			        'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -872,7 +876,7 @@ table 'Order Measures'
 		displayFolder: Order Frequency
 
 	/// Number of order that has one or more grocery purchases
-	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Number of Orders with Groceries' = CALCULATE([Number of Orders], 'Order Measures'[is_grocery] = TRUE())
 		formatString: #,0
 		displayFolder: Groceries
 		lineageTag: 907b81be-d98c-476b-9b88-c0b53f1d2608
@@ -884,7 +888,11 @@ table 'Order Measures'
 		lineageTag: 90ce50c3-d6c7-4a7b-8339-518093f7f186
 
 	/// Number of order that has one or more subscribed groceries
-	measure 'Number of Orders with Subscribed Groceries' = CALCULATE([Number of Orders], 'Order Measures'[is_subscribed_grocery] = true)
+	measure 'Number of Orders with Subscribed Groceries' = 
+			CALCULATE(
+				[Number of Orders],
+				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
+			)
 		formatString: #,0
 		displayFolder: Groceries
 
@@ -901,13 +909,17 @@ table 'Order Measures'
 
 	/// Number of ordered groceries.
 	/// Sums the product variation quantity for all ordered products that are groceries.
-	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Number of Ordered Groceries' = CALCULATE([Product Variation Quantity], 'Order Measures'[is_grocery] = TRUE())
 		formatString: #,0
 		displayFolder: Groceries
 
 	/// Number of ordered groceries that comes from a grocery subscription.
 	/// Sums the product variation quantity for all ordered product variations that are subscribed groceries.
-	measure 'Number of Ordered Groceries from Subscription' = CALCULATE([Subscribed Product Variation Quantity], 'Order Measures'[is_subscribed_grocery] = true)
+	measure 'Number of Ordered Groceries from Subscription' = 
+			CALCULATE(
+				[Subscribed Product Variation Quantity], 
+				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
+			)
 		formatString: #,0
 		displayFolder: Groceries
 
@@ -918,7 +930,7 @@ table 'Order Measures'
 
 	/// Revenue from groceries
 	/// Excluding VAT
-	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], Products[Product Type] IN {"Standalone-groceries", "Add-on-product"})
+	measure 'Grocery Value Ex Vat' = CALCULATE([Order Value Gross Ex Vat], 'Order Measures'[is_grocery] = TRUE())
 		formatString: #,0
 		displayFolder: Groceries
 		lineageTag: ad346d06-f70c-436e-960b-33738cb969e1
@@ -938,7 +950,11 @@ table 'Order Measures'
 
 	/// Revenue from subscribed groceries
 	/// Excluding VAT
-	measure 'Subscribed Grocery Value Ex Vat' = CALCULATE([Subscribed Product Variation Amount Ex Vat], 'Order Measures'[is_subscribed_grocery] = true)
+	measure 'Subscribed Grocery Value Ex Vat' = 
+			CALCULATE(
+				[Subscribed Product Variation Amount Ex Vat], 
+				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
+			)
 		formatString: #,0
 		displayFolder: Groceries
 
@@ -957,13 +973,13 @@ table 'Order Measures'
 	/// To see the definition of a swapping customer, see the measure 'Number of Swapping Customers' in the 'Customer and Subscriber Measures' table.
 	/// Not to be confused with 'Number of Orders with Swaps', which is a different measure.
 	measure 'Number of Orders by Swapping Customers' =
-						CALCULATE(
-			    			[Number of Orders],
-			    			FILTER(
-			    			    SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
-			    			    [Number of Orders with Swaps] > 0
-			    			)
-						)
+			CALCULATE(
+			    [Number of Orders],
+			    FILTER(
+			    	SELECTCOLUMNS('Customer and Subscriber Details',[Agreement Id]),
+			    	[Number of Orders with Swaps] > 0
+			    )
+			)
 		formatString: #,0
 		displayFolder: Swapped Dishes
 		lineageTag: 78a09f39-38ac-4d50-ad7e-8393bbe61796
@@ -1244,7 +1260,7 @@ table 'Order Measures'
 	measure 'Number of Consumers' =
 			CALCULATE(
 				SUM('Order Measures'[portions])
-				, 'Products'[Product Type] = "Mealbox"
+				, 'Order Measures'[is_mealbox] = TRUE()
 			)
 		formatString: #,0
 		displayFolder: Recipe Sales
@@ -1255,7 +1271,7 @@ table 'Order Measures'
 		formatString: #,0
 		displayFolder: Recipe Sales
 
-	/// The total number of plates served, which is calculated as the sum of all Portions x Meals for all orders in the selection.
+	/// The total number of plates served, which is calculated as the sum of Portions x Meals for all orders in the selection.
 	/// Example: One delivery with 5 meals and 4 portions per meal will count as 20 servings.
 	measure 'Number of Servings' =
 			SUM('Order Measures'[mealbox_servings])
@@ -1284,42 +1300,20 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Recipe Sales
 
-	column order_status_id
-		dataType: string
+	/// The unique identifier of a user that have signed up for our service
+	column billing_agreement_id
+		dataType: int64
 		isHidden
+		formatString: 0
 		isAvailableInMdx: false
-		lineageTag: 97d4bcb3-e53a-4277-af57-57a94757ec39
-		summarizeBy: none
-		sourceColumn: order_status_id
-
-		changedProperty = IsHidden
+		lineageTag: 84439a3d-2be2-48be-964d-7db562b16e3e
+		summarizeBy: sum
+		sourceColumn: billing_agreement_id
 
 		annotation SummarizationSetBy = Automatic
 
-	column order_type_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 094f462a-d367-48ec-9a45-4eeba1a9b353
-		summarizeBy: none
-		sourceColumn: order_type_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column product_variation_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 64dfca24-3043-4e81-a204-f255f0399874
-		summarizeBy: none
-		sourceColumn: product_variation_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
+	/// A description of what kind of order line it its. Fore example debit, credit, discount, transport etc.
+	/// Used to filter measure on which order lines to include.
 	column order_line_type_name
 		dataType: string
 		isHidden
@@ -1332,20 +1326,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column vat
-		dataType: double
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 4521f41d-a9a8-484a-9159-d4046240c6ea
-		summarizeBy: sum
-		sourceColumn: vat
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
+	/// The unit price of the product variation ex vat.
 	column unit_price_ex_vat
 		dataType: double
 		isHidden
@@ -1360,6 +1341,7 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// The unit price of the product variation ex vat.
 	column unit_price_inc_vat
 		dataType: double
 		isHidden
@@ -1374,6 +1356,8 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// The total amount of the order line ex vat. 
+	/// I.e., the unit price ex vat multiplied with the quantity ordered of the variation.
 	column total_amount_ex_vat
 		dataType: double
 		isHidden
@@ -1388,6 +1372,8 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// The total amount of the order line inc vat. 
+	/// I.e., the unit price inc vat multiplied with the quantity ordered of the variation.
 	column total_amount_inc_vat
 		dataType: double
 		isHidden
@@ -1402,19 +1388,9 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column has_delivery
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		isAvailableInMdx: false
-		lineageTag: 61ef0da3-7497-4720-a9b7-cc7bffba031a
-		summarizeBy: none
-		sourceColumn: has_delivery
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
+	/// Flag to indiacte if the order has printed recipes. 
+	/// The option to only have digital recipes was introduced in February 2024. 
+	/// Customers has to opt out on the webpage to only recieve digital recipes.
 	column has_recipe_leaflets
 		dataType: boolean
 		isHidden
@@ -1489,6 +1465,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The unique identifier of an order. An order can have several order lines.
 	column billing_agreement_order_id
 		dataType: string
 		isHidden
@@ -1501,17 +1478,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column billing_agreement_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: 84439a3d-2be2-48be-964d-7db562b16e3e
-		summarizeBy: sum
-		sourceColumn: billing_agreement_id
-
-		annotation SummarizationSetBy = Automatic
-
+	/// The ordered quantity of the product variation.
 	column product_variation_quantity
 		dataType: int64
 		isHidden
@@ -1523,6 +1490,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The timestamp of when the order was created in the CMS system
 	column source_created_at
 		dataType: dateTime
 		isHidden
@@ -1544,46 +1512,30 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column menu_year
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: c9673c50-5e6f-469e-8554-fbde45b0c193
-		summarizeBy: sum
-		sourceColumn: menu_year
-
-		annotation SummarizationSetBy = Automatic
-
-	column company_id
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 2338558b-3049-4416-af88-185958bdc6e8
-		summarizeBy: none
-		sourceColumn: company_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column fk_dim_billing_agreements_deviations
+	/// Foreign key to Dim Billing Agreements based on when the customer made changes to the recipes in the mealbox
+	/// if no change was made to the order its based on the generation timestamp of the order.
+	/// Used to see the state of the customer when they started modifying their order.
+	/// Customer can make changes to their mealbox 4 weeks in advance. If they change their subscription
+	/// after making changes it will not update orders that has already been modified by the customer.
+	column fk_dim_billing_agreements_subscription
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 70f41c62-2bf4-4d7d-ad49-eb860a3a49c7
 		summarizeBy: none
-		sourceColumn: fk_dim_billing_agreements_deviations
+		sourceColumn: fk_dim_billing_agreements_subscription
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
-	column fk_dim_products_preselected
+	column fk_dim_products_subscription
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 9ddcb8e7-5e53-41e2-8d8b-69b02321fe10
 		summarizeBy: none
-		sourceColumn: fk_dim_products_preselected
+		sourceColumn: fk_dim_products_subscription
 
 		changedProperty = IsHidden
 
@@ -1601,18 +1553,20 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column fk_dim_recipes_preselected
+	column fk_dim_recipes_subscription
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: a83a42fe-d628-44f3-a944-434b8c7c3dab
 		summarizeBy: none
-		sourceColumn: fk_dim_recipes_preselected
+		sourceColumn: fk_dim_recipes_subscription
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Is 1 if the ordered dish was added by the customer themselves and 0 if the ordered dish was a part of the preselection the customer was presented to on the frontend. 
+	/// For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers add to their menu.
 	column is_added_dish
 		dataType: int64
 		isHidden
@@ -1624,6 +1578,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Is 1 if the customer removed the dish presented on the frontend from their menu and and 0 if the dish presented on the frontend was ordered by the customer. 
+	/// For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers remove from their menu.
 	column is_removed_dish
 		dataType: int64
 		isHidden
@@ -1635,17 +1591,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column language_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		isAvailableInMdx: false
-		lineageTag: dffdd704-34fa-4a27-a9e5-84cd05d151ab
-		summarizeBy: sum
-		sourceColumn: language_id
-
-		annotation SummarizationSetBy = Automatic
-
+	/// Is true if the product variation is a dish (i.e., velg & vrak product type) else false.
 	column is_dish
 		dataType: boolean
 		isHidden
@@ -1659,17 +1605,33 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column preselected_product_variation_id
-		dataType: string
+	/// Is true if the product variation represents a mealbox else false. If there are several mealboxes on the order it will be true of all mealboxes.
+	column is_mealbox
+		dataType: boolean
 		isHidden
-		lineageTag: c1704f19-b63d-43d0-9b42-e651da388077
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: preselected_product_variation_id
+		sourceColumn: is_mealbox
 
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Is true if the preselected product variation represents a dish, else false.
+	column is_preselected_dish
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_preselected_dish
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The unique identifier representing a recipe id. Both dishes and groceries can have recipes.
 	column recipe_id
 		dataType: int64
 		isHidden
@@ -1682,18 +1644,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column preselected_recipe_id
-		dataType: int64
-		isHidden
-		formatString: 0
-		lineageTag: fe464424-3aec-4605-a156-127ea206aee8
-		summarizeBy: sum
-		sourceColumn: preselected_recipe_id
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
+	/// The difference between the number of meals ordered by the customer and the number of meals they subscribe to. The differnece is on the mealbox row of the order.
 	column meal_adjustment_subscription
 		dataType: int64
 		isHidden
@@ -1704,6 +1655,8 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
+	/// The difference between the number of portions ordered by the customer and the number of portions they subscribe to. 
+	/// The customer can change portions on dish level, hence is the number placed on the recipe row of the order.
 	column portion_adjustment_subscription
 		dataType: int64
 		isHidden
@@ -1714,6 +1667,7 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
+	/// Free text comment made by a customer when rating the recipe.
 	column 'Recipe Comment'
 		dataType: string
 		isHidden
@@ -1726,6 +1680,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The 1-5 rating converted to a 0-100 score.
 	column 'Recipe Rating Score'
 		dataType: double
 		isHidden
@@ -1739,7 +1694,8 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
+	
+	/// Rating (1-5) of the recipe given by the customer. If rating is 0 it means that the customer marked the recipe as not cooked.
 	column 'Recipe Rating'
 		dataType: int64
 		isHidden
@@ -1752,6 +1708,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The customer has selected that they have not cooked the dish (rating = 0).
 	column is_not_cooked_dish
 		dataType: boolean
 		isHidden
@@ -1765,13 +1722,13 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_onesub_migration
-		dataType: int64
-		isHidden
-		formatString: 0
-		summarizeBy: none
-		sourceColumn: is_onesub_migration
-
+	/// Flag that indicates if the customer was presented for output of the preselector in the frontend before selecting recipes. 
+	/// Due to bugs it can happen that a customer does not see any preselected dishes in their menu on the frontend. 
+	/// When this happens the customer will often just go ahead and select dishes themselves. 
+	/// If the customer was not presented with preselector output in the frontend the value of the flag is 1, 
+	/// if the customer did receive preselector output before selecting dishes its 0. 
+	/// The value is null for orders that existed before the preselector was launched together with Onesub (pre fall of 2024). 
+	/// The flag is on order level. I.e. the whole order will have the same value for this flag.
 	column is_missing_preselector_output
 		dataType: int64
 		isHidden
@@ -1779,6 +1736,14 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: is_missing_preselector_output
 
+	/// True if the customer replaced the dishes in the menu presented to them on the frontend with other dishes, else false.
+	///
+	/// The order is not considered to have a swap if any of these are true, and the field will be false.
+	/// - The customer did not make any changes to the dishes on their order, and sticked with what was presented to them on the webpage.
+	/// - The customer only removed/added dishes without adding/removing another dish
+	/// - The customer did not get any preselected menu on the frontend, and was forced to chose dishes themselves (see is_missing_preselector-column)
+	///
+	/// The field is null for orders created before we started tracking subscribed products (<2024).
 	column has_swap
 		dataType: boolean
 		isHidden
@@ -1786,37 +1751,15 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: has_swap
 
-	column fk_dim_basket_deviation_origins
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: f36e57bf-a06a-4770-b51d-8bfcb3d8dd7d
-		summarizeBy: none
-		sourceColumn: fk_dim_basket_deviation_origins
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column fk_dim_basket_deviation_origins_preselected
-		dataType: string
-		isHidden
-		isAvailableInMdx: false
-		lineageTag: 4c93f8f6-edfd-491e-af59-8152c8992d3d
-		summarizeBy: none
-		sourceColumn: fk_dim_basket_deviation_origins_preselected
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column fk_dim_portions
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: fk_dim_portions
-
+	
+	/// Defines a unique recipe rating. To be used to count number of ratings. A concatenation of the billing_agreement_id and the recipe_id from the recipe ratings table.
+	/// Used in Menu Measures
 	column 'Recipe Rating Id'
 		dataType: string
 		isHidden
@@ -1824,7 +1767,9 @@ table 'Order Measures'
 		lineageTag: 68b906db-5f2b-4ce4-88ce-8349a1e8c941
 		summarizeBy: none
 		sourceColumn: recipe_rating_id
-
+	
+	/// Defines a unique recipe comment. To be used to count number of comments. A concatenation of the billing_agreement_id and the recipe_id from the recipe comments table.
+	/// Used in Menu Measures
 	column 'Recipe Comment Id'
 		dataType: string
 		isHidden
@@ -1856,15 +1801,7 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: is_plus_price_dish
 
-	/// true if the customer has made adjustments to the order
-	column is_adjusted_by_customer
-		dataType: boolean
-		isHidden
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		summarizeBy: none
-		sourceColumn: is_adjusted_by_customer
-
-	/// the number of meals of a product
+	/// The number of meals of the product variation
 	column meals
 		dataType: int64
 		isHidden
@@ -1872,7 +1809,7 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: meals
 
-	/// the number of portions of a product
+	/// The number of portions of the product variation
 	column portions
 		dataType: int64
 		isHidden
@@ -1880,7 +1817,7 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: portions
 
-	/// the product of meals and portions for a mealbox
+	/// The total number of servings in the mealbox which is calculated by taking meals * portions. The value is null for all product variations that are not represention a mealbox.
 	column mealbox_servings
 		dataType: int64
 		isHidden
@@ -1888,7 +1825,6 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: mealbox_servings
 
-	/// Primary key for the preference combinations dimension.
 	column fk_dim_preference_combinations
 		dataType: string
 		isHidden
@@ -1903,6 +1839,8 @@ table 'Order Measures'
     	summarizeBy: none
     	sourceColumn: fk_dim_order_line_details
 
+	/// True if the preselected product variation represents a grocery the customer subscribes to, else false. 
+	/// Is null for all orders that was placed before we started tracking subscribed products (< 2024).
 	column is_subscribed_grocery
 		dataType: boolean
 		isHidden
@@ -1911,20 +1849,23 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: is_subscribed_grocery
 
-	column subscribed_product_variation_quantity
+	/// Quantity subscribed to of the product.
+	column product_variation_quantity_subscription
 		dataType: int64
 		isHidden
 		formatString: 0
 		isAvailableInMdx: false
 		summarizeBy: sum
-		sourceColumn: subscribed_product_variation_quantity
-
-	column subscribed_product_variation_amount_ex_vat
+		sourceColumn: product_variation_quantity_subscription
+	
+	/// The total amount of the order line if only including subscribed product variation quantity. 
+	/// E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk.
+	column total_amount_ex_vat_subscription
 		dataType: double
 		isHidden
 		isAvailableInMdx: false
 		summarizeBy: sum
-		sourceColumn: subscribed_product_variation_amount_ex_vat
+		sourceColumn: total_amount_ex_vat_subscription
 
 	column fk_dim_loyalty_seasons
 		dataType: string
@@ -1940,6 +1881,8 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_discounts
 
+	/// True if the order status is one finished or processed.
+	/// The flag is used in measures only include the orders of interest.
 	column has_finished_order_status
 		dataType: boolean
 		isHidden
@@ -1947,7 +1890,9 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: has_finished_order_status
-
+	
+	/// True if the order is a subscription order, campaign order or daily direct order.
+	/// The flag is used in measures only include the orders of interest. E.g., excluding gift cards and similar.
 	column has_normal_order_type
 		dataType: boolean
 		isHidden

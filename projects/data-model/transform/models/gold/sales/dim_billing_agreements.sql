@@ -42,12 +42,6 @@ billing_agreements as (
 
 )
 
-, recommendations as (
-
-    select * from {{ ref('int_basket_deviation_recommendations') }}
-
-)
-
 , loyalty_levels as (
 
     select * from {{ ref('int_billing_agreements_loyalty_levels_scd2') }}
@@ -94,34 +88,6 @@ billing_agreements as (
 
 )
 
-, preselector_agreements_scd2 as (
-
-    select 
-        billing_agreement_id
-        , "Preselector" as preselector_flag
-        , min(deviation_created_at) as valid_from
-        , {{ get_scd_valid_to() }} as valid_to
-    from recommendations
-    where billing_agreement_basket_deviation_origin_id = '{{ var("preselector_origin_id") }}'
-    group by 1,2,4
-
-)
-
-/*
-TODO: Add sales point scd2. We exclude this for now since we don't have history for it and it is not used yet.
-
-, billing_agreements_sales_point_scd2 as (
-
-    select
-        billing_agreement_id
-        , sales_point_id
-        , valid_from
-        , valid_to
-    from billing_agreements
-
-)
-*/
-
 , subscribed_products_scd2 as (
 
     select distinct
@@ -167,7 +133,6 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
     , 'billing_agreement_statuses'
     , 'subscribed_products_scd2'
     , 'preferences_scd2'
-    , 'preselector_agreements_scd2'
     , 'loyalty_levels_scd2'
     ] %}
 
@@ -218,7 +183,6 @@ TODO: Add sales point scd2. We exclude this for now since we don't have history 
         , first_orders.first_menu_week_year
         , scd2_tables_joined.billing_agreement_status_name
         , scd2_tables_joined.has_grocery_subscription
-        , coalesce(scd2_tables_joined.preselector_flag, "Not Preselector") as preselector_flag
         , case
             when onesub_agreements.billing_agreement_basket_product_updated_id is null
             then 'Not OneSub'

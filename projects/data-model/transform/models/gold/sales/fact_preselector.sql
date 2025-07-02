@@ -14,7 +14,7 @@ preselector_successful_output_dishes as (
 
 , deviations as (
 
-    select * from {{ ref('int_basket_deviation_products_joined_versions') }}
+    select * from {{ ref('int_basket_deviation_products_joined') }}
 
 )
 

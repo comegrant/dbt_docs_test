@@ -80,7 +80,7 @@ The name of the product statuses in the product layer database.
 # Product Variations
 {% docs column__product_variation_id %}
 
-The primary key of the product variations in the product layer database. A product variation has a specified size, meals and portions, unlike the corresponding product where the size, portions and meals is not specified. 
+The unique identifier of the product variations in the product layer database. The product variation is the lowest granularity of a product and represents different variations of a product in terms of meals and portions for instance. The variation is what the customer order when they make a purchase.
 
 {% enddocs %}
 

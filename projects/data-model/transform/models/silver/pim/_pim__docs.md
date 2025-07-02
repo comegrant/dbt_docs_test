@@ -85,7 +85,7 @@ The order of the recipes in the menu. Is used to find which recipes that belong 
 # Recipes
 {% docs column__recipe_id %}
 
-The primary key of the recipes table in the pim database.
+The unique identifier of a recipes.
 
 {% enddocs %}
 

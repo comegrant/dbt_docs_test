@@ -10145,11 +10145,11 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "order_measure.fk_dim_product_preselected": {
+			    "order_measure.fk_dim_product_subscription": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Measures",
-			          "ConceptualProperty": "fk_dim_products_preselected"
+			          "ConceptualProperty": "fk_dim_products_subscription"
 			        }
 			      },
 			      "State": "Generated",
@@ -10163,7 +10163,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "fk_dim_products_preselected": {
+			          "fk_dim_products_subscription": {
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
@@ -10243,11 +10243,11 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "order_measure.fk_dim_recipe_preselected": {
+			    "order_measure.fk_dim_recipe_subscription": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Order Measures",
-			          "ConceptualProperty": "fk_dim_recipes_preselected"
+			          "ConceptualProperty": "fk_dim_recipes_subscription"
 			        }
 			      },
 			      "State": "Generated",
@@ -10261,7 +10261,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "fk_dim_recipes_preselected": {
+			          "fk_dim_recipes_subscription": {
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99

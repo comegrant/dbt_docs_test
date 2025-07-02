@@ -2,26 +2,26 @@
 
 {% docs column__menu_week_monday_date %}
 
-The first date of the menu week (starts on a Monday).
+The first date of the week when the menu is delivered to the customer (starts on a Monday).
 
 {% enddocs %}
 
 {% docs column__menu_week_financial_date %}
 
-The financial date of the menu week. This is usually the Monday of the week, but with some exceptions: 
+The financial date of the week when the menu is delivered to the customer. This is usually the Monday of the week, but with some exceptions: 
 - In week 40 2024, the financial date is 2024-10-01, this is so that the week will belong to october and the quarter 3
 
 {% enddocs %}
 
 {% docs column__menu_year %}
 
-The year of the menu
+The year the menu is delivered to customers.
 
 {% enddocs %}
 
 {% docs column__menu_week %}
 
-The week of the year for the menu
+The week of the year the menu is delivered to customers.
 
 {% enddocs %}
 

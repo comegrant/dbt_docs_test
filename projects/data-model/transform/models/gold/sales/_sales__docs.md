@@ -1,7 +1,13 @@
 # Fact Orders
 {% docs column__pk_fact_orders %}
 
-The unique key of each row in Fact Orders.
+The unique key of each row in Fact Orders. Is a composite key of:
+- billing_agreement_order_id
+- billing_agreement_order_line_id
+- product_variation_id
+- preselected_product_variation_id
+- recipe_id
+- preselected_recipe_id
 
 {% enddocs %}
 
@@ -13,25 +19,60 @@ Number of weeks since the first order of the billing agreement.
 
 {% docs column__preselected_product_variation_id %}
 
-The product variation id of the dish presented to the customer on the webpage.
+The id of the product variations the customer would have in their basket if not making any changes to their order.
 
 {% enddocs %}
 
 {% docs column__preselected_recipe_id %}
 
-The recipe id of the dish preseneted to the customer on the webpage.
+The recipe id of the dish the customer would have in their basket if not making any changes to their order. I.e. the dish presented to the customer of the frontend.
+
+{% enddocs %}
+
+{% docs column__meals_mealbox %}
+
+The number of meals in the mealbox the customer ordered. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Meals using the meals related to the mealbox of the order. With the connection its possible to create analysis such answering questions such as: 
+- How does the composition of recipes differ among customers that order different number of meals?
+
+
+{% enddocs %}
+
+{% docs column__meals_mealbox_subscription %}
+
+The number of meals in the mealbox the customer subscribes to. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Meals using the meals related to the mealbox in the customers subscription. The connection makes it possible to create analysis answering questions such as:
+- How does the composition of recipes differ among customers that subscribed to different number of meals?
+
+{% enddocs %}
+
+{% docs column__mealbox_portions %}
+
+The number of portions in the mealbox the customer ordered. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Portions using the portions related to the mealbox of the order. The column are mainly present for debugging purposes.
+
+{% enddocs %}
+
+{% docs column__portions_mealbox_subscription %}
+
+The number of portions in the mealbox the customer subscribes to. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Portions using the portions related to the mealbox in the customers subscription. The column are mainly present for debugging purposes.
+
+{% enddocs %}
+
+{% docs column__portion_id_mealbox %}
+
+The id of the number of portions in the mealbox the ordered. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Portions using the portions related to the mealbox of the order. The connection makes it possible to create analysis answering questions such as:
+- How does the composition of recipes differ among customers that subscribed to different number of portions?
+
+{% enddocs %}
+
+{% docs column__portion_id_mealbox_subscription %}
+
+The the id of the number of portions in the mealbox the customer subscribes to. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Portions using the portions related to the mealbox in the customers subscription. The connection makes it possible to create analysis answering questions such as:
+- How does the composition of recipes differ among customers that subscribed to different number of portions?
 
 {% enddocs %}
 
 {% docs column__mealbox_servings %}
 
-The total number of mealbox_servings in a mealbox. I.e., ordered portions * ordered meals. This is null for all order lines that are not a mealbox.
-
-{% enddocs %}
-
-{% docs column__has_delivery %}
-
-1 if the order has delivery. E.g., gift card orders does not have a delivery, most other orders does.
+The total number of servings in the mealbox which is calculated by taking meals * portions. The value is null for all product variations that are not represention a mealbox.
 
 {% enddocs %}
 
@@ -44,7 +85,18 @@ True if the order type is one of the following:
 - Daily Direct Order
 - Campaign
 
-This filter will be used in Power BI to only include the orders of interest and not gift cards for example.
+The flag is on order level and will be used in Power BI to only include the orders of interest.
+
+{% enddocs %}
+
+{% docs column__has_subscription_order_type %}
+
+True if the order type is one of the following:
+- Recurring
+- Order After Registration
+- Orders After Cutoff
+
+The flag is on order level and will be used in Power BI to only include the orders of interest.
 
 {% enddocs %}
 
@@ -54,95 +106,122 @@ True if the order status is one of the following:
 - Finished
 - Processing
 
-This filter will be used in Power BI to only include the orders of interest and not include cancelled orders for example.
+The flag is on order level and will be used in Power BI to only include the orders of interest.
 
 {% enddocs %}
 
 {% docs column__has_swap %}
 
-True if the customer has swapped in or out dishes when placing the orders. Is false if they only removed or added one dish without replacing it with another recipe, or if the customer did not make any changes to the order at all.
+True if the customer replaced the dishes in the menu presented to them on the frontend with other dishes, else false.
+
+The order is not considered to have a swap if any of these are true, and the field will be false.
+- The customer did not make any changes to the dishes on their order, and sticked with what was presented to them on the webpage.
+- The customer only removed/added dishes without adding/removing another dish
+- The customer did not get any preselected menu on the frontend, and was forced to chose dishes themselves (see is_missing_preselector-column)
+
+The field is null for orders created before we started tracking subscribed products (<2024).
+
+The flag is on order level. I.e. all the rows for the order will have the same value for this flag.
+
+{% enddocs %}
+
+{% docs column__is_mealbox %}
+
+Is true if the product variation represents a mealbox else false. If there are several mealboxes on the order it will be true of all mealboxes.
+
+{% enddocs %}
+
+{% docs column__is_subscribed_mealbox %}
+
+Is true if the preselected product variation represents the subscribed mealbox else false.
+
+{% enddocs %}
+
+{% docs column__is_preselected_dish %}
+
+Is true if the preselected product variation represents a dish, else false.
 
 {% enddocs %}
 
 {% docs column__is_added_dish %}
 
-Is 1 if the ordered dish was added by the customer and 0 if the ordered dish was preselected for the customer. For all rows that are not representing a dish the field will be null.
+Is 1 if the ordered dish was added by the customer themselves and 0 if the ordered dish was a part of the preselection the customer was presented to on the frontend. For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers add to their menu.
 
 {% enddocs %}
 
 {% docs column__is_removed_dish %}
 
-Is 1 if the preselected dish was removed by the customer and 0 if the preselected dish was ordered. For all rows that are not representing a dish the field will be null.
+Is 1 if the customer removed the dish presented on the frontend from their menu and and 0 if the dish presented on the frontend was ordered by the customer. For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers remove from their menu.
 
 {% enddocs %}
 
 {% docs column__is_thrifty_dish %}
 
-Customers can select dishes that give them a price decrease. Column is 1 if the customer was discounted for the dish on their order. 0 for all dishes that did not have a minus price. Null if the order line is not a dish.
+Customers can select dishes that give them a price decrease. Column is 1 if the customer was discounted for the dish on their order, 0 for all dishes that did not have a minus price and null if the product variation is not a dish.
 
 {% enddocs %}
 
 {% docs column__is_plus_price_dish %}
 
-Customers can select dishes for an extra price. The column is 1 if the customer was charged extra for the dish on their order. 0 for all dishes that did not have an extra price. Null if the order line is not a dish.
+Customers can select dishes for an extra price. The column is 1 if the customer was charged extra for the dish on their order, 0 for all dishes that did not have an extra price and null if the product variation is not a dish.
+
+{% enddocs %}
+
+{% docs column__is_grocery %}
+
+True if the the product variation represents a grocery, else false.
 
 {% enddocs %}
 
 {% docs column__is_subscribed_grocery %}
 
-True if the order line is a grocery the customer subscribes to, else false.
+True if the preselected product variation represents a grocery the customer subscribes to, else false. Is null for all orders that was placed before we started tracking subscribed products (< 2024).
 
 {% enddocs %}
 
 {% docs column__is_onesub_migration %}
 
-1 if the customers order was migrated to onesub. Meaning that the product on the order line was changed to the Onesub mealbox product.
+Flag that indicates if the order is a part of the migration to Onesub and is on order level. I.e. the whole order will have the same value for this flag. Is 1 if the order was a part of the Onesub migration else 0. The flag is used to determine if the customer should have recieve preselector output yet or not. Its also used for other debugging purposes.
 
 {% enddocs %}
 
 {% docs column__is_missing_preselector_output %}
 
-1 if the customer did not see any preselector output in the frontend before selecting recipes, else 0.
-
-{% enddocs %}
-
-{% docs column__is_adjusted_by_customer %}
-
-True if customers edited the order before placing it. This could be swapping recipes, adding portions, adding meals or adding groceries, else false.
+Flag that indicates if the customer was presented for output of the preselector in the frontend before selecting recipes. Due to bugs it can happen that a customer does not see any preselected dishes in their menu on the frontend. When this happens the customer will often just go ahead and select dishes themselves. If the customer was not presented with preselector output in the frontend the value of the flag is 1, if the customer did receive preselector output before selecting dishes its 0. The value is null for orders that existed before the preselector was launched together with Onesub (pre fall of 2024). The flag is on order level. I.e. the whole order will have the same value for this flag.
 
 {% enddocs %}
 
 {% docs column__meal_adjustment_subscription %}
 
-The difference between the ordered number of meals and the number of meals the customer subscribes to.
+The difference between the number of meals ordered by the customer and the number of meals they subscribe to. The differnece is on the mealbox row of the order.
 
 {% enddocs %}
 
 {% docs column__portion_adjustment_subscription %}
 
-The difference between the ordered number of portions and the number of portions the customer subscribes to.
+The difference between the number of portions ordered by the customer and the number of portions they subscribe to. The customer can change portions on dish level, hence is the number placed on the recipe row of the order.
 
 {% enddocs %}
 
-{% docs column__subscribed_product_variation_quantity %}
+{% docs column__product_variation_quantity_subscription %}
 
 Quantity subscribed to of the product.
 
 {% enddocs %}
 
-{% docs column__subscribed_product_variation_amount_ex_vat %}
+{% docs column__total_amount_ex_vat_subscription %}
 
-The total amount of the order line if only including subscribed product variation quantity. E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk.
+The total amount of the order line if only including subscribed product variation quantity. E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk that was subscribed to.
 
 {% enddocs %}
 
-{% docs column__fk_dim_products_preselected %}
+{% docs column__fk_dim_products_subscription %}
 
 Used to fetch product information about the dishes that has been presented to the customer on the webpage before the order was placed. Is 0 for order lines that are not representing a preselected dish.
 
 {% enddocs %}
 
-{% docs column__fk_dim_recipes_preselected %}
+{% docs column__fk_dim_recipes_subscription %}
 
 Used to fetch recipe information about the dishes that has been presented to the customer on the webpage before the order was placed. Is 0 for order lines that are not representing a preselected dish.
 
@@ -163,6 +242,24 @@ Defines a unique recipe comment. To be used to count number of comments. A conca
 {% docs column__fk_dim_periods_since_first_menu_week %}
 
 Foreign key to the dimension dim_periods_since, representing number of days since the first menu week of the agreement.
+
+{% enddocs %}
+
+{% docs column__sum_added_dish %}
+
+The sum of the is_added_dish column for each order. Used for middle calculations and debugging.
+
+{% enddocs %}
+
+{% docs column__sum_removed_dish %}
+
+The sum of the is_removed_dish column for each order. Used for middle calculations and debugging.
+
+{% enddocs %}
+
+{% docs column__orders_subscriptions_match_key %}
+
+A key used to match ordered products with preselected/subscribed products. Is the recipe id if a recipe exists, else its the product variation id.
 
 {% enddocs %}
 
@@ -220,12 +317,6 @@ True if the customer has groceries in their subscription, else false.
 {% docs column__onesub_flag%}
 
 Describes if the customer has a OneSub product or not in their basket. It will not "OneSub" from the time when the customer got OneSub in their basket for each individual customer and "Not OneSub" before.
-
-{% enddocs %}
-
-{% docs column__preselector_flag %}
-
-Describes if a customer has been rolled over to the preselector during Onesub launch. The field is changed to "Preselector" at the time preselector was run first time for each individual customer, and is "Not Preselector" before this for each customer. After the launch people get preselector output for the weeks visible in the webpage if they have taken the preference quiz and not made a deviation themselves. For the weeks not visible in the webpage at launch the preselector will run for all customers.
 
 {% enddocs %}
 

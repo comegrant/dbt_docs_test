@@ -36,12 +36,12 @@ relationship b3b42321-b8ef-ff1c-cc69-82b30a6c553d
 
 relationship 1ac02f48-3f59-ea62-e9cd-61120162f262
 	isActive: false
-	fromColumn: 'Order Measures'.fk_dim_recipes_preselected
+	fromColumn: 'Order Measures'.fk_dim_recipes_subscription
 	toColumn: Recipes.pk_dim_recipes
 
 relationship 0e5c479f-fe9d-63e6-2472-c54bf165f06d
 	isActive: false
-	fromColumn: 'Order Measures'.fk_dim_products_preselected
+	fromColumn: 'Order Measures'.fk_dim_products_subscription
 	toColumn: Products.pk_dim_products
 
 relationship e3d2c6c0-3f64-33a8-0194-761fdfb88538
@@ -92,12 +92,8 @@ relationship 68328fbb-4f22-943b-4a02-e3b0c2d5feb1
 	fromColumn: 'Subscription Quiz Measures'.fk_dim_date_source_created_at_segment
 	toColumn: Dates.pk_dim_dates
 
-relationship 705abe51-4d12-52b4-7598-2fbe420f9f2a
-	fromColumn: 'Order Measures'.fk_dim_basket_deviation_origins_preselected
-	toColumn: 'Origin of Preselected Dishes'.pk_dim_basket_deviation_origins
-
 relationship 20285513-1770-0ace-c116-8fd2fa6e064b
-	fromColumn: 'Order Measures'.fk_dim_billing_agreements_deviations
+	fromColumn: 'Order Measures'.fk_dim_billing_agreements_subscription
 	toColumn: 'Billing Agreements Deviation'.pk_dim_billing_agreements
 
 relationship dae01af1-a97e-54b0-3730-3aaf8052dd21

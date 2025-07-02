@@ -23,7 +23,7 @@ Created by concatenating weekly_menu_id, menu_id, product_variation_id, recipe_i
 
 {% docs column__is_dish %}
 
-Is true if the product variation is a dish (i.e., velg & vrak product type). Some groceries and other product types also have recipes.
+Is true if the product variation is a dish (i.e., velg & vrak product type) else false.
 
 {% enddocs %}
 

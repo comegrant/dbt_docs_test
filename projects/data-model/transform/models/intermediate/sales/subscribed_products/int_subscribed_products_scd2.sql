@@ -107,6 +107,8 @@ basket_mealboxes as (
                         mealbox_product_variation_id as product_variation_id
                         , 1 as product_variation_quantity
                         , false as is_extra_product
+                        , true as is_mealbox
+                        , mealbox_basket_id as billing_agreement_basket_id
                     )
                 )
         else
@@ -117,6 +119,8 @@ basket_mealboxes as (
                         mealbox_product_variation_id as product_variation_id
                         , 1 as product_variation_quantity
                         , false as is_extra_product
+                        , true as is_mealbox
+                        , mealbox_basket_id as billing_agreement_basket_id
                     )
                 )
             ) 
@@ -143,7 +147,7 @@ basket_mealboxes as (
                 cast(billing_agreement_id as string)
                 , cast(valid_from as string)
             )) as billing_agreement_basket_product_updated_id
-        , mealbox_basket_id as billing_agreement_basket_id
+        , basket_product_object.billing_agreement_basket_id
         , mealbox_basket_id
         , grocery_basket_id
         , company_id
@@ -156,6 +160,7 @@ basket_mealboxes as (
         , basket_product_object.product_variation_id
         , basket_product_object.product_variation_quantity
         , basket_product_object.is_extra_product
+        , basket_product_object.is_mealbox
         , coalesce(has_grocery_subscription, false) as has_grocery_subscription
         , valid_from
         , valid_to

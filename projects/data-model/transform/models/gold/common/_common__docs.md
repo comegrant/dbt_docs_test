@@ -1,3 +1,11 @@
+# General
+
+{% docs column__fact_updated_at %}
+
+The source updated at timestamp from the source that was updated most recently. I.e., in Fact Orders we have recipe ratings which can be added after the initial order was updated.
+
+{% enddocs %}
+
 # Dim Dates
 
 {% docs column__pk_dim_dates %}

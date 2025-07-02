@@ -88,12 +88,20 @@ weekly_menus as (
 
         , case
             when products.product_type_id in (
-                    '{{ var("mealbox_product_type_id") }}',
-                    '{{ var("velg&vrak_product_type_id") }}'
+                    '{{ var("mealbox_product_type_id") }}'
+                    , '{{ var("velg&vrak_product_type_id") }}'
                 )
             then true
             else false
         end as is_dish
+        , case
+            when products.product_type_id in (
+                    '{{ var("mealbox_product_type_id") }}'
+                    , '{{ var("financial_product_type_id") }}'
+                )
+            then true
+            else false
+        end as is_mealbox
         , dates.is_future_menu_week
 
     from weekly_menus

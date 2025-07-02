@@ -40,6 +40,8 @@ subscribed_products as (
             product_variation_id 
             , product_variation_quantity
             , is_extra_product
+            , false as is_mealbox
+            , billing_agreement_basket_id
             )
         )
     ) as basket_products_list

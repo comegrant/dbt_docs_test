@@ -26,7 +26,86 @@ baskets as (
 
 )
 
-, basket_deviation_products_joined as (
+, deviation_version as (
+
+    select
+        deviations.billing_agreement_basket_deviation_id
+        , dense_rank() over (
+            partition by
+                deviations.billing_agreement_basket_id
+                , deviations.menu_week_monday_date
+            order by
+                deviations.source_created_at asc
+        ) as deviation_version
+    from deviations
+
+)
+
+, recommendation_version as (
+
+    select
+        deviations.billing_agreement_basket_deviation_id
+        , dense_rank()
+            over
+            (
+
+                partition by
+                    deviations.billing_agreement_basket_id
+                    , deviations.menu_week_monday_date
+                order by
+                    deviations.source_created_at desc
+
+            )
+        as recommendation_version_desc
+    from deviations
+    where billing_agreement_basket_deviation_origin_id in (
+        '{{ var("mealselector_origin_id") }}'
+        , '{{ var("preselector_origin_id") }}'
+    )
+
+)
+
+-- find the deviation of the first placed order
+-- i.e. after this changes to the customers subscription 
+-- will only be valid for future menu weeks
+, order_placement as (
+
+    select
+        billing_agreement_basket_id
+        , menu_week_monday_date
+        , coalesce(
+
+            -- get the id of the latest deviation created by the preselector or mealselector
+            max_by(
+                billing_agreement_basket_deviation_id
+                , case 
+                    when billing_agreement_basket_deviation_origin_id in 
+                    (
+                        '{{ var("preselector_origin_id") }}'
+                        ,'{{ var("mealselector_origin_id") }}'
+                    )
+                    then source_created_at
+                    else null
+                    end
+            )
+            
+            -- get the id of the first deviation created by the customer
+            , min_by(
+                billing_agreement_basket_deviation_id
+                , case 
+                    when billing_agreement_basket_deviation_origin_id = '{{ var("normal_origin_id") }}'
+                    then source_created_at
+                    else null
+                    end
+            )
+        
+        ) as billing_agreement_basket_deviation_id
+    from deviations
+    group by all
+
+)
+
+, basket_deviation_tables_joined as (
 
     select
         baskets.billing_agreement_id
@@ -42,12 +121,15 @@ baskets as (
         , deviations.menu_year
         , deviations.menu_week
         , deviation_products.product_variation_quantity
+        , deviation_version.deviation_version
+        , recommendation_version.recommendation_version_desc
         , deviations.is_active_deviation
         , deviation_products.is_extra_product
         -- new deviation was created to migrate customer to onesub
         , deviations.is_onesub_migration as is_onesub_migration_insert
         -- previous deviation was updated to migrated customer to onesub
         , deviation_products.is_onesub_migration as is_onesub_migration_update
+        , (order_placement.billing_agreement_basket_deviation_id is not null) as is_order_placement
         , deviations.source_created_at as deviation_created_at
         , deviations.source_created_by as deviation_created_by
         , deviations.source_updated_at as deviation_updated_at
@@ -62,7 +144,14 @@ baskets as (
     left join baskets
       on deviations.billing_agreement_basket_id = baskets.billing_agreement_basket_id
     left join billing_agreements
-        on billing_agreements.billing_agreement_id = baskets.billing_agreement_id 
+        on billing_agreements.billing_agreement_id = baskets.billing_agreement_id
+    left join deviation_version
+        on deviations.billing_agreement_basket_deviation_id = deviation_version.billing_agreement_basket_deviation_id
+    left join recommendation_version
+        on deviations.billing_agreement_basket_deviation_id = recommendation_version.billing_agreement_basket_deviation_id
+    left join order_placement
+        on deviations.billing_agreement_basket_deviation_id = order_placement.billing_agreement_basket_deviation_id
+
 )
 
-select * from basket_deviation_products_joined
+select * from basket_deviation_tables_joined

@@ -2,7 +2,10 @@ with
 
 recommendations as (
 
-    select * from {{ ref('int_basket_deviation_recommendations_most_recent') }}
+    select * from {{ ref('int_basket_deviation_products_joined') }}
+    -- only include the most recent recommendation for a menu week
+    where recommendation_version_desc = 1
+
 )
 
 , menus as (

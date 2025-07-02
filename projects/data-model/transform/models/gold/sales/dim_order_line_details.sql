@@ -6,53 +6,77 @@ order_lines as (
 
 )
 
-, products as (
+, order_line_types as (
 
-    select * from {{ ref('int_product_tables_joined') }}
-
-)
-
-, create_order_line_details as (
-    select distinct
-        order_lines.order_line_type_name
-        , case
-            when
-                products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-                and order_lines.total_amount_ex_vat > 0
-                then 'Plus Price Dish'
-            when
-                products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-                and order_lines.total_amount_ex_vat < 0
-                then 'Thrifty Dish'
-            when
-                products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-                and order_lines.total_amount_ex_vat = 0
-                then 'Normal Dish'
-            when
-                products.product_type_id in (
-                    '{{ var("mealbox_product_type_id") }}'
-                    , '{{ var("financial_product_type_id") }}'
-                )
-                then 'Mealbox'
-            when products.product_type_id in ({{ var('grocery_product_type_ids') | join(', ') }})
-                then 'Groceries'
-            else order_lines.order_line_type_name
-        end as order_line_details
+    select distinct 
+        order_line_type_name
     from order_lines
-    left join products on order_lines.product_variation_id = products.product_variation_id
+
+    union
+
+    select 'GENERATED' as order_line_type_name
 
 )
 
-, add_pk as (
+, order_line_details as (
+        
+        select 'Plus Price Dish' as order_line_details
+        
+        union all
+        
+        select 'Thrifty Dish'
+        
+        union all
+        
+        select 'Normal Dish'
+        
+        union all
+        
+        select 'Mealbox'
+        
+        union all
+        
+        select 'Groceries'
+
+        union all
+
+        select 'Discount'
+        
+        union all
+        
+        select 'Campaign Discount'
+
+
+)
+
+, order_line_types_and_details_joined as (
+
+    select 
+        order_line_type_name
+        , order_line_details
+    from order_line_types
+    full join order_line_details
+
+    union all
+    
+    select
+        order_line_type_name  as order_line_type_name
+        , order_line_type_name  as order_line_details 
+    from order_line_types
+
+)
+
+, add_pk_and_uknown_row as (
 
     select
         md5(
             concat(
-                create_order_line_details.order_line_type_name, create_order_line_details.order_line_details
+                order_line_type_name
+                , order_line_details
             )
         ) as pk_dim_order_line_details
-        , create_order_line_details.*
-    from create_order_line_details
+        , order_line_types_and_details_joined.*
+    from order_line_types_and_details_joined
 
     union all
 
@@ -63,4 +87,4 @@ order_lines as (
 
 )
 
-select * from add_pk
+select * from add_pk_and_uknown_row
