@@ -308,6 +308,42 @@ The year of the customers first delivery.
 
 {% enddocs %}
 
+{% docs column__reactivation_date %}
+
+The date of the monday of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
+{% docs column__reactivation_week %}
+
+The week of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
+{% docs column__reactivation_month %}
+
+The month name of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
+{% docs column__reactivation_month_number %}
+
+The month number of the of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
+{% docs column__reactivation_quarter %}
+
+The quarter of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
+{% docs column__reactivation_year %}
+
+The year of of the delivery which makes a customer enter the reactivated customer journey segment.
+
+{% enddocs %}
+
 {% docs column__has_grocery_subscription %}
 
 True if the customer has groceries in their subscription, else false.

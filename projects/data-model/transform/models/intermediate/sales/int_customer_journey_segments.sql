@@ -87,6 +87,7 @@ agreements_with_history as (
         , delivery_week_order.company_id
         , delivery_week_order.menu_year
         , delivery_week_order.menu_week
+        , delivery_week_order.menu_week_cutoff_time
         , agreements.signup_date
         , floor (datediff
                     (delivery_week_order.menu_week_monday_date, agreements.signup_date) 
@@ -219,6 +220,7 @@ agreements_with_history as (
         , agreements_and_weeks_joined.menu_year
         , agreements_and_weeks_joined.menu_week
         , agreements_and_weeks_joined.menu_year*100 + agreements_and_weeks_joined.menu_week as menu_yearweek
+        , agreements_and_weeks_joined.menu_week_cutoff_time
         , case 
         when agreements_and_weeks_joined.weeks_since_signup < 3 
             and weeks_since_first_order is null
@@ -280,6 +282,7 @@ agreements_with_history as (
     select
         billing_agreement_id
         , menu_week_monday_date
+        , menu_week_cutoff_time
         , sub_segment_id
         , lag(sub_segment_id) over (
             partition by billing_agreement_id
@@ -294,6 +297,7 @@ agreements_with_history as (
         billing_agreement_id
         , sub_segment_id
         , menu_week_monday_date as menu_week_monday_date_from
+        , menu_week_cutoff_time as menu_week_cutoff_date_from
     from agreement_previous_segment
     where previous_sub_segment_id is null
        or sub_segment_id != previous_sub_segment_id
@@ -305,6 +309,7 @@ agreements_with_history as (
         segment_with_valid_from.billing_agreement_id
         , segment_with_valid_from.sub_segment_id
         , segment_with_valid_from.menu_week_monday_date_from
+        , segment_with_valid_from.menu_week_cutoff_date_from
         , coalesce(
             lead (menu_week_monday_date_from) over (
                 partition by segment_with_valid_from.billing_agreement_id
@@ -312,6 +317,13 @@ agreements_with_history as (
             ),
             '{{var("future_proof_date")}}'
          ) as menu_week_monday_date_to
+        , coalesce(
+            lead (menu_week_cutoff_date_from) over (
+                partition by segment_with_valid_from.billing_agreement_id
+                order by menu_week_cutoff_date_from
+            ),
+            '{{var("future_proof_date")}}'
+         ) as menu_week_cutoff_date_to
     from segment_with_valid_from
 
 )

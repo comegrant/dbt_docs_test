@@ -982,6 +982,30 @@ models:
         data_type: int
         description: "{{ doc('column__first_menu_week_year') }}"
 
+      - name: reactivation_date
+        data_type: date
+        description: "{{ doc('column__reactivation_date') }}"
+
+      - name: reactivation_week
+        data_type: int
+        description: "{{ doc('column__reactivation_week') }}"
+
+      - name: reactivation_month
+        data_type: string
+        description: "{{ doc('column__reactivation_month') }}"
+
+      - name: reactivation_month_number
+        data_type: int
+        description: "{{ doc('column__reactivation_month_number') }}"
+
+      - name: reactivation_quarter  
+        data_type: int
+        description: "{{ doc('column__reactivation_quarter') }}"
+
+      - name: reactivation_year
+        data_type: int
+        description: "{{ doc('column__reactivation_quarter') }}"
+
       - name: loyalty_level_name_brand
         data_type: string
         description: "{{ doc('column__loyalty_level_name_brand') }}"

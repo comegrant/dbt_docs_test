@@ -48,6 +48,12 @@ billing_agreements as (
 
 )
 
+, reactivation_cohorts as (
+
+    select * from {{ ref('int_reactivation_customer_cohorts') }}
+
+)
+
 , agreements_to_include as (
     
     select distinct billing_agreement_id from billing_agreements
@@ -126,6 +132,17 @@ billing_agreements as (
 
 )
 
+, reactivation_cohorts_scd2 as (
+
+    select
+        billing_agreement_id
+        , menu_week_cutoff_date_from as valid_from
+        , menu_week_cutoff_date_to as valid_to
+        , menu_week_monday_date_from as reactivation_monday_date
+        , {{ get_financial_date_from_monday_date('menu_week_monday_date_from') }} as reactivation_financial_date
+    from reactivation_cohorts
+)
+
 -- Use macro to join all scd2 tables
 {% set id_column = 'billing_agreement_id' %}
 {% set table_names = [
@@ -134,6 +151,7 @@ billing_agreements as (
     , 'subscribed_products_scd2'
     , 'preferences_scd2'
     , 'loyalty_levels_scd2'
+    , 'reactivation_cohorts_scd2'
     ] %}
 
 , scd2_tables_joined as (
@@ -181,6 +199,12 @@ billing_agreements as (
         , first_orders.first_menu_week_month_number
         , first_orders.first_menu_week_quarter
         , first_orders.first_menu_week_year
+        , scd2_tables_joined.reactivation_financial_date as reactivation_date
+        , extract('WEEK', scd2_tables_joined.reactivation_financial_date) as reactivation_week
+        , date_format(scd2_tables_joined.reactivation_financial_date, 'MMMM') as reactivation_month
+        , extract('MONTH', scd2_tables_joined.reactivation_financial_date) as reactivation_month_number
+        , extract('QUARTER', scd2_tables_joined.reactivation_financial_date) as reactivation_quarter
+        , extract('YEAROFWEEK', scd2_tables_joined.reactivation_financial_date) as reactivation_year
         , scd2_tables_joined.billing_agreement_status_name
         , scd2_tables_joined.has_grocery_subscription
         , case
