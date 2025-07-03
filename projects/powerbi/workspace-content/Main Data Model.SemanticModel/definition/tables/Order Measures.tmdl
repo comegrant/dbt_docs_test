@@ -1631,6 +1631,19 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Is true if the ordered product variation is a grocery
+	column is_grocery
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_grocery
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	/// The unique identifier representing a recipe id. Both dishes and groceries can have recipes.
 	column recipe_id
 		dataType: int64
