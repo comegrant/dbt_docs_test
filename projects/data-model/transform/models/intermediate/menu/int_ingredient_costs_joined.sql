@@ -86,9 +86,9 @@ procurement_cycles as (
                 , campaign_prices.ingredient_unit_cost
                 , regular_prices.ingredient_unit_cost_markup
                 , regular_prices.ingredient_unit_cost
-            ) as ingredient_planned_cost
-        , coalesce(campaign_prices.ingredient_unit_cost, regular_prices.ingredient_unit_cost) as ingredient_expected_cost
-        , actual_costs.ingredient_average_purchasing_cost as ingredient_actual_cost
+            ) as ingredient_planned_cost_per_unit
+        , coalesce(campaign_prices.ingredient_unit_cost, regular_prices.ingredient_unit_cost) as ingredient_expected_cost_per_unit
+        , actual_costs.ingredient_average_purchasing_cost as ingredient_actual_cost_per_unit
     
     from weekly_menus
     

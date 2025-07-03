@@ -37,7 +37,7 @@ recipes as (
         , portions.portion_name_local                   as portion_size
         , ingredients.ingredient_id
         , ingredients.ingredient_net_weight
-        , recipe_ingredients.ingredient_nutrition_units as nutrition_units
+        , recipe_ingredients.nutrition_units 
     from recipes
     left join recipe_ingredients
         on recipes.recipe_id = recipe_ingredients.recipe_id
@@ -47,7 +47,7 @@ recipes as (
         on recipe_ingredients.ingredient_id = ingredients.ingredient_id
     where
         recipes.is_in_recipe_universe = true
-        and ingredients.is_active = true
+        and ingredients.is_active_ingredient = true
         and portions.language_id = recipes.language_id
         and ingredients.language_id = recipes.language_id
         and recipe_ingredients.language_id = recipes.language_id

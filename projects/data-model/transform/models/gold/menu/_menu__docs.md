@@ -39,42 +39,6 @@ portion_id obtained from product variations.
 
 {% enddocs %}
 
-{% docs column__recipe_planned_cost %}
-
-The menu planning recipe cost, calculated as the sum of the cost of the recipe ingredients based on the exact quantity used in the recipe.
-
-{% enddocs %}
-
-{% docs column__recipe_planned_cost_whole_units %}
-
-The menu planning recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
-
-{% enddocs %}
-
-{% docs column__recipe_expected_cost %}
-
-The expected recipe cost, calculated as the sum of the cost of the recipe ingredients based on the exact quantity used in the recipe. This is the expected purchasing cost which takes any special cost (variable cost unit) into account if set.
-
-{% enddocs %}
-
-{% docs column__recipe_expected_cost_whole_units %}
-
-The expected recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. This is the expected purchasing cost which takes any special cost (variable cost unit) into account if set.
-
-{% enddocs %}
-
-{% docs column__recipe_actual_cost %}
-
-The actual recipe cost, calculated as the sum of the cost of the ingredients in the recipe based on the exact quantity used in the recipe. The cost used for the calculation is the ingredient cost on the purchase order.
-
-{% enddocs %}
-
-{% docs column__recipe_actual_cost_whole_units %}
-
-The actual recipe cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. The cost used for the calculation is the ingredient cost on the purchase order.
-
-{% enddocs %}
-
 # Dim Recipes
 {% docs column__pk_dim_recipes %}
 
@@ -188,6 +152,12 @@ The ingredient name in local language with size and unit label appended.
 
 {% enddocs %}
 
+{% docs column__ingredient_manufacturer_name %}
+
+The name of the producing supplier, which can differ from the supplier.
+
+{% enddocs %}
+
 {% docs column__main_group %}
 
 Ingredient category name of the main group of an ingredient.
@@ -292,7 +262,7 @@ The name of the number of portions on English.
 {% enddocs %}
 
 # Fact Recipes Ingredients
-{% docs column__pk_fact_recipes_ingredients %}
+{% docs column__pk_fact_recipe_ingredients %}
 
 Primary key of Fact Recipes Ingredients. Is a composite of menu_variation_id, menu_recipe_id, recipe_portion_id and weekly_ingredient_id.
 
@@ -322,13 +292,25 @@ The amount of the actual ingredient which is included in nutritional calculation
 
 {% enddocs %}
 
-{% docs column__ingredient_order_quantity %}
+{% docs column__ingredient_weight_per_unit %}
 
-The amount of the actual ingredient to be ordered for this recipe. The unit is specified by the unit label.
+The net weight (in grams) for one unit of the ingredient.
 
 {% enddocs %}
 
-{% docs column__ingredient_planned_cost %}
+{% docs column__total_ingredient_weight %}
+
+The net weight (in grams) for the total ingredient amount in the recipe.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_weight_whole_units %}
+
+The net weight (in grams) of the ingredients, based on ingredient quantity in whole units.
+
+{% enddocs %}
+
+{% docs column__ingredient_planned_cost_per_unit %}
 
 The menu planning purchasing cost for one unit of the ingredient, valid for the menu week of the recipe.
 
@@ -336,35 +318,37 @@ The menu planning purchasing cost for one unit of the ingredient, valid for the 
 
 {% docs column__total_ingredient_planned_cost %}
 
-The menu planning purchasing cost for the total ingredient amount of the recipe, valid for the menu week of the recipe.
+The menu planning purchasing cost for the total ingredient amount in the recipe.
 
 {% enddocs %}
 
 {% docs column__total_ingredient_planned_cost_whole_units %}
 
-The menu planning purchasing cost for the total ingredient amount of the recipe, rounded up to the nearest integer, valid for the menu week of the recipe.
+The menu planning purchasing cost based on ingredient quantity in whole units. It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 
 {% enddocs %}
 
-{% docs column__ingredient_expected_cost %}
+{% docs column__ingredient_expected_cost_per_unit %}
 
-The expected purchasing cost for one unit of the ingredient, valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+The expected purchasing cost for one unit of the ingredient, valid for the menu week of the recipe. The expected cost includes discounts or other price adjustment (variable cost unit) if set, that is not included in the planned cost.
+
+[//]: # (TODO: explain more about the purpose and use of this field vs the planned cost. Is this when there are discounts on on purchasing ingredients?)
 
 {% enddocs %}
 
 {% docs column__total_ingredient_expected_cost %}
 
-The expected purchasing cost for the total ingredient amount of the recipe, valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+The expected purchasing cost for the total ingredient amount in the recipe. The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
 
 {% enddocs %}
 
 {% docs column__total_ingredient_expected_cost_whole_units %}
 
-The expected purchasing cost for the total ingredient amount of the recipe, rounded up to the nearest integer, which is valid for the menu week of the recipe. The expected cost might have a discount that is not to be included in the menu planning process.
+The expected purchasing cost based on ingredient quantity in whole units. The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 
 {% enddocs %}
 
-{% docs column__ingredient_actual_cost %}
+{% docs column__ingredient_actual_cost_per_unit %}
 
 The actual purchasing cost for one unit of the ingredient, fetched from the purchasing order(s) for the menu week of the recipe.
 
@@ -372,13 +356,46 @@ The actual purchasing cost for one unit of the ingredient, fetched from the purc
 
 {% docs column__total_ingredient_actual_cost %}
 
-The actual purchasing cost for the total ingredient amount of the recipe, fetched from the purchasing order(s) for the menu week of the recipe.
+The actual purchasing cost for the total ingredient amount of the recipe. It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe. 
 
 {% enddocs %}
 
 {% docs column__total_ingredient_actual_cost_whole_units %}
 
-The actual purchasing cost for the total ingredient amount of the recipe, fetched from the purchasing order(s) for the menu week of the recipe. The total ingredient amount is rounded up to the nearest integer.
+The actual purchasing cost for the total ingredient amount of the recipe. It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe. 
+
+{% enddocs %}
+
+{% docs column__total_ingredient_co2_emissions %}
+
+The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
+Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_co2_emissions_whole_units %}
+
+The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe.
+Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
+
+{% enddocs %}
+
+{% docs column__ingredient_weight_with_co2_data %}
+
+The net weight (in grams) of one unit of the ingredient, that have registered CO2 emission data.
+
+{% enddocs %}
+
+
+{% docs column__total_ingredient_weight_with_co2_data %}
+
+The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+
+{% enddocs %}
+
+{% docs column__total_ingredient_weight_with_co2_data_whole_units %}
+
+The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data, where the quantity of the ingredients is rounded up to whole units. 
 
 {% enddocs %}
 

@@ -38,9 +38,11 @@ renamed as (
         {# numerics #}
         , cast(ingredient_quantity as int) as ingredient_size
         , shelf_life as ingredient_shelf_life
-        , netto_weight as ingredient_net_weight
-        , brutto_weight as ingredient_gross_weight
+        , coalesce(netto_weight,0) as ingredient_net_weight
+        , coalesce(brutto_weight,0) as ingredient_gross_weight
         , supplier_pack_size as ingredient_distribution_packaging_size
+        , kg_of_co2_emissions_per_kg as ingredient_co2_emissions_per_kg
+        , coalesce(netto_weight,0) * kg_of_co2_emissions_per_kg / 1000 as ingredient_co2_emissions_per_unit
 
         {# ints #}
         , dfp_pallet as distribution_packages_per_pallet
@@ -49,12 +51,12 @@ renamed as (
         , width as ingredient_packaging_width
 
         {# booleans #}
-        , is_active
+        , is_active as is_active_ingredient
         , can_be_used as is_available_for_use
-        , is_outgoing
+        , is_outgoing as is_outgoing_ingredient
         , cold_storage as is_cold_storage
         , consumer_cold_storage as is_consumer_cold_storage
-        , is_organic
+        , is_organic as is_organic_ingredient
         , fragile_ingredient as is_fragile_ingredient
         , special_packing as is_special_packing
         , isnotnull(ingredient_photo) as has_customer_photo
@@ -64,6 +66,11 @@ renamed as (
         , register_expiration_date as is_to_register_expiration_date
         , register_temperature as is_to_register_temperature
         , register_ingredient_weight as is_to_register_ingredient_weight
+        , case 
+            when kg_of_co2_emissions_per_kg is not null 
+            then true 
+            else false 
+          end as has_co2_data
 
         {# Not Used
         , ingredient_customer_category_id --Customer categories are legacy

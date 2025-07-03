@@ -57,13 +57,18 @@ recipes as (
         , generic_ingredient_translations.generic_ingredient_id
         , generic_ingredient_translations.generic_ingredient_name
         , ingredients.ingredient_id
+        , order_ingredients.ingredient_internal_reference
         , ingredient_translations.ingredient_name
         , ingredient_translations.language_id
-        , chef_ingredients.ingredient_amount as recipe_ingredient_amount
-        , order_ingredients.is_main_carbohydrate as is_recipe_main_carbohydrate
-        , order_ingredients.is_main_protein as is_recipe_main_protein
-        , order_ingredients.nutrition_units as ingredient_nutrition_units
-        , order_ingredients.order_ingredient_quantity as ingredient_order_quantity
+        , chef_ingredients.recipe_ingredient_amount
+        , order_ingredients.is_main_carbohydrate
+        , order_ingredients.is_main_protein
+        , order_ingredients.nutrition_units 
+        , order_ingredients.ingredient_order_quantity
+        , ingredients.ingredient_net_weight
+        , ingredients.ingredient_co2_emissions_per_kg
+        , ingredients.ingredient_co2_emissions_per_unit
+        , ingredients.has_co2_data
 
     from recipes
 
@@ -83,11 +88,6 @@ recipes as (
         on ingredients.ingredient_id = ingredient_translations.ingredient_id
 
     where generic_ingredient_translations.language_id = ingredient_translations.language_id
-
-    order by 
-        recipes.recipe_id
-        , recipe_portions.portion_id
-        , chef_ingredient_sections.chef_ingredient_section_id
 )
 
 select * from all_tables_joined

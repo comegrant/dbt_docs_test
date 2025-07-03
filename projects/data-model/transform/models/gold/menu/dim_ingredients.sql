@@ -24,6 +24,18 @@ ingredients as (
 
 )
 
+, ingredient_suppliers as (
+
+    select * from {{ ref('pim__ingredient_suppliers') }}
+
+)
+/* NOTE: This is wrong, ingredient statuses are found in ingredient_status_codes.*/
+, status_codes as (
+
+    select * from {{ ref('pim__status_code_translations') }}
+
+)
+
 , ingredient_info as (
 
     select
@@ -44,9 +56,9 @@ ingredients as (
         , ingredients.ingredient_supplier_id
         , ingredients.unit_label_id
         , ingredients.ingredient_category_id
-        , ingredients.ingredient_status_code_id
-        , ingredients.ingredient_type_id
-        , ingredients.pack_type_id
+        , ingredients.ingredient_status_code_id --Add status description
+        , ingredients.ingredient_type_id --Add ingredient type name (N/A right now, needs INGREDIENT_TYPE table)
+        , ingredients.pack_type_id  --Add pack type name (N/A right now, needs PACK_TYPES_TRANSLATIONS table)
         , ingredients.epd_id_number
         , ingredients.ingredient_manufacturer_supplier_id
         
@@ -56,6 +68,9 @@ ingredients as (
         , ingredients.ean_code_consumer_packaging
         , ingredients.ean_code_distribution_packaging
         , ingredients.ingredient_external_reference
+        , ingredient_suppliers.ingredient_supplier_name
+        , ingredient_manufacturer_suppliers.ingredient_supplier_name as ingredient_manufacturer_name
+        , status_codes.status_code_name as ingredient_status_name
 
         -- numerics
         , ingredients.ingredient_size
@@ -69,12 +84,12 @@ ingredients as (
         , ingredients.ingredient_packaging_width
 
         -- booleans
-        , ingredients.is_active
+        , ingredients.is_active_ingredient
         , ingredients.is_available_for_use
-        , ingredients.is_outgoing
+        , ingredients.is_outgoing_ingredient
         , ingredients.is_cold_storage
         , ingredients.is_consumer_cold_storage
-        , ingredients.is_organic
+        , ingredients.is_organic_ingredient
         , ingredients.is_fragile_ingredient
         , ingredients.is_special_packing
         , ingredients.has_customer_photo
@@ -84,6 +99,7 @@ ingredients as (
         , ingredients.is_to_register_expiration_date
         , ingredients.is_to_register_temperature
         , ingredients.is_to_register_ingredient_weight
+        , ingredients.has_co2_data
 
     from ingredients
     
@@ -93,6 +109,16 @@ ingredients as (
     left join unit_label_translations
         on ingredients.unit_label_id = unit_label_translations.unit_label_id
         and ingredient_translations.language_id = unit_label_translations.language_id
+
+    left join ingredient_suppliers
+        on ingredients.ingredient_supplier_id = ingredient_suppliers.ingredient_supplier_id
+
+    left join ingredient_suppliers as ingredient_manufacturer_suppliers
+        on ingredients.ingredient_manufacturer_supplier_id = ingredient_manufacturer_suppliers.ingredient_supplier_id
+
+    left join status_codes
+        on ingredients.ingredient_status_code_id = status_codes.status_code_id
+        and ingredient_translations.language_id = status_codes.language_id
 
 )
 

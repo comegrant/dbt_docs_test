@@ -12,9 +12,9 @@ menu_weeks as (
 
 )
 
-, ingredient_costs as (
+, recipe_costs_and_co2 as (
 
-    select * from {{ ref('fact_recipes_ingredients') }}
+    select * from {{ ref('int_weekly_recipe_costs_and_co2') }}
 
 )
 
@@ -24,7 +24,7 @@ menu_weeks as (
 
 )
 
-, recipe_costs as (
+, add_recipe_costs_and_co2 as (
 
     select
         menu_weeks.weekly_menu_id
@@ -58,12 +58,23 @@ menu_weeks as (
         , menu_weeks.is_dish
         , menu_weeks.is_future_menu_week
 
-        , sum(ingredient_costs.total_ingredient_planned_cost) as recipe_planned_cost
-        , sum(ingredient_costs.total_ingredient_planned_cost_whole_units) as recipe_planned_cost_whole_units
-        , sum(ingredient_costs.total_ingredient_expected_cost) as recipe_expected_cost
-        , sum(ingredient_costs.total_ingredient_expected_cost_whole_units) as recipe_expected_cost_whole_units
-        , sum(ingredient_costs.total_ingredient_actual_cost) as recipe_actual_cost
-        , sum(ingredient_costs.total_ingredient_actual_cost_whole_units) as recipe_actual_cost_whole_units
+        , recipe_costs_and_co2.total_ingredient_weight
+        , recipe_costs_and_co2.total_ingredient_weight_whole_units
+
+        , recipe_costs_and_co2.total_ingredient_planned_cost
+        , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units
+
+        , recipe_costs_and_co2.total_ingredient_expected_cost
+        , recipe_costs_and_co2.total_ingredient_expected_cost_whole_units
+
+        , recipe_costs_and_co2.total_ingredient_actual_cost
+        , recipe_costs_and_co2.total_ingredient_actual_cost_whole_units
+
+        , recipe_costs_and_co2.total_ingredient_co2_emissions
+        , recipe_costs_and_co2.total_ingredient_co2_emissions_whole_units
+
+        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data
+        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
 
     from menu_weeks
 
@@ -71,11 +82,12 @@ menu_weeks as (
         on menu_weeks.portion_name_products = portions.portion_name_local
         and menu_weeks.language_id = portions.language_id
 
-    left join ingredient_costs
-        on menu_weeks.company_id = ingredient_costs.company_id
-        and menu_weeks.menu_year = ingredient_costs.menu_year
-        and menu_weeks.menu_week = ingredient_costs.menu_week
-        and menu_weeks.recipe_id = ingredient_costs.recipe_id
+    left join recipe_costs_and_co2
+        on menu_weeks.company_id = recipe_costs_and_co2.company_id
+        and menu_weeks.menu_year = recipe_costs_and_co2.menu_year
+        and menu_weeks.menu_week = recipe_costs_and_co2.menu_week
+        and menu_weeks.recipe_id = recipe_costs_and_co2.recipe_id
+        and menu_weeks.recipe_portion_id = recipe_costs_and_co2.recipe_portion_id
 
     group by all
 
@@ -84,70 +96,81 @@ menu_weeks as (
 , add_price_categories_and_keys as (
     select
         md5(concat_ws('-',
-            recipe_costs.weekly_menu_id,
-            recipe_costs.menu_id,
-            recipe_costs.product_variation_id,
-            recipe_costs.recipe_id,
-            recipe_costs.menu_recipe_id,
-            recipe_costs.portion_id,
-            recipe_costs.menu_number_days,
-            recipe_costs.menu_recipe_order
+            add_recipe_costs_and_co2.weekly_menu_id,
+            add_recipe_costs_and_co2.menu_id,
+            add_recipe_costs_and_co2.product_variation_id,
+            add_recipe_costs_and_co2.recipe_id,
+            add_recipe_costs_and_co2.menu_recipe_id,
+            add_recipe_costs_and_co2.portion_id,
+            add_recipe_costs_and_co2.menu_number_days,
+            add_recipe_costs_and_co2.menu_recipe_order
         )) as pk_fact_menus
 
-        , recipe_costs.weekly_menu_id
-        , recipe_costs.company_id
-        , recipe_costs.language_id
-        , recipe_costs.menu_id
-        , recipe_costs.menu_variation_id
-        , recipe_costs.product_variation_id
-        , recipe_costs.menu_recipe_id
-        , recipe_costs.recipe_id
+        , add_recipe_costs_and_co2.weekly_menu_id
+        , add_recipe_costs_and_co2.company_id
+        , add_recipe_costs_and_co2.language_id
+        , add_recipe_costs_and_co2.menu_id
+        , add_recipe_costs_and_co2.menu_variation_id
+        , add_recipe_costs_and_co2.product_variation_id
+        , add_recipe_costs_and_co2.menu_recipe_id
+        , add_recipe_costs_and_co2.recipe_id
 
-        , recipe_costs.recipe_portion_id
-        , recipe_costs.portion_id_menus
-        , recipe_costs.portion_id_products
-        , recipe_costs.portion_id
+        , add_recipe_costs_and_co2.recipe_portion_id
+        , add_recipe_costs_and_co2.portion_id_menus
+        , add_recipe_costs_and_co2.portion_id_products
+        , add_recipe_costs_and_co2.portion_id
 
-        , recipe_costs.menu_year
-        , recipe_costs.menu_week
-        , recipe_costs.menu_week_monday_date
-        , recipe_costs.menu_week_financial_date
+        , add_recipe_costs_and_co2.menu_year
+        , add_recipe_costs_and_co2.menu_week
+        , add_recipe_costs_and_co2.menu_week_monday_date
+        , add_recipe_costs_and_co2.menu_week_financial_date
 
-        , recipe_costs.menu_number_days
-        , recipe_costs.menu_recipe_order
+        , add_recipe_costs_and_co2.menu_number_days
+        , add_recipe_costs_and_co2.menu_recipe_order
 
-        , recipe_costs.is_locked_recipe
-        , recipe_costs.is_selected_menu
-        , recipe_costs.is_dish
-        , recipe_costs.is_future_menu_week
+        , add_recipe_costs_and_co2.is_locked_recipe
+        , add_recipe_costs_and_co2.is_selected_menu
+        , add_recipe_costs_and_co2.is_dish
+        , add_recipe_costs_and_co2.is_future_menu_week
 
-        , recipe_costs.recipe_planned_cost
-        , recipe_costs.recipe_planned_cost_whole_units
-        , recipe_costs.recipe_expected_cost
-        , recipe_costs.recipe_expected_cost_whole_units
-        , recipe_costs.recipe_actual_cost
-        , recipe_costs.recipe_actual_cost_whole_units
+        , add_recipe_costs_and_co2.total_ingredient_weight
+        , add_recipe_costs_and_co2.total_ingredient_weight_whole_units
+
+        , add_recipe_costs_and_co2.total_ingredient_planned_cost
+        , add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units
+        
+        , add_recipe_costs_and_co2.total_ingredient_expected_cost
+        , add_recipe_costs_and_co2.total_ingredient_expected_cost_whole_units
+        
+        , add_recipe_costs_and_co2.total_ingredient_actual_cost
+        , add_recipe_costs_and_co2.total_ingredient_actual_cost_whole_units
+
+        , add_recipe_costs_and_co2.total_ingredient_co2_emissions
+        , add_recipe_costs_and_co2.total_ingredient_co2_emissions_whole_units
+        
+        , add_recipe_costs_and_co2.total_ingredient_weight_with_co2_data
+        , add_recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
 
         , price_categories.price_category_level_id
         , price_categories.price_category_level_name
         , price_categories.price_category_price_inc_vat
 
         {# FKS #}
-        , md5(recipe_costs.company_id) as fk_dim_companies
-        , cast(date_format(recipe_costs.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
-        , md5(concat(recipe_costs.portion_id, recipe_costs.language_id)) as fk_dim_portions
-        , md5(concat(recipe_costs.product_variation_id, recipe_costs.company_id)) as fk_dim_products
-        , coalesce(md5(cast(concat(recipe_costs.recipe_id, recipe_costs.language_id) as string)),0) as fk_dim_recipes
+        , md5(add_recipe_costs_and_co2.company_id) as fk_dim_companies
+        , cast(date_format(add_recipe_costs_and_co2.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
+        , md5(concat(add_recipe_costs_and_co2.portion_id, add_recipe_costs_and_co2.language_id)) as fk_dim_portions
+        , md5(concat(add_recipe_costs_and_co2.product_variation_id, add_recipe_costs_and_co2.company_id)) as fk_dim_products
+        , coalesce(md5(cast(concat(add_recipe_costs_and_co2.recipe_id, add_recipe_costs_and_co2.language_id) as string)),0) as fk_dim_recipes
 
-    from recipe_costs
+    from add_recipe_costs_and_co2
 
     left join price_categories
-        on recipe_costs.company_id = price_categories.company_id
-        and recipe_costs.portion_id = price_categories.portion_id
-        and recipe_costs.recipe_planned_cost_whole_units >= price_category_min_total_ingredient_cost
-        and recipe_costs.recipe_planned_cost_whole_units < price_categories.price_category_max_total_ingredient_cost
-        and recipe_costs.menu_week_monday_date >= price_categories.price_category_valid_from
-        and recipe_costs.menu_week_monday_date <= price_categories.price_category_valid_to
+        on add_recipe_costs_and_co2.company_id = price_categories.company_id
+        and add_recipe_costs_and_co2.portion_id = price_categories.portion_id
+        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units >= price_category_min_total_ingredient_cost
+        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units < price_categories.price_category_max_total_ingredient_cost
+        and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.price_category_valid_from
+        and add_recipe_costs_and_co2.menu_week_monday_date <= price_categories.price_category_valid_to
 
 )
 

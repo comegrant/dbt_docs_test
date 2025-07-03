@@ -18,7 +18,7 @@ Identifier for each ingredient section, where an ingredient section is i.e. "pan
 
 {% enddocs %}
 
-{% docs column__ingredient_amount %}
+{% docs column__recipe_ingredient_amount %}
 
 Amount of specific ingredient in a recipe variation
 
@@ -383,7 +383,7 @@ Description of an ingredient's composition, e.g. "oil, egg, salt" for "mayonnais
 
 {% docs column__ingredient_net_weight %}
 
-The netto weight of an ingredient.
+The net weight of an ingredient.
 
 {% enddocs %}
 
@@ -429,6 +429,12 @@ Indicates if there is a packaging photo linked.
 
 {% enddocs %}
 
+{% docs column__is_active_ingredient %}
+
+Indicates if the ingredient is active.
+
+{% enddocs %}
+
 {% docs column__is_available_for_use %}
 
 Indicates if the ingredient is available for use in menu planning.
@@ -453,13 +459,13 @@ Indicates if the ingredient is fragile and should be handled carefully in produc
 
 {% enddocs %}
 
-{% docs column__is_organic %}
+{% docs column__is_organic_ingredient %}
 
 Indicates if the ingredient is classified as organic.
 
 {% enddocs %}
 
-{% docs column__is_outgoing %}
+{% docs column__is_outgoing_ingredient %}
 
 Indicates if the ingredient is soon not to be used in menu planning.
 
@@ -543,6 +549,26 @@ The amount contained in the ingredient package, in the unit specified by the uni
 
 {% enddocs %}
 
+{% docs column__ingredient_co2_emissions_per_kg %}
+
+The number of kilos CO2 emissions registered per one kilo of the ingredient.
+Note: Not all ingredients has registered CO2 emissions.
+
+{% enddocs %}
+
+{% docs column__ingredient_co2_emissions_per_unit %}
+
+The registered CO2 emission (in kg) for one unit of the ingredient. It is calculated by multipling the emission per kg of the ingredient with the net weight of one unit of the ingredient. 
+Note: Not all ingredients have registered CO2 emission data. 
+
+{% enddocs %}
+
+{% docs column__has_co2_data %}
+
+A flag stating if the ingredient has registered data about it's CO2 emission.
+
+{% enddocs %}
+
 {% docs column__ean_code_consumer_packaging %}
 
 The EAN code for the consumer packaging.
@@ -551,7 +577,7 @@ The EAN code for the consumer packaging.
 
 {% docs column__ean_code_distribution_packaging %}
 
-The EAN code for the districution packaging.
+The EAN code for the distribution packaging.
 
 {% enddocs %}
 
@@ -857,7 +883,7 @@ The amount of an ingredient which is included in nutritional calculations. The u
 
 {% enddocs %}
 
-{% docs column__order_ingredient_quantity %}
+{% docs column__ingredient_order_quantity %}
 
 The amount of an ingredient to be ordered for a recipe. The unit is specified by the unit label.
 

@@ -16,7 +16,7 @@ renamed as (
         , generic_ingredient_id
 
         {# strings #}
-        , ingredient_amount
+        , ingredient_amount as recipe_ingredient_amount
 
         --{# ints #}
         --, ingredient_order

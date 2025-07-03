@@ -1153,9 +1153,9 @@ models:
         data_type: int
         description: "{{ doc('column__generic_ingredient_id') }}"
 
-      - name: ingredient_amount
+      - name: recipe_ingredient_amount
         data_type: string
-        description: "{{ doc('column__ingredient_amount') }}"
+        description: "{{ doc('column__recipe_ingredient_amount') }}"
 
   - name: pim__ingredient_category_translations
     description: "Table mapping ingredient category ids to their names in different languages"
@@ -1245,9 +1245,9 @@ models:
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
 
-      - name: is_active
+      - name: is_active_ingredient
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_active_ingredient') }}"
 
       - name: ingredient_net_weight
         data_type: decimal(34,2)
@@ -1297,13 +1297,13 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_fragile_ingredient') }}"
         
-      - name: is_organic
+      - name: is_organic_ingredient
         data_type: boolean
-        description: "{{ doc('column__is_organic') }}"
+        description: "{{ doc('column__is_organic_ingredient') }}"
         
-      - name: is_outgoing
+      - name: is_outgoing_ingredient
         data_type: boolean
-        description: "{{ doc('column__is_outgoing') }}"
+        description: "{{ doc('column__is_outgoing_ingredient') }}"
         
       - name: is_special_packing
         data_type: boolean
@@ -1340,6 +1340,18 @@ models:
       - name: ingredient_distribution_packaging_size
         data_type: int
         description: "{{ doc('column__ingredient_distribution_packaging_size') }}"
+
+      - name: ingredient_co2_emissions_per_kg
+        data_type: decimal(34,4)
+        description: "{{ doc('column__ingredient_co2_emissions_per_kg') }}"
+
+      - name: ingredient_co2_emissions_per_unit
+        data_type: decimal(34,4)
+        description: "{{ doc('column__ingredient_co2_emissions_per_unit') }}"
+
+      - name: has_co2_data
+        data_type: boolean
+        description: "{{ doc('column__has_co2_data') }}"
 
       - name: ingredient_packaging_depth
         data_type: int
@@ -1416,9 +1428,9 @@ models:
         data_type: decimal(6,2)
         description: "{{ doc('column__nutrition_units') }}"
       
-      - name: order_ingredient_quantity
+      - name: ingredient_order_quantity
         data_type: decimal(6,2)
-        description: "{{ doc('column__order_ingredient_quantity') }}"
+        description: "{{ doc('column__ingredient_order_quantity') }}"
 
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"

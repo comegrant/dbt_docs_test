@@ -24,12 +24,6 @@ weekly_menus as (
 
 )
 
-, recipes as (
-
-    select * from {{ ref('pim__recipes') }}
-
-)
-
 , recipe_portions as (
 
     select * from {{ ref('pim__recipe_portions') }}

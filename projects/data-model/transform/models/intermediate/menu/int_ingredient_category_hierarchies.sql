@@ -21,7 +21,7 @@ ingredients as (
         ingredient_id
         , ingredient_category_id
     from ingredients
-    where is_active = True -- active
+    where is_active_ingredient = True -- active
 )
 
 , parent_level as (

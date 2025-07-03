@@ -30,7 +30,7 @@ renamed as (
         , modified_date as source_updated_at
             
         {# numerics #}
-        , order_ingredient_qty as order_ingredient_quantity
+        , order_ingredient_qty as ingredient_order_quantity
         , nutrition_units
         
     from source

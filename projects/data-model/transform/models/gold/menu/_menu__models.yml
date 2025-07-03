@@ -548,9 +548,9 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_type_id') }}"
 
-      - name: is_active
+      - name: is_active_ingredient
         data_type: boolean
-        description: ""
+        description: "{{ doc('column__is_active_ingredient') }}"
 
       - name: ingredient_net_weight
         data_type: decimal(34,2)
@@ -583,6 +583,10 @@ models:
       - name: has_packaging_photo
         data_type: boolean
         description: "{{ doc('column__has_packaging_photo') }}"
+
+      - name: has_co2_data
+        data_type: boolean
+        description: "{{ doc('column__has_co2_data') }}"
         
       - name: is_available_for_use
         data_type: boolean
@@ -600,13 +604,13 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_fragile_ingredient') }}"
         
-      - name: is_organic
+      - name: is_organic_ingredient
         data_type: boolean
-        description: "{{ doc('column__is_organic') }}"
+        description: "{{ doc('column__is_organic_ingredient') }}"
         
-      - name: is_outgoing
+      - name: is_outgoing_ingredient
         data_type: boolean
-        description: "{{ doc('column__is_outgoing') }}"
+        description: "{{ doc('column__is_outgoing_ingredient') }}"
         
       - name: is_special_packing
         data_type: boolean
@@ -675,6 +679,18 @@ models:
       - name: ingredient_external_reference
         data_type: string
         description: "{{ doc('column__ingredient_external_reference') }}"
+
+      - name: ingredient_supplier_name
+        data_type: string
+        description: "{{ doc('column__ingredient_supplier_name') }}"
+
+      - name: ingredient_manufacturer_name
+        data_type: string
+        description: "{{ doc('column__ingredient_manufacturer_name') }}"
+
+      - name: ingredient_status_name
+        data_type: string
+        description: "{{ doc('column__status_code_name') }}"
 
       - name: main_group
         data_type: string
@@ -1050,29 +1066,53 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_future_menu_week') }}"
 
-      - name: recipe_planned_cost
+      - name: total_ingredient_weight
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_planned_cost') }}"
+        description: "{{ doc('column__total_ingredient_weight') }}"
 
-      - name: recipe_planned_cost_whole_units
+      - name: total_ingredient_weight_whole_units
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_planned_cost_whole_units') }}"
+        description: "{{ doc('column__total_ingredient_weight_whole_units') }}"
 
-      - name: recipe_expected_cost
+      - name: total_ingredient_planned_cost
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_expected_cost') }}"
+        description: "{{ doc('column__total_ingredient_planned_cost') }}"
 
-      - name: recipe_expected_cost_whole_units
+      - name: total_ingredient_planned_cost_whole_units
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_expected_cost_whole_units') }}"
+        description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
 
-      - name: recipe_actual_cost
+      - name: total_ingredient_expected_cost
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_actual_cost') }}"
+        description: "{{ doc('column__total_ingredient_expected_cost') }}"
 
-      - name: recipe_actual_cost_whole_units
+      - name: total_ingredient_expected_cost_whole_units
         data_type: decimal(38,2)
-        description: "{{ doc('column__recipe_actual_cost_whole_units') }}"
+        description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
+
+      - name: total_ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
+
+      - name: total_ingredient_co2_emissions
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions') }}"
+
+      - name: total_ingredient_co2_emissions_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions_whole_units') }}"
+
+      - name: total_ingredient_weight_with_co2_data
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}"
+
+      - name: total_ingredient_weight_with_co2_data_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
 
       - name: price_category_level_id
         data_type: int
@@ -1237,18 +1277,18 @@ models:
     versions:
       - v: 1
 
-  - name: fact_recipes_ingredients
+  - name: fact_recipe_ingredients
     description: "Contains the ingredients of each weekly recipe, together with ingredient costs."
     latest_version: 1
     config:
-      alias: fact_recipes_ingredients
+      alias: fact_recipe_ingredients
       contract:
         enforced: true
 
     columns:
-      - name: pk_fact_recipes_ingredients
+      - name: pk_fact_recipe_ingredients
         data_type: string
-        description: "{{ doc('column__pk_fact_recipes_ingredients') }}"
+        description: "{{ doc('column__pk_fact_recipe_ingredients') }}"
         constraints:
           - type: primary_key
           - type: not_null
@@ -1277,6 +1317,12 @@ models:
       - name: ingredient_id
         data_type: int
         description: "{{ doc('column__ingredient_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_internal_reference
+        data_type: string
+        description: "{{ doc('column__ingredient_internal_reference') }}"
         data_tests:
           - not_null
 
@@ -1370,15 +1416,15 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_locked_recipe') }}"
 
-      - name: is_recipe_main_carbohydrate
+      - name: is_main_carbohydrate
         data_type: boolean
         description: "{{ doc('column__is_recipe_main_carbohydrate') }}"
 
-      - name: is_recipe_main_protein
+      - name: is_main_protein
         data_type: boolean
         description: "{{ doc('column__is_recipe_main_protein') }}"
 
-      - name: ingredient_nutrition_units
+      - name: nutrition_units
         data_type: decimal(38,2)
         description: "{{ doc('column__ingredient_nutrition_units') }}"
 
@@ -1386,9 +1432,21 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__ingredient_order_quantity') }}"
 
-      - name: ingredient_planned_cost
+      - name: ingredient_weight_per_unit
         data_type: decimal(38,2)
-        description: "{{ doc('column__ingredient_planned_cost') }}"
+        description: "{{ doc('column__ingredient_weight_per_unit') }}"
+
+      - name: total_ingredient_weight
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight') }}"
+
+      - name: total_ingredient_weight_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_whole_units') }}"
+
+      - name: ingredient_planned_cost_per_unit
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_planned_cost_per_unit') }}"
 
       - name: total_ingredient_planned_cost
         data_type: decimal(38,2)
@@ -1398,9 +1456,9 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
 
-      - name: ingredient_expected_cost
+      - name: ingredient_expected_cost_per_unit
         data_type: decimal(38,2)
-        description: "{{ doc('column__ingredient_expected_cost') }}"
+        description: "{{ doc('column__ingredient_expected_cost_per_unit') }}"
 
       - name: total_ingredient_expected_cost
         data_type: decimal(38,2)
@@ -1410,9 +1468,9 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
 
-      - name: ingredient_actual_cost
+      - name: ingredient_actual_cost_per_unit
         data_type: decimal(38,2)
-        description: "{{ doc('column__ingredient_actual_cost') }}"
+        description: "{{ doc('column__ingredient_actual_cost_per_unit') }}"
 
       - name: total_ingredient_actual_cost
         data_type: decimal(38,2)
@@ -1421,6 +1479,30 @@ models:
       - name: total_ingredient_actual_cost_whole_units
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
+
+      - name: ingredient_co2_emissions_per_unit
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_co2_emissions_per_unit') }}"
+
+      - name: total_ingredient_co2_emissions
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions') }}"
+
+      - name: total_ingredient_co2_emissions_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions_whole_units') }}"
+
+      - name: ingredient_weight_with_co2_data
+        data_type: decimal(38,2)
+        description: "{{ doc('column__ingredient_weight_with_co2_data') }}" 
+
+      - name: total_ingredient_weight_with_co2_data
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}" 
+
+      - name: total_ingredient_weight_with_co2_data_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}" 
 
       - name: fk_dim_companies
         data_type: string
