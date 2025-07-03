@@ -361,3 +361,7 @@ relationship fact_cases_to_dim_dates
 relationship fact_cases_to_dim_case_details
 	fromColumn: 'Case Measures'.fk_dim_case_details
 	toColumn: 'Case Details'.pk_dim_case_details
+
+relationship fact_billing_agreements_daily_to_dim_customer_journey_segments
+	fromColumn: 'Fact Billing Agreements'.fk_dim_customer_journey_segments
+	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments

@@ -1,0 +1,50 @@
+/// Customer journey segments table that is used to categorize customers and prospects based on their behavior in the past 8 weeks
+table 'Customer Journey Segments'
+    lineageTag: Customer-Journey-Segments-Table
+
+    /// The primary key of the dim_customer_journey_segments. It is a hash of the column customer_journey_sub_segment_id.
+    column pk_dim_customer_journey_segments
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_customer_journey_segments
+
+    /// The name of the main segment in the customer journey model.
+    column 'Customer Journey Main Segment'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: customer_journey_main_segment_name
+
+    /// The name of the sub segment in the customer journey model. Each sub segment can only be related to one main segment.
+    column 'Customer Journey Sub Segment'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: customer_journey_sub_segment_name
+
+    /// The description of the main segment in the customer journey model.
+    column 'Customer Journey Main Segment Description'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: customer_journey_main_segment_description
+
+    /// The description of the sub segment in the customer journey model.
+    column 'Customer Journey Sub Segment Description'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: customer_journey_sub_segment_description
+
+    partition 'Customer Journey Segments' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_customer_journey_segments_Table = gold_Schema{[Name="dim_customer_journey_segments",Kind="Table"]}[Data]
+                in
+                    dim_customer_journey_segments_Table

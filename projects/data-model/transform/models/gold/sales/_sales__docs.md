@@ -925,6 +925,6 @@ The primary key of the bridge_preference_combinations_preferences.
 
 {% docs column__pk_dim_customer_journey_segments %}
 
-The primary key of the dim_customer_journey_segments. It is a hash of the column customer_joruney_sub_segment_id.
+The primary key of the dim_customer_journey_segments. It is a hash of the column customer_journey_sub_segment_id.
 
 {% enddocs %}

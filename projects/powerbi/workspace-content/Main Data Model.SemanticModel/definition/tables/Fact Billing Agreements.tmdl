@@ -227,6 +227,13 @@ table 'Fact Billing Agreements'
 		summarizeBy: none
 		sourceColumn: date
 
+	column fk_dim_customer_journey_segments
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: fk_dim_customer_journey_segments
+
+
 	partition 'fact Billing Agreements' = m
 		mode: directQuery
 		source =
