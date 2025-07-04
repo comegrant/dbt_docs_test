@@ -64,6 +64,12 @@ discounts as (
 
 )
 
+, recipe_costs_and_co2 as (
+
+    select * from {{ ref('int_weekly_recipe_costs_and_co2')}}
+
+)
+
 -- Gold
 , billing_agreements as (
 
@@ -296,6 +302,7 @@ discounts as (
         , order_lines.billing_agreement_order_id
         , order_lines.product_variation_id
         , menus.recipe_id
+        , menus.recipe_portion_id
         , coalesce(menus.recipe_id, order_lines.product_variation_id) as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
         , order_lines.product_variation_quantity
@@ -328,6 +335,7 @@ discounts as (
         , order_lines.billing_agreement_order_id
         , order_lines.product_variation_id
         , menus.recipe_id
+        , menus.recipe_portion_id
         , menus.recipe_id as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
         , {{ generate_null_columns(6, prefix='null_col') }}
@@ -767,7 +775,7 @@ discounts as (
 
 )
 
-, add_recipe_feedback as (
+, add_recipe_information as (
 
     select
         add_swap_information.*
@@ -781,10 +789,29 @@ discounts as (
             add_swap_information.source_created_at
             , recipe_feedback.source_updated_at
         ) as fact_updated_at
+        , recipe_costs_and_co2.total_ingredient_weight
+        , recipe_costs_and_co2.total_ingredient_weight_whole_units
+        , recipe_costs_and_co2.total_ingredient_planned_cost
+        , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units
+        , recipe_costs_and_co2.total_ingredient_expected_cost
+        , recipe_costs_and_co2.total_ingredient_expected_cost_whole_units
+        , recipe_costs_and_co2.total_ingredient_actual_cost
+        , recipe_costs_and_co2.total_ingredient_actual_cost_whole_units
+        , recipe_costs_and_co2.total_ingredient_co2_emissions
+        , recipe_costs_and_co2.total_ingredient_co2_emissions_whole_units
+        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data
+        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
+
     from add_swap_information
     left join recipe_feedback
         on add_swap_information.recipe_id = recipe_feedback.recipe_id
         and add_swap_information.billing_agreement_id = recipe_feedback.billing_agreement_id
+    left join recipe_costs_and_co2
+        on add_swap_information.company_id = recipe_costs_and_co2.company_id
+        and add_swap_information.menu_year = recipe_costs_and_co2.menu_year
+        and add_swap_information.menu_week = recipe_costs_and_co2.menu_week
+        and add_swap_information.recipe_id = recipe_costs_and_co2.recipe_id
+        and add_swap_information.recipe_portion_id = recipe_costs_and_co2.recipe_portion_id
 
 )
 
@@ -793,49 +820,49 @@ discounts as (
 
     select 
         md5(concat_ws('-'
-            , add_recipe_feedback.billing_agreement_order_id
-            , add_recipe_feedback.billing_agreement_order_line_id
-            , add_recipe_feedback.product_variation_id
-            , add_recipe_feedback.product_variation_id_subscription
-            , add_recipe_feedback.recipe_id
-            , add_recipe_feedback.recipe_id_subscription
+            , add_recipe_information.billing_agreement_order_id
+            , add_recipe_information.billing_agreement_order_line_id
+            , add_recipe_information.product_variation_id
+            , add_recipe_information.product_variation_id_subscription
+            , add_recipe_information.recipe_id
+            , add_recipe_information.recipe_id_subscription
             )
         ) as pk_fact_orders
-        , add_recipe_feedback.* 
+        , add_recipe_information.* 
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_subscription.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_subscription
         , coalesce(billing_agreements_subscription.preference_combination_id, billing_agreements_ordergen.preference_combination_id) as fk_dim_preference_combinations
-        --, md5(add_recipe_feedback.billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
-        --, md5(add_recipe_feedback.subscription_billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins_preselected
-        , md5(add_recipe_feedback.company_id) as fk_dim_companies
-        , cast(date_format(add_recipe_feedback.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
+        --, md5(add_recipe_information.billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
+        --, md5(add_recipe_information.subscription_billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins_preselected
+        , md5(add_recipe_information.company_id) as fk_dim_companies
+        , cast(date_format(add_recipe_information.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
         , coalesce(md5(discounts.discount_id), '0') as fk_dim_discounts
         , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
         , coalesce(meals, 0) as fk_dim_meals
         , coalesce(meals_subscription, 0) as fk_dim_meals_subscription
         , coalesce(meals_mealbox, 0) as fk_dim_meals_mealbox
         , coalesce(meals_mealbox_subscription, 0) as fk_dim_meals_mealbox_subscription
-        , md5(add_recipe_feedback.order_status_id) as fk_dim_order_statuses
-        , md5(add_recipe_feedback.order_type_id) as fk_dim_order_types
-        , coalesce(md5(concat(add_recipe_feedback.order_line_type_name, order_line_details)), '0') as fk_dim_order_line_details
-        , datediff(add_recipe_feedback.menu_week_monday_date, billing_agreements_ordergen.first_menu_week_monday_date) as fk_dim_periods_since_first_menu_week
-        , coalesce(md5(concat(add_recipe_feedback.portion_id, add_recipe_feedback.language_id)), '0') as fk_dim_portions
-        , coalesce(md5(concat(add_recipe_feedback.portion_id_subscription, add_recipe_feedback.language_id)), '0') as fk_dim_portions_subscription
-        , coalesce(md5(concat(add_recipe_feedback.portion_id_mealbox, add_recipe_feedback.language_id)), '0') as fk_dim_portions_mealbox
-        , coalesce(md5(concat(add_recipe_feedback.portion_id_mealbox_subscription, add_recipe_feedback.language_id)), '0') as fk_dim_portions_mealbox_subscription
+        , md5(add_recipe_information.order_status_id) as fk_dim_order_statuses
+        , md5(add_recipe_information.order_type_id) as fk_dim_order_types
+        , coalesce(md5(concat(add_recipe_information.order_line_type_name, order_line_details)), '0') as fk_dim_order_line_details
+        , datediff(add_recipe_information.menu_week_monday_date, billing_agreements_ordergen.first_menu_week_monday_date) as fk_dim_periods_since_first_menu_week
+        , coalesce(md5(concat(add_recipe_information.portion_id, add_recipe_information.language_id)), '0') as fk_dim_portions
+        , coalesce(md5(concat(add_recipe_information.portion_id_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_subscription
+        , coalesce(md5(concat(add_recipe_information.portion_id_mealbox, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox
+        , coalesce(md5(concat(add_recipe_information.portion_id_mealbox_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox_subscription
         , coalesce(
             md5(
                 concat(
-                    add_recipe_feedback.product_variation_id,
-                    add_recipe_feedback.company_id
+                    add_recipe_information.product_variation_id,
+                    add_recipe_information.company_id
                     )
                 ), '0'
             ) as fk_dim_products
         , coalesce(
             md5(
                 concat(
-                    add_recipe_feedback.product_variation_id_subscription,
-                    add_recipe_feedback.company_id
+                    add_recipe_information.product_variation_id_subscription,
+                    add_recipe_information.company_id
                     )
                 ), '0'
             ) as fk_dim_products_subscription
@@ -843,8 +870,8 @@ discounts as (
             md5(
                 cast(
                     concat(
-                        add_recipe_feedback.recipe_id,
-                        add_recipe_feedback.language_id
+                        add_recipe_information.recipe_id,
+                        add_recipe_information.language_id
                         ) as string
                     )
                 ), '0'
@@ -853,33 +880,33 @@ discounts as (
             md5(
                 cast(
                     concat(
-                        add_recipe_feedback.recipe_id_subscription,
-                        add_recipe_feedback.language_id
+                        add_recipe_information.recipe_id_subscription,
+                        add_recipe_information.language_id
                         ) as string
                     )
                 ), '0'
             ) as fk_dim_recipes_subscription
         
-    from add_recipe_feedback
+    from add_recipe_information
     left join billing_agreements as billing_agreements_ordergen
-        on add_recipe_feedback.billing_agreement_id = billing_agreements_ordergen.billing_agreement_id
-        and add_recipe_feedback.source_created_at >= billing_agreements_ordergen.valid_from
-        and add_recipe_feedback.source_created_at < billing_agreements_ordergen.valid_to
+        on add_recipe_information.billing_agreement_id = billing_agreements_ordergen.billing_agreement_id
+        and add_recipe_information.source_created_at >= billing_agreements_ordergen.valid_from
+        and add_recipe_information.source_created_at < billing_agreements_ordergen.valid_to
     -- TODO: temp solution for finding billing_agreements_subscription
     left join subscription_orders
-        on add_recipe_feedback.billing_agreement_order_id = subscription_orders.billing_agreement_order_id
+        on add_recipe_information.billing_agreement_order_id = subscription_orders.billing_agreement_order_id
         and subscription_orders.basket_type_id = '{{ var("mealbox_basket_type_id") }}' 
     left join billing_agreements as billing_agreements_subscription
-        on add_recipe_feedback.billing_agreement_id = billing_agreements_subscription.billing_agreement_id
+        on add_recipe_information.billing_agreement_id = billing_agreements_subscription.billing_agreement_id
         and subscription_orders.order_placed_at >= billing_agreements_subscription.valid_from
         and subscription_orders.order_placed_at < billing_agreements_subscription.valid_to
     left join discounts
-        on add_recipe_feedback.billing_agreement_order_line_id = discounts.billing_agreement_order_line_id
-        and add_recipe_feedback.menu_year > 2020
+        on add_recipe_information.billing_agreement_order_line_id = discounts.billing_agreement_order_line_id
+        and add_recipe_information.menu_year > 2020
     left join loyalty_seasons
-        on add_recipe_feedback.company_id = loyalty_seasons.company_id
-        and add_recipe_feedback.source_created_at >= loyalty_seasons.loyalty_season_start_date
-        and add_recipe_feedback.source_created_at < loyalty_seasons.loyalty_season_end_date
+        on add_recipe_information.company_id = loyalty_seasons.company_id
+        and add_recipe_information.source_created_at >= loyalty_seasons.loyalty_season_start_date
+        and add_recipe_information.source_created_at < loyalty_seasons.loyalty_season_end_date
     -- TODO: remove all order lines that are subscribed groceries which was not ordered, and mealboxes that does not match the ordered mealbox
     --where not (is_subscribed_grocery = true and is_grocery = false)
     --and not (is_subscribed_mealbox = true and is_mealbox = false)

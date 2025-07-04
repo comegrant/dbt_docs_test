@@ -272,6 +272,54 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
 
+      - name: total_ingredient_weight
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight') }}"
+
+      - name: total_ingredient_weight_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_whole_units') }}"
+
+      - name: total_ingredient_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost') }}"
+
+      - name: total_ingredient_planned_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
+
+      - name: total_ingredient_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost') }}"
+
+      - name: total_ingredient_expected_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
+
+      - name: total_ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
+
+      - name: total_ingredient_co2_emissions
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions') }}"
+
+      - name: total_ingredient_co2_emissions_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions_whole_units') }}"
+
+      - name: total_ingredient_weight_with_co2_data
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}"
+
+      - name: total_ingredient_weight_with_co2_data_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
+
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
@@ -367,6 +415,10 @@ models:
       - name: recipe_id_subscription
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
+
+      - name: recipe_portion_id
+        data_type: int
+        description: "{{ doc('column__recipe_portion_id') }}"
 
       - name: recipe_rating_id
         data_type: string

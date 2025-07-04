@@ -40,3 +40,4 @@ weekly_recipe_ingredients as (
 )
 
 select * from weekly_recipe_ingredients_aggregated
+
