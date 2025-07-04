@@ -64,6 +64,11 @@ discounts as (
 
 )
 
+, customer_journey_segments as (
+
+    select * from {{ ref('int_customer_journey_segments') }}
+)
+
 , recipe_costs_and_co2 as (
 
     select * from {{ ref('int_weekly_recipe_costs_and_co2')}}
@@ -835,6 +840,7 @@ discounts as (
         --, md5(add_recipe_information.billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         --, md5(add_recipe_information.subscription_billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins_preselected
         , md5(add_recipe_information.company_id) as fk_dim_companies
+        , md5(cast( customer_journey_segments.sub_segment_id as string)) as fk_dim_customer_journey_segments
         , cast(date_format(add_recipe_information.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
         , coalesce(md5(discounts.discount_id), '0') as fk_dim_discounts
         , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
@@ -907,6 +913,10 @@ discounts as (
         on add_recipe_information.company_id = loyalty_seasons.company_id
         and add_recipe_information.source_created_at >= loyalty_seasons.loyalty_season_start_date
         and add_recipe_information.source_created_at < loyalty_seasons.loyalty_season_end_date
+    left join customer_journey_segments
+        on add_recipe_information.billing_agreement_id = customer_journey_segments.billing_agreement_id
+        and add_recipe_information.menu_week_financial_date >= customer_journey_segments.menu_week_monday_date_from
+        and add_recipe_information.menu_week_financial_date < customer_journey_segments.menu_week_monday_date_to
     -- TODO: remove all order lines that are subscribed groceries which was not ordered, and mealboxes that does not match the ordered mealbox
     --where not (is_subscribed_grocery = true and is_grocery = false)
     --and not (is_subscribed_mealbox = true and is_mealbox = false)

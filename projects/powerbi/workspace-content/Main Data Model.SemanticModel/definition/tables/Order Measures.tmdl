@@ -1894,6 +1894,13 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_discounts
 
+	column fk_dim_customer_journey_segments
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_customer_journey_segments
+
 	/// True if the order status is one finished or processed.
 	/// The flag is used in measures only include the orders of interest.
 	column has_finished_order_status

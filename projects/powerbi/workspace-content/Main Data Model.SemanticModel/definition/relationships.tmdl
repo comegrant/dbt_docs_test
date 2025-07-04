@@ -362,6 +362,10 @@ relationship fact_cases_to_dim_case_details
 	fromColumn: 'Case Measures'.fk_dim_case_details
 	toColumn: 'Case Details'.pk_dim_case_details
 
+relationship fact_orders_to_dim_customer_journey_segments
+	fromColumn: 'Order Measures'.fk_dim_customer_journey_segments
+	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments
+
 relationship fact_recipe_ingredients_to_dim_companies
 	fromColumn: 'Recipe Ingredients'.fk_dim_companies
     toColumn: Brands.pk_dim_companies
@@ -393,3 +397,4 @@ relationship fact_billing_agreements_daily_to_dim_customer_journey_segments
 relationship fact_cases_to_dim_customer_journey_segments
 	fromColumn: 'Case Measures'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments
+
