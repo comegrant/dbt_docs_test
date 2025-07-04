@@ -172,9 +172,15 @@ models:
         data_tests:
           - not_null
 
-      - name: is_active_case_line
+      - name: is_complaint
         data_type: boolean
-        description: "{{ doc('column__is_active_case_line') }}"
+        description: "{{ doc('column__is_complaint') }}"
+        data_tests:
+          - not_null
+
+      - name: is_accepted_redelivery
+        data_type: boolean
+        description: "{{ doc('column__is_accepted_redelivery') }}"
         data_tests:
           - not_null
 

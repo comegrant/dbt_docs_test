@@ -152,7 +152,7 @@ The amount the customer will get in reimbursement. I.e., the cost of the case.
 
 {% docs column__is_active_case_line %}
 
-Describes whether or not the case line is active. Is active unless a line is cancelled or deleted. 1 is active and 0 is inactive.
+True if the case line is active, else false. If the case line is inactive it means that it has been deleted on the Operations UI.
 
 {% enddocs %}
 
@@ -166,7 +166,7 @@ The unique id for the case line types table.
 
 {% docs column__case_line_type_name %}
 
-Contains the description of the different case line types.
+Contains the name of the different case line types. An order can only have one case, but many case lines. A case line can be related to what type of compensation the customer receives, if it's a redelivery or if it's an sms or note relating to the order. Customers can get three different types of compensation: 1. Refund: Transfer to the customers card/bank account, 2. Credit: The credited amount gets added to the customers credit balance giving them a deduction on future orders, 3. PRP: A deduction on the order belonging to the case of the customer (before 2025 PRP could also be put on future active orders not belonging to the current case), to get an PRP the order can not be locked for invoicing.
 
 {% enddocs %}
 

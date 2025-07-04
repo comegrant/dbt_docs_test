@@ -65,6 +65,16 @@ vars:
   "'8A613C15-35E4-471F-91CC-972F933331D7'", #Adams matkasse
   "'5E65A955-7B1A-446C-B24F-CFE576BF52D7'" #Retnemt
  ]
+ 
+ complaint_case_line_type_ids: [
+  2, #PRP/Credit
+  5, #Automatic Complaint
+  6, #No Credit
+  7 #Refund
+  ]
+
+ accepted_redelivery_status_id: 2
+ redelivery_case_line_type_id: 4
 
  onesub_chefs_favorite_taxonomy_ids: [
   2011, # Chefs choice, Norwegian

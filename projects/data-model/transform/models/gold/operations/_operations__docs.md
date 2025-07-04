@@ -56,3 +56,15 @@ Then the total value is: `2 * 15 + 5 = 35 kr`
 Each ingredient gets a corresponding share of the total reimbursement amount.
 
 {% enddocs %}
+
+{% docs column__is_complaint %}
+
+True if the case line belongs to a complaint and false for other case lines such as sms, notes or redeliveries. Complaints are delivery incidents reported by the customers, customer service or our external partners (i.e. transport company) which can result in compensating the customer. The complaint can relate to the delivery itself or to the products being delivered.
+
+{% enddocs %}
+
+{% docs column__is_accepted_redelivery %}
+
+True if the case line belongs to a redelivery that has been approved and rescheduled by the logistics team. The flag is on case line level. The information about the redelivery (i.e., new timeblock etc) is on case level. There can only be one accepted redelivery case line per case.
+
+{% enddocs %}

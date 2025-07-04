@@ -6,38 +6,31 @@ table 'Case Measures'
 
     /// The number of cases.
     measure 'Number of Orders With Cases' = DISTINCTCOUNTNOBLANK('Case Measures'[ops_order_id])
-		formatString: #,0
-        isHidden
+		formatString: #,0    
      
     /// The number of case lines.
     measure 'Number of Case Lines' = DISTINCTCOUNTNOBLANK('Case Measures'[case_line_id])
         formatString: #,0
-        isHidden
     
     /// The number of cases per 1000 orders.
     measure 'Number of Cases per 1000 Orders' = DIVIDE([Number of Orders With Cases], [Number of Orders])*1000
         formatString: #,0
-        isHidden
 
     /// The number of orders without a case
     measure 'Number of Orders Without Case' = [Number of Orders] - [Number of Orders With Cases]   
         formatString: #,0
-        isHidden
 
     ///The share of orders that have a case.
     measure 'Share of Orders With Cases' = DIVIDE([Number of Orders With Cases], [Number of Orders])
         formatString: 0.00%;-0.00%;0.00%
-        isHidden
 
     /// The total cost of cases, including VAT.
     measure 'Case Cost (Inc VAT)' = SUM('Case Measures'[Case Line Amount Inc VAT])
         formatString: #,0
-        isHidden
         
     /// The average cost of caese per delivery, including VAT.
     measure 'Average Case Cost (Inc VAT)' = DIVIDE([Case Cost (Inc VAT)], [Number of Orders])
         formatString: #,0
-        isHidden
         
     /// Primary key of the fact_case table.
     column pk_fact_cases
@@ -89,15 +82,23 @@ table 'Case Measures'
         summarizeBy: none
         sourceColumn: case_line_comment
 
-    /// Describes whether or not the case line is active.
-    /// Is active unless a line is cancelled or deleted. 
-    /// 1 is active and 0 is inactive.
-    column 'Is Active Case Line'
+    /// True if the case line belongs to a complaint and false for other case lines such as sms, notes or redeliveries. 
+    /// Complaints are delivery incidents reported by the customers, customer service or our external partners (i.e. transport company) 
+    /// which can result in compensating the customer. The complaint can relate to the delivery itself or to the products being delivered.
+    column is_complaint
         dataType: boolean
         isHidden
         formatString: """TRUE"";""TRUE"";""FALSE"""
         summarizeBy: none
-        sourceColumn: is_active_case_line
+        sourceColumn: is_complaint
+
+    /// True if the case line belongs to a redelivery case that has been approved and rescheduled by the logistics team.
+    column is_accepted_redelivery
+        dataType: boolean
+        isHidden
+        formatString: """TRUE"";""TRUE"";""FALSE"""
+        summarizeBy: none
+        sourceColumn: is_accepted_redelivery
 
     /// Comment connected to redelivery. 
     /// Can come from external partners or internally from logistics/customer service,

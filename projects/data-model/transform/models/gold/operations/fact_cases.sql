@@ -84,7 +84,17 @@ cases as (
             end as case_line_amount_ex_vat
         , case_lines.case_line_amount as case_line_total_amount_inc_vat
         , case_lines.case_line_comment
-        , case_lines.is_active_case_line
+        , case 
+            when case_lines.case_line_type_id in ({{var("complaint_case_line_type_ids") | join(", ")}})
+            then true
+            else false
+        end as is_complaint
+        , case 
+            when cases.redelivery_status_id = '{{var("accepted_redelivery_status_id")}}'
+            and case_lines.case_line_type_id = '{{var("redelivery_case_line_type_id")}}'
+            then true
+            else false
+        end as is_accepted_redelivery
         , case_lines.case_line_type_id
         , case_lines.case_cause_id
         , case_lines.case_responsible_id
@@ -144,7 +154,10 @@ cases as (
         and case_line_ingredients.product_type_id = find_ingredients_price_share.product_type_id
     -- only include cases with case lines
     where case_lines.case_id is not null
-    and orders_operations.company_id!= '1A6819EF-CFD1-43E1-BBB0-F49001AE5562' -- God Matlyst
+    -- only include case lines that are not deleted in the UI of OPS systems
+    and case_lines.is_active_case_line is true
+    -- remove God Matlyst cases
+    and orders_operations.company_id != '1A6819EF-CFD1-43E1-BBB0-F49001AE5562'
 
 )
 
