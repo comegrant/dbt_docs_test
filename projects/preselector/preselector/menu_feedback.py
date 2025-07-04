@@ -200,7 +200,7 @@ def build_critical_issue(row: dict) -> IssueModel:
         negative_preference_ids=row["preference_set_ids"],
         issue_description=issue,
         issue_recipe_ids=row["match_recipes"],
-        action_description=f"Add {MAX_PORTION_SIZE-row['n_recipes']} new recipes that fulfill the preferences",
+        action_description=f"Add {MAX_PORTION_SIZE - row['n_recipes']} new recipes that fulfill the preferences",
         action_recipe_ids=[],
     )
 
@@ -208,7 +208,7 @@ def build_critical_issue(row: dict) -> IssueModel:
 def build_overlap_issue(row: dict) -> IssueModel:
     issue = (
         f"There exists {row['n_recipes']} recipes for this user group. However, they are not rotated within "
-        f"{row['max_week_var']+1} weeks potentially leading to repeat recipes"
+        f"{row['max_week_var'] + 1} weeks potentially leading to repeat recipes"
     )
     return IssueModel(
         issue_type=3,
@@ -240,11 +240,13 @@ def build_protein_issue(row: dict) -> IssueModel:
         total = sum(protein_counts.values())
         top_protein, top_count = protein_counts.most_common(1)[0]
         other_protein_shares = [
-            f"{protein} ({count/total*100:.1f}%)" for protein, count in protein_counts.items() if protein != top_protein
+            f"{protein} ({count / total * 100:.1f}%)"
+            for protein, count in protein_counts.items()
+            if protein != top_protein
         ]
         issue = (
             f"The protein distribution is heavily skewed, with {top_protein} "
-            f"appearing most frequently ({top_count/total*100:.1f}%)"
+            f"appearing most frequently ({top_count / total * 100:.1f}%)"
         )
         action = f"Consider adding more diversity in the lower-represented proteins: {', '.join(other_protein_shares)}."
     else:
@@ -310,6 +312,7 @@ async def create_warnings(
 
     recipes = await get_data("recipe_preferences")
     recipes = recipes.filter(pl.col("main_recipe_id").is_in(payload.target_menu_week.portions[0].main_recipe_ids))
+    # hotfix for now, data should be int and not floats
     recipes = recipes.filter(~pl.col("recipe_main_ingredient_id").is_null())
     recipes = recipes.with_columns(pl.col("recipe_main_ingredient_id").cast(pl.Int64))
     old_recipes = get_previous_week_recipe_ids(payload, portion_id)

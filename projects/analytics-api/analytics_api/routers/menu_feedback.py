@@ -1,3 +1,7 @@
+"""
+This router is used to get the menu feedback.
+"""
+
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
