@@ -128,7 +128,12 @@ table 'Customer and Subscriber Measures'
 			//	'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
 			//	'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
 			//)
-			'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
+
+			IF(
+				ISFILTERED('Periods Since First Menu Week') || ISFILTERED('Customer Journey Segments'),
+				'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
+				'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
+			)
 		formatString: #,0
 		displayFolder: Selected Statuses
 
