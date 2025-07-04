@@ -1914,6 +1914,136 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: has_normal_order_type
 
+	/// The net weight (in grams) for the total ingredient amount in the recipe.
+	column total_ingredient_weight
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The net weight (in grams) of the ingredients, based on ingredient quantity in whole units.
+	column total_ingredient_weight_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The menu planning purchasing cost for the total ingredient amount in the recipe.
+	column total_ingredient_planned_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The menu planning purchasing cost based on ingredient quantity in whole units. 
+	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. 
+	column total_ingredient_planned_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The expected purchasing cost for the total ingredient amount in the recipe. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
+	column total_ingredient_expected_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The expected purchasing cost based on ingredient quantity in whole units. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. 
+	/// This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
+	column total_ingredient_expected_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe.
+	column total_ingredient_actual_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
+	column total_ingredient_actual_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
+	column total_ingredient_co2_emissions
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_co2_emissions
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
+	column total_ingredient_co2_emissions_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_co2_emissions_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+	column total_ingredient_weight_with_co2_data
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_with_co2_data
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data, where the quantity of the ingredients is rounded up to whole units.
+	column total_ingredient_weight_with_co2_data_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_with_co2_data_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =

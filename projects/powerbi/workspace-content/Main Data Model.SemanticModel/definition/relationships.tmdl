@@ -362,6 +362,30 @@ relationship fact_cases_to_dim_case_details
 	fromColumn: 'Case Measures'.fk_dim_case_details
 	toColumn: 'Case Details'.pk_dim_case_details
 
+relationship fact_recipe_ingredients_to_dim_companies
+	fromColumn: 'Recipe Ingredients'.fk_dim_companies
+    toColumn: Brands.pk_dim_companies
+
+relationship fact_recipe_ingredients_to_dim_dates
+	fromColumn: 'Recipe Ingredients'.fk_dim_dates
+    toColumn: Dates.pk_dim_dates
+
+relationship fact_recipe_ingredients_to_dim_products
+	fromColumn: 'Recipe Ingredients'.fk_dim_products
+    toColumn: Products.pk_dim_products
+
+relationship fact_recipe_ingredients_to_dim_recipes
+	fromColumn: 'Recipe Ingredients'.fk_dim_recipes
+    toColumn: Recipes.pk_dim_recipes
+
+relationship fact_recipe_ingredients_to_dim_portions
+	fromColumn: 'Recipe Ingredients'.fk_dim_portions
+    toColumn: Portions.pk_dim_portions
+
+relationship fact_recipe_ingredients_to_dim_ingredients
+	fromColumn: 'Recipe Ingredients'.fk_dim_ingredients
+    toColumn: Ingredients.pk_dim_ingredients
+
 relationship fact_billing_agreements_daily_to_dim_customer_journey_segments
 	fromColumn: 'Fact Billing Agreements'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments

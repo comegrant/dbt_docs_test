@@ -1,0 +1,337 @@
+/// This is where all ingredient information is found.
+table Ingredients
+	lineageTag: Ingredients-Table
+	isHidden
+
+    column pk_dim_ingredients
+		dataType: string
+        isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: pk_dim_ingredients
+
+        changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The name of the ingredient
+    column 'Ingredient Name'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_name
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The ingredient name in local language with size and unit label appended.
+    column 'Ingredient Full Name'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_full_name
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Id number that serves as a link to external product information database.
+    column 'EPD Id Number'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: epd_id_number
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The brand of the ingredient.
+    column 'Ingredient Brand'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_brand
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Description of an ingredient's composition, e.g. "oil, egg, salt" for "mayonnaise"
+    column 'Ingredient Content List'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_content_list
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The EAN code for the consumer packaging.
+    column 'EAN Code Consumer Packaging'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ean_code_consumer_packaging
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The EAN code for the distribution packaging.
+    column 'EAN Code Distribution Packaging'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ean_code_distribution_packaging
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// A reference number to the article number used by the supplier.
+    column 'Ingredient External Reference'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_external_reference
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The name of the ingredient supplier.
+    column 'Ingredient Supplier Name'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_supplier_name
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The name of the producing supplier, which might sometimes be different from the supplier.
+    column 'Ingredient Manufacturer Name'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_manufacturer_name
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The status of the ingredient
+    column 'Ingredient Status'
+		dataType: string
+		summarizeBy: none
+        isHidden
+        isAvailableInMdx: false
+		sourceColumn: ingredient_status_name
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The amount contained in the ingredient package, in the unit specified by the unit_label_id
+    column 'Ingredient Size'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_size
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The maximum number of days until "use by" date is due.
+    column 'Ingredient Shelf Life'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_shelf_life
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The net weight of an ingredient.
+    column 'Ingredient Net Weight'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_net_weight
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The gross weight of the ingredient, i.e. including packaging.
+    column 'Ingredient Gross Weight'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_gross_weight
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The number of consumer packages that are contained in one distribution package.
+    column 'Ingredient Distribution Packaging Size'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_distribution_packaging_size
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The number of distribution packages of the ingredient that are packed on a pallet.
+    column 'Ingredient Distribution Packages Per Pallet'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: distribution_packages_per_pallet
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The depth in mm of the ingredient consumer packaging.
+    column 'Ingredient Packaging Depth'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_packaging_depth
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The height in mm of the ingredient consumer packaging.
+    column 'Ingredient Packaging Height'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_packaging_height
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The width in mm of the ingredient consumer packaging.
+    column 'Ingredient Packaging Width'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: ingredient_packaging_width
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is active.
+    column 'Is Active Ingredient'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_active_ingredient
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is available for use in menu planning.
+    column 'Is Available For Use'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_available_for_use
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is soon not to be used in menu planning.
+    column 'Is Outgoing Ingredient'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_outgoing_ingredient
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient should be handled in cold storage in production.
+    column 'Is Cold Storage'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_cold_storage
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is to be stored cold by the customer/consumer.
+    column 'Is Consumer Cold Storage'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_consumer_cold_storage
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is classified as organic.
+    column 'Is Organic Ingredient'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_organic_ingredient
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is fragile and should be handled carefully in production.
+    column 'Is Fragile Ingredient'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_fragile_ingredient
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient is a special packaging ingredient.
+    column 'Is Special Packaging'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_special_packing
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if there is a linked photo of the ingredient that is displayed for customers.
+    column 'Has Customer Photo'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: has_customer_photo
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if there is a packaging photo linked.
+    column 'Has Packaging Photo'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: has_packaging_photo
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if there is a linked photo of the ingredient for internal use.
+    column 'Has Internal Photo'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: has_internal_photo
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the batch number should be registered upon reception at the production site.
+    column 'Is To Register Batch Number'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_to_register_batch_number
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the expiration date should be registered upon reception at the production site.
+    column 'Is To Register Expiration Date'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_to_register_expiration_date
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the temperature should be registered upon reception at the production site.
+    column 'Is To Register Temperature'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_to_register_temperature
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient weight should be registered upon reception at the production site.
+    column 'Is To Register Ingredient Weight'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_to_register_ingredient_weight
+        displayFolder: 'Operational Ingredient Information'
+
+		annotation SummarizationSetBy = Automatic
+
+    /// Indicates if the ingredient has registered CO2 emissions.
+    column 'Has CO2 Emission Data'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: has_co2_data
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Ingredients = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_ingredients_Table = gold_Schema{[Name="dim_ingredients",Kind="Table"]}[Data]
+				in
+					dim_ingredients_Table
+
+	annotation PBI_ResultType = Table
