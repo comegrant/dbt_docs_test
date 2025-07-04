@@ -18,15 +18,21 @@ cases as (
 
 )
 
+, orders_operations as (
+
+    select * from {{ref('operations__orders')}}
+
+)
+
 , ingredients as (
 
     select * from {{ref('pim__ingredients')}}
 
 )
 
-, orders_operations as (
+, customer_journey_segments as (
 
-    select * from {{ref('operations__orders')}}
+    select * from {{ ref('int_customer_journey_segments') }}
 
 )
 
@@ -121,6 +127,7 @@ cases as (
                 , case_lines.case_category_id
             )
         ) as fk_dim_case_details
+        , md5(cast(customer_journey_segments.sub_segment_id as string)) as fk_dim_customer_journey_segments
         , case 
             when case_line_ingredients.ingredient_internal_reference is null
             then '0' 
@@ -152,6 +159,10 @@ cases as (
         on case_lines.case_line_id = find_ingredients_price_share.case_line_id
         and case_line_ingredients.ingredient_internal_reference = find_ingredients_price_share.ingredient_internal_reference
         and case_line_ingredients.product_type_id = find_ingredients_price_share.product_type_id
+    left join customer_journey_segments
+        on orders_operations.billing_agreement_id = customer_journey_segments.billing_agreement_id
+        and orders_operations.menu_week_financial_date >= customer_journey_segments.menu_week_monday_date_from
+        and orders_operations.menu_week_financial_date < customer_journey_segments.menu_week_monday_date_to
     -- only include cases with case lines
     where case_lines.case_id is not null
     -- only include case lines that are not deleted in the UI of OPS systems

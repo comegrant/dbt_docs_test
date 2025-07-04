@@ -263,6 +263,18 @@ models:
               to: ref('dim_case_details')
               field: pk_dim_case_details
 
+      - name: fk_dim_customer_journey_segments
+        data_type: string
+        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_customer_journey_segments')
+            to_columns: [pk_dim_customer_journey_segments]
+        data_tests:
+          - relationships:
+              to: ref('dim_customer_journey_segments')
+              field: pk_dim_customer_journey_segments
+
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
