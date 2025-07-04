@@ -125,6 +125,9 @@ def find_matching_values(
     recipe_preferences: list[set[str]],
     recipe_main_ingredient_ids: list[int],
 ) -> list[int]:
+    # convert all recipe_main_ingredient_ids to int
+    recipe_main_ingredient_ids = [int(x) for x in recipe_main_ingredient_ids]
+
     return [
         values[i]
         for i, recipe_preference in enumerate(recipe_preferences)
@@ -307,7 +310,8 @@ async def create_warnings(
 
     recipes = await get_data("recipe_preferences")
     recipes = recipes.filter(pl.col("main_recipe_id").is_in(payload.target_menu_week.portions[0].main_recipe_ids))
-
+    recipes = recipes.filter(~pl.col("recipe_main_ingredient_id").is_null())
+    recipes = recipes.with_columns(pl.col("recipe_main_ingredient_id").cast(pl.Int64))
     old_recipes = get_previous_week_recipe_ids(payload, portion_id)
 
     recipes = recipes.with_columns(
