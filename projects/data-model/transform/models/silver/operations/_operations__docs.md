@@ -264,3 +264,67 @@ The name of the cutoff. There is a cutoff for each country and an additional cut
 Describes when in the week cutoff usually occurs.  
 
 {% enddocs %}
+
+# Geofences
+
+{% docs column__geofence_id %}
+
+Unique identifier for the geofence.
+
+{% enddocs %}
+
+{% docs column__geofence_layer_id %}
+
+ID of the geofence layer.
+
+{% enddocs %}
+
+{% docs column__geofence_container_id %}
+
+ID of the geofence container.
+
+{% enddocs %}
+
+{% docs column__geofence_polygon_id %}
+
+ID of the geofence polygon.
+
+{% enddocs %}
+
+{% docs column__geofence_layer_name %}
+
+Name of the geofence layer as created in Atlas, a third party tool used to create our geofences.
+
+{% enddocs %}
+
+{% docs column__geofence_container_name %}
+
+Name of the geofence container as created in Atlas, a third party tool use to create our geofences.
+
+{% enddocs %}
+
+{% docs column__geofence_polygon_name %}
+
+Name of the geofence polygon. A polygon is a shape on a map defined by a set of coordinates which covers a geographical area. They are created in Atlas, a third party tool use to create our geofences. 
+
+{% enddocs %}
+
+{% docs column__is_active_geofence %}
+
+True if the geofence is active for operations. False if it is not active.
+
+{% enddocs %}
+
+# Geofence Postal Codes
+
+{% docs column__geofence_postal_code_id %}
+
+Unique identifier of a row in the operations__geofence_postalcode table.
+
+{% enddocs %}
+
+{% docs column__is_active_geofence_postal_code %}
+
+True if the postal code is actively connected to the associated geofence. False otherwise.
+
+{% enddocs %}

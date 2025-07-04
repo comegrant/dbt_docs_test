@@ -576,3 +576,168 @@ models:
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
+
+  - name: operations__geofences
+    description: "Associated information about geofences - geographical areas that are used for logistics purposes."
+    columns:
+      - name: geofence_id
+        data_type: char(36)
+        description: "{{ doc('column__geofence_id') }}"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: country_id
+        data_type: char(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: geofence_layer_id
+        data_type: string
+        description: "{{ doc('column__geofence_layer_id') }}"
+        data_tests:
+          - not_null
+
+      - name: geofence_container_id
+        data_type: string
+        description: "{{ doc('column__geofence_container_id') }}"
+        data_tests:
+          - not_null
+
+      - name: geofence_polygon_id
+        data_type: string
+        description: "{{ doc('column__geofence_polygon_id') }}"
+        data_tests:
+          - not_null
+
+      - name: geofence_layer_name
+        data_type: string
+        description: "{{ doc('column__geofence_layer_name') }}"
+        data_tests:
+          - not_null
+
+      - name: geofence_container_name
+        data_type: string
+        description: "{{ doc('column__geofence_container_name') }}"
+        data_tests:
+          - not_null
+
+      - name: geofence_polygon_name
+        data_type: string
+        description: "{{ doc('column__geofence_polygon_name') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_geofence') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+
+
+  - name: operations__geofence_postal_codes
+    description: "Postal codes and associated geofences."
+    columns:
+      - name: geofence_postal_code_id
+        data_type: char(36)
+        description: "{{ doc('column__geofence_postal_code_id') }}"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: geofence_id
+        data_type: char(36) 
+        description: "{{ doc('column__geofence_id') }}"
+        data_tests:
+          - not_null
+
+      - name: country_id
+        data_type: char(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_geofence_postal_code') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null

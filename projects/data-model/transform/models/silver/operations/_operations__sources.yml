@@ -19,3 +19,5 @@ sources:
       - name: operations__zones
       - name: operations__orders
       - name: operations__orders_history
+      - name: operations__geofence
+      - name: operations__geofence_postalcodes

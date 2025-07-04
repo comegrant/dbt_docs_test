@@ -19,6 +19,10 @@ table_dictionary = {
                 "recipes_taxonomies",
                 "taxonomies",
                 "recipe_favorites"
+        ],
+        "OPERATIONS":[
+               "geofence",
+               "geofence_postalcodes"
         ]
 }
 

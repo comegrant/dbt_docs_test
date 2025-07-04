@@ -1,0 +1,18 @@
+snapshots:
+  - name: scd_operations__geofences
+    description: Tracks updates to geofences in the geofence table in OPS.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      invalidate_hard_deletes: True
+
+  - name: scd_operations__geofence_postal_codes
+    description: Tracks updates to geofenced postal codes in the geofence_postalcodes table in OPS.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      invalidate_hard_deletes: True
