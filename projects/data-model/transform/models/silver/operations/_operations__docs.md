@@ -293,19 +293,19 @@ ID of the geofence polygon.
 
 {% docs column__geofence_layer_name %}
 
-Name of the geofence layer as created in Atlas, a third party tool used to create our geofences.
+Name of the geofence layer, an object created in Atlas - our visualization tool for delivery areas, which may contain one or more containers.
 
 {% enddocs %}
 
 {% docs column__geofence_container_name %}
 
-Name of the geofence container as created in Atlas, a third party tool use to create our geofences.
+Name of the geofence container, an object created in Atlas - our visualization tool for delivery areas, which may contain one or more polygons.
 
 {% enddocs %}
 
 {% docs column__geofence_polygon_name %}
 
-Name of the geofence polygon. A polygon is a shape on a map defined by a set of coordinates which covers a geographical area. They are created in Atlas, a third party tool use to create our geofences. 
+Name of the geofence polygon, a geographical area defined by a set of coordinates in Atlas - our visualization tool for delivery areas. 
 
 {% enddocs %}
 
