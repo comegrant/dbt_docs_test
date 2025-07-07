@@ -223,10 +223,6 @@ agreements_with_history as (
         , agreements_and_weeks_joined.menu_week_cutoff_time
         , case 
         when agreements_and_weeks_joined.weeks_since_signup < 3 
-            and weeks_since_first_order is null
-            and agreements_first_freeze_date.first_freeze_date < agreements_and_weeks_joined.menu_week_monday_date
-            then {{ var("customer_journey_sub_segment_ids")["regret"] }}
-        when agreements_and_weeks_joined.weeks_since_signup < 3 
             and agreements_and_weeks_joined.weeks_since_first_order is null 
             then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
         when agreements_and_weeks_joined.weeks_since_signup >= 3 
