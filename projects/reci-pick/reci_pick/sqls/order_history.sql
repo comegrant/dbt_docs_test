@@ -11,11 +11,9 @@ with finished_orders as (
         is_added_dish,
         is_removed_dish,
         product_variation_id,
-        preselected_recipe_id,
         recipe_id,
         fk_dim_products,
         fk_dim_companies,
-        fk_dim_products_preselected,
         fk_dim_recipes
     from {env}.gold.fact_orders
     where order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- Finished
