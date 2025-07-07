@@ -96,6 +96,7 @@ jobs:
         BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc
 
     - name: Deploy DABs
+      if: github.event_name != 'pull_request'
       run: databricks bundle deploy ${{inputs.extra-args}}
       env:
         DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}

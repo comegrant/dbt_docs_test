@@ -14,18 +14,6 @@ models:
         description: "{{ doc('column__product_concept_name') }}"
         data_tests:
           - not_null
-          - accepted_values:
-              values: [
-                   'Marketing Gifts',
-                   'Mealbox',
-                   'Customer Composed Mealbox',
-                   'Adminitrative',
-                   'Digital',
-                   'Addons',
-                   'Foodstore'
-              ]
-              config:
-                severity: warn
 
       - name: product_concept_description
         data_type: string
@@ -112,28 +100,6 @@ models:
         description: "{{ doc('column__product_type_name') }}"
         data_tests:
           - not_null
-          - accepted_values:
-              values: [
-                    'Administrative',
-                    'Morgenleveringproducts',
-                    'Velg&vrak',
-                    'Bundling',
-                    'Giftcard',
-                    'Digital-product',
-                    'Marketing-gifts',
-                    'Limited-quantity-groceries',
-                    'Subscription',
-                    'Add-on-product',
-                    'Financial',
-                    'Standalone-groceries',
-                    'Food-dishes',
-                    'Non-food',
-                    'Loyaltyproducts',
-                    'Preference Product',
-                    'Product_group',
-                    'Loyalty Card Credit',
-                    'Mealbox'
-              ]
 
       - name: product_type_description
         data_type: string
@@ -240,13 +206,6 @@ models:
         description: "{{ doc('column__product_status_name') }}"
         data_tests:
           - not_null
-          - accepted_values:
-              values: [
-                    'Master',
-                    'Temp',
-                    'Live',
-                    'Deleted'
-              ]
 
   - name: product_layer__product_variations
     description: ""

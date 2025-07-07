@@ -39,7 +39,7 @@ resources:
             {task_key: bronze_cms_billing_agreement_basket_scheduler}
           ]
 
-        - task_key: dbt
+        - task_key: dbt-run
           dbt_task:
             project_directory: ../transform/
             warehouse_id: ${var.warehouse_id}
@@ -59,12 +59,28 @@ resources:
             {task_key: bronze_psl_full}
           ]
 
+        - task_key: dbt-test
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt test -s +estimations_log +active_basket_deviations_recent_weeks --indirect-selection cautious'
+          job_cluster_key: dbt_CLI
+          libraries:
+            - pypi:
+                package: dbt-databricks==1.10.0
+          disable_auto_optimization: true
+          depends_on: [
+            {task_key: dbt-run}
+          ]
+
         # The preselector uses the data created in this job, so it's loaded into the preselector at the end of the job
         - task_key: start_preselector_materialization
           run_job_task:
             job_id: ${var.preselector_materialization_job_id}
           depends_on: [
-            {task_key: dbt}
+            {task_key: dbt-run}
           ]
 
         - task_key: fail-notification
@@ -73,7 +89,8 @@ resources:
             {task_key: bronze_psl_full},
             {task_key: bronze_cms_billing_agreement_basket_scheduler},
             {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: dbt},
+            {task_key: dbt-run},
+            {task_key: dbt-test},
             {task_key: start_preselector_materialization}
           ]
           run_if: AT_LEAST_ONE_FAILED

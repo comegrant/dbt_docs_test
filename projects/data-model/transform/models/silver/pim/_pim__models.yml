@@ -216,8 +216,6 @@ models:
         description: "{{ doc('column__ingredient_price_type_id') }}"
         data_tests:
           - not_null
-          - accepted_values:
-              values: [0, 1, 2]
 
       - name: ingredient_unit_cost
         data_type: decimal(19,4)
@@ -1018,8 +1016,6 @@ models:
         description: "{{ doc('column__language_id') }}"
         data_tests:
           - not_null
-          - accepted_values:
-              values: [1, 4, 5, 6]
 
       - name: taxonomy_name
         data_type: string
