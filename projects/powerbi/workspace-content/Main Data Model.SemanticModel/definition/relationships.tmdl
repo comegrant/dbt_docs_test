@@ -362,6 +362,10 @@ relationship fact_cases_to_dim_case_details
 	fromColumn: 'Case Measures'.fk_dim_case_details
 	toColumn: 'Case Details'.pk_dim_case_details
 
+relationship fact_cases_to_dim_ingredients
+	fromColumn: 'Case Measures'.fk_dim_ingredients
+	toColumn: 'Ingredients'.pk_dim_ingredients
+
 relationship fact_orders_to_dim_customer_journey_segments
 	fromColumn: 'Order Measures'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments

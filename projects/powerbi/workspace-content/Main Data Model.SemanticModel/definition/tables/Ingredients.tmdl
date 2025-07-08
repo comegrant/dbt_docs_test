@@ -1,7 +1,6 @@
 /// This is where all ingredient information is found.
 table Ingredients
 	lineageTag: Ingredients-Table
-	isHidden
 
     column pk_dim_ingredients
 		dataType: string
