@@ -1,0 +1,15 @@
+# A temporary job to ingest tables from the shared schema in ADB for budget in NDP purposes. 
+resources:
+  jobs:
+    temp_ingest_shared_schema_adb:
+      name: temp_ingest_shared_schema_adb
+
+      timeout_seconds: 1200 #Timeout after 20 mins
+
+      tasks: 
+        - task_key: temp_ingest_shared_schema_adb
+          notebook_task: 
+            notebook_path: ../ingest/onetime_ingest/bronze_analyticsdb_shared_schema_ingest.py
+          disable_auto_optimization: true
+
+      edit_mode: EDITABLE
