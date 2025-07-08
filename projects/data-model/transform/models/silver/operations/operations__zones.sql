@@ -12,7 +12,7 @@ source as (
         {# ints #}
         zone_id
         , timeblock_id
-        , transport_company_id
+        , cast(transport_company_id as int) as transport_company_id
         , cast(period_from as int) as menu_year_week_from
         , cast(period_to as int) as menu_year_week_to
 

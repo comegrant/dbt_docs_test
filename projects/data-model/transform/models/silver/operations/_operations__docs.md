@@ -1,3 +1,17 @@
+# Transport Companies
+
+{% docs column__transport_company_id %}
+
+The unique id of the transport company in the source database.
+
+{% enddocs %}
+
+{% docs column__transport_company_name %}
+
+The name of the transport company
+
+{% enddocs %}
+
 # Timeblocks
 {% docs column__timeblock_id %}
 
@@ -71,12 +85,6 @@ The unique identifier for a delivery zone.
 {% docs column__is_active_zone %}
 
 True if this zone is currently active, false otherwise.
-
-{% enddocs %}
-
-{% docs column__transport_company_id %}
-
-The unique identifier for a transport company that operates in this zone.
 
 {% enddocs %}
 
