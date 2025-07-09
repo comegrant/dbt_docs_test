@@ -1,0 +1,310 @@
+models:
+  - name: partnership__partnerships
+    description: "Information on partnerships that exist between Cheffelo and partners. Cheffelo leverages partnerships to acquire new customers."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: partnership_name
+        data_type: string
+        description: "{{ doc('column__partnership_name') }}"
+        data_tests:
+          - not_null
+
+      - name: has_loyalty_program
+        data_type: boolean
+        description: "{{ doc('column__has_loyalty_program') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: partnership__billing_agreement_partnerships
+    description: "Table which maps billing agreements to the partnership the agreement was acquired through. Includes also when the customer was registered."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: billing_agreement_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_partnership_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: partnership__billing_agreement_partnership_loyalty_points
+    description: "Record of partnership loyalty points earned by an agreement according to the rule of the partnership. E.g. an agreement earns 10,000 SAS Eurobonus points after ordering their fourth Cheffelo mealbox."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: billing_agreement_partnership_loyalty_point_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_partnership_loyalty_point_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_partnership_loyalty_points_parent_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_partnership_loyalty_points_parent_id') }}"
+
+      - name: billing_agreement_partnership_loyalty_points_event_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_partnership_loyalty_points_event_id') }}"
+
+      - name: billing_agreement_order_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+
+      - name: transaction_points
+        data_type: int
+        description: "{{ doc('column__transaction_points_partnership') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+
+  - name: partnership__company_partnerships
+    description: "Table mapping Cheffelo brands to partnerships."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_company_partnership') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: partnership__partnership_rules
+    description: "Rules that define how partnership points are awarded to partnership agreements. E.g. an agreement earns 10,000 Eurobonus points after taking their 4th mealbox order."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: partnership_rule_name
+        data_type: string
+        description: "{{ doc('column__partnership_rule_name') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_description
+        data_type: string
+        description: "{{ doc('column__partnership_rule_description') }}"
+
+      - name: order_criteria
+        data_type: int
+        description: "{{ doc('column__order_criteria') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_points_value
+        data_type: int
+        description: "{{ doc('column__partnership_points_value') }}"
+        data_tests:
+          - not_null
+
+      - name: allow_multiple_uses
+        data_type: boolean
+        description: "{{ doc('column__allow_multiple_uses') }}"
+        data_tests:
+          - not_null
+
+      - name: is_cumulative
+        data_type: boolean
+        description: "{{ doc('column__is_cumulative') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: partnership__company_partnership_rules
+    description: "A mapping between a Cheffelo brand and a partnership rule indicating which partnership rule is in effect for each brand-partnership."
+    config:
+      enabled: false
+      contract:
+        enforced: true
+    columns:
+      - name: company_partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_rule_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active_company_partnership_rule') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+

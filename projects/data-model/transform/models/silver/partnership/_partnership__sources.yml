@@ -1,0 +1,11 @@
+sources:
+  - name: partnership
+    description: "Tables from the partnership database in the CoreDB Azure SQL Server. Contains data on agreements acquired through Cheffelo partners."
+    schema: bronze
+    tables:
+      - name: partnership__billing_agreement_partnership
+      - name: partnership__billing_agreement_partnership_loyalty_points
+      - name: partnership__company_partnership
+      - name: partnership__company_partnership_rule
+      - name: partnership__partnership
+      - name: partnership__partnership_rule
