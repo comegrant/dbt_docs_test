@@ -1,0 +1,316 @@
+company_name,delivery_year,delivery_week,effect
+Linas Matkasse,2026,33,1.0
+Linas Matkasse,2026,34,1.0
+Linas Matkasse,2026,35,1.0
+Linas Matkasse,2026,36,1.0
+Linas Matkasse,2026,37,1.0
+Linas Matkasse,2026,38,1.0
+Linas Matkasse,2026,39,1.0
+Linas Matkasse,2026,40,1.0
+Linas Matkasse,2026,41,1.0
+Linas Matkasse,2026,42,1.0
+Linas Matkasse,2026,43,0.97
+Linas Matkasse,2026,44,0.9
+Linas Matkasse,2026,45,1.0
+Linas Matkasse,2026,46,1.0
+Linas Matkasse,2026,47,1.0
+Linas Matkasse,2026,48,1.0
+Linas Matkasse,2026,49,1.0
+Linas Matkasse,2026,50,0.91
+Linas Matkasse,2026,51,0.67
+Linas Matkasse,2026,52,0.35
+Linas Matkasse,2025,1,0.75
+Linas Matkasse,2025,2,1.0
+Linas Matkasse,2025,3,1.0
+Linas Matkasse,2025,4,1.0
+Linas Matkasse,2025,5,1.0
+Linas Matkasse,2025,6,1.0
+Linas Matkasse,2025,7,0.91
+Linas Matkasse,2025,8,0.91
+Linas Matkasse,2025,9,0.85
+Linas Matkasse,2025,10,0.95
+Linas Matkasse,2025,11,0.98
+Linas Matkasse,2025,12,1.0
+Linas Matkasse,2025,13,1.0
+Linas Matkasse,2025,14,1.0
+Linas Matkasse,2025,15,1.0
+Linas Matkasse,2025,16,0.86
+Linas Matkasse,2025,17,0.75
+Linas Matkasse,2025,18,0.9
+Linas Matkasse,2025,19,0.98
+Linas Matkasse,2025,20,1.0
+Linas Matkasse,2025,21,0.94
+Linas Matkasse,2025,22,0.91
+Linas Matkasse,2025,23,0.92
+Linas Matkasse,2025,24,0.92
+Linas Matkasse,2025,25,0.75
+Linas Matkasse,2025,26,0.68
+Linas Matkasse,2025,27,0.6
+Linas Matkasse,2025,28,0.45
+Linas Matkasse,2025,29,0.38
+Linas Matkasse,2025,30,0.35
+Linas Matkasse,2025,31,0.42
+Linas Matkasse,2025,32,0.72
+Linas Matkasse,2025,33,0.92
+Linas Matkasse,2025,34,1.05
+Linas Matkasse,2025,35,1.07
+Linas Matkasse,2025,36,1.03
+Linas Matkasse,2025,37,1.0
+Linas Matkasse,2025,38,1.0
+Linas Matkasse,2025,39,1.0
+Linas Matkasse,2025,40,1.0
+Linas Matkasse,2025,41,1.0
+Linas Matkasse,2025,42,1.0
+Linas Matkasse,2025,43,0.9
+Linas Matkasse,2025,44,0.8
+Linas Matkasse,2025,45,0.98
+Linas Matkasse,2025,46,1.0
+Linas Matkasse,2025,47,0.98
+Linas Matkasse,2025,48,1.0
+Linas Matkasse,2025,49,1.0
+Linas Matkasse,2025,50,0.91
+Linas Matkasse,2025,51,0.67
+Linas Matkasse,2025,52,0.2
+Linas Matkasse,2026,1,1.0
+Godtlevert,2026,37,1.0
+Godtlevert,2026,38,1.0
+Godtlevert,2026,39,1.0
+Godtlevert,2026,40,0.95
+Godtlevert,2026,41,0.98
+Godtlevert,2026,42,1.0
+Godtlevert,2026,43,1.0
+Godtlevert,2026,44,1.0
+Godtlevert,2026,45,1.0
+Godtlevert,2026,46,1.0
+Godtlevert,2026,47,1.0
+Godtlevert,2026,48,1.0
+Godtlevert,2026,49,1.0
+Godtlevert,2026,50,0.9
+Godtlevert,2026,51,0.65
+Godtlevert,2026,52,0.2
+Godtlevert,2025,1,1.0
+Godtlevert,2025,2,1.0
+Godtlevert,2025,3,1.0
+Godtlevert,2025,4,1.0
+Godtlevert,2025,5,1.0
+Godtlevert,2025,6,0.91
+Godtlevert,2025,7,0.91
+Godtlevert,2025,8,0.83
+Godtlevert,2025,9,0.9
+Godtlevert,2025,10,1.0
+Godtlevert,2025,11,1.0
+Godtlevert,2025,12,1.0
+Godtlevert,2025,13,1.0
+Godtlevert,2025,14,1.0
+Godtlevert,2025,15,1.0
+Godtlevert,2025,16,0.53
+Godtlevert,2025,17,0.72
+Godtlevert,2025,18,0.88
+Godtlevert,2025,19,1.0
+Godtlevert,2025,20,0.93
+Godtlevert,2025,21,0.98
+Godtlevert,2025,22,0.9
+Godtlevert,2025,23,0.95
+Godtlevert,2025,24,0.92
+Godtlevert,2025,25,0.9
+Godtlevert,2025,26,0.73
+Godtlevert,2025,27,0.65
+Godtlevert,2025,28,0.42
+Godtlevert,2025,29,0.35
+Godtlevert,2025,30,0.35
+Godtlevert,2025,31,0.55
+Godtlevert,2025,32,0.85
+Godtlevert,2025,33,1.11
+Godtlevert,2025,34,1.1
+Godtlevert,2025,35,1.05
+Godtlevert,2025,36,1.0
+Godtlevert,2025,37,1.0
+Godtlevert,2025,38,1.0
+Godtlevert,2025,39,1.0
+Godtlevert,2025,40,0.88
+Godtlevert,2025,41,0.9
+Godtlevert,2025,42,1.0
+Godtlevert,2025,43,1.0
+Godtlevert,2025,44,1.0
+Godtlevert,2025,45,1.0
+Godtlevert,2025,46,1.0
+Godtlevert,2025,47,1.0
+Godtlevert,2025,48,1.0
+Godtlevert,2025,49,1.0
+Godtlevert,2025,50,0.93
+Godtlevert,2025,51,0.65
+Godtlevert,2025,52,0.2
+Godtlevert,2026,1,1.0
+RetNemt,2026,37,1.0
+RetNemt,2026,38,1.0
+RetNemt,2026,39,1.0
+RetNemt,2026,40,1.0
+RetNemt,2026,41,1.0
+RetNemt,2026,42,0.82
+RetNemt,2026,43,1.0
+RetNemt,2026,44,1.0
+RetNemt,2026,45,1.0
+RetNemt,2026,46,1.0
+RetNemt,2026,47,1.0
+RetNemt,2026,48,1.0
+RetNemt,2026,49,1.0
+RetNemt,2026,50,0.98
+RetNemt,2026,51,0.84
+RetNemt,2026,52,0.38
+RetNemt,2025,1,1.0
+RetNemt,2025,2,1.0
+RetNemt,2025,3,1.0
+RetNemt,2025,4,1.0
+RetNemt,2025,5,1.0
+RetNemt,2025,6,0.97
+RetNemt,2025,7,0.85
+RetNemt,2025,8,0.97
+RetNemt,2025,9,0.98
+RetNemt,2025,10,0.99
+RetNemt,2025,11,1.0
+RetNemt,2025,12,1.0
+RetNemt,2025,13,1.0
+RetNemt,2025,14,1.0
+RetNemt,2025,15,1.0
+RetNemt,2025,16,0.72
+RetNemt,2025,17,0.91
+RetNemt,2025,18,1.0
+RetNemt,2025,19,1.0
+RetNemt,2025,20,0.95
+RetNemt,2025,21,1.0
+RetNemt,2025,22,0.98
+RetNemt,2025,23,0.95
+RetNemt,2025,24,0.95
+RetNemt,2025,25,0.92
+RetNemt,2025,26,0.87
+RetNemt,2025,27,0.74
+RetNemt,2025,28,0.57
+RetNemt,2025,29,0.46
+RetNemt,2025,30,0.45
+RetNemt,2025,31,0.6
+RetNemt,2025,32,0.84
+RetNemt,2025,33,1.0
+RetNemt,2025,34,1.0
+RetNemt,2025,35,1.0
+RetNemt,2025,36,1.0
+RetNemt,2025,37,1.0
+RetNemt,2025,38,1.0
+RetNemt,2025,39,1.0
+RetNemt,2025,40,1.0
+RetNemt,2025,41,1.0
+RetNemt,2025,42,0.78
+RetNemt,2025,43,1.0
+RetNemt,2025,44,1.0
+RetNemt,2025,45,1.0
+RetNemt,2025,46,1.0
+RetNemt,2025,47,1.0
+RetNemt,2025,48,1.0
+RetNemt,2025,49,1.0
+RetNemt,2025,50,0.94
+RetNemt,2025,51,0.84
+RetNemt,2025,52,0.38
+RetNemt,2026,1,1.0
+Adams Matkasse,2025,1,1.0
+Adams Matkasse,2025,2,1.0
+Adams Matkasse,2025,3,1.0
+Adams Matkasse,2025,4,1.0
+Adams Matkasse,2025,5,1.0
+Adams Matkasse,2025,6,1.0
+Adams Matkasse,2025,7,1.0
+Adams Matkasse,2025,8,0.83
+Adams Matkasse,2025,9,0.89
+Adams Matkasse,2025,10,1.0
+Adams Matkasse,2025,11,1.0
+Adams Matkasse,2025,12,1.0
+Adams Matkasse,2025,13,1.0
+Adams Matkasse,2025,14,1.0
+Adams Matkasse,2025,15,1.0
+Adams Matkasse,2025,16,0.49
+Adams Matkasse,2025,17,0.72
+Adams Matkasse,2025,18,0.85
+Adams Matkasse,2025,19,1.0
+Adams Matkasse,2025,20,0.93
+Adams Matkasse,2025,21,0.98
+Adams Matkasse,2025,22,0.9
+Adams Matkasse,2025,23,1.0
+Adams Matkasse,2025,24,0.98
+Adams Matkasse,2025,25,0.93
+Adams Matkasse,2025,26,0.78
+Adams Matkasse,2025,27,0.65
+Adams Matkasse,2025,28,0.43
+Adams Matkasse,2025,29,0.4
+Adams Matkasse,2025,30,0.4
+Adams Matkasse,2025,31,0.45
+Adams Matkasse,2025,32,0.85
+Adams Matkasse,2025,33,1.02
+Adams Matkasse,2025,34,1.05
+Adams Matkasse,2025,35,1.07
+Adams Matkasse,2025,36,1.0
+Adams Matkasse,2025,37,1.0
+Adams Matkasse,2025,38,1.0
+Adams Matkasse,2025,39,1.0
+Adams Matkasse,2025,40,0.9
+Adams Matkasse,2025,41,0.93
+Adams Matkasse,2025,42,1.0
+Adams Matkasse,2025,43,1.0
+Adams Matkasse,2025,44,1.0
+Adams Matkasse,2025,45,1.0
+Adams Matkasse,2025,46,1.0
+Adams Matkasse,2025,47,1.0
+Adams Matkasse,2025,48,1.0
+Adams Matkasse,2025,49,1.0
+Adams Matkasse,2025,50,0.93
+Adams Matkasse,2025,51,0.65
+Adams Matkasse,2025,52,0.2
+Adams Matkasse,2026,1,1.0
+Adams Matkasse,2026,2,1.0
+Adams Matkasse,2026,3,1.0
+Adams Matkasse,2026,4,1.0
+Adams Matkasse,2026,5,1.0
+Adams Matkasse,2026,6,1.0
+Adams Matkasse,2026,7,1.0
+Adams Matkasse,2026,8,0.83
+Adams Matkasse,2026,9,0.89
+Adams Matkasse,2026,10,1.0
+Adams Matkasse,2026,11,1.0
+Adams Matkasse,2026,12,1.0
+Adams Matkasse,2026,13,1.0
+Adams Matkasse,2026,14,0.49
+Adams Matkasse,2026,15,0.72
+Adams Matkasse,2026,16,0.85
+Adams Matkasse,2026,17,1.0
+Adams Matkasse,2026,18,1.0
+Adams Matkasse,2026,19,1.0
+Adams Matkasse,2026,20,0.93
+Adams Matkasse,2026,21,0.98
+Adams Matkasse,2026,22,0.9
+Adams Matkasse,2026,23,1.0
+Adams Matkasse,2026,24,0.98
+Adams Matkasse,2026,25,0.93
+Adams Matkasse,2026,26,0.78
+Adams Matkasse,2026,27,0.65
+Adams Matkasse,2026,28,0.43
+Adams Matkasse,2026,29,0.4
+Adams Matkasse,2026,30,0.4
+Adams Matkasse,2026,31,0.45
+Adams Matkasse,2026,32,0.85
+Adams Matkasse,2026,33,1.02
+Adams Matkasse,2026,34,1.05
+Adams Matkasse,2026,35,1.07
+Adams Matkasse,2026,36,1.0
+Adams Matkasse,2026,37,1.0
+Adams Matkasse,2026,38,1.0
+Adams Matkasse,2026,39,1.0
+Adams Matkasse,2026,40,0.9
+Adams Matkasse,2026,41,0.93
+Adams Matkasse,2026,42,1.0
+Adams Matkasse,2026,43,1.0
+Adams Matkasse,2026,44,1.0
+Adams Matkasse,2026,45,1.0
+Adams Matkasse,2026,46,1.0
+Adams Matkasse,2026,47,1.0
+Adams Matkasse,2026,48,1.0
+Adams Matkasse,2026,49,1.0
+Adams Matkasse,2026,50,0.93
+Adams Matkasse,2026,51,0.65
+Adams Matkasse,2026,52,0.2

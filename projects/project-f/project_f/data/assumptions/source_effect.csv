@@ -1,0 +1,17 @@
+company_name,source,source_effect
+RetNemt,Sales-Phone,0.85
+RetNemt,Sales-Door,0.5
+RetNemt,Web,1.1
+RetNemt,Leads,0.7
+Linas Matkasse,Sales-Phone,0.85
+Linas Matkasse,Sales-Door,0.5
+Linas Matkasse,Web,1.1
+Linas Matkasse,Leads,0.7
+Godtlevert,Sales-Phone,0.85
+Godtlevert,Sales-Door,0.5
+Godtlevert,Web,1.1
+Godtlevert,Leads,0.7
+Adams Matkasse,Sales-Phone,0.85
+Adams Matkasse,Sales-Door,0.5
+Adams Matkasse,Web,1.1
+Adams Matkasse,Leads,0.7

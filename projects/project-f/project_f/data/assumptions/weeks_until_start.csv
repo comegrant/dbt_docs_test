@@ -1,0 +1,41 @@
+company_name,source,weeks_til_start,percent_split
+Adams Matkasse,Sales-Phone,1,0.14
+Adams Matkasse,Sales-Phone,2,0.64
+Adams Matkasse,Sales-Phone,3,0.12
+Adams Matkasse,Sales-Phone,4,0.06
+Adams Matkasse,Sales-Phone,5,0.04
+Adams Matkasse,Web,1,0.41
+Adams Matkasse,Web,2,0.54
+Adams Matkasse,Web,3,0.04
+Adams Matkasse,Web,4,0.01
+Adams Matkasse,Web,5,0.0
+Godtlevert,Sales-Phone,1,0.14
+Godtlevert,Sales-Phone,2,0.64
+Godtlevert,Sales-Phone,3,0.12
+Godtlevert,Sales-Phone,4,0.06
+Godtlevert,Sales-Phone,5,0.04
+Godtlevert,Web,1,0.41
+Godtlevert,Web,2,0.54
+Godtlevert,Web,3,0.04
+Godtlevert,Web,4,0.01
+Godtlevert,Web,5,0.0
+Linas Matkasse,Sales-Phone,1,0.14
+Linas Matkasse,Sales-Phone,2,0.64
+Linas Matkasse,Sales-Phone,3,0.12
+Linas Matkasse,Sales-Phone,4,0.06
+Linas Matkasse,Sales-Phone,5,0.04
+Linas Matkasse,Web,1,0.41
+Linas Matkasse,Web,2,0.54
+Linas Matkasse,Web,3,0.04
+Linas Matkasse,Web,4,0.01
+Linas Matkasse,Web,5,0.0
+RetNemt,Sales-Phone,1,0.14
+RetNemt,Sales-Phone,2,0.64
+RetNemt,Sales-Phone,3,0.12
+RetNemt,Sales-Phone,4,0.06
+RetNemt,Sales-Phone,5,0.04
+RetNemt,Web,1,0.41
+RetNemt,Web,2,0.54
+RetNemt,Web,3,0.04
+RetNemt,Web,4,0.01
+RetNemt,Web,5,0.0

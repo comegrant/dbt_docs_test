@@ -1,0 +1,39 @@
+FROM databricksruntime/python:15.4-LTS
+
+SHELL ["/bin/bash", "-c"]
+
+# Defaulting to utf-8 to fix a few charset bugs
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# set the home directory
+ENV APP_HOME=/opt
+ENV SERVICE_HOME=$APP_HOME/projects/project-f
+
+RUN /databricks/python3/bin/pip install poetry
+
+# copy source code
+WORKDIR $APP_HOME
+COPY packages packages
+
+WORKDIR $SERVICE_HOME
+COPY projects/project-f/pyproject.toml .
+COPY projects/project-f/poetry.lock .
+
+# create a dummy package to satisfy Poetry
+RUN mkdir -p project_f && touch project_f/__init__.py
+
+RUN source /databricks/python3/bin/activate \
+	&& echo "$(which poetry)" \
+	&& poetry config virtualenvs.create false \
+	&& poetry install --without=dev && rm -rf ~/.cache/pypoetry
+
+
+ENV PYTHONPATH=/databricks/python3/bin
+ENV PATH=/databricks/python3/bin:$PATH
+
+# copy source code
+COPY projects/project-f .
+
+WORKDIR $SERVICE_HOME
+CMD python project_f/cli.py

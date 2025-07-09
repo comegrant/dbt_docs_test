@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "project-f"
+version = "0.1.0"
+description = "Cheffelo's budget forecasting app"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "project_f"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic-settings = "^2.1.0"
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
+model-registry = {path = "../../packages/model-registry", develop = true}
+streamlit = "^1.46.1"
+ipykernel = "^6.29.5"
+plotly = "^6.2.0"
+
+[tool.poetry.group.databricks.dependencies]
+nest_asyncio = "1.6.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-mock = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+pyright = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'

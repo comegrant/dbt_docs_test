@@ -1,0 +1,17 @@
+company_name,customer_segment,decay_rate
+Linas Matkasse,Activated Customers,0.97
+Linas Matkasse,New Customers,0.98
+Linas Matkasse,Reactivated Customers,0.98
+Linas Matkasse,Reactivated Customers No Code,0.985
+Godtlevert,Activated Customers,0.97
+Godtlevert,New Customers,0.975
+Godtlevert,Reactivated Customers,0.975
+Godtlevert,Reactivated Customers No Code,0.98
+RetNemt,Activated Customers,0.98
+RetNemt,New Customers,0.985
+RetNemt,Reactivated Customers,0.99
+RetNemt,Reactivated Customers No Code,0.995
+Adams Matkasse,Activated Customers,0.97
+Adams Matkasse,New Customers,0.97
+Adams Matkasse,Reactivated Customers,0.97
+Adams Matkasse,Reactivated Customers No Code,0.98
