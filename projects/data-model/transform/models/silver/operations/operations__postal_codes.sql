@@ -10,25 +10,7 @@ source as (
 
     select 
         *
-        , case
-            -- loop through the countries variables to check if the postal code is a pickup location. If it is, do not transform it 
-            when source.postalcode_id in (
-                {% for country in var('countries').values() -%}
-                {%- if not loop.first %}, {% endif %}'{{ country["pickup_location_postal_code_id"] }}'
-                {%- endfor %}
-            ) 
-            then source.postalcode_id -- pickup location postal code ids are artificial
-
-            -- match the country_id of the postal code. 
-            -- fetch the number of characters in postal codes for that country from it's postal_code_length variable
-            -- Pad leading zeros to the postal code if necessary to ensure the postal code has the correct number of characters based on the country it belongs to.
-            {% for country in var('countries').values() -%}
-                when source.country_id = '{{ country["country_id"] }}'
-                then lpad(source.postalcode_id, '{{ country["postal_code_length"] }}', '0')
-
-            {%- endfor %}
-            else source.postalcode_id
-            end as postal_code
+        , {{ clean_postal_code('postalcode_id', 'country_id') }} as postal_code
     from source
 
 

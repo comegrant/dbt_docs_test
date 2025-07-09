@@ -897,12 +897,6 @@ Id of the company used for purchasing ingredients. Eg. in Norway where there are
 
 {% enddocs %}
 
-{% docs column__distribution_center_id %}
-
-Id of the distribution center where the ingredients are delivered to.
-
-{% enddocs %}
-
 # Suppliers
 {% docs column__ingredient_supplier_id %} 
 

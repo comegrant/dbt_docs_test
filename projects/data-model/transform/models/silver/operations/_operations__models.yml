@@ -42,6 +42,100 @@ models:
       - name: source_updated_by
         data_type: varchar(50)
         description: "{{ doc('column__source_updated_by') }}"
+
+  - name: operations__distribution_centers
+    description: "Has information about distribution centers which are ??"
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: distribution_center_id
+        data_type: char(36)
+        description: "{{ doc('column__distribution_center_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: distribution_center_type_id
+        data_type: char(36)
+        description: "{{ doc('column__distribution_center_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: transport_company_id
+        data_type: int
+        description: "{{ doc('column__transport_company_id') }}"
+
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: distribution_center_name
+        data_type: string
+        description: "{{ doc('column__distribution_center_name') }}"
+        data_tests:
+          - not_null
+
+      - name: distribution_center_postal_code
+        data_type: string
+        description: "{{ doc('column__distribution_center_postal_code') }}"
+        data_tests:
+          - not_null
+
+      - name: distribution_center_latitude
+        data_type: decimal(9,6)
+        description: "{{ doc('column__distribution_center_latitude') }}"
+
+      - name: distribution_center_longitude
+        data_type: decimal(9,6)
+        description: "{{ doc('column__distribution_center_longitude') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__distribution_center_types
+    description: "Has information about distribution different types. Which are ??"
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: distribution_center_type_id
+        data_type: char(36)
+        description: "{{ doc('column__distribution_center_type_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: distribution_center_type__name
+        data_type: string
+        description: "{{ doc('column__distribution_center_type__name') }}"
+        data_tests:
+          - not_null
   
   - name: operations__timeblocks_blacklisted
     description: Contains blacklisted timeblocks for given menu year and menu week.
