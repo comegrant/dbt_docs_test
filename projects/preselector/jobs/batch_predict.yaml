@@ -21,8 +21,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "bhregistry"
-                password: "egR8ieIpB46AEEyRAkmkzWnc3dcOiInDcV5ohSiHnU+ACRC5tV6W"
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
         quartz_cron_expression: '0 0 2 ? * MON'
@@ -99,8 +99,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "bhregistry"
-                password: "egR8ieIpB46AEEyRAkmkzWnc3dcOiInDcV5ohSiHnU+ACRC5tV6W"
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
         quartz_cron_expression: '0 0 6 ? * MON'
@@ -177,8 +177,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "bhregistry"
-                password: "egR8ieIpB46AEEyRAkmkzWnc3dcOiInDcV5ohSiHnU+ACRC5tV6W"
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
         quartz_cron_expression: '0 0 10 ? * MON'
@@ -255,8 +255,8 @@ resources:
             docker_image:
               url: "${var.docker_image_url}"
               basic_auth:
-                username: "bhregistry"
-                password: "egR8ieIpB46AEEyRAkmkzWnc3dcOiInDcV5ohSiHnU+ACRC5tV6W"
+                username: "{{secrets/auth_common/docker-registry-username}}"
+                password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
         quartz_cron_expression: '0 0 14 ? * MON'
