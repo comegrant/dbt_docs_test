@@ -14,7 +14,7 @@ source as (
         id as distribution_center_type_id
         
         {# strings #}
-        , name as distribution_center_type__name
+        , name as distribution_center_type_name
 
     from source
 

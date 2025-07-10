@@ -25,6 +25,20 @@ The week of the year the menu is delivered to customers.
 
 {% enddocs %}
 
+# Geographical Fields
+{% docs column__latitude %}
+
+Latitude are a geographic coordinate that specify a location on Earth's surface. Used together with longitude.
+
+{% enddocs %}
+
+{% docs column__longitude %}
+
+Longitude are a geographic coordinate that specify a location on Earth's surface. Used together with latitude.
+
+{% enddocs %}
+
+
 # SCD2 fields
 {% docs column__valid_from %}
 

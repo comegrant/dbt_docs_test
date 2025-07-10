@@ -18,6 +18,8 @@ source as (
 
         {# ids #}
         , company_id
+        , packing_distribution_center_id
+        , last_mile_hub_distribution_center_id
 
         {# booleans #}
         , is_active

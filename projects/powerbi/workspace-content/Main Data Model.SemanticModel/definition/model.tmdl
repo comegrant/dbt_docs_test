@@ -69,6 +69,7 @@ ref table Discounts
 ref table 'Case Measures'
 ref table 'Case Details'
 ref table 'Customer Journey Segments'
+ref table 'Transportation'
 
 ref cultureInfo en-US
 

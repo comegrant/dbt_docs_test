@@ -20,10 +20,10 @@ source as (
         , alias as distribution_center_name
 
         {# numbers #}
-        , {{ clean_postal_code('postalcode', 'country_id') }} as distribution_center_postal_code
+        , {{ clean_postal_code('postalcode', 'country_id') }} as postal_code
 
-        , latitude as distribution_center_latitude
-        , longitude as distribution_center_longitude
+        , latitude as latitude
+        , longitude as longitude
 
         {# system #}
         , created_at as source_created_at

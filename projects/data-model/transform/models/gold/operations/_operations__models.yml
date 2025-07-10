@@ -1,6 +1,75 @@
 version: 2
 
 models:
+  - name: dim_transportaion
+    description: >
+      Contains information about the transportation of a delivery including transport company and the facilities distributing the boxes.
+    latest_version: 1
+    config:
+      alias: dim_transportaion
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_transportation
+        data_type: string
+        description: "{{ doc('column__pk_dim_transportation') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: transport_company_id
+        data_type: int
+        description: "{{ doc('column__transport_company_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: last_mile_hub_distribution_center_id
+        data_type: char(36)
+        description: "{{ doc('column__last_mile_hub_distribution_center_id') }}"
+
+      - name: packing_distribution_center_id
+        data_type: char(36)
+        description: "{{ doc('column__packing_distribution_center_id') }}"
+
+      - name: transport_company_name
+        data_type: varchar(100)
+        description: "{{ doc('column__transport_company_name') }}"
+
+      - name: last_mile_distribution_site
+        data_type: string
+        description: "{{ doc('column__last_mile_distribution_site') }}"
+
+      - name: last_mile_distribution_postal_code
+        data_type: string
+        description: "{{ doc('column__postal_code') }}"
+
+      - name: last_mile_distribution_longitude
+        data_type: decimal(9,6)
+        description: "{{ doc('column__longitude') }}"
+
+      - name: last_mile_distribution_latitude
+        data_type: decimal(9,6)
+        description: "{{ doc('column__latitude') }}"
+
+      - name: production_site
+        data_type: string
+        description: "{{ doc('column__production_site') }}"
+      
+    versions:
+      - v: 1
+
   - name: dim_case_details
     description: >
       Contains information about cause, category, type, and responsible party for a case line related to a delivery. 

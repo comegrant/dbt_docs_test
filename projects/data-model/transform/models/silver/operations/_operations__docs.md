@@ -19,9 +19,9 @@ The unique id of the distribution center type in the source database.
 
 {% enddocs %}
 
-{% docs column__distribution_center_type__name %}
+{% docs column__distribution_center_type_name %}
 
-The name of the distribution center type. [Q: What is this actually?]
+The name of the distribution center type. Can be HUB, DIP or Packing.
 
 {% enddocs %}
 
@@ -34,25 +34,7 @@ The unique id of the distribution center in the source database.
 
 {% docs column__distribution_center_name %}
 
-The name of the distribution center namne. A distribution center is .. [Q: What is this actually?]
-
-{% enddocs %}
-
-{% docs column__distribution_center_postal_code %}
-
-The postal code of the distribution center
-
-{% enddocs %}
-
-{% docs column__distribution_center_latitude %}
-
-The latitude of the placement of the distribution center.
-
-{% enddocs %}
-
-{% docs column__distribution_center_longitude %}
-
-The longtiude of the placement of the distribution center.
+The name of the distribution center namne. A distribution center is the site where the delivery gets distributed to the transport company. An order can go through several distibution centers during the delivery process.
 
 {% enddocs %}
 

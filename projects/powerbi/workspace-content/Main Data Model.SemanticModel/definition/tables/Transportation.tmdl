@@ -1,0 +1,68 @@
+/// Write table end user friendly description here (can copy from Databricks if relevant)
+table 'Transportation'
+    isHidden
+    lineageTag: Transportation-Table
+
+    column pk_dim_transportation
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_transportation
+
+    /// The name of the transport company delivering the order.
+    column 'Transport Company'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: transport_company_name
+
+    /// The last distribution site of the order before being delivered to the customer.
+    column 'Last Mile Distribution Site'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: last_mile_distribution_site
+
+    /// The postal code of the last mile distribution center. Can be used in visuals leveraging the map.
+    column 'Last Mile Distribution Postal Code'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: last_mile_distribution_postal_code
+
+    /// The longitude of the last mile distribution site. Can be used in visuals leveraging the map.
+    column 'Last Mile Distribution Longitude'
+        dataType: double
+        dataCategory: Longitude
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: last_mile_distribution_longitude
+
+    /// The latitude of the last mile distribution site. Can be used in visuals leveraging the map.
+    column 'Last Mile Distribution Latitude'
+        dataType: double
+        dataCategory: Latitude
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: last_mile_distribution_latitude
+
+    /// The facility where the order was packed before delivery.
+    column 'Production Site'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: production_site
+
+    partition 'Transportation' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_transportation_Table = gold_Schema{[Name="dim_transportation",Kind="Table"]}[Data]
+                in
+                    dim_transportation_Table
