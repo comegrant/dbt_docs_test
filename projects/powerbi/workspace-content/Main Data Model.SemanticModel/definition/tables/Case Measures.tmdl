@@ -7,31 +7,234 @@ table 'Case Measures'
     /// The number of cases.
     measure 'Number of Orders With Cases' = DISTINCTCOUNTNOBLANK('Case Measures'[ops_order_id])
 		formatString: #,0    
-     
+        displayFolder: 'Orders'
+    
+    /// The number of cases last year.
+    measure 'Number of Orders With Cases (PY)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Orders'
+
+    /// The cummulative number of cases from the beginning of the year up to the current period.
+    measure 'Number of Orders With Cases (YTD)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Orders'
+
+    /// The cummulative number of cases from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Number of Orders With Cases (PYTD)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Orders'
+
     /// The number of case lines.
     measure 'Number of Case Lines' = DISTINCTCOUNTNOBLANK('Case Measures'[case_line_id])
         formatString: #,0
+        displayFolder: 'Orders'
     
     /// The number of cases per 1000 orders.
     measure 'Number of Cases per 1000 Orders' = DIVIDE([Number of Orders With Cases], [Number of Orders])*1000
         formatString: #,0
+        displayFolder: 'Orders'
 
-    /// The number of orders without a case
-    measure 'Number of Orders Without Case' = [Number of Orders] - [Number of Orders With Cases]   
+    /// The number of deliveries without a case
+    measure 'Number of Fault Free Deliveries' = [Number of Orders] - [Number of Orders With Cases] 
         formatString: #,0
+        displayFolder: 'Orders'
 
-    ///The share of orders that have a case.
+    ///The share of deliveries that have a case.
     measure 'Share of Orders With Cases' = DIVIDE([Number of Orders With Cases], [Number of Orders])
         formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Orders'
+    
+    /// The share of orders with cases last year.
+    measure 'Share of Orders With Cases (PY)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Orders' 
+
+    /// The share of orders with cases from the beginning of the year up to the current period.
+    measure 'Share of Orders With Cases (YTD)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Orders'
+
+    /// The share of orders with cases from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Share of Orders With Cases (PYTD)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Orders'
 
     /// The total cost of cases, including VAT.
-    measure 'Case Cost (Inc VAT)' = SUM('Case Measures'[Case Line Amount Inc VAT])
+    measure 'Case Cost Inc VAT' = SUM('Case Measures'[Case Line Amount Inc VAT])
         formatString: #,0
-        
-    /// The average cost of caese per delivery, including VAT.
-    measure 'Average Case Cost (Inc VAT)' = DIVIDE([Case Cost (Inc VAT)], [Number of Orders])
+        displayFolder: 'Costs Inc VAT'
+    
+    /// The total cost of cases (inc vat) last year.
+    measure 'Case Cost Inc VAT (PY)' = CALCULATE([Case Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The total cost of cases (inc vat) from the beginning of the year up to the current period.
+    measure 'Case Cost Inc VAT (YTD)' = CALCULATE([Case Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The total cost of cases (inc vat) from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Case Cost Inc VAT (PYTD)' = CALCULATE([Case Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The total cost of cases, excluding VAT.The total cost of cases, excluding VAT. 
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Case Cost Ex VAT' = SUM('Case Measures'[Case Line Amount Ex VAT])
         formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
+    /// The total cost of cases (ex vat) last year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Case Cost Ex VAT (PY)' = CALCULATE([Case Cost Ex VAT], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The total cost of cases (ex vat) from the beginning of the year up to the current period.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Case Cost Ex VAT (YTD)' = CALCULATE([Case Cost Ex VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The total cost of cases (ex vat) from the beginning of the year up to the current period, for the same period in the previous year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Case Cost Ex VAT (PYTD)' = CALCULATE([Case Cost Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
         
+    /// The average cost of cases per order, including VAT. The cost of all cases in a given period divided by the number of orders in that period.
+    measure 'Average Case Cost Per Order Inc VAT' = DIVIDE([Case Cost Inc VAT], [Number of Orders])
+        formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+    
+    /// The average cost of cases per order, including VAT, last year.
+    measure 'Average Case Cost Per Order Inc VAT (PY)' = CALCULATE([Average Case Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The average cost of cases per order, including VAT, from the beginning of the year up to the current period.
+    measure 'Average Case Cost Per Order Inc VAT (YTD)' = CALCULATE([Average Case Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The average cost of cases per order, including VAT, from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Average Case Cost Per Order Inc VAT (PYTD)' = CALCULATE([Average Case Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+    
+    /// The average cost of cases per order, excluding VAT. The cost of all cases in a given period divided by the number of orders in that period.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Case Cost Per Order Ex VAT' = DIVIDE([Case Cost Ex VAT], [Number of Orders])
+        formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
+    /// The average cost of cases per order (ex VAT) last year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Case Cost Per Order Ex VAT (PY)' = CALCULATE([Average Case Cost Per Order Ex VAT], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The average cost of cases per order (ex VAT) from the beginning of the year up to the current period.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Case Cost Per Order Ex VAT (YTD)' = CALCULATE([Average Case Cost Per Order Ex VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The average cost of cases per order (ex VAT) from the beginning of the year up to the current period, for the same period in the previous year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Case Cost Per Order Ex VAT (PYTD)' = CALCULATE([Average Case Cost Per Order Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
+    /// The share of case cost per revenue, excluding VAT.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Share of Case Cost Per Gross Revenue Ex VAT' = DIVIDE([Case Cost Ex VAT], [Order Value Gross Ex VAT])
+        formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Costs Ex VAT'
+
+    /// The share of case cost per revenue (ex VAT) last year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Share of Case Cost Per Gross Revenue Ex VAT (PY)' = CALCULATE([Share of Case Cost Per Gross Revenue Ex VAT], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The share of case cost per revenue (ex VAT) from the beginning of the year up to the current period.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Share of Case Cost Per Gross Revenue Ex VAT (YTD)' = CALCULATE([Share of Case Cost Per Gross Revenue Ex VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The share of case cost per revenue (ex VAT) from the beginning of the year up to the current period, for the same period in the previous year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Share of Case Cost Per Gross Revenue Ex VAT (PYTD)' = CALCULATE([Share of Case Cost Per Gross Revenue Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The share of deliveries that do not have a case.
+    measure 'Share of Fault Free Deliveries' = DIVIDE([Number of Fault Free Deliveries], [Number of Orders])
+        formatString: 0.00%;-0.00%;0.00%
+        displayFolder: 'Orders'
+    
+    /// The share of deliveries that do not have a case, last year.
+    measure 'Share of Fault Free Deliveries (PY)' = CALCULATE([Share of Fault Free Deliveries], 'Time Intelligence'[Time Calculation]="PY") 
+		formatString: #,0
+        displayFolder: 'Orders'
+
+    /// The share of deliveries that do not have a case from the beginning of the year up to the current period.
+    measure 'Share of Fault Free Deliveries (YTD)' = CALCULATE([Share of Fault Free Deliveries], 'Time Intelligence'[Time Calculation]="YTD") 
+		formatString: #,0
+        displayFolder: 'Orders'
+
+    /// The share of deliveries that do not have a case from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Share of Fault Free Deliveries (PYTD)' = CALCULATE([Share of Fault Free Deliveries], 'Time Intelligence'[Time Calculation]="PYTD") 
+		formatString: #,0
+        displayFolder: 'Orders'
+        
+    /// The average amount credited per case , including VAT.
+    measure 'Average Amount Credited Per Case Inc VAT' = AVERAGE('Case Measures'[Case Line Amount Inc VAT])
+        formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+    
+    /// The average amount credited per case (inc VAT) last year.
+    measure 'Average Amount Credited Per Case Inc VAT (PY)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Inc VAT], 'Time Intelligence'[Time Calculation]="PY")
+        formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+    
+    /// The average amount credited per case (inc VAT) from the beginning of the year up to the current period.
+    measure 'Average Amount Credited Per Case Inc VAT (YTD)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Inc VAT], 'Time Intelligence'[Time Calculation]="YTD")
+        formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The average amount credited per case (inc VAT) from the beginning of the year up to the current period, for the same period in the previous year.
+    measure 'Average Amount Credited Per Case Inc VAT (PYTD)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD")
+        formatString: #,0
+        displayFolder: 'Costs Inc VAT'
+
+    /// The average amount credited per case , excluding VAT.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Amount Credited Per Case Ex VAT' = AVERAGE('Case Measures'[Case Line Amount Ex VAT])
+        formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
+    /// The average amount credited per case (ex VAT) last year.
+    /// /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Amount Credited Per Case Ex VAT (PY)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Ex VAT], 'Time Intelligence'[Time Calculation]="PY")
+        formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
+    /// The average amount credited per case (inc VAT) from the beginning of the year up to the current period.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Amount Credited Per Case Ex VAT (YTD)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Ex VAT], 'Time Intelligence'[Time Calculation]="YTD")
+        formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+
+    /// The average amount credited per case (inc VAT) from the beginning of the year up to the current period,, for the same period in the previous year.
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    measure 'Average Amount Credited Per Case Ex VAT (PYTD)' = CALCULATE ('Case Measures'[Average Amount Credited Per Case Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD")
+        formatString: #,0
+        displayFolder: 'Costs Ex VAT'
+    
     /// Primary key of the fact_case table.
     column pk_fact_cases
         dataType: string
@@ -72,6 +275,14 @@ table 'Case Measures'
         isHidden
         summarizeBy: none
         sourceColumn: case_line_amount_inc_vat
+    
+    /// The amount the customer will get in reimbursement. I.e., the cost of the case. 
+    /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
+    column 'Case Line Amount Ex VAT'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: case_line_amount_ex_vat
 
     /// Comments regarding the case. 
     /// Can come from external partners or internally from logistics/customer service, 
