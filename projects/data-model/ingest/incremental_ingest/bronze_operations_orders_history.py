@@ -18,7 +18,7 @@ source_table = "orders_history"
 source_date_column = "created_date"
 
 # Name of table in silver layer
-silver_table = "operations__orders_history"
+silver_table = "base_operations__orders_history"
 
 # Name of date column to be used when finding most recent data in silver
 # Is often the created_at or updated_at column
