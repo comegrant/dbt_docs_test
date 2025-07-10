@@ -4,7 +4,7 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 0,
+        "x": 9844.7998046875,
         "y": 0
       },
       "nodes": [
@@ -56,19 +56,6 @@
           "nodeLineageTag": "e9e23909-ea1a-4aa8-9c71-604cd8245dce",
           "size": {
             "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 815.48185059123477,
-            "y": 1033.9786650625119
-          },
-          "nodeIndex": "Bridge Billing Agreements Preferences",
-          "nodeLineageTag": "3eacf138-1292-4b16-90b5-348f57351f03",
-          "size": {
-            "height": 224,
             "width": 234
           },
           "zIndex": 0
@@ -438,18 +425,6 @@
         },
         {
           "location": {
-            "x": 8429.59381447551,
-            "y": 588.04950104828606
-          },
-          "nodeIndex": "(Param) Number of Deliveries per Customer Target",
-          "size": {
-            "height": 152,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 8713.59381447551,
             "y": 588.04950104828606
           },
@@ -530,6 +505,211 @@
           "nodeLineageTag": "Preselector-Versions-Table",
           "size": {
             "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10912.858762683445,
+            "y": 332.66487229279483
+          },
+          "nodeIndex": "Loyalty Measures",
+          "nodeLineageTag": "Loyalty-Measures-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12466.074562228187,
+            "y": 425.49838105780879
+          },
+          "nodeIndex": "(Param) Days in Rolling Period",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12853.591537978837,
+            "y": 425.49838105780879
+          },
+          "nodeIndex": "(Param) Number of Orders per Customer Target",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 13241.108513729485,
+            "y": 425.49838105780879
+          },
+          "nodeIndex": "Bridge Preference Combinations Preferences",
+          "nodeLineageTag": "Bridge-Preference-Combinations-Preferences-Table",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10123.593814475509,
+            "y": 625.68995227796665
+          },
+          "nodeIndex": "Case Details",
+          "nodeLineageTag": "Case-Details-Table",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10529.667003999359,
+            "y": 177.30680983765086
+          },
+          "nodeIndex": "Case Measures",
+          "nodeLineageTag": "Case-Measures-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11691.040610726888,
+            "y": 351.49838105780879
+          },
+          "nodeIndex": "Discounts",
+          "nodeLineageTag": "Discounts-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14016.142465230783,
+            "y": 437.49838105780879
+          },
+          "nodeIndex": "Grand Total Calculations",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11303.52363497624,
+            "y": 355.3523511416239
+          },
+          "nodeIndex": "Loyalty Order Statuses",
+          "nodeLineageTag": "Loyalty-Order-Statuses-table",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10847.412014258021,
+            "y": 0
+          },
+          "nodeIndex": "Loyalty Seasons",
+          "nodeLineageTag": "Loyalty-Seasons-Table",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 13628.625489480135,
+            "y": 425.49838105780879
+          },
+          "nodeIndex": "Order Line Details",
+          "nodeLineageTag": "Order-Line-Details",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12078.557586477538,
+            "y": 413.49838105780879
+          },
+          "nodeIndex": "Portions",
+          "nodeLineageTag": "Portions-Table",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14290.142465230783,
+            "y": 0
+          },
+          "nodeIndex": "Customer Journey Segments",
+          "nodeLineageTag": "Customer-Journey-Segments-Table",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14696.215654754633,
+            "y": 157.60312638169677
+          },
+          "nodeIndex": "Fact Billing Agreements",
+          "nodeLineageTag": "fact-billing-agreements",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14722.49055540096,
+            "y": 25.864301878412391
+          },
+          "nodeIndex": "Ingredients",
+          "nodeLineageTag": "Ingredients-Table",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 15146.724621750811,
+            "y": 157.60312638169677
+          },
+          "nodeIndex": "Recipe Ingredients",
+          "nodeLineageTag": "Recipe-Ingredients-Table",
+          "size": {
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
