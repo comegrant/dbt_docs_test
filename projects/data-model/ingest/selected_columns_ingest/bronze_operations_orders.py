@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC This is not a part of the full cms ingest because we avoid including personal info.
+# MAGIC This is not a part of the full operations ingest because we avoid including personal info.
 
 # COMMAND ----------
 import sys

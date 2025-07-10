@@ -2191,6 +2191,13 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+    column fk_dim_transportation
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_transportation
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =

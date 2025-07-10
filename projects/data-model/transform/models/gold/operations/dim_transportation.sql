@@ -48,5 +48,24 @@ zones as (
 
 )
 
-select * from join_tables
+, add_unknown_row as (
 
+    select * from join_tables
+
+    union all
+
+    select
+        '0'  as pk_dim_transportation
+        , null as zone_id
+        , null as company_id
+        , null as last_mile_hub_distribution_center_id
+        , null as packing_distribution_center_id
+        ,'unknown' as transport_company_name
+        , 'unknown' as last_mile_distribution_site
+        , null as last_mile_distribution_postal_code
+        , null as last_mile_distribution_longitude
+        , null as last_mile_distribution_latitude
+        , 'unknown' as production_site
+)
+
+select * from add_unknown_row

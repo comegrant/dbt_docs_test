@@ -241,6 +241,14 @@ models:
         data_tests:
           - not_null
 
+      - name: ingredient_price
+        data_type: decimal(18,0)
+        description: "{{ doc('column__ingredient_price') }}"
+
+      - name: ingredient_quantity
+        data_type: int
+        description: "{{ doc('column__ingredient_quantity') }}"
+
       - name: is_complaint
         data_type: boolean
         description: "{{ doc('column__is_complaint') }}"
@@ -373,6 +381,20 @@ models:
               field: pk_dim_ingredients
               config:
                 where: "fk_dim_ingredients != 0"
+
+      - name: fk_dim_transportation
+        data_type: string
+        description: "{{ doc('column__pk_dim_transportation') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_transportation')
+            to_columns: [pk_dim_transportation]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_transportation')
+              field: pk_dim_transportation
 
     versions:
       - v: 1

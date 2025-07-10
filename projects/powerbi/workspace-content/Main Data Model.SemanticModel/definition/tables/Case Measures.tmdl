@@ -369,6 +369,13 @@ table 'Case Measures'
         summarizeBy: none
         sourceColumn: fk_dim_customer_journey_segments
 
+    column fk_dim_transportation
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_transportation
+
     partition 'Case Measures' = m
         mode: directQuery
         source =

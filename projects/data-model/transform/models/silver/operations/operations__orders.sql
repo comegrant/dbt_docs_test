@@ -8,7 +8,7 @@ source as (
 
 , history as (
 
-    select * from {{ ref('operations__orders_history') }}
+    select * from {{ ref('base_operations__orders_history') }}
 
 )
 
@@ -23,48 +23,26 @@ source as (
         , cast(agreement_id as int) as billing_agreement_id
         , bao_id as billing_agreement_order_id
         , company_id
-        , year_nr as menu_year
-        , week_nr as menu_week
-        , {{ get_iso_week_start_date('year_nr', 'week_nr') }} as menu_week_monday_date
- 
-        {# strings #}
-        -- place strings here
+        , country_id
+        , cast(agreement_timeblock as int) as timeblock_id
+        , null as zone_id
+        , agreement_postalcode as postal_code_id
 
         {# numerics #}
-        -- place numerics here
-        
-        {# booleans #}
-        -- place booleans here
-        
+        , year_nr as menu_year
+        , week_nr as menu_week
+
         {# date #}
-        -- place dates here
-        
-        {# timestamp #}
-        -- place timestamps here
+        , {{ get_iso_week_start_date('year_nr', 'week_nr') }} as menu_week_monday_date
         
         {# scd #}
-        -- place slowly change dimension fields here
+        , period_nr as menu_year_week
         
         {# system #}
-        -- place system columns here
-    
-        /*, agreement_postalcode
-        , agreement_timeblock
-        , order_status_id
-        , order_id_reference
-        , weekdate
-        , created_by
-        , created_date
-        , modified_by
-        , modified_date
-        , order_type
-        , pod_plan_company_id
-        , country_id
-        , external_logistics_id
-        , logistic_system_id
-        , has_recipe_leaflets
-        , external_order_id
-        , period_nr*/
+        , created_by as source_created_by
+        , created_date as source_created_at
+        , modified_by as source_updated_by
+        , modified_date as source_updated_at
 
     from source
 
@@ -84,10 +62,20 @@ source as (
         , billing_agreement_id
         , billing_agreement_order_id
         , company_id
+        , country_id
+        , timeblock_id
+        , zone_id
+        , postal_code_id
         , menu_year
         , menu_week
         , menu_week_monday_date
+        , null as menu_year_week
+        , source_created_by
+        , source_created_at
+        , source_updated_by
+        , source_updated_at
         , {{ get_financial_date_from_monday_date('menu_week_monday_date') }} as menu_week_financial_date
+
     from history
 )
 

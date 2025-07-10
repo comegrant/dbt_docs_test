@@ -1,7 +1,212 @@
 models:
-  - name: operations__orders_history
+  - name: base_operations__orders_history
+    description: "Information about orders from the operations database. Contains all the history of orders related to deliveries that has passed."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: country_id
+        data_type: varchar(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        data_tests:
+          - not_null
+
 
   - name: operations__orders
+    description: "Information about orders from the operations database which are currenly going to be delivered."
+    config:
+      contract:
+        enforced: false
+
+    columns:
+      - name: ops_order_id
+        data_type: bigint
+        description: "{{ doc('column__ops_order_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_order_id
+        data_type: varchar(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+        data_tests:
+          - unique:
+              where: "menu_year > 2019 and billing_agreement_order_id != '00000000-0000-0000-0000-000000000000' and billing_agreement_order_id is not null"
+          - not_null:
+              where: "menu_year > 2020"
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: country_id
+        data_type: varchar(36)
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: zone_id
+        data_type: int
+        description: "{{ doc('column__zone_id') }}"
+        data_tests:
+          - not_null:
+              where: "menu_week_monday_date <= current_date and menu_year >= 2024"
+
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
+        data_tests:
+          - not_null:
+              where: "menu_year >= 2024 and zone_id is null"
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year_week
+        data_type: int
+        description: "{{ doc('column__menu_year_week') }}"
+        data_tests:
+          - not_null:
+              where: "menu_week_monday_date >= current_date"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+        #data_tests:
+        #  - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+        #data_tests:
+        #  - not_null
+
+      - name: menu_week_financial_date
+        data_type: date
+        description: "{{ doc('column__menu_week_financial_date') }}"
+        data_tests:
+          - not_null
 
   - name: operations__transport_companies
     description: "Contains information about the transport companies that are used for deliveries"

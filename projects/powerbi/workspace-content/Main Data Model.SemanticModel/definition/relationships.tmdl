@@ -208,6 +208,10 @@ relationship fact_orders_to_dim_periods_since
 	fromColumn: 'Order Measures'.fk_dim_periods_since_first_menu_week
 	toColumn: 'Periods Since First Menu Week'.pk_dim_periods_since
 
+relationship fact_orders_to_dim_transportation
+	fromColumn: 'Order Measures'.fk_dim_transportation
+	toColumn: 'Transportation'.pk_dim_transportation
+
 relationship fact_orders_to_dim_loyalty_seasons
 	fromColumn: 'Order Measures'.fk_dim_loyalty_seasons
 	toColumn: 'Loyalty Seasons'.pk_dim_loyalty_seasons
@@ -401,4 +405,8 @@ relationship fact_billing_agreements_daily_to_dim_customer_journey_segments
 relationship fact_cases_to_dim_customer_journey_segments
 	fromColumn: 'Case Measures'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments
+
+relationship fact_cases_to_dim_transportation
+	fromColumn: 'Case Measures'.fk_dim_transportation
+	toColumn: 'Transportation'.pk_dim_transportation
 

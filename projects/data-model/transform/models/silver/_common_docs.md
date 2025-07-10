@@ -25,6 +25,12 @@ The week of the year the menu is delivered to customers.
 
 {% enddocs %}
 
+{% docs column__menu_year_week %}
+
+The menu year and menu week together as a number in the format YYYYWW.
+
+{% enddocs %}
+
 # Geographical Fields
 {% docs column__latitude %}
 

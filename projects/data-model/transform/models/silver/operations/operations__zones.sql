@@ -11,10 +11,8 @@ source as (
     select 
         {# ints #}
         zone_id
-        , timeblock_id
+        , cast(timeblock_id as int) as timeblock_id
         , cast(transport_company_id as int) as transport_company_id
-        , cast(period_from as int) as menu_year_week_from
-        , cast(period_to as int) as menu_year_week_to
 
         {# ids #}
         , company_id
@@ -23,6 +21,10 @@ source as (
 
         {# booleans #}
         , is_active
+
+        {# booleans #}
+        , cast(period_from as int) as menu_year_week_from
+        , cast(period_to as int) as menu_year_week_to
 
         {# system #}
         , created_date as source_created_at

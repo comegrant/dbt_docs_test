@@ -1,5 +1,11 @@
 # Dim Transportation
 
+{% docs column__pk_dim_transportation %}
+
+Primary key of the dim_transportation table.
+
+{% enddocs %}
+
 {% docs column__last_mile_distribution_site %}
 
 The last distribution site of the order before being delivered to the customer.
