@@ -1278,7 +1278,6 @@ table 'Order Measures'
 		formatString: #,0
 		displayFolder: Recipe Sales
 
-
 	/// The average number of servings per unique recipe id.
 	measure 'Average Number of Consumers per Dish' =
 			DIVIDE([Number of Servings],[Number of Distinct Recipes Ordered])
@@ -1299,6 +1298,147 @@ table 'Order Measures'
 		formatString: #,0.00
 		isHidden
 		displayFolder: Recipe Sales
+
+	/// The planned cost per ordered serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Planned Cost per Ordered Serving' =
+			DIVIDE(
+				[Planned Cost of Ordered Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The expected cost per ordered serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Expected Cost per Ordered Serving' =
+			DIVIDE(
+				[Expected Cost of Ordered Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The actual cost per ordered serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Actual Cost per Ordered Serving' =
+			DIVIDE(
+				[Actual Cost of Ordered Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The CO2 emissions (in kg) per ordered serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'CO2 Emissions per Ordered Serving' =
+			DIVIDE(
+				[CO2 Emissions from Ordered Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The sum of the planned recipe cost of the recipes ordered by the customers.
+	/// It is the cost used in menu planning, and calculated using the exact quantity of all included ingredients.
+	measure 'Planned Cost of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_planned_cost])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The sum of the planned recipe cost of the recipes ordered by the customers.
+	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Planned Cost Whole Units of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_planned_cost_whole_units])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The sum of the expected recipe cost of the recipes ordered by the customers.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Expected Cost of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_expected_cost])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The sum of the expected recipe cost of the recipes ordered by the customers.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Expected Cost Whole Units of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_expected_cost_whole_units])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The sum of the actual recipe cost of the recipes ordered by the customers.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Actual Cost of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_actual_cost])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The sum of the actual recipe cost of the recipes ordered by the customers.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Actual Cost Whole Units of Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_actual_cost_whole_units])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the ordered recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	measure 'CO2 Emissions from Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_co2_emissions])
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the ordered recipes, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	measure 'CO2 Emissions Whole Units from Ordered Recipes' =
+			SUM('Order Measures'[total_ingredient_co2_emissions_whole_units])
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// Hidden measure?
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+	measure 'Weight of Ingredients in Orders with CO2 Data' =
+			SUM('Order Measures'[total_ingredient_weight_with_co2_data])
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The CO2 emissions in kg per kg of ingredients in the ordered recioes.
+	/// It is calculated by dividing the total CO2 emissions from the ingredients in the recipes by the total net weight of the ingredients in the recipes that have registered CO2 emission data.
+	measure 'CO2 Emissions per kg of Ingredients Ordered by Customer' =
+			DIVIDE(
+				[CO2 Emissions from Ordered Recipes],
+				[Weight of Ingredients in Orders with CO2 Data]/1000,
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
 
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id

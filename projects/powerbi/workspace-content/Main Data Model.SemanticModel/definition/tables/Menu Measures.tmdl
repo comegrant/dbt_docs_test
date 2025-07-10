@@ -147,6 +147,252 @@ table 'Menu Measures'
 		lineageTag: 27195082-227f-4e26-8144-68af06a5c82b
 		displayFolder: Recipe Ratings
 
+	/// The number of servings in the recipes, i.e. the sum of portions in the recipes.
+	measure 'Number of Servings in Menu' =
+			CALCULATE(
+				SUM('Menu Measures'[fk_dim_portions])
+				, ALL('Dates')
+				, 'Menu Measures'[fk_dim_dates] <= MAX('Menu Measures'[fk_dim_dates])
+			)
+		formatString: #,0
+		isHidden
+
+	/// The planned cost per serving in the menu.
+	/// A serving is one portion of a recipe.
+	measure 'Planned Cost per Serving in the Menu' =
+			DIVIDE(
+				[Planned Cost of Ingredients in Menu],
+				[Number of Servings in Menu],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The expected cost per serving in the menu.
+	/// A serving is one portion of a recipe.
+	measure 'Expected Cost per Serving in the Menu' =
+			DIVIDE(
+				[Expected Cost of Ingredients in Menu],
+				[Number of Servings in Menu],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The actual cost per serving in the menu.
+	/// A serving is one portion of a recipe.
+	measure 'Actual Cost per Serving in the Menu' =
+			DIVIDE(
+				[Actual Cost of Ingredients in Menu],
+				[Number of Servings in Menu],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe Costs
+
+	/// The CO2 emissions (in kg) per serving the menu.
+	/// A serving is one portion of a recipe.
+	measure 'CO2 Emissions per Serving in Menu' =
+			DIVIDE(
+				[CO2 Emissions from Ingredients in Menu],
+				[Number of Servings in Menu],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The sum of the planned ingredient purchasing cost for the exact quantity of all included ingredients.
+	/// The planned cost is the cost used in menu planning.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Planned Cost of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_planned_cost]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The sum of the planned ingredient purchasing cost  for the quantity of all included ingredients, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// The planned cost is the cost used in menu planning.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost of the latest week in the selection.
+	measure 'Planned Cost Whole Units of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_planned_cost_whole_units]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The sum of the expected ingredient purchasing cost for the exact quantity of all included ingredients.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Expected Cost of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_expected_cost]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The sum of the expected ingredient purchasing cost for the quantity of all included ingredients, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost of the latest week in the selection.
+	measure 'Expected Cost Whole Units of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_expected_cost_whole_units]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The sum of the actual ingredient purchasing cost for the exact quantity of all included ingredients.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Actual Cost of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_actual_cost]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The sum of the actual ingredient purchasing cost for the quantity of all included ingredients, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
+	/// When multiple weeks are selected the cost will be the cost of the latest week in the selection.
+	measure 'Actual Cost Whole Units of Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_actual_cost_whole_units]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	/// When multiple weeks are selected the emissions will be the emissions of the latest menu week in the selection.
+	measure 'CO2 Emissions from Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_co2_emissions]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	/// When multiple weeks are selected the emissions will be the emissions of the latest menu week in the selection.
+	measure 'CO2 Emissions Whole Units from Ingredients in Menu' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_co2_emissions_whole_units]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// Hidden measure?
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+	measure 'Weight of Ingredients in Menu with CO2 Data' =
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_weight_with_co2_data]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The CO2 emissions in kg per kg of ingredients in the recipes.
+	/// It is calculated by dividing the total CO2 emissions from the ingredients in the recipes by the total net weight of the ingredients in the recipes that have registered CO2 emission data.
+	measure 'CO2 Emissions per kg of Ingredients in Menu' =
+			DIVIDE(
+				[CO2 Emissions from Ingredients in Menu],
+				[Weight of Ingredients in Menu with CO2 Data]/1000,
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: CO2 Emissions
+
+	/// The total quantity of ingredients in the recipes.
+	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
+	/// When multiple weeks are selected the quantity will be the quantity of the latest menu week in the selection.
+	measure 'Quantity of Ingredients in Menu' = 
+			CALCULATE(
+				SUM('Recipe Ingredients'[ingredient_order_quantity]),
+				ALL('Dates'),
+				'Recipe Ingredients'[fk_dim_dates] <= MAX('Recipe Ingredients'[fk_dim_dates])
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The average planned cost of ingredients in the menu.
+	/// It is calculated by dividing the total planned cost of ingredients in the menu by the total quantity of ingredients in the menu.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Planned Cost per Ingredient in Menu' = 
+			DIVIDE(
+				[Planned Cost of Ingredients in Menu],
+				[Quantity of Ingredients in Menu],
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Recipe and Ingredient Costs
+
+	/// The average expected cost of ingredients in the menu.
+	/// It is calculated by dividing the total expected cost of ingredients in the menu by the total quantity of ingredients in the menu.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Expected Cost per Ingredient in Menu' = 
+			DIVIDE(
+				[Expected Cost of Ingredients in Menu],
+				[Quantity of Ingredients in Menu],
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Ingredient Costs
+
+	/// The average actual cost of ingredients in the menu.
+	/// It is calculated by dividing the total actual cost of ingredients in the menu by the total quantity of ingredients in the menu.
+	/// When multiple weeks are selected the cost will be the cost in the latest week in the selection.
+	measure 'Actual Cost per Ingredient in Menu' = 
+			DIVIDE(
+				[Expected Cost of Ingredients in Menu],
+				[Quantity of Ingredients in Menu],
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Ingredient Costs
+
 	column weekly_menu_id
 		dataType: int64
 		isHidden
