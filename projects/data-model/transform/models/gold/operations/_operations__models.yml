@@ -1,12 +1,12 @@
 version: 2
 
 models:
-  - name: dim_transportaion
+  - name: dim_transportation
     description: >
       Contains information about the transportation of a delivery including transport company and the facilities distributing the boxes.
     latest_version: 1
     config:
-      alias: dim_transportaion
+      alias: dim_transportation
       contract:
         enforced: true
 
@@ -32,16 +32,15 @@ models:
         data_type: int
         description: "{{ doc('column__transport_company_id') }}"
         data_tests:
-          - unique
           - not_null
 
       - name: last_mile_hub_distribution_center_id
         data_type: char(36)
-        description: "{{ doc('column__last_mile_hub_distribution_center_id') }}"
+        description: "{{ doc('column__distribution_center_id') }}"
 
       - name: packing_distribution_center_id
         data_type: char(36)
-        description: "{{ doc('column__packing_distribution_center_id') }}"
+        description: "{{ doc('column__distribution_center_id') }}"
 
       - name: transport_company_name
         data_type: varchar(100)

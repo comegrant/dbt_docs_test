@@ -56,10 +56,10 @@ zones as (
 
     select
         '0'  as pk_dim_transportation
-        , null as zone_id
-        , null as company_id
-        , null as last_mile_hub_distribution_center_id
-        , null as packing_distribution_center_id
+        , 0 as zone_id
+        , 0 as company_id
+        , '0' as last_mile_hub_distribution_center_id
+        , '0' as packing_distribution_center_id
         ,'unknown' as transport_company_name
         , 'unknown' as last_mile_distribution_site
         , null as last_mile_distribution_postal_code

@@ -284,6 +284,21 @@ table 'Case Measures'
         summarizeBy: none
         sourceColumn: case_line_amount_ex_vat
 
+    /// The price of the ingredient. Price is set per ingredient by customer service for the case line.
+    /// I.e., the price can be an estimate.
+    column 'Ingredient Price'
+        dataType: double
+        isHidden
+        summarizeBy: none
+        sourceColumn: ingredient_price
+
+    /// The quantity of ingredients registered in the case.
+    column 'Ingredient Quantity'
+        dataType: int64
+        isHidden
+        summarizeBy: none
+        sourceColumn: ingredient_quantity
+
     /// Comments regarding the case. 
     /// Can come from external partners or internally from logistics/customer service, 
     /// which is defined by source_updated_by.
