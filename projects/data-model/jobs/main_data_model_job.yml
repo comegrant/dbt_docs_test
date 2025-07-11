@@ -200,8 +200,9 @@ resources:
         - task_key: refresh-powerbi
           notebook_task:
             notebook_path: ../powerbi-refresh/powerbi-refresh.py
-            base_parameters:
-              tables: ''
+            parameters:
+              - name: tables
+                default: ""
           depends_on: [
             {task_key: dbt-run}
           ]
