@@ -5,6 +5,9 @@ import powerbi_api_functions as pb
 
 # COMMAND ----------
 
+# Define the widget
+dbutils.widgets.text("tables", "", "Tables to refresh")
+
 # Set selected tables to refresh if passed as a parameter, else refresh all tables
 tables = dbutils.widgets.get("tables")
 
