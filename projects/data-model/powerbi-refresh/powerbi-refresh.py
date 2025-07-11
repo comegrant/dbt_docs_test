@@ -1,5 +1,12 @@
 # Databricks notebook source
 import requests
+import sys
+import powerbi_api_functions as pb
+
+# COMMAND ----------
+
+# Set selected tables to refresh if passed as a parameter, else refresh all tables
+tables = dbutils.widgets.get("tables")
 
 # COMMAND ----------
 
@@ -8,34 +15,9 @@ client_id = dbutils.secrets.get(scope="auth_common", key="azure-sp-powerbi-clien
 client_secret = dbutils.secrets.get(scope="auth_common", key="azure-sp-powerbi-clientSecret")
 tenant_id = dbutils.secrets.get(scope="auth_common", key="azure-tenant-cheffelo-tenantId")
 
-token_url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+access_token = pb.get_access_token(client_id, client_secret, tenant_id)
 
-body = {
-    'grant_type': 'client_credentials',
-    'scope': 'https://analysis.windows.net/powerbi/api/.default',
-    'client_id': client_id,
-    'client_secret': client_secret
-}
-
-headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
-
-response = requests.post(token_url, headers=headers, data=body)
-
-if response.status_code == 200:
-    token_response = response.json()
-    access_token = token_response['access_token']
-    print("Access token retrieved successfully!")
-    
-    headers_with_token = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {access_token}'
-    }
-
-else:
-    print(f"Failed to retrieve access token. Status code: {response.status_code}")
-    print(f"Response: {response.text}")
+headers_with_token = pb.get_headers_with_token(access_token)
 
 # COMMAND ----------
 
@@ -57,52 +39,18 @@ semantic_model_name = 'Main Data Model'
 # COMMAND ----------
 
 #Get Power Bi workspace id 
-url = "https://api.powerbi.com/v1.0/myorg/groups/"
-response = requests.get(url, headers=headers_with_token)
+workspace_id = pb.get_workspace_id(pbi_workspace_name, access_token)
 
-if response.status_code == 200:
-    workspaces = response.json()['value']
-    
-    workspace_name = pbi_workspace_name
-    workspace_id = next((workspace['id'] for workspace in workspaces if workspace['name'] == workspace_name), None)
-    
-    if workspace_id:
-        print(f"Workspace ID for '{workspace_name}': {workspace_id}")
-    else:
-        print(f"No workspace found with the name '{workspace_name}'")
-else:
-    print(f"Failed to retrieve workspaces. Status code: {response.status_code}")
-    print(f"Response: {response.text}")
 
 # COMMAND ----------
 
 #Get Power Bi semantic model id 
-url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets"
-response = requests.get(url, headers=headers_with_token)
-
-if response.status_code == 200:
-    datasets = response.json()['value']
-    
-    dataset_name = semantic_model_name
-    dataset_id = next((dataset['id'] for dataset in datasets if dataset['name'] == dataset_name), None)
-    
-    if dataset_id:
-        print(f"Semantic model ID for '{dataset_name}': {dataset_id}")
-    else:
-        print(f"No semantic model found with the name '{dataset_name}'")
-else:
-    print(f"Failed to retrieve workspaces. Status code: {response.status_code}")
-    print(f"Response: {response.text}")
+dataset_id = pb.get_dataset_id(semantic_model_name, workspace_id, access_token)
 
 # COMMAND ----------
 
-#Refresh semantic model
-url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}/refreshes"
+# Trigger full refresh or selected models
+result = pb.refresh_tables(workspace_id, dataset_id, access_token, tables)
+print(result)
+    
 
-response = requests.post(url, headers=headers_with_token)
-
-if response.status_code == 202:
-    print("Dataset refresh initiated successfully!")
-else:
-    print(f"Failed to initiate refresh. Status code: {response.status_code}")
-    print(f"Response: {response.text}")

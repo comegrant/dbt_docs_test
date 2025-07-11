@@ -1,0 +1,80 @@
+resources:
+  jobs:
+    forecasting_data_model_job:
+      name: forecasting-data-model-job
+
+      permissions:
+        - service_principal_name: ${var.databricks_forecasting_sp_application_id}
+          level: CAN_MANAGE_RUN
+
+      timeout_seconds: 2700 #Timeout after 45 mins
+      edit_mode: EDITABLE
+
+      environments:
+        - environment_key: dbt-default
+          spec:
+            client: "1"
+            dependencies:
+              - dbt-databricks>=1.0.0,<2.0.0
+
+      tasks:
+        - task_key: dbt-run-forecasting
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt run -s models/silver/forecasting+'
+          environment_key: dbt-default
+
+        - task_key: dbt-test-forecasting
+          dbt_task:
+            project_directory: ../transform/
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${bundle.target}
+            commands:
+              - 'dbt deps'
+              - 'dbt test -s models/silver/forecasting+'
+          environment_key: dbt-default
+          depends_on: [
+            {task_key: dbt-run-forecasting}
+          ]
+
+        # - task_key: refresh-powerbi-forecasting
+        #   notebook_task:
+        #     notebook_path: ../powerbi-refresh/powerbi-refresh.py
+        #     base_parameters:
+        #       tables: Forcecast Measures, Forecast Details
+        #   depends_on: [
+        #     {task_key: dbt-run-forecasting}
+        #   ]
+
+        - task_key: success-notification
+          depends_on: [
+            {task_key: dbt-run-forecasting},
+            {task_key: dbt-test-forecasting},
+          #  {task_key: refresh-powerbi-forecasting}
+          ]
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              body_message: ✅ Forecasting data models and PowerBI tables refreshed successfully
+              is_error: "false"
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: dbt-run-forecasting},
+            {task_key: dbt-test-forecasting},
+          #  {task_key: refresh-powerbi-forecasting}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Forecasting data model job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: grant, sylvia
