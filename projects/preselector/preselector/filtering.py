@@ -25,14 +25,18 @@ def filter_out_unwanted_preselected_recipes(recipes: Annotated[pl.DataFrame, Nor
     This could either be cheep recipes - to not rip the customer off, or premium recipes
     """
 
+    schema = NormalizedRecipeFeatures()
+    not_include_features = [
+        schema.is_adams_signature,
+        schema.is_cheep,
+        schema.is_red_cross,
+        schema.is_slow_grown_chicken,
+        schema.is_premium,
+    ]
+    not_include = [feat.name for feat in not_include_features]
     return recipes.filter(
-        pl.col("is_adams_signature").not_()
-        & pl.col("is_cheep").not_()
-        & pl.col("is_red_cross").not_()
-        & pl.col("is_slow_grown_chicken").not_()
-    ).select(
-        pl.exclude(["is_adams_signature", "is_cheep", "is_red_cross", "is_slow_grown_chicken"]),
-    )
+        pl.reduce(lambda left, right: left & right, [pl.col(col).not_() for col in not_include])
+    ).select(pl.exclude(not_include))
 
 
 async def filter_out_recipes_based_on_preference(

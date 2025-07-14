@@ -401,6 +401,9 @@ class RecipeFeatures:
     week = Int32()
 
     recipe_name = String()
+    recipe_photo = String().description("The path of the image")
+    recipe_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/").as_image_url()
+
     average_rating = Float().is_optional()
     number_of_ratings = Int32().is_optional()
 
@@ -765,7 +768,7 @@ class NormalizedRecipeFeatures:
     main_recipe_id = Int32()
     main_ingredient_id = Int32().is_optional()
 
-    taxonomy_ids = List(Int32()).description("The taxonomy ids for that recipe")
+    taxonomy_ids = List(String()).description("The taxonomy ids for that recipe")
 
     year = Int32()
     week = Int32()
@@ -788,6 +791,13 @@ class NormalizedRecipeFeatures:
     is_red_cross = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains("3663") | pl.col("taxonomy_ids").list.contains("3664"), as_dtype=Bool()
     )
+    is_premium = taxonomy_ids.transform_polars(
+        pl.col("taxonomy_ids").list.contains("3671")
+        | pl.col("taxonomy_ids").list.contains("3673")
+        | pl.col("taxonomy_ids").list.contains("3674"),
+        as_dtype=Bool(),
+    )
+
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
     is_high_cooking_time = Bool()
