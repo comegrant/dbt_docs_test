@@ -15,7 +15,9 @@ def badge(text: str, color: str = "#D67067", text_color: str = "white") -> str:
     return f'<span style="display: inline-block; padding: 4px 8px; background-color: {color}; color: {text_color}; border-radius: 10px; font-size: 14px; margin-bottom: 4px; border-color: gray; border-style: solid; border-width: thin;">{text}</span>'  # noqa: E501
 
 
-def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: DeltaGenerator | ModuleType) -> None:
+def mealkit(
+    recipe_information: Annotated[pd.DataFrame, RecipeFeatures], container: DeltaGenerator | ModuleType
+) -> None:
     number_of_recipes = recipe_information.shape[0]
     cols = container.columns(number_of_recipes)
 
@@ -33,20 +35,20 @@ def mealkit(recipe_information: Annotated[pd.DataFrame, "Todo"], container: Delt
         assert isinstance(index, int)
 
         col = cols[int(index)]
-        col.image(row["photo_url"])  # type: ignore
+        col.image(row[RecipeFeatures().recipe_photo_url.name])  # type: ignore
 
         tags = " ".join(
-            [badge(tag) for tag in row["taxonomies"] if tag in taxonomies_to_show],
+            [badge(tag) for tag in row[RecipeFeatures().taxonomies.name] if tag in taxonomies_to_show],
         )
         col.markdown(tags, unsafe_allow_html=True)
 
         col.markdown(
-            f"<span style='color: rgba(255, 255, 255, 0.5)'>Cooking time:</span> {row['cooking_time_from']} - {row['cooking_time_to']} min",  # noqa: E501
+            f"<span style='color: rgba(255, 255, 255, 0.5)'>Cooking time:</span> {row[RecipeFeatures().cooking_time_from.name]} - {row[RecipeFeatures().cooking_time_to.name]} min",  # noqa: E501
             unsafe_allow_html=True,
         )
 
-        col.write(row["recipe_name"])
-        col.caption(row["main_recipe_id"])
+        col.write(row[RecipeFeatures().recipe_name.name])
+        col.caption(row[RecipeFeatures().main_recipe_id.name])
 
         if "compliancy" in row:
             compliancy = row["compliancy"]

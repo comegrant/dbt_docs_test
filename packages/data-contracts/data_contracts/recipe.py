@@ -401,8 +401,9 @@ class RecipeFeatures:
     week = Int32()
 
     recipe_name = String()
+
     recipe_photo = String().description("The path of the image")
-    recipe_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/").as_image_url()
+    recipe_photo_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/").as_image_url()
 
     average_rating = Float().is_optional()
     number_of_ratings = Int32().is_optional()
