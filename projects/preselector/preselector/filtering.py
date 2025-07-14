@@ -31,7 +31,7 @@ def filter_out_unwanted_preselected_recipes(recipes: Annotated[pl.DataFrame, Nor
         schema.is_cheep,
         schema.is_red_cross,
         schema.is_slow_grown_chicken,
-        schema.is_premium,
+        schema.is_value_add,
     ]
     not_include = [feat.name for feat in not_include_features]
     return recipes.filter(
