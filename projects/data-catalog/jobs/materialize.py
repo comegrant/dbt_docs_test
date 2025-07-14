@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from contextlib import suppress
 from typing import Literal
 
@@ -24,12 +25,11 @@ async def main(args: MaterializeArgs, vault: KeyVaultInterface | None = None) ->
     """
     The main function that contains the logic for this job
     """
-    import os
 
     env_keys = ["UC_ENV", "DATALAKE_ENV"]
 
     if vault is None:
-        vault = key_vault()
+        vault = key_vault(env=args.environment)
 
     for env_key in env_keys:
         if env_key not in os.environ:
