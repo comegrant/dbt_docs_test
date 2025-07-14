@@ -918,13 +918,15 @@ models:
 
   - name: operations__geofences
     description: "Associated information about geofences - geographical areas that are used for logistics purposes."
+    data_tests:
+      - unique:
+          column_name: "(geofence_id || '-' || valid_from)"
     columns:
       - name: geofence_id
         data_type: char(36)
         description: "{{ doc('column__geofence_id') }}"
         data_tests:
           - not_null
-          - unique
 
       - name: country_id
         data_type: char(36)
@@ -1013,13 +1015,15 @@ models:
 
   - name: operations__geofence_postal_codes
     description: "Postal codes and associated geofences."
+    data_tests:
+      - unique:
+          column_name: "(geofence_postal_code_id || '-' || valid_from)"
     columns:
       - name: geofence_postal_code_id
         data_type: char(36)
         description: "{{ doc('column__geofence_postal_code_id') }}"
         data_tests:
           - not_null
-          - unique
 
       - name: geofence_id
         data_type: char(36) 
