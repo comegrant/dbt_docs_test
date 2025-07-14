@@ -1,0 +1,379 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "66ee4a8ddb9be70993c7",
+  "position": {
+    "x": 16.129088713488162,
+    "y": 408.87239888692488,
+    "z": 6000,
+    "height": 295.96877789250777,
+    "width": 1245.9721031169604,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Brands"
+                    }
+                  },
+                  "Property": "Brand"
+                }
+              },
+              "queryRef": "Brands.Brand",
+              "nativeQueryRef": "Brand"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Number of Orders With Cases"
+                }
+              },
+              "queryRef": "Case Measures.Number of Orders With Cases",
+              "nativeQueryRef": "Number of Orders With Cases"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Number of Case Lines"
+                }
+              },
+              "queryRef": "Case Measures.Number of Case Lines",
+              "nativeQueryRef": "Number of Case Lines"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Number of Orders"
+                }
+              },
+              "queryRef": "Order Measures.Number of Orders",
+              "nativeQueryRef": "Number of Orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Case Cost Inc VAT"
+                }
+              },
+              "queryRef": "Case Measures.Case Cost Inc VAT",
+              "nativeQueryRef": "Case Cost Inc VAT"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Average Case Cost Per Order Inc VAT"
+                }
+              },
+              "queryRef": "Case Measures.Average Case Cost Per Order Inc VAT",
+              "nativeQueryRef": "Average Case Cost Per Order Inc VAT"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Order Measures"
+                    }
+                  },
+                  "Property": "Order Value Gross Ex Vat"
+                }
+              },
+              "queryRef": "Order Measures.Order Value Gross Ex Vat",
+              "nativeQueryRef": "Order Value Gross Ex Vat",
+              "format": "#,0"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "131.65313790901865D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Brands.Brand"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "188.39146425725804D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Case Measures.Number of Orders With Cases"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "113.53699843346756D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Case Measures.Number of Case Lines"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "149.73137358154827D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Number of Orders"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "246.2922903745637D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Order Measures.Order Value Gross Ex Vat"
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridHorizontalWeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "outlineWeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "1b484e6a9feb45737f7a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "0219f7a1e7ce2db4f232",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Number of Orders With Cases"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1d4b80926557ac569e53",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Number of Case Lines"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "42df4c021464aa689008",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Number of Orders"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "11b2265da31127bfcb55",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "030be740667baaff2991",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Case Cost Inc VAT"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c166a26c1200fab42ac5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Average Case Cost Per Order Inc VAT"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

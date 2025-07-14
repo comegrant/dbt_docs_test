@@ -4,7 +4,7 @@
   "artifacts": [
     {
       "report": {
-        "path": "Standard Report Template.Report"
+        "path": "Cases.Report"
       }
     }
   ],

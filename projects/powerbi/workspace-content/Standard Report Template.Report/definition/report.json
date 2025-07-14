@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/2.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/1.2.0/schema.json",
   "themeCollection": {
     "baseTheme": {
       "name": "CY24SU10",
@@ -12,8 +12,24 @@
       "type": "RegisteredResources"
     }
   },
+  "layoutOptimization": "None",
   "filterConfig": {
     "filters": [
+      {
+        "name": "cc9edeb16e35fe3a27b2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dates"
+              }
+            },
+            "Property": "Date"
+          }
+        },
+        "type": "RelativeDate",
+        "howCreated": "User"
+      },
       {
         "name": "f54abdfddabb44bcad84",
         "field": {
@@ -143,6 +159,11 @@
       "name": "RegisteredResources",
       "type": "RegisteredResources",
       "items": [
+        {
+          "name": "Cheffelo-Report-Background11889223152955908.svg",
+          "path": "Cheffelo-Report-Background11889223152955908.svg",
+          "type": "Image"
+        },
         {
           "name": "Cheffelo-Report-Background2417383144405547.svg",
           "path": "Cheffelo-Report-Background2417383144405547.svg",
