@@ -12,9 +12,9 @@ from data_contracts.preselector.store import (
     SuccessfulPreselectorOutput,
 )
 from data_contracts.preselector.store import Preselector as PreselectorOutput
+from data_contracts.reci_pick import LatestRecommendations
 from data_contracts.recipe import NormalizedRecipeFeatures
 from data_contracts.recipe_vote import RecipeVote
-from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.recommendations.store import recommendation_feature_contracts
 
 from preselector.monitor import duration
@@ -64,15 +64,21 @@ async def load_recommendations(
     week: int,
     store: ContractStore,
 ) -> pl.DataFrame:
-    preds = (
-        await store.model(RecommendatedDish)
-        .all_predictions()
-        .filter((pl.col("agreement_id") == agreement_id) & (pl.col("year") == year) & (pl.col("week") == week))
+    rec_schema = LatestRecommendations()
+
+    recs = (
+        await store.feature_view(LatestRecommendations)
+        .features_for({"billing_agreement_id": [agreement_id], "menu_week": [week], "menu_year": [year]})
         .to_lazy_polars()
     )
+
     return (
-        preds.sort("predicted_at", descending=True).unique(["agreement_id", "week", "year", "product_id"], keep="first")
-    ).collect()
+        recs.explode(rec_schema.recipes.name)
+        .unnest(rec_schema.recipes.name)
+        .sort("score")
+        .with_row_index(name="order_rank")
+        .collect()
+    )
 
 
 async def normalize_cost(

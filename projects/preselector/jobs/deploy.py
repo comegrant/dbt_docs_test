@@ -23,7 +23,7 @@ from azure.mgmt.containerinstance.models import (
     UserAssignedIdentities,
 )
 from cheffelo_logging.logging import DataDogConfig, DataDogStatsdConfig
-from key_vault import AzureKeyVault, DatabricksKeyVault, KeyVaultInterface
+from key_vault import key_vault
 from preselector.process_stream_settings import ProcessStreamSettings
 from pydantic import BaseModel, Field, SecretStr
 from pydantic_argparser import parse_args
@@ -98,7 +98,7 @@ async def deploy_preselector(
     workers: list[WorkerConfig],
     write_output_interval: timedelta | None = None,
 ) -> None:
-    vault = key_vault()
+    vault = key_vault(env=env)
 
     intervals = {
         "test": {
@@ -435,17 +435,6 @@ async def scale_worker(tag: str, env: str, worker_id: int, company: str, should_
             resource_group=f"rg-chefdp-{env}",
             workers=workers,
         )
-
-
-def key_vault() -> KeyVaultInterface:
-    try:
-        # Only works on the databricks runtime
-        return DatabricksKeyVault(
-            dbutils=dbutils,  # type: ignore
-            scope="auth_common",
-        )
-    except NameError:
-        return AzureKeyVault.from_vault_name("kv-chefdp-common")
 
 
 async def main() -> None:

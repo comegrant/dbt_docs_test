@@ -528,6 +528,10 @@ async def run_preselector(
             st.write("Preselected recipes")
             st.write(preselected_recipes)
 
+        if not recommendations.is_empty():
+            st.write("Recommendations")
+            st.write(recommendations)
+
     if recipe_features.is_empty():
         raise ValueError(
             "Found no recipes to select from. "
@@ -538,15 +542,15 @@ async def run_preselector(
     if not recommendations.is_empty():
         with duration("add-recommendations-data"):
             with_rank = (
-                recipes.cast({"recipe_id": pl.Int32})
-                .join(recommendations.select(["product_id", "order_rank"]), on="product_id", how="left")
+                recipes.cast({"main_recipe_id": pl.Int32})
+                .join(recommendations.select(["main_recipe_id", "order_rank"]), on="main_recipe_id", how="left")
                 .unique("recipe_id")
             )
 
             recipe_features = (
                 recipe_features.select(pl.exclude("order_rank"))
                 .join(with_rank.select(["recipe_id", "order_rank"]), on="recipe_id", how="left")
-                .with_columns(pl.col("order_rank").fill_null(pl.lit(recipe_features.height / 2)))
+                .with_columns(pl.col("order_rank").fill_null(pl.lit(recipe_features.height * 3 / 4)))
                 .with_columns(
                     order_rank=pl.col("order_rank").log() / pl.col("order_rank").log().max().clip(lower_bound=1)
                 )

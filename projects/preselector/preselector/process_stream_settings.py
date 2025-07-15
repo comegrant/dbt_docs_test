@@ -8,6 +8,9 @@ class ProcessStreamSettings(BaseSettings):
     datalake_service_account_name: str
     datalake_storage_account_key: SecretStr
 
+    redis_url: SecretStr
+    "Used for loading recommendations"
+
     databricks_token: SecretStr
     databricks_host: str
 
@@ -30,7 +33,7 @@ class ProcessStreamSettings(BaseSettings):
     "The min interval between each data cache update"
 
     write_output_interval: timedelta | None = Field(None)
-    "The min interval between each dump to our persistance storage. E.g. Databricks"
+    "The min interval between each dump to our persistence storage. E.g. Databricks"
 
     write_output_max_size: int = Field(1000)
     write_output_wait_time: int = Field(60)

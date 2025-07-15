@@ -33,4 +33,5 @@ jobs:
       working-directory: projects/data-model
       target-env: Development
       should-change-target: false
+      should-deploy: false
     secrets: inherit

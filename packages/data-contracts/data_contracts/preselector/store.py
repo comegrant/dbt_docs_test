@@ -22,6 +22,7 @@ from data_contracts.preselector.basket_features import (
     TargetVectors,
 )
 from data_contracts.preselector.menu import CostOfFoodPerMenuWeek, PreselectorYearWeekMenu
+from data_contracts.reci_pick import LatestRecommendations
 from data_contracts.recipe import (
     NormalizedRecipeFeatures,
     RecipeCost,
@@ -31,7 +32,6 @@ from data_contracts.recipe import (
     RecipePreferences,
 )
 from data_contracts.recipe_vote import RecipeVote
-from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.sources import data_science_data_lake, databricks_catalog
 from pydantic import BaseModel
 
@@ -54,7 +54,7 @@ class AllergenPreference(BaseModel):
             OneSubMealkits.location,
             RecipeEmbedding.location,
             WeeksSinceRecipe.location,
-            RecommendatedDish.location,
+            LatestRecommendations.location,
             CostOfFoodPerMenuWeek.location,
             RecipeNegativePreferences.location,
             RecipeMainIngredientCategory.location,

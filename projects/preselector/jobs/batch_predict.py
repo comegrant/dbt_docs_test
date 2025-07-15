@@ -4,6 +4,7 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from data_contracts.reci_pick import LatestRecommendations
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
@@ -43,8 +44,10 @@ os.environ["DATALAKE_ENV"] = environment
 os.environ["UC_ENV"] = environment
 
 # COMMAND ----------
+from aligned.config_value import EnvironmentValue
 from data_contracts.recipe import AllergyPreferences
 from data_contracts.sources import databricks_catalog
+from key_vault import key_vault
 from preselector.data.models.customer import PreselectorFailedResponse
 from preselector.process_stream import load_cache, process_stream_batch
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
@@ -52,10 +55,7 @@ from preselector.sql import sql_folder
 from preselector.store import preselector_store
 from preselector.stream import CustomReader, CustomWriter, MultipleWriter, PreselectorResultWriter
 
-os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
-    scope="auth_common",
-    key="analyticsDb-connectionString",
-).replace("ODBC Driver 17", "ODBC Driver 18")
+vault = key_vault(env=environment)
 
 os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
     scope="auth_common",
@@ -181,6 +181,10 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
 # COMMAND ----------
 async def run() -> None:
     store = preselector_store()
+
+    await vault.load_env_keys(
+        [env.env for env in store.needed_configs_for(LatestRecommendations) if isinstance(env, EnvironmentValue)]
+    )
 
     def failed_requests(data: Sequence[BaseModel]) -> None:
         for req in data:

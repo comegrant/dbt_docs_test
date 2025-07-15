@@ -71,7 +71,7 @@ def remove_user_sources(store: ContractStore) -> tuple[ContractStore, list[Cache
         entity_names = view.entitiy_names
         in_mem_source = InMemorySource.empty().with_view(view)
 
-        if "agreement_id" in entity_names:
+        if "agreement_id" in entity_names or "billing_agreement_id" in entity_names:
             # Just an empty frame with all columns that are expected
             logger.info(f"Removing real source for '{dep.name}'")
             store = store.update_source_for(dep, in_mem_source)

@@ -21,8 +21,9 @@ from data_contracts.attribute_scoring import AttributeScoring
 from data_contracts.orders import WeeksSinceRecipe
 from data_contracts.preselector.basket_features import PredefinedVectors
 from data_contracts.preselector.menu import PreselectorYearWeekMenu
+from data_contracts.preselector.store import Preselector
+from data_contracts.reci_pick import LatestRecommendations
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost, RecipeEmbedding
-from data_contracts.recommendations.recommendations import RecommendatedDish
 from data_contracts.unity_catalog import DatabricksConnectionConfig, DatabricksSource
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -167,9 +168,8 @@ async def load_cache(
     if five_weeks_into_the_future.year != this_year:
         rec_partitions = rec_partitions | (pl.col("year") >= five_weeks_into_the_future.year)
 
-    depends_on = store.feature_view("preselector_output").view.source.depends_on()
-
-    partition_recs = cache_dir.partitioned_parquet_at(f"{company_id}/recs", partition_keys=["year", "week"])
+    depends_on = store.feature_view(Preselector).view.source.depends_on()
+    use_original_source = [LatestRecommendations.location]
 
     cache_sources: list[tuple[ConvertableToLocation, BatchDataSource, pl.Expr | None]] = [
         (RecipeCost.location, cache_dir.parquet_at("recipe_cost.parquet"), (pl.col("menu_year") >= this_year)),
@@ -183,7 +183,6 @@ async def load_cache(
             cache_dir.parquet_at(f"{company_id}/normalized_recipe_features"),
             (pl.col("company_id") == company_id) & (pl.col("year") >= this_year),
         ),
-        (RecommendatedDish.location, partition_recs, (pl.col("company_id") == company_id) & rec_partitions),
         (PredefinedVectors.location, InMemorySource.empty(), pl.col("company_id") == company_id),
         (
             WeeksSinceRecipe.location,
@@ -206,6 +205,9 @@ async def load_cache(
 
     for dep in depends_on:
         if dep in custom_cache:
+            continue
+
+        if dep in use_original_source:
             continue
 
         cache_sources.append((dep, cache_dir.parquet_at(f"{dep.name}.parquet"), None))

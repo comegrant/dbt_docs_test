@@ -20,6 +20,10 @@ on:
         required: false
         type: string
         description: "The docker image tag to use. The default will be {env}-latest"
+      should-deploy:
+        type: boolean
+        default: true
+        description: "If we should deploy the DAB or not."
       should-change-target:
         required: false
         type: boolean
@@ -46,64 +50,66 @@ jobs:
         working-directory: ${{inputs.working-directory}}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Configure Azure credentials
-      uses: azure/login@v1.4.7
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Setting SHA
-      if: github.event_name == 'pull_request'
-      run: echo "GIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+      - name: Setting SHA
+        if: github.event_name == 'pull_request'
+        run: echo "GIT_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
 
-    - name: Setting SHA
-      if: github.event_name == 'push'
-      run: echo "GIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+      - name: Setting SHA
+        if: github.event_name == 'push'
+        run: echo "GIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
 
-    - name: Setting target
-      if: ${{ inputs.should-change-target }}
-      run: echo "DATABRICKS_TARGET=${{ vars.ENVIRONMENT_VARIABLE }}" >> $GITHUB_ENV
+      - name: Setting target
+        if: ${{ inputs.should-change-target }}
+        run: echo "DATABRICKS_TARGET=${{ vars.ENVIRONMENT_VARIABLE }}" >> $GITHUB_ENV
 
-    - name: Get Secrets from Key Vault
-      uses: azure/cli@v2
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
-          DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
-          az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
+      - name: Get Secrets from Key Vault
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
+            DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
+            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
 
-          echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
-          echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
+            echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
+            echo "DATABRICKS_SP_BUNDLE_PAT=${DATABRICKS_SP_BUNDLE_PAT}" >> $GITHUB_ENV
 
-    - name: Setup Databricks CLI
-      uses: databricks/setup-cli@v0.251.0
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@v0.251.0
 
-    - name: Validate DABs
-      run: databricks bundle validate ${{inputs.extra-args}} --output json
-      env:
-        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
-        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
+      - name: Validate DABs
+        run: databricks bundle validate ${{inputs.extra-args}} --output json
+        env:
+          DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
           #
         # Sets some default variables for dab input vars
-        BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{  inputs.docker-image-tag }}
-        BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
-        BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc
+          BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{  inputs.docker-image-tag
+            }}
+          BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
+          BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc
 
-    - name: Deploy DABs
-      if: github.event_name != 'pull_request'
-      run: databricks bundle deploy ${{inputs.extra-args}}
-      env:
-        DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
-        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
+      - name: Deploy DABs
+        if: ${{ inputs.should-deploy }}
+        run: databricks bundle deploy ${{inputs.extra-args}}
+        env:
+          DATABRICKS_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_BUNDLE_ENV: ${{ env.DATABRICKS_TARGET }}
           #
         # Sets some default variables for dab input vars
-        BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
-        BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
-        BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc
+          BUNDLE_VAR_docker_image_url: ${{ vars.CONTAINER_REGISTRY }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag
+            }}
+          BUNDLE_VAR_environment: ${{ vars.ENVIRONMENT_VARIABLE }} # Can be used to swap runtime variables like catalog etc
+          BUNDLE_VAR_git_sha: ${{ env.GIT_SHA }} # Can be used to swap runtime variables like catalog etc

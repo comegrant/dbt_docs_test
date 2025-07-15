@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from databricks.sdk.dbutils import RemoteDbUtils
-    dbutils: RemoteDbUtils = "" # type: ignore
+
+    dbutils: RemoteDbUtils = ""  # type: ignore
 
 from databricks_env import auto_setup_env
 
@@ -32,34 +33,32 @@ os.environ["UC_ENV"] = environment
 
 from data_contracts.materialize import materialize_data
 from data_contracts.preselector.store import Preselector
+from key_vault import key_vault
 from preselector.store import preselector_store
+
+vault = key_vault(env=environment)
 
 os.environ["ADB_CONNECTION"] = dbutils.secrets.get(
     scope="auth_common",
     key="analyticsDb-connectionString",
 ).replace("ODBC Driver 17", "ODBC Driver 18")
 
-os.environ["CORE_PIM_CONNECTION"] = "DRIVER=ODBC Driver 18 for SQL Server;DATABASE=PIM;UID={username};SERVER=bh-replica.database.windows.net;PORT=1433;PWD={password}".format( # noqa: E501
-    username=dbutils.secrets.get(
-        scope="auth_common",
-        key="coreDb-replica-username",
-    ),
-    password=dbutils.secrets.get(
-        scope="auth_common",
-        key="coreDb-replica-password",
-    ),
+
+os.environ["CORE_PIM_CONNECTION"] = (
+    "DRIVER=ODBC Driver 18 for SQL Server;DATABASE=PIM;UID={username};SERVER=bh-replica.database.windows.net;PORT=1433;PWD={password}".format(  # noqa: E501
+        username=dbutils.secrets.get(
+            scope="auth_common",
+            key="coreDb-replica-username",
+        ),
+        password=dbutils.secrets.get(
+            scope="auth_common",
+            key="coreDb-replica-password",
+        ),
+    )
 )
-os.environ["DATALAKE_SERVICE_ACCOUNT_NAME"] = dbutils.secrets.get(
-    scope="auth_common",
-    key="azure-storageAccount-experimental-name",
-)
-os.environ["OPENAI_API_KEY"] = dbutils.secrets.get(
-    scope="auth_common",
-    key="openai-preselector-key",
-)
-os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"] = dbutils.secrets.get(
-    scope="auth_common",
-    key="azure-storageAccount-experimental-key",
+
+await vault.load_env_keys(
+    ["DATALAKE_SERVICE_ACCOUNT_NAME", "DATALAKE_STORAGE_ACCOUNT_KEY", "OPENAI_API_KEY", "REDIS_URL"]
 )
 
 logging.basicConfig(level=logging.INFO)
