@@ -197,7 +197,6 @@ Whether ot not the recipe is low sugar. A recipe is considered low sugar if the 
 
 {% enddocs %}
 
-
 {% docs column__menu_feedback_model__column__number_of_users %}
 
 Number of users who have the same negative taste preferences for a company
@@ -231,5 +230,41 @@ Cumulated number of rating a recipe id has received based on the main recipe id
 {% docs column__cumulated_average_rating %}
 
 Cumulated average rating of a recipe id based on the main recipe id
+
+{% enddocs %}
+
+{% docs column__users_with_1_portions %}
+
+Number of active users with portion size 1 who have the same negative taste preferences for a company
+
+{% enddocs %}
+
+{% docs column__users_with_2_portions %}
+
+Number of active users with portion size 2 who have the same negative taste preferences for a company
+
+{% enddocs %}
+
+{% docs column__users_with_3_portions %}
+
+Number of active users with portion size 3 who have the same negative taste preferences for a company
+
+{% enddocs %}
+
+{% docs column__users_with_4_portions %}
+
+Number of active users with portion size 4 who have the same negative taste preferences for a company
+
+{% enddocs %}
+
+{% docs column__users_with_5_portions %}
+
+Number of active users with portion size 5 who have the same negative taste preferences for a company
+
+{% enddocs %}
+
+{% docs column__users_with_6_portions %}
+
+Number of active users with portion size 6 who have the same negative taste preferences for a company
 
 {% enddocs %}

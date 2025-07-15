@@ -657,6 +657,31 @@ models:
         description: "{{ doc('column__menu_feedback_model__column__number_of_users') }}"
         data_type: int
 
+      - name: users_with_1_portions
+        description: "{{ doc('column__users_with_1_portions') }}"
+        data_type: int
+
+      - name: users_with_2_portions
+        description: "{{ doc('column__users_with_2_portions') }}"
+        data_type: int
+
+      - name: users_with_3_portions
+        description: "{{ doc('column__users_with_3_portions') }}"
+        data_type: int
+
+      - name: users_with_4_portions
+        description: "{{ doc('column__users_with_4_portions') }}"
+        data_type: int
+
+      - name: users_with_5_portions
+        description: "{{ doc('column__users_with_5_portions') }}"
+        data_type: int
+
+      - name: users_with_6_portions
+        description: "{{ doc('column__users_with_6_portions') }}"
+        data_type: int
+
+
   - name: ml_preselector_features
     description: "Table containing recipe features for the preselector"
 
