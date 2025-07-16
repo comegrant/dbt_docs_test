@@ -43,9 +43,11 @@ table 'Case Details'
         summarizeBy: none
         sourceColumn: case_line_type_name
 
+    /// TODO: One case can have several taxonomies so need to figure out how to model that before unhiding
     /// Contains the name of the taxonomy which is related to a case..
     column 'Taxonomy Name'
         dataType: string
+        isHidden
         summarizeBy: none
         sourceColumn: taxonomy_name
 
