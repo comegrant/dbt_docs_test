@@ -50,19 +50,19 @@ The Monday date to the menu week of the upcoming cutoff.
 
 {% enddocs %}
 
-{% docs column__horizon_index %}
+{% docs column__forecast_horizon_index %}
 
-The position of a menu week within the forecast horizon, relative to the menu week of the upcoming cutoff. The next cutoff menu week has horizon_index = 1, and subsequent weeks increment by 1.
+The position of a menu week within the forecast horizon, relative to the menu week of the upcoming cutoff. The next cutoff menu week has forecast_horizon_index = 1, and subsequent weeks increment by 1.
 
 {% enddocs %}
 
-{% docs column__is_most_recent_for_menu_week_and_horizon_index %}
+{% docs column__is_most_recent_menu_week_horizon_forecast %}
 
 Boolean flag indicating whether this is the most recent forecast for the combination of menu week and horizon index. A menu week will appear at multiple positions in the forecast horizon as time progresses, for example when the menu week is 4 cutoffs away, 3 cutoffs away, 2 cutoffs away, etc. It is possible that a forecast can be run multiple times for a menu week at a certain position in the forecast horizon. This column will be true for the latest forecast of each menu week at each position in the horizon.
 
 {% enddocs %}
 
-{% docs column__is_most_recent_for_menu_week %}
+{% docs column__is_most_recent_menu_week_forecast %}
 
 Boolean flag indicating whether this is the most recent forecast for a given menu week, regardless of horizon index.
 

@@ -31,7 +31,7 @@ forecast_orders as (
         , company_id
         , forecast_group_id
         , forecast_model_id
-        , horizon_index
+        , forecast_horizon_index
         , forecast_horizon
 
         -- variations
@@ -44,8 +44,8 @@ forecast_orders as (
         , null as order_quantity_forecast
 
         , source_created_at as forecast_generated_at
-        , is_most_recent_for_menu_week_and_horizon_index
-        , is_most_recent_for_menu_week
+        , is_most_recent_menu_week_horizon_forecast
+        , is_most_recent_menu_week_forecast
 
     from forecast_variations
 
@@ -61,7 +61,7 @@ forecast_orders as (
         , company_id
         , forecast_group_id
         , forecast_model_id
-        , horizon_index
+        , forecast_horizon_index
         , forecast_horizon
 
         -- variations
@@ -74,8 +74,8 @@ forecast_orders as (
         , order_quantity_forecast
 
         , source_created_at as forecast_generated_at
-        , is_most_recent_for_menu_week_and_horizon_index
-        , is_most_recent_for_menu_week
+        , is_most_recent_menu_week_horizon_forecast
+        , is_most_recent_menu_week_forecast
 
     from forecast_orders
 
@@ -124,7 +124,7 @@ forecast_orders as (
     , add_recipe_info.company_id
     , add_recipe_info.forecast_group_id
     , add_recipe_info.forecast_model_id
-    , add_recipe_info.horizon_index
+    , add_recipe_info.forecast_horizon_index
     , add_recipe_info.forecast_horizon
 
     -- variation forecasts
@@ -136,8 +136,8 @@ forecast_orders as (
     , add_recipe_info.order_quantity_forecast
 
     , add_recipe_info.forecast_generated_at
-    , add_recipe_info.is_most_recent_for_menu_week_and_horizon_index
-    , add_recipe_info.is_most_recent_for_menu_week
+    , add_recipe_info.is_most_recent_menu_week_horizon_forecast
+    , add_recipe_info.is_most_recent_menu_week_forecast
 
     , md5(
         concat(
@@ -145,7 +145,7 @@ forecast_orders as (
             , add_recipe_info.company_id
             , add_recipe_info.forecast_group_id
             , add_recipe_info.forecast_model_id
-            , add_recipe_info.horizon_index
+            , add_recipe_info.forecast_horizon_index
             , add_recipe_info.forecast_horizon
             )
     ) as fk_dim_forecast_runs

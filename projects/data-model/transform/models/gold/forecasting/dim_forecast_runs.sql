@@ -8,7 +8,7 @@ job_run_metadata_distinct_dimensions as (
         , company_id
         , forecast_group_id
         , forecast_model_id
-        , horizon_index
+        , forecast_horizon_index
         , forecast_horizon
 
     from {{ ref('forecasting__forecast_job_run_metadata') }}
@@ -43,7 +43,7 @@ job_run_metadata_distinct_dimensions as (
         , forecast_groups.forecast_group_id
         , forecast_models.forecast_model_id
 
-        , job_run_metadata_distinct_dimensions.horizon_index
+        , job_run_metadata_distinct_dimensions.forecast_horizon_index
         , job_run_metadata_distinct_dimensions.forecast_horizon
 
         , forecast_jobs.forecast_job_name
@@ -72,7 +72,7 @@ job_run_metadata_distinct_dimensions as (
             company_id,
             forecast_group_id,
             forecast_model_id,
-            horizon_index,
+            forecast_horizon_index,
             forecast_horizon
         )) as pk_dim_forecast_runs
         , *

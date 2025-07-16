@@ -23,7 +23,7 @@ source as (
 )
 
 
-, add_horizon_index as (
+, add_forecast_horizon_index as (
 
     select
         add_monday_dates.*
@@ -33,7 +33,7 @@ source as (
                 , menu_week_monday_date_next_cutoff
                 , menu_week_monday_date
                 ) + 1
-            as int) as horizon_index
+            as int) as forecast_horizon_index
 
     from add_monday_dates
 
@@ -42,9 +42,10 @@ source as (
 , add_most_recent_flags as (
 
     select
-        add_horizon_index.*
+        add_forecast_horizon_index.*
 
-        -- true/false flag if job run is the most recent run for the menu_week and its position in the forecast horizon (horizon_index)
+        -- true/false flag if job run is the most recent run for the menu_week and its position in the forecast horizon (forecast_horizon_index)
+        -- a reservation is also made for the one-week forecast vs the multi-week forecast. Both will have forecast_horizon_index = 1, both are wanted in reporting
         , row_number() over (
             partition by
                 forecast_job_id
@@ -53,9 +54,10 @@ source as (
                 , menu_week
                 , forecast_group_id
                 , forecast_model_id
-                , horizon_index
+                , forecast_horizon_index
+                , case when forecast_horizon = 1 then 'One-week Forecast' else 'Multi-week Forecast' end
             order by created_at desc
-        ) = 1 as is_most_recent_for_menu_week_and_horizon_index
+        ) = 1 as is_most_recent_menu_week_horizon_forecast
 
         -- true/false flag if job run is the latest run for the menu_week
         , row_number() over (
@@ -64,10 +66,12 @@ source as (
                 , company_id
                 , menu_year
                 , menu_week
+                , forecast_group_id
+                , forecast_model_id
             order by created_at desc
-        ) = 1 as is_most_recent_for_menu_week
+        ) = 1 as is_most_recent_menu_week_forecast
 
-    from add_horizon_index
+    from add_forecast_horizon_index
 
 )
 
@@ -89,15 +93,15 @@ source as (
         , menu_week
         , next_cutoff_menu_week
         , forecast_horizon
-        , horizon_index
+        , forecast_horizon_index
 
         {# dates #}
         , menu_week_monday_date_next_cutoff
         , menu_week_monday_date
 
         {# booleans #}
-        , is_most_recent_for_menu_week_and_horizon_index
-        , is_most_recent_for_menu_week
+        , is_most_recent_menu_week_horizon_forecast
+        , is_most_recent_menu_week_forecast
 
         {# system #}
         , created_at as source_created_at

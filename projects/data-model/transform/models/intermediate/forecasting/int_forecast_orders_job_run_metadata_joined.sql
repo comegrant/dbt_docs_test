@@ -27,10 +27,10 @@ job_run_metadata as (
         , forecast_orders.menu_week
         , job_run_metadata.menu_week_monday_date
         , forecast_orders.order_quantity_forecast
-        , job_run_metadata.horizon_index
+        , job_run_metadata.forecast_horizon_index
         , job_run_metadata.forecast_horizon
-        , job_run_metadata.is_most_recent_for_menu_week_and_horizon_index
-        , job_run_metadata.is_most_recent_for_menu_week
+        , job_run_metadata.is_most_recent_menu_week_horizon_forecast
+        , job_run_metadata.is_most_recent_menu_week_forecast
         , forecast_orders.source_created_at
 
     from forecast_orders
@@ -38,7 +38,7 @@ job_run_metadata as (
     left join job_run_metadata
         on forecast_orders.forecast_job_run_metadata_id = job_run_metadata.forecast_job_run_metadata_id
 
-    where job_run_metadata.is_most_recent_for_menu_week_and_horizon_index is true
+    where job_run_metadata.is_most_recent_menu_week_horizon_forecast is true
 
 )
 

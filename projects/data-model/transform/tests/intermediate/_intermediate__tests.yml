@@ -12,10 +12,10 @@ data_tests:
 
   - name: int_forecast_orders_job_run_metadata_joined_row_counts
     description: >
-      Test to ensure that forecast orders has one row for every forecast_job, forecast_group, forecast_model, menu_year, menu_week, horizon_index, forecast_horizon 
-      where flagged as is_most_recent_for_menu_week_and_horizon_index.
+      Test to ensure that forecast orders has one row for every forecast_job, forecast_group, forecast_model, menu_year, menu_week, forecast_horizon_index, forecast_horizon 
+      where flagged as is_most_recent_menu_week_horizon_forecast.
 
   - name: int_forecast_variations_metadata_external_estimates_joined_row_counts
     description: >
-      Test to ensure that forecast variations has one row for every forecast_job, forecast_group, forecast_model, menu_year, menu_week, product_variation_id, horizon_index, forecast_horizon 
-      where flagged as is_most_recent_for_menu_week_and_horizon_index.
+      Test to ensure that forecast variations has one row for every forecast_job, forecast_group, forecast_model, menu_year, menu_week, product_variation_id, forecast_horizon_index, forecast_horizon 
+      where flagged as is_most_recent_menu_week_horizon_forecast.

@@ -26,17 +26,17 @@ job_run_metadata as (
         , job_run_metadata.forecast_job_run_id
         , job_run_metadata.forecast_job_id
         , job_run_metadata.forecast_job_run_parent_id
-        , job_run_metadata.horizon_index
+        , job_run_metadata.forecast_horizon_index
         , job_run_metadata.forecast_horizon
-        , job_run_metadata.is_most_recent_for_menu_week_and_horizon_index
-        , job_run_metadata.is_most_recent_for_menu_week
+        , job_run_metadata.is_most_recent_menu_week_horizon_forecast
+        , job_run_metadata.is_most_recent_menu_week_forecast
 
     from forecast_variations
 
     left join job_run_metadata
         on forecast_variations.forecast_job_run_metadata_id = job_run_metadata.forecast_job_run_metadata_id
 
-    where job_run_metadata.is_most_recent_for_menu_week_and_horizon_index is true
+    where job_run_metadata.is_most_recent_menu_week_horizon_forecast is true
 
 )
 
@@ -63,11 +63,11 @@ job_run_metadata as (
             , forecast_variations_metadata_joined_filtered.product_variation_quantity_forecast_analytics
         ) as product_variation_quantity_forecast
 
-        , forecast_variations_metadata_joined_filtered.horizon_index
+        , forecast_variations_metadata_joined_filtered.forecast_horizon_index
         , forecast_variations_metadata_joined_filtered.forecast_horizon
         , forecast_variations_metadata_joined_filtered.source_created_at
-        , forecast_variations_metadata_joined_filtered.is_most_recent_for_menu_week_and_horizon_index
-        , forecast_variations_metadata_joined_filtered.is_most_recent_for_menu_week
+        , forecast_variations_metadata_joined_filtered.is_most_recent_menu_week_horizon_forecast
+        , forecast_variations_metadata_joined_filtered.is_most_recent_menu_week_forecast
 
     from forecast_variations_metadata_joined_filtered
 

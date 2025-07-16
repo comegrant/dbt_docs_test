@@ -120,17 +120,17 @@ models:
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
 
-      - name: horizon_index
+      - name: forecast_horizon_index
         data_type: integer
-        description: "{{ doc('column__horizon_index') }}"
+        description: "{{ doc('column__forecast_horizon_index') }}"
 
-      - name: is_most_recent_for_menu_week_and_horizon_index
+      - name: is_most_recent_menu_week_horizon_forecast
         data_type: boolean
-        description: "{{ doc('column__is_most_recent_for_menu_week_and_horizon_index') }}"
+        description: "{{ doc('column__is_most_recent_menu_week_horizon_forecast') }}"
 
-      - name: is_most_recent_for_menu_week
+      - name: is_most_recent_menu_week_forecast
         data_type: boolean
-        description: "{{ doc('column__is_most_recent_for_menu_week') }}"
+        description: "{{ doc('column__is_most_recent_menu_week_forecast') }}"
 
   - name: forecasting__forecast_groups
     description: "Constructs representing subsets of customers who are expected to perform an action, such as make adjustments to their mealbox. A forecast group is also used as a component to determine which forecast model will be applied."
