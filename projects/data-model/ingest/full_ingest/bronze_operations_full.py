@@ -13,6 +13,8 @@ tables = [
         , "case_line_ingredient"
         , "case_line_type"
         , "case_responsible"
+        , "case_taxonomies"
+        , "taxonomies"
         , "cutoff"
         , "cutoff_calendar"
         , "last_mile_route"

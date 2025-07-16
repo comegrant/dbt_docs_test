@@ -10,6 +10,8 @@ sources:
       - name: operations__case_line_ingredient
       - name: operations__case_responsible
       - name: operations__cases
+      - name: operations__case_taxonomies
+      - name: operations__taxonomies
       - name: operations__cutoff
       - name: operations__cutoff_calendar
       - name: operations__distribution_center

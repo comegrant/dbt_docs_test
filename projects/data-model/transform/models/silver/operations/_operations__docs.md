@@ -261,6 +261,33 @@ Contains what reason or which company/supplier was responsible for a case happen
 
 {% enddocs %}
 
+{% docs column__case_responsibility_type %}
+
+Contains whether the responsible party for a case is internal or an external partner.
+
+{% enddocs %}
+
+# Case Taxonomies
+
+{% docs column__taxonomy_id_operations %}
+
+The id's belonging to the different case taxonomies.
+{% enddocs %}
+
+# Taxonomies
+
+{% docs column__taxonomy_name_operations %}
+
+The name of the taxonomy which is related to a case. Can for instance be missing product, partial delivery or late cancellation.
+
+{% enddocs %}
+
+{% docs column__is_active_taxonomy %}
+
+Column containing whether or not the taxonomy is active in frontend (in use/not in use).
+
+{% enddocs %}
+
 # Cutoff Calendar
 {% docs column__cutoff_calendar_id %}
 

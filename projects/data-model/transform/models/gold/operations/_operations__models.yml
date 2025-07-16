@@ -116,6 +116,10 @@ models:
         data_type: string
         description: "{{ doc('column__case_responsible_description') }}"
 
+      - name: case_responsibility_type
+        data_type: string
+        description: "{{ doc('column__case_responsibility_type') }}"
+
       - name: case_line_type_id
         data_type: int
         description: "{{ doc('column__case_line_type_id') }}"
@@ -125,8 +129,14 @@ models:
       - name: case_line_type_name
         data_type: string
         description: "{{ doc('column__case_line_type_name') }}"
-        data_tests:
-          - not_null
+      
+      - name: taxonomy_id
+        data_type: string
+        description: "{{ doc('column__taxonomy_id_operations') }}"
+      
+      - name: taxonomy_name
+        data_type: string
+        description: "{{ doc('column__taxonomy_name_operations') }}"
 
     versions:
       - v: 1
@@ -209,6 +219,10 @@ models:
       - name: case_category_id
         data_type: string
         description: "{{ doc('column__case_category_id') }}"
+
+      - name: taxonomy_id
+        data_type: string
+        description: "{{ doc('column__taxonomy_id_operations') }}"
 
       - name: case_status_id
         data_type: int

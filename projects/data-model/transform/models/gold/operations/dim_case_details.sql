@@ -30,6 +30,18 @@ case_lines as (
 
 )
 
+, case_taxonomies as (
+
+    select * from {{ref('operations__case_taxonomies')}}
+
+)
+
+, taxonomies as (
+
+    select * from {{ref('operations__taxonomies')}}
+
+)
+
 , find_distinct_combination as (
 
     select distinct
@@ -37,8 +49,11 @@ case_lines as (
         , case_lines.case_cause_id
         , case_lines.case_responsible_id
         , case_lines.case_category_id
+        , case_taxonomies.taxonomy_id
     from case_lines
-
+    left join case_taxonomies
+        on case_lines.case_id = case_taxonomies.case_id
+    group by all
 )
 
 , tables_joined as (
@@ -51,6 +66,7 @@ case_lines as (
                 , find_distinct_combination.case_cause_id
                 , find_distinct_combination.case_responsible_id
                 , find_distinct_combination.case_category_id
+                , find_distinct_combination.taxonomy_id
             )
         ) as pk_dim_case_details
         , find_distinct_combination.case_category_id
@@ -59,8 +75,11 @@ case_lines as (
         , case_causes.case_cause_name
         , find_distinct_combination.case_responsible_id
         , case_responsible.case_responsible_description
+        , case_responsible.case_responsibility_type
         , find_distinct_combination.case_line_type_id
         , case_line_types.case_line_type_name
+        , find_distinct_combination.taxonomy_id
+        , taxonomies.taxonomy_name
     from find_distinct_combination
     left join case_categories
         on find_distinct_combination.case_category_id = case_categories.case_category_id
@@ -70,7 +89,8 @@ case_lines as (
         on find_distinct_combination.case_responsible_id = case_responsible.case_responsible_id
     left join case_line_types
         on find_distinct_combination.case_line_type_id = case_line_types.case_line_type_id
-
+    left join taxonomies
+        on find_distinct_combination.taxonomy_id = taxonomies.taxonomy_id
 )
 
 select * from tables_joined

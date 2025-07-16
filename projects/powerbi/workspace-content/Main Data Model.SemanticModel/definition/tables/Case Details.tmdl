@@ -26,16 +26,28 @@ table 'Case Details'
 
     /// Contains what reason or which company/supplier was responsible for a case happening.
     /// From 2025 this only contains the reason/explanation for a case, not company/supplier.
-    column 'Case Responsible Description'
+    column 'Case Responsible'
         dataType: string
         summarizeBy: none
         sourceColumn: case_responsible_description
+
+    /// Contains whether the case responsibility is related to an internal or external party.
+    column 'Case Responsibility Type'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: case_responsibility_type
 
     /// Contains the description of the different case line types.
     column 'Case Line Type'
         dataType: string
         summarizeBy: none
         sourceColumn: case_line_type_name
+
+    /// Contains the name of the taxonomy which is related to a case..
+    column 'Taxonomy Name'
+        dataType: string
+        summarizeBy: none
+        sourceColumn: taxonomy_name
 
     partition 'Case Details' = m
         mode: directQuery

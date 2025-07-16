@@ -18,6 +18,12 @@ cases as (
 
 )
 
+, case_taxonomies as (
+
+    select * from {{ref('operations__case_taxonomies')}}
+
+)
+
 , ingredients as (
 
     select * from {{ref('pim__ingredients')}}
@@ -106,6 +112,7 @@ cases as (
         , case_lines.case_cause_id
         , case_lines.case_responsible_id
         , case_lines.case_category_id
+        , max(case_taxonomies.taxonomy_id) as taxonomy_id
         , cases.case_status_id
         , cases.redelivery_status_id
         , cases.redelivery_comment
@@ -128,6 +135,7 @@ cases as (
                 , case_lines.case_cause_id
                 , case_lines.case_responsible_id
                 , case_lines.case_category_id
+                , max(case_taxonomies.taxonomy_id)
             )
         ) as fk_dim_case_details
         , md5(cast(customer_journey_segments.sub_segment_id as string)) as fk_dim_customer_journey_segments
@@ -147,6 +155,8 @@ cases as (
     from cases
     left join case_lines
         on cases.case_id = case_lines.case_id
+    left join case_taxonomies
+        on cases.case_id = case_taxonomies.case_id
     left join order_zones
         on cases.ops_order_id = order_zones.ops_order_id
     left join agreements
@@ -173,6 +183,7 @@ cases as (
     and case_lines.is_active_case_line is true
     -- remove God Matlyst cases
     and order_zones.company_id != '1A6819EF-CFD1-43E1-BBB0-F49001AE5562'
+    group by all
 
 )
 
