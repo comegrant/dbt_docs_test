@@ -4,6 +4,12 @@ resources:
       name: forecasting-data-model-job
 
       permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_MANAGE_RUN
         - service_principal_name: ${var.databricks_forecasting_sp_application_id}
           level: CAN_MANAGE_RUN
 
