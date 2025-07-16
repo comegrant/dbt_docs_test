@@ -32,14 +32,14 @@ Primary key of the fact_case table.
 
 {% enddocs %}
 
-{% docs column__case_line_total_amount_inc_vat %}
+{% docs column__case_line_total_amount_inc_vat_fact %}
 
 The total amount the customer will be reimbursed for a case line including vat. 
 
-> ⚠️ Note: This column should not be used for analytics purposes, as it can lead to duplication when a single case line contains multiple ingredients. For accurate analytics, use `case_line_amount` instead.
+> ⚠️ Note: This column should not be used for analytics purposes, as it can lead to duplication when a single case line contains multiple ingredients. For accurate analytics, use `credit_amount` instead.
 {% enddocs %}
 
-{% docs column__case_line_amount_ex_vat %}
+{% docs column__credit_amount_ex_vat %}
 
 The amount the customer will be reimbursed excluding vat, allocated proportionally across each ingredient in the case line.
 
@@ -58,7 +58,7 @@ Each ingredient gets a corresponding share of the total reimbursement amount.
 
 {% enddocs %}
 
-{% docs column__case_line_amount_inc_vat %}
+{% docs column__credit_amount_inc_vat %}
 
 The amount the customer will be reimbursed including vat, allocated proportionally across each ingredient in the case line.
 
@@ -74,6 +74,25 @@ Then the total value is: `2 * 15 + 5 = 35 kr`
 - Carrot share: `5 / 35 = 0.14`
 
 Each ingredient gets a corresponding share of the total reimbursement amount.
+
+{% enddocs %}
+
+{% docs column__case_line_ingredient_amount_inc_vat %}
+
+The amount the ingredient costs based on the unit price and quantity reported by customer service when the case was created. 
+
+From menu week 6 2025 and onwards it's possible to have *one* case line with *several* ingredients and this amount should be the same as `credit_amount_inc_vat` unless the `case_line_type_id = 6` (no credit).
+
+Before menu week 6 2025 this data cannot be trusted due to mistakes made when reporting:
+1. One case line was created for each ingredient
+2. One case line was created with one selected ingredient, and the additional ingredients were manually typed into the comment field.
+3. Credits not related to the ingredients was placed on the same case line as the ingredient cost
+
+{% enddocs %}
+
+{% docs column__case_line_ingredient_amount_share %}
+
+The ingredient's share of the total ingredient cost for the case line. Before menu week 6 2025 this field cannot be trusted. After this it should be correct (but bugs can occur). Tests have been created to validate this field.
 
 {% enddocs %}
 

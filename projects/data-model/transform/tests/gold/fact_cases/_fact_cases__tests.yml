@@ -1,0 +1,6 @@
+version: 2
+
+data_tests:
+  - name: fact_cases_credit_amount
+    description: >
+      Checks that the sum of credit_amount_inc_vat is the same as the average of case_line_total_amount_inc_vat

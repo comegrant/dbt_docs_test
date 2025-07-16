@@ -28,10 +28,10 @@ source as (
         , case_line_category as case_category_id
         
         {# strings #}
-        , case_line_comment as case_line_comment
+        , case_line_comment
 
         {# numerics #}
-        , case_line_ammount as case_line_amount
+        , case_line_ammount as case_line_total_amount_inc_vat
         
         {# booleans #}
         , case_line_active as is_active_case_line

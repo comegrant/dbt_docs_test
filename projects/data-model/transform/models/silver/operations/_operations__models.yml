@@ -659,9 +659,9 @@ models:
         data_type: string
         description: "{{ doc('column__case_line_comment') }}"
 
-      - name: case_line_amount
+      - name: case_line_total_amount_inc_vat
         data_type: decimal(19,4)
-        description: "{{ doc('column__case_line_amount') }}"
+        description: "{{ doc('column__case_line_total_amount_inc_vat_fact') }}"
 
       - name: is_active_case_line
         data_type: boolean

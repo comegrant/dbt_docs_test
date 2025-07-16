@@ -178,7 +178,7 @@ Comments regarding the case. Can come from external partners or internally from 
 
 {% enddocs %}
 
-{% docs column__case_line_amount %}
+{% docs column__case_line_total_amount_inc_vat %}
 
 The amount the customer will get in reimbursement. I.e., the cost of the case.
 

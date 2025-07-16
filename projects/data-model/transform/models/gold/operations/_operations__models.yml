@@ -188,13 +188,21 @@ models:
         data_tests:
           - not_null
 
-      - name: case_line_amount_ex_vat
-        data_type: decimal(19,4)
-        description: "{{ doc('column__case_line_amount_ex_vat') }}"
+      - name: credit_amount_ex_vat
+        data_type: double
+        description: "{{ doc('column__credit_amount_ex_vat') }}"
 
-      - name: case_line_amount_inc_vat
-        data_type: decimal(19,4)
-        description: "{{ doc('column__case_line_amount_inc_vat') }}"
+      - name: credit_amount_inc_vat
+        data_type: double
+        description: "{{ doc('column__credit_amount_inc_vat') }}"
+
+      - name: case_line_ingredient_amount_inc_vat
+        data_type: decimal(38,9)
+        description: "{{ doc('column__case_line_ingredient_amount_inc_vat') }}"
+
+      - name:  case_line_ingredient_amount_share
+        data_type: double
+        description: "{{ doc('column__case_line_ingredient_amount_share') }}"
 
       - name: case_line_total_amount_inc_vat
         data_type: decimal(19,4)
@@ -274,6 +282,12 @@ models:
         data_tests:
           - not_null
 
+      - name: is_active_case_line
+        data_type: boolean
+        description: "{{ doc('column__is_active_case_line') }}"
+        data_tests:
+          - not_null
+
       - name: ingredient_internal_reference
         data_type: string
         description: "{{ doc('column__ingredient_internal_reference') }}"
@@ -285,6 +299,22 @@ models:
       - name: redelivery_user
         data_type: string
         description: "{{ doc('column__redelivery_comment') }}"
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+  
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
 
       - name: menu_week_financial_date
         data_type: date

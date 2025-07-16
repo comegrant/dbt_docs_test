@@ -2,4 +2,8 @@ data_tests:
   - name: postal_codes_have_correct_length
     description: >
       Test to ensure postal codes have the correct number of characters after cleaning.
-      
+  - name: case_line_ingredients_cost_validation
+    description: >
+      Starting from menu week 6 of 2025, the sum of (ingredient_price * ingredient_quantity) 
+      in 'case_line_ingredients' should match the 'case_line_total_amount_inc_vat' in 'case_lines'.
+      Test that this holds. Allows up to 200 kr in mismatches per menu week to account for minor discrepancies or bugs.

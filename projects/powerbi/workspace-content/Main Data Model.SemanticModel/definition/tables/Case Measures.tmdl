@@ -60,7 +60,7 @@ table 'Case Measures'
         displayFolder: 'Orders'
 
     /// The total cost of cases, including VAT.
-    measure 'Case Cost Inc VAT' = SUM('Case Measures'[Case Line Amount Inc VAT])
+    measure 'Case Cost Inc VAT' = SUM('Case Measures'[Credit Amount Inc VAT])
         formatString: #,0
         displayFolder: 'Costs Inc VAT'
     
@@ -81,7 +81,7 @@ table 'Case Measures'
 
     /// The total cost of cases, excluding VAT.The total cost of cases, excluding VAT. 
     /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
-    measure 'Case Cost Ex VAT' = SUM('Case Measures'[Case Line Amount Ex VAT])
+    measure 'Case Cost Ex VAT' = SUM('Case Measures'[Credit Amount Ex VAT])
         formatString: #,0
         displayFolder: 'Costs Ex VAT'
     
@@ -192,7 +192,7 @@ table 'Case Measures'
         displayFolder: 'Orders'
         
     /// The average amount credited per case , including VAT.
-    measure 'Average Amount Credited Per Case Inc VAT' = AVERAGE('Case Measures'[Case Line Amount Inc VAT])
+    measure 'Average Amount Credited Per Case Inc VAT' = AVERAGE('Case Measures'[Credit Amount Inc VAT])
         formatString: #,0
         displayFolder: 'Costs Inc VAT'
     
@@ -213,7 +213,7 @@ table 'Case Measures'
 
     /// The average amount credited per case , excluding VAT.
     /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
-    measure 'Average Amount Credited Per Case Ex VAT' = AVERAGE('Case Measures'[Case Line Amount Ex VAT])
+    measure 'Average Amount Credited Per Case Ex VAT' = AVERAGE('Case Measures'[Credit Amount Ex VAT])
         formatString: #,0
         displayFolder: 'Costs Ex VAT'
     
@@ -270,34 +270,19 @@ table 'Case Measures'
         sourceColumn: ops_order_id
 
     /// The amount the customer will get in reimbursement. I.e., the cost of the case.
-    column 'Case Line Amount Inc VAT'
+    column 'Credit Amount Inc VAT'
         dataType: int64
         isHidden
         summarizeBy: none
-        sourceColumn: case_line_amount_inc_vat
+        sourceColumn: credit_amount_inc_vat
     
     /// The amount the customer will get in reimbursement. I.e., the cost of the case. 
     /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
-    column 'Case Line Amount Ex VAT'
+    column 'Credit Amount Ex VAT'
         dataType: int64
         isHidden
         summarizeBy: none
-        sourceColumn: case_line_amount_ex_vat
-
-    /// The price of the ingredient. Price is set per ingredient by customer service for the case line.
-    /// I.e., the price can be an estimate.
-    column 'Ingredient Price'
-        dataType: double
-        isHidden
-        summarizeBy: none
-        sourceColumn: ingredient_price
-
-    /// The quantity of ingredients registered in the case.
-    column 'Ingredient Quantity'
-        dataType: int64
-        isHidden
-        summarizeBy: none
-        sourceColumn: ingredient_quantity
+        sourceColumn: credit_amount_ex_vat
 
     /// Comments regarding the case. 
     /// Can come from external partners or internally from logistics/customer service, 
