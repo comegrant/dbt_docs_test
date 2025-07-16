@@ -93,7 +93,7 @@ models:
 
 
   - name: operations__orders
-    description: "Information about orders from the operations database which are currenly going to be delivered."
+    description: "Information about orders from the operations database."
     config:
       contract:
         enforced: false
@@ -144,7 +144,12 @@ models:
         description: "{{ doc('column__zone_id') }}"
         data_tests:
           - not_null:
-              where: "menu_week_monday_date <= current_date and menu_year >= 2024"
+              # Can only be null for the most recent menu week.
+              # A new menu week is generated after cutoff which is the week before.
+              # Since cutoff is mid week some days of slack has been added to the condition.
+              # I.e. we expect that by the Friday in the current menu week, 
+              # the next menu week has been generated.
+              where: "date_add(menu_week_monday_date, 4) <= current_date and menu_year >= 2024"
 
       - name: postal_code_id
         data_type: int
