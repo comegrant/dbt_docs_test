@@ -13,9 +13,11 @@ companies as (
 )
 
 , countries_and_companies_joined (
+
     select
         md5(companies.company_id) as pk_dim_companies
         , companies.company_id
+        , companies.country_id
         , countries.language_id
         , companies.company_name
         , countries.country_name
@@ -24,6 +26,7 @@ companies as (
     from companies
     left join countries
         on companies.country_id = countries.country_id
+
 )
 
 select * from countries_and_companies_joined

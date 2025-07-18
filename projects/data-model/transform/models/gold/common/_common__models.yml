@@ -27,6 +27,12 @@ models:
         data_type: string
         data_tests:
           - not_null
+  
+      - name: country_id
+        description: "{{ doc('column__country_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
 
       - name: language_id
         description: "{{ doc('column__language_id') }}"
