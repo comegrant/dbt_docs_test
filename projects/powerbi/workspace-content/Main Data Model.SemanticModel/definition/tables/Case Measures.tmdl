@@ -320,6 +320,13 @@ table 'Case Measures'
         summarizeBy: none
         sourceColumn: redelivery_comment
 
+    /// The quantity of ingredients registered in the case.
+    column 'Ingredient Quantity'
+        dataType: string
+        isHidden
+        summarizeBy: none
+        sourceColumn: ingredient_quantity
+
     /// The unique id of each row in dim billing agreements.
     column fk_dim_billing_agreements
         dataType: string
