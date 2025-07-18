@@ -34,7 +34,7 @@ VEGETARIAN_MAIN_INGREDIENT_ID = 3
 PREVIOUS_WEEKS = 3
 MAX_PORTION_SIZE = 5
 ENTROPY_THRESHOLD = 0.75
-MIN_PERC_USERS = 0.01
+MIN_VALUE_PERC = 0.001
 PORTION_ID = 2
 
 
@@ -65,7 +65,7 @@ class MenuFeedbackRequestModel(ConfigModel):
 class IssueModel(ConfigModel):
     issue_type: int
     issue_title: str
-    amount_affected: float
+    customer_value_percentage: float
     user_group_description: str
     user_group_id: str
     negative_preference_ids: Optional[list[str]]
@@ -76,7 +76,7 @@ class IssueModel(ConfigModel):
 
 
 class PortionFeedbackModel(ConfigModel):
-    portion_id: int
+    portion_id: int  # TODO: no need to return this
     preference_groups: list[IssueModel]
 
 
@@ -138,6 +138,20 @@ def find_matching_values(
     ]
 
 
+def compute_portion_size_weights(df: pl.DataFrame) -> dict[int, float]:
+    total_users = df.select(pl.col("number_of_users")).item()
+    if total_users == 0:
+        raise ValueError("Total number of users is zero — cannot compute weights.")
+
+    portion_columns = [col for col in df.columns if col.startswith("users_with_")]
+    portion_values = df.select(portion_columns).row(0)
+
+    portion_map = {int(col.split("_")[2]): value for col, value in zip(portion_columns, portion_values)}
+    portion_map_normalized = {portion: count / total_users for portion, count in portion_map.items()}
+
+    return portion_map_normalized
+
+
 def shannon_entropy(protein_counts: Counter) -> float:
     total = sum(protein_counts.values())
     return -sum((count / total) * math.log2(count / total) for count in protein_counts.values())
@@ -194,7 +208,7 @@ def build_critical_issue(row: dict) -> IssueModel:
     return IssueModel(
         issue_type=1,
         issue_title="Critical issue",
-        amount_affected=row["perc_of_users"],
+        customer_value_percentage=row["perc_of_customer_value"],
         user_group_description=f"Customers with negative preferences: {row['negative_taste_preferences']}.",
         user_group_id=row["negative_taste_preference_combo_id"],
         negative_preference_ids=row["preference_set_ids"],
@@ -213,7 +227,7 @@ def build_overlap_issue(row: dict) -> IssueModel:
     return IssueModel(
         issue_type=3,
         issue_title="Week to week variation issue",
-        amount_affected=row["perc_of_users"],
+        customer_value_percentage=row["perc_of_customer_value"],
         user_group_description=f"Customers with negative preferences: {row['negative_taste_preferences']}.",
         user_group_id=row["negative_taste_preference_combo_id"],
         negative_preference_ids=row["preference_set_ids"],
@@ -256,7 +270,7 @@ def build_protein_issue(row: dict) -> IssueModel:
     return IssueModel(
         issue_type=2,
         issue_title="Low protein diversity",
-        amount_affected=row["perc_of_users"],
+        customer_value_percentage=row["perc_of_customer_value"],
         user_group_description=f"Customers with negative preferences: {row['negative_taste_preferences']}.",
         user_group_id=row["negative_taste_preference_combo_id"],
         negative_preference_ids=row["preference_set_ids"],
@@ -307,6 +321,10 @@ async def create_warnings(
     portion_id: int,
 ) -> pl.DataFrame:
     company = get_company_by_id(company_id)
+    portion_weights = await get_data(f"user_portion_weights_{company.company_code}")
+
+    portion_weights_norm = compute_portion_size_weights(portion_weights)
+
     customers = await get_data(f"user_preferences_{company.company_code}")
     customers = customers.filter(pl.col("company_id") == company_id)
 
@@ -341,6 +359,21 @@ async def create_warnings(
             )
             .alias("preference_set_ids"),
         ]
+    )
+
+    # create customer value column
+    customers = customers.with_columns(
+        (
+            pl.col("users_with_2_portions") * portion_weights_norm.get(2, 0)
+            + pl.col("users_with_3_portions") * portion_weights_norm.get(3, 0)
+            + pl.col("users_with_4_portions") * portion_weights_norm.get(4, 0)
+            + pl.col("users_with_5_portions") * portion_weights_norm.get(5, 0)
+            + pl.col("users_with_6_portions") * portion_weights_norm.get(6, 0)
+        ).alias("customer_value")
+    )
+
+    customers = customers.with_columns(
+        (pl.col("customer_value") / pl.col("customer_value").sum()).alias("perc_of_customer_value")
     )
 
     customers = customers.with_columns(
@@ -477,7 +510,7 @@ async def create_menu_feedback(payload: MenuFeedbackRequestModel) -> MenuFeedbac
         pl.col("warning_critical") | pl.col("warning_protein_entropy") | pl.col("warning_overlap")
     )
 
-    conc_results = conc_results.filter(pl.col("perc_of_users") >= MIN_PERC_USERS)
+    conc_results = conc_results.filter(pl.col("perc_of_customer_value") >= MIN_VALUE_PERC)  # MIN_PERC_USERS
 
     response = response_from_df(
         conc_results,
