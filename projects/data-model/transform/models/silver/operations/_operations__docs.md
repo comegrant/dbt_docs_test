@@ -204,6 +204,21 @@ Contains the name of the different case line types. An order can only have one c
 
 {% enddocs %}
 
+{% docs column__case_impact_id %}
+
+In January 2025 the `case_cause_id`-column was changed to representing the impact rather than the cause. 
+Hence, an additional column has been created representing only ids after this change was fully launched in the system (28.01.2025).
+
+{% enddocs %}
+
+{% docs column__case_cause_responsible_id %}
+
+In January 2025 the `case_responsible_id`-column was changed to representing the cause and the `case_cause_id`-column was changed to representing the impact on the customer experience.
+Due to this an additional id-column has been created generating a new id based on the `case_cause_id` for all cases until 28.01.2025, and based on `case_responsible_id` after this. 
+To ensure uniqueness, the id has been concatenated with 'C' for cause and 'R' for responsible respectively, then hashed.
+
+{% enddocs %}
+
 # Case Line Ingredients
 
 {% docs column__ingredient_price %}
@@ -212,7 +227,7 @@ The price of the ingredient in a case line. Price is set per ingredient by custo
 
 {% enddocs %}
 
-{% docs column__ingredient_quantity %}
+{% docs column__ingredient_quantity_case %}
 
 The quantity of ingredients registered in the case. 
 
@@ -229,7 +244,7 @@ The unique id for the case cause table.
 
 {% docs column__case_cause_name %}
 
-Contains the cause name related to the case. From week 2 2025 cause name refers to the priority of the case.
+Contains the cause name related to the case. From end of January 2025 this column was changed to contain the impact of the case on the customer experience (Low, Medium, High, Goodwill). In the beginning the old and new column values was used in parallell but from Februray 2025 the transition was fully made. This has been taken into account in the `operations__case_lines`-table which in turn is used in `Dim Case Details` to clean the data.
 
 {% enddocs %}
 
@@ -257,7 +272,8 @@ The unique id of the case responsible table.
 
 {% docs column__case_responsible_description %}
 
-Contains what reason or which company/supplier was responsible for a case happening. From 2025 this only contains the reason/explanation for a case, not company/supplier.
+Originially contained what reason or which company/supplier was responsible for a case happening. From end of January 2025 this contains the cause of the case. 
+This has been taken into account in the `operations__case_lines`-table which in turn is used in `Dim Case Details` to clean the data.
 
 {% enddocs %}
 

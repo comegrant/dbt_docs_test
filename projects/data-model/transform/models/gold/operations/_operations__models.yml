@@ -100,21 +100,21 @@ models:
         data_type: string
         description: "{{ doc('column__case_category_name') }}"
 
-      - name: case_cause_id
+      - name: case_impact_id
         data_type: string
-        description: "{{ doc('column__case_cause_id') }}"
+        description: "{{ doc('column__case_impact_id') }}"
 
       - name: case_cause_name
         data_type: string
-        description: "{{ doc('column__case_cause_name') }}"
+        description: "{{ doc('column__case_cause_name_dim') }}"
 
-      - name: case_responsible_id
+      - name: case_impact
         data_type: string
-        description: "{{ doc('column__case_responsible_id') }}"
+        description: "{{ doc('column__case_impact') }}"
 
-      - name: case_responsible_description
+      - name: case_cause_responsible_id
         data_type: string
-        description: "{{ doc('column__case_responsible_description') }}"
+        description: "{{ doc('column__case_cause_responsible_id') }}"
 
       - name: case_responsibility_type
         data_type: string
@@ -228,6 +228,14 @@ models:
         data_type: string
         description: "{{ doc('column__case_category_id') }}"
 
+      - name: case_impact_id
+        data_type: string
+        description: "{{ doc('column__case_impact_id') }}"
+
+      - name: case_cause_responsible_id
+        data_type: string
+        description: "{{ doc('column__case_cause_responsible_id') }}"
+
       - name: taxonomy_id
         data_type: string
         description: "{{ doc('column__taxonomy_id_operations') }}"
@@ -268,7 +276,7 @@ models:
 
       - name: ingredient_quantity
         data_type: int
-        description: "{{ doc('column__ingredient_quantity') }}"
+        description: "{{ doc('column__ingredient_quantity_case') }}"
 
       - name: is_complaint
         data_type: boolean

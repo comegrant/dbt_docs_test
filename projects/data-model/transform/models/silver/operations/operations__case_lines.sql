@@ -46,4 +46,31 @@ source as (
 
 )
 
-select * from renamed
+-- the purpose of the case responsible and case cause columns was changed in 2025
+-- cause was changed to contain the impact of the compalints 
+-- and responsible was changed to contain the cause
+, add_id_colums as (
+
+    select
+        renamed.*
+        -- TODO: Alternative approach - using the ids of the case causes that relates to "impact"
+        -- downside is that its not very robust if this changes over time, upside is that the period inbetween 
+        -- the implementation will be cleaner (i.e. there was a period where both cause and impact was used)
+        , case
+            -- from 28-01-2025 there exist no cases
+            -- using the old definition of case cause in the data
+            when source_updated_at >= '2025-01-28'
+            then case_cause_id
+        end as case_impact_id
+        , case
+            -- from 28-01-2025 there exist no cases
+            -- using the old definition of case cause  in the data
+            when source_updated_at < '2025-01-28'
+            -- generate new ids to ensure uniqueness
+            then md5(concat_ws('-', 'C', case_cause_id))
+            else md5(concat_ws('-', 'R', case_responsible_id))
+        end as case_cause_responsible_id
+    from renamed
+)
+
+select * from add_id_colums

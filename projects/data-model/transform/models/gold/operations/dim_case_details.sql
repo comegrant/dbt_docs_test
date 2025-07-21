@@ -46,9 +46,9 @@ case_lines as (
 
     select distinct
         case_lines.case_line_type_id
-        , case_lines.case_cause_id
-        , case_lines.case_responsible_id
         , case_lines.case_category_id
+        , case_lines.case_impact_id
+        , case_lines.case_cause_responsible_id
         , case_taxonomies.taxonomy_id
     from case_lines
     left join case_taxonomies
@@ -63,18 +63,18 @@ case_lines as (
             concat_ws(
                 '-'
                 , find_distinct_combination.case_line_type_id
-                , find_distinct_combination.case_cause_id
-                , find_distinct_combination.case_responsible_id
                 , find_distinct_combination.case_category_id
+                , find_distinct_combination.case_impact_id
+                , find_distinct_combination.case_cause_responsible_id
                 , find_distinct_combination.taxonomy_id
             )
         ) as pk_dim_case_details
         , find_distinct_combination.case_category_id
         , case_categories.case_category_name
-        , find_distinct_combination.case_cause_id
-        , case_causes.case_cause_name
-        , find_distinct_combination.case_responsible_id
-        , case_responsible.case_responsible_description
+        , find_distinct_combination.case_impact_id
+        , find_distinct_combination.case_cause_responsible_id
+        , coalesce(case_responsible.case_responsible_description, case_causes.case_cause_name) as case_cause_name
+        , case_causes.case_cause_name as case_impact
         , case_responsible.case_responsibility_type
         , find_distinct_combination.case_line_type_id
         , case_line_types.case_line_type_name
@@ -84,9 +84,11 @@ case_lines as (
     left join case_categories
         on find_distinct_combination.case_category_id = case_categories.case_category_id
     left join case_causes
-        on find_distinct_combination.case_cause_id = case_causes.case_cause_id
+        on find_distinct_combination.case_cause_responsible_id = case_causes.case_cause_responsible_id
     left join case_responsible
-        on find_distinct_combination.case_responsible_id = case_responsible.case_responsible_id
+        on find_distinct_combination.case_cause_responsible_id = case_responsible.case_cause_responsible_id
+    left join case_causes as case_impact
+        on find_distinct_combination.case_impact_id = case_impact.case_cause_id
     left join case_line_types
         on find_distinct_combination.case_line_type_id = case_line_types.case_line_type_id
     left join taxonomies

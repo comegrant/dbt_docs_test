@@ -25,6 +25,18 @@ Primary key of the dim_case_details table.
 
 {% enddocs %}
 
+{% docs column__case_impact %}
+
+The impact on the customer experience due to the case. Originates from case_cause_name.
+
+{% enddocs %}
+
+{% docs column__case_cause_name_dim %}
+
+Contains the cause name related to the case. Originates from case_cause_name before February 2025 and from case_responsible_description after due to changes in the source system.
+
+{% enddocs %}
+
 # Fact Cases
 {% docs column__pk_fact_cases %}
 

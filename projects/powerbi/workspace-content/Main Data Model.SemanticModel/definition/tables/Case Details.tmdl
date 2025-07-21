@@ -17,21 +17,19 @@ table 'Case Details'
         summarizeBy: none
         sourceColumn: case_category_name
 
-    /// Contains the cause name related to the case. 
-    /// From week 2 2025 cause name refers to the priority of the case.
+    /// The cause of the case
     column 'Cause'
         dataType: string
         summarizeBy: none
         sourceColumn: case_cause_name
 
-    /// Contains what reason or which company/supplier was responsible for a case happening.
-    /// From 2025 this only contains the reason/explanation for a case, not company/supplier.
-    column 'Responsible'
+    /// The impact on the customer experience due to the case. E.g. low, medium, high.
+    column 'Impact'
         dataType: string
         summarizeBy: none
-        sourceColumn: case_responsible_description
+        sourceColumn: case_impact
 
-    /// Contains whether the case responsibility is related to an internal or external party.
+    /// Contains whether the responsible for the case is related to an internal or external party.
     column 'Responsibility Type'
         dataType: string
         summarizeBy: none

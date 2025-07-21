@@ -12,6 +12,10 @@ source as (
 
         {# ids #}
         case_cause_id 
+
+        -- generate id to be used in dim case details to fetch case name before 28.01.2025
+        -- and responsible description after 28.01.2025 
+        , md5(concat_ws('-', 'C', case_cause_id)) as case_cause_responsible_id
         
         {# strings #}
         , case

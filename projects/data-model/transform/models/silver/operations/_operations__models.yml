@@ -620,7 +620,7 @@ models:
       Each delivery can only have one case, but a case can have several case lines.
     config:
       contract:
-        enforced: false
+        enforced: true
     columns:
       - name: case_line_id
         data_type: varchar(36)
@@ -650,6 +650,14 @@ models:
       - name: case_responsible_id
         data_type: varchar(36)
         description: "{{ doc('column__case_responsible_id') }}"
+
+      - name: case_cause_responsible_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_cause_responsible_id') }}"
+
+      - name: case_impact_id
+        data_type: varchar(36)
+        description: "{{ doc('column__case_impact_id') }}"
 
       - name: case_category_id
         data_type: varchar(36)
@@ -762,7 +770,7 @@ models:
 
       - name: ingredient_quantity
         data_type: int
-        description: "{{ doc('column__ingredient_quantity') }}"
+        description: "{{ doc('column__ingredient_quantity_case') }}"
         data_tests:
           - not_null
 
@@ -770,11 +778,18 @@ models:
     description: "Table containing the different causes of cases"
     config:
       contract:
-        enforced: false
+        enforced: true
     columns:
       - name: case_cause_id
         data_type: char(36)
         description: "{{ doc('column__case_cause_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: case_cause_responsible_id
+        data_type: string
+        description: "{{ doc('column__case_cause_responsible_id') }}"
         data_tests:
           - unique
           - not_null
@@ -808,11 +823,18 @@ models:
     description: "Table containing the different responsible parties for cases"
     config:
       contract:
-        enforced: false
+        enforced: true
     columns:
       - name: case_responsible_id
         data_type: char(36)
         description: "{{ doc('column__case_responsible_id') }}"
+        data_tests:
+          - unique
+          - not_null
+  
+      - name: case_cause_responsible_id
+        data_type: string
+        description: "{{ doc('column__case_cause_responsible_id') }}"
         data_tests:
           - unique
           - not_null

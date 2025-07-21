@@ -75,6 +75,8 @@ cases as (
         , case_lines.case_line_type_id
         , case_lines.case_cause_id
         , case_lines.case_responsible_id
+        , case_lines.case_impact_id
+        , case_lines.case_cause_responsible_id
         , case_lines.case_category_id
         , case_lines.source_updated_at as case_line_updated_at
     
@@ -131,14 +133,12 @@ cases as (
         , case_line_ingredients_total_cost_share.case_line_ingredient_amount_inc_vat
         , case_line_ingredients_total_cost_share.case_line_ingredient_amount_share
         -- distribute case line cost to ingredients
-        , round(
-            case 
+        , case 
                 when case_tables_joined.ingredient_internal_reference is null -- no ingredient
                 or case_tables_joined.case_line_type_id = 6 -- no credit
                 then case_tables_joined.case_line_total_amount_inc_vat
                 else case_tables_joined.case_line_total_amount_inc_vat * case_line_ingredients_total_cost_share.case_line_ingredient_amount_share
-                end
-        , 2) as credit_amount_inc_vat
+                end as credit_amount_inc_vat
     from case_tables_joined
     left join case_line_ingredients_total_cost_share
         on case_tables_joined.case_line_id = case_line_ingredients_total_cost_share.case_line_id
@@ -160,7 +160,7 @@ cases as (
         ) as pk_fact_cases
         
         , cases_ingredient_costs_distributed.*
-        , cases_ingredient_costs_distributed.credit_amount_inc_vat * (1 + companies.main_vat_rate) as credit_amount_ex_vat
+        , cases_ingredient_costs_distributed.credit_amount_inc_vat / (1 + companies.main_vat_rate) as credit_amount_ex_vat
         
         -- TODO: Temp until we figured out how to deal with taxonomies
         , max(case_taxonomies.taxonomy_id) as taxonomy_id
@@ -181,9 +181,9 @@ cases as (
             concat_ws(
                 '-'
                 , cases_ingredient_costs_distributed.case_line_type_id
-                , cases_ingredient_costs_distributed.case_cause_id
-                , cases_ingredient_costs_distributed.case_responsible_id
                 , cases_ingredient_costs_distributed.case_category_id
+                , cases_ingredient_costs_distributed.case_impact_id
+                , cases_ingredient_costs_distributed.case_cause_responsible_id
                 -- TODO: Temp until we figured out how to deal with taxonomies
                 , max(case_taxonomies.taxonomy_id)
             )
