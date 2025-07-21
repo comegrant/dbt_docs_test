@@ -23,11 +23,11 @@
                       "Entity": "Case Details"
                     }
                   },
-                  "Property": "Case Responsible Description"
+                  "Property": "Responsible"
                 }
               },
-              "queryRef": "Case Details.Case Responsible Description",
-              "nativeQueryRef": "Case Responsible Description",
+              "queryRef": "Case Details.Responsible",
+              "nativeQueryRef": "Responsible",
               "active": true
             }
           ]
@@ -204,7 +204,7 @@
                 "Entity": "Case Details"
               }
             },
-            "Property": "Case Category"
+            "Property": "Category"
           }
         },
         "type": "Categorical",
@@ -229,7 +229,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Case Category"
+                        "Property": "Category"
                       }
                     }
                   ],
@@ -405,7 +405,7 @@
                 "Entity": "Case Details"
               }
             },
-            "Property": "Case Responsible Description"
+            "Property": "Responsible"
           }
         },
         "type": "Categorical"

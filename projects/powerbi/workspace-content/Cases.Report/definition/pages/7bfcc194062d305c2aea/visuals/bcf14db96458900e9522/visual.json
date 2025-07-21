@@ -87,11 +87,11 @@
                       "Entity": "Case Details"
                     }
                   },
-                  "Property": "Case Category"
+                  "Property": "Category"
                 }
               },
-              "queryRef": "Case Details.Case Category",
-              "nativeQueryRef": "Case Category"
+              "queryRef": "Case Details.Category",
+              "nativeQueryRef": "Category"
             }
           ]
         },
@@ -225,7 +225,7 @@
                 "Entity": "Case Details"
               }
             },
-            "Property": "Case Category"
+            "Property": "Category"
           }
         },
         "type": "Categorical"

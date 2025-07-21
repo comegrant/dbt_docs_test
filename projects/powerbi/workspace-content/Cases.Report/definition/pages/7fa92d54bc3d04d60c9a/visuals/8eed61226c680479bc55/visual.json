@@ -23,11 +23,11 @@
                       "Entity": "Case Details"
                     }
                   },
-                  "Property": "Case Cause"
+                  "Property": "Cause"
                 }
               },
-              "queryRef": "Case Details.Case Cause",
-              "nativeQueryRef": "Case Cause",
+              "queryRef": "Case Details.Cause",
+              "nativeQueryRef": "Cause",
               "active": true
             }
           ]
@@ -102,7 +102,7 @@
                 "Entity": "Case Details"
               }
             },
-            "Property": "Case Category"
+            "Property": "Category"
           }
         },
         "type": "Categorical",
@@ -127,7 +127,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Case Category"
+                        "Property": "Category"
                       }
                     }
                   ],
@@ -303,7 +303,7 @@
                 "Entity": "Case Details"
               }
             },
-            "Property": "Case Cause"
+            "Property": "Cause"
           }
         },
         "type": "Categorical",
@@ -328,7 +328,7 @@
                             "Source": "c"
                           }
                         },
-                        "Property": "Case Cause"
+                        "Property": "Cause"
                       }
                     }
                   ],
