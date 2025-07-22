@@ -15,7 +15,7 @@ from project_owners.owner import Owner
 likability = UserRecipeLikability()
 cluster = RecipeCluster()
 
-rec_contacts = [Owner.niladri().name, Owner.matsmoll().name]
+rec_contacts = [Owner.matsmoll().name]
 
 
 delivered_recipes = HistoricalRecipeOrders()

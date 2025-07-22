@@ -31,22 +31,6 @@ class Owner:
         )
 
     @staticmethod
-    def jose() -> Owner:
-        return Owner(
-            name="José Cruz",
-            slack_member_id="U046CCXA5GW",
-            email="jose.cruz@syone.com",
-        )
-
-    @staticmethod
-    def niladri() -> Owner:
-        return Owner(
-            name="Niladri Banerjee",
-            slack_member_id="U018KSDQY14",
-            email="niladri.banerjee@cheffelo.com",
-        )
-
-    @staticmethod
     def stephen() -> Owner:
         return Owner(
             name="Stephen Allwright",
@@ -124,8 +108,6 @@ class Owner:
     def all_owners() -> list[Owner]:
         return [
             Owner.matsmoll(),
-            Owner.jose(),
-            Owner.niladri(),
             Owner.stephen(),
             Owner.sylvia(),
             Owner.grant(),

@@ -61,7 +61,6 @@ slack_user_ids = {
     "anna": "U06B9U6R8D6",
     "sylvia": "U04TRPCUKGD",
     "mats": "U05Q1RUDC20",
-    "niladri": "U018KSDQY14",
     "agathe": "U07AVT7SG3D",
     "lina": "UF7UCANTC",
     "grant": "U058KUJC1PV",
@@ -75,7 +74,6 @@ slack_users = {
     "anna": slack_user_ids["anna"],
     "sylvia": slack_user_ids["sylvia"],
     "mats": slack_user_ids["mats"],
-    "niladri": slack_user_ids["niladri"],
     "agathe": slack_user_ids["agathe"],
     "lina": slack_user_ids["lina"],
     "grant": slack_user_ids["grant"],
@@ -94,7 +92,6 @@ slack_users = {
     "science": [
         slack_user_ids["sylvia"],
         slack_user_ids["mats"],
-        slack_user_ids["niladri"],
         slack_user_ids["agathe"],
     ],
     "team": [
@@ -105,7 +102,6 @@ slack_users = {
             "anna",
             "sylvia",
             "mats",
-            "niladri",
             "agathe",
             "lina",
             "daniel",

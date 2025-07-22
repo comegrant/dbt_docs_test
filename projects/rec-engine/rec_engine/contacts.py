@@ -18,25 +18,9 @@ class Contacts:
         return full_markdown
 
     @staticmethod
-    def jose() -> Contacts:
-        return Contacts(
-            name="José Cruz",
-            slack_handel="@José Cruz",
-            email="jose.cruz@syone.com",
-        )
-
-    @staticmethod
     def matsmoll() -> Contacts:
         return Contacts(
             name="Mats Eikeland Mollestad",
             slack_handel="@Mats Eikeland Mollestad",
             email="mats.mollestad@cheffelo.com",
-        )
-
-    @staticmethod
-    def niladri() -> Contacts:
-        return Contacts(
-            name="Niladri Banerjee",
-            slack_handel="@Dr. N",
-            email="niladri.banerjee@cheffelo.com",
         )

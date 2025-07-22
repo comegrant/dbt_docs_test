@@ -18,7 +18,6 @@ orders = HistoricalRecipeOrders()
     name="user_recipe_likability",
     description="The score of a recipe per user.",
     contacts=[
-        Owner.niladri().name,
         Owner.matsmoll().name,
     ],
     input_features=[

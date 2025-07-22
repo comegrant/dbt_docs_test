@@ -11,7 +11,6 @@ recipes_taxonomies = RecipeTaxonomies()
     name="recipe_cluster",
     description="The cluster a recipe contains.",
     contacts=[
-        Owner.niladri().name,
         Owner.matsmoll().name,
     ],
     input_features=[recipes_taxonomies.recipe_taxonomies],

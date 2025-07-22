@@ -27,7 +27,7 @@ send_slack_notification(
         f"it could be bad, or good, we'll find out soon. "
         f"The important number is {important_number} "
     ),
-    relevant_people="niladri ,stephen, engineering",
+    relevant_people="stephen, engineering",
     is_error=True,
     urls=job_url
 )
@@ -102,7 +102,6 @@ Available short names:
 - `anna`
 - `sylvia`
 - `mats`
-- `niladri`
 - `agathe`
 - `lina`
 - `daniel`
@@ -123,7 +122,7 @@ If this is set to `true` then extra information is added to the notification whi
 
 ### `urls`
 Receives the url to display, either directly from `get_databricks_job_url`.
-Alternatively, as part of Workflows with multiple upstream tasks, this parameter receives list of upstream notebok urls that failed.
+Alternatively, as part of Workflows with multiple upstream tasks, this parameter receives list of upstream notebook urls that failed.
 
 `dbt_tasks` are not yet supported.
 
@@ -155,7 +154,7 @@ send_slack_notification(
         f"The important number is {important_number} "
         f"and the URL to check is <{job_url}|here>."
     ),
-    relevant_people="niladri ,stephen, engineering",
+    relevant_people="stephen, engineering",
     is_error=True,
 )
 ```
@@ -211,7 +210,7 @@ tasks:
 
 ### Workflow notifications for notebook tasks
 
-Initial support for slack notifications for worfklows with notebook tasks is also available.
+Initial support for slack notifications for workflows with notebook tasks is also available.
 To fetch the URL of a task running a notebook in a workflow, the default `get_databricks_job_url()` will work.
 
 If instead one wants to use it embedded in a standalone python script or Databricks notebook then the parameter `embedded` is needed like `get_databricks_job_url("embedded")`
@@ -272,7 +271,7 @@ resources:
               body_message: "Job to do XYZ failed"
               environment: ${bundle.target}
               urls: "{{tasks.monitoring_task.values.failed_urls}}"
-              relevant_people: niladri
+              relevant_people: stephen
               is_error: true
 
 ```
@@ -370,7 +369,7 @@ dbutils.jobs.taskValues.set(key="failed_urls", value=failed_urls_str)
 
 ## Best practices
 
-When sending notifications, please rememebr:
+When sending notifications, please remember:
 
 - Be concise
 - Only provide relevant information

@@ -31,7 +31,6 @@ resources:
         on_failure:
           - sylvia.liu@cheffelo.com
           - agathe.raaum@cheffelo.com
-          - niladri.banerjee@cheffelo.com
 
       tasks:
         - task_key: ft-ml-recipes
