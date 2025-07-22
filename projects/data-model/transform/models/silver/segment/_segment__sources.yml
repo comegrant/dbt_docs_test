@@ -7,7 +7,6 @@ sources:
     description: "Tables from the segment events made by the frontend for RetNemt"
     tables:
       - name: subscription_updated
-      - name: preselector_feedback_submitted
       - name: update_subscription_step_viewed
       - name: update_subscription_step_completed
 
@@ -17,7 +16,6 @@ sources:
     description: "Tables from the segment events made by the frontend for Adams"
     tables:
       - name: subscription_updated
-      - name: preselector_feedback_submitted
       - name: update_subscription_step_viewed
       - name: update_subscription_step_completed
 
@@ -27,7 +25,6 @@ sources:
     description: "Tables from the segment events made by the frontend for Linas"
     tables:
       - name: subscription_updated
-      - name: preselector_feedback_submitted
       - name: update_subscription_step_viewed
       - name: update_subscription_step_completed
 
@@ -37,6 +34,5 @@ sources:
     description: "Tables from the segment events made by the frontend for godtlevert"
     tables:
       - name: subscription_updated
-      - name: preselector_feedback_submitted
       - name: update_subscription_step_viewed
       - name: update_subscription_step_completed
