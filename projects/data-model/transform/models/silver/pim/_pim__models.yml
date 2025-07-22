@@ -3,6 +3,43 @@
 version: 2
 
 models:
+  - name: pim__ingredient_status_codes
+    description: "Contains the different statuses an ingredient can have."
+
+    columns:
+      - name: ingredient_status_code_id
+        data_type: int
+        description: "{{ doc('column__ingredient_status_code_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ingredient_status_name
+        data_type: string
+        description: "{{ doc('column__ingredient_status_name') }}"
+        data_tests:
+          - not_null
+  
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
   - name: pim__weekly_purchase_order_lines
     description: "Contains information on order lines for weekly purchase orders."
 

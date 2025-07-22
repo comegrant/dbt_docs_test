@@ -21,6 +21,7 @@ tables = [
     "ingredient_category_preference",
     "ingredient_nutrient_facts",
     "ingredient_price",
+    "ingredients_status_codes",
     "ingredients_translations",
     "menus",
     "menu_recipes",

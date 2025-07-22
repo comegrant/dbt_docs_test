@@ -29,10 +29,10 @@ ingredients as (
     select * from {{ ref('pim__ingredient_suppliers') }}
 
 )
-/* NOTE: This is wrong, ingredient statuses are found in ingredient_status_codes.*/
+
 , status_codes as (
 
-    select * from {{ ref('pim__status_code_translations') }}
+    select * from {{ ref('pim__ingredient_status_codes') }}
 
 )
 
@@ -70,7 +70,7 @@ ingredients as (
         , ingredients.ingredient_external_reference
         , ingredient_suppliers.ingredient_supplier_name
         , ingredient_manufacturer_suppliers.ingredient_supplier_name as ingredient_manufacturer_name
-        , status_codes.status_code_name as ingredient_status_name
+        , status_codes.ingredient_status_name
 
         -- numerics
         , ingredients.ingredient_size
@@ -117,8 +117,7 @@ ingredients as (
         on ingredients.ingredient_manufacturer_supplier_id = ingredient_manufacturer_suppliers.ingredient_supplier_id
 
     left join status_codes
-        on ingredients.ingredient_status_code_id = status_codes.status_code_id
-        and ingredient_translations.language_id = status_codes.language_id
+        on ingredients.ingredient_status_code_id = status_codes.ingredient_status_code_id
 
 )
 

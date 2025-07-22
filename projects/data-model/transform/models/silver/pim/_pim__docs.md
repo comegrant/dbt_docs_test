@@ -646,6 +646,20 @@ The description of the status code.
 
 {% enddocs %}
 
+# Ingredient Status Codes
+
+{% docs column__ingredient_status_code_id %}
+
+The unique identifier for the ingredient status in the PIM database.
+
+{% enddocs %}
+
+{% docs column__ingredient_status_name %}
+
+The name of the status of an ingredient
+
+{% enddocs %}
+
 # Recipe Favorites
 {% docs column__recipe_favorite_id %}
 
