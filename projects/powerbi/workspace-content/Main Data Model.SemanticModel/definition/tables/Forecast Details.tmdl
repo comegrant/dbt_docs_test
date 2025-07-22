@@ -24,7 +24,7 @@ table 'Forecast Details'
         isHidden
         isAvailableInMdx: false
         summarizeBy: none
-        sourceColumn: fk_dim_forecast_runs
+        sourceColumn: pk_dim_forecast_runs
 
     partition 'Forecast Runs' = m
         mode: directQuery
