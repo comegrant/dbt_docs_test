@@ -410,3 +410,27 @@ relationship fact_cases_to_dim_transportation
 	fromColumn: 'Case Measures'.fk_dim_transportation
 	toColumn: 'Transportation'.pk_dim_transportation
 
+relationship fact_forecast_variations_to_dim_companies
+	fromColumn: 'Forecast Measures'.fk_dim_companies
+	toColumn: 'Brands'.pk_dim_companies
+
+relationship fact_forecast_variations_to_dim_dates_menu_week
+	fromColumn: 'Forecast Measures'.fk_dim_dates_menu_week
+	toColumn: 'Dates'.pk_dim_dates
+
+relationship fact_forecast_variations_to_dim_recipes
+	fromColumn: 'Forecast Measures'.fk_dim_recipes
+	toColumn: 'Recipes'.pk_dim_recipes
+
+relationship fact_forecast_variations_to_dim_forecast_runs
+	fromColumn: 'Forecast Measures'.fk_dim_forecast_runs
+	toColumn: 'Forecast Details'.pk_dim_forecast_runs
+
+relationship fact_forecast_variations_to_dim_dates_forecast_generated_at
+	isActive: false
+	fromColumn: 'Forecast Measures'.fk_dim_dates_forecast_generated_at
+	toColumn: 'Dates'.pk_dim_dates
+
+relationship fact_forecast_variations_to_dim_products
+	fromColumn: 'Forecast Measures'.fk_dim_products
+	toColumn: 'Products'.pk_dim_products

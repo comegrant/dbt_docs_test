@@ -45,6 +45,10 @@ job_run_metadata_distinct_dimensions as (
 
         , job_run_metadata_distinct_dimensions.forecast_horizon_index
         , job_run_metadata_distinct_dimensions.forecast_horizon
+        , case 
+            when job_run_metadata_distinct_dimensions.forecast_horizon = 1 then '1'
+            else '11/15'
+            end as forecast_horizon_group
 
         , forecast_jobs.forecast_job_name
         , forecast_groups.forecast_group_name

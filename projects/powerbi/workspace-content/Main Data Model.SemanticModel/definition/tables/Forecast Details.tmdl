@@ -1,0 +1,38 @@
+/// Details on how far into the future a given menu week is in the forecast horizon when the forecast is created.
+table 'Forecast Details'
+    lineageTag: Forecast-Details-Table
+
+    /// The forecast horizon index is used to identify the week in the forecast horizon. 
+    /// E.g. Forecast Horizon Index 1 corresponds to the menu week of the upcoming cutoff.
+    /// Generally speaking, forecast horizon index n means the menu week is n cutoffs away.
+    column 'Forecast Horizon Index'
+        dataType: int64
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: forecast_horizon_index
+
+    /// Whether the forecast was created by a 1-week forecast or a 11/15-week forecast.
+    column 'Forecast Horizon'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: forecast_horizon_group
+
+    /// Primary key of the dim_forecast_runs table
+    column pk_dim_forecast_runs
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_forecast_runs
+
+    partition 'Forecast Runs' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_forecast_runs_Table = gold_Schema{[Name="dim_forecast_runs",Kind="Table"]}[Data]
+                in
+                    dim_forecast_runs_Table

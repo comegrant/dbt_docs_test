@@ -110,3 +110,9 @@ Foreign key connecting the forecast generation date to dim_dates.
 Primary key of the dim_forecast_runs table.
 
 {% enddocs %}
+
+{% docs column__forecast_horizon_group %}
+
+The number of weeks in the horizon of the Total Order Forecast when a forecast is created, grouped as either either '1' or '11/15'.
+
+{% enddocs %}

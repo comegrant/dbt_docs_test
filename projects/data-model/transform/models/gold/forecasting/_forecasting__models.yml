@@ -600,6 +600,12 @@
         description: "{{ doc('column__forecast_horizon') }}"
         data_tests:
           - not_null
+      
+      - name: forecast_horizon_group
+        data_type: string
+        description: "{{ doc('column__forecast_horizon_group') }}"
+        data_tests:
+          - not_null
 
       - name: forecast_job_name
         data_type: string
