@@ -1,0 +1,97 @@
+name: 'Deploy Databricks DABs...'
+
+on:
+  workflow_call:
+    inputs:
+      target-env:
+        required: true
+        type: string
+        description: "Target environment in Github Actions"
+      project:
+        required: true
+        type: string
+        description: "The project to deploy"
+      tag:
+        type: string
+        description: "The docker image tag to use. The default will be {env}-latest"
+        default: main-latest
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+    inputs:
+      target-env:
+        required: true
+        type: string
+        description: "Target environment in Github Actions"
+      project:
+        required: true
+        type: string
+        description: "The project to deploy"
+      tag:
+        type: string
+        description: "The docker image tag to use. The default will be {env}-latest"
+        default: main-latest
+
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+
+jobs:
+  deploy-streamlit:
+    name: 'Deploy Streamlit Apps in ${{inputs.project}}'
+    runs-on: ubuntu-22.04
+    environment: ${{inputs.target-env}}
+    defaults:
+      run:
+        working-directory: projects/${{inputs.project}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get runner public IP
+        id: ip
+        run: echo "ip=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
+
+      - name: Add runner IP to Key Vault firewall
+        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          version: 1.8.2
+
+      - run: |
+          python -m venv .venv --upgrade-deps
+          source .venv/bin/activate
+          poetry install --no-interaction --all-extras
+          echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        with:
+          creds: ${{ secrets.AZURE_DEPLOYER_CREDS }}
+
+      - run: chef deploy-streamlit -e ${{ vars.ENVIRONMENT_VARIABLE }} -t ${{ inputs.tag }}
+
+      - name: Configure Azure credentials
+        uses: azure/login@v1.4.7
+        if: always()
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Remove runner IP from Key Vault firewall
+        if: always()
+        run: az keyvault network-rule remove --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }}

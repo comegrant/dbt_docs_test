@@ -11,8 +11,12 @@ from pythonjsonlogger import jsonlogger
 
 
 class DataDogStatsdConfig(BaseSettings):
-    datadog_host: str
+    datadog_host: str = "127.0.0.1"
     datadog_port: Annotated[int, Field] = 8125
+
+
+class DataDogSecrets(BaseSettings):
+    datadog_api_key: str
 
 
 class DataDogConfig(BaseSettings):
@@ -63,9 +67,8 @@ class DataDogStreamHandler(StreamHandler):
                 ]
                 api_instance.submit_log(body)  # type: ignore
         except ApiException as api_exception:
-            logging.exception(
-                "Exception when calling LogsApi->submit_log: %s\n", api_exception
-            )
+            logging.exception("Exception when calling LogsApi->submit_log: %s\n", api_exception)
+
 
 def setup_datadog(logger: Logger, config: DataDogConfig, formatter: Optional[Formatter] = None) -> None:
     """
@@ -93,12 +96,10 @@ def setup_datadog(logger: Logger, config: DataDogConfig, formatter: Optional[For
         config.configuration(),
         service_name=config.datadog_service_name,
         source=config.datadog_source,
-        tags=config.datadog_tags
+        tags=config.datadog_tags,
     )
     handler.setFormatter(
-        formatter or jsonlogger.JsonFormatter(
-            "%(timestamp)s %(level)s %(name)s %(filename)s %(lineno)d %(message)s"
-        )
+        formatter or jsonlogger.JsonFormatter("%(timestamp)s %(level)s %(name)s %(filename)s %(lineno)d %(message)s")
     )
     logger.addHandler(handler)
 
@@ -110,7 +111,6 @@ class StreamlitLogger(StreamHandler):
         import streamlit as st
 
         msg = self.format(record)
-
 
         if record.levelno <= logging.WARNING:
             st.warning(msg)
@@ -135,8 +135,6 @@ def setup_streamlit(logger: Logger, formatter: Optional[Formatter] = None) -> No
     """
     handler = StreamlitLogger()
     handler.setFormatter(
-        formatter or jsonlogger.JsonFormatter(
-            "%(timestamp)s %(level)s %(name)s %(filename)s %(lineno)d %(message)s"
-        )
+        formatter or jsonlogger.JsonFormatter("%(timestamp)s %(level)s %(name)s %(filename)s %(lineno)d %(message)s")
     )
     logger.addHandler(handler)

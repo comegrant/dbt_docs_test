@@ -1,10 +1,8 @@
-import asyncio
 import logging
 
 import polars as pl
 import streamlit as st
-from cheffelo_logging.logging import setup_streamlit
-from combinations_app import display_recipes
+from cheffelo_logging.logging import setup_streamlit as streamlit_logger
 from data_contracts.preselector.store import SuccessfulPreselectorOutput
 from data_contracts.recipe import AllergyPreferences
 from preselector.data.models.customer import (
@@ -16,6 +14,9 @@ from preselector.main import run_preselector_for_request
 from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
+from project_owners.owner import owner_for_email
+from streamlit_apps.combinations_app import display_recipes
+from streamlit_helper import authenticated_user, setup_streamlit
 
 
 async def failure_responses_form() -> list[GenerateMealkitRequest]:
@@ -220,7 +221,18 @@ async def select(
     )
 
 
+@setup_streamlit()
 async def debug_app() -> None:
+    user = authenticated_user()
+    owner = owner_for_email(user.mail.replace("godtlevert.no", "cheffelo.com"))
+
+    if not owner:
+        st.error(
+            f"Unable to find an Data personal for user with mail: '{user.mail}'. "
+            "If you should have access talk to the data team."
+        )
+        st.stop()
+
     store = preselector_store()
 
     async def successful_responses() -> tuple[GenerateMealkitRequest, PreselectorYearWeekResponse] | None:
@@ -300,6 +312,6 @@ if __name__ == "__main__":
 
     if preselector_logger.level != logging.DEBUG:
         preselector_logger.setLevel(logging.DEBUG)
-        setup_streamlit(preselector_logger)
+        streamlit_logger(preselector_logger)
 
-    asyncio.run(debug_app())
+    debug_app()  # type: ignore

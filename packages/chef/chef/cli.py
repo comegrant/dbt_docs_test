@@ -1,3 +1,5 @@
+import asyncio
+import functools
 import json
 import logging
 import os
@@ -31,6 +33,14 @@ from chef.package_workflow import write_package_workflow
 from chef.project_workflow import deploy_project_workflow, test_project_workflow
 
 logger = logging.getLogger(__name__)
+
+
+def coro(func):  # noqa
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):  # noqa
+        return asyncio.run(func(*args, **kwargs))
+
+    return wrapper
 
 
 @click.group()
@@ -342,7 +352,7 @@ def build(project: str | None, profile_or_service: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -394,7 +404,7 @@ def run(subcommand: tuple) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -459,7 +469,7 @@ def push_image(
         if isinstance(name, Exception):
             click.echo(name)
             click.echo(
-                "An error occured while trying to get the project name. "
+                "An error occurred while trying to get the project name. "
                 "Make sure you run this command from a project directory.",
                 err=True,
             )
@@ -494,7 +504,7 @@ def up(profile_or_service: str | None, project: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -543,7 +553,7 @@ def down(project: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -563,7 +573,7 @@ def shell(project: str | None, service: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -692,7 +702,7 @@ def create(type_name: str) -> None:
             write_package_workflow(pr_file, root_folder, package_name, extra_context["python_version"])
 
     except Exception as e:
-        click.echo(f"\nAn error occured while creating the {type_name}.\n{e}")
+        click.echo(f"\nAn error occurred while creating the {type_name}.\n{e}")
         return
 
     subprocess.run(["poetry", "lock", f"--directory={output_dir}"], check=False)
@@ -705,7 +715,7 @@ def lock(project: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -731,7 +741,7 @@ def test(project: str | None, test_service: str | None) -> None:
     if isinstance(name, Exception):
         click.echo(name)
         click.echo(
-            "An error occured while trying to get the project name. "
+            "An error occurred while trying to get the project name. "
             "Make sure you run this command from a project directory.",
             err=True,
         )
@@ -810,6 +820,87 @@ def catalog() -> None:
     command = compose_command(catalog_path, compose_file)
     command.extend(["run", "--service-ports", "data-catalog-app"])
     subprocess.run(command, check=False)
+
+
+@cli.command()
+@click.option("--app", "-a", default=None, help="The app to deploy")
+@click.option("--env", "-e", default="test", help="The environment to deploy to")
+@click.option("--tag", "-t", default="main-latest", help="The docker tag to use")
+@click.option("--manifest-module", default="apps", help="The environment to deploy to")
+@coro
+async def deploy_streamlit(app: str | None, env: str, manifest_module: str, tag: str) -> None:
+    """
+    Deploys a streamlit app to Azure.
+
+    This assumes that you run this command in a project.
+
+    ```
+    chef deploy-streamlit -a my_app -t dev-latest -e test
+    ```
+
+    This will look for the `apps.py` file in your project find the `my_app` definition and deploy
+    that app with the `dev-latest` docker image in `test` mode.
+
+
+    If you only have one define app will the following also work.
+
+    ```
+    chef deploy-streamlit
+    ```
+
+    This will default to the `main-latest` tag and the `test` environment.
+    """
+    echo_action("Deploying Streamlit app")
+
+    env = {
+        "production": "prod",
+        "development": "dev"
+    }.get(env.lower(), env.lower())
+    assert env.lower() in ["dev", "test", "prod"]
+
+    from importlib import import_module
+
+    from chef.deploy import Apps, deploy
+
+    project_name = folder_name()
+
+    if isinstance(project_name, Exception):
+        raise project_name
+
+    manifest = import_module(manifest_module)
+
+    def find_config() -> Apps | None:
+        for attr in dir(manifest):
+            val = getattr(manifest, attr)
+
+            if isinstance(val, Apps):
+                return val
+        return None
+
+    apps = find_config()
+
+    if apps is None:
+        raise ValueError(f"Unable to find any apps in {manifest_module}")
+
+    async def deploy_app(app: str) -> None:
+        app_name = f"{project_name}-{app}-{env}"
+        click.echo(f"Found an application to deploy '{app}' and will name it {app_name}")
+
+        if apps.docker_image is None:
+            apps.docker_image = f"bhregistry.azurecr.io/{project_name}:{tag}"
+
+        config = apps.config_for(project_name, name=app, env=env)
+
+        click.echo(f"Creating the application '{config.app_name}'. This may take some time")
+        url = await deploy(config)
+        click.echo(f"Successfully created an application for '{app}' which will be available on '{url}'")
+
+    if app is not None:
+        await deploy_app(app)
+    else:
+        click.echo(f"Deploying all apps '{apps.applications.keys()}'")
+        for app_name in apps.applications:
+            await deploy_app(app_name)
 
 
 @cli.command()
@@ -906,7 +997,7 @@ def check_poetry_installation() -> bool:
 
     click.echo(
         click.style(
-            f"✅ Poetry {version_str} is installed " f"(>={'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))})",
+            f"✅ Poetry {version_str} is installed (>={'.'.join(map(str, MINIMUM_REQUIRED_POETRY_VERSION))})",
             fg="green",
         )
     )

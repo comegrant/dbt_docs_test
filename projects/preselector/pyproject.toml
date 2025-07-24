@@ -45,6 +45,7 @@ databricks-env = {path = "../../packages/databricks-env", develop = true}
 nest_asyncio = "1.6.0"
 
 [tool.poetry.group.app.dependencies]
+streamlit-helper = {path = "../../packages/streamlit-helper", develop = true}
 streamlit = "^1.37.0"
 pydantic-form = {path = "../../packages/pydantic-form", develop = true}
 

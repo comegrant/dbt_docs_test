@@ -27,3 +27,24 @@ services:
       - MLFLOW_REGISTRY_URI=http://mlflow:8000
     depends_on:
       - mlflow
+
+    # This service mainly serves as a build step. Therefore, making sure the Dockerfile is build
+  # It will also be used when starting a shell
+  app:
+    image: {{cookiecutter.project_name}}
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: projects/{{ cookiecutter.project_name }}/docker/Dockerfile
+    command: "python -m streamlit run streamlit_apps/main.py --server.folderWatchList /opt/projects/{{ cookiecutter.project_name }}/{{ cookiecutter.module_name }}"
+    ports:
+      - 8501:8501
+    volumes:
+      - ./:/opt/projects/{{cookiecutter.project_name}}
+      - ./../../packages:/opt/packages
+    env_file:
+      - ../../.env
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:8000
+      - MLFLOW_REGISTRY_URI=http://mlflow:8000
+      - PYTHONDONTWRITEBYTECODE=1

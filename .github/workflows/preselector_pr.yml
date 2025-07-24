@@ -26,6 +26,15 @@ jobs:
       tag: dev-latest
     secrets: inherit
 
+  deploy-streamlit-apps:
+    uses: ./.github/workflows/template_deploy_streamlit.yml
+    needs: build-preselector-image
+    with:
+      target-env: Development
+      project: preselector
+      tag: dev-latest
+    secrets: inherit
+
   build-preselector-databricks-image:
     uses: ./.github/workflows/cd_docker_image_template.yml
     with:

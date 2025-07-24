@@ -63,6 +63,7 @@ lint.ignore = [
     "PLR0912", # Too many branches
     "PLR0913",
     "PLR0915", # Too many statements
+    "PLC0415", # Top level imports - good practice but not always practical
     "PT023", # Use `@pytest.mark.asyncio` over `@pytest.mark.asyncio()`
     "PT001", # Use `@pytest.fixture` over `@pytest.fixture()`
     "RUF012"

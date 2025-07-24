@@ -12,6 +12,7 @@ pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true
 key-vault = {path = "../../packages/key-vault", develop = true}
 catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 model-registry = {path = "../../packages/model-registry", develop = true}
+streamlit-helper = {path = "../../packages/streamlit-helper", develop = true, extras=["auth"]}
 
 [tool.poetry.group.databricks.dependencies]
 nest_asyncio = "1.6.0"

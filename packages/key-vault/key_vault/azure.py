@@ -66,7 +66,7 @@ class AzureKeyVault(KeyVaultInterface):
                 values[env_key] = secret_value
             else:
                 if env_key not in optional_keys:
-                    raise ValueError(f"Did not find secret for {env_key}, tried to load {azure_key}")
+                    raise ValueError(f"Did not find secret for {env_key}, or azure secret {azure_key}")
 
                 logger.info(f"Found no value for {env_key}. Will use default value.")
 

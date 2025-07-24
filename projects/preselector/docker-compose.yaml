@@ -38,7 +38,9 @@ services:
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
-    command: "python -m streamlit run combinations_app.py --server.fileWatcherType poll"
+    command: "python -m streamlit run streamlit_apps/combinations_app.py --server.folderWatchList /opt/projects/preselector/preselector"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
     ports:
       - 8506:8501
     depends_on:
@@ -88,7 +90,9 @@ services:
     volumes:
       - ./:/opt/projects/preselector
       - ./../../packages:/opt/packages
-    command: "python -m streamlit run debug_app.py --server.fileWatcherType poll"
+    command: "python -m streamlit run streamlit_apps/debug_app.py --server.folderWatchList /opt/projects/preselector/preselector"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
     ports:
       - 8507:8501
     depends_on:

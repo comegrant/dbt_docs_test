@@ -10,6 +10,11 @@ def datalake_vault_keys() -> dict[str, str]:
         "datalake_service_account_name": "azure-storageAccount-experimental-name",
         "datalake_storage_account_key": "azure-storageAccount-experimental-key",
         "openai_api_key": "openai-preselector-key",
+        "datadog_api_key": "datadog-apikey",
+        "auth_client_id": "azure-sp-streamlit-clientId",
+        "auth_secret": "azure-sp-streamlit-clientSecret",
+        "docker_username": "docker-registry-username",
+        "docker_password": "docker-registry-password",
     }
 
 
@@ -21,9 +26,13 @@ def default_env_keys(env: str) -> dict[str, str]:
     }
 
 
+def default_keys(env: str) -> dict[str, str]:
+    return {**datalake_vault_keys(), **default_env_keys(env)}
+
+
 def key_vault(env: str | None = None, global_key_mappings: dict[str, str] | None = None) -> KeyVaultInterface:
     if global_key_mappings is None:
-        global_key_mappings = {**datalake_vault_keys(), **default_env_keys(env or "dev")}
+        global_key_mappings = default_keys(env or "dev")
 
     with suppress(ImportError):
         from pyspark.errors.exceptions.base import PySparkRuntimeError  # type: ignore
