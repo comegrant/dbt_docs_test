@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "powerbi_chef"
+version = "0.1.0"
+description = "A package to assist with the local development of PowerBI"
+authors = ["Stephen Allwright <stephen.allwright@cheffelo.com>"]
+packages = [{include = "powerbi_chef"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pyright = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+powerbi-chef = 'powerbi_chef.cli:cli'

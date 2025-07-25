@@ -1,0 +1,15 @@
+name: powerbi-chef - Package PR
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/powerbi-chef_pr.yaml'
+      - 'packages/powerbi-chef/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  test-powerbi-chef:
+    uses: ./.github/workflows/template_test_python.yml
+    with:
+      python-version: "3.10"
+      working-directory: packages/powerbi-chef
+    secrets: inherit

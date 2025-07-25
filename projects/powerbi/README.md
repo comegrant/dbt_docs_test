@@ -55,6 +55,21 @@ This means that changes can be done both in Power BI Desktop by saving to `.pbip
             - `Power BI Project (.pbip) save option`
             - `Store semantic model using TMDL option`
             - `Store reports using enhanced metadata format (PBIR)`
+3. (Optional) Install the PowerBI Chef helper CLI tool:
+    ```bash
+    cd packages/powerbi-chef
+    poetry shell
+    poetry install
+    ```
+    This tool provides utilities to standardize and automate common PowerBI development tasks. You can use it to:
+    - Fix opening pages across all reports to ensure consistency
+    - (More features coming soon)
+    
+    To use the tool, navigate to the powerbi project directory and run:
+    ```bash
+    cd projects/powerbi
+    powerbi-chef fix-opening-page
+    ```
 
 ## Connect a Power BI workspace to a feature branch (One time only)
 

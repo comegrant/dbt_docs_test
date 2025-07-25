@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "powerbi"
+version = "0.1.0"
+description = "PowerBI reports and semantic layer"
+authors = ["Stephen Allwright <stephen.allwright@cheffelo.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+powerbi-chef = {path = "../../packages/powerbi-chef", develop = true}
+dbt-chef = {path = "../../packages/dbt-chef", develop = true}
+chef = {path = "../../packages/chef", develop = true}
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
