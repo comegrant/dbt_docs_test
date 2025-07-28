@@ -19,6 +19,7 @@ variable "data_lake_containers" {
     "bronze",
     "silver",
     "gold",
+    "diamond",
     "mlgold",
     "mlfeatures",
     "mloutputs",

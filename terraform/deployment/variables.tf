@@ -25,6 +25,7 @@ variable "medallion_layers" {
     "bronze",
     "silver",
     "gold",
+    "diamond",
     "mltesting",
     "mlfeaturetesting",
     "mlgold",

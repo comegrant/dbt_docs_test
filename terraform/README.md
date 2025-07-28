@@ -10,11 +10,14 @@ export TF_VAR_client_secret="your-client-secret"
 ## Go to directory
 cd deployment
 
+## Authenticate with Azure
+az login --tenant <GODTLEVERT_TENANT_ID> --use-device-code
+
 ## Terraforming
 terraform init -backend-config=backend.conf
 
-terraform workspace select dev
-terraform plan -out=dev
+terraform workspace select dev  
+terraform plan -out=dev  
 terraform apply "dev"
 
 # Build and Test

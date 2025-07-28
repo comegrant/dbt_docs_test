@@ -79,6 +79,7 @@ variable "schemas" {
     "bronze",
     "silver",
     "gold",
+    "diamond",
     "mlgold",
     "mlfeatures",
     "mloutputs",
