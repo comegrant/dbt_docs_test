@@ -138,6 +138,7 @@ vars:
       pickup_location_postal_code_id: 1
       postal_code_length: 4
  customer_journey_sub_segment_ids:
+    partial_signup: 0
     churned: 1
     pending_onboarding: 2
     regret: 3

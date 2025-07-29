@@ -42,6 +42,7 @@ billing_agreements as (
 
     select 
         union_with_historical_statuses.billing_agreement_id
+        , union_with_historical_statuses.billing_agreement_status_id
         , status_names.billing_agreement_status_name
         , union_with_historical_statuses.valid_from
         , {{get_scd_valid_to('union_with_historical_statuses.valid_from', 'billing_agreement_id')}} as valid_to

@@ -40,6 +40,7 @@ agreements_with_history as (
 
     select 
         agreements_with_history.billing_agreement_id
+        , agreements_with_history.billing_agreement_status_id
         , agreements_with_history.billing_agreement_status_name
         , agreements_with_history.valid_from
         , agreements_with_history.valid_to
@@ -51,7 +52,7 @@ agreements_with_history as (
         on agreements_with_history.billing_agreement_id = distinct_agreements.billing_agreement_id
     left join first_orders
         on agreements_with_history.billing_agreement_id = first_orders.billing_agreement_id
-    where billing_agreement_status_id != 40 -- need to add deleted customers to model at a later stage
+    where agreements_with_history.billing_agreement_status_id != 40 -- need to add deleted customers to model at a later stage
 
 )
 
@@ -75,7 +76,7 @@ agreements_with_history as (
     from orders
     left join distinct_agreements
         on orders.billing_agreement_id = distinct_agreements.billing_agreement_id
- where orders.menu_week_monday_date > DATEADD(week, -9, '{{customer_journey_segments_start_date}}') -- to have orders to base the initial segments on
+    where orders.menu_week_monday_date > DATEADD(week, -9, '{{customer_journey_segments_start_date}}') -- to have orders to base the initial segments on
 
 )
 
@@ -83,16 +84,21 @@ agreements_with_history as (
 
     select 
         agreements.billing_agreement_id
+        , agreements.billing_agreement_status_id
         , delivery_week_order.menu_week_monday_date
         , delivery_week_order.company_id
         , delivery_week_order.menu_year
         , delivery_week_order.menu_week
         , delivery_week_order.menu_week_cutoff_time
         , agreements.signup_date
-        , floor (datediff
-                    (delivery_week_order.menu_week_monday_date, agreements.signup_date) 
-                / 7) 
-                as weeks_since_signup
+        -- if cutoff for the next menu_week has not happened yet, menu_week_monday_date in delivery_week_order will be null when 
+        -- joined to agreements who sign up after Monday 00:00 of the current week.
+        , case 
+            when delivery_week_order.menu_week_monday_date is null then 0
+            else 
+            floor (datediff
+                (delivery_week_order.menu_week_monday_date, agreements.signup_date) 
+            / 7) end as weeks_since_signup
         , floor (datediff
                     (delivery_week_order.menu_week_monday_date, agreements.first_menu_week_monday_date) 
                 / 7) 
@@ -100,10 +106,13 @@ agreements_with_history as (
     from agreements
     left join delivery_week_order
         on agreements.company_id = delivery_week_order.company_id
-        and agreements.valid_from <= delivery_week_order.menu_week_monday_date
+        and agreements.valid_from <= delivery_week_order.menu_week_monday_date 
         and agreements.valid_to > delivery_week_order.menu_week_monday_date
-    where menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
-
+    where (
+        delivery_week_order.menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
+        -- include agreements that sign up after Monday 00:00 of the current week.
+        or agreements.signup_date >= {{ get_monday_date_of_date('current_date()') }}
+    )
 )
 
 , orders_with_rownumber as (
@@ -221,7 +230,9 @@ agreements_with_history as (
         , agreements_and_weeks_joined.menu_week
         , agreements_and_weeks_joined.menu_year*100 + agreements_and_weeks_joined.menu_week as menu_yearweek
         , agreements_and_weeks_joined.menu_week_cutoff_time
-        , case 
+        , case
+        when agreements_and_weeks_joined.billing_agreement_status_id == 5
+            then {{ var("customer_journey_sub_segment_ids")["partial_signup"] }}
         when agreements_and_weeks_joined.weeks_since_signup < 3 
             and agreements_and_weeks_joined.weeks_since_first_order is null 
             then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
@@ -257,7 +268,7 @@ agreements_with_history as (
         when (agreements_and_weeks_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null) 
             then {{ var("customer_journey_sub_segment_ids")["churned"] }}
         else 
-            0 --unknown
+            -1 --unknown
         end as sub_segment_id
     from agreements_and_weeks_joined
     left join orders_past_8_weeks 
@@ -270,7 +281,6 @@ agreements_with_history as (
         on agreements_and_weeks_joined.billing_agreement_id = first_orders.billing_agreement_id
     left join agreements_first_freeze_date
         on agreements_and_weeks_joined.billing_agreement_id = agreements_first_freeze_date.billing_agreement_id
-    where agreements_and_weeks_joined.signup_date < agreements_and_weeks_joined.menu_week_monday_date -- might need to be adjusted when introducing partial signup
 
 )
 

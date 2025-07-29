@@ -1,4 +1,5 @@
 main_segment_id;main_segment_name;main_segment_description;sub_segment_id;sub_segment_name;sub_segment_description
+1;Prospect;Before first order or churned.;0;Partial Signup;Has not yet fully signed up, but has an agreement_id.
 1;Prospect;Before first order or churned.;1;Churned;Has previously been a customer, but has not had any orders the past 8 weeks.
 1;Prospect;Before first order or churned.;2;Pending Onboarding;Has signed up, but has not had any orders yet.
 1;Prospect;Before first order or churned.;3;Regret;Freeze before first delivery, or has not taken a delivery 4 weeks after signup.
