@@ -268,3 +268,9 @@ Number of active users with portion size 5 who have the same negative taste pref
 Number of active users with portion size 6 who have the same negative taste preferences for a company
 
 {% enddocs %}
+
+{% docs column__ingredient_id_list %}
+
+Aggregated list of ingredient ids for a recipe id.
+
+{% enddocs %}

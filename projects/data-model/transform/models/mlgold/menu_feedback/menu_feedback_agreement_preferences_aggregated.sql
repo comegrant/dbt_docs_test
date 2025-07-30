@@ -24,7 +24,7 @@ agreements as (
 , products as (
 
     select * from {{ ref('dim_products') }}
-    where product_type_id = '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- Mealbox
+    where product_type_id = '{{ var("mealbox_product_type_id") }}'
 
 )
 
