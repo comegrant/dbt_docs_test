@@ -11,6 +11,8 @@ pydantic-settings = "^2.1.0"
 dbt-databricks = ">=1.0.0,<2.0.0"
 dbt-chef = {path = "../../packages/dbt-chef", develop = true}
 powerbi-chef = {path = "../../packages/powerbi-chef", develop = true}
+aiohttp = "^3.12.14"
+customerio = "^2.2"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

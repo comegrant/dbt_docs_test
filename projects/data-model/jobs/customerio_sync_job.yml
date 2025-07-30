@@ -1,0 +1,80 @@
+resources:
+  jobs:
+    customerio_sync_job:
+      name: customerio-sync-job
+
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_VIEW
+
+      timeout_seconds: 2700 # Timeout after 45 mins
+      edit_mode: EDITABLE
+
+      # TO-DO: 
+      # Add a schedule when ready to deploy. 
+      # Once a day is fine for now.
+      # Schedule will need to be more frequent (potentially every hour) when traits which can update throughout the day are moved into diamond.billing_agreement_traits.
+      # This job should not be available to trigger in DEV or TEST
+
+      tasks:
+        - task_key: customerio_sync_gl
+          notebook_task:
+            notebook_path: ../export/customerio/customerio_sync.py
+            base_parameters:
+              brand_shortname: 'GL'
+              company_id: '09ECD4F0-AE58-4539-8E8F-9275B1859A19'
+              workspace_env: ${bundle.target}
+
+        - task_key: customerio_sync_lmk
+          depends_on: [
+              {task_key: customerio_sync_gl}
+            ]
+          notebook_task:
+            notebook_path: ../export/customerio/customerio_sync.py
+            base_parameters:
+              brand_shortname: 'LMK'
+              company_id: '6A2D0B60-84D6-4830-9945-58D518D27AC2'
+              workspace_env: ${bundle.target}
+
+        - task_key: customerio_sync_amk
+          depends_on: [
+              {task_key: customerio_sync_lmk}
+            ]
+          notebook_task:
+            notebook_path: ../export/customerio/customerio_sync.py
+            base_parameters:
+              brand_shortname: 'AMK'
+              company_id: '8A613C15-35E4-471F-91CC-972F933331D7'
+              workspace_env: ${bundle.target}
+
+        - task_key: customerio_sync_rt
+          depends_on: [
+              {task_key: customerio_sync_amk}
+            ]
+          notebook_task:
+            notebook_path: ../export/customerio/customerio_sync.py
+            base_parameters:
+              brand_shortname: 'RT'
+              company_id: '5E65A955-7B1A-446C-B24F-CFE576BF52D7'
+              workspace_env: ${bundle.target}
+
+        - task_key: fail-notification
+          depends_on: [
+            {task_key: customerio_sync_gl},
+            {task_key: customerio_sync_lmk},
+            {task_key: customerio_sync_amk},
+            {task_key: customerio_sync_rt}
+          ]
+          run_if: AT_LEAST_ONE_FAILED
+          run_job_task:
+            job_id: ${var.slack_notification_job_id}
+            job_parameters:
+              environment: ${bundle.target}
+              header_message: ❌ Customerio sync job failed
+              body_message: Check the Databricks logs for more details
+              is_error: true
+              relevant_people: grant, anna, marie
