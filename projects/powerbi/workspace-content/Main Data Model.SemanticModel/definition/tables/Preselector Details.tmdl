@@ -303,6 +303,14 @@ table 'Preselector Details'
 		summarizeBy: none
 		sourceColumn: fk_dim_preference_combinations
 
+    /// Foreign key to the portions dimension table.
+    column fk_dim_portions
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_portions
+
     partition 'Preselector Measures' = m
         mode: directQuery
         source =

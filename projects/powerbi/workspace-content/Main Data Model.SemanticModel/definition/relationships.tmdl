@@ -240,6 +240,10 @@ relationship fact_preselector_to_dim_billing_agreements
 	fromColumn: 'Preselector Details'.fk_dim_billing_agreements
 	toColumn: 'Customer and Subscriber Details'.pk_dim_billing_agreements
 
+relationship fact_preselector_to_dim_portions
+	fromColumn: 'Preselector Details'.fk_dim_portions
+	toColumn: 'Portions'.pk_dim_portions
+
 relationship fact_orders_to_dim_preference_combinations
 	fromColumn: 'Order Measures'.fk_dim_preference_combinations
 	toColumn: 'Preference Combinations'.pk_dim_preference_combinations
