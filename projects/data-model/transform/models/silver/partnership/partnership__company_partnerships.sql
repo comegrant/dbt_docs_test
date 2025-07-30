@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('partnership', 'partnership__company_partnership') }}
+    select * from {{ source('partnership','partnership__company_partnership') }}
 
 )
 
@@ -10,14 +10,13 @@ source as (
 
     select
 
-        
         {# ids #}
         id as company_partnership_id
         , company_id
         , partnership_id
         
         {# booleans #}
-        , is_active
+        , is_active as is_active_partnership
         
         {# system #}
         , created_at as source_created_at

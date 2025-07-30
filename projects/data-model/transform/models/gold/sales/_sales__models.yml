@@ -1103,6 +1103,10 @@ models:
           - type: not_null
         data_tests:
           - not_null
+      
+      - name: partnership_name
+        data_type: string
+        description: "{{ doc('column__partnership_name') }}"
 
     versions:
       - v: 1

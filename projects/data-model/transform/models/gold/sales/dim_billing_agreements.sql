@@ -54,6 +54,12 @@ billing_agreements as (
 
 )
 
+, billing_agreements_partnerships as (
+
+    select * from {{ ref('int_billing_agreements_partnerships_rules_aggregated') }}
+
+)
+
 , agreements_to_include as (
     
     select distinct billing_agreement_id from billing_agreements
@@ -217,6 +223,7 @@ billing_agreements as (
             when onesub_beta_agreements.is_internal is true then "Internal Launch"
         else "Normal Customer"
         end as onesub_beta_flag
+        , billing_agreements_partnerships.partnership_name
     from scd2_tables_joined
     left join billing_agreements_scd1
         on scd2_tables_joined.billing_agreement_id = billing_agreements_scd1.billing_agreement_id
@@ -232,6 +239,8 @@ billing_agreements as (
     -- dim_billling_agreements that does not exist in cms__billing_agreements yet.
     inner join agreements_to_include
         on scd2_tables_joined.billing_agreement_id = agreements_to_include.billing_agreement_id
+    left join billing_agreements_partnerships
+        on scd2_tables_joined.billing_agreement_id = billing_agreements_partnerships.billing_agreement_id
 
 )
 

@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('partnership', 'partnership__company_partnership_rule') }}
+    select * from {{ source('partnership','partnership__company_partnership_rule') }}
 
 )
 
@@ -16,7 +16,7 @@ source as (
         , partnership_rule_id
         
         {# booleans #}
-        , is_active
+        , is_active as is_active_rule
         
         {# system #}
         , created_at as source_created_at

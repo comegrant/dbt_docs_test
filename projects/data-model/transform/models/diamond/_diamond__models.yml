@@ -1,0 +1,49 @@
+models:
+  - name: billing_agreement_traits
+    description: "Table containing most recent information about billing agreements which is relevant to sync to external systems such as Intercom (via Segment) used by Customer Service, Mixpanel (via Segment) used primarily by Growth Team, and CustomerIO used primarily by Customer Team (via direct integration)."
+    config:
+      alias: billing_agreement_traits
+      contract:
+        enforced: true
+
+    columns:
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: partnership_name
+        data_type: string
+        description: "{{ doc('column__partnership_name') }}"
+      
+      - name: partnership_rules
+        data_type: string
+        description: "{{ doc('column__partnership_rules') }}"
+      
+      - name: customer_journey_main_segment_name
+        data_type: string
+        description: "{{ doc('column__customer_journey_main_segment_name') }}"
+        # TO-DO: Uncomment when customer journey model fixed. If customers signup between Monday 00:00 and cutoff of any week, they are not assigned any customer journey segment.  
+        # data_tests:
+        #   - not_null:
+
+      - name: customer_journey_sub_segment_name
+        data_type: string
+        description: "{{ doc('column__customer_journey_sub_segment_name') }}"
+        # data_tests:
+        #   - not_null:
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from_billing_agreement_traits') }}"

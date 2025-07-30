@@ -2,7 +2,6 @@ models:
   - name: partnership__partnerships
     description: "Information on partnerships that exist between Cheffelo and partners. Cheffelo leverages partnerships to acquire new customers."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -44,7 +43,6 @@ models:
   - name: partnership__billing_agreement_partnerships
     description: "Table which maps billing agreements to the partnership the agreement was acquired through. Includes also when the customer was registered."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -86,7 +84,6 @@ models:
   - name: partnership__billing_agreement_partnership_loyalty_points
     description: "Record of partnership loyalty points earned by an agreement according to the rule of the partnership. E.g. an agreement earns 10,000 SAS Eurobonus points after ordering their fourth Cheffelo mealbox."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -151,7 +148,6 @@ models:
   - name: partnership__company_partnerships
     description: "Table mapping Cheffelo brands to partnerships."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -174,7 +170,7 @@ models:
         data_tests:
           - not_null
 
-      - name: is_active
+      - name: is_active_partnership
         data_type: boolean
         description: "{{ doc('column__is_active_company_partnership') }}"
         data_tests:
@@ -199,7 +195,6 @@ models:
   - name: partnership__partnership_rules
     description: "Rules that define how partnership points are awarded to partnership agreements. E.g. an agreement earns 10,000 Eurobonus points after taking their 4th mealbox order."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -263,7 +258,6 @@ models:
   - name: partnership__company_partnership_rules
     description: "A mapping between a Cheffelo brand and a partnership rule indicating which partnership rule is in effect for each brand-partnership."
     config:
-      enabled: false
       contract:
         enforced: true
     columns:
@@ -286,7 +280,7 @@ models:
         data_tests:
           - not_null
       
-      - name: is_active
+      - name: is_active_rule
         data_type: boolean
         description: "{{ doc('column__is_active_company_partnership_rule') }}"
         data_tests:

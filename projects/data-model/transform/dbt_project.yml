@@ -178,6 +178,9 @@ models:
     gold:
       +schema: gold
 
+    diamond:
+      +schema: diamond
+
     mlgold:
       +schema: mlgold
 

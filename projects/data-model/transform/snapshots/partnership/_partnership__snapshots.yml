@@ -1,0 +1,18 @@
+snapshots:
+  - name: scd_partnership__company_partnerships
+    description: Tracks updates to company partnerships in the company_partnership table.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      invalidate_hard_deletes: True
+
+  - name: scd_partnership__company_partnership_rules
+    description: Tracks updates to company partnership rules in the company_partnership_rule table.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      invalidate_hard_deletes: True
