@@ -106,6 +106,12 @@ discounts as (
 
 )
 
+, partnerships as (
+
+    select * from {{ ref('fact_partnership_points') }}
+
+)
+
 -- FIND SUBCRIPTION ORDERS
 -- Assumptions:
 -- 1) Only one subscription order per customer per menu week
@@ -899,6 +905,14 @@ discounts as (
                 ), '0'
             ) as fk_dim_recipes_subscription
         , coalesce(md5(cast(zone_id as string)), '0') as fk_dim_transportation
+        , coalesce(
+            md5(
+                concat(
+                    partnerships.company_partnership_id
+                    , partnerships.partnership_rule_id
+                )
+            ), '0'
+        ) as fk_dim_partnerships
         
     from add_recipe_information
     left join billing_agreements as billing_agreements_ordergen
@@ -929,6 +943,9 @@ discounts as (
     -- TODO: remove all order lines that are subscribed groceries which was not ordered, and mealboxes that does not match the ordered mealbox
     --where not (is_subscribed_grocery = true and is_grocery = false)
     --and not (is_subscribed_mealbox = true and is_mealbox = false)
+    -- TODO: Fix the fk on partnerships to handle cases where multiple rules can apply to a single order
+    left join partnerships
+        on add_recipe_information.billing_agreement_order_id = partnerships.billing_agreement_order_id
 
 )
 

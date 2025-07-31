@@ -1,0 +1,45 @@
+/// Information about the rules of the partnerships customers can sign up with. The rules determine how customers obtain certain benefits with the partner. 
+/// For example customers that have signed up through the SAS partnership earn 10,000 SAS Eurobonus points after placing their fourth order.
+/// TO-DO: Unhide table when dim_partnerships is connected to relevant fact tables in a similar way as it is done for dim_preferences. 
+table 'Partnership Details'
+	isHidden
+	lineageTag: Partnership-Details-Table
+
+	/// The name of the partnership. 
+	/// Currently hidden because it exists in Customer and Subscriber Measures for now.
+	/// TO-DO: 
+	/// Remove when dim_partnerships is connected to relevant fact tables in a similar way as it is done for dim_preferences. 
+	column Partnership
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ac9ad24e-506a-487d-b81d-4b6c9e73a11e
+		summarizeBy: none
+		sourceColumn: partnership_name
+
+	/// A description of what the partnership rule comprises.
+	column 'Partnership Rule'
+		dataType: string
+		isAvailableInMdx: false
+		lineageTag: cb2be7c8-0eb2-429b-835d-96c45d1dfbad
+		summarizeBy: none
+		sourceColumn: partnership_rule_description
+
+	column pk_dim_partnerships
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 70a68297-bc46-4e35-8665-28f76ec24d29
+		summarizeBy: none
+		sourceColumn: pk_dim_partnerships
+
+	partition 'Partnership Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_partnerships_Table = gold_Schema{[Name="dim_partnerships",Kind="Table"]}[Data]
+				in
+				    dim_partnerships_Table

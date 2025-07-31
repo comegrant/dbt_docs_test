@@ -72,6 +72,8 @@ ref table 'Customer Journey Segments'
 ref table 'Transportation'
 ref table 'Forecast Details'
 ref table 'Forecast Measures'
+ref table 'Bridge Fact Orders Dim Partnerships'
+ref table 'Partnership Details'
+ref table 'Partnership Measures'
 
 ref cultureInfo en-US
-

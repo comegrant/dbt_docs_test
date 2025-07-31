@@ -1,0 +1,34 @@
+/// Bridge table connecting Fact Orders and Dim Partnerships. 
+/// It is possible for multiple patnership rules to apply to a single order, creating a many-to-many relationship. Hence the need for this bridge table. 
+table 'Bridge Fact Orders Dim Partnerships'
+	isHidden
+	lineageTag: Bridge-Fact-Orders-Dim-Partnerships-Table
+
+	/// Primary key of the Fact Orders table
+	column fk_fact_orders
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 4678683a-f596-4051-8bb6-86b94c0efd7c
+		summarizeBy: none
+		sourceColumn: fk_fact_orders
+
+	/// Primary key of Dim Partnerships
+	column fk_dim_partnerships
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 947745a1-7768-4003-bc1b-9f3f7b0da212
+		summarizeBy: none
+		sourceColumn: fk_dim_partnerships
+
+	partition 'Bridge Fact Orders Dim Partnerships' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    bridge_fact_orders_dim_partnerships_Table = gold_Schema{[Name="bridge_fact_orders_dim_partnerships",Kind="Table"]}[Data]
+				in
+				    bridge_fact_orders_dim_partnerships_Table

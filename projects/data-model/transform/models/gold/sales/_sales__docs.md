@@ -964,3 +964,26 @@ The primary key of the bridge_preference_combinations_preferences.
 The primary key of the dim_customer_journey_segments. It is a hash of the column customer_journey_sub_segment_id.
 
 {% enddocs %}
+
+
+# Dim Partnerships
+{% docs column__pk_dim_partnerships %}
+
+The primary key of dim_partnerships. It is a hash of the columns company_partnership_id and partnership_rule_id.
+
+{% enddocs %}
+
+# Fact Partnership Points
+{% docs column__pk_fact_partnership_points %}
+
+The primary key of fact_partnership_points.
+
+{% enddocs %}
+
+
+# Bridge Fact Orders Dim Partnerships
+{% docs column__pk_bridge_fact_orders_dim_partnerships %}
+
+The primary key of bridge_fact_orders_dim_partnerships. It is a hasg of the columns pk_fact_orders and pk_dim_partnerships.
+
+{% enddocs %}

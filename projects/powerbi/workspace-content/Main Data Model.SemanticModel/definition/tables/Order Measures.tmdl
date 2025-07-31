@@ -2198,6 +2198,23 @@ table 'Order Measures'
         summarizeBy: none
         sourceColumn: fk_dim_transportation
 
+	column pk_fact_orders
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: a0616f12-e53a-4cd8-93a8-0c03b169a149
+		summarizeBy: none
+		sourceColumn: pk_fact_orders
+
+	/// TO-DO: 
+	/// Remove when dim_partnerships is connected to relevant fact tables in a similar way as it is done for dim_preferences. 
+	column fk_dim_partnerships
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_partnerships
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =
@@ -2213,4 +2230,3 @@ table 'Order Measures'
 	annotation PBI_ResultType = Table
 
 	annotation PBI_NavigationStepName = Navigation
-

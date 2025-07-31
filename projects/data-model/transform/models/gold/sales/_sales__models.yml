@@ -757,6 +757,20 @@ models:
               to: ref('dim_transportation')
               field: pk_dim_transportation
 
+      - name: fk_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnerships') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_partnerships')
+            to_columns: [pk_dim_partnerships]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_partnerships')
+              field: pk_dim_partnerships
+
     versions:
       - v: 1
 
@@ -3833,3 +3847,222 @@ models:
 
     versions:
       - v: 1
+
+  - name: fact_partnership_points
+    description: "Table of all partnership points earned by customers on Cheffelo orders. Partnership points can only be earned by customers acquired through a partnership, e.g. SAS Partnership."
+    config:
+      alias: fact_partnership_points
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_partnership_points
+        data_type: string
+        description: "{{ doc('column__pk_fact_partnership_points') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: billing_agreement_partnership_loyalty_point_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_partnership_loyalty_point_id') }}"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_order_id
+        data_type: char(36)
+        description: "{{ doc('column__billing_agreement_order_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+        data_tests:
+          - not_null
+
+      - name: transaction_points
+        data_type: int
+        description: "{{ doc('column__transaction_points_partnership') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: fk_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnerships') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_partnerships')
+            to_columns: [pk_dim_partnerships]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_partnerships')
+              field: pk_dim_partnerships
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+
+  - name: dim_partnerships
+    description: "Table of all partnership rules that determine how many partnership points are earned and when they are earned by cutomers. Partnership points can only be earned by customers acquired through a partnership, e.g. SAS Partnership."
+    config:
+      alias: dim_partnerships
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnerships') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_name
+        data_type: string
+        description: "{{ doc('column__partnership_name') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_name
+        data_type: string
+        description: "{{ doc('column__partnership_rule_name') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_description
+        data_type: string
+        description: "{{ doc('column__partnership_rule_description') }}"
+        data_tests:
+          - not_null
+
+  - name: bridge_fact_orders_dim_partnerships
+    description: "Bridge table connecting fact orders to dim partnerships. It is possible to have multiple rules that apply and earn partnership points for a single order."
+    config:
+      alias: bridge_fact_orders_dim_partnerships
+      contract:
+        enforced: true
+
+    columns:
+
+      - name: pk_bridge_fact_orders_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_bridge_fact_orders_dim_partnerships') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_fact_orders
+        data_type: string
+        description: "{{ doc('column__pk_fact_orders') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('fact_orders')
+            to_columns: [pk_fact_orders]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: pk_fact_orders
+
+      - name: fk_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_fact_orders') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('fact_orders')
+            to_columns: [pk_fact_orders]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: pk_fact_orders

@@ -438,3 +438,23 @@ relationship fact_forecast_variations_to_dim_dates_forecast_generated_at
 relationship fact_forecast_variations_to_dim_products
 	fromColumn: 'Forecast Measures'.fk_dim_products
 	toColumn: 'Products'.pk_dim_products
+
+relationship fact_partnership_points_to_dim_billing_agreements
+	fromColumn: 'Partnership Measures'.fk_dim_billing_agreements
+	toColumn: 'Customer and Subscriber Details'.pk_dim_billing_agreements
+
+relationship fact_partnership_points_to_dim_partnerships
+	fromColumn: 'Partnership Measures'.fk_dim_partnerships
+	toColumn: 'Partnership Details'.pk_dim_partnerships
+
+relationship fact_partnership_points_to_dim_dates
+	fromColumn: 'Partnership Measures'.fk_dim_dates
+	toColumn: Dates.pk_dim_dates
+
+relationship fact_partnership_points_to_dim_companies
+	fromColumn: 'Partnership Measures'.fk_dim_companies
+	toColumn: Brands.pk_dim_companies
+
+relationship fact_orders_to_dim_partnerships
+	fromColumn: 'Order Measures'.fk_dim_partnerships
+	toColumn: 'Partnership Details'.pk_dim_partnerships

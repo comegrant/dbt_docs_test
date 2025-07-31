@@ -347,6 +347,16 @@ table 'Customer and Subscriber Details'
 		summarizeBy: none
 		sourceColumn: loyalty_level_name_english
 
+	/// The name of the partnership the customer signed-up through. Null if the customer is not acquired through a partnership. 
+	/// isHidden because this dimension should belong to 'dim_partnerships' not 'dim_billing_agreements', but exists to create partnership report before Aug 2025 deadline 
+	/// TO-DO: 
+	/// Remove when dim_partnerships is connected to relevant fact tables in a similar way as it is done for dim_preferences. 
+	column 'Partnership'
+		isHidden
+		dataType: string
+		isAvailableInMdx: false
+		sourceColumn: partnership_name
+
 	partition 'Customer and Subscriber Details' = m
 		mode: directQuery
 		source =

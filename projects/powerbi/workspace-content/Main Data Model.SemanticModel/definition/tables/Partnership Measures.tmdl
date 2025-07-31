@@ -1,0 +1,74 @@
+/// Measures related to the earning of partnership points. Partnership points are earned by customers who signed up through a partnership (e.g. SAS Partnership) according to the rules of that partnership.
+table 'Partnership Measures'
+	lineageTag: Partnership-Measures-Table
+
+	/// The number of orders that have earned partnership points. E.g. 10,000 Eurobonus points are earned through the SAS Partnership on a customer's fourth order.
+	measure 'Number of Orders with Partnership Points' = 
+				DISTINCTCOUNTNOBLANK('Partnership Measures'[billing_agreement_order_id])
+		formatString: #,0
+		lineageTag: 0e742e3b-79a4-4515-bc9c-6fbff26ac2a0
+
+	/// The total number of partnership points earned by customers through orders.
+	measure 'Number of Partnership Points Earned ' = 
+				SUM('Partnership Measures'[Transaction Points])
+		formatString: #,0
+		lineageTag: c78bb891-de9c-4864-8d9e-83d7c21e24f6
+
+	column 'Transaction Points'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ee000e73-4b36-4217-88e2-55e7fec1cd3c
+		summarizeBy: none
+		sourceColumn: transaction_points
+
+	column billing_agreement_order_id
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 0b553751-be5b-42c6-99b1-e8971b5846e8
+		summarizeBy: none
+		sourceColumn: billing_agreement_order_id
+
+	column fk_dim_partnerships
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: b4409862-2ec3-4745-b380-07b5e1258223
+		summarizeBy: none
+		sourceColumn: fk_dim_partnerships
+
+	column fk_dim_billing_agreements
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 7d635646-6d77-42ce-b063-813931d914a0
+		summarizeBy: none
+		sourceColumn: fk_dim_billing_agreements
+
+	column fk_dim_dates
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 23e9619c-2b4c-4ba8-929d-ac66903ebe0a
+		summarizeBy: none
+		sourceColumn: fk_dim_dates
+
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5279e2ec-f4fa-42f3-8891-6447eca5dca2
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
+
+	partition 'Partnership Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_partnership_points_Table = gold_Schema{[Name="fact_partnership_points",Kind="Table"]}[Data]
+				in
+				    fact_partnership_points_Table

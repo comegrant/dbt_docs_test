@@ -1,4 +1,4 @@
-with 
+with
 
 source as (
 
@@ -11,7 +11,7 @@ source as (
     select
 
         {# ids #}
-        id as billing_agreement_partnership_loyalty_point_id 
+        id as billing_agreement_partnership_loyalty_point_id
         , parent_id as billing_agreement_partnership_loyalty_points_parent_id
         , event_id as billing_agreement_partnership_loyalty_points_event_id
         , billing_agreement_order_id
@@ -20,9 +20,9 @@ source as (
 
         {# ints #}
         , agreement_id as billing_agreement_id
-        , transaction_points as transaction_points
-        
-        {# system #}  
+        , transaction_points
+
+        {# system #}
         , created_at as source_created_at
         , created_by as source_created_by
         , updated_at as source_updated_at
