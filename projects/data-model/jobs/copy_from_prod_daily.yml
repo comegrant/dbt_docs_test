@@ -74,4 +74,4 @@ resources:
         - name: sink_schema_prefix
           default: ''
         - name: schemas
-          default: 'bronze,silver,intermediate,gold,mlgold,mlfeatures,mloutputs,dbt_snapshots,forecasting'
+          default: 'bronze,silver,intermediate,gold,diamond,mlgold,mlfeatures,mloutputs,dbt_snapshots,forecasting'
