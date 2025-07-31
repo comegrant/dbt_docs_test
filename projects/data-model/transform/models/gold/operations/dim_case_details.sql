@@ -74,7 +74,7 @@ case_lines as (
         , find_distinct_combination.case_impact_id
         , find_distinct_combination.case_cause_responsible_id
         , coalesce(case_responsible.case_responsible_description, case_causes.case_cause_name) as case_cause_name
-        , case_causes.case_cause_name as case_impact
+        , case_impact.case_cause_name as case_impact
         , case_responsible.case_responsibility_type
         , find_distinct_combination.case_line_type_id
         , case_line_types.case_line_type_name
