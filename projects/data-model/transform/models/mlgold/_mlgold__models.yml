@@ -970,3 +970,114 @@ models:
       - name: cumulated_average_rating
         description: "{{ doc('column__cumulated_average_rating') }}"
         data_type: float
+
+
+  - name: tofu_order_history
+    description: "Table containing total order and flex ordershistory for the tofu model"
+
+    columns:
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 53
+              inclusive: true
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        description: "{{ doc('column__total_orders') }}"
+        data_type: int
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: total_orders_with_flex
+        description: "{{ doc('column__total_orders_with_flex') }}"
+        data_type: int
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: flex_share
+        description: "{{ doc('column__flex_share') }}"
+        data_type: float
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+
+
+  - name: tofu_latest_forecasts
+    description: "the latest orders forecasts to be compared with the new tofu forecasts"
+
+    columns:
+      - name: forecast_job_run_id
+        description: "{{ doc('column__forecast_job_run_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 2000
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 53
+              inclusive: true
+
+      - name: forecast_total_orders
+        description: "{{ doc('column__forecast_total_orders') }}"
+        data_type: float
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: forecast_flex_orders
+        description: "{{ doc('column__forecast_flex_orders') }}"
+        data_type: int
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+
+      - name: forecast_flex_share
+        description: "{{ doc('column__forecast_flex_share') }}"
+        data_type: float
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true

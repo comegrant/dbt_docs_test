@@ -175,25 +175,25 @@ Total calories per portion for a recipe portion id.
 
 {% docs column__is_low_calorie %}
 
-Whether ot not the recipe is low calorie. A recipe is considered low calorie if the total calories per portion is less than the threshold for the country (NO: 750, SE: 550, DK: 600), and the sum of fresh and processed fruit and vegetables per portion is greater than 150 grams.
+Whether or not the recipe is low calorie. A recipe is considered low calorie if the total calories per portion is less than the threshold for the country (NO: 750, SE: 550, DK: 600), and the sum of fresh and processed fruit and vegetables per portion is greater than 150 grams.
 
 {% enddocs %}
 
 {% docs column__is_high_fiber %}
 
-Whether ot not the recipe is high fiber. A recipe is considered high fiber if the fiber per portion is greater than 10 grams.
+Whether or not the recipe is high fiber. A recipe is considered high fiber if the fiber per portion is greater than 10 grams.
 
 {% enddocs %}
 
 {% docs column__is_low_fat %}
 
-Whether ot not the recipe is low fat. A recipe is considered low fat if the fat per portion is less than 30% of the total calories per portion.
+Whether or not the recipe is low fat. A recipe is considered low fat if the fat per portion is less than 30% of the total calories per portion.
 
 {% enddocs %}
 
 {% docs column__is_low_sugar %}
 
-Whether ot not the recipe is low sugar. A recipe is considered low sugar if the sugar per portion is less than 7% of the total calories per portion.
+Whether or not the recipe is low sugar. A recipe is considered low sugar if the sugar per portion is less than 7% of the total calories per portion.
 
 {% enddocs %}
 
@@ -272,5 +272,48 @@ Number of active users with portion size 6 who have the same negative taste pref
 {% docs column__ingredient_id_list %}
 
 Aggregated list of ingredient ids for a recipe id.
+
+{% enddocs %}
+
+# Tofu Order History
+
+{% docs column__total_orders %}
+
+Total number of orders per menu year, week, and company.
+
+{% enddocs %}
+
+{% docs column__total_orders_with_flex %}
+
+Number of orders of that contains flex: includijng swaps, additions, or removals of default dishes. The calculation method differs by time period:
+- Pre-OneSub (≤ week 202446): Count of orders of legacy financial product type
+- Post-OneSub (≥ week 202447): Count of distinct orders with has_swap, is_removed_dish, or is_added_dish flags
+
+{% enddocs %}
+
+{% docs column__flex_share %}
+
+Percentage of orders that include flex, calculated as total_orders_with_flex / total_orders. This metric helps track adoption of menu customization features over time.
+
+{% enddocs %}
+
+
+# Tofu Latest Forecasts
+
+{% docs column__forecast_total_orders %}
+
+Latest forecasted number of total orders for a  menu week and company.
+
+{% enddocs %}
+
+{% docs column__forecast_flex_orders %}
+
+Latest forecast of the number of orders that includes one or more flex dishes (swaps, additions, or removals) for a menu week and company.
+
+{% enddocs %}
+
+{% docs column__forecast_flex_share %}
+
+Latest forecast of the percentage of orders that includes one or more flex dishes (swaps, additions, or removals) for a menu week and company.
 
 {% enddocs %}
