@@ -1,5 +1,5 @@
 """
-This router is used to get the menu feedback.
+This router is used to get the menu feedback with a new customer value metric.
 """
 
 import logging
