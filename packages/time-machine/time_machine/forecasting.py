@@ -28,12 +28,8 @@ def get_forecast_calendar(
         - year
         - week
     """
-    start_year, start_week = get_forecast_start(
-        cut_off_day=cut_off_day, forecast_date=forecast_date
-    )
-    first_forecast_date = get_date_from_year_week(
-        year=start_year, week_number=start_week, weekday=1
-    )
+    start_year, start_week = get_forecast_start(cut_off_day=cut_off_day, forecast_date=forecast_date)
+    first_forecast_date = get_date_from_year_week(year=start_year, week_number=start_week, weekday=1)
     dates = [first_forecast_date + timedelta(days=7 * i) for i in range(num_weeks)]
     df = pd.DataFrame(dates)
     df.columns = ["mondays"]
@@ -80,3 +76,27 @@ def get_forecast_start(
         forecast_start_year, forecast_start_week = next_next_monday.isocalendar()[:2]
 
     return forecast_start_year, forecast_start_week
+
+
+def get_default_cutoff_date(menu_year: int, menu_week: int, cut_off_weekday: int) -> date:
+    """
+    Get the default cut off date for a menu week.
+    This is define as the cut off week day before the Monday of the menu week.
+    So the cut off date is the last day of the week before the menu week.
+
+    Args:
+        menu_year (int): the year of the menu week
+        menu_week (int): the week of the menu week
+        cut_off_weekday (int): the weekday of the cut off (at 23:59)
+
+    Returns:
+        datetime.date: the cutoff date
+    """
+    # This is the date of the menu week, cut off is one week before this
+    one_week_after_cutoff_date = get_date_from_year_week(
+        year=menu_year,
+        week_number=menu_week,
+        weekday=cut_off_weekday,
+    )
+    cut_off_date = one_week_after_cutoff_date - timedelta(days=7)
+    return cut_off_date

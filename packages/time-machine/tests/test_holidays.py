@@ -1,3 +1,6 @@
+# pyright: reportAttributeAccessIssue=false
+# pyright: reportGeneralTypeIssues=false
+
 import holidays
 import pandas as pd
 import pytest
@@ -15,9 +18,10 @@ def test_get_holidays_dictionary() -> None:
     end_date = "2023-12-31"
     country = "Norway"
 
-    expected_holidays = holidays.Norway(years=[2022, 2023])
+    expected_holidays = holidays.Norway(years=[2022, 2023], language="en_US")
     result = get_holidays_dictionary(start_date, end_date, country)
-    assert result == expected_holidays
+    assert result.keys() == expected_holidays.keys()
+    assert list(result.values()) == list(expected_holidays.values())
 
     # Invalid date range (end_date before start_date)
     start_date = "2023-01-01"
@@ -88,6 +92,9 @@ def test_get_calendar_dataframe_with_holiday_features() -> None:
         "is_long_weekend",
         "is_holiday_on_monday",
         "is_holiday_on_thursday",
+        "is_holiday_on_saturday",
+        "is_holiday_on_sunday",
+        "is_holiday_on_weekend",
         "is_holiday",
     ]
 
@@ -132,6 +139,9 @@ def test_get_weekly_calendar_with_holiday_features() -> None:
         "num_holidays",
         "has_holiday_on_monday",
         "has_holiday_on_thursday",
+        "has_holiday_on_saturday",
+        "has_holiday_on_sunday",
+        "has_holiday_on_weekend",
         "has_squeeze_day",
         "has_long_weekend",
     ]

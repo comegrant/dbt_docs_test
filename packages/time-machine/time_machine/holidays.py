@@ -1,4 +1,7 @@
 # pyright: ignore
+# pyright: reportAttributeAccessIssue=false
+# pyright: reportArgumentType=false
+
 import datetime
 from typing import Optional, Union
 
@@ -33,15 +36,9 @@ def get_holidays_dictionary(start_date: str, end_date: str, country: Optional[Un
 
     date_range = pd.date_range(start=start_date, end=end_date)
     country_holiday_objects = {
-        "Sweden": holidays.Sweden(
-            years=date_range.year.tolist(),
-            include_sundays=False,
-        ),
-        "Norway": holidays.Norway(
-            years=date_range.year.tolist(),
-            include_sundays=False,
-        ),
-        "Denmark": holidays.Denmark(years=date_range.year.tolist()),
+        "Sweden": holidays.Sweden(years=date_range.year.tolist(), include_sundays=False, language="en_US"),
+        "Norway": holidays.Norway(years=date_range.year.tolist(), include_sundays=False, language="en_US"),
+        "Denmark": holidays.Denmark(years=date_range.year.tolist(), language="en_US"),
     }
 
     if country not in country_holiday_objects:
@@ -170,6 +167,10 @@ def get_calendar_dataframe_with_holiday_features(
 
     df_holidays = add_is_holiday_on_monday_feature(df_holidays=df_holidays)
     df_holidays = add_is_holiday_on_thursday_feature(df_holidays=df_holidays)
+
+    df_holidays = add_is_holiday_on_saturday_feature(df_holidays=df_holidays)
+    df_holidays = add_is_holiday_on_sunday_feature(df_holidays=df_holidays)
+    df_holidays = add_is_holiday_on_weekend(df_holidays=df_holidays)
     df_holidays["is_holiday"] = df_holidays["holiday"].notna()
     if is_onehot_encode_holiday:
         one_hot = pd.get_dummies(df_holidays["holiday"])
@@ -230,6 +231,9 @@ def get_weekly_calendar_with_holiday_features(
                 "is_holiday": "sum",
                 "is_holiday_on_monday": "sum",
                 "is_holiday_on_thursday": "sum",
+                "is_holiday_on_saturday": "sum",
+                "is_holiday_on_sunday": "sum",
+                "is_holiday_on_weekend": "sum",
                 "is_squeeze_day": "sum",
                 "is_long_weekend": "sum",
             }
@@ -240,6 +244,9 @@ def get_weekly_calendar_with_holiday_features(
                 "is_holiday": "num_holidays",
                 "is_holiday_on_monday": "has_holiday_on_monday",
                 "is_holiday_on_thursday": "has_holiday_on_thursday",
+                "is_holiday_on_saturday": "has_holiday_on_saturday",
+                "is_holiday_on_sunday": "has_holiday_on_sunday",
+                "is_holiday_on_weekend": "has_holiday_on_weekend",
                 "is_squeeze_day": "has_squeeze_day",
                 "is_long_weekend": "has_long_weekend",
             }
@@ -434,6 +441,66 @@ def add_is_holiday_on_thursday_feature(df_holidays: pd.DataFrame) -> pd.DataFram
         - False if the date is not a holiday on a Monday
     """
     df_holidays["is_holiday_on_thursday"] = (df_holidays["date"].apply(lambda x: x.dayofweek) == 3) & (  # noqa
+        df_holidays["holiday"].notna()
+    )
+    return df_holidays
+
+
+def add_is_holiday_on_weekend(df_holidays: pd.DataFrame) -> pd.DataFrame:
+    """Adds a is_holiday_on_weekend column to the dataframe.
+    The reason we have this feature is because when a holiday is on a Thursday, it is both a long weekend
+    and people might not be home for their delivery.
+    This feature can be very useful when it comes to demand forecasting.
+
+    Args:
+        df_holidays (pd.DataFrame): a pandas dataframe with a "date" column
+
+    Returns:
+        pd.DataFrame: a pandas dataframe with a "is_holiday_on_thursday" column added to it which contains:
+        - True if the date is a holiday on a Monday
+        - False if the date is not a holiday on a Monday
+    """
+    df_holidays["is_holiday_on_weekend"] = (df_holidays["date"].apply(lambda x: x.dayofweek) >= 5) & (  # noqa
+        df_holidays["holiday"].notna()
+    )
+    return df_holidays
+
+
+def add_is_holiday_on_saturday_feature(df_holidays: pd.DataFrame) -> pd.DataFrame:
+    """Adds a is_holiday_on_saturday column to the dataframe.
+    The reason we have this feature is because when a holiday is on a Thursday, it is both a long weekend
+    and people might not be home for their delivery.
+    This feature can be very useful when it comes to demand forecasting.
+
+    Args:
+        df_holidays (pd.DataFrame): a pandas dataframe with a "date" column
+
+    Returns:
+        pd.DataFrame: a pandas dataframe with a "is_holiday_on_thursday" column added to it which contains:
+        - True if the date is a holiday on a Monday
+        - False if the date is not a holiday on a Monday
+    """
+    df_holidays["is_holiday_on_saturday"] = (df_holidays["date"].apply(lambda x: x.dayofweek) == 5) & (  # noqa
+        df_holidays["holiday"].notna()
+    )
+    return df_holidays
+
+
+def add_is_holiday_on_sunday_feature(df_holidays: pd.DataFrame) -> pd.DataFrame:
+    """Adds a is_holiday_on_sunday column to the dataframe.
+    The reason we have this feature is because when a holiday is on a Thursday, it is both a long weekend
+    and people might not be home for their delivery.
+    This feature can be very useful when it comes to demand forecasting.
+
+    Args:
+        df_holidays (pd.DataFrame): a pandas dataframe with a "date" column
+
+    Returns:
+        pd.DataFrame: a pandas dataframe with a "is_holiday_on_thursday" column added to it which contains:
+        - True if the date is a holiday on a Monday
+        - False if the date is not a holiday on a Monday
+    """
+    df_holidays["is_holiday_on_sunday"] = (df_holidays["date"].apply(lambda x: x.dayofweek) == 6) & (  # noqa
         df_holidays["holiday"].notna()
     )
     return df_holidays

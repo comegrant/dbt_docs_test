@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "tofu"
+version = "0.1.0"
+description = "TOFU = Total Orders Forecast Unicorn"
+authors = ["Sylvia Liu <sylvia.liu@cheffelo.com>"]
+packages = [{include = "tofu"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.13"
+pydantic-settings = "^2.1.0"
+pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
+model-registry = {path = "../../packages/model-registry", develop = true}
+ipykernel = "^6.29.5"
+time-machine = {path = "../../packages/time-machine", develop = true}
+plotly = "^6.1.2"
+constants = {path = "../../packages/constants", develop = true}
+ipywidgets = "^8.1.7"
+scikit-learn = "^1.7.0"
+streamlit = "^1.47.0"
+nbformat = "^5.10.4"
+
+[tool.poetry.group.databricks.dependencies]
+nest_asyncio = "1.6.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+pytest = "*"
+pytest-mock = "*"
+pytest-asyncio = "*"
+ruff = "*"
+chef = {path = "../../packages/chef", develop = true}
+pyright = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chef = 'chef.cli:cli'
