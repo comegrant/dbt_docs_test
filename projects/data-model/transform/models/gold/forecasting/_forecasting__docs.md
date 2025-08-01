@@ -35,12 +35,6 @@ The quantity of the associated product variation that would have been ordered if
 
 {% enddocs %}
 
-{% docs column__is_latest_estimation %}
-
-A boolean flag indicating whether this estimation is from the most recent generation.
-
-{% enddocs %}
-
 
 # Dim Budget
 

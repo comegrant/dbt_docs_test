@@ -1,6 +1,6 @@
   models:
   - name: fact_estimations
-    description: "Table of all estimations at each timestamp they're generated. The estimations are a snapshot of the active baskets at the time of generation, and is generated in the Data Platform."
+    description: "Table of the latest estimations for each company. The estimations are a snapshot of the active baskets at the time of generation, and is generated in the Data Platform."
     latest_version: 1
     config:
       alias: fact_estimations
@@ -83,12 +83,6 @@
       - name: product_variation_quantity
         data_type: int
         description: "{{ doc('column__estimations_product_variation_quantity') }}"
-        data_tests:
-          - not_null
-
-      - name: is_latest_estimation
-        data_type: boolean
-        description: "{{ doc('column__is_latest_estimation') }}"
         data_tests:
           - not_null
 

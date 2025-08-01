@@ -98,16 +98,6 @@ table 'Active Baskets'
 		summarizeBy: none
 		sourceColumn: fk_dim_portions
 
-	/// A boolean flag indicating whether this estimation is from the most recent generation.
-	column is_latest_estimation
-		dataType: boolean
-		isHidden
-		lineageTag: 5927ed9e-e5b6-4613-87bd-b32ce9d95bb9
-		summarizeBy: none
-		sourceColumn: is_latest_estimation
-
-		annotation SummarizationSetBy = Automatic
-
 	column product_variation_quantity
 		dataType: int64
 		isHidden
@@ -144,7 +134,6 @@ table 'Active Baskets'
 				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
 				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
 				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-				    fact_estimations_Table = gold_Schema{[Name="fact_estimations",Kind="Table"]}[Data],
-					filtered_table = Table.SelectRows(fact_estimations_Table, each ([is_latest_estimation]=true))
+				    fact_estimations_Table = gold_Schema{[Name="fact_estimations",Kind="Table"]}[Data]
 				in
-					filtered_table
+					fact_estimations_Table

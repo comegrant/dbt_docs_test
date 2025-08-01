@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/1.2.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/2.1.0/schema.json",
   "themeCollection": {
     "baseTheme": {
       "name": "CY24SU10",
@@ -12,7 +12,6 @@
       "type": "RegisteredResources"
     }
   },
-  "layoutOptimization": "None",
   "filterConfig": {
     "filters": [
       {
@@ -168,65 +167,8 @@
         "howCreated": "User"
       },
       {
-        "name": "6b3d4a0f2fb822149ede",
-        "ordinal": 2,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Active Baskets"
-              }
-            },
-            "Property": "is_latest_estimation"
-          }
-        },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "e",
-              "Entity": "Active Baskets",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "e"
-                          }
-                        },
-                        "Property": "is_latest_estimation"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "true"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User",
-        "isHiddenInViewMode": true,
-        "isLockedInViewMode": true
-      },
-      {
         "name": "f20bdeaa424c59f05c45",
-        "ordinal": 3,
+        "ordinal": 2,
         "field": {
           "Column": {
             "Expression": {
@@ -242,7 +184,7 @@
       },
       {
         "name": "913ab6a7db804d4fe228",
-        "ordinal": 4,
+        "ordinal": 3,
         "field": {
           "Column": {
             "Expression": {
@@ -279,7 +221,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           }
