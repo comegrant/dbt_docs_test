@@ -18,6 +18,24 @@ forecast_orders as (
 
 )
 
+, products as (
+
+    select * from {{ ref('int_product_tables_joined') }}
+
+)
+
+, portions as (
+
+    select * from {{ ref('dim_portions') }}
+
+)
+
+, ingredient_combinations as (
+
+    select * from {{ ref('int_recipes_with_ingredient_combinations') }}
+
+)
+
 
 , forecast_orders_forecast_variations_unioned as (
 
@@ -90,6 +108,8 @@ forecast_orders as (
         , weekly_menus_variations.language_id
         , weekly_menus_variations.is_dish
         , weekly_menus_variations.recipe_id
+        , portions.portion_id
+        , ingredient_combinations.ingredient_combination_id
 
     from forecast_orders_forecast_variations_unioned
 
@@ -99,6 +119,19 @@ forecast_orders as (
         and forecast_orders_forecast_variations_unioned.menu_week = weekly_menus_variations.menu_week
         and forecast_orders_forecast_variations_unioned.product_variation_id = weekly_menus_variations.product_variation_id
 
+    left join products
+        on forecast_orders_forecast_variations_unioned.product_variation_id = products.product_variation_id
+        and forecast_orders_forecast_variations_unioned.company_id = products.company_id
+
+    left join portions
+        on products.portion_name = portions.portion_name_local
+        and weekly_menus_variations.language_id = portions.language_id
+
+    left join ingredient_combinations
+        on weekly_menus_variations.recipe_id = ingredient_combinations.recipe_id
+        and portions.portion_id = ingredient_combinations.portion_id
+        and weekly_menus_variations.language_id = ingredient_combinations.language_id
+
 )
 
 , add_keys as (
@@ -106,65 +139,77 @@ forecast_orders as (
     select
         md5(
             concat(
-                add_recipe_info.menu_year
-                , add_recipe_info.menu_week
-                , add_recipe_info.company_id
-                , add_recipe_info.forecast_group_id
-                , add_recipe_info.forecast_model_id
-                , add_recipe_info.product_variation_id
-                , add_recipe_info.forecast_job_run_id
-                , add_recipe_info.forecast_generated_at
+                menu_year
+                , menu_week
+                , company_id
+                , forecast_group_id
+                , forecast_model_id
+                , product_variation_id
+                , forecast_job_run_id
+                , forecast_generated_at
             )
         ) as pk_fact_forecast_variations
 
-    , add_recipe_info.forecast_job_run_id
-    , add_recipe_info.forecast_job_id
-    , add_recipe_info.menu_year
-    , add_recipe_info.menu_week
-    , add_recipe_info.company_id
-    , add_recipe_info.forecast_group_id
-    , add_recipe_info.forecast_model_id
-    , add_recipe_info.forecast_horizon_index
-    , add_recipe_info.forecast_horizon
+    , forecast_job_run_id
+    , forecast_job_id
+    , menu_year
+    , menu_week
+    , company_id
+    , forecast_group_id
+    , forecast_model_id
+    , forecast_horizon_index
+    , forecast_horizon
+    , language_id
+    , recipe_id
+    , portion_id
+    , ingredient_combination_id
 
     -- variation forecasts
-    , add_recipe_info.product_variation_id
-    , add_recipe_info.product_variation_quantity_forecast_analytics
-    , add_recipe_info.product_variation_quantity_forecast
+    , product_variation_id
+    , product_variation_quantity_forecast_analytics
+    , product_variation_quantity_forecast
 
     -- order forecasts
-    , add_recipe_info.order_quantity_forecast
+    , order_quantity_forecast
 
-    , add_recipe_info.forecast_generated_at
-    , add_recipe_info.is_most_recent_menu_week_horizon_forecast
-    , add_recipe_info.is_most_recent_menu_week_forecast
+    , forecast_generated_at
+    , is_most_recent_menu_week_horizon_forecast
+    , is_most_recent_menu_week_forecast
 
     , md5(
         concat(
-            add_recipe_info.forecast_job_id
-            , add_recipe_info.company_id
-            , add_recipe_info.forecast_group_id
-            , add_recipe_info.forecast_model_id
-            , add_recipe_info.forecast_horizon_index
-            , add_recipe_info.forecast_horizon
+            forecast_job_id
+            , company_id
+            , forecast_group_id
+            , forecast_model_id
+            , forecast_horizon_index
+            , forecast_horizon
             )
     ) as fk_dim_forecast_runs
-    , md5(add_recipe_info.company_id) as fk_dim_companies
+    , md5(company_id) as fk_dim_companies
     , case 
         when product_variation_id = '0' 
         then '0'
         else md5(
             concat(
-                add_recipe_info.product_variation_id,
-                add_recipe_info.company_id)
+                product_variation_id,
+                company_id)
             ) 
     end as fk_dim_products
-    , cast(date_format(add_recipe_info.menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_dates_menu_week
-    , cast(date_format(add_recipe_info.forecast_generated_at, 'yyyyMMdd') as int) as fk_dim_dates_forecast_generated_at
+    , cast(date_format(menu_week_monday_date, 'yyyyMMdd') as int) as fk_dim_dates_menu_week
+    , cast(date_format(forecast_generated_at, 'yyyyMMdd') as int) as fk_dim_dates_forecast_generated_at
     , coalesce(
-        md5(cast(concat(add_recipe_info.recipe_id, add_recipe_info.language_id) as string))
+        md5(cast(concat(recipe_id, language_id) as string))
         , '0'
     ) as fk_dim_recipes
+    , coalesce(
+        md5(concat(portion_id, language_id))
+        , '0'
+    ) as fk_dim_portions
+    , coalesce(
+        md5(concat(ingredient_combination_id, language_id))
+        , '0'
+    ) as fk_dim_ingredient_combinations
 
     from add_recipe_info
 

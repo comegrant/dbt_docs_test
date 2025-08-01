@@ -434,6 +434,22 @@
         data_tests:
           - not_null
 
+      - name: recipe_id
+        data_type: int
+        description: "{{ doc('column__recipe_id') }}"
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+
+      - name: ingredient_combination_id
+        data_type: string
+        description: "{{ doc('column__ingredient_combination_id') }}"
+
       - name: product_variation_quantity_forecast_analytics
         data_type: int
         description: "{{ doc('column__product_variation_quantity_forecast_analytics') }}"
@@ -532,6 +548,32 @@
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
+
+      - name: fk_dim_portions
+        data_type: string
+        description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_portions')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_portions')
+              field: pk_dim_portions
+
+      - name: fk_dim_ingredient_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredient_combinations')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredient_combinations')
+              field: pk_dim_ingredient_combinations
 
       - name: fk_dim_forecast_runs
         data_type: string

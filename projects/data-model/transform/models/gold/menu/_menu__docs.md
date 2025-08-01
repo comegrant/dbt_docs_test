@@ -412,3 +412,49 @@ Primary key of dim_meals. Has the same value as the meals column.
 Number of meals related to the product. Mainly relevant for mealbox product, but does also hold information about meals for other product types such as Velg&Vrak and Groceries. However, for these meals are usually 1.
 
 {% enddocs %}
+
+# Dim Ingredient Combinations
+
+{% docs column__pk_dim_ingredient_combinations %}
+
+Primary key of dim_ingredient_combinations. Generated from ingredient_combination_id and language_id.
+
+{% enddocs %}
+
+{% docs column__ingredient_combination_id %}
+
+Represents a specific set of ingredients grouped together, typically corresponding to a unique combination used in one or more recipes.
+
+{% enddocs %}
+
+{% docs column__ingredient_id_list_array %}
+
+Contains a sorted array of all ingredient IDs that make up the combination, allowing for easy programmatic access and analysis of the individual ingredients involved.
+
+{% enddocs %}
+
+{% docs column__ingredient_id_combinations %}
+
+Lists all ingredient IDs in the combination as a single, comma-separated string. Useful for display, reporting, or exporting purposes.
+
+{% enddocs %}
+
+{% docs column__ingredient_internal_reference_combinations %}
+
+Lists the internal reference codes for each ingredient in the combination, separated by commas. 
+
+{% enddocs %}
+
+{% docs column__ingredient_name_combinations %}
+
+Lists the names of all ingredients in the combination as a single, comma-separated string. This column is intended for user-facing applications, reporting, and easier interpretation of the ingredient combinations.
+
+{% enddocs %}
+
+# Bridge Ingredient Combinations Ingredients
+
+{% docs column__pk_bridge_ingredient_combinations_ingredients %}
+
+Primary key of bridge_ingredient_combinations_ingredients. Generated from ingredient_combination_id, ingredient_id and language_id.
+
+{% enddocs %}

@@ -85,7 +85,6 @@ weekly_recipe_ingredients as (
     , md5(concat_ws(
             '-'
             , weekly_recipe_ingredients.ingredient_id
-            , weekly_recipe_ingredients.ingredient_internal_reference
             , weekly_recipe_ingredients.language_id
         )) as fk_dim_ingredients
 

@@ -428,6 +428,10 @@ models:
         data_type: string
         description: "{{ doc('column__recipe_comment_id') }}"
 
+      - name: ingredient_combination_id
+        data_type: string
+        description: "{{ doc('column__ingredient_combination_id') }}"
+
       - name: fk_dim_billing_agreements_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
@@ -718,6 +722,19 @@ models:
           - relationships:
               to: ref('dim_recipes')
               field: pk_dim_recipes
+
+      - name: fk_dim_ingredient_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredient_combinations')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredient_combinations')
+              field: pk_dim_ingredient_combinations
 
       - name: fk_dim_preference_combinations
         data_type: string
@@ -1824,6 +1841,13 @@ models:
           - not_null:
               where: "is_dish = true"
 
+      - name: ingredient_combination_id
+        data_type: string
+        description: "{{ doc('column__ingredient_combination_id') }}"
+        data_tests:
+          - not_null:
+              where: "is_dish = true"
+
       - name: main_recipe_id
         data_type: int
         description: "{{ doc('column__main_recipe_id') }}"
@@ -2436,6 +2460,19 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
+
+      - name: fk_dim_ingredient_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredient_combinations')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredient_combinations')
+              field: pk_dim_ingredient_combinations
 
       - name: fk_dim_dates
         data_type: int

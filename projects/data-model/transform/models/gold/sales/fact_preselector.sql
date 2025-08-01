@@ -60,6 +60,13 @@ preselector_successful_output_dishes as (
 
 )
 
+, ingredient_combinations as (
+
+    select * from {{ ref('int_recipes_with_ingredient_combinations') }}
+
+)
+
+
 -- Get the recipe and main recipe id for each dish in the preselector dishes output
 , join_recipe_and_main_recipe_id_to_preselector_dishes as (
 
@@ -452,6 +459,7 @@ preselector_successful_output_dishes as (
 
     select
         add_aggregated_error_metrics.*
+        , ingredient_combinations.ingredient_combination_id
         , companies.language_id
         -- Primary key
         , md5(
@@ -489,6 +497,7 @@ preselector_successful_output_dishes as (
         else
             portions_mealbox.pk_dim_portions
         end as fk_dim_portions
+        , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, companies.language_id)), '0') as fk_dim_ingredient_combinations
     from add_aggregated_error_metrics
     left join companies
         on add_aggregated_error_metrics.company_id = companies.company_id
@@ -520,6 +529,10 @@ preselector_successful_output_dishes as (
         and companies.language_id = portions_dish.language_id
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
+    left join ingredient_combinations
+        on add_aggregated_error_metrics.recipe_id = ingredient_combinations.recipe_id
+        and portions_dish.portion_id = ingredient_combinations.portion_id
+        and companies.language_id = ingredient_combinations.language_id
 )
 
 select * from add_keys

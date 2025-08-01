@@ -18,6 +18,12 @@ menu_weeks as (
 
 )
 
+, ingredient_combinations as (
+
+    select * from {{ ref('int_recipes_with_ingredient_combinations') }}
+
+)
+
 , price_categories as (
 
     select * from {{ ref('pim__price_categories') }}
@@ -119,6 +125,7 @@ menu_weeks as (
         , add_recipe_costs_and_co2.portion_id_menus
         , add_recipe_costs_and_co2.portion_id_products
         , add_recipe_costs_and_co2.portion_id
+        , ingredient_combinations.ingredient_combination_id
 
         , add_recipe_costs_and_co2.menu_year
         , add_recipe_costs_and_co2.menu_week
@@ -161,6 +168,7 @@ menu_weeks as (
         , md5(concat(add_recipe_costs_and_co2.portion_id, add_recipe_costs_and_co2.language_id)) as fk_dim_portions
         , md5(concat(add_recipe_costs_and_co2.product_variation_id, add_recipe_costs_and_co2.company_id)) as fk_dim_products
         , coalesce(md5(cast(concat(add_recipe_costs_and_co2.recipe_id, add_recipe_costs_and_co2.language_id) as string)),0) as fk_dim_recipes
+        , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, add_recipe_costs_and_co2.language_id)), '0') as fk_dim_ingredient_combinations
 
     from add_recipe_costs_and_co2
 
@@ -171,6 +179,11 @@ menu_weeks as (
         and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units < price_categories.price_category_max_total_ingredient_cost
         and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.price_category_valid_from
         and add_recipe_costs_and_co2.menu_week_monday_date <= price_categories.price_category_valid_to
+
+    left join ingredient_combinations
+        on add_recipe_costs_and_co2.recipe_id = ingredient_combinations.recipe_id
+        and add_recipe_costs_and_co2.portion_id = ingredient_combinations.portion_id
+        and add_recipe_costs_and_co2.language_id = ingredient_combinations.language_id
 
 )
 

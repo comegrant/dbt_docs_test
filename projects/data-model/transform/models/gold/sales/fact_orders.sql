@@ -75,6 +75,12 @@ discounts as (
 
 )
 
+, ingredient_combinations as (
+
+    select * from {{ ref('int_recipes_with_ingredient_combinations') }}
+
+)
+
 , order_zones as (
 
     select * from {{ ref('int_orders_zones_joined')}}
@@ -846,6 +852,7 @@ discounts as (
             )
         ) as pk_fact_orders
         , add_recipe_information.* 
+        , ingredient_combinations.ingredient_combination_id
         , billing_agreements_ordergen.pk_dim_billing_agreements as fk_dim_billing_agreements_ordergen
         , coalesce(billing_agreements_subscription.pk_dim_billing_agreements, billing_agreements_ordergen.pk_dim_billing_agreements) as fk_dim_billing_agreements_subscription
         , coalesce(billing_agreements_subscription.preference_combination_id, billing_agreements_ordergen.preference_combination_id) as fk_dim_preference_combinations
@@ -904,6 +911,14 @@ discounts as (
                     )
                 ), '0'
             ) as fk_dim_recipes_subscription
+        , coalesce(
+            md5(
+                concat(
+                    ingredient_combinations.ingredient_combination_id
+                    , add_recipe_information.language_id
+                )
+            ), '0'
+         ) as fk_dim_ingredient_combinations
         , coalesce(md5(cast(zone_id as string)), '0') as fk_dim_transportation
         , coalesce(
             md5(
@@ -943,6 +958,10 @@ discounts as (
     -- TODO: remove all order lines that are subscribed groceries which was not ordered, and mealboxes that does not match the ordered mealbox
     --where not (is_subscribed_grocery = true and is_grocery = false)
     --and not (is_subscribed_mealbox = true and is_mealbox = false)
+    left join ingredient_combinations
+        on add_recipe_information.recipe_id = ingredient_combinations.recipe_id
+        and add_recipe_information.portion_id = ingredient_combinations.portion_id
+        and add_recipe_information.language_id = ingredient_combinations.language_id
     -- TODO: Fix the fk on partnerships to handle cases where multiple rules can apply to a single order
     left join partnerships
         on add_recipe_information.billing_agreement_order_id = partnerships.billing_agreement_order_id

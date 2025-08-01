@@ -151,7 +151,6 @@ ingredients as (
         md5(concat_ws(
             '-'
             , ingredient_info.ingredient_id
-            , ingredient_info.ingredient_internal_reference
             , ingredient_info.language_id
         )) as pk_dim_ingredients
         , ingredient_info.*

@@ -196,7 +196,6 @@ cases as (
                     concat_ws(
                         '-'
                         , ingredients.ingredient_id
-                        , cases_ingredient_costs_distributed.ingredient_internal_reference
                         , companies.language_id
                     )
             ) 

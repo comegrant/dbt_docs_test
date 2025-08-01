@@ -727,6 +727,64 @@ models:
     versions:
       - v: 1
 
+  - name: dim_ingredient_combinations
+    description: "Table of all ingredient combinations which are used in recipes"
+    latest_version: 1
+    config:
+      alias: dim_ingredient_combinations
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_ingredient_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: ingredient_combination_id
+        data_type: string
+        description: "{{ doc('column__ingredient_combination_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id_list_array
+        data_type: array<string>
+        description: "{{ doc('column__ingredient_id_list_array') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_id_combinations
+        data_type: string
+        description: "{{ doc('column__ingredient_id_combinations') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_internal_reference_combinations
+        data_type: string
+        description: "{{ doc('column__ingredient_internal_reference_combinations') }}"
+        data_tests:
+          - not_null
+
+      - name: ingredient_name_combinations
+        data_type: string
+        description: "{{ doc('column__ingredient_name_combinations') }}"
+        data_tests:
+          - not_null
+  
+    versions:
+      - v: 1
+  
   - name: dim_taxonomies
     description: "Table of all taxonomies which are used to tag recipes"
     latest_version: 1
@@ -837,16 +895,16 @@ models:
     versions:
       - v: 1
 
-  - name: bridge_recipes_ingredients
-    description: "Bridge table connecting recipes and ingredients"
+  - name: bridge_ingredient_combinations_ingredients
+    description: "Bridge table connecting ingredient combinations and ingredients"
     latest_version: 1
     config:
-      alias: bridge_recipes_ingredients
+      alias: bridge_ingredient_combinations_ingredients
 
     columns:
-      - name: pk_bridge_recipes_ingredients
+      - name: pk_bridge_ingredient_combinations_ingredients
         data_type: string
-        description: "{{ doc('column__pk_bridge_recipes_ingredients') }}"
+        description: "{{ doc('column__pk_bridge_ingredient_combinations_ingredients') }}"
         constraints:
           - type: primary_key
           - type: not_null
@@ -854,15 +912,9 @@ models:
           - unique
           - not_null
 
-      - name: recipe_id
+      - name: ingredient_combination_id
         data_type: int
-        description: "{{ doc('column__recipe_id') }}"
-        data_tests:
-          - not_null
-
-      - name: recipe_portion_id
-        data_type: int
-        description: "{{ doc('column__recipe_portion_id') }}"
+        description: "{{ doc('column__ingredient_combination_id') }}"
         data_tests:
           - not_null
 
@@ -878,23 +930,19 @@ models:
         data_tests:
           - not_null
 
-      - name: allergy_id
-        data_type: int
-        description: "{{ doc('column__allergy_id') }}"
-
-      - name: fk_dim_recipes
+      - name: fk_dim_ingredient_combinations
         data_type: string
-        description: "{{ doc('column__pk_dim_recipes') }}"
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
         constraints:
-          - type: foreign_key
-            to: ref('dim_recipes')
-            to_columns: [pk_dim_recipes]
           - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredient_combinations')
+            to_columns: [pk_dim_ingredient_combinations]
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_recipes')
-              field: pk_dim_recipes
+              to: ref('dim_ingredient_combinations')
+              field: pk_dim_ingredient_combinations
 
       - name: fk_dim_ingredients
         data_type: string
@@ -1013,6 +1061,14 @@ models:
           - not_null:
               # There are known issues before 2023-07-17
               where: 'menu_week_monday_date > date("2023-07-17")'
+
+      - name: ingredient_combination_id
+        data_type: string
+        description: "{{ doc('column__ingredient_combination_id') }}"
+        data_tests:
+          - not_null:
+              # There are known issues before 2023-07-17
+              where: 'menu_week_monday_date > date("2023-07-17") and recipe_id is not null'
 
       - name: menu_year
         data_type: smallint
@@ -1169,6 +1225,19 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
+
+      - name: fk_dim_ingredient_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_ingredient_combinations') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_ingredient_combinations')
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_ingredient_combinations')
+              field: pk_dim_ingredient_combinations
 
       - name: fk_dim_dates
         data_type: int
