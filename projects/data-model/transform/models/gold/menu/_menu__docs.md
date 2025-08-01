@@ -114,6 +114,30 @@ product_type_name is renamed from Financial to Mealbox in Gold to avoid confusio
 
 {% enddocs %}
 
+{% docs column__is_active_product %}
+
+Used by the grocery team to perform troubleshooting related to which product that are visible on the web page. Seem to work like this: If sent_to_frontend = TRUE but is_active_product = FALSE, then the product will not be shown on the web page. However, no one seem to know 100% the logic behind this field and its not supposed to be in use anymore.
+
+{% enddocs %}
+
+{% docs column__picking_line_label %}
+
+A label grouping product variations based on what part of the picking line the product belongs to.
+
+{% enddocs %}
+
+{% docs column__maximum_order_quantity %}
+
+The maximum quantity a customer can order of the product variation in one week.
+
+{% enddocs %}
+
+{% docs column__vat_rate %}
+
+The VAT category the product variation belongs to, represented as an whole number.
+
+{% enddocs %}
+
 # Dim Taxonomies
 {% docs column__pk_dim_taxonomies %}
 

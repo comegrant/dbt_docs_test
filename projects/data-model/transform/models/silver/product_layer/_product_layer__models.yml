@@ -254,7 +254,10 @@ models:
           - not_null
 
   - name: product_layer__product_variations_companies
-    description: ""
+    description: "Table holding company specific information for a product variation."
+    config:
+      contract:
+        enforced: true
     data_tests:
       - unique:
           column_name: "(product_variation_id || '-' || company_id)"
@@ -280,6 +283,10 @@ models:
       - name: product_variation_description
         data_type: string
         description: "{{ doc('column__product_variation_description') }}"
+  
+      - name: sent_to_frontend
+        data_type: boolean
+        description: "{{ doc('column__sent_to_frontend') }}"
 
       - name: source_created_at
         data_type: timestamp

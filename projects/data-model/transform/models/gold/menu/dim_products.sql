@@ -23,6 +23,11 @@ products as (
         , meals
         , portions
         , portion_name
+        , is_active_product
+        , vat_rate
+        , picking_line_label
+        , maximum_order_quantity
+        , sent_to_frontend
         , case
             when product_type_id = '{{ var("financial_product_type_id") }}' then true
             else false
@@ -59,7 +64,13 @@ products as (
         , meals
         , portions
         , portion_name
+        , is_active_product
+        , vat_rate
+        , picking_line_label
+        , maximum_order_quantity
         , is_financial
+        , sent_to_frontend
+
     from rename_financial_product_type_name
 
     union all
@@ -81,7 +92,12 @@ products as (
         , null              as meals
         , null              as portions
         , null              as portion_name
+        , null              as is_active_product
+        , null              as vat_rate
+        , null              as picking_line_label
+        , null              as maximum_order_quantity 
         , false             as is_financial
+        , false             as sent_to_frontend
 
 )
 

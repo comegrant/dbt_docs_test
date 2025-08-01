@@ -166,6 +166,51 @@ table Products
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Old filed that should not be used any more. Used to troubleshoot and validate if the product is set up correctly on the webpage.
+	column 'Is Active Product'
+		dataType: string
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: is_active_product
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Is true for products that will be displayed on the webpage within the next 4 weeks. Used to troubleshoot and validate if the product is set up correctly on the webpage.
+	column 'Sent To Frontend'
+		dataType: string
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sent_to_frontend
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The VAT rate of the product represented as a whole number.
+	column 'Vat Rate'
+		dataType: string
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: vat_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	/// An label grouping product variations based on what part of the picking line the product belongs to.
+	column 'Picking Line Label'
+		dataType: string
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: picking_line_label
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The maximum quantity a customer can order of the product variation in one week.
+	column 'Maximum Order Quantity'
+		dataType: string
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: maximum_order_quantity
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Products = m
 		mode: directQuery
 		source =

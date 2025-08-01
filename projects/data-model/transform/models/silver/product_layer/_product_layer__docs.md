@@ -104,6 +104,12 @@ Description of a product variation.
 
 {% enddocs %}
 
+{% docs column__sent_to_frontend %}
+
+True if the product variation will be visible on the webpage within the next 4 wekks else false. When exactly it will be shown on the front page is determined by rules on the campaigns set up in the platform_campaign_product-table. The field is used by the grocery team to validate if the set up of groceries is correct.
+
+{% enddocs %}
+
 # Product Variation Attribute Values
 
 {% docs column__attribute_value %}

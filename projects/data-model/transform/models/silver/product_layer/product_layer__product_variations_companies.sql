@@ -18,6 +18,9 @@ renamed as (
         , initcap(name) as product_variation_name
         , description as product_variation_description
 
+        {# booleans #}
+        , send_frontend as sent_to_frontend
+
         {# system #}
         , created_at as source_created_at
         , created_by as source_created_by

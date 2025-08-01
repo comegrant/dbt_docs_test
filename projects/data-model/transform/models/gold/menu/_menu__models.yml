@@ -163,23 +163,43 @@ models:
         data_tests:
           - not_null
 
-      - name: meals
-        data_type: int
-        description: "{{ doc('column__meals') }}"
+      - name: picking_line_label
+        data_type: string
+        description: "{{ doc('column__picking_line_label') }}"
+
+      - name: portion_name
+        data_type: string
+        description: "{{ doc('column__portion_name') }}"
 
       - name: portions
         data_type: int
         description: "{{ doc('column__portions') }}"
 
-      - name: portion_name
-        data_type: string
-        description: "{{ doc('column__portion_name') }}"
+      - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+
+      - name: vat_rate
+        data_type: int
+        description: "{{ doc('column__vat_rate') }}"
+
+      - name: maximum_order_quantity
+        data_type: int
+        description: "{{ doc('column__maximum_order_quantity') }}"
 
       - name: is_financial
         data_type: boolean
         description: "{{ doc('column__is_financial') }}"
         data_tests:
           - not_null
+
+      - name: is_active_product
+        data_type: boolean
+        description: "{{ doc('column__is_active_product') }}"
+
+      - name: sent_to_frontend
+        data_type: boolean
+        description: "{{ doc('column__sent_to_frontend') }}"
 
     versions:
       - v: 1

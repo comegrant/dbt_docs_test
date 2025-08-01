@@ -15,7 +15,7 @@ renamed as (
         , product_type_id
         
         {# strings #}
-        , attribute_name
+        , lower(attribute_name) as attribute_name
         , default_value as attribute_default_value
         , data_type as attribute_data_type
 
