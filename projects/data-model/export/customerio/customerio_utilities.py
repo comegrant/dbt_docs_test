@@ -77,20 +77,23 @@ class CustomerIOSyncer:
              or {self.sync_status_table}.last_sync_at is null
              or {self.sync_status_table}.last_sync_succeeded is false
             )
-            and company_id = '{self.company_id}'
+        and company_id = '{self.company_id}'
         """
         
-        df = self.spark.sql(query).toPandas()
+        df_customers = self.spark.sql(query).toPandas()
                 
-        logger.info(f"Retrieved {len(df)} customers to sync")
-        return df
+        logger.info(f"Retrieved {len(df_customers)} customers to sync")
+        return df_customers
 
 
-    def update_customers_last_synced_at_timestamps(self, start_time: datetime, failed_sync_agreements_list: list) -> tuple:
-
+    def update_customers_last_synced_at_timestamps(self, df_customers: pd.DataFrame, start_time: datetime, failed_sync_agreements_list: list) -> tuple:
+        
+        all_agreements_list = [str(billing_agreement_id) for billing_agreement_id in df_customers.billing_agreement_id.values]
+        all_agreements = ",".join(all_agreements_list)
+        
         query_merge = f"""
             merge into {self.sync_status_table}
-            using {self.traits_table}
+            using (select * from {self.traits_table} where billing_agreement_id in ({all_agreements}))
                 on {self.sync_status_table}.billing_agreement_id = {self.traits_table}.billing_agreement_id
             when matched then
                 update set last_sync_at = '{start_time}', last_sync_succeeded = true
@@ -155,12 +158,12 @@ class CustomerIOSyncer:
         """
         Convert a DataFrame row to Customer.io format
         """
-        # Convert Series to dict and remove billing_agreement_id from attributes
-        attributes = row.drop('billing_agreement_id').to_dict()
+        # Convert Series to dict and remove billing_agreement_id and company_id from attributes
+        attributes = row.drop(['billing_agreement_id']).to_dict()
         
         # Remove any attributes that shouldn't be sent to Customer.io
-        # (like internal timestamps, etc.)
-        exclude_attrs = {'valid_from', 'last_synced_at'} 
+        # TO-DO: Remove company_id from exclude_attrs when it is no longer part of the ADB-->stagingDB-->customerio sync 
+        exclude_attrs = {'company_id','valid_from'} 
         attributes = {k: v for k, v in attributes.items() if k not in exclude_attrs}
         
         return CustomerIORow(row['billing_agreement_id'],attributes)
@@ -319,7 +322,7 @@ class CustomerIOSyncer:
         """)
 
         # Update last_synced_at timestamp in Databricks
-        self.update_customers_last_synced_at_timestamps(start_time=start_time, failed_sync_agreements_list=total_results.failed_sync_agreements_list)
+        self.update_customers_last_synced_at_timestamps(df_customers=df_customers, start_time=start_time, failed_sync_agreements_list=total_results.failed_sync_agreements_list)
         end_databricks_write = datetime.now()
         duration_databricks_write = (end_databricks_write - end_time).total_seconds()
 
