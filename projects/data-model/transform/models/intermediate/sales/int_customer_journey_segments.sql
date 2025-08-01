@@ -65,6 +65,14 @@ agreements_with_history as (
     group by 1
 )
 
+, agreements_deleted_date as (
+    select billing_agreement_id
+            , min (valid_from) as deleted_date 
+    from agreements_with_history
+    where billing_agreement_status_name= 'Deleted' 
+    group by 1
+)
+
 , agreements_and_orders_joined as (
 
     select 
@@ -95,14 +103,13 @@ agreements_with_history as (
         -- joined to agreements who sign up after Monday 00:00 of the current week.
         , case 
             when delivery_week_order.menu_week_monday_date is null then 0
-            else 
-            floor (datediff
-                (delivery_week_order.menu_week_monday_date, agreements.signup_date) 
-            / 7) end as weeks_since_signup
-        , floor (datediff
-                    (delivery_week_order.menu_week_monday_date, agreements.first_menu_week_monday_date) 
-                / 7) 
-                as weeks_since_first_order
+            else date_diff(week, agreements.signup_date, delivery_week_order.menu_week_monday_date)
+          end as weeks_since_signup
+        , case
+            when date_diff(week, agreements.first_menu_week_monday_date, delivery_week_order.menu_week_monday_date) < 0
+            then null
+            else date_diff(week, agreements.first_menu_week_monday_date, delivery_week_order.menu_week_monday_date)
+          end as weeks_since_first_order
     from agreements
     left join delivery_week_order
         on agreements.company_id = delivery_week_order.company_id
@@ -214,10 +221,7 @@ agreements_with_history as (
         billing_agreement_id
         , menu_week_monday_date
         , reactivation_date
-        , floor (datediff
-                    (menu_week_monday_date, reactivation_date) 
-                / 7) 
-                as weeks_since_reactivation
+        , date_diff(week, menu_week_monday_date, reactivation_date) as weeks_since_reactivation
     from latest_agreement_reactivation
 
 )
@@ -334,4 +338,28 @@ agreements_with_history as (
 
 )
 
-select * from segment_valid_to_and_from
+, end_segments_at_deleted_date as (
+    select 
+        segment_valid_to_and_from.billing_agreement_id
+        , segment_valid_to_and_from.sub_segment_id
+        , segment_valid_to_and_from.menu_week_monday_date_from
+        , segment_valid_to_and_from.menu_week_cutoff_date_from
+        , case 
+            when agreements_deleted_date.deleted_date is not null 
+                and segment_valid_to_and_from.menu_week_monday_date_to > agreements_deleted_date.deleted_date
+            then to_date(agreements_deleted_date.deleted_date)
+            else segment_valid_to_and_from.menu_week_monday_date_to
+        end as menu_week_monday_date_to
+        , case 
+            when agreements_deleted_date.deleted_date is not null 
+                and segment_valid_to_and_from.menu_week_cutoff_date_to > agreements_deleted_date.deleted_date
+            then agreements_deleted_date.deleted_date
+            else segment_valid_to_and_from.menu_week_cutoff_date_to
+        end as menu_week_cutoff_date_to
+    from segment_valid_to_and_from
+    left join agreements_deleted_date 
+        on segment_valid_to_and_from.billing_agreement_id = agreements_deleted_date.billing_agreement_id
+
+)
+
+select * from end_segments_at_deleted_date
