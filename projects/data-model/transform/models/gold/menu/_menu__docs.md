@@ -1,3 +1,10 @@
+# Dim Price Categories
+{% docs column__pk_dim_price_categories %}
+
+Primary key of the dim_price_categories table. Is a composite key of company_id, portion_id, price_category_level_id and valid_from.
+
+{% enddocs %}
+
 # Fact Recipe Reactions
 {% docs column__pk_fact_recipe_reactions %}
 

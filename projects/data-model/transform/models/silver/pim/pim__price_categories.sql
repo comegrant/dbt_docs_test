@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('pim', 'pim__price_category') }}
+    select * from {{ ref('scd_pim__price_categories') }}
 
 ),
 
@@ -15,29 +15,22 @@ renamed as (
         , level as price_category_level_id
         
         {# ints #}
-        , coalesce(min_price,0) as price_category_min_total_ingredient_cost
-        , coalesce(max_price,9999) as price_category_max_total_ingredient_cost
-        , suggested_selling_price_incl_vat as price_category_price_inc_vat
+        , coalesce(min_price,0) as min_ingredient_cost_inc_vat
+        , coalesce(max_price,9999) as max_ingredient_cost_inc_vat
+        , suggested_selling_price_incl_vat as suggested_price_inc_vat
 
         {# strings #}
         , name as price_category_level_name
 
         {# dates #}
-        --, to_date(period_from, 'MMddyy') as price_category_valid_from
-        , {{ get_iso_week_start_date('cast(right(period_from,4) as int)', 'cast(left(period_from,2) as int)') }} as price_category_valid_from
-        --, to_date(period_to, 'MMddyy') as price_category_valid_to
-        , {{ get_iso_week_start_date('cast(right(period_to,4) as int)', 'cast(left(period_to,2) as int)') }} as price_category_valid_to
+        , dbt_valid_from as valid_from
+        , dbt_valid_to  as valid_to
 
         {# system #}
         , created_by as source_created_by
         , created_at as source_created_at
         , updated_by as source_updated_by
         , updated_at as source_updated_at
-
-        {# not sure if this is needed
-        , color
-        , text_color
-        #}
 
     from source
 

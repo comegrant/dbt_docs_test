@@ -1,6 +1,81 @@
 version: 2
 
 models:
+
+  - name: dim_price_categories
+    description: "Containing the different price categoriy levels a dish can have given the number of portions in the recipe. Is a slowly changing dimension type II."
+    latest_version: 1
+    config:
+      alias: dim_price_categories
+      contract:
+        enforced: true
+
+    columns:
+  
+      - name: pk_dim_price_categories
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: portion_id
+        data_type: int
+        description: "{{ doc('column__portion_id') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_level_id
+        data_type: int
+        description: "{{ doc('column__price_category_level_id') }}"
+        data_tests:
+          - not_null
+
+      - name: min_ingredient_cost_inc_vat
+        data_type: int
+        description: "{{ doc('column__min_ingredient_cost_inc_vat') }}"
+
+      - name: max_ingredient_cost_inc_vat
+        data_type: int
+        description: "{{ doc('column__max_ingredient_cost_inc_vat') }}"
+
+      - name: suggested_price_inc_vat
+        data_type: decimal(6,2)
+        description: "{{ doc('column__suggested_price_inc_vat') }}"
+        data_tests:
+          - not_null
+
+      - name: price_category_level_name
+        data_type: string
+        description: "{{ doc('column__price_category_level_name') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+
   - name: dim_products
     description: ""
     latest_version: 1
@@ -1170,18 +1245,6 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
 
-      - name: price_category_level_id
-        data_type: int
-        description: "{{ doc('column__price_category_level_id') }}"
-
-      - name: price_category_level_name
-        data_type: string
-        description: "{{ doc('column__price_category_level_name') }}"
-
-      - name: price_category_price_inc_vat
-        data_type: decimal(6,2)
-        description: "{{ doc('column__price_category_price_inc_vat') }}"
-
       - name: fk_dim_recipes
         data_type: string
         description: "{{ doc('column__pk_dim_recipes') }}"
@@ -1211,6 +1274,20 @@ models:
               field: pk_dim_products
               config:
                 severity: warn
+
+      - name: fk_dim_price_categories
+        data_type: string
+        description: "{{ doc('column__pk_dim_price_categories') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_price_categories')
+            to_columns: [pk_dim_price_categories]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_price_categories')
+              field: pk_dim_price_categories
 
       - name: fk_dim_portions
         data_type: string

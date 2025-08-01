@@ -26,7 +26,7 @@ menu_weeks as (
 
 , price_categories as (
 
-    select * from {{ ref('pim__price_categories') }}
+    select * from {{ ref('dim_price_categories') }}
 
 )
 
@@ -158,15 +158,12 @@ menu_weeks as (
         , add_recipe_costs_and_co2.total_ingredient_weight_with_co2_data
         , add_recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
 
-        , price_categories.price_category_level_id
-        , price_categories.price_category_level_name
-        , price_categories.price_category_price_inc_vat
-
         {# FKS #}
         , md5(add_recipe_costs_and_co2.company_id) as fk_dim_companies
         , cast(date_format(add_recipe_costs_and_co2.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
         , md5(concat(add_recipe_costs_and_co2.portion_id, add_recipe_costs_and_co2.language_id)) as fk_dim_portions
         , md5(concat(add_recipe_costs_and_co2.product_variation_id, add_recipe_costs_and_co2.company_id)) as fk_dim_products
+        , coalesce(price_categories.pk_dim_price_categories, '0') as fk_dim_price_categories
         , coalesce(md5(cast(concat(add_recipe_costs_and_co2.recipe_id, add_recipe_costs_and_co2.language_id) as string)),0) as fk_dim_recipes
         , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, add_recipe_costs_and_co2.language_id)), '0') as fk_dim_ingredient_combinations
 
@@ -175,10 +172,10 @@ menu_weeks as (
     left join price_categories
         on add_recipe_costs_and_co2.company_id = price_categories.company_id
         and add_recipe_costs_and_co2.portion_id = price_categories.portion_id
-        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units >= price_category_min_total_ingredient_cost
-        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units < price_categories.price_category_max_total_ingredient_cost
-        and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.price_category_valid_from
-        and add_recipe_costs_and_co2.menu_week_monday_date <= price_categories.price_category_valid_to
+        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units >= price_categories.min_ingredient_cost_inc_vat
+        and add_recipe_costs_and_co2.total_ingredient_planned_cost_whole_units < price_categories.max_ingredient_cost_inc_vat
+        and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.valid_from
+        and add_recipe_costs_and_co2.menu_week_monday_date < price_categories.valid_to
 
     left join ingredient_combinations
         on add_recipe_costs_and_co2.recipe_id = ingredient_combinations.recipe_id

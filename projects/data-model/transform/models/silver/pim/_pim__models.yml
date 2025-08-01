@@ -2107,17 +2107,17 @@ models:
         data_tests:
           - not_null
 
-      - name: price_category_min_total_ingredient_cost
+      - name: min_ingredient_cost_inc_vat
         data_type: int
-        description: "{{ doc('column__price_category_min_total_ingredient_cost') }}"
+        description: "{{ doc('column__min_ingredient_cost_inc_vat') }}"
 
-      - name: price_category_max_total_ingredient_cost
+      - name: max_ingredient_cost_inc_vat
         data_type: int
-        description: "{{ doc('column__price_category_max_total_ingredient_cost') }}"
+        description: "{{ doc('column__max_ingredient_cost_inc_vat') }}"
 
-      - name: price_category_price_inc_vat
+      - name: suggested_price_inc_vat
         data_type: decimal(6,2)
-        description: "{{ doc('column__price_category_price_inc_vat') }}"
+        description: "{{ doc('column__suggested_price_inc_vat') }}"
         data_tests:
           - not_null
 
@@ -2127,15 +2127,15 @@ models:
         data_tests:
           - not_null
 
-      - name: price_category_valid_from
-        data_type: date
-        description: "{{ doc('column__price_category_valid_from') }}"
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
         data_tests:
           - not_null
 
-      - name: price_category_valid_to
-        data_type: date
-        description: "{{ doc('column__price_category_valid_to') }}"
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
         data_tests:
           - not_null
 
