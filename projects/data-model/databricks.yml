@@ -18,6 +18,8 @@ variables:
     description: The id of the sql warehouse used for the dbt task
   slack_notification_job_id:
     description: The id of the slack notification job to call
+  running_job_check_job_id:
+    description: The id of the running job check job to call
   preselector_materialization_job_id:
     description: The id of the preselector materialization job to call
   copy_from_prod_daily_pause_status:
@@ -35,6 +37,7 @@ targets:
     variables:
       warehouse_id: 45100b61eb7ee2f5
       slack_notification_job_id: 221967110790300
+      running_job_check_job_id: 1013342696672148
       preselector_materialization_job_id: 98557615197253
       databricks_forecasting_sp_application_id: c185ec1e-ec85-4a95-9362-cfc489a00039
 
@@ -53,6 +56,7 @@ targets:
     variables:
       warehouse_id: 76c581aa18fb7b4f
       slack_notification_job_id: 823927532277018
+      running_job_check_job_id: 151995008710777
       preselector_materialization_job_id: 1030627407532831
       databricks_forecasting_sp_application_id: b75a37c9-53e9-4b66-a44d-2e3e03e3dbb0
     resources:
@@ -60,12 +64,13 @@ targets:
         copy_from_prod_daily:
           schedule:
             pause_status: ${var.copy_from_prod_daily_pause_status}
-    
+
   prod:
     mode: production
     variables:
       warehouse_id: 1a2fc265706df5fb
       slack_notification_job_id: 808732355997444
+      running_job_check_job_id: 497656932586919
       preselector_materialization_job_id: 148734131753684
       databricks_forecasting_sp_application_id: e91b18b8-e2c8-468d-bb1b-6bd194b7bf6c
     resources:

@@ -19,17 +19,30 @@ resources:
 
       tasks:
 
+        - task_key: check-if-main-data-model-job-runs
+          run_job_task:
+              job_id: ${var.running_job_check_job_id}
+              job_parameters:
+                  job_name: "main-data-model-job"
+                  environment: ${bundle.target}
+
         - task_key: bronze_psl_full
           notebook_task:
             notebook_path: ../ingest/full_ingest/bronze_psl_full.py
+          depends_on:
+            - task_key: check-if-main-data-model-job-runs
 
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+          depends_on:
+            - task_key: check-if-main-data-model-job-runs
 
         - task_key: bronze_cms_billing_agreement_basket_scheduler
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_scheduler.py
+          depends_on:
+            - task_key: check-if-main-data-model-job-runs
 
         - task_key: bronze_cms_full
           notebook_task:
@@ -85,6 +98,7 @@ resources:
 
         - task_key: fail-notification
           depends_on: [
+            {task_key: check-if-main-data-model-job-runs},
             {task_key: bronze_cms_full},
             {task_key: bronze_psl_full},
             {task_key: bronze_cms_billing_agreement_basket_scheduler},
@@ -102,7 +116,7 @@ resources:
               body_message: Check the Databricks logs for more details
               is_error: true
               relevant_people: stephen, mats, sylvia, grant, engineering
-              
+
       job_clusters:
         - job_cluster_key: dbt_CLI
           new_cluster:
