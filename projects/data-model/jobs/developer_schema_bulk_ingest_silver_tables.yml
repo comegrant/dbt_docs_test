@@ -8,7 +8,7 @@ resources:
           spec:
             client: "1"
             dependencies:
-              - dbt-databricks>=1.0.0,<2.0.0
+              - dbt-databricks${var.dbt_databricks_version}
 
       tasks: 
 

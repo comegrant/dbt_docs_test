@@ -65,7 +65,7 @@ resources:
           job_cluster_key: dbt_CLI
           libraries:
             - pypi:
-                package: dbt-databricks==1.10.0
+                package: dbt-databricks${var.dbt_databricks_version}
           disable_auto_optimization: true
           depends_on: [
             {task_key: bronze_cms_full},
@@ -82,7 +82,7 @@ resources:
           job_cluster_key: dbt_CLI
           libraries:
             - pypi:
-                package: dbt-databricks==1.10.0
+                package: dbt-databricks${var.dbt_databricks_version}
           disable_auto_optimization: true
           depends_on: [
             {task_key: dbt-run}
@@ -132,6 +132,10 @@ resources:
             node_type_id: Standard_D4ds_v5
             custom_tags:
               ResourceClass: SingleNode
+              tool: "dbt"
+              env: ${bundle.target}
+              managed_by: "manually"
+              user: "dbt developers"
             spark_env_vars:
               PYSPARK_PYTHON: /databricks/python3/bin/python3
             enable_elastic_disk: true
