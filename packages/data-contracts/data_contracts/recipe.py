@@ -790,7 +790,10 @@ class NormalizedRecipeFeatures:
         pl.col("taxonomy_ids").list.contains("2109") | pl.col("taxonomy_ids").list.contains("2104"), as_dtype=Bool()
     )
     is_red_cross = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("3663") | pl.col("taxonomy_ids").list.contains("3664"), as_dtype=Bool()
+        pl.col("taxonomy_ids").list.contains("3663")
+        | pl.col("taxonomy_ids").list.contains("3664")
+        | pl.col("taxonomy_ids").list.contains("3670"),
+        as_dtype=Bool(),
     )
     is_value_add = taxonomy_ids.transform_polars(
         pl.col("taxonomy_ids").list.contains("3684")

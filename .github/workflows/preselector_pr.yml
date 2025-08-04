@@ -6,6 +6,7 @@ on:
       - '.github/workflows/template_test_in_docker.yml'
       - '.github/workflows/preselector_pr.yml'
       - 'projects/preselector/**'
+      - 'packages/data-contracts/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
