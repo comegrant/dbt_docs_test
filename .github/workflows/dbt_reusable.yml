@@ -118,6 +118,21 @@ jobs:
         run: |
           poetry run sed -i "s/schema: prdev/schema: ~PR${{ env.PR_NUMBER }}/" ./transform/profiles/profiles.yml
 
+      # TODO: Find a better way to handle the int_product_variation_attribute_templates_filtered, see DATA-1735
+      - name: Clone other gold models
+        run: |
+          set +e
+          poetry run dbt clone --select models/gold int_product_variation_attribute_templates_filtered --exclude state:modified.body+ --state ./ --project-dir ./transform --profiles-dir ./transform/profiles --target ${{ inputs.dbt-target }} --full-refresh
+          status=$?
+          if [ $status -ne 0 ]; then
+            echo "::warning file=clone-gold-models::dbt clone command failed with status $status, continuing..."
+          fi
+          exit 0
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+
       - name: Compile dbt models
         run: |
           poetry run dbt compile --project-dir ./transform --profiles-dir ./transform/profiles --target ${{ inputs.dbt-target }}
@@ -138,20 +153,6 @@ jobs:
       - name: Seed dbt models
         run: |
           poetry run dbt seed --models state:modified.body --state ./ --defer --project-dir ./transform --profiles-dir ./transform/profiles --target ${{ inputs.dbt-target }}
-        env:
-          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
-          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
-          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
-
-      - name: Clone other gold models
-        run: |
-          set +e
-          poetry run dbt clone --select models/gold --exclude state:modified.body+ --state ./ --project-dir ./transform --profiles-dir ./transform/profiles --target ${{ inputs.dbt-target }} --full-refresh
-          status=$?
-          if [ $status -ne 0 ]; then
-            echo "::warning file=clone-gold-models::dbt clone command failed with status $status, continuing..."
-          fi
-          exit 0
         env:
           DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
           DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
