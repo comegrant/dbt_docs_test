@@ -1,92 +1,104 @@
 /// All forecasts per product variation and menu week produced by the analytics team and including overwrites made by external teams.
 table 'Forecast Measures'
-    lineageTag: Forecast-Measures-Table
+	lineageTag: Forecast-Measures-Table
 
-    /// The forecasted number of orders for a given menu week.
-    measure 'Number of Forecasted Orders' = SUM('Forecast Measures'[Order Quantity Forecast])
-        formatString: #,0
+	/// The forecasted number of orders for a given menu week.
+	measure 'Number of Forecasted Orders' = SUM('Forecast Measures'[Order Quantity Forecast])
+		formatString: #,0
+		lineageTag: 7a024798-dc70-466f-9e33-3e8371b4fae7
 
-    /// The forecasted quantity of a given product variation for a given menu week.
-    measure 'Number of Forecasted Product Variations' = SUM('Forecast Measures'[Product Variation Quantity Forecast])
-        formatString: #,0
+	/// The forecasted quantity of a given product variation for a given menu week.
+	measure 'Number of Forecasted Product Variations' = SUM('Forecast Measures'[Product Variation Quantity Forecast])
+		formatString: #,0
+		lineageTag: a43f5c61-5908-4572-ac98-b0bcb2891052
 
-    column 'Order Quantity Forecast'
-        dataType: int64
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: order_quantity_forecast
+	column 'Order Quantity Forecast'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 84d5d4a5-8b89-44de-ab99-f974747ee4a8
+		summarizeBy: none
+		sourceColumn: order_quantity_forecast
 
-    column 'Product Variation Quantity Forecast'
-        dataType: int64
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: product_variation_quantity_forecast
+	column 'Product Variation Quantity Forecast'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 160dcc04-2136-40b8-8605-99cdc6a74348
+		summarizeBy: none
+		sourceColumn: product_variation_quantity_forecast
 
-    /// True if the forecast is the most recent for a given menu week.
-    column 'Is Most Recent Forecast'
-        dataType: boolean
-        formatString: """TRUE"";""TRUE"";""FALSE"""
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: is_most_recent_menu_week_forecast
+	/// True if the forecast is the most recent for a given menu week.
+	column 'Is Most Recent Forecast'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		isAvailableInMdx: false
+		lineageTag: 2bce2c4b-5939-4ac9-a688-3d1cf95ca5ff
+		summarizeBy: none
+		sourceColumn: is_most_recent_menu_week_forecast
 
-    /// Primary key of the dim_forecast_runs table
-    column fk_dim_forecast_runs
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_forecast_runs
+	/// Primary key of the dim_forecast_runs table
+	column fk_dim_forecast_runs
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 456d8ff9-e006-4437-bf20-3b68473ee2c6
+		summarizeBy: none
+		sourceColumn: fk_dim_forecast_runs
 
-    /// Primary key of the dim_companies table
-    column fk_dim_companies
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_companies
+	/// Primary key of the dim_companies table
+	column fk_dim_companies
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: f0a3bc0d-2dcc-41b4-8bde-66fac3abf794
+		summarizeBy: none
+		sourceColumn: fk_dim_companies
 
-    /// Primary key of the dim_products table
-    column fk_dim_products
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_products
+	/// Primary key of the dim_products table
+	column fk_dim_products
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 30f15101-fbb1-4fcc-b0b1-3eebc3f44d0b
+		summarizeBy: none
+		sourceColumn: fk_dim_products
 
-    /// Primary key of the dim_dates table
-    column fk_dim_dates_menu_week
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_dates_menu_week
-    
-    /// Primary key of the dim_dates_forecast_generated_at table
-    column fk_dim_dates_forecast_generated_at
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_dates_forecast_generated_at
+	/// Primary key of the dim_dates table
+	column fk_dim_dates_menu_week
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 967503e1-a25b-42be-8a0c-537a3209f629
+		summarizeBy: none
+		sourceColumn: fk_dim_dates_menu_week
 
-    /// Primary key of the dim_recipes table
-    column fk_dim_recipes
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_recipes
+	/// Primary key of the dim_dates_forecast_generated_at table
+	column fk_dim_dates_forecast_generated_at
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: f97293fd-16a8-4e2c-8e95-6784266f7158
+		summarizeBy: none
+		sourceColumn: fk_dim_dates_forecast_generated_at
 
-    partition 'Forecast Variation Measures' = m
-        mode: directQuery
-        source =
-                let
-                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
-                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
-                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
-                    fact_forecast_variations_Table = gold_Schema{[Name="fact_forecast_variations",Kind="Table"]}[Data]
-                in
-                    fact_forecast_variations_Table
+	/// Primary key of the dim_recipes table
+	column fk_dim_recipes
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 5e4dc396-6343-4a59-b1ef-72f65e3c3f8a
+		summarizeBy: none
+		sourceColumn: fk_dim_recipes
+
+	partition 'Forecast Variation Measures' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    fact_forecast_variations_Table = gold_Schema{[Name="fact_forecast_variations",Kind="Table"]}[Data]
+				in
+				    fact_forecast_variations_Table
+
