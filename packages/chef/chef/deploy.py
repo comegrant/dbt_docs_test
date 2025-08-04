@@ -57,15 +57,46 @@ class DeployConfig:
 
     container_registry_url: str = "bhregistry.azurecr.io"
     resources: ContainerResources = field(default_factory=lambda: ContainerResources(cpu=0.5, memory="1Gi"))
+    ip_rules: list[IpSecurityRestrictionRule] | None = None
 
     location: str = "northeurope"
     subscription_id: str = "7c54c7c3-c54c-44bd-969c-440ecef1d917"
 
 
-def firewall() -> list[IpSecurityRestrictionRule]:
+class AllowIpAddress:
+    # DATA-1736
+    norway_vpn = IpSecurityRestrictionRule(name="Norway VPN", ip_address_range="185.7.138.205/32", action="Allow")
+    norway_office = IpSecurityRestrictionRule(
+        name="Norway Office", ip_address_range="109.74.178.186/32", action="Allow"
+    )
+    norway_sb2 = IpSecurityRestrictionRule(
+        name="Norway SB2 Storage", ip_address_range="77.40.143.14/32", action="Allow"
+    )
+
+    sweden_vpn = IpSecurityRestrictionRule(name="Sweden VPN", ip_address_range="194.236.49.120/32", action="Allow")
+    sweden_main_office = IpSecurityRestrictionRule(
+        name="Sweden Main Office", ip_address_range="84.55.74.180/32", action="Allow"
+    )
+    sweden_gothenburg_office = IpSecurityRestrictionRule(
+        name="Sweden Gothenburg Office", ip_address_range="62.20.23.147/32", action="Allow"
+    )
+
+    danmark_office = IpSecurityRestrictionRule(name="Danmark Office", ip_address_range="83.94.96.6/32", action="Allow")
+    danmark_vpn = IpSecurityRestrictionRule(name="Danmark VPN", ip_address_range="62.20.23.147/32", action="Allow")
+
+    syone = IpSecurityRestrictionRule(name="Syone", ip_address_range="148.69.136.81/32", action="Allow")
+
+
+def default_firewall() -> list[IpSecurityRestrictionRule]:
     return [
-        IpSecurityRestrictionRule(name="VPN Norway", ip_address_range="185.7.138.205/32", action="Allow"),
-        IpSecurityRestrictionRule(name="Office Norway", ip_address_range="109.74.178.186/32", action="Allow"),
+        AllowIpAddress.norway_vpn,
+        AllowIpAddress.norway_office,
+        AllowIpAddress.norway_sb2,
+        AllowIpAddress.sweden_vpn,
+        AllowIpAddress.sweden_main_office,
+        AllowIpAddress.sweden_gothenburg_office,
+        AllowIpAddress.danmark_vpn,
+        AllowIpAddress.danmark_office,
     ]
 
 
@@ -154,7 +185,10 @@ async def deploy(
 
     if config.exposed_at_port:
         container_config.ingress = Ingress(
-            external=True, target_port=config.exposed_at_port, transport="auto", ip_security_restrictions=firewall()
+            external=True,
+            target_port=config.exposed_at_port,
+            transport="auto",
+            ip_security_restrictions=config.ip_rules or default_firewall(),
         )
 
     datadog_sidecar = Container(
@@ -200,6 +234,7 @@ class StreamlitApp:
     secrets: type[BaseSettings] | list[type[BaseSettings]] | None = None
     env_vars: EnvConfig | dict[str, str] | None = None
 
+    ip_rules: list[IpSecurityRestrictionRule] | None = None
     resources: ContainerResources = field(default_factory=lambda: ContainerResources(cpu=0.5, memory="1Gi"))
 
 
@@ -232,6 +267,7 @@ class Apps:
             startup_command=["/bin/sh", "-c", command],
             exposed_at_port=8501,
             env_vars=used_env_vars,
+            ip_rules=streamlit_app.ip_rules,
             secrets=streamlit_app.secrets,
             resources=streamlit_app.resources,
         )
