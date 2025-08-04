@@ -7,6 +7,8 @@
 ///
 /// - Current: Returns the original value of the measure without any time modification.
 ///
+///  - Current Month: Returns the value for the month of todays date, year must be filtered on seperately.
+///
 /// - PY (Previous Year): Returns the value of the measure for the same period one year earlier.
 ///   It adapts based on what time hierarchy is in scope (Date, Calendar Month, Financial Quarter, etc.).
 ///
@@ -39,6 +41,13 @@ table 'Time Intelligence'
 	calculationGroup
 
 		calculationItem Current = SELECTEDMEASURE()
+
+		calculationItem 'Current Month' = 
+				CALCULATE(
+					SELECTEDMEASURE()
+					, MONTH(Dates[Date]) = MONTH(TODAY())
+					, ALLEXCEPT(Dates, Dates[Calendar Year])
+				)
 
 		calculationItem PY =
 

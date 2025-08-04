@@ -265,6 +265,16 @@ table 'Order Measures'
 		formatString: #,0
 		displayFolder: Ordered Units
 
+	/// Number of ordered units for the same period in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	measure 'Number of Ordered Units (Current Month)' =
+			CALCULATE(
+				[Number of Ordered Units],
+				'Time Intelligence'[Time Calculation] = "Current Month"
+			)
+		formatString: #,0
+		displayFolder: Ordered Units
+
 	/// Relative increase/decrease in number of ordered units from previous year
 	measure 'Number of Ordered Units (YOY%)' =
 			CALCULATE(
@@ -291,6 +301,16 @@ table 'Order Measures'
 			CALCULATE(
 				[Average Number of Units per Order],
 				'Time Intelligence'[Time Calculation] = "PY"
+			)
+		formatString: #,0.00
+		displayFolder: Ordered Units
+
+	/// Average Number of Units per Order for the same period in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	measure 'Average Number of Units per Order (Current Month)' =
+			CALCULATE(
+				[Average Number of Units per Order],
+				'Time Intelligence'[Time Calculation] = "Current Month"
 			)
 		formatString: #,0.00
 		displayFolder: Ordered Units
@@ -825,6 +845,16 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Order Frequency
 
+	/// Order frequency same period in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	measure 'Average Number of Orders per Customer (Current Month)' =
+			CALCULATE(
+				[Average Number of Orders per Customer],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0.00
+		displayFolder: Order Frequency
+
 	/// Number of orders by customers who have had fewer than x orders in the selected period.
 	/// x is by default set to 4, but can be changed to any number, using the parameter "(Param) Number of Orders per Customer Target"
 	measure 'Number of Orders by Customers with Fewer than X Orders' =
@@ -1007,6 +1037,16 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 6107c597-37e1-40fb-936d-536e8c6fa315
 
+	/// Sales in the same period of the in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	measure 'Number of Orders (Current Month)' =
+			CALCULATE(
+				[Number of Orders],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0
+		displayFolder: Orders
+
 	/// Absolute increase/decrease in sales from previous year
 	measure 'Number of Orders (Diff PY)' =
 			CALCULATE(
@@ -1060,6 +1100,18 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: 3c4644d8-ad4a-4c09-b41a-fd69e27cf2af
 
+	/// Average Transaction Value of orders in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	/// Only including debit and transportation order lines (i.e. exclude discounts and credit).
+	/// Exlucding VAT.
+	measure 'ATV Gross Ex Vat (Current Month)' =
+			CALCULATE(
+				[ATV Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0.00
+		displayFolder: Orders
+
 	/// Absolute increase/decrease in average transaction value from previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
 	/// exlucding vat
@@ -1097,6 +1149,19 @@ table 'Order Measures'
 		displayFolder: Orders
 		lineageTag: b37ae9b9-9d5a-4d00-a8fd-1c2db5d6d3dd
 
+
+	/// Average Transaction Value of orders in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	/// Including all order lines (i.e. include discounts and credit).
+	/// Exlucding VAT.
+	measure 'ATV Net Ex Vat (Current Month)' =
+			CALCULATE(
+				[ATV Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0.00
+		displayFolder: Orders
+
 	/// Absolute increase/decrease in average transaction value from previous year
 	/// including all order lines (i.e. include discounts and credit)
 	/// exlucding vat
@@ -1133,6 +1198,18 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Orders
 		lineageTag: 81164b9b-6304-4cbd-94d2-eb0f42c1ea0c
+
+	/// Revenue from orders in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	/// Only including debit and transportation order lines (i.e. exclude discounts and credit).
+	/// Exlucding VAT.
+	measure 'Order Value Gross Ex Vat (Current Month)' =
+			CALCULATE(
+				[Order Value Gross Ex Vat],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0.00
+		displayFolder: Orders
 
 	/// Absolute increase/decrease in revenue from orders in the same period previous year
 	/// only including debit and transportation order lines (i.e. exclude discounts and credit)
@@ -1190,6 +1267,18 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Orders
 		lineageTag: 9d37b5ab-ce84-47ea-a41a-3a9b809d476b
+
+	/// Revenue from orders in the month of todays date.
+    /// Need to be filtered on year if its wanted to see numbers for a specific year.
+	/// Including all order lines (i.e. include discounts and credit).
+	/// Exlucding VAT.
+	measure 'Order Value Net Ex Vat (Current Month)' =
+			CALCULATE(
+				[Order Value Net Ex Vat],
+				'Time Intelligence'[Time Calculation]="Current Month"
+			)
+		formatString: #,0.00
+		displayFolder: Orders
 
 	/// Absolute increase/decrease in revenue from orders in the same period
 	/// of the previous year from previous year
