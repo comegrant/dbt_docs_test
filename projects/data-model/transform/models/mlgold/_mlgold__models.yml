@@ -1351,3 +1351,284 @@ models:
       - name: allergen_preference_id_list
         description: "{{ doc('column__allergen_preference_id_list') }}"
         data_type: array
+
+  - name: dishes_forecasting_weekly_dishes_variations
+    description: "Table containing information about weekly menu variations for dishes"
+
+    columns:
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+
+      - name: portion_id
+        description: "{{ doc('column__portion_id') }}"
+        data_type: int
+
+      - name: portion_quantity
+        description: "{{ doc('column__portion_size') }}"
+        data_type: int
+
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+
+      - name: product_type_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: product_variation_name
+        description: "{{ doc('column__product_variation_name') }}"
+        data_type: string
+
+      - name: fk_dim_products
+        description: "{{ doc('column__pk_dim_products') }}"
+        data_type: string
+
+      - name: fk_dim_portions
+        description: "{{ doc('column__pk_dim_portions') }}"
+        data_type: string
+
+  - name: dishes_forecasting_order_history
+    description: "Table containing aggregated information about order history for product variations ids"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+
+      - name: company_name
+        description: "{{ doc('column__company_name') }}"
+        data_type: string
+
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+
+      - name: menu_week_monday_date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_type: date
+
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: string
+
+      - name: product_variation_quantity
+        description: "{{ doc('column__product_variation_quantity_order_history') }}"
+        data_type: int
+
+      - name: total_weekly_qty
+        description: "{{ doc('column__total_weekly_qty') }}"
+        data_type: int
+
+      - name: variation_ratio
+        description: "{{ doc('column__variation_ratio') }}"
+        data_type: double
+
+  - name: dishes_forecasting_recipe_ingredients
+    description: "Table containing information about recipe ingredients for dishes"
+
+    columns:
+      - name: recipe_portion_id
+        description: "{{ doc('column__recipe_portion_id') }}"
+        data_type: int
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+      - name: has_chicken_filet
+        description: "{{ doc('column__has_chicken_filet') }}"
+        data_type: int
+      - name: has_chicken
+        description: "{{ doc('column__has_chicken') }}"
+        data_type: int
+      - name: has_dry_pasta
+        description: "{{ doc('column__has_dry_pasta') }}"
+        data_type: int
+      - name: has_fresh_pasta
+        description: "{{ doc('column__has_fresh_pasta') }}"
+        data_type: int
+      - name: has_white_fish_filet
+        description: "{{ doc('column__has_white_fish_filet') }}"
+        data_type: int
+      - name: has_cod_fillet
+        description: "{{ doc('column__has_cod_fillet') }}"
+        data_type: int
+      - name: has_breaded_cod
+        description: "{{ doc('column__has_breaded_cod') }}"
+        data_type: int
+      - name: has_salmon_filet
+        description: "{{ doc('column__has_salmon_filet') }}"
+        data_type: int
+      - name: has_seafood
+        description: "{{ doc('column__has_seafood') }}"
+        data_type: int
+      - name: has_pork_filet
+        description: "{{ doc('column__has_pork_filet') }}"
+        data_type: int
+      - name: has_pork_cutlet
+        description: "{{ doc('column__has_pork_cutlet') }}"
+        data_type: int
+      - name: has_trout_filet
+        description: "{{ doc('column__has_trout_filet') }}"
+        data_type: int
+      - name: has_parmasan
+        description: "{{ doc('column__has_parmasan') }}"
+        data_type: int
+      - name: has_cheese
+        description: "{{ doc('column__has_cheese') }}"
+        data_type: int
+      - name: has_minced_meat
+        description: "{{ doc('column__has_minced_meat') }}"
+        data_type: int
+      - name: has_burger_patty
+        description: "{{ doc('column__has_burger_patty') }}"
+        data_type: int
+      - name: has_noodles
+        description: "{{ doc('column__has_noodles') }}"
+        data_type: int
+      - name: has_sausages
+        description: "{{ doc('column__has_sausages') }}"
+        data_type: int
+      - name: has_tortilla
+        description: "{{ doc('column__has_tortilla') }}"
+        data_type: int
+      - name: has_pizza_crust
+        description: "{{ doc('column__has_pizza_crust') }}"
+        data_type: int
+      - name: has_bacon
+        description: "{{ doc('column__has_bacon') }}"
+        data_type: int
+      - name: has_wok_sauce
+        description: "{{ doc('column__has_wok_sauce') }}"
+        data_type: int
+      - name: has_asian_sauces
+        description: "{{ doc('column__has_asian_sauces') }}"
+        data_type: int
+      - name: has_salsa
+        description: "{{ doc('column__has_salsa') }}"
+        data_type: int
+      - name: has_flat_bread
+        description: "{{ doc('column__has_flat_bread') }}"
+        data_type: int
+      - name: has_pita
+        description: "{{ doc('column__has_pita') }}"
+        data_type: int
+      - name: has_whole_salad
+        description: "{{ doc('column__has_whole_salad') }}"
+        data_type: int
+      - name: has_shredded_vegetables
+        description: "{{ doc('column__has_shredded_vegetables') }}"
+        data_type: int
+      - name: has_potato
+        description: "{{ doc('column__has_potato') }}"
+        data_type: int
+      - name: has_peas
+        description: "{{ doc('column__has_peas') }}"
+        data_type: int
+      - name: has_rice
+        description: "{{ doc('column__has_rice') }}"
+        data_type: int
+      - name: has_nuts
+        description: "{{ doc('column__has_nuts') }}"
+        data_type: int
+      - name: has_beans
+        description: "{{ doc('column__has_beans') }}"
+        data_type: int
+      - name: has_onion
+        description: "{{ doc('column__has_onion') }}"
+        data_type: int
+      - name: has_citrus
+        description: "{{ doc('column__has_citrus') }}"
+        data_type: int
+      - name: has_sesame
+        description: "{{ doc('column__has_sesame') }}"
+        data_type: int
+      - name: has_herbs
+        description: "{{ doc('column__has_herbs') }}"
+        data_type: int
+      - name: has_fruit
+        description: "{{ doc('column__has_fruit') }}"
+        data_type: int
+      - name: has_cucumber
+        description: "{{ doc('column__has_cucumber') }}"
+        data_type: int
+      - name: has_chili
+        description: "{{ doc('column__has_chili') }}"
+        data_type: int
+      - name: has_pancake
+        description: "{{ doc('column__has_pancake') }}"
+        data_type: int
+  - name: dishes_forecasting_recipes
+    description: "Table containing information about recipes for dishes"
+
+    columns:
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+      - name: cooking_time_to
+        description: "{{ doc('column__cooking_time_to') }}"
+        data_type: int
+      - name: cooking_time_from
+        description: "{{ doc('column__cooking_time_from') }}"
+        data_type: int
+      - name: recipe_difficulty_level_id
+        description: "{{ doc('column__recipe_difficulty_level_id') }}"
+        data_type: int
+      - name: recipe_main_ingredient_id
+        description: "{{ doc('column__recipe_main_ingredient_id') }}"
+        data_type: int
+      - name: number_of_recipe_steps
+        description: "{{ doc('column__number_of_recipe_steps') }}"
+        data_type: int
+      - name: number_of_taxonomies
+        description: "{{ doc('column__number_of_taxonomies') }}"
+        data_type: int
+      - name: taxonomy_list
+        description: "{{ doc('column__taxonomy_list') }}"
+        data_type: string
+      - name: has_chefs_favorite_taxonomy
+        description: "{{ doc('column__has_chefs_favorite_taxonomy') }}"
+        data_type: int
+      - name: has_quick_and_easy_taxonomy
+        description: "{{ doc('column__has_quick_and_easy_taxonomy') }}"
+        data_type: int
+      - name: has_vegetarian_taxonomy
+        description: "{{ doc('column__has_vegetarian_taxonomy') }}"
+        data_type: int
+      - name: has_low_calorie_taxonomy
+        description: "{{ doc('column__has_low_calorie_taxonomy') }}"
+        data_type: int
+      - name: has_family_friendly_taxonomy
+        description: "{{ doc('column__has_family_friendly_taxonomy') }}"
+        data_type: int

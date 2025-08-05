@@ -358,3 +358,256 @@ Whether or not the recipe has the low calorie taxonomy. Created based on keyword
 Menu year and week combined into a single integer.
 
 {% enddocs %}
+
+# Dishes forecasting Models
+{% docs column__has_family_friendly_taxonomy %}
+
+Whether or not the recipe has the family friendly taxonomy. Created based on keywords matching the taxonomy name. Keywords include familievenlig,
+
+{% enddocs %}
+
+{% docs column__has_chicken %}
+
+Whether or not the recipe has chicken. Based on whether ingredient category id is in (1505, 627)
+
+{% enddocs %}
+
+{% docs column__has_chicken_filet %}
+
+Whether or not the recipe has chicken filet. Based on whether ingredient category id is in (1503, 1505, 627)
+
+{% enddocs %}
+
+{% docs column__has_dry_pasta %}
+
+Whether or not the recipe has dry pasta. Based on whether ingredient category id is in (2191, 2192, 2193, 2194, 2195, 2197, 2199, 2310, 2311)
+
+{% enddocs %}
+
+{% docs column__has_fresh_pasta %}
+
+Whether or not the recipe has fresh pasta. Based on whether ingredient category id is in (2183)
+
+{% enddocs %}
+
+{% docs column__has_white_fish_filet %}
+
+Whether or not the recipe has white fish filet. Based on whether ingredient category id is in (1238, 1295, 1238, 2345, 1276)
+
+{% enddocs %}
+
+{% docs column__has_cod_fillet %}
+
+Whether or not the recipe has cod fillet. Based on whether ingredient category id is in (1238, 1295)
+
+{% enddocs %}
+
+{% docs column__has_breaded_cod %}
+
+Whether or not the recipe has breaded cod. Based on whether ingredient category id is in (1246)
+
+{% enddocs %}
+
+{% docs column__has_salmon_filet %}
+
+Whether or not the recipe has salmon filet. Based on whether ingredient category id is in (1218, 616)
+
+{% enddocs %}
+
+{% docs column__has_seafood %}
+
+Whether or not the recipe has seafood. Based on whether ingredient category id is in (1215, 2231, 1238, 1295, 1238, 2345, 1276, 1218, 616)
+
+{% enddocs %}
+
+{% docs column__has_pork_filet %}
+
+Whether or not the recipe has pork filet. Based on whether ingredient category id is in (1083, 1070)
+
+{% enddocs %}
+
+{% docs column__has_pork_cutlet %}
+
+Whether or not the recipe has pork cutlet. Based on whether ingredient category id is in (1085)
+
+{% enddocs %}
+
+{% docs column__has_trout_filet %}
+
+Whether or not the recipe has trout filet. Based on whether ingredient category id is in (1333)
+
+{% enddocs %}
+
+{% docs column__has_parmasan %}
+
+Whether or not the recipe has parmesan. Based on whether ingredient category id is in (2358, 2357)
+
+{% enddocs %}
+
+{% docs column__has_cheese %}
+
+Whether or not the recipe has cheese. Based on whether ingredient category id is in (1611, 2358, 2357)
+
+{% enddocs %}
+
+{% docs column__has_minced_meat %}
+
+Whether or not the recipe has minced meat. Based on whether ingredient category id is in (1113, 1142, 1084, 1506, 1200)
+
+{% enddocs %}
+
+{% docs column__has_burger_patty %}
+
+Whether or not the recipe has burger patty. Based on whether ingredient category id is in (1136, 1194, 1147)
+
+{% enddocs %}
+
+{% docs column__has_noodles %}
+
+Whether or not the recipe has noodles. Based on whether ingredient category id is in (2205)
+
+{% enddocs %}
+
+{% docs column__has_sausages %}
+
+Whether or not the recipe has sausages. Based on whether ingredient category id is in (1096, 1079)
+
+{% enddocs %}
+
+{% docs column__has_tortilla %}
+
+Whether or not the recipe has tortilla. Based on whether ingredient category id is in (1707, 1743)
+
+{% enddocs %}
+
+{% docs column__has_pizza_crust %}
+
+Whether or not the recipe has pizza crust. Based on whether ingredient category id is in (1712)
+
+{% enddocs %}
+
+{% docs column__has_bacon %}
+
+Whether or not the recipe has bacon. Based on whether ingredient category id is in (1081)
+
+{% enddocs %}
+
+{% docs column__has_wok_sauce %}
+
+Whether or not the recipe has wok sauce. Based on whether ingredient category id is in (2082)
+
+{% enddocs %}
+
+{% docs column__has_asian_sauces %}
+
+Whether or not the recipe has asian sauces. Based on whether ingredient category id is in (2082, 2367, 2375, 2020, 2083, 2019, 2037)
+
+{% enddocs %}
+
+{% docs column__has_salsa %}
+
+Whether or not the recipe has salsa. Based on whether ingredient category id is in (2025)
+
+{% enddocs %}
+
+{% docs column__has_flat_bread %}
+
+Whether or not the recipe has flat bread. Based on whether ingredient category id is in (1708)
+
+{% enddocs %}
+
+{% docs column__has_pita %}
+
+Whether or not the recipe has pita. Based on whether ingredient category id is in (1729)
+
+{% enddocs %}
+
+{% docs column__has_whole_salad %}
+
+Whether or not the recipe has whole salad. Based on whether ingredient category id is in (980)
+
+{% enddocs %}
+
+{% docs column__has_shredded_vegetables %}
+
+Whether or not the recipe has shredded vegetables. Based on whether ingredient category id is in (944)
+
+{% enddocs %}
+
+{% docs column__has_potato %}
+
+Whether or not the recipe has potato. Based on whether ingredient category id is in (968, 968)
+
+{% enddocs %}
+
+{% docs column__has_peas %}
+
+Whether or not the recipe has peas. Based on whether ingredient category id is in (1014)
+
+{% enddocs %}
+
+{% docs column__has_rice %}
+
+Whether or not the recipe has rice. Based on whether ingredient category id is in (1064)
+
+{% enddocs %}
+
+{% docs column__has_nuts %}
+
+Whether or not the recipe has nuts. Based on whether ingredient category id is in (1028)
+
+{% enddocs %}
+
+{% docs column__has_beans %}
+
+Whether or not the recipe has beans. Based on whether ingredient category id is in (990, 989)
+
+{% enddocs %}
+
+{% docs column__has_onion %}
+
+Whether or not the recipe has onion. Based on whether ingredient category id is in (961)
+
+{% enddocs %}
+
+{% docs column__has_citrus %}
+
+Whether or not the recipe has citrus. Based on whether ingredient category id is in (922)
+
+{% enddocs %}
+
+{% docs column__has_sesame %}
+
+Whether or not the recipe has sesame. Based on whether ingredient category id is in (1034)
+
+{% enddocs %}
+
+{% docs column__has_herbs %}
+
+Whether or not the recipe has herbs. Based on whether ingredient category id is in (959)
+
+{% enddocs %}
+
+{% docs column__has_fruit %}
+
+Whether or not the recipe has fruit. Based on whether ingredient category id is in (926)
+
+{% enddocs %}
+
+{% docs column__has_cucumber %}
+
+Whether or not the recipe has cucumber. Based on whether ingredient category id is in (957)
+
+{% enddocs %}
+
+{% docs column__has_chili %}
+
+Whether or not the recipe has chili. Based on whether ingredient category id is in (965)
+
+{% enddocs %}
+
+{% docs column__has_pancake %}
+
+Whether or not the recipe has pancake. Based on whether ingredient category id is in (1714)
+
+{% enddocs %}
