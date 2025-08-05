@@ -598,6 +598,20 @@ models:
               to: ref('dim_meals')
               field: pk_dim_meals
 
+      - name: fk_dim_price_categories
+        data_type: string
+        description: "{{ doc('column__pk_dim_price_categories') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_price_categories')
+            to_columns: [pk_dim_price_categories]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_price_categories')
+              field: pk_dim_price_categories
+
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"

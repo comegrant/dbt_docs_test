@@ -118,6 +118,12 @@ discounts as (
 
 )
 
+, price_categories as (
+
+    select * from {{ ref('dim_price_categories') }}
+
+)
+
 -- FIND SUBCRIPTION ORDERS
 -- Assumptions:
 -- 1) Only one subscription order per customer per menu week
@@ -875,6 +881,7 @@ discounts as (
         , coalesce(md5(concat(add_recipe_information.portion_id_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_subscription
         , coalesce(md5(concat(add_recipe_information.portion_id_mealbox, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox
         , coalesce(md5(concat(add_recipe_information.portion_id_mealbox_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox_subscription
+        , coalesce(price_categories.pk_dim_price_categories, '0') as fk_dim_price_categories
         , coalesce(
             md5(
                 concat(
@@ -965,6 +972,13 @@ discounts as (
     -- TODO: Fix the fk on partnerships to handle cases where multiple rules can apply to a single order
     left join partnerships
         on add_recipe_information.billing_agreement_order_id = partnerships.billing_agreement_order_id
+    left join price_categories
+        on add_recipe_information.company_id = price_categories.company_id
+        and add_recipe_information.portion_id = price_categories.portion_id
+        and add_recipe_information.total_ingredient_planned_cost_whole_units >= price_categories.min_ingredient_cost_inc_vat
+        and add_recipe_information.total_ingredient_planned_cost_whole_units < price_categories.max_ingredient_cost_inc_vat
+        and add_recipe_information.menu_week_monday_date >= price_categories.valid_from
+        and add_recipe_information.menu_week_monday_date < price_categories.valid_to
 
 )
 
