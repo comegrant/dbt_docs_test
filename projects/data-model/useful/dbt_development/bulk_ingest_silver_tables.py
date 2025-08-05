@@ -4,7 +4,7 @@ sys.path.append('../../reusable')
 
 # COMMAND ----------
 
-from copy_data import create_or_replace_tables
+from copy_data import create_or_replace_objects
 
 # COMMAND ----------
 
@@ -15,10 +15,10 @@ tables = dbutils.widgets.get("table_list")
 
 # COMMAND ----------
 
-create_or_replace_tables(
+create_or_replace_objects(
     source_database = "dev",
     source_schema = layer,
     sink_database = "dev",
     sink_schema = dbt_schema,
-    tables = tables
+    objects = tables
 )

@@ -34,4 +34,4 @@ resources:
         - name: sink_schema
           default: 'add valid schema here'
         - name: tables
-          default: 'add valid tables as comma separated list here'
+          default: 'add valid tables or views as comma separated list here'
