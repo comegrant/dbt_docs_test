@@ -479,6 +479,14 @@ relationship fact_orders_to_dim_partnerships
 	fromColumn: 'Order Measures'.fk_dim_partnerships
 	toColumn: 'Partnership Details'.pk_dim_partnerships
 
+relationship fact_orders_to_dim_price_categories
+	fromColumn: 'Order Measures'.fk_dim_price_categories
+	toColumn: 'Price Categories'.pk_dim_price_categories
+
+relationship fact_menus_to_dim_price_categories
+	fromColumn: 'Menu Measures'.fk_dim_price_categories
+	toColumn: 'Price Categories'.pk_dim_price_categories
+
 relationship bridge_ingredient_combinations_ingredients_to_dim_ingredient_combinations
 	crossFilteringBehavior: bothDirections
 	fromColumn: 'Bridge Ingredient Combinations Ingredients'.fk_dim_ingredient_combinations

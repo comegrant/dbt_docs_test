@@ -1,0 +1,61 @@
+/// Has information about the price categories that relates to a recipe.
+table 'Price Categories'
+    lineageTag: Price-Categories-Table
+
+    column pk_dim_price_categories
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_price_categories
+
+    /// The price category represented as a number from -3 to 6 
+    column 'Price Category Level Id'
+        dataType: int64
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: price_category_level_id
+
+    /// The lowest recipe cost (in whole units) for a recipe to fit in to the price category.
+    column 'Min Ingredient Cost Inc Vat'
+        dataType: int64
+        isAvailableInMdx: false
+        formatString: #,0
+        summarizeBy: none
+        sourceColumn: min_ingredient_cost_inc_vat
+
+    /// The highest recipe cost (in whole units) for a recipe to fit into the price category.
+    column 'Max Ingredient Cost Inc Vat'
+        dataType: int64
+        isAvailableInMdx: false
+        formatString: #,0
+        summarizeBy: none
+        sourceColumn: max_ingredient_cost_inc_vat
+
+    /// The suggested additional price to be charged from the customer for a recipe in the price category. The price can also be negative for thrifty dishes.
+    column 'Suggested Price Inc Vat'
+        dataType: double
+        isAvailableInMdx: false
+        formatString: #,0.00
+        summarizeBy: none
+        sourceColumn: suggested_price_inc_vat
+
+    /// The name of the price category level.
+    column 'Price Category Level'
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sortByColumn: 'Price Category Level Id'
+        sourceColumn: price_category_level_name
+
+    partition 'Price Categories' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_price_categories_Table = gold_Schema{[Name="dim_price_categories",Kind="Table"]}[Data]
+                in
+                    dim_price_categories_Table

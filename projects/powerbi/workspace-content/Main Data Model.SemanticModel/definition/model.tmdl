@@ -75,5 +75,6 @@ ref table 'Forecast Measures'
 ref table 'Bridge Fact Orders Dim Partnerships'
 ref table 'Partnership Details'
 ref table 'Partnership Measures'
+ref table 'Price Categories'
 
 ref cultureInfo en-US
