@@ -1081,3 +1081,273 @@ models:
               min_value: 0
               max_value: 1
               inclusive: true
+
+  - name: reci_pick_all_recipes
+    description: "Table containing all recipes for the reci-pick project"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+
+      - name: recipe_main_ingredient_name_english
+        description: "{{ doc('column__recipe_main_ingredient_name_english') }}"
+        data_type: string
+
+      - name: cooking_time_mean
+        description: "{{ doc('column__cooking_time_mean') }}"
+        data_type: float
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 200.0
+              inclusive: true
+              config:
+                severity: warn
+
+      - name: recipe_difficulty_level_id
+        description: "{{ doc('column__recipe_difficulty_level_id') }}"
+        data_type: int
+
+      - name: number_of_recipe_steps
+        description: "{{ doc('column__number_of_recipe_steps') }}"
+        data_type: int
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 50
+              inclusive: true
+      - name: number_of_taxonomies
+        description: "{{ doc('column__number_of_taxonomies') }}"
+        data_type: int
+      - name: number_of_ingredients
+        description: "{{ doc('column__number_of_ingredients') }}"
+        data_type: int
+      - name: has_chefs_favorite_taxonomy
+        description: "{{ doc('column__has_chefs_favorite_taxonomy') }}"
+        data_type: int
+      - name: has_quick_and_easy_taxonomy
+        description: "{{ doc('column__has_quick_and_easy_taxonomy') }}"
+        data_type: int
+      - name: has_vegetarian_taxonomy
+        description: "{{ doc('column__has_vegetarian_taxonomy') }}"
+        data_type: int
+      - name: has_low_calorie_taxonomy
+        description: "{{ doc('column__has_low_calorie_taxonomy') }}"
+        data_type: int
+      - name: allergen_preference_id_list
+        description: "{{ doc('column__allergen_preference_id_list') }}"
+        data_type: array
+      - name: allergen_name_combinations
+        description: "{{ doc('column__allergen_name_combinations') }}"
+        data_type: string
+
+  - name: reci_pick_menu_recipes
+    description: "Table containing menu recipes for the reci-pick project"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_yyyyww
+        description: "{{ doc('column__menu_yyyyww') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: product_id
+        description: "{{ doc('column__product_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+
+  - name: reci_pick_order_history
+    description: "Table containing recipe order history for the reci-pick project"
+
+    columns:
+      - name: pk_fact_orders
+        description: "{{ doc('column__pk_fact_orders') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: language_id
+        description: "{{ doc('column__language_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: billing_agreement_id
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_yyyyww
+        description: "{{ doc('column__menu_yyyyww') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: is_dish
+        description: "{{ doc('column__is_dish') }}"
+        data_type: boolean
+      - name: is_added_dish
+        description: "{{ doc('column__is_added_dish') }}"
+        data_type: boolean
+      - name: is_removed_dish
+        description: "{{ doc('column__is_removed_dish') }}"
+        data_type: boolean
+      - name: product_variation_id
+        description: "{{ doc('column__product_variation_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: recipe_id
+        description: "{{ doc('column__recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: fk_dim_products
+        description: "{{ doc('column__pk_dim_products') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: fk_dim_companies
+        description: "{{ doc('column__fk_dim_companies') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: fk_dim_recipes
+        description: "{{ doc('column__pk_dim_recipes') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: main_recipe_id
+        description: "{{ doc('column__main_recipe_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: recipe_name
+        description: "{{ doc('column__recipe_name') }}"
+        data_type: string
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: product_type_id
+        description: "{{ doc('column__product_type_id') }}"
+        data_type: char(36)
+        data_tests:
+          - not_null
+      - name: product_type_name
+        description: "{{ doc('column__product_type_name') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: product_variation_name
+        description: "{{ doc('column__product_variation_name') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: concept_combinations
+        description: "{{ doc('column__concept_name_combinations') }}"
+        data_type: array
+      - name: taste_preference_combinations
+        description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
+        data_type: string
+
+  - name: reci_pick_concept_combinations
+    description: "Table containing concept combinations for the reci-pick project"
+
+    columns:
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: pk_dim_preference_combinations
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: concept_preference_id_list
+        description: "{{ doc('column__concept_preference_id_list') }}"
+        data_type: array
+      - name: concept_name_combinations
+        description: "{{ doc('column__concept_name_combinations') }}"
+        data_type: string
+
+  - name: reci_pick_active_users
+    description: "Table containing active users for the reci-pick project, used for prediction"
+
+    columns:
+      - name: pk_dim_billing_agreements
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: billing_agreement_id
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: billing_agreement_status_name
+        description: "{{ doc('column__billing_agreement_status_name') }}"
+        data_type: string
+      - name: preference_combination_id
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        data_type: string
+      - name: concept_combinations
+        description: "{{ doc('column__concept_name_combinations') }}"
+        data_type: string
+      - name: taste_preference_combinations
+        description: "{{ doc('column__taste_name_combinations_including_allergens') }}"
+        data_type: string
+      - name: allergen_preference_id_list
+        description: "{{ doc('column__allergen_preference_id_list') }}"
+        data_type: array

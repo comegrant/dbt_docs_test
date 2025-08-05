@@ -317,3 +317,44 @@ Latest forecast of the number of orders that includes one or more flex dishes (s
 Latest forecast of the percentage of orders that includes one or more flex dishes (swaps, additions, or removals) for a menu week and company.
 
 {% enddocs %}
+
+
+# Reci-pick Models
+
+{% docs column__cooking_time_mean %}
+
+Average cooking time in minutes, calculated as the mean of cooking_time_from and cooking_time_to.
+
+{% enddocs %}
+
+
+{% docs column__has_chefs_favorite_taxonomy %}
+
+Whether or not the recipe has the chefs favorite taxonomy. Created based on keywords matching the taxonomy name. Keywords include inspiration, inspirerende, favoritter, chefs choice, cockens val, inspirerande.
+
+{% enddocs %}
+
+{% docs column__has_quick_and_easy_taxonomy %}
+
+Whether or not the recipe has the quick and easy taxonomy. Created based on keywords matching the taxonomy name. Keywords include express, rask, laget på 1-2-3, fort gjort, snabb, enkelt, hurtig, nem på 5.
+
+{% enddocs %}
+
+{% docs column__has_vegetarian_taxonomy %}
+
+Whether or not the recipe has the vegetarian taxonomy. Created based on keywords matching the taxonomy name. Keywords include vegetarian, vegan.
+
+{% enddocs %}
+
+{% docs column__has_low_calorie_taxonomy %}
+
+Whether or not the recipe has the low calorie taxonomy. Created based on keywords matching the taxonomy name. Keywords include low calorie, sunn, sund, roede, kalorismart, viktväktarna, sund, kalorilet.
+
+{% enddocs %}
+
+
+{% docs column__menu_yyyyww %}
+
+Menu year and week combined into a single integer.
+
+{% enddocs %}
