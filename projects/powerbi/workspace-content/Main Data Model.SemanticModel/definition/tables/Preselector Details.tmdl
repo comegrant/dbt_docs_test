@@ -311,6 +311,14 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: fk_dim_portions
 
+    /// Primary key of the dim_ingredient_combinations table
+    column fk_dim_ingredient_combinations
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_ingredient_combinations
+
     partition 'Preselector Measures' = m
         mode: directQuery
         source =

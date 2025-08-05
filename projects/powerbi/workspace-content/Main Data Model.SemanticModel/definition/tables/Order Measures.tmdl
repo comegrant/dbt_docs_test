@@ -2304,6 +2304,14 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_partnerships
 
+	/// Primary key of the dim_ingredient_combinations table
+    column fk_dim_ingredient_combinations
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_ingredient_combinations
+
 	partition 'Order Measures' = m
 		mode: directQuery
 		source =

@@ -1,0 +1,51 @@
+/// This table contains combinations of ingredients used in recipes.
+table 'Ingredient Combinations'
+	lineageTag: Ingredient-Combinations-Table
+
+    column pk_dim_ingredient_combinations
+		dataType: string
+        isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: pk_dim_ingredient_combinations
+
+        changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// A list of the ingredient ids that are combined in this combination.
+    column 'Ingredient Id Combination'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_id_combinations
+
+		annotation SummarizationSetBy = Automatic
+
+	/// A list of the ingredient codes that are combined in this combination.
+    column 'Ingredient Code Combination'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_internal_reference_combinations
+
+		annotation SummarizationSetBy = Automatic
+
+	/// A list of the ingredient names (in local language) that are combined in this combination.
+    column 'Ingredient Name Combination'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ingredient_name_combinations
+
+		annotation SummarizationSetBy = Automatic
+
+	partition IngredientCombinations = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_ingredient_combinations_Table = gold_Schema{[Name="dim_ingredient_combinations",Kind="Table"]}[Data]
+				in
+					dim_ingredient_combinations_Table
+
+	annotation PBI_ResultType = Table

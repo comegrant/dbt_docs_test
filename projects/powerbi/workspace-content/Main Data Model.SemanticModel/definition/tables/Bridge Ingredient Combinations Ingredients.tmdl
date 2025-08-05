@@ -1,0 +1,30 @@
+/// A bridge table that connects a combination of ingredients with each ingredient in the combination.
+table 'Bridge Ingredient Combinations Ingredients'
+    lineageTag: Bridge-Ingredient-Combinations-Ingredients-Table
+
+    /// Unique primary key for the ingredient combinations dimension.
+    column fk_dim_ingredient_combinations
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_ingredient_combinations
+
+    /// Primary key of the ingredients dimension. It is a composite key of ingredient_id and company_id.
+    column fk_dim_ingredients
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_ingredients
+
+    partition 'Bridge Ingredient Combinations Ingredients' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    bridge_ingredient_combinations_ingredients_Table = gold_Schema{[Name="bridge_ingredient_combinations_ingredients",Kind="Table"]}[Data]
+                in
+                    bridge_ingredient_combinations_ingredients_Table

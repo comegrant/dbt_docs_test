@@ -22,7 +22,7 @@ table Ingredients
 		annotation SummarizationSetBy = Automatic
 
 	/// The name of the ingredient in local language
-    column 'Ingredient'
+    column 'Ingredient Name'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_name
