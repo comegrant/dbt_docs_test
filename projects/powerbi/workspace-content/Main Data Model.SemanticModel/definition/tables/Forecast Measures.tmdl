@@ -7,11 +7,15 @@ table 'Forecast Measures'
 		formatString: #,0
 		lineageTag: 7a024798-dc70-466f-9e33-3e8371b4fae7
 
-	/// The forecasted quantity of a given product variation for a given menu week.
-	measure 'Number of Forecasted Product Variations' = SUM('Forecast Measures'[Product Variation Quantity Forecast])
+	/// The forecasted quantity of a given product variation for a given menu week. If filtered on multiple weeks, this will return the quantity for the earliest week.
+	measure 'Number of Forecasted Product Variations' = 
+			CALCULATE(
+    			SUM('Forecast Measures'[Product Variation Quantity Forecast]),
+    			ALL('Dates'),
+    			'Forecast Measures'[fk_dim_dates_menu_week] = MIN('Forecast Measures'[fk_dim_dates_menu_week])
+			)
 		formatString: #,0
 		lineageTag: a43f5c61-5908-4572-ac98-b0bcb2891052
-
 	column 'Order Quantity Forecast'
 		dataType: int64
 		isHidden
