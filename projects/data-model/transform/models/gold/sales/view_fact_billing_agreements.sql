@@ -12,16 +12,17 @@ all_days as (
 
 )
 
-, last_30_days_or_mondays as (
+, mondays as (
 
     select 
     * except (date),
     cast(date as timestamp) as date
     from all_days
     where 
-        date >= current_date() - interval '30 days'
-        or is_monday = true
+        -- The logic in the measures assumes the data to be on weekly basis and as og now we only need weekly data in this view.
+        --date >= current_date() - interval '30 days' or
+        is_monday = true
 
 )
 
-select * from last_30_days_or_mondays
+select * from mondays
