@@ -881,3 +881,11 @@ output "databricks_workspace_url" {
 output "databricks_id" {
   value = azurerm_databricks_workspace.this.id
 }
+
+
+###########################################
+###          Tag Policies               ###
+###########################################
+
+# Tag Policies are not supported in the current version of the Databricks Terraform provider.
+# For now Tag Policies are managed manually in the Databricks UI.
