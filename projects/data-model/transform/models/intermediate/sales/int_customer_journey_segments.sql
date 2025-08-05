@@ -221,7 +221,11 @@ agreements_with_history as (
         billing_agreement_id
         , menu_week_monday_date
         , reactivation_date
-        , date_diff(week, menu_week_monday_date, reactivation_date) as weeks_since_reactivation
+        , case
+            when date_diff(week, reactivation_date, menu_week_monday_date) < 0
+            then null
+            else date_diff(week, reactivation_date, menu_week_monday_date)
+          end as weeks_since_reactivation
     from latest_agreement_reactivation
 
 )
