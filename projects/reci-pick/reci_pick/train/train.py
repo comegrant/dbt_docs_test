@@ -36,9 +36,7 @@ def train_model(args: Args) -> None:
     start_yyyyww = company_configs.train_start_yyyyww
 
     logger.info("Downloading data...")
-    df_recipes, df_menu_recipes, df_order_history = get_dataframes(
-        company_id=company_id, start_yyyyww=start_yyyyww, env=args.env
-    )
+    df_recipes, df_menu_recipes, df_order_history = get_dataframes(company_id=company_id, start_yyyyww=start_yyyyww)
     logger.info("Preprocessing recipes...")
     df_recipes_processed, fitted_preprocessor = preprocess_recipes_dataframe(
         df_recipes=df_recipes.drop(columns=["allergen_preference_id_list", "allergen_name_combinations"]),

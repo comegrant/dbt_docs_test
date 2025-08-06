@@ -48,7 +48,6 @@ def get_recipe_numeric_features_config(company_code: str) -> list[str]:
             "recipe_main_ingredient_name_english_Shellfish",
             "recipe_main_ingredient_name_english_Vegan",
             "recipe_main_ingredient_name_english_Vegetarian",
-            "recipe_main_ingredient_name_english_Dessert",
         ]
     elif company_code == "RT":
         one_hot_features = [
@@ -58,7 +57,6 @@ def get_recipe_numeric_features_config(company_code: str) -> list[str]:
             "recipe_main_ingredient_name_english_Poultry",
             "recipe_main_ingredient_name_english_Shellfish",
             "recipe_main_ingredient_name_english_Vegetarian",
-            "recipe_main_ingredient_name_english_Dessert",
         ]
 
     else:

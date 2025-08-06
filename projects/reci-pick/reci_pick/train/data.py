@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def get_dataframes(
     **kwargs: dict,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    required_keys = ["start_yyyyww", "company_id", "env"]
+    required_keys = ["start_yyyyww", "company_id"]
     for key in required_keys:
         if key not in kwargs:
             raise KeyError(f"Missing required kwarg: {key}")
@@ -19,10 +19,9 @@ def get_dataframes(
     try:
         logger.info("Downloading recipes...")
         df_recipes = get_data_from_sql(
-            SQL_DIR / "all_recipes.sql",
+            SQL_DIR / "reci_pick_all_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
-            env=kwargs["env"],
         ).toPandas()
         df_recipes = df_recipes.drop_duplicates(subset="main_recipe_id")
     except Exception as e:
@@ -31,11 +30,11 @@ def get_dataframes(
     try:
         logger.info("Downloading menus...")
         df_menu_recipes = get_data_from_sql(
-            SQL_DIR / "menu_recipes.sql",
+            SQL_DIR / "reci_pick_menu_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
-            env=kwargs["env"],
         ).toPandas()
+        df_menu_recipes = df_menu_recipes[df_menu_recipes["main_recipe_id"].isin(df_recipes["main_recipe_id"])]
     except Exception as e:
         logger.error(f"Error downloading menus: {e}")
         raise
@@ -43,10 +42,9 @@ def get_dataframes(
     try:
         logger.info("Downloading purchase history...")
         df_order_history = get_data_from_sql(
-            SQL_DIR / "order_history.sql",
+            SQL_DIR / "reci_pick_order_history.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
-            env=kwargs["env"],
         ).toPandas()
 
         df_order_history["concept_combination_list"] = (

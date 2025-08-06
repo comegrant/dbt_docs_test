@@ -18,7 +18,7 @@ def get_dataframes(
     try:
         logging.info("Downloading recipes...")
         df_recipes = get_data_from_sql(
-            SQL_DIR / "all_recipes.sql",
+            SQL_DIR / "reci_pick_all_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
             env=kwargs["env"],
@@ -31,11 +31,12 @@ def get_dataframes(
     try:
         logging.info("Downloading menus...")
         df_menu_recipes = get_data_from_sql(
-            SQL_DIR / "menu_recipes.sql",
+            SQL_DIR / "reci_pick_menu_recipes.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
             env=kwargs["env"],
         ).toPandas()
+        df_menu_recipes = df_menu_recipes[df_menu_recipes["main_recipe_id"].isin(df_recipes["main_recipe_id"])]
         df_menu_recipes = df_menu_recipes.drop_duplicates(subset=["menu_year", "menu_week", "main_recipe_id"])
     except Exception as e:
         logging.error(f"Error downloading menus: {e}")
@@ -43,7 +44,7 @@ def get_dataframes(
     try:
         logging.info("Downloading purchase history...")
         df_order_history = get_data_from_sql(
-            SQL_DIR / "order_history.sql",
+            SQL_DIR / "reci_pick_order_history.sql",
             start_yyyyww=kwargs["start_yyyyww"],
             company_id=kwargs["company_id"],
             env=kwargs["env"],
@@ -58,7 +59,7 @@ def get_dataframes(
     try:
         logging.info("Downloading active users list...")
         df_active_users = get_data_from_sql(
-            SQL_DIR / "active_users.sql", company_id=kwargs["company_id"], env=kwargs["env"]
+            SQL_DIR / "reci_pick_active_users.sql", company_id=kwargs["company_id"], env=kwargs["env"]
         ).toPandas()
         df_active_users["concept_combination_list"] = df_active_users["concept_combinations"].str.split(", ")
     except Exception as e:
@@ -68,7 +69,7 @@ def get_dataframes(
     try:
         logging.info("Downloading concept preferences combinations...")
         df_concept_preferences = get_data_from_sql(
-            SQL_DIR / "concept_combinations.sql", company_id=kwargs["company_id"], env=kwargs["env"]
+            SQL_DIR / "reci_pick_concept_combinations.sql", company_id=kwargs["company_id"], env=kwargs["env"]
         ).toPandas()
         df_concept_preferences["concept_combination_list"] = df_concept_preferences[
             "concept_name_combinations"
