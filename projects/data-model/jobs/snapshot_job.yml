@@ -28,6 +28,7 @@ resources:
             warehouse_id: ${var.warehouse_id}
             catalog: ${bundle.target}
             commands:
+              - 'dbt deps'
               - 'dbt snapshot'
           environment_key: dbt-default
           depends_on: [

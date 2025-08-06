@@ -25,6 +25,7 @@ resources:
             warehouse_id: ${var.warehouse_id}
             catalog: ${bundle.target}
             commands:
+              - 'dbt deps'
               - 'dbt snapshot {{job.parameters.snapshot}}'
           environment_key: dbt-default 
           disable_auto_optimization: true
