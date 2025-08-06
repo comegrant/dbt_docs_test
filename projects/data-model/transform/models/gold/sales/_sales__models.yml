@@ -1578,6 +1578,7 @@ models:
     config:
       alias: view_fact_billing_agreements
       materialized: view
+      view_update_via_alter: true #https://docs.getdbt.com/reference/global-configs/databricks-changes#changes-to-the-view-materialization
 
     versions:
       - v: 1
