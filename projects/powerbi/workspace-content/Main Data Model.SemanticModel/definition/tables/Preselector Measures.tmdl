@@ -101,22 +101,6 @@ table 'Preselector Measures'
         formatString: #,0.00
         displayFolder: Selection Quality
 
-    /// The average main ingredient error from the preselector
-    measure 'Average Main Ingredient Error' =
-            IF(
-                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
-                CALCULATE(
-                    AVERAGE('Preselector Details'[Sum Error Main Ingredients]),
-                        'Preselector Details'[Is Dish] = TRUE()
-                ),
-                CALCULATE(
-                    AVERAGE('Preselector Details'[Sum Error Main Ingredients]),
-                        'Preselector Details'[Is Dish] = FALSE()
-                )
-            )
-        formatString: #,0.00
-        displayFolder: Selection Quality
-
 	partition 'Measure Table' = m
 		mode: import
 		source = GENERATESERIES(1,1,1)

@@ -102,47 +102,6 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_dishes.taste_preference_ids
         , preselector_successful_output_dishes.taste_preference_compliancy_code
 
-        -- Error metrics
-        , preselector_successful_output_dishes.error_cooking_time_mean
-        , preselector_successful_output_dishes.error_is_beef_percentage
-        , preselector_successful_output_dishes.error_is_chef_choice_percentage
-        , preselector_successful_output_dishes.error_is_chicken_percentage
-        , preselector_successful_output_dishes.error_is_cod_percentage
-        , preselector_successful_output_dishes.error_is_family_friendly_percentage
-        , preselector_successful_output_dishes.error_is_gluten_free_percentage
-        , preselector_successful_output_dishes.error_is_grain_percentage
-        , preselector_successful_output_dishes.error_is_lactose_percentage
-        , preselector_successful_output_dishes.error_is_lamb_percentage
-        , preselector_successful_output_dishes.error_is_low_calorie
-        , preselector_successful_output_dishes.error_is_mixed_meat_percentage
-        , preselector_successful_output_dishes.error_is_other_carbo_percentage
-        , preselector_successful_output_dishes.error_is_other_protein_percentage
-        , preselector_successful_output_dishes.error_is_pasta_percentage
-        , preselector_successful_output_dishes.error_is_pork_percentage
-        , preselector_successful_output_dishes.error_is_roede_percentage
-        , preselector_successful_output_dishes.error_is_salmon_percentage
-        , preselector_successful_output_dishes.error_is_seafood_percentage
-        , preselector_successful_output_dishes.error_is_shrimp_percentage
-        , preselector_successful_output_dishes.error_is_soft_bread_percentage
-        , preselector_successful_output_dishes.error_is_spicy_percentage
-        , preselector_successful_output_dishes.error_is_tuna_percentage
-        , preselector_successful_output_dishes.error_is_vegan_percentage
-        , preselector_successful_output_dishes.error_is_vegetables_percentage
-        , preselector_successful_output_dishes.error_is_vegetarian_percentage
-        , preselector_successful_output_dishes.error_mean_cost_of_food
-        , preselector_successful_output_dishes.error_mean_energy
-        , preselector_successful_output_dishes.error_mean_fat
-        , preselector_successful_output_dishes.error_mean_fat_saturated
-        , preselector_successful_output_dishes.error_mean_number_of_ratings
-        , preselector_successful_output_dishes.error_mean_ordered_ago
-        , preselector_successful_output_dishes.error_intra_week_similarity
-        , preselector_successful_output_dishes.error_mean_family_friendly_probability
-        , preselector_successful_output_dishes.error_mean_protein
-        , preselector_successful_output_dishes.error_mean_rank
-        , preselector_successful_output_dishes.error_mean_ratings
-        , preselector_successful_output_dishes.error_mean_veg_fruit
-        , preselector_successful_output_dishes.error_repeated_proteins_percentage
-        , preselector_successful_output_dishes.error_repeated_carbohydrates_percentage
     from preselector_successful_output_dishes
     left join companies
         on preselector_successful_output_dishes.company_id = companies.company_id
@@ -308,47 +267,6 @@ preselector_successful_output_dishes as (
         , preselector_successful_output_mealbox.concept_preference_ids
         , preselector_successful_output_mealbox.taste_preference_ids
         , preselector_successful_output_mealbox.taste_preference_compliancy_code
-        -- Error metrics
-        , preselector_successful_output_mealbox.error_cooking_time_mean
-        , preselector_successful_output_mealbox.error_is_beef_percentage
-        , preselector_successful_output_mealbox.error_is_chef_choice_percentage
-        , preselector_successful_output_mealbox.error_is_chicken_percentage
-        , preselector_successful_output_mealbox.error_is_cod_percentage
-        , preselector_successful_output_mealbox.error_is_family_friendly_percentage
-        , preselector_successful_output_mealbox.error_is_gluten_free_percentage
-        , preselector_successful_output_mealbox.error_is_grain_percentage
-        , preselector_successful_output_mealbox.error_is_lactose_percentage
-        , preselector_successful_output_mealbox.error_is_lamb_percentage
-        , preselector_successful_output_mealbox.error_is_low_calorie
-        , preselector_successful_output_mealbox.error_is_mixed_meat_percentage
-        , preselector_successful_output_mealbox.error_is_other_carbo_percentage
-        , preselector_successful_output_mealbox.error_is_other_protein_percentage
-        , preselector_successful_output_mealbox.error_is_pasta_percentage
-        , preselector_successful_output_mealbox.error_is_pork_percentage
-        , preselector_successful_output_mealbox.error_is_roede_percentage
-        , preselector_successful_output_mealbox.error_is_salmon_percentage
-        , preselector_successful_output_mealbox.error_is_seafood_percentage
-        , preselector_successful_output_mealbox.error_is_shrimp_percentage
-        , preselector_successful_output_mealbox.error_is_soft_bread_percentage
-        , preselector_successful_output_mealbox.error_is_spicy_percentage
-        , preselector_successful_output_mealbox.error_is_tuna_percentage
-        , preselector_successful_output_mealbox.error_is_vegan_percentage
-        , preselector_successful_output_mealbox.error_is_vegetables_percentage
-        , preselector_successful_output_mealbox.error_is_vegetarian_percentage
-        , preselector_successful_output_mealbox.error_mean_cost_of_food
-        , preselector_successful_output_mealbox.error_mean_energy
-        , preselector_successful_output_mealbox.error_mean_fat
-        , preselector_successful_output_mealbox.error_mean_fat_saturated
-        , preselector_successful_output_mealbox.error_mean_number_of_ratings
-        , preselector_successful_output_mealbox.error_mean_ordered_ago
-        , preselector_successful_output_mealbox.error_intra_week_similarity
-        , preselector_successful_output_mealbox.error_mean_family_friendly_probability
-        , preselector_successful_output_mealbox.error_mean_protein
-        , preselector_successful_output_mealbox.error_mean_rank
-        , preselector_successful_output_mealbox.error_mean_ratings
-        , preselector_successful_output_mealbox.error_mean_veg_fruit
-        , preselector_successful_output_mealbox.error_repeated_proteins_percentage
-        , preselector_successful_output_mealbox.error_repeated_carbohydrates_percentage
         -- Dish repeat selection metrics which are not relevant for mealboxes
         , null as repeat_weeks
         , null as menu_week_window
@@ -435,57 +353,37 @@ preselector_successful_output_dishes as (
     from union_preselector_dishes_with_mealbox
 )
 
-, add_aggregated_error_metrics as (
-    select
-        *
-        , error_is_beef_percentage
-        + error_is_chicken_percentage
-        + error_is_cod_percentage
-        + error_is_lamb_percentage
-        + error_is_mixed_meat_percentage
-        + error_is_other_protein_percentage
-        + error_is_pork_percentage
-        + error_is_salmon_percentage
-        + error_is_seafood_percentage
-        + error_is_shrimp_percentage
-        + error_is_tuna_percentage
-        + error_is_vegan_percentage
-        + error_is_vegetarian_percentage
-        as sum_error_main_ingredients
-    from add_mealbox_level_metrics
-)
-
 , add_keys as (
 
     select
-        add_aggregated_error_metrics.*
+        add_mealbox_level_metrics.*
         , ingredient_combinations.ingredient_combination_id
         , companies.language_id
         -- Primary key
         , md5(
             cast(concat(
-                add_aggregated_error_metrics.billing_agreement_id
-                , coalesce(add_aggregated_error_metrics.product_variation_id, 'mealbox')
-                , add_aggregated_error_metrics.created_at
-                , add_aggregated_error_metrics.menu_week_monday_date
+                add_mealbox_level_metrics.billing_agreement_id
+                , coalesce(add_mealbox_level_metrics.product_variation_id, 'mealbox')
+                , add_mealbox_level_metrics.created_at
+                , add_mealbox_level_metrics.menu_week_monday_date
             ) as string)
         ) as pk_fact_preselector
         -- Foreign keys
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
-        , md5(add_aggregated_error_metrics.company_id) as fk_dim_companies
+        , md5(add_mealbox_level_metrics.company_id) as fk_dim_companies
         , md5(
-            concat(add_aggregated_error_metrics.recipe_id, companies.language_id)
+            concat(add_mealbox_level_metrics.recipe_id, companies.language_id)
         ) as fk_dim_recipes
         , cast(
-            date_format(add_aggregated_error_metrics.created_at, 'yyyyMMdd') as int
+            date_format(add_mealbox_level_metrics.created_at, 'yyyyMMdd') as int
         ) as fk_dim_dates_created_at
         , cast(
-            date_format(add_aggregated_error_metrics.menu_week_financial_date, 'yyyyMMdd') as int
+            date_format(add_mealbox_level_metrics.menu_week_financial_date, 'yyyyMMdd') as int
         ) as fk_dim_dates
-        , date_format(add_aggregated_error_metrics.created_at, 'HHmm') as fk_dim_time_created_at
+        , date_format(add_mealbox_level_metrics.created_at, 'HHmm') as fk_dim_time_created_at
         , md5(
-            add_aggregated_error_metrics.model_version_commit_sha
+            add_mealbox_level_metrics.model_version_commit_sha
         )                                      as fk_dim_preselector_versions
         , case when is_dish = true then
             products_dish.pk_dim_products
@@ -498,29 +396,29 @@ preselector_successful_output_dishes as (
             portions_mealbox.pk_dim_portions
         end as fk_dim_portions
         , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, companies.language_id)), '0') as fk_dim_ingredient_combinations
-    from add_aggregated_error_metrics
+    from add_mealbox_level_metrics
     left join companies
-        on add_aggregated_error_metrics.company_id = companies.company_id
+        on add_mealbox_level_metrics.company_id = companies.company_id
     left join agreements
         on
-            add_aggregated_error_metrics.billing_agreement_id = agreements.billing_agreement_id
-            and add_aggregated_error_metrics.created_at >= agreements.valid_from
-            and add_aggregated_error_metrics.created_at < agreements.valid_to
+            add_mealbox_level_metrics.billing_agreement_id = agreements.billing_agreement_id
+            and add_mealbox_level_metrics.created_at >= agreements.valid_from
+            and add_mealbox_level_metrics.created_at < agreements.valid_to
     -- The connection to dim_products is different for dishes and mealboxes, as the preselector doesn't output the
     -- product_variation_id for the mealbox, so I have to join it on the company, product_name, type, meals, and portions
     left join products as products_mealbox
         on
-            add_aggregated_error_metrics.company_id = products_mealbox.company_id
+            add_mealbox_level_metrics.company_id = products_mealbox.company_id
             and products_mealbox.product_type_id = '{{ var("mealbox_product_type_id") }}'
             and products_mealbox.product_id = '{{ var("onesub_product_id") }}'
-            and add_aggregated_error_metrics.meals = products_mealbox.meals
-            and add_aggregated_error_metrics.portions = products_mealbox.portions
-            and add_aggregated_error_metrics.is_dish = false
+            and add_mealbox_level_metrics.meals = products_mealbox.meals
+            and add_mealbox_level_metrics.portions = products_mealbox.portions
+            and add_mealbox_level_metrics.is_dish = false
     left join products as products_dish
         on
-            add_aggregated_error_metrics.company_id = products_dish.company_id
-            and add_aggregated_error_metrics.product_variation_id = products_dish.product_variation_id
-            and add_aggregated_error_metrics.is_dish = true
+            add_mealbox_level_metrics.company_id = products_dish.company_id
+            and add_mealbox_level_metrics.product_variation_id = products_dish.product_variation_id
+            and add_mealbox_level_metrics.is_dish = true
     left join portions as portions_mealbox
         on products_mealbox.portion_name = portions_mealbox.portion_name_local
         and companies.language_id = portions_mealbox.language_id
@@ -530,7 +428,7 @@ preselector_successful_output_dishes as (
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join ingredient_combinations
-        on add_aggregated_error_metrics.recipe_id = ingredient_combinations.recipe_id
+        on add_mealbox_level_metrics.recipe_id = ingredient_combinations.recipe_id
         and portions_dish.portion_id = ingredient_combinations.portion_id
         and companies.language_id = ingredient_combinations.language_id
 )

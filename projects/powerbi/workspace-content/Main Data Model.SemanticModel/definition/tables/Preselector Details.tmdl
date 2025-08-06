@@ -121,13 +121,6 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: model_version_commit_sha
 
-    column 'Sum Error Main Ingredients'
-        dataType: double
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: sum_error_main_ingredients
-
     column 'Repeat Weeks'
         dataType: int64
         isHidden
