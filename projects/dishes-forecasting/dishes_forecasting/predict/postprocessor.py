@@ -5,21 +5,18 @@ from typing import Optional
 
 import pandas as pd
 import pytz
-from pyspark.sql import SparkSession
+from catalog_connector import connection
 
 
 def save_predictions(
     df_to_write: pd.DataFrame,
-    spark: SparkSession,
     env: str,
     table_name: str,
     table_schema: Optional[str] = "mloutputs",
-    write_mode: str = "append"
 ) -> None:
     full_table_name = f"{env}.{table_schema}.{table_name}"
-    spark_df = spark.createDataFrame(df_to_write)
     logging.info(f"Writing into {full_table_name}...")
-    spark_df.write.mode(write_mode).saveAsTable(full_table_name)
+    append_pandas_df_to_catalog(df_to_write, full_table_name)
 
 
 def postprocess_predictions(
@@ -43,3 +40,9 @@ def postprocess_predictions(
         "created_at"
     ]]
     return df_to_save
+
+
+def append_pandas_df_to_catalog(df: pd.DataFrame, table_name: str) -> None:
+
+    spark_df = connection.spark().createDataFrame(df)
+    connection.table(f"{table_name}").append(spark_df)

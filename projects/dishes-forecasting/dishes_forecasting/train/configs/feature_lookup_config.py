@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class FeatureLookUpConfig(BaseModel):
-    features_container: str = "mlfeatures"
+    features_container: str = "mlgold"
     feature_table_name: str
     primary_keys: list[str] = []
     feature_columns: list[str] = []
@@ -10,32 +10,26 @@ class FeatureLookUpConfig(BaseModel):
 
 
 weekly_dishes_variations_lookup = FeatureLookUpConfig(
-    feature_table_name="ft_weekly_dishes_variations",
+    feature_table_name="dishes_forecasting_weekly_dishes_variations",
     primary_keys=[
         "menu_year",
         "menu_week",
         "company_id",
         "product_variation_id",
     ],
-    feature_columns=[
-        "language_id",
-        "recipe_id",
-        "recipe_portion_id",
-        "portion_quantity",
-        "product_variation_name"
-    ],
+    feature_columns=["language_id", "recipe_id", "recipe_portion_id", "portion_quantity", "product_variation_name"],
     exclude_in_training_set=[
         "product_variation_id",
         "company_id",
         "language_id",
         "recipe_id",
         "recipe_portion_id",
-        "product_variation_name"
-    ]
+        "product_variation_name",
+    ],
 )
 
 recipes_lookup = FeatureLookUpConfig(
-    feature_table_name="ft_ml_recipes",
+    feature_table_name="dishes_forecasting_recipes",
     primary_keys=[
         "recipe_id",
     ],
@@ -53,20 +47,17 @@ recipes_lookup = FeatureLookUpConfig(
         "has_vegetarian_taxonomy",
         "has_low_calorie_taxonomy",
         "number_of_recipe_steps",
-        "number_of_ingredients"
+        "number_of_ingredients",
     ],
     exclude_in_training_set=[
         "recipe_id",
-    ]
+    ],
 )
 
 
 recipe_ingredients_lookup = FeatureLookUpConfig(
-    feature_table_name="ft_recipe_ingredients",
-    primary_keys=[
-        "recipe_portion_id",
-        "language_id"
-    ],
+    feature_table_name="dishes_forecasting_recipe_ingredients",
+    primary_keys=["recipe_portion_id", "language_id"],
     feature_columns=[
         "has_chicken_filet",
         "has_chicken",
@@ -100,11 +91,7 @@ recipe_ingredients_lookup = FeatureLookUpConfig(
     exclude_in_training_set=[
         "recipe_portion_id",
         "language_id",
-    ]
+    ],
 )
 
-feature_lookup_config_list = [
-    weekly_dishes_variations_lookup,
-    recipes_lookup,
-    recipe_ingredients_lookup
-]
+feature_lookup_config_list = [weekly_dishes_variations_lookup, recipes_lookup, recipe_ingredients_lookup]

@@ -1,5 +1,4 @@
 from dishes_forecasting.train.train_pipeline import train_model
-from pyspark.sql import SparkSession
 import optuna
 import pandas as pd
 from typing import Optional
@@ -11,7 +10,6 @@ import itertools
 def tune_pipeline(
     company: Company,
     env: str,
-    spark: SparkSession,
     training_set: pd.DataFrame,
     train_config: dict,
     n_trials: Optional[int] = 30,
@@ -42,7 +40,6 @@ def tune_pipeline(
             params_rf=params_rf,
             company=company,
             env=env,
-            spark=spark,
             train_config=train_config,
             is_log_model=False,
             is_register_model=False,
@@ -58,7 +55,6 @@ def tune_pipeline(
 def grid_search_params(
     company: Company,
     env: str,
-    spark: SparkSession,
     training_set: pd.DataFrame,
     train_config: dict,
 ) -> None:
@@ -116,7 +112,6 @@ def grid_search_params(
             params_rf=rf_dict,
             company=company,
             env=env,
-            spark=spark,
             train_config=train_config,
             is_log_model=False,
             is_register_model=False,

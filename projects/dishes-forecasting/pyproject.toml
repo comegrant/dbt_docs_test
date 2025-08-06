@@ -13,18 +13,17 @@ constants = {path = "../../packages/constants", develop = true}
 pandera = "^0.18.3"
 nltk = "^3.8.1"
 scikit-learn = "^1.4.2"
-databricks-feature-engineering = "^0.2.0"
 kaleido = "0.2.1"
 time-machine = {path = "../../packages/time-machine", develop = true}
 pycaret = "^3.3.2"
 databricks-env = {path = "../../packages/databricks-env", develop = true}
-databricks-connect = "14.3"
 ipykernel = "^6.29.5"
 pydantic = "^2.9.1"
 xgboost = "^2.1.1"
 optuna = "^4.0.0"
 slack-connector = {path = "../../packages/slack-connector", develop = true}
-mlflow = "2.19.0"
+mlflow = {extras = ["databricks"], version = "^3.1.4"}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 
 [tool.poetry.group.app.dependencies]
 streamlit = "^1.30.0"

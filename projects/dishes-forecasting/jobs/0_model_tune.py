@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 # COMMAND ----------
 from dishes_forecasting.train.run_tune import Args, run_tune
-from dishes_forecasting.spark_context import create_spark_context
 
-spark = create_spark_context()
 # COMMAND ----------
 is_get_params_from_workflow = True
 is_running_on_databricks = True
@@ -28,4 +26,4 @@ else:
 
 # COMMAND ----------
 args = Args(company=company, env=env, is_running_on_databricks=is_running_on_databricks)
-run_tune(args=args, spark=spark)
+run_tune(args=args)
