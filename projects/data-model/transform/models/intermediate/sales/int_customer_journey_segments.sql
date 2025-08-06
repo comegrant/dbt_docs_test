@@ -47,11 +47,16 @@ agreements_with_history as (
         , distinct_agreements.company_id
         , distinct_agreements.signup_date
         , first_orders.first_menu_week_monday_date
+        , first_possible_menu_week.menu_week_monday_date as first_possible_menu_week_monday_date
     from agreements_with_history
     left join distinct_agreements 
         on agreements_with_history.billing_agreement_id = distinct_agreements.billing_agreement_id
     left join first_orders
         on agreements_with_history.billing_agreement_id = first_orders.billing_agreement_id
+    left join delivery_week_order as first_possible_menu_week
+        on distinct_agreements.company_id = first_possible_menu_week.company_id
+        and distinct_agreements.signup_date <= first_possible_menu_week.menu_week_cutoff_time
+        and distinct_agreements.signup_date > first_possible_menu_week.menu_week_cutoff_time - interval '7 days'
     where agreements_with_history.billing_agreement_status_id != 40 -- need to add deleted customers to model at a later stage
 
 )
@@ -98,13 +103,13 @@ agreements_with_history as (
         , delivery_week_order.menu_year
         , delivery_week_order.menu_week
         , delivery_week_order.menu_week_cutoff_time
-        , agreements.signup_date
+        , agreements.first_possible_menu_week_monday_date
         -- if cutoff for the next menu_week has not happened yet, menu_week_monday_date in delivery_week_order will be null when 
         -- joined to agreements who sign up after Monday 00:00 of the current week.
         , case 
             when delivery_week_order.menu_week_monday_date is null then 0
-            else date_diff(week, agreements.signup_date, delivery_week_order.menu_week_monday_date)
-          end as weeks_since_signup
+            else date_diff(week, agreements.first_possible_menu_week_monday_date, delivery_week_order.menu_week_monday_date)
+          end as weeks_since_first_possible_menu_week
         , case
             when date_diff(week, agreements.first_menu_week_monday_date, delivery_week_order.menu_week_monday_date) < 0
             then null
@@ -239,44 +244,44 @@ agreements_with_history as (
         , agreements_and_weeks_joined.menu_year*100 + agreements_and_weeks_joined.menu_week as menu_yearweek
         , agreements_and_weeks_joined.menu_week_cutoff_time
         , case
-        when agreements_and_weeks_joined.billing_agreement_status_id == 5
-            then {{ var("customer_journey_sub_segment_ids")["partial_signup"] }}
-        when agreements_and_weeks_joined.weeks_since_signup < 3 
-            and agreements_and_weeks_joined.weeks_since_first_order is null 
-            then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
-        when agreements_and_weeks_joined.weeks_since_signup >= 3 
-            and agreements_and_weeks_joined.weeks_since_first_order is null 
-            then {{ var("customer_journey_sub_segment_ids")["regret"] }}
-        when (agreements_and_weeks_joined.weeks_since_first_order < 3 
-            and agreements_and_weeks_joined.weeks_since_first_order is not null) 
-            then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
-        when (agreements_and_weeks_joined.weeks_since_first_order < 7 
-            and orders_past_8_weeks.number_of_orders <4) 
-            then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
-        when (weeks_since_reactivation.weeks_since_reactivation < 7 
-            and orders_past_8_weeks.number_of_orders < 4 ) 
-            then {{ var("customer_journey_sub_segment_ids")["reactivated"] }}
-        when orders_past_8_weeks.number_of_orders < 4
-            and agreements_and_weeks_joined.weeks_since_first_order >= 7 
-            then {{ var("customer_journey_sub_segment_ids")["occasional"] }}
-        when orders_past_8_weeks.number_of_orders >= 4 
-            and orders_past_8_weeks.number_of_orders < 6 
-            and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then {{ var("customer_journey_sub_segment_ids")["regular"] }}
-        when orders_past_8_weeks.number_of_orders >= 6 
-            and orders_past_8_weeks.number_of_orders < 8
-            and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then {{ var("customer_journey_sub_segment_ids")["frequent"] }}
-        when orders_past_8_weeks.number_of_orders >= 7
-            and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
-            then {{ var("customer_journey_sub_segment_ids")["always_on"] }}
-        when (agreements_and_weeks_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null) 
-            then {{ var("customer_journey_sub_segment_ids")["churned"] }}
-        else 
-            -1 --unknown
+            when agreements_and_weeks_joined.billing_agreement_status_id == 5
+                then {{ var("customer_journey_sub_segment_ids")["partial_signup"] }}
+            when agreements_and_weeks_joined.weeks_since_first_possible_menu_week < 3 
+                and agreements_and_weeks_joined.weeks_since_first_order is null 
+                then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
+            when agreements_and_weeks_joined.weeks_since_first_possible_menu_week >= 3
+                and agreements_and_weeks_joined.weeks_since_first_order is null
+                then {{ var("customer_journey_sub_segment_ids")["regret"] }}
+            when (agreements_and_weeks_joined.weeks_since_first_order < 3 
+                and agreements_and_weeks_joined.weeks_since_first_order is not null) 
+                then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
+            when (agreements_and_weeks_joined.weeks_since_first_order < 7 
+                and orders_past_8_weeks.number_of_orders <4) 
+                then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
+            when (weeks_since_reactivation.weeks_since_reactivation < 7 
+                and orders_past_8_weeks.number_of_orders < 4 ) 
+                then {{ var("customer_journey_sub_segment_ids")["reactivated"] }}
+            when orders_past_8_weeks.number_of_orders < 4
+                and agreements_and_weeks_joined.weeks_since_first_order >= 7 
+                then {{ var("customer_journey_sub_segment_ids")["occasional"] }}
+            when orders_past_8_weeks.number_of_orders >= 4 
+                and orders_past_8_weeks.number_of_orders < 6 
+                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
+                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
+                then {{ var("customer_journey_sub_segment_ids")["regular"] }}
+            when orders_past_8_weeks.number_of_orders >= 6 
+                and orders_past_8_weeks.number_of_orders < 8
+                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
+                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
+                then {{ var("customer_journey_sub_segment_ids")["frequent"] }}
+            when orders_past_8_weeks.number_of_orders >= 7
+                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
+                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
+                then {{ var("customer_journey_sub_segment_ids")["always_on"] }}
+            when (agreements_and_weeks_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null) 
+                then {{ var("customer_journey_sub_segment_ids")["churned"] }}
+            else 
+                -1 --unknown
         end as sub_segment_id
     from agreements_and_weeks_joined
     left join orders_past_8_weeks 
