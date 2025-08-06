@@ -23,7 +23,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 # Project level flags (https://docs.getdbt.com/reference/global-configs/project-flags)
 flags:
-  use_materialization_v2: true # https://docs.getdbt.com/reference/global-configs/databricks-changes#use-restructured-materializations
+  use_materialization_v2: false # https://docs.getdbt.com/reference/global-configs/databricks-changes#use-restructured-materializations
 
 vars:
  english_language_id: 4
