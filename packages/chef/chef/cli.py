@@ -852,10 +852,7 @@ async def deploy_streamlit(app: str | None, env: str, manifest_module: str, tag:
     """
     echo_action("Deploying Streamlit app")
 
-    env = {
-        "production": "prod",
-        "development": "dev"
-    }.get(env.lower(), env.lower())
+    env = {"production": "prod", "development": "dev"}.get(env.lower(), env.lower())
     assert env.lower() in ["dev", "test", "prod"]
 
     from importlib import import_module
@@ -892,7 +889,7 @@ async def deploy_streamlit(app: str | None, env: str, manifest_module: str, tag:
         config = apps.config_for(project_name, name=app, env=env)
 
         click.echo(f"Creating the application '{config.app_name}'. This may take some time")
-        url = await deploy(config)
+        url = await deploy(config, env)
         click.echo(f"Successfully created an application for '{app}' which will be available on '{url}'")
 
     if app is not None:
