@@ -78,6 +78,7 @@ resources:
             warehouse_id: ${var.warehouse_id}
             catalog: ${bundle.target}
             commands:
+              - 'dbt deps'
               - 'dbt test -s +estimations_log +active_basket_deviations_recent_weeks --indirect-selection cautious'
           job_cluster_key: dbt_CLI
           libraries:
