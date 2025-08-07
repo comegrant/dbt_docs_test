@@ -36,6 +36,22 @@ agreements_with_history as (
 
 )
 
+
+, delivery_week_order_add_previous_cutoff as (
+
+    select
+        delivery_week_order
+        , company_id
+        , menu_week_monday_date
+        , menu_week_cutoff_time
+        , lag(menu_week_cutoff_time) over (
+            partition by company_id
+            order by delivery_week_order
+        ) as previous_menu_week_cutoff_time
+    from delivery_week_order
+        
+)
+
 , agreements as (
 
     select 
@@ -47,16 +63,23 @@ agreements_with_history as (
         , distinct_agreements.company_id
         , distinct_agreements.signup_date
         , first_orders.first_menu_week_monday_date
-        , first_possible_menu_week.menu_week_monday_date as first_possible_menu_week_monday_date
+        -- We find the first possible menu week for the agreement based on the signup date and the cutoff time of the week.
+        -- For historical weeks we miss the cutoff time, so we simplify the logic, however, since this is before the customer journey segments start date,
+        -- it is not a problem for the final segments.
+        , case
+            when distinct_agreements.signup_date < '{{customer_journey_segments_start_date}}' - interval 9 weeks
+            then {{ get_monday_date_of_date('distinct_agreements.signup_date') }} + interval 1 week
+            else first_possible_menu_week.menu_week_monday_date 
+        end as first_possible_menu_week_monday_date
     from agreements_with_history
     left join distinct_agreements 
         on agreements_with_history.billing_agreement_id = distinct_agreements.billing_agreement_id
     left join first_orders
         on agreements_with_history.billing_agreement_id = first_orders.billing_agreement_id
-    left join delivery_week_order as first_possible_menu_week
+    left join delivery_week_order_add_previous_cutoff as first_possible_menu_week
         on distinct_agreements.company_id = first_possible_menu_week.company_id
         and distinct_agreements.signup_date <= first_possible_menu_week.menu_week_cutoff_time
-        and distinct_agreements.signup_date > first_possible_menu_week.menu_week_cutoff_time - interval '7 days'
+        and distinct_agreements.signup_date > first_possible_menu_week.previous_menu_week_cutoff_time
     where agreements_with_history.billing_agreement_status_id != 40 -- need to add deleted customers to model at a later stage
 
 )
@@ -103,6 +126,7 @@ agreements_with_history as (
         , delivery_week_order.menu_year
         , delivery_week_order.menu_week
         , delivery_week_order.menu_week_cutoff_time
+        , agreements.signup_date
         , agreements.first_possible_menu_week_monday_date
         -- if cutoff for the next menu_week has not happened yet, menu_week_monday_date in delivery_week_order will be null when 
         -- joined to agreements who sign up after Monday 00:00 of the current week.
@@ -123,7 +147,10 @@ agreements_with_history as (
     where (
         delivery_week_order.menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
         -- include agreements that sign up after Monday 00:00 of the current week.
-        or agreements.signup_date >= {{ get_monday_date_of_date('current_date()') }}
+        or (
+            agreements.signup_date >= {{ get_monday_date_of_date('current_date()') }}
+            and delivery_week_order.menu_week_monday_date is not null
+        )
     )
 )
 
@@ -246,7 +273,9 @@ agreements_with_history as (
         , case
             when agreements_and_weeks_joined.billing_agreement_status_id == 5
                 then {{ var("customer_journey_sub_segment_ids")["partial_signup"] }}
-            when agreements_and_weeks_joined.weeks_since_first_possible_menu_week < 3 
+            when 
+                coalesce(agreements_and_weeks_joined.weeks_since_first_possible_menu_week,0) < 3 
+                and agreements_and_weeks_joined.menu_week_monday_date > agreements_and_weeks_joined.signup_date
                 and agreements_and_weeks_joined.weeks_since_first_order is null 
                 then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
             when agreements_and_weeks_joined.weeks_since_first_possible_menu_week >= 3
