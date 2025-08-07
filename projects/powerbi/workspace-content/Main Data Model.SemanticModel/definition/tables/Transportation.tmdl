@@ -1,6 +1,5 @@
 /// Write table end user friendly description here (can copy from Databricks if relevant)
 table 'Transportation'
-    isHidden
     lineageTag: Transportation-Table
 
     column pk_dim_transportation
