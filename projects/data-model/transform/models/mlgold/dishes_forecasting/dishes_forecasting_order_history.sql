@@ -7,6 +7,10 @@ fact_orders as (
         , menu_week_monday_date
         , product_variation_id
         , product_variation_quantity
+        , has_swap
+        , is_removed_dish
+        , is_added_dish
+        , is_dish
         , fk_dim_order_statuses
         , fk_dim_companies
         , fk_dim_products
@@ -42,6 +46,10 @@ fact_orders as (
         , fact_orders.menu_week_monday_date
         , fact_orders.product_variation_id
         , fact_orders.product_variation_quantity
+        , fact_orders.has_swap
+        , fact_orders.is_removed_dish
+        , fact_orders.is_added_dish
+        , fact_orders.is_dish
         , dim_companies.company_id
         , dim_companies.company_name
     from fact_orders
@@ -57,6 +65,35 @@ fact_orders as (
         and dim_order_statuses.order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- Finished
 )
 
+, flex_orders_post_onesub as (
+    select
+        *
+    from finished_standalone_dishes_orders
+    where (menu_year * 100 + menu_week) >= 202447
+        and (
+            has_swap
+            or is_removed_dish = 1
+            or is_added_dish = 1
+        )
+)
+
+, flex_orders_pre_onesub as (
+    select
+        *
+    from finished_standalone_dishes_orders
+    where (menu_year * 100 + menu_week) <= 202446
+)
+
+, flex_orders_combined as (
+    select
+        *
+    from flex_orders_pre_onesub
+    union all
+    select
+        *
+    from flex_orders_post_onesub
+)
+
 , per_variation_aggregated as (
     select
         company_id
@@ -66,7 +103,7 @@ fact_orders as (
         , menu_week_monday_date
         , product_variation_id
         , sum(product_variation_quantity) as product_variation_quantity
-    from finished_standalone_dishes_orders
+    from flex_orders_combined
     group by
         company_id
         , company_name
@@ -82,7 +119,7 @@ fact_orders as (
         , menu_year
         , menu_week
         , sum(product_variation_quantity) as total_weekly_qty
-    from finished_standalone_dishes_orders
+    from flex_orders_combined
     group by
         company_id
         , menu_year

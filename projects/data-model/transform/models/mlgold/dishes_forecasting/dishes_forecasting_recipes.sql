@@ -2,6 +2,7 @@ with recipes_in_menu as (
     select distinct
         fk_dim_recipes
         , fk_dim_ingredient_combinations
+        , fk_dim_price_categories
         , recipe_portion_id
         , menu_id
         , fk_dim_portions
@@ -33,6 +34,14 @@ with recipes_in_menu as (
         , portions
     from {{ ref('dim_portions') }}
 )
+
+, dim_price_categories as (
+    select distinct
+        pk_dim_price_categories
+        , price_category_level_id
+    from {{ ref('dim_price_categories') }}
+)
+
 
 , recipe_step_sections as (
     select
@@ -158,6 +167,7 @@ with recipes_in_menu as (
     group by 1
 )
 
+
 , final as (
     select distinct
         dim_recipes.recipe_id
@@ -166,6 +176,7 @@ with recipes_in_menu as (
         , dim_recipes.cooking_time_from
         , dim_recipes.recipe_difficulty_level_id
         , dim_recipes.recipe_main_ingredient_id
+        , dim_price_categories.price_category_level_id
         , number_of_recipe_steps.number_of_recipe_steps
         , taxonomies_list.number_of_taxonomies
         , recipe_ingredient_combinations.number_of_ingredients
@@ -180,6 +191,8 @@ with recipes_in_menu as (
         on recipes_in_menu.fk_dim_recipes = dim_recipes.pk_dim_recipes
     left join dim_portions
         on recipes_in_menu.fk_dim_portions = dim_portions.pk_dim_portions
+    left join dim_price_categories
+        on recipes_in_menu.fk_dim_price_categories = dim_price_categories.pk_dim_price_categories
     left join number_of_recipe_steps
         on recipes_in_menu.recipe_portion_id = number_of_recipe_steps.recipe_portion_id
     left join recipe_ingredient_combinations

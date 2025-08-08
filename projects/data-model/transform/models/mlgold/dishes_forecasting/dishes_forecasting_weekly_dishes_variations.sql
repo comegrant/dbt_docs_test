@@ -50,6 +50,7 @@ fact_menus as (
     left join dim_portions
         on fact_menus.fk_dim_portions = dim_portions.pk_dim_portions
     where fact_menus.recipe_id is not null
+    and dim_products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
     order by fact_menus.menu_year, fact_menus.menu_week, dim_products.product_variation_name
 )
 

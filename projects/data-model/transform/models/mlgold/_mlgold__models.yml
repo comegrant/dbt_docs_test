@@ -1605,6 +1605,9 @@ models:
       - name: recipe_difficulty_level_id
         description: "{{ doc('column__recipe_difficulty_level_id') }}"
         data_type: int
+      - name: price_category_level_id
+        description: "{{ doc('column__price_category_level_id') }}"
+        data_type: int
       - name: recipe_main_ingredient_id
         description: "{{ doc('column__recipe_main_ingredient_id') }}"
         data_type: int
