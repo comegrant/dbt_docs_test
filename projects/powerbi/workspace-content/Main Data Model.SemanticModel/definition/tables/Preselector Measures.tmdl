@@ -11,7 +11,7 @@ table 'Preselector Measures'
         formatString: #,0
         displayFolder: Preference Compliance
 
-    /// The number of mealboxes that have been output by the preselector that have broken at least one of the subscriber's non-allergy taste preferences (e.g. fish, pork)
+    /// The number of mealboxes that have been output by the preselector that have at least one dish that has broken at least one of the subscriber's non-allergy taste preferences (e.g. fish, pork)
     measure 'Number of Mealboxes with Non-Allergy Taste Preferences Broken' =
             CALCULATE(
                 [Number of Mealboxes from Preselector],
@@ -20,13 +20,23 @@ table 'Preselector Measures'
         formatString: #,0
         displayFolder: Preference Compliance
 
-    /// The number of mealboxes that have been output by the preselector that have broken at least one of the subscriber's allergy taste preferences (e.g. nuts, lactose)
+    /// The number of mealboxes that have been output by the preselector that have at least one dish that has broken at least one of the subscriber's allergy taste preferences (e.g. nuts, lactose)
     measure 'Number of Mealboxes with Allergy Taste Preferences Broken' =
             CALCULATE(
                 [Number of Mealboxes from Preselector],
                 'Preselector Details'[Taste Preference Compliancy Code] = 1
                 )
         formatString: #,0
+        displayFolder: Preference Compliance
+
+    /// The share of mealboxes that have been output by the preselector that have at least one dish that has broken at least one of the subscriber's allergy or non-allergy taste preferences (e.g. fish, pork, nuts, lactose)
+    measure 'Share of Mealboxes with Taste Preferences Broken' =
+            CALCULATE(
+                ([Number of Mealboxes with Non-Allergy Taste Preferences Broken]
+                + [Number of Mealboxes with Allergy Taste Preferences Broken])
+                / [Number of Mealboxes from Preselector]
+                )
+        formatString: 0.00\ %;-0.00\ %;0.00\ %
         displayFolder: Preference Compliance
 
     /// The number of mealboxes that have been output by the preselector
