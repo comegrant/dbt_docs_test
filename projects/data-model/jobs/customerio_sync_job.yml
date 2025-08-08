@@ -15,10 +15,11 @@ resources:
       edit_mode: EDITABLE
 
       # TO-DO: 
-      # Add a schedule when ready to deploy. 
-      # Once a day is fine for now.
       # Schedule will need to be more frequent (potentially every hour) when traits which can update throughout the day are moved into diamond.billing_agreement_traits.
-      # This job should not be available to trigger in DEV or TEST
+      schedule:
+        #Run every day at 7 AM Central European Time
+        quartz_cron_expression: 0 0 7 * * ?
+        timezone_id: Europe/Oslo
 
       tasks:
         - task_key: customerio_sync_gl
