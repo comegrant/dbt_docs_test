@@ -5,14 +5,14 @@ with recipes_to_train as (
         company_id,
         recipe_id
     from
-        mlgold.weekly_dishes_variations
+        gold.fact_menus
 ),
 
 train_target as (
     select
         recipe_id,
         recipe_difficulty_level_id
-    from mlfeatures.ft_ml_recipes
+    from gold.dim_recipes
 ),
 
 target_set as (
