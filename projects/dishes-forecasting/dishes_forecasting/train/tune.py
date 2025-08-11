@@ -43,7 +43,7 @@ def tune_pipeline(
             train_config=train_config,
             is_log_model=False,
             is_register_model=False,
-            is_running_on_databricks=False,
+            is_running_on_databricks=True,
         )
         return mae
 
@@ -105,7 +105,7 @@ def grid_search_params(
         rf_dict = {
             "max_depth": rf_params[0],
             "max_features": rf_params[1]}
-        _, _, _, _, _, _, mae = train_model(
+        _, _, _, _, _, _, mae, _, _ = train_model(
             training_set=training_set,
             params_lgb=lgb_dict,
             params_xgb=xgb_dict,

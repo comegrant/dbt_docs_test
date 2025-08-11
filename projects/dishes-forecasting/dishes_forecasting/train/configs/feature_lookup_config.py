@@ -10,6 +10,7 @@ class FeatureLookUpConfig(BaseModel):
 
 
 weekly_dishes_variations_lookup = FeatureLookUpConfig(
+    features_container="`~sylvia_liu_mlgold`",
     feature_table_name="dishes_forecasting_weekly_dishes_variations",
     primary_keys=[
         "menu_year",
@@ -29,6 +30,7 @@ weekly_dishes_variations_lookup = FeatureLookUpConfig(
 )
 
 recipes_lookup = FeatureLookUpConfig(
+    features_container="`~sylvia_liu_mlgold`",
     feature_table_name="dishes_forecasting_recipes",
     primary_keys=[
         "recipe_id",
@@ -39,6 +41,7 @@ recipes_lookup = FeatureLookUpConfig(
         "cooking_time_to",
         "recipe_difficulty_level_id",
         "recipe_main_ingredient_id",
+        "price_category_level_id",
         "taxonomy_list",
         "number_of_taxonomies",
         "has_chefs_favorite_taxonomy",
@@ -56,6 +59,7 @@ recipes_lookup = FeatureLookUpConfig(
 
 
 recipe_ingredients_lookup = FeatureLookUpConfig(
+    features_container="`~sylvia_liu_mlgold`",
     feature_table_name="dishes_forecasting_recipe_ingredients",
     primary_keys=["recipe_portion_id", "language_id"],
     feature_columns=[

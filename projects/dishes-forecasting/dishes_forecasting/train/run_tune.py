@@ -8,7 +8,7 @@ from dishes_forecasting.train.configs.feature_lookup_config import feature_looku
 
 from dishes_forecasting.train.configs.train_configs import get_training_configs
 from dishes_forecasting.train.training_set import create_training_set
-from dishes_forecasting.train.tune import grid_search_params
+from dishes_forecasting.train.tune import tune_pipeline
 
 
 class Args(BaseModel):
@@ -27,10 +27,4 @@ def run_tune(args: Args) -> tuple[dict, float]:
         feature_lookup_config_list=feature_lookup_config_list,
         is_drop_ignored_columns=True,
     )
-    grid_search_params(
-        company=company,
-        env=args.env,
-        train_config=train_config,
-        training_set=training_set,
-        # n_trials=50
-    )
+    tune_pipeline(company=company, env=args.env, train_config=train_config, training_set=training_set)

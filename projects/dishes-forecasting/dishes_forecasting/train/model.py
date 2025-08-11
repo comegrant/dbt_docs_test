@@ -9,18 +9,14 @@ from xgboost import XGBRegressor
 from dishes_forecasting.train.preprocessors import TaxonomyOneHotTransformer, get_stopwords
 
 
-def define_ensemble_model(
-    company_code: str,
-    params_lgb: dict,
-    params_xgb: dict,
-    params_rf: dict
-) -> Pipeline:
+def define_ensemble_model(company_code: str, params_lgb: dict, params_xgb: dict, params_rf: dict) -> Pipeline:
     categorical_features = [
         "cooking_time_from",
         "cooking_time_to",
         "menu_year",
         "menu_week",
         "portion_quantity",
+        "price_category_level_id",
         "recipe_difficulty_level_id",
         "recipe_main_ingredient_id",
     ]
@@ -40,7 +36,7 @@ def define_ensemble_model(
             ("taxonomies", custom_transformer, taxonomy_features),
             ("tfidf_recipe", tfidf_transformer, "recipe_name"),
         ],
-        remainder="passthrough"
+        remainder="passthrough",
     )
 
     lgbm = LGBMRegressor(**params_lgb)
@@ -52,7 +48,7 @@ def define_ensemble_model(
             ("rf", rf),
             ("xgb", xgb),
         ],
-        n_jobs=-1
+        n_jobs=-1,
     )
     # Create final pipeline with preprocessor and ensemble
     custom_pipeline = Pipeline(
