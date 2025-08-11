@@ -147,8 +147,6 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
-
-
 	/// Average price per unit
 	/// Including VAT
 	/// Example: A person bought 2 cucumbers, 1 milk and 1 apple. If we want to
@@ -1517,7 +1515,7 @@ table 'Order Measures'
 		isHidden
 		displayFolder: CO2 Emissions
 
-	/// The CO2 emissions in kg per kg of ingredients in the ordered recioes.
+	/// The CO2 emissions in kg per kg of ingredients in the ordered recipes.
 	/// It is calculated by dividing the total CO2 emissions from the ingredients in the recipes by the total net weight of the ingredients in the recipes that have registered CO2 emission data.
 	measure 'CO2 Emissions per kg of Ingredients Ordered by Customer' =
 			DIVIDE(
@@ -1528,6 +1526,148 @@ table 'Order Measures'
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions
+
+	/// The planned cost per preselected serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Planned Cost per Preselected Serving' =
+			DIVIDE(
+				[Planned Cost of Preselected Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The expected cost per preselected serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Expected Cost per Preselected Serving' =
+			DIVIDE(
+				[Expected Cost of Preselected Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The actual cost per preselected serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'Actual Cost per Preselected Serving' =
+			DIVIDE(
+				[Actual Cost of Preselected Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The CO2 emissions (in kg) per preselected serving.
+	/// See [Number of Servings] for the definition of servings.
+	measure 'CO2 Emissions per Preselected Serving' =
+			DIVIDE(
+				[CO2 Emissions from Preselected Recipes],
+				[Number of Servings],
+				BLANK()
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe CO2 Emissions
+
+	/// The sum of the planned recipe cost of the preselected recipes.
+	/// It is the cost used in menu planning, and calculated using the exact quantity of all included ingredients.
+	measure 'Planned Cost of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_planned_cost_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The sum of the planned recipe cost of the preselected recipes.
+	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Planned Cost Whole Units of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_planned_cost_whole_units_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The sum of the expected recipe cost of the preselected recipes.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Expected Cost of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_expected_cost_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The sum of the expected recipe cost of the preselected recipes.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Expected Cost Whole Units of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_expected_cost_whole_units_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The sum of the actual recipe cost of the preselected recipes.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Actual Cost of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_actual_cost_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The sum of the actual recipe cost of the preselected recipes.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Actual Cost Whole Units of Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_actual_cost_whole_units_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe Costs
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the preselected recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	measure 'CO2 Emissions from Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_co2_emissions_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe CO2 Emissions
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the preselected recipes, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
+	measure 'CO2 Emissions Whole Units from Preselected Recipes' =
+			SUM('Order Measures'[total_ingredient_co2_emissions_whole_units_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe CO2 Emissions
+
+	/// Hidden measure?
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+	measure 'Weight of Ingredients in Preselection with CO2 Data' =
+			SUM('Order Measures'[total_ingredient_weight_with_co2_data_subscription])
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipe CO2 Emissions
+
+	/// The CO2 emissions in kg per kg of ingredients in the preselected recipes.
+	/// It is calculated by dividing the total CO2 emissions from the ingredients in the recipes by the total net weight of the ingredients in the recipes that have registered CO2 emission data.
+	measure 'CO2 Emissions per kg of Ingredients in Preselection by Customer' =
+			DIVIDE(
+				[CO2 Emissions from Ordered Recipes],
+				[Weight of Ingredients in Orders with CO2 Data]/1000,
+				0
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: Preselected Recipes CO2 Emissions
+
 
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id
@@ -2277,6 +2417,156 @@ table 'Order Measures'
         isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: total_ingredient_weight_with_co2_data_whole_units
+
+		annotation SummarizationSetBy = Automatic
+	
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The net weight (in grams) for the total ingredient amount in the recipe.
+	column total_ingredient_weight_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The net weight (in grams) of the ingredients, based on ingredient quantity in whole units.
+	column total_ingredient_weight_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_whole_units_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The menu planning purchasing cost for the total ingredient amount in the recipe.
+	column total_ingredient_planned_cost_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The menu planning purchasing cost based on ingredient quantity in whole units. 
+	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. 
+	column total_ingredient_planned_cost_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost_whole_units_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The expected purchasing cost for the total ingredient amount in the recipe. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
+	column total_ingredient_expected_cost_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The expected purchasing cost based on ingredient quantity in whole units. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. 
+	/// This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
+	column total_ingredient_expected_cost_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost_whole_units_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe.
+	column total_ingredient_actual_cost_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
+	column total_ingredient_actual_cost_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost_whole_units_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
+	column total_ingredient_co2_emissions_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_co2_emissions_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe. 
+	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
+	column total_ingredient_co2_emissions_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_co2_emissions_whole_units_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
+	column total_ingredient_weight_with_co2_data_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_with_co2_data_subscription
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
+	/// I.e. the recipes the customer would get if not making changes to the mealbox.
+	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data, where the quantity of the ingredients is rounded up to whole units.
+	column total_ingredient_weight_with_co2_data_whole_units_subscription
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_weight_with_co2_data_whole_units_subscription
 
 		annotation SummarizationSetBy = Automatic
 

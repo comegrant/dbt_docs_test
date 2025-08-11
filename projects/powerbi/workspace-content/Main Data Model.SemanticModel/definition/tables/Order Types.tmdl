@@ -41,6 +41,26 @@ table 'Order Types'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// A description of how the meals in the mealbox was selected. Can be preselected menu or customer composed. 
+	/// Customer composed meaning that the customer has made adjustments to the dishes in the mealbox either by swapping out a dish, adding/removing a dish or increase/decrease number of portions
+	/// and preselected menu meaning that the customer has chosen the default selection.
+	column 'Mealbox Selection'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: mealbox_selection
+
+	/// Used to filter orders on whether or not the order includes a premium dish. A premium dish is a dish which the customer has to pay extra for if adding.
+	column 'Premium Dish'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: premium_dish
+
+	/// Used to filter orders on whether or not the order includes a thrifty dish. A thrifty dish is a dish which the customer get a price reduction if chosing.
+	column 'Thrifty Dish'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: thrifty_dish
+
 	/// Whether or not the order type is a direct order type. 'Campaign' and 'Gift Card' order types are direct order types.
 	column 'Is Direct Order'
 		dataType: boolean
