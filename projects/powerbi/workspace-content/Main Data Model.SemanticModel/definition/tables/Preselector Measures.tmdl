@@ -77,6 +77,23 @@ table 'Preselector Measures'
             )
         formatString: #,0
 
+    /// The number of activesubscribers that have received a preselector output.
+    measure 'Number of Active Subscribers with Preselector Output' =
+            IF(
+                OR(ISFILTERED('Recipes'), ISFILTERED('Taxonomies')),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[billing_agreement_id]),
+                    'Preselector Details'[Is Dish] = TRUE(),
+                    'Customer and Subscriber Details'[Billing Agreement Status] = "Active"
+                ),
+                CALCULATE(
+                    DISTINCTCOUNT('Preselector Details'[billing_agreement_id]),
+                    'Preselector Details'[Is Dish] = FALSE(),
+                    'Customer and Subscriber Details'[Billing Agreement Status] = "Active"
+                )
+            )
+        formatString: #,0
+
     /// The overall quality metric (0 bad - 1 good) of the preselector output, calculated as a combination of the rotation and main ingredient variation scores for mealboxes
     measure 'Average Combined Rotation and Variation Score' =
             CALCULATE(
