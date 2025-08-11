@@ -23,48 +23,36 @@ models:
       - name: menu_year
         data_type: int
         description: "{{ doc('column__menu_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week
         data_type: int
         description: "{{ doc('column__menu_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_financial_date
         data_type: date
         description: "{{ doc('column__menu_week_financial_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
   
       - name: fact_updated_at
         data_type: timestamp
         description: "{{ doc('column__fact_updated_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -107,8 +95,6 @@ models:
       - name: order_line_details
         data_type: string
         description: "{{ doc('column__order_line_details') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -219,40 +205,40 @@ models:
       - name: has_swap
         data_type: boolean
         description: "{{ doc('column__has_swap') }}"
-        constraints:
-          - type: not_null
-        data_tests:
-          - not_null
+
+      - name: has_mealbox_adjustment
+        data_type: boolean
+        description: "{{ doc('column__has_mealbox_adjustment') }}"
+
+      - name: has_plus_price_dish
+        data_type: int
+        description: "{{ doc('column__has_plus_price_dish') }}"
+
+      - name: has_thrifty_dish
+        data_type: int
+        description: "{{ doc('column__has_plus_price_dish') }}"
 
       - name: has_normal_order_type
         data_type: boolean
         description: "{{ doc('column__has_normal_order_type') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_finished_order_status
         data_type: boolean
         description: "{{ doc('column__has_finished_order_status') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_subscription_order_type
         data_type: boolean
         description: "{{ doc('column__has_subscription_order_type') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: has_recipe_leaflets
         data_type: boolean
         description: "{{ doc('column__has_recipe_leaflets') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -320,11 +306,57 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
 
+      - name: total_ingredient_weight_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight') }}"
+
+      - name: total_ingredient_weight_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_whole_units') }}"
+
+      - name: total_ingredient_planned_cost_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost') }}"
+
+      - name: total_ingredient_planned_cost_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
+
+      - name: total_ingredient_expected_cost_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost') }}"
+
+      - name: total_ingredient_expected_cost_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
+
+      - name: total_ingredient_actual_cost_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
+
+      - name: total_ingredient_co2_emissions_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions') }}"
+
+      - name: total_ingredient_co2_emissions_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_co2_emissions_whole_units') }}"
+
+      - name: total_ingredient_weight_with_co2_data_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}"
+
+      - name: total_ingredient_weight_with_co2_data_whole_units_subscription
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
+
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -335,8 +367,6 @@ models:
       - name: billing_agreement_order_id
         data_type: varchar(36)
         description: "{{ doc('column__billing_agreement_order_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -351,32 +381,24 @@ models:
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_status_id
         data_type: varchar(36)
         description: "{{ doc('column__order_status_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_type_id
         data_type: varchar(36)
         description: "{{ doc('column__order_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -417,6 +439,10 @@ models:
         description: "{{ doc('column__recipe_id') }}"
 
       - name: recipe_portion_id
+        data_type: int
+        description: "{{ doc('column__recipe_portion_id') }}"
+
+      - name: recipe_portion_id_subscription
         data_type: int
         description: "{{ doc('column__recipe_portion_id') }}"
 
@@ -851,7 +877,10 @@ models:
       - v: 1
 
   - name: dim_order_types
-    description: ""
+    description: >
+      Table describing the different aspects of an order. I.e., if the order is an order relating to a subscription or a campaign (christmas box/easter box).
+      Furthermore, it also contains more detailed descriptions of orders such as if the mealbox in the order was composed by the customer or if the mealbox 
+      in the order was the default selection presented to the customer in the frontend.
     latest_version: 1
     config:
       alias: dim_order_types
@@ -874,11 +903,27 @@ models:
         data_tests:
           - not_null
 
+      - name: mealbox_composition_id
+        data_type: int
+        description: "{{ doc('column__mealbox_composition_id') }}"
+
       - name: order_type_name
         data_type: string
         description: "{{ doc('column__order_type_name') }}"
         data_tests:
           - not_null
+  
+      - name: mealbox_selection
+        data_type: string
+        description: "{{ doc('column__mealbox_selection') }}"
+
+      - name: premium_dish
+        data_type: string
+        description: "{{ doc('column__premium_dish') }}"
+
+      - name: thrifty_dish
+        data_type: string
+        description: "{{ doc('column__thrifty_dish') }}"
 
       - name: is_direct_order
         data_type: boolean

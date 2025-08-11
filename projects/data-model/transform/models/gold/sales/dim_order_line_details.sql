@@ -18,8 +18,8 @@ order_lines as (
 
 )
 
-, order_line_details as (
-        
+, order_line_details_debit as (
+
         select 'Plus Price Dish' as order_line_details
         
         union all
@@ -41,28 +41,57 @@ order_lines as (
         union all
 
         select 'Discount'
+
+        union all
+
+        select 'DEBIT'
+
+)
+
+, order_line_details_generated as (
+        
+        select 'Normal Dish' as order_line_details
+        
+        union all
+        
+        select 'Groceries'
+
+        union all
+        
+        select 'GENERATED'
+
+)
+
+, order_line_details_discount as (
+
+        select 'Discount' as order_line_details
         
         union all
         
         select 'Campaign Discount'
-
 
 )
 
 , order_line_types_and_details_joined as (
 
     select 
-        order_line_type_name
-        , order_line_details
+        order_line_types.order_line_type_name
+        , case
+            when order_line_types.order_line_type_name = 'DEBIT'
+            then order_line_details_debit.order_line_details
+            when order_line_types.order_line_type_name = 'GENERATED'
+            then order_line_details_generated.order_line_details
+            when order_line_types.order_line_type_name in ('DISCOUNT', 'DISCOUNT_GIFT')
+            then order_line_details_discount.order_line_details
+            else order_line_types.order_line_type_name
+        end as order_line_details
     from order_line_types
-    full join order_line_details
-
-    union all
-    
-    select
-        order_line_type_name  as order_line_type_name
-        , order_line_type_name  as order_line_details 
-    from order_line_types
+    left join order_line_details_debit
+        on order_line_types.order_line_type_name = 'DEBIT'
+    left join order_line_details_generated
+        on order_line_types.order_line_type_name = 'GENERATED'
+    left join order_line_details_discount
+        on order_line_types.order_line_type_name in ('DISCOUNT', 'DISCOUNT_GIFT')
 
 )
 

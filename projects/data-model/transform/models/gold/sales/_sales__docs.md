@@ -110,18 +110,40 @@ The flag is on order level and will be used in Power BI to only include the orde
 
 {% enddocs %}
 
+{% docs column__has_plus_price_dish %}
+
+1 for all the rows in an order if the customer has chosen one or more premium dishes in their mealbox, else 0. When a premium dish is selected an extra cost will be added to the order. Is null if the order does not have any dishes.
+
+{% enddocs %}
+
+{% docs column__has_thrifty_dish %}
+
+1 for all the rows in an order if the customer has chosen one or more thrifty dishes in their mealbox, else 0. When a thrifty dish is selected a price reduction is added to the order. Is null if the order does not have any dishes.
+
+{% enddocs %}
+
 {% docs column__has_swap %}
 
 True if the customer replaced the dishes in the menu presented to them on the frontend with other dishes, else false.
 
-The order is not considered to have a swap if any of these are true, and the field will be false.
+The order is not considered to have a swap if any of these are true, else the field will be false.
 - The customer did not make any changes to the dishes on their order, and sticked with what was presented to them on the webpage.
 - The customer only removed/added dishes without adding/removing another dish
 - The customer did not get any preselected menu on the frontend, and was forced to chose dishes themselves (see is_missing_preselector-column)
 
-The field is null for orders created before we started tracking subscribed products (<2024).
-
 The flag is on order level. I.e. all the rows for the order will have the same value for this flag.
+
+The field is null for non subscription orders and orders created before we started tracking subscribed products (<2024).
+
+{% enddocs %}
+
+{% docs column__has_mealbox_adjustment %}
+
+True if the customer has made any adjustments to their mealbox either by swapping dishes, changing number of meals or changing number of portions, else false.
+
+The flag is on order level. I.e. all the rows for the order will have the same value for this flag. 
+
+The field is null for non subscription orders and orders created before we started tracking subscribed products (<2024).
 
 {% enddocs %}
 
@@ -375,7 +397,31 @@ The unique id of the rows in Dim Order Statuses
 
 {% docs column__pk_dim_order_types %}
 
-The unique id of the rows in Dim Order Types
+The primary key of Dim Order Types. Is a composite key of the order type id coming from the source table and the mealbox_composition_id which is generated in the dimension.
+
+{% enddocs %}
+
+{% docs column__mealbox_composition_id %}
+
+An id representing the mealbox composition. The id is generated inside the dimension together with all the column values it represents.
+
+{% enddocs %}
+
+{% docs column__mealbox_selection %}
+
+A description of how the meals in the mealbox was selected. Can be preselected menu or customer composed. Customer composed meaning that the customer has made adjustments to the dishes in the mealbox and preselected menu meaning that the customer has chosen the default selection.
+
+{% enddocs %}
+
+{% docs column__premium_dish %}
+
+Describes if an order has a premium dish or not.
+
+{% enddocs %}
+
+{% docs column__thrifty_dish %}
+
+Describes if an order has a thrifty dish or not.
 
 {% enddocs %}
 

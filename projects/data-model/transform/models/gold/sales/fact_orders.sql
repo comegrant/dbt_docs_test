@@ -286,6 +286,7 @@ discounts as (
     select 
         recommended_and_subscription_products_unioned.*
         , menus.recipe_id
+        , menus.recipe_portion_id
         , coalesce(menus.recipe_id, recommended_and_subscription_products_unioned.product_variation_id) as orders_subscriptions_match_key
     from recommended_and_subscription_products_unioned 
     left join menus
@@ -302,6 +303,7 @@ discounts as (
     select 
         recommended_and_subscription_products_unioned.*
         , menus.recipe_id
+        , menus.recipe_portion_id
         , menus.recipe_id as orders_subscriptions_match_key
     from recommended_and_subscription_products_unioned 
     left join menus
@@ -411,6 +413,7 @@ discounts as (
         ) as order_line_type_name
         , recommended_and_subscription_products_unioned_add_recipes.product_variation_id as product_variation_id_subscription
         , recommended_and_subscription_products_unioned_add_recipes.recipe_id as recipe_id_subscription
+        , recommended_and_subscription_products_unioned_add_recipes.recipe_portion_id as recipe_portion_id_subscription
         , recommended_and_subscription_products_unioned_add_recipes.product_variation_quantity as product_variation_quantity_subscription
         , recommended_and_subscription_products_unioned_add_recipes.product_variation_quantity * order_lines_one_meal_and_multi_meal_recipes_unioned.unit_price_ex_vat as total_amount_ex_vat_subscription
         , recommended_and_subscription_products_unioned_add_recipes.billing_agreement_basket_deviation_origin_id
@@ -706,6 +709,18 @@ discounts as (
         billing_agreement_order_id
         , sum(is_added_dish) as sum_added_dish
         , sum(is_removed_dish) as sum_removed_dish
+        , sum(
+            case 
+            when is_dish = true
+            then portions
+            end 
+        ) as sum_dish_portions
+        , sum(
+            case 
+            when is_preselected_dish = true
+            then portions_subscription
+            end 
+        ) as sum_dish_portions_subscription
         -- TODO: What is the best way to handle this when a customer has several mealboxes on their order?
         , max(
             case 
@@ -751,6 +766,8 @@ discounts as (
                 end
         ) as has_preselector_output
         , max(is_onesub_migration) as is_onesub_migration
+        , coalesce(max(is_plus_price_dish), 0) as has_plus_price_dish
+        , coalesce(max(is_thrifty_dish), 0) as has_thrifty_dish
 
     from add_product_columns
     where has_subscription_order_type is true
@@ -787,7 +804,9 @@ discounts as (
             then add_product_columns.portions - find_swap_information.portions_mealbox_subscription 
             end as portion_adjustment_subscription
         , case 
-            -- exclude customers that was never presented with preselector output
+            -- set to null if order is not relevant for swap data
+            when find_swap_information.billing_agreement_order_id is null
+            then null
             when find_swap_information.has_preselector_output is false 
             and find_swap_information.is_onesub_migration is false
             and add_product_columns.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
@@ -798,6 +817,20 @@ discounts as (
             then true
             else false
         end as has_swap
+        , case
+            -- set to null if order is not relevant for swap data
+            when find_swap_information.billing_agreement_order_id is null
+            then null
+            -- customers that have swapped a dish or change in number of meals
+            when find_swap_information.sum_added_dish + find_swap_information.sum_removed_dish != 0
+            then true
+            -- customers that has changed number of portions or change in number of meals
+            when find_swap_information.sum_dish_portions - find_swap_information.sum_dish_portions_subscription != 0
+            then true
+            else false
+        end as has_mealbox_adjustment
+        , has_plus_price_dish
+        , has_thrifty_dish
     from add_product_columns
     left join find_swap_information
         on add_product_columns.billing_agreement_order_id = find_swap_information.billing_agreement_order_id
@@ -818,6 +851,7 @@ discounts as (
             add_swap_information.source_created_at
             , recipe_feedback.source_updated_at
         ) as fact_updated_at
+    
         , recipe_costs_and_co2.total_ingredient_weight
         , recipe_costs_and_co2.total_ingredient_weight_whole_units
         , recipe_costs_and_co2.total_ingredient_planned_cost
@@ -831,6 +865,19 @@ discounts as (
         , recipe_costs_and_co2.total_ingredient_weight_with_co2_data
         , recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
 
+        , recipe_costs_and_co2_subscription.total_ingredient_weight as total_ingredient_weight_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_planned_cost as total_ingredient_planned_cost_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_planned_cost_whole_units as total_ingredient_planned_cost_whole_units_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_expected_cost as total_ingredient_expected_cost_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_expected_cost_whole_units as total_ingredient_expected_cost_whole_units_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_actual_cost as total_ingredient_actual_cost_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_actual_cost_whole_units as total_ingredient_actual_cost_whole_units_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_co2_emissions as total_ingredient_co2_emissions_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_co2_emissions_whole_units as total_ingredient_co2_emissions_whole_units_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data as total_ingredient_weight_with_co2_data_subscription
+        , recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data_whole_units as total_ingredient_weight_with_co2_data_whole_units_subscription
+
     from add_swap_information
     left join recipe_feedback
         on add_swap_information.recipe_id = recipe_feedback.recipe_id
@@ -841,6 +888,12 @@ discounts as (
         and add_swap_information.menu_week = recipe_costs_and_co2.menu_week
         and add_swap_information.recipe_id = recipe_costs_and_co2.recipe_id
         and add_swap_information.recipe_portion_id = recipe_costs_and_co2.recipe_portion_id
+    left join recipe_costs_and_co2 as recipe_costs_and_co2_subscription
+        on add_swap_information.company_id = recipe_costs_and_co2_subscription.company_id
+        and add_swap_information.menu_year = recipe_costs_and_co2_subscription.menu_year
+        and add_swap_information.menu_week = recipe_costs_and_co2_subscription.menu_week
+        and add_swap_information.recipe_id_subscription = recipe_costs_and_co2_subscription.recipe_id
+        and add_swap_information.recipe_portion_id_subscription = recipe_costs_and_co2_subscription.recipe_portion_id
 
 )
 
@@ -874,8 +927,45 @@ discounts as (
         , coalesce(meals_mealbox, 0) as fk_dim_meals_mealbox
         , coalesce(meals_mealbox_subscription, 0) as fk_dim_meals_mealbox_subscription
         , md5(add_recipe_information.order_status_id) as fk_dim_order_statuses
-        , md5(add_recipe_information.order_type_id) as fk_dim_order_types
-        , coalesce(md5(concat(add_recipe_information.order_line_type_name, order_line_details)), '0') as fk_dim_order_line_details
+        
+        -- TODO: Have to consider if it should include swaps or mealbox adjustments
+        , case 
+            
+            when 
+                add_recipe_information.order_type_id not in ({{var ('subscription_order_type_ids') | join(', ')}})
+                or add_recipe_information.menu_week_monday_date < '{{ var("mealbox_adjustments_cutoff") }}'
+            then md5(concat_ws('-', add_recipe_information.order_type_id, null))
+
+            when add_recipe_information.has_mealbox_adjustment is false
+            then md5(concat_ws('-', add_recipe_information.order_type_id, 1))
+            
+            when 
+                add_recipe_information.has_mealbox_adjustment is true 
+                and add_recipe_information.has_plus_price_dish = 1 
+                and add_recipe_information.has_thrifty_dish = 1
+            then md5(concat_ws('-', add_recipe_information.order_type_id, 2))
+            
+            when 
+                add_recipe_information.has_mealbox_adjustment is true 
+                and add_recipe_information.has_plus_price_dish = 0 
+                and add_recipe_information.has_thrifty_dish = 0
+            then md5(concat_ws('-', add_recipe_information.order_type_id, 3))
+            
+            when 
+                add_recipe_information.has_mealbox_adjustment is true 
+                and add_recipe_information.has_plus_price_dish = 1 
+                and add_recipe_information.has_thrifty_dish = 0
+            then md5(concat_ws('-', order_type_id, 4))
+            
+            when 
+                add_recipe_information.has_mealbox_adjustment is true 
+                and add_recipe_information.has_plus_price_dish = 0 
+                and add_recipe_information.has_thrifty_dish = 1
+            then md5(concat_ws('-', order_type_id, 5))
+            
+        end as fk_dim_order_types
+
+        , coalesce(md5(concat(add_recipe_information.order_line_type_name, add_recipe_information.order_line_details)), '0') as fk_dim_order_line_details
         , datediff(add_recipe_information.menu_week_monday_date, billing_agreements_ordergen.first_menu_week_monday_date) as fk_dim_periods_since_first_menu_week
         , coalesce(md5(concat(add_recipe_information.portion_id, add_recipe_information.language_id)), '0') as fk_dim_portions
         , coalesce(md5(concat(add_recipe_information.portion_id_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_subscription
