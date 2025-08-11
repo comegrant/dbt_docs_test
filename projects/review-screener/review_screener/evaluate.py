@@ -5,7 +5,7 @@ import pandas as pd
 import pytz
 from catalog_connector import connection
 from key_vault import key_vault
-from openai import OpenAI
+from openai import AsyncOpenAI
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 from review_screener.config import MODEL
@@ -27,7 +27,7 @@ def load_eval_reviews(fraction: float = 0.05) -> pd.DataFrame:
     return stratified_sample
 
 
-async def process_reviews(df: pd.DataFrame, client: OpenAI) -> list[Response]:
+async def process_reviews(df: pd.DataFrame, client: AsyncOpenAI) -> list[Response]:
     """Processes reviews through the OpenAI API.
 
     Args:
@@ -53,7 +53,7 @@ async def evaluate_openai_response(df: pd.DataFrame, threshold: float) -> tuple[
     """
     vault = key_vault()
     await vault.load_into_env({"openai-preselector-key": "OPENAI_API_KEY"})
-    client = OpenAI()
+    client = AsyncOpenAI()
 
     timezone = pytz.timezone("UTC")
     timestamp_now = datetime.now(tz=timezone).strftime("%Y-%m-%d-%H:%M:%S")

@@ -1,7 +1,7 @@
 import logging
 from typing import Literal, Optional
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pydantic import BaseModel, model_validator
 
 from review_screener.config import CONTEXT, MODEL
@@ -45,7 +45,7 @@ class CustomerReviewResponse(Response):
     model_version: str
 
 
-async def get_customer_review_response(review: str, client: OpenAI) -> Response:
+async def get_customer_review_response(review: str, client: AsyncOpenAI) -> Response:
     """Get a response from OpenAI for a customer review.
 
     Args:
@@ -58,7 +58,7 @@ async def get_customer_review_response(review: str, client: OpenAI) -> Response:
     Raises:
         ValueError: If no response is received from OpenAI.
     """
-    response = client.responses.parse(
+    response = await client.responses.parse(
         model=MODEL,
         input=[
             {"role": "system", "content": CONTEXT},
@@ -72,7 +72,7 @@ async def get_customer_review_response(review: str, client: OpenAI) -> Response:
     return response.output_parsed
 
 
-async def create_customer_review_response(request: ReviewRequest, client: OpenAI) -> CustomerReviewResponse:
+async def create_customer_review_response(request: ReviewRequest, client: AsyncOpenAI) -> CustomerReviewResponse:
     """Create response for a customer review with model version information.
 
     Args:
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     request = ReviewRequest(
         review="The food was great",

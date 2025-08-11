@@ -1,5 +1,5 @@
 import pytest
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pytest_mock import MockFixture
 from review_screener.main import CustomerReviewResponse, Response, ReviewRequest, create_customer_review_response
 
@@ -22,7 +22,7 @@ async def test_feedback_with_mocked_response(mocker: MockFixture) -> None:
         agreement_id=456,
     )
 
-    client = OpenAI(api_key="test")
+    client = AsyncOpenAI(api_key="test")
     result = await create_customer_review_response(request, client=client)
 
     assert isinstance(result, CustomerReviewResponse)
