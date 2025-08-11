@@ -1,3 +1,7 @@
+"""
+Review Screener API
+"""
+
 import logging
 
 from fastapi import APIRouter, Depends

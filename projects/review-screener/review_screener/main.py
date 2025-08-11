@@ -82,8 +82,13 @@ async def create_customer_review_response(request: ReviewRequest, client: AsyncO
     Returns:
         CustomerReviewResponse: A response object containing the label, score, and model version.
     """
-    response = await get_customer_review_response(request.review, client)
-    return CustomerReviewResponse(**response.model_dump(), model_version=MODEL)
+
+    if not request.review.strip():
+        return CustomerReviewResponse(label=False, score=0.0, model_version=MODEL)
+
+    else:
+        response = await get_customer_review_response(request.review, client)
+        return CustomerReviewResponse(**response.model_dump(), model_version=MODEL)
 
 
 if __name__ == "__main__":
@@ -97,7 +102,7 @@ if __name__ == "__main__":
     client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     request = ReviewRequest(
-        review="The food was great",
+        review="æsj",
         source="RECIPE_RATING",
         country="US",
         rating=5,

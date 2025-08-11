@@ -33,7 +33,7 @@ Non-critical issues:
    - "score": a number between 0.0 and 1.0 representing your confidence in the classification
              (0.0 being least confident, 1.0 being most confident)
 Remember, it's better to be cautious and flag a review for customer service attention if there's any doubt about its
-criticality.
+criticality. If there is no text in the review, it should be classified as non-critical.
 Please proceed with your analysis and classification of the customer review, and provide only the JSON output as
 specified.
 """
