@@ -18,10 +18,7 @@ fact_orders as (
         on fact_orders.fk_dim_products = dim_products.pk_dim_products
     where
         has_finished_order_status
-        and product_type_id in (
-            '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealbox
-            , '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- legacy financial
-        )
+        and product_type_id in ('{{ var("financial_product_type_id") }}', '{{ var("mealbox_product_type_id") }}')
 )
 
 , aggregated_order as (
@@ -32,10 +29,7 @@ fact_orders as (
         , sum(product_variation_quantity) as total_orders
     from fact_orders_joined_product_type
     where
-        product_type_id in (
-            '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealbox
-            , '288ED8CA-B437-4A6D-BE16-8F9A30185008'
-        )
+        product_type_id in ('{{ var("financial_product_type_id") }}', '{{ var("mealbox_product_type_id") }}')
     group by
         menu_year
         , menu_week
@@ -71,9 +65,7 @@ fact_orders as (
         , sum(product_variation_quantity) as total_orders_with_flex
     from fact_orders_joined_product_type
     where
-        product_type_id in (
-            '288ED8CA-B437-4A6D-BE16-8F9A30185008' -- legacy financial
-        )
+        product_type_id in ('{{ var("financial_product_type_id") }}')
         and (menu_year * 100 + menu_week) <= 202446
     group by
         menu_year

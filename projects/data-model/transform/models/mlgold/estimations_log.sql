@@ -55,13 +55,8 @@ estimations as (
     where
         --Non-deviations
         estimations.billing_agreement_basket_deviation_origin_id <> '00000000-0000-0000-0000-000000000000'
-        and dim_products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' --Velg&Vrak
-        and estimations.company_id in (
-            '09ECD4F0-AE58-4539-8E8F-9275B1859A19' --Godtlevert
-            , '8A613C15-35E4-471F-91CC-972F933331D7' --Adams Matkasse
-            , '6A2D0B60-84D6-4830-9945-58D518D27AC2' --Linas Matkasse
-            , '5E65A955-7B1A-446C-B24F-CFE576BF52D7' --Retnemt
-        )
+        and dim_products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+        and estimations.company_id in ({{ var('active_company_ids') | join(', ') }})
 
     group by 1, 2, 3, 4, 5, 6
 

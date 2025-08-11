@@ -224,17 +224,11 @@ fact_menus as (
         on fact_menus.fk_dim_portions = dim_portions.pk_dim_portions
     where
         products.product_type_id in (
-            'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1' -- single dishes
-            , '2F163D69-8AC1-6E0C-8793-FF0000804EB3' -- mealboxes
+            '{{ var("velg&vrak_product_type_id") }}', '{{ var("mealbox_product_type_id") }}'
         )
         and dim_portions.portions = 4
         and dim_portions.portion_id <> 15 -- plus portions for Retnemt
-        and dim_companies.company_id in (
-            '5E65A955-7B1A-446C-B24F-CFE576BF52D7' -- Retnemt
-            , '8A613C15-35E4-471F-91CC-972F933331D7' -- Adams Matkasse
-            , '09ECD4F0-AE58-4539-8E8F-9275B1859A19' -- Godtlevert
-            , '6A2D0B60-84D6-4830-9945-58D518D27AC2' -- Linas Matkasse
-        )
+        and dim_companies.company_id in ({{ var('active_company_ids') | join(', ') }})
         and dim_recipes.recipe_id not in (
             select recipe_id from excluded_recipes
         )

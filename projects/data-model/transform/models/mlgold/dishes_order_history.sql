@@ -53,7 +53,7 @@ fact_orders as (
         on dim_companies.pk_dim_companies = fact_orders.fk_dim_companies
     where
         -- Velg&vrak, or standalone dishes
-        dim_products.product_type_id = 'CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1'
+        dim_products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
         and dim_order_statuses.order_status_id = '4508130E-6BA1-4C14-94A4-A56B074BB135' -- Finished
 )
 
