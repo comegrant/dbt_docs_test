@@ -638,6 +638,10 @@ models:
         description: "{{ doc('column__cooking_time_to') }}"
         data_type: int
 
+      - name: cooking_time_mean
+        description: "{{ doc('column__cooking_time_mean') }}"
+        data_type: int
+
       - name: recipe_difficulty_level_id
         description: "{{ doc('column__recipe_difficulty_level_id') }}"
         data_type: int
@@ -653,6 +657,26 @@ models:
       - name: number_of_taxonomies
         description: "{{ doc('column__number_of_taxonomies') }}"
         data_type: int
+
+      - name: has_chefs_favorite_taxonomy
+        description: "{{ doc('column__has_chefs_favorite_taxonomy') }}"
+        data_type: boolean
+
+      - name: has_quick_and_easy_taxonomy
+        description: "{{ doc('column__has_quick_and_easy_taxonomy') }}"
+        data_type: boolean
+
+      - name: has_vegetarian_taxonomy
+        description: "{{ doc('column__has_vegetarian_taxonomy') }}"
+        data_type: boolean
+
+      - name: has_low_calorie_taxonomy
+        description: "{{ doc('column__has_low_calorie_taxonomy') }}"
+        data_type: boolean
+
+      - name: has_family_friendly_taxonomy
+        description: "{{ doc('column__has_family_friendly_taxonomy') }}"
+        data_type: boolean
 
       - name: ingredient_id_list
         description: "{{ doc('column__ingredient_id_list') }}"

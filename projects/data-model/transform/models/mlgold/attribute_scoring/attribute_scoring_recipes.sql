@@ -9,12 +9,6 @@ with fact_menus as (
 
 )
 
-, fact_recipe_ingredients as (
-
-    select * from {{ ref('fact_recipe_ingredients') }}
-
-)
-
 , dim_companies as (
 
     select * from {{ ref('dim_companies') }}
@@ -24,6 +18,12 @@ with fact_menus as (
 , dim_recipes as (
 
     select * from {{ ref('dim_recipes') }}
+
+)
+
+, dim_ingredient_combinations as (
+
+    select * from {{ ref('dim_ingredient_combinations') }}
 
 )
 
@@ -57,27 +57,87 @@ with fact_menus as (
 
 )
 
+, taxonomy_flags (
+    select
+        pk_dim_taxonomies
+        , cast(
+            lower(taxonomy_name_local) like '%inspirasjon%'
+            or lower(taxonomy_name_local) like 'inspirerende'
+            or lower(taxonomy_name_local) like 'favoritter'
+            or lower(taxonomy_name_local) like 'chefs choice'
+            or lower(taxonomy_name_local) like 'kockens val'
+            or lower(taxonomy_name_local) like '%inspirerande%'
+            as int
+        ) as has_chefs_favorite_taxonomy
+        , cast(
+            lower(taxonomy_name_local) like '%family%'
+            or lower(taxonomy_name_local) like 'barnevennlig'
+            or lower(taxonomy_name_local) like 'familie%'
+            or lower(taxonomy_name_local) like 'barnvänlig%'
+            or lower(taxonomy_name_local) like 'børnevenlig'
+            as int
+        ) as has_family_friendly_taxonomy
+        , cast(
+            lower(taxonomy_name_local) like '%ekspress%'
+            or lower(taxonomy_name_local) like 'rask'
+            or lower(taxonomy_name_local) like 'laget på 1-2-3'
+            or lower(taxonomy_name_local) like 'fort gjort'
+            or lower(taxonomy_name_local) like 'snabb%'
+            or lower(taxonomy_name_local) like 'enkelt'
+            or lower(taxonomy_name_local) like 'hurtig%'
+            or lower(taxonomy_name_local) like 'nem på 5'
+            as int
+        ) as has_quick_and_easy_taxonomy
+        , cast(
+            lower(taxonomy_name_local) like 'vegetar%'
+            or lower(taxonomy_name_local) like 'vegan'
+            as int
+        ) as has_vegetarian_taxonomy
+        , cast(
+            lower(taxonomy_name_local) like 'low calorie'
+            or lower(taxonomy_name_local) like 'sunn%'
+            or lower(taxonomy_name_local) like '%sunt%'
+            or lower(taxonomy_name_local) like 'roede'
+            or lower(taxonomy_name_local) like 'kalorismart'
+            or lower(taxonomy_name_local) like '%viktväktarna%'
+            or lower(taxonomy_name_local) like '%sund%'
+            or lower(taxonomy_name_local) like '%kalorilet%'
+            as int
+        ) as has_low_calorie_taxonomy
+    from dim_taxonomies
+)
+
 , taxonomies_list as (
     select
         dim_recipes.recipe_id
         , concat_ws(', ', collect_list(dim_taxonomies.taxonomy_name_local)) as taxonomy_list
         , size(collect_set(dim_taxonomies.taxonomy_name_local))             as number_of_taxonomies
+        , sum(taxonomy_flags.has_chefs_favorite_taxonomy)
+        > 0                                                                 as has_chefs_favorite_taxonomy
+        , sum(taxonomy_flags.has_quick_and_easy_taxonomy)
+        > 0                                                                 as has_quick_and_easy_taxonomy
+        , sum(taxonomy_flags.has_vegetarian_taxonomy)
+        > 0                                                                 as has_vegetarian_taxonomy
+        , sum(taxonomy_flags.has_low_calorie_taxonomy)
+        > 0                                                                 as has_low_calorie_taxonomy
+        , sum(taxonomy_flags.has_family_friendly_taxonomy)
+        > 0                                                                 as has_family_friendly_taxonomy
     from dim_recipes
     left join recipe_taxonomies
         on dim_recipes.pk_dim_recipes = recipe_taxonomies.fk_dim_recipes
     left join dim_taxonomies
         on recipe_taxonomies.fk_dim_taxonomies = dim_taxonomies.pk_dim_taxonomies
+    left join taxonomy_flags
+        on recipe_taxonomies.fk_dim_taxonomies = taxonomy_flags.pk_dim_taxonomies
     group by 1
 )
 
-, ingredients_list as (
+, ingredient_list as (
     select
-        recipe_portion_id
-        , concat_ws(', ', collect_set(ingredient_id)) as ingredient_id_list
-        , size(collect_set(ingredient_id))            as number_of_ingredients
-    from fact_recipe_ingredients
-    where ingredient_id is not null
-    group by 1
+        pk_dim_ingredient_combinations
+        , ingredient_id_list_array       as ingredient_id_list
+        , size(ingredient_id_list_array) as number_of_ingredients
+    from dim_ingredient_combinations
 )
 
 , recipe_steps_list as (
@@ -101,12 +161,18 @@ with fact_menus as (
         , fact_menus.recipe_portion_id
         , dim_recipes.cooking_time_from
         , dim_recipes.cooking_time_to
+        , (dim_recipes.cooking_time_from + dim_recipes.cooking_time_to) / 2 as cooking_time_mean
         , dim_recipes.recipe_difficulty_level_id
         , dim_recipes.recipe_main_ingredient_id
         , taxonomies_list.taxonomy_list
         , taxonomies_list.number_of_taxonomies
-        , ingredients_list.ingredient_id_list
-        , ingredients_list.number_of_ingredients
+        , taxonomies_list.has_chefs_favorite_taxonomy
+        , taxonomies_list.has_quick_and_easy_taxonomy
+        , taxonomies_list.has_vegetarian_taxonomy
+        , taxonomies_list.has_low_calorie_taxonomy
+        , taxonomies_list.has_family_friendly_taxonomy
+        , ingredient_list.ingredient_id_list
+        , ingredient_list.number_of_ingredients
         , recipe_steps_list.recipe_step_id_list
         , recipe_steps_list.number_of_recipe_steps
     from fact_menus
@@ -118,8 +184,8 @@ with fact_menus as (
         on fact_menus.fk_dim_portions = dim_portions.pk_dim_portions
     left join taxonomies_list
         on dim_recipes.recipe_id = taxonomies_list.recipe_id
-    left join ingredients_list
-        on fact_menus.recipe_portion_id = ingredients_list.recipe_portion_id
+    left join ingredient_list
+        on fact_menus.fk_dim_ingredient_combinations = ingredient_list.pk_dim_ingredient_combinations
     left join recipe_steps_list
         on fact_menus.recipe_portion_id = recipe_steps_list.recipe_portion_id
     where
@@ -127,4 +193,4 @@ with fact_menus as (
         and dim_recipes.recipe_id is not null
 )
 
-select * from distinct_recipes
+select * from distinct_recipes;
