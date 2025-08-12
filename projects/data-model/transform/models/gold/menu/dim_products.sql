@@ -15,7 +15,12 @@ products as (
         , product_status_id
         , product_variation_id
         , company_id
-        , product_concept_name
+        -- replace 'Customer Composed Mealbox' with 'Mealbox'
+        , case 
+            when product_concept_id = 'F735584A-666E-41BD-8F4D-4D80FBEDF49F'
+            then 'Mealbox'
+            else product_concept_name
+        end as product_concept_name
         , product_name
         , product_status_name
         , product_variation_name
