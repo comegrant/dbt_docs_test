@@ -4,6 +4,11 @@ resources:
     slack_notification:
       name: slack-notification
 
+      tags:
+        tool: "slack"
+        env: ${bundle.target}
+        managed_by: "manually"
+
       environments:
         - environment_key: notification-default
           spec:

@@ -3,6 +3,13 @@ resources:
     main_data_model_job:
       name: main-data-model-job
 
+      tags:
+        tool: "dbt"
+        purpose: "ingestion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       permissions:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN

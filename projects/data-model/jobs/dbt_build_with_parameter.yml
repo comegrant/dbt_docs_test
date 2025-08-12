@@ -3,6 +3,13 @@ resources:
     dbt_build_with_parameter:
       name: dbt_build_with_parameter
 
+      tags:
+        tool: "dbt"
+        purpose: "transformation"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       permissions:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN

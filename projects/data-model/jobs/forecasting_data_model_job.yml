@@ -2,6 +2,13 @@ resources:
   jobs:
     forecasting_data_model_job:
       name: forecasting-data-model-job
+      
+      tags:
+        tool: "forecasting"
+        purpose: "transformation"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
 
       permissions:
         - group_name: data-engineers

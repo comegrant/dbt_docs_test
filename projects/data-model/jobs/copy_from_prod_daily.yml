@@ -3,6 +3,13 @@ resources:
     copy_from_prod_daily:
       name: copy_from_prod_daily
 
+      tags:
+        tool: "data platform"
+        purpose: "ingestion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       permissions:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN

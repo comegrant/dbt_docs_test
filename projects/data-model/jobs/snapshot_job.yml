@@ -3,6 +3,13 @@ resources:
     snapshot_job:
       name: snapshot_job
 
+      tags:
+        tool: "dbt"
+        purpose: "ingestion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       timeout_seconds: 1200 #Timeout after 20 mins
 
       schedule:

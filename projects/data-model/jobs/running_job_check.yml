@@ -3,6 +3,12 @@ resources:
   jobs:
     running_job_check:
       name: running-job-check
+
+      tags:
+        tool: "data platform"
+        env: ${bundle.target}
+        managed_by: "manually"
+
       timeout_seconds: 300  # 5 minutes timeout
       edit_mode: EDITABLE
 

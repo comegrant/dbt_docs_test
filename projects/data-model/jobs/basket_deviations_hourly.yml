@@ -3,6 +3,13 @@ resources:
     basket_deviations_hourly:
       name: basket_deviations_hourly
 
+      tags:
+        tool: "preselector"
+        purpose: "transformation"
+        env: ${bundle.target}
+        managed_by: "manually" 
+        user: "dbt developers"
+
       permissions:
         - group_name: data-scientists
           level: CAN_MANAGE_RUN

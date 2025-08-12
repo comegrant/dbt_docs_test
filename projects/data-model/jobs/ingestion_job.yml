@@ -3,6 +3,13 @@ resources:
     ingestion_job:
       name: ingestion-job
 
+      tags:
+        tool: "dbt"
+        purpose: "ingestion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       timeout_seconds: 2700 #Timeout after 45 mins
       edit_mode: EDITABLE
 

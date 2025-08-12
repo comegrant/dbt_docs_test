@@ -3,6 +3,13 @@ resources:
     customerio_sync_job:
       name: customerio-sync-job
 
+      tags:
+        tool: "customerio"
+        purpose: "export"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       permissions:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN
