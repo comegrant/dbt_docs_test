@@ -38,7 +38,7 @@ def mealkit(
         col.image(row[RecipeFeatures().recipe_photo_url.name])  # type: ignore
 
         tags = " ".join(
-            [badge(tag) for tag in row[RecipeFeatures().taxonomies.name] if tag in taxonomies_to_show],
+            [badge(tag) for tag in row[RecipeFeatures().taxonomy_ids.name] if tag in taxonomies_to_show],
         )
         col.markdown(tags, unsafe_allow_html=True)
 
@@ -65,8 +65,21 @@ async def recipe_information_for_ids(
     if not main_recipe_ids:
         return pd.DataFrame()
 
+    schema = RecipeFeatures()
     return (
         await RecipeFeatures.query()
+        .select_columns(
+            [
+                schema.recipe_photo_url.name,
+                schema.main_recipe_id.name,
+                schema.year.name,
+                schema.week.name,
+                schema.taxonomy_ids.name,
+                schema.recipe_name.name,
+                schema.cooking_time_from.name,
+                schema.cooking_time_to.name,
+            ]
+        )
         .filter(
             pl.col(RecipeFeatures().main_recipe_id.name).is_in(main_recipe_ids)
             & (pl.col(RecipeFeatures().year.name) == year)

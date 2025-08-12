@@ -4,9 +4,9 @@ from contextlib import suppress
 from typing import Literal
 
 from aligned.feature_view.feature_view import FeatureViewWrapper
+from aligned.sources.databricks import UCTableSource
 from data_contracts.preselector.store import FailedPreselectorOutput, Preselector, SuccessfulPreselectorOutput
 from data_contracts.sources import ml_outputs
-from data_contracts.unity_catalog import UCTableSource
 from pydantic import BaseModel
 from pydantic_argparser import parse_args
 

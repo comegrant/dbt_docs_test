@@ -1,4 +1,5 @@
 from aligned import (
+    Bool,
     Int32,
     feature_view,
 )
@@ -32,5 +33,5 @@ group by agreement_id, main_recipe_id;
 class RecipeVote:
     agreement_id = Int32().as_entity()
     main_recipe_id = Int32().as_entity()
-    is_favorite = Int32()
-    is_dislike = Int32()
+    is_favorite = Bool()
+    is_dislike = Bool()

@@ -66,12 +66,12 @@ async def importance_vector_for_concept(
 
     importance_vector = importances.select(combined_feature)
 
-    assert (
-        not importance_vector.is_empty()
-    ), f"Predefined importance vector is missing for concept {concept_ids} company: {company_id}"
-    assert (
-        not target_vector.is_empty()
-    ), f"Predefined target vector is missing for concept {concept_ids} company: {company_id}"
+    assert not importance_vector.is_empty(), (
+        f"Predefined importance vector is missing for concept {concept_ids} company: {company_id}"
+    )
+    assert not target_vector.is_empty(), (
+        f"Predefined target vector is missing for concept {concept_ids} company: {company_id}"
+    )
     return (importance_vector, target_vector)
 
 
@@ -191,6 +191,7 @@ async def historical_preselector_vector(
                     "repeated_carbo_percentage": [0.05],
                     "mean_is_dislike": [0.1],
                     "mean_is_favorite": [0.1],
+                    "suppress_score": [0.1],
                 }
             )
             .drop_invalid()
@@ -210,6 +211,7 @@ async def historical_preselector_vector(
                     "repeated_carbo_percentage": [0],
                     "mean_is_dislike": [0],
                     "mean_is_favorite": [1],
+                    "suppress_score": [0],
                 }
             )
             .drop_invalid()
@@ -222,7 +224,7 @@ async def historical_preselector_vector(
             pl.DataFrame(
                 dict(
                     **importance_static,
-                    **{key: 0 for key in other_features},
+                    **dict.fromkeys(other_features, 0),
                 ),
                 schema_overrides=importance.schema,
             )

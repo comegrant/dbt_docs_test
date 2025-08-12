@@ -12,6 +12,8 @@ from aligned import ContractStore
 from aligned.compiler.feature_factory import FeatureFactory
 from aligned.schemas.feature import Feature, FeatureType
 from aligned.schemas.feature_view import CompiledFeatureView
+from aligned.sources.databricks import UCSqlSource, UCTableSource
+from aligned.sources.renamer import Renamer
 from dbt.artifacts.resources.v1.components import ColumnInfo
 from dbt.contracts.graph.manifest import Manifest
 from dbt.contracts.graph.nodes import ManifestNode, ModelNode
@@ -19,7 +21,6 @@ from pydantic import BaseModel, Field
 from pyspark.sql.types import CharType, DecimalType, VarcharType
 
 from data_contracts.tags import Tags
-from data_contracts.unity_catalog import UCSqlSource, UCTableSource
 
 logger = logging.getLogger(__name__)
 
@@ -153,6 +154,7 @@ def columns_per_table(nodes: Iterable[ManifestNode], prefix: str = "~matsei_") -
 
 
 def feature_type_from(data_type: str) -> FeatureType:
+    from aligned.sources.databricks import convert_pyspark_type
     from pyspark.sql.types import (
         BooleanType,
         ByteType,
@@ -167,8 +169,6 @@ def feature_type_from(data_type: str) -> FeatureType:
         TimestampNTZType,
         TimestampType,
     )
-
-    from data_contracts.unity_catalog import convert_pyspark_type
 
     if data_type == "array":
         data_type = "array<string>"
@@ -284,12 +284,18 @@ def issues_for_table(
     missing_columns: list[MissingColumn] = []
     mismatching_types: list[MismatchingDataType] = []
 
+    inverse_renamer = Renamer.noop()
+    if source.renamer:
+        inverse_renamer = source.renamer.inverse()
+
     for feat in needed_columns:
-        if feat.name not in dbt_columns:
-            missing_columns.append(MissingColumn(feat.name, feat.dtype.name))
+        source_name = inverse_renamer.rename(feat.name)
+
+        if source_name not in dbt_columns:
+            missing_columns.append(MissingColumn(source_name, feat.dtype.name))
             continue
 
-        column = dbt_columns[feat.name]
+        column = dbt_columns[source_name]
         if not column.data_type:
             continue
 
@@ -299,8 +305,10 @@ def issues_for_table(
 
         stored_dtype = feature_type_from(column.data_type)
 
-        if stored_dtype != feat.dtype:
-            mismatching_types.append(MismatchingDataType(feat.name, feat.dtype.name, stored_dtype.name))
+        if stored_dtype != feat.dtype and not (
+            feat.dtype.name.startswith("float") and stored_dtype.name.startswith("float")
+        ):
+            mismatching_types.append(MismatchingDataType(source_name, feat.dtype.name, stored_dtype.name))
 
     if missing_columns or mismatching_types:
         return BrokenContract(
@@ -444,12 +452,6 @@ class {snake_to_pascal(view.name)}:
 """
 
 
-def dtype_to_dbt_type(dtype: FeatureType) -> str:
-    from data_contracts.unity_catalog import spark_type
-
-    return spark_type(dtype).simpleString()
-
-
 def dbt_sources_for_views(
     views: list[CompiledFeatureView],
     schema: str,
@@ -475,7 +477,7 @@ def dbt_table_for_view(view: CompiledFeatureView) -> dict:
         "identifier": source.table.table.read(),
         "description": description,
         "columns": [
-            {"name": feat.name, "description": feat.description, "data_type": dtype_to_dbt_type(feat.dtype)}
+            {"name": feat.name, "description": feat.description, "data_type": feat.dtype.spark_type.simpleString()}
             for feat in all_features
         ],
         "tags": ["auto-generated", "aligned"],
@@ -524,7 +526,7 @@ def dbt_model_for_view(view: CompiledFeatureView) -> dict:
         "name": view.name,
         "description": view.description,
         "columns": [
-            {"name": feat.name, "description": feat.description, "data_type": dtype_to_dbt_type(feat.dtype)}
+            {"name": feat.name, "description": feat.description, "data_type": feat.dtype.spark_type.simpleString()}
             for feat in all_features
         ],
         "config": {"tags": ["auto-generated", "aligned"]},

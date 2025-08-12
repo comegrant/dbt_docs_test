@@ -90,6 +90,7 @@ recipes as (
         , recipe_metadata.has_recipe_photo
 
         , recipe_metadata.recipe_name
+        , recipe_metadata.recipe_photo
         , recipe_metadata.recipe_photo_caption
         , recipe_metadata.recipe_general_text
         , recipe_metadata.recipe_description
@@ -136,7 +137,7 @@ recipes as (
         on
             recipes.recipe_id = recipe_translations.recipe_id
             and recipe_metadata.language_id = recipe_translations.language_id
-    
+
     left join recipe_companies_find_local_language_id
         on recipes.recipe_id = recipe_companies_find_local_language_id.recipe_id
 
@@ -155,7 +156,7 @@ recipes as (
 
 , recipes_tables_add_menu_week_information as (
 
-    select 
+    select
         recipe_tables_joined.*
         , main_recipes_in_menus.menu_week_count_main_recipe
         , main_recipes_in_menus.previous_menu_week_main_recipe
@@ -164,8 +165,8 @@ recipes as (
     left join main_recipes_in_menus
         on recipe_tables_joined.main_recipe_id = main_recipes_in_menus.main_recipe_id
     -- filter out recipes that are not in recipe universe or menu week
-    where 
-        main_recipes_in_menus.main_recipe_id is not null 
+    where
+        main_recipes_in_menus.main_recipe_id is not null
         or recipe_tables_joined.is_in_recipe_universe is true
 
 )
@@ -194,6 +195,7 @@ recipes as (
         , 0              as cooking_time_sorting
         , false          as has_recipe_photo
         , 'Not relevant' as recipe_name
+        , 'Not relevant' as recipe_photo
         , 'Not relevant' as recipe_photo_caption
         , 'Not relevant' as recipe_general_text
         , 'Not relevant' as recipe_description

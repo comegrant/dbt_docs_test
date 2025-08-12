@@ -13,12 +13,12 @@ def dependency_level(location: FeatureLocation, store: ContractStore) -> dict[Fe
 
     loc_deps = set()
 
-    if location.location_type == "feature_view":
+    if location.location_type == "feature_view" and location.name in store.feature_views:
         view = store.feature_view(location.name).view
         source = view.source
         loc_deps = source.depends_on()
 
-    elif location.location_type == "model":
+    elif location.location_type == "model" and location.name in store.models:
         model = store.model(location.name)
         loc_deps = model.depends_on()
 
@@ -44,6 +44,10 @@ async def materialize_view(
     sample_size: int | None = None,
 ) -> None:
     logger(location.name)
+
+    if location.name not in store.feature_views:
+        logger(f"Did not find '{location.name}' in the store. Will therefore skip.")
+        return
 
     view = store.feature_view(location.name).view
     view_tags = view.tags or set()

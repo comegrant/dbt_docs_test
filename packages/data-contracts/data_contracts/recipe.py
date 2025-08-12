@@ -8,10 +8,10 @@ from aligned import (
     Embedding,
     EventTimestamp,
     Float,
+    Float32,
     Int32,
     List,
     String,
-    Timestamp,
     feature_view,
     model_contract,
 )
@@ -23,7 +23,7 @@ from aligned.schemas.feature_view import RetrievalRequest
 from aligned.sources.in_mem_source import InMemorySource
 from project_owners.owner import Owner
 
-from data_contracts.sources import adb, adb_ml, materialized_data, pim_core
+from data_contracts.sources import adb, adb_ml, materialized_data, ml_gold, pim_core
 
 contacts = [Owner.matsmoll().name]
 
@@ -383,15 +383,21 @@ main_ingredient_ids = {
 
 @feature_view(
     name="recipe_features",
-    source=adb.fetch(recipe_features_sql),
+    source=ml_gold.table("preselector_features").with_renames(
+        {
+            "menu_week": "week",
+            "menu_year": "year",
+            "taxonomy_id_list": "taxonomy_ids",
+            "recipe_main_ingredient_id": "main_ingredient_id",
+            "cumulated_average_rating": "average_rating",
+            "cumulated_number_of_ratings": "number_of_ratings",
+        }
+    ),
     materialized_source=materialized_data.parquet_at("recipe_features.parquet"),
     acceptable_freshness=timedelta(hours=6),
 )
 class RecipeFeatures:
-    recipe_id = Int32().lower_bound(1).upper_bound(10_000_000).as_entity()
-
-    updated_at = EventTimestamp()
-    loaded_at = Timestamp()
+    recipe_id = Int32().lower_bound(1).as_entity()
 
     main_recipe_id = Int32()
     main_ingredient_id = Int32()
@@ -405,7 +411,7 @@ class RecipeFeatures:
     recipe_photo = String().description("The path of the image")
     recipe_photo_url = recipe_photo.prepend("https://pimimages.azureedge.net/images/resized/").as_image_url()
 
-    average_rating = Float().is_optional()
+    average_rating = Float32().is_optional()
     number_of_ratings = Int32().is_optional()
 
     number_of_ratings_log = (
@@ -414,6 +420,8 @@ class RecipeFeatures:
         .description("Taking the log in order to get it closer to a normal distribution.")
     )
 
+    cumulated_times_on_menu = Int32().is_optional()
+
     cooking_time_from = Int32()
     cooking_time_to = Int32()
 
@@ -421,63 +429,29 @@ class RecipeFeatures:
     is_medium_cooking_time = (cooking_time_from == 20).logical_or(cooking_time_from == 25)  # noqa: PLR2004
     is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
 
-    taxonomies = List(String()).description("The taxonomies for a recipe")
-    taxonomy_ids = List(Int32()).description("The taconomy ids for a recipe")
+    taxonomy_ids = List(Int32()).description("The taxonomy ids for a recipe")
 
-    is_addon_kit = taxonomy_ids.contains("2164")
-    is_adams_signature = taxonomy_ids.contains("2146")
-    is_weight_watchers = taxonomy_ids.contains("1878")
+    is_addon_kit = taxonomy_ids.contains(2164)
+    is_adams_signature = taxonomy_ids.contains(2146)
+    is_weight_watchers = taxonomy_ids.contains(1878)
 
-    is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2109") | pl.col("taxonomy_ids").list.contains("2104"), as_dtype=Bool()
+    is_slow_grown_chicken = taxonomy_ids.contains_any([2109, 2104])
+    is_roede = taxonomy_ids.contains_any([2015, 2096])
+    is_cheep = taxonomy_ids.contains_any([2195, 2196, 2197])
+
+    is_chefs_choice = taxonomy_ids.contains_any([2011, 2147, 2152]).description(
+        "Also known as inspirational in some places"
     )
 
-    is_roede = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2015") | pl.col("taxonomy_ids").list.contains("2096"), as_dtype=Bool()
-    )
+    is_family_friendly = taxonomy_ids.contains_any([2148, 2014, 2153])
+    is_low_calorie = taxonomy_ids.contains_any([2156, 2013, 2151])
+    is_kids_friendly = taxonomy_ids.contains_any([1213, 247, 1321]).description("Not ideal solution, but works for now")
 
-    is_cheep = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2195")
-        | pl.col("taxonomy_ids").list.contains("2196")
-        | pl.col("taxonomy_ids").list.contains("2197"),
-        as_dtype=Bool(),
-    )
+    is_lactose = taxonomy_ids.contains_any([1164, 953]).description("Not ideal solution, but works for now")
 
-    is_chefs_choice = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2011")
-        | pl.col("taxonomy_ids").list.contains("2147")
-        | pl.col("taxonomy_ids").list.contains("2152"),
-        as_dtype=Bool(),
-    ).description("Also known as inspirational in some places")
+    is_spicy = taxonomy_ids.contains_any([845, 795, 1436])
 
-    is_family_friendly = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2148")
-        | pl.col("taxonomy_ids").list.contains("2014")
-        | pl.col("taxonomy_ids").list.contains("2153"),
-        as_dtype=Bool(),
-    )
-
-    is_low_calorie = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2156")
-        | pl.col("taxonomy_ids").list.contains("2013")
-        | pl.col("taxonomy_ids").list.contains("2151"),
-        as_dtype=Bool(),
-    )
-
-    is_kids_friendly = (
-        taxonomies.contains("Børnevenlig")
-        .logical_or(taxonomies.contains("Barnevennlig"))
-        .description("Not ideal solution, but works for now")
-    )
-
-    is_lactose = (
-        taxonomies.contains("Laktosefri")
-        .logical_or(taxonomies.contains("Laktosfri"))
-        .description("Not ideal solution, but works for now")
-    )
-
-    is_spicy = taxonomies.contains("Stark/Spicy").logical_or(taxonomies.contains("Stærk/krydret"))
-    is_gluten_free = taxonomies.contains("Glutenfri")
+    is_gluten_free = taxonomy_ids.contains(1026)
 
     (is_vegetarian_ingredient, is_vegan, is_fish) = main_ingredient_id.one_hot_encode(
         [  # type: ignore
@@ -769,13 +743,19 @@ class NormalizedRecipeFeatures:
     main_recipe_id = Int32()
     main_ingredient_id = Int32().is_optional()
 
-    taxonomy_ids = List(String()).description("The taxonomy ids for that recipe")
+    taxonomy_ids = List(Int32()).description("The taxonomy ids for that recipe")
 
     year = Int32()
     week = Int32()
 
     average_rating = Float().is_optional()
     cost_of_food = Float()
+
+    cumulated_times_on_menu = Int32().is_optional()
+
+    riskyness = cumulated_times_on_menu.transform_polars(
+        ((5 - pl.col("cumulated_times_on_menu")) / 5).clip(lower_bound=0), as_dtype=Float32()
+    )
 
     number_of_ratings_log = (
         Float()
@@ -786,21 +766,9 @@ class NormalizedRecipeFeatures:
 
     cooking_time_from = Float().lower_bound(0).upper_bound(1)
 
-    is_slow_grown_chicken = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("2109") | pl.col("taxonomy_ids").list.contains("2104"), as_dtype=Bool()
-    )
-    is_red_cross = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("3663")
-        | pl.col("taxonomy_ids").list.contains("3664")
-        | pl.col("taxonomy_ids").list.contains("3670"),
-        as_dtype=Bool(),
-    )
-    is_value_add = taxonomy_ids.transform_polars(
-        pl.col("taxonomy_ids").list.contains("3684")
-        | pl.col("taxonomy_ids").list.contains("3681")
-        | pl.col("taxonomy_ids").list.contains("3682"),
-        as_dtype=Bool(),
-    )
+    is_slow_grown_chicken = taxonomy_ids.contains_any([2109, 2104])
+    is_red_cross = taxonomy_ids.contains_any([3663, 3664, 3670])
+    is_value_add = taxonomy_ids.contains_any([3684, 3681, 3682])
 
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()

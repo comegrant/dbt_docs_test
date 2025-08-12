@@ -11,7 +11,7 @@ models:
         enforced: true
 
     columns:
-  
+
       - name: pk_dim_price_categories
         data_type: string
         description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
@@ -501,6 +501,10 @@ models:
         data_type: string
         description: "{{ doc('column__recipe_photo_caption') }}"
 
+      - name: recipe_photo
+        data_type: string
+        description: "{{ doc('column__recipe_photo') }}"
+
       - name: recipe_general_text
         data_type: string
         description: "{{ doc('column__recipe_general_text') }}"
@@ -650,7 +654,7 @@ models:
       - name: ingredient_net_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_net_weight') }}"
-      
+
       - name: unit_label_id
         data_type: int
         description: "{{ doc('column__unit_label_id') }}"
@@ -682,51 +686,51 @@ models:
       - name: has_co2_data
         data_type: boolean
         description: "{{ doc('column__has_co2_data') }}"
-        
+
       - name: is_available_for_use
         data_type: boolean
         description: "{{ doc('column__is_available_for_use') }}"
-        
+
       - name: is_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_cold_storage') }}"
-        
+
       - name: is_consumer_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_consumer_cold_storage') }}"
-        
+
       - name: is_fragile_ingredient
         data_type: boolean
         description: "{{ doc('column__is_fragile_ingredient') }}"
-        
+
       - name: is_organic_ingredient
         data_type: boolean
         description: "{{ doc('column__is_organic_ingredient') }}"
-        
+
       - name: is_outgoing_ingredient
         data_type: boolean
         description: "{{ doc('column__is_outgoing_ingredient') }}"
-        
+
       - name: is_special_packing
         data_type: boolean
         description: "{{ doc('column__is_special_packing') }}"
-        
+
       - name: is_to_register_batch_number
         data_type: boolean
         description: "{{ doc('column__is_to_register_batch_number') }}"
-        
+
       - name: is_to_register_expiration_date
         data_type: boolean
         description: "{{ doc('column__is_to_register_expiration_date') }}"
-        
+
       - name: is_to_register_ingredient_weight
         data_type: boolean
         description: "{{ doc('column__is_to_register_ingredient_weight') }}"
-        
+
       - name: is_to_register_temperature
         data_type: boolean
         description: "{{ doc('column__is_to_register_temperature') }}"
-        
+
       - name: ingredient_gross_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_gross_weight') }}"
@@ -876,10 +880,10 @@ models:
         description: "{{ doc('column__ingredient_name_combinations') }}"
         data_tests:
           - not_null
-  
+
     versions:
       - v: 1
-  
+
   - name: dim_taxonomies
     description: "Table of all taxonomies which are used to tag recipes"
     latest_version: 1
@@ -1660,15 +1664,15 @@ models:
 
       - name: ingredient_weight_with_co2_data
         data_type: decimal(38,2)
-        description: "{{ doc('column__ingredient_weight_with_co2_data') }}" 
+        description: "{{ doc('column__ingredient_weight_with_co2_data') }}"
 
       - name: total_ingredient_weight_with_co2_data
         data_type: decimal(38,2)
-        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}" 
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data') }}"
 
       - name: total_ingredient_weight_with_co2_data_whole_units
         data_type: decimal(38,2)
-        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}" 
+        description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
 
       - name: fk_dim_companies
         data_type: string
@@ -1685,7 +1689,7 @@ models:
 
       - name: fk_dim_dates
         data_type: int
-        description: "{{ doc('column__pk_dim_dates') }}"        
+        description: "{{ doc('column__pk_dim_dates') }}"
         constraints:
           - type: foreign_key
             to: ref('dim_dates')
@@ -1735,7 +1739,7 @@ models:
           - relationships:
               to: ref('dim_ingredients')
               field: pk_dim_ingredients
-    
+
     versions:
       - v: 1
 

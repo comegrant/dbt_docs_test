@@ -77,7 +77,7 @@ jobs:
         run: echo "ip=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
 
       - name: Add runner IP to Key Vault firewall
-        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }}
+        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }} & sleep 5
 
       - name: Get Secrets from Key Vault
         uses: azure/cli@v2

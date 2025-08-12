@@ -31,3 +31,4 @@ resources:
             notebook_path: materialize.py
             base_parameters:
               environment: "${var.environment}"
+              pr_schema: ""

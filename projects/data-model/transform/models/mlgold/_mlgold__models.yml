@@ -820,7 +820,7 @@ models:
         description: "{{ doc('column__is_low_sugar') }}"
         data_type: boolean
 
-  - name: ml_preselector_features
+  - name: preselector_features
     description: "Table containing recipe features for the preselector"
 
     columns:
@@ -858,6 +858,10 @@ models:
         description: "{{ doc('column__recipe_name') }}"
         data_type: string
 
+      - name: recipe_photo
+        description: "{{ doc('column__recipe_photo') }}"
+        data_type: string
+
       - name: recipe_main_ingredient_id
         description: "{{ doc('column__recipe_main_ingredient_id') }}"
         data_type: int
@@ -872,7 +876,7 @@ models:
 
       - name: taxonomy_id_list
         description: "{{ doc('column__taxonomy_id_list') }}"
-        data_type: array
+        data_type: array<int>
 
       - name: cumulated_times_on_menu
         description: "{{ doc('column__cumulated_times_on_menu') }}"

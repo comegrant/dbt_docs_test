@@ -13,7 +13,6 @@ from aligned import (
     String,
     feature_view,
 )
-from aligned.compiler.feature_factory import FeatureFactory
 from aligned.feature_store import FeatureViewStore
 from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.schemas.feature_view import RetrievalRequest
@@ -76,12 +75,6 @@ def mean_of_bool(feature: Bool) -> Float64:
     )
 
 
-def cast_feature(feature: FeatureFactory, dtype: T) -> T:
-    assert isinstance(dtype, FeatureFactory)
-    dtype.transformation = feature.transformation
-    return dtype
-
-
 quarantining = WeeksSinceRecipe()
 
 ordered_ago_agg = quarantining.ordered_weeks_ago.aggregate()
@@ -102,6 +95,7 @@ class InjectedFeatures:
     repeated_carbo_percentage = Float().default_value(0)
     mean_is_dislike = dislike_agg.mean().default_value(0)
     mean_is_favorite = favorite_agg.mean().default_value(0)
+    suppress_score = Float64().default_value(0)
 
 
 injected_features = InjectedFeatures()
@@ -111,29 +105,30 @@ injected_features = InjectedFeatures()
 class BasketFeatures:
     basket_id = Int32().as_entity()
 
-    mean_fat = cast_feature(fat_agg.mean(), Float64())
-    mean_protein = cast_feature(protein_agg.mean(), Float64())
-    mean_veg_fruit = cast_feature(veg_fruit_agg.mean(), Float64())
-    mean_fat_saturated = cast_feature(fat_saturated_agg.mean(), Float64())
+    mean_fat = fat_agg.mean().cast(Float64())
+    mean_protein = protein_agg.mean().cast(Float64())
+    mean_veg_fruit = veg_fruit_agg.mean().cast(Float64())
+    mean_fat_saturated = fat_saturated_agg.mean().cast(Float64())
 
-    mean_rank = cast_feature(injected_features.mean_rank, Float64())
-    mean_cost_of_food = cast_feature(injected_features.mean_cost_of_food, Float64())
-    mean_ordered_ago = cast_feature(injected_features.mean_ordered_ago.default_value(0), Float64())
-    intra_week_similarity = cast_feature(injected_features.intra_week_similarity, Float64())
-    mean_is_dislike = cast_feature(dislike_agg.mean().default_value(0), Float64())
-    mean_is_favorite = cast_feature(favorite_agg.mean().default_value(0), Float64())
+    mean_rank = injected_features.mean_rank.cast(Float64())
+    mean_cost_of_food = injected_features.mean_cost_of_food.cast(Float64())
+    mean_ordered_ago = injected_features.mean_ordered_ago.cast(Float64()).default_value(0)
+    intra_week_similarity = injected_features.intra_week_similarity.cast(Float64())
+    mean_is_dislike = dislike_agg.mean().cast(Float64()).default_value(0)
+    mean_is_favorite = favorite_agg.mean().cast(Float64()).default_value(0)
 
-    mean_energy = cast_feature(energy_kcal_agg.mean(), Float64())
-    mean_number_of_ratings = cast_feature(number_of_ratings_agg.mean().with_tag(VariationTags.quality), Float64())
+    mean_energy = energy_kcal_agg.mean().cast(Float64())
+    mean_number_of_ratings = number_of_ratings_agg.mean().cast(Float64()).with_tag(VariationTags.quality)
 
     mean_ratings = recipe_features.average_rating.polars_aggregation(
         pl.col("average_rating").fill_nan(0).mean(), as_type=Float64()
     ).with_tag(VariationTags.quality)
 
-    mean_family_friendly_probability = cast_feature(is_family_friendly_agg.mean().default_value(0), Float64())
+    suppress_score = recipe_features.riskyness.aggregate().mean().cast(Float64()).default_value(0)
+    mean_family_friendly_probability = is_family_friendly_agg.mean().cast(Float64()).default_value(0)
 
-    cooking_time_mean = cast_feature(
-        recipe_features.cooking_time_from.aggregate().mean().with_tag(VariationTags.time), Float64()
+    cooking_time_mean = (
+        recipe_features.cooking_time_from.aggregate().mean().cast(Float64()).with_tag(VariationTags.time)
     )
 
     is_low_calorie = mean_of_bool(recipe_features.is_low_calorie)

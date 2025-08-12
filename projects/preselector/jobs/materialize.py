@@ -17,10 +17,12 @@ import logging
 import os
 
 dbutils.widgets.text("environment", defaultValue="")
+dbutils.widgets.text("pr_schema", defaultValue="")
 dbutils.widgets.text("should_force_update", "false")
 
 should_force_update = dbutils.widgets.get("should_force_update").lower() == "true"
 environment = dbutils.widgets.get("environment")
+pr_schema = dbutils.widgets.get("pr_schema")
 
 assert isinstance(environment, str)
 assert environment != ""
@@ -30,6 +32,9 @@ assert environment != ""
 os.environ["DATALAKE_ENV"] = environment
 os.environ["UC_ENV"] = environment
 
+if pr_schema:
+    os.environ["SCHEMA_PREFIX"] = f"`~{pr_schema}_"
+    os.environ["SCHEMA_SUFFIX"] = "`"
 
 from data_contracts.materialize import materialize_data
 from data_contracts.preselector.store import Preselector

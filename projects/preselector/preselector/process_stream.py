@@ -12,6 +12,7 @@ from aligned.feature_source import (
     WritableFeatureSource,
 )
 from aligned.feature_store import ConvertableToLocation, convert_to_location
+from aligned.sources.databricks import DatabricksConnectionConfig, DatabricksSource
 from aligned.sources.in_mem_source import InMemorySource
 from azure.core.exceptions import ResourceNotFoundError
 from azure.servicebus.exceptions import MessageAlreadySettled, SessionLockLostError
@@ -24,7 +25,6 @@ from data_contracts.preselector.menu import PreselectorYearWeekMenu
 from data_contracts.preselector.store import Preselector
 from data_contracts.reci_pick import LatestRecommendations
 from data_contracts.recipe import NormalizedRecipeFeatures, RecipeCost, RecipeEmbedding
-from data_contracts.unity_catalog import DatabricksConnectionConfig, DatabricksSource
 from pydantic import Field
 from pydantic_settings import BaseSettings
 

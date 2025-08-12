@@ -1,8 +1,9 @@
 from aligned import PostgreSQLConfig, RedisConfig
+from aligned.config_value import ConcatValue, ConfigValue, LiteralValue
+from aligned.sources.databricks import DatabricksConnectionConfig, EnvironmentValue
 
 from data_contracts.azure import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
-from data_contracts.unity_catalog import DatabricksConnectionConfig, EnvironmentValue
 
 azure_dl_creds = AzureBlobConfig(  # type: ignore
     account_name=EnvironmentValue("DATALAKE_SERVICE_ACCOUNT_NAME"),
@@ -34,8 +35,22 @@ segment_personas_db = PostgreSQLConfig("SEGMENT_PSQL_DB", schema="personas")
 
 databricks_config = DatabricksConnectionConfig.databricks_or_serverless()
 
-databricks_catalog = databricks_config.catalog(EnvironmentValue("UC_ENV"))
-ml_features = databricks_catalog.schema("mlfeatures")
-ml_outputs = databricks_catalog.schema("mloutputs")
-ml_gold = databricks_catalog.schema("mlgold")
-dbt_gold = databricks_catalog.schema("gold")
+
+def pr_schema(schema: str) -> ConfigValue:
+    """
+    A schema config that makes it possible to swap to testable schemas
+    """
+    return ConcatValue(
+        [
+            EnvironmentValue("SCHEMA_PREFIX", default_value=""),
+            LiteralValue(schema),
+            EnvironmentValue("SCHEMA_SUFFIX", default_value=""),
+        ]
+    )
+
+
+databricks_catalog = databricks_config.catalog(EnvironmentValue("UC_ENV", default_value="dev"))
+ml_features = databricks_catalog.schema(pr_schema("mlfeatures"))
+ml_outputs = databricks_catalog.schema(pr_schema("mloutputs"))
+ml_gold = databricks_catalog.schema(pr_schema("mlgold"))
+dbt_gold = databricks_catalog.schema(pr_schema("gold"))

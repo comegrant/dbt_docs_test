@@ -28,6 +28,7 @@ fact_menus as (
         , dim_recipes.main_recipe_id
         , dim_recipes.recipe_id
         , dim_recipes.recipe_name
+        , dim_recipes.recipe_photo
         , dim_recipes.recipe_main_ingredient_id
         , dim_recipes.cooking_time_from
         , dim_recipes.cooking_time_to
@@ -108,6 +109,7 @@ fact_menus as (
         , main_recipe_id
         , recipe_id
         , recipe_name
+        , recipe_photo
         , recipe_main_ingredient_id
         , cooking_time_from
         , cooking_time_to
