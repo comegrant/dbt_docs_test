@@ -4,7 +4,7 @@ resources:
       name: forecasting-data-model-job
       
       tags:
-        tool: "forecasting"
+        tool: "Forecasting"
         purpose: "transformation"
         env: ${bundle.target}
         managed_by: "manually"

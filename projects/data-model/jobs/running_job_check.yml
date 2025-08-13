@@ -5,7 +5,8 @@ resources:
       name: running-job-check
 
       tags:
-        tool: "data platform"
+        tool: "Data Platform"
+        purpose: "validation"
         env: ${bundle.target}
         managed_by: "manually"
 

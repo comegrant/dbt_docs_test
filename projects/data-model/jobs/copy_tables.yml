@@ -4,7 +4,7 @@ resources:
       name: copy_tables
 
       tags:
-        tool: "data platform"
+        tool: "Data Platform"
         purpose: "ingestion"
         env: ${bundle.target}
         managed_by: "manually"

@@ -4,8 +4,8 @@ resources:
       name: customerio-sync-job
 
       tags:
-        tool: "customerio"
-        purpose: "export"
+        tool: "CustomerIO"
+        purpose: "exporting"
         env: ${bundle.target}
         managed_by: "manually"
         user: "dbt developers"

@@ -3,6 +3,13 @@ resources:
     delete_pr_schemas:
       name: delete_pr_schemas
 
+      tags:
+        tool: "Data Platform"
+        purpose: "deletion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       tasks: 
         - task_key: delete_pr_schemas
           notebook_task: 

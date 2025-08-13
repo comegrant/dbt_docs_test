@@ -16,6 +16,7 @@ resources:
             custom_tags:
               user: "Data scientists"
               tool: "Preselector"
+              purpose: "transformation"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:

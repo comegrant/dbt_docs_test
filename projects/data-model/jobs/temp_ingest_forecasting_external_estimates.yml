@@ -3,6 +3,13 @@ resources:
     temp_ingest_forecasting_external_estimates:
       name: temp_ingest_forecasting_external_estimates
 
+      tags:
+        tool: "Forecasting"
+        purpose: "ingestion"
+        env: ${bundle.target}
+        managed_by: "manually"
+        user: "dbt developers"
+
       permissions:
         - group_name: data-scientists
           level: CAN_MANAGE_RUN

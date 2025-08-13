@@ -4,7 +4,7 @@ resources:
       name: basket_deviations_hourly
 
       tags:
-        tool: "preselector"
+        tool: "Preselector"
         purpose: "transformation"
         env: ${bundle.target}
         managed_by: "manually" 
@@ -140,7 +140,8 @@ resources:
             node_type_id: Standard_D4ds_v5
             custom_tags:
               ResourceClass: SingleNode
-              tool: "dbt"
+              tool: "Preselector"
+              purpose: "transformation"
               env: ${bundle.target}
               managed_by: "manually"
               user: "dbt developers"

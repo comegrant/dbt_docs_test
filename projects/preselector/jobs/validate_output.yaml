@@ -15,6 +15,7 @@ resources:
             custom_tags:
               user: "Data scientists"
               tool: "Preselector"
+              purpose: "validation"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:
@@ -73,6 +74,7 @@ resources:
             custom_tags:
               user: "Data scientists"
               tool: "Preselector"
+              purpose: "validation"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:
@@ -131,6 +133,7 @@ resources:
             custom_tags:
               user: "Data scientists"
               tool: "Preselector"
+              purpose: "validation"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:
@@ -189,6 +192,7 @@ resources:
             custom_tags:
               user: "Data scientists"
               tool: "Preselector"
+              purpose: "validation"
               env: ${bundle.target}
               managed_by: "manually"
             docker_image:
