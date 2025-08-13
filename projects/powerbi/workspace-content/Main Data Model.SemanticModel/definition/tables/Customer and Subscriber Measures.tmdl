@@ -738,8 +738,8 @@ table 'Customer and Subscriber Measures'
 	measure 'Number of Customers' =
 			CALCULATE(
 				DISTINCTCOUNTNOBLANK('Order Measures'[billing_agreement_id]),
-				'Order Types'[Order Type] IN {"Recurring", "Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
-				'Order Statuses'[Order Status] IN {"Finished", "Processing"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
+				'Order Measures'[has_finished_order_status] = TRUE(),
 				USERELATIONSHIP(
 					'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					'Billing Agreements Deviation'[pk_dim_billing_agreements]

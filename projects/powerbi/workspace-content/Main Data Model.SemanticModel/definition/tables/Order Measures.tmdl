@@ -182,7 +182,7 @@ table 'Order Measures'
 	measure 'Order Value Net Ex Vat' =
 			CALCULATE(
 				[Total Order Value Ex Vat],
-				'Order Types'[Order Type] IN {"Recurring","Order After Registration", "Orders After Cutoff", "Daily Direct Order", "Campaign"},
+				'Order Measures'[has_normal_order_type] = TRUE(),
 				'Order Measures'[has_finished_order_status] = TRUE()
 				)
 		displayFolder: Orders
@@ -759,8 +759,8 @@ table 'Order Measures'
 			                BLANK(),
 			                CALCULATE(
 			    	            SUM('Order Measures'[meal_adjustment_subscription]),
-			    	            'Order Types'[Order Type] IN {"Recurring",     "Order After Registration", "Orders After Cutoff",  "Daily Direct Order",    "Campaign"},
-			    	            'Order Statuses'[Order Status] IN {"Finished",     "Processing"}
+			    	            'Order Measures'[has_normal_order_type] = TRUE(),
+			    	            'Order Measures'[has_finished_order_status] = TRUE()
 			                )
 			            )
 			    ),

@@ -5314,13 +5314,13 @@ cultureInfo en-US
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Products",
-			          "ConceptualProperty": "Product Concept Name"
+			          "ConceptualProperty": "Product Concept"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "product concept name": {
+			          "product concept": {
 			            "State": "Generated"
 			          }
 			        },
