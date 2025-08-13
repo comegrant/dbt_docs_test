@@ -86,12 +86,12 @@ table Products
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
-
-	column 'Product Concept Name'
+	
+	/// The name of the product concept. This field groups product types together such as standalone dishes and mealboxes.
+	column 'Product Concept'
 		dataType: string
 		lineageTag: 5a455508-7287-4878-9abd-ca0273bdc011
 		summarizeBy: none
-		isHidden
 		sourceColumn: product_concept_name
 
 		annotation SummarizationSetBy = Automatic
