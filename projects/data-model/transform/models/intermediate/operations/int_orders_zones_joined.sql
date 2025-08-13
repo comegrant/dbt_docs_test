@@ -41,6 +41,7 @@ orders as (
         and orders.timeblock_id = zones.timeblock_id 
         and orders.menu_year_week >= zones.menu_year_week_from 
         and orders.menu_year_week <= zones.menu_year_week_to
+        and zones.is_active = true
     -- remove duplicates that occurs due to the join with zones_postal_codes
     where not (zones.zone_id is null and orders.is_history_base is false)
 
