@@ -31,18 +31,17 @@ source as (
         {# numerics #}
         , year_nr as menu_year
         , week_nr as menu_week
+        , period_nr as menu_year_week
 
         {# date #}
         , {{ get_iso_week_start_date('year_nr', 'week_nr') }} as menu_week_monday_date
-        
-        {# scd #}
-        , period_nr as menu_year_week
         
         {# system #}
         , created_by as source_created_by
         , created_date as source_created_at
         , modified_by as source_updated_by
         , modified_date as source_updated_at
+        , false as is_history_base
 
     from source
 
@@ -68,12 +67,13 @@ source as (
         , postal_code_id
         , menu_year
         , menu_week
+        , menu_year_week
         , menu_week_monday_date
-        , null as menu_year_week
         , source_created_by
         , source_created_at
         , source_updated_by
         , source_updated_at
+        , true as is_history_base
         , {{ get_financial_date_from_monday_date('menu_week_monday_date') }} as menu_week_financial_date
 
     from history

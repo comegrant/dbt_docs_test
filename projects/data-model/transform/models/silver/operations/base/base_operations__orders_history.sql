@@ -32,6 +32,7 @@ source as (
         {# numerics #}
         , year_nr as menu_year
         , week_nr as menu_week
+        , year_nr*100+week_nr as menu_year_week
         
         {# date #}
         , {{ get_iso_week_start_date('year_nr', 'week_nr') }} as menu_week_monday_date

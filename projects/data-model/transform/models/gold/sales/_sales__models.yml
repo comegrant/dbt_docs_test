@@ -458,6 +458,10 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_combination_id') }}"
 
+      - name: zone_id
+        description: "{{ doc('column__zone_id') }}"
+        data_type: int
+
       - name: fk_dim_billing_agreements_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"

@@ -260,6 +260,22 @@ models:
         data_tests:
           - not_null
 
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: country_id
+        description: "{{ doc('column__country_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: zone_id
+        description: "{{ doc('column__zone_id') }}"
+        data_type: int
+
       - name: redelivery_timeblock_id
         data_type: int
         description: "{{ doc('column__redelivery_timeblock_id') }}"
@@ -311,24 +327,18 @@ models:
       - name: menu_year
         data_type: int
         description: "{{ doc('column__menu_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
   
       - name: menu_week
         data_type: int
         description: "{{ doc('column__menu_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: menu_week_financial_date
         data_type: date
         description: "{{ doc('column__menu_week_financial_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 

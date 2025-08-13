@@ -171,7 +171,10 @@ cases as (
         
         , order_zones.billing_agreement_id
         , order_zones.billing_agreement_order_id
+        , order_zones.company_id
+        , order_zones.zone_id
         , ingredients.ingredient_id
+        , companies.country_id
         , companies.language_id
 
         , cast(date_format(order_zones.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
@@ -226,6 +229,7 @@ cases as (
     and cases_ingredient_costs_distributed.is_active_case_line is true
     -- remove God Matlyst cases
     and order_zones.company_id != '1A6819EF-CFD1-43E1-BBB0-F49001AE5562'
+    and menu_year >= 2019
     -- TODO: Temp until we figured out how to deal with taxonomies
     group by all
 

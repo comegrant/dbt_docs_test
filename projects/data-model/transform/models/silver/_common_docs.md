@@ -90,6 +90,13 @@ Who updated the row in the source system.
 
 {% enddocs %}
 
+# Base Table Fields
+{% docs column__is_history_base %}
+
+Used to indicate if the rows comes from a history table in the source, which is added as a base table and concatenated to the silver table of the most recent data.
+
+{% enddocs %}
+
 # Segment Fields
 
 {% docs column__client_device_called_at %}
