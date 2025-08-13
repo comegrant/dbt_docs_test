@@ -22,11 +22,11 @@
                       "Entity": "Dates"
                     }
                   },
-                  "Property": "Date"
+                  "Property": "Relative Date Filter (Inc. week after cutoff)"
                 }
               },
-              "queryRef": "Dates.Date",
-              "nativeQueryRef": "Date",
+              "queryRef": "Dates.Relative Date Filter (Inc. week after cutoff)",
+              "nativeQueryRef": "Relative Date Filter (Inc. week after cutoff)",
               "active": true
             }
           ]
@@ -42,7 +42,7 @@
                     "Entity": "Dates"
                   }
                 },
-                "Property": "Date"
+                "Property": "Relative Date Filter (Inc. week after cutoff)"
               }
             },
             "direction": "Ascending"
@@ -72,14 +72,14 @@
             "relativeDuration": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "12D"
                 }
               }
             },
             "relativePeriod": {
               "expr": {
                 "Literal": {
-                  "Value": "'Years'"
+                  "Value": "'Months'"
                 }
               }
             }
@@ -171,7 +171,7 @@
                                 "Source": "d"
                               }
                             },
-                            "Property": "Date"
+                            "Property": "Relative Date Filter (Inc. week after cutoff)"
                           }
                         },
                         "LowerBound": {
@@ -187,8 +187,8 @@
                                     "TimeUnit": 0
                                   }
                                 },
-                                "Amount": -1,
-                                "TimeUnit": 3
+                                "Amount": -12,
+                                "TimeUnit": 2
                               }
                             },
                             "TimeUnit": 0
@@ -231,5 +231,23 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "812ea4f4058059e04666",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dates"
+              }
+            },
+            "Property": "Relative Date Filter (Inc. week after cutoff)"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

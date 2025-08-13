@@ -219,6 +219,7 @@
             "queryRefs": [
               "Customer and Subscriber Details.Partnership"
             ],
+            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -238,6 +239,18 @@
               "Partnership Details.Partnership Rule"
             ],
             "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Partnership Details"
+                    }
+                  },
+                  "Property": "Partnership Rule"
+                }
+              }
+            ],
             "isPinned": true
           }
         ],
@@ -247,7 +260,7 @@
               "identityValues": [
                 {
                   "Literal": {
-                    "Value": "'Adams Matkasse'"
+                    "Value": "'Godtlevert'"
                   }
                 }
               ],
@@ -256,11 +269,23 @@
                   "identityValues": [
                     {
                       "Literal": {
-                        "Value": "null"
+                        "Value": "'SAS Partnership'"
                       }
                     }
                   ],
-                  "isToggled": true
+                  "isToggled": true,
+                  "children": [
+                    {
+                      "identityValues": [
+                        {
+                          "Literal": {
+                            "Value": "'No partnership rule'"
+                          }
+                        }
+                      ],
+                      "isToggled": true
+                    }
+                  ]
                 }
               ]
             }
