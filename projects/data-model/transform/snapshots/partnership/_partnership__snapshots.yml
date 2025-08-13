@@ -7,6 +7,7 @@ snapshots:
       updated_at: updated_at
       dbt_valid_to_current: null
       invalidate_hard_deletes: True
+      enabled: false
 
   - name: scd_partnership__company_partnership_rules
     description: Tracks updates to company partnership rules in the company_partnership_rule table.
@@ -16,3 +17,4 @@ snapshots:
       updated_at: updated_at
       dbt_valid_to_current: null
       invalidate_hard_deletes: True
+      enabled: false
