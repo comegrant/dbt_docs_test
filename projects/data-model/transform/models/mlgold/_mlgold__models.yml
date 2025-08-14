@@ -1003,6 +1003,45 @@ models:
               max_value: 1
               inclusive: true
 
+  - name: tofu_estimations
+    description: "Table containing estimations for the tofu model"
+
+    columns:
+      - name: menu_year
+        description: "{{ doc('column__menu_year') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: menu_week
+        description: "{{ doc('column__menu_week') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+      - name: estimation_generated_at
+        description: "{{ doc('column__estimation_generated_at') }}"
+        data_type: datetime
+        data_tests:
+          - not_null
+      - name: cutoff_at_local_time
+        description: "{{ doc('column__cutoff_at_local_time') }}"
+        data_type: datetime
+      - name: num_days_before_cutoff
+        description: "{{ doc('column__num_days_before_cutoff') }}"
+        data_type: int
+      - name: total_orders_estimated
+        description: "{{ doc('column__total_orders_estimated') }}"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: flex_orders_estimated
+        description: "{{ doc('column__flex_orders_estimated') }}"
+        data_type: int
+
   - name: reci_pick_all_recipes
     description: "Table containing all recipes for the reci-pick project"
 

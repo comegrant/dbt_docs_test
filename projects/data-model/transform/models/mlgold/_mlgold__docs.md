@@ -318,6 +318,27 @@ Latest forecast of the percentage of orders that includes one or more flex dishe
 
 {% enddocs %}
 
+# Tofu Estimations
+
+{% docs column__num_days_before_cutoff %}
+
+Number of days before the cutoff for a menu week and company. It is rounded based on the number of hours between cut off timestamp and estimations generated at timestamp divide by 24 and then rounded to the nearest integer.
+
+{% enddocs %}
+
+{% docs column__total_orders_estimated %}
+
+The number of active baskets for a menu week and company.
+
+{% enddocs %}
+
+{% docs column__flex_orders_estimated %}
+
+The number of active baskets for a menu week and company that contains flex dishes (swaps, additions, or removals). Compuated based on the fake variation id 10000000-0000-0000-0000-000000000000 and the user deviation origin
+
+{% enddocs %}
+
+
 
 # Reci-pick Models
 
