@@ -21,7 +21,7 @@ snapshots:
     description: Track active rules for each company partnership. Currently not in use, but exist in case it will be useful later.
     config:
       unique_key: company_partnership_id
-      strategy: timestamp
-      updated_at: updated_at
+      strategy: check
+      check_cols: ['partnership_rule_ids_list']
       dbt_valid_to_current: null
       invalidate_hard_deletes: True
