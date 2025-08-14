@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from uuid import uuid4
+
+import pandas as pd
+import polars as pl
 
 from catalog_connector.value import EnvironmentValue, LiteralValue, ValueRepresentable
 
 if TYPE_CHECKING:
     from pyspark.sql import DataFrame
     from pyspark.sql.session import SparkSession
+
+    DataFrameType = Union[DataFrame, pd.DataFrame, pl.DataFrame]
 
 
 @dataclass(init=False)
@@ -30,6 +35,19 @@ class DatabricksConnectionConfig:
         )
         self.cluster_id = ValueRepresentable.from_value(cluster_id) if isinstance(cluster_id, str) else cluster_id
         self.token = ValueRepresentable.from_value(token) if token else EnvironmentValue("DATABRICKS_TOKEN")
+
+    def _convert_to_spark_df(self, dataframe: DataFrameType) -> DataFrame:
+        """Convert pandas/polars DataFrame to Spark DataFrame if needed."""
+        spark = self.spark()
+
+        if isinstance(dataframe, pd.DataFrame):
+            return spark.createDataFrame(dataframe)
+
+        elif isinstance(dataframe, pl.DataFrame):
+            return spark.createDataFrame(dataframe.to_pandas())
+
+        else:
+            return dataframe
 
     def with_auth(
         self, token: str | ValueRepresentable, workspace: str | ValueRepresentable | None = None
@@ -130,7 +148,7 @@ class DatabricksConnectionConfig:
         """
         return TableConfig(table, self)
 
-    def append_to(self, table: str, dataframe: DataFrame) -> None:
+    def append_to(self, table: str, dataframe: DataFrameType) -> None:
         """
         Appends a dataframe to a given table.
 
@@ -146,9 +164,10 @@ class DatabricksConnectionConfig:
             table (str): The table to append to
             dataframe (DataFrame): The dataframe to append
         """
+        dataframe = self._convert_to_spark_df(dataframe)
         dataframe.write.mode("append").saveAsTable(table)
 
-    def overwrite(self, table: str, dataframe: DataFrame) -> None:
+    def overwrite(self, table: str, dataframe: DataFrameType) -> None:
         """
         Overwrites a table with a new dataframe
 
@@ -164,9 +183,10 @@ class DatabricksConnectionConfig:
             table (str): The table to overwrite
             dataframe (DataFrame): The dataframe to overwrite with
         """
+        dataframe = self._convert_to_spark_df(dataframe)
         dataframe.write.mode("overwrite").saveAsTable(table)
 
-    def upsert_on(self, columns: list[str], table: str, dataframe: DataFrame) -> None:
+    def upsert_on(self, columns: list[str], table: str, dataframe: DataFrameType) -> None:
         """
         Upserts a dataframe into a table given a set of columns to match on.
 
@@ -188,6 +208,7 @@ class DatabricksConnectionConfig:
             dataframe (DataFrame): The dataframe to upsert
         """
         conn = self.spark()
+        dataframe = self._convert_to_spark_df(dataframe)
 
         if not conn.catalog.tableExists(table):
             self.append_to(table, dataframe)
@@ -196,13 +217,17 @@ class DatabricksConnectionConfig:
 
             temp_table = f"new_values_{str(uuid4()).lower()}"
             dataframe.createOrReplaceTempView(temp_table)
-            conn.sql(f"""MERGE INTO {table} AS target
-USING {temp_table} AS source
-ON {on_statement}
-WHEN MATCHED THEN
-  UPDATE SET *
-WHEN NOT MATCHED THEN
-  INSERT *""")
+            conn.sql(
+                f"""
+                MERGE INTO {table} AS target
+                USING {temp_table} AS source
+                ON {on_statement}
+                WHEN MATCHED THEN
+                UPDATE SET *
+                WHEN NOT MATCHED THEN
+                INSERT *
+                """
+            )
 
     def spark(self) -> SparkSession:
         "Creates a spark session"
@@ -266,11 +291,11 @@ class TableConfig:
         spark = self.config.spark()
         return spark.table(self.identifier)
 
-    def append(self, dataframe: DataFrame) -> None:
+    def append(self, dataframe: DataFrameType) -> None:
         self.config.append_to(self.identifier, dataframe)
 
-    def upsert_on(self, columns: list[str], dataframe: DataFrame) -> None:
+    def upsert_on(self, columns: list[str], dataframe: DataFrameType) -> None:
         self.config.upsert_on(columns, self.identifier, dataframe)
 
-    def overwrite(self, dataframe: DataFrame) -> None:
+    def overwrite(self, dataframe: DataFrameType) -> None:
         self.config.overwrite(self.identifier, dataframe)
