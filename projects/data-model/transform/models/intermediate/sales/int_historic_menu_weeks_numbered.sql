@@ -15,7 +15,7 @@ orders as (
 
 )
 
-, agreement_orders as (
+, orders_agreements_joined as (
 
     select 
         cast (convert_timezone('UTC', 'Europe/Oslo', orders.source_created_at) as date) as order_creation_date
@@ -30,41 +30,45 @@ orders as (
 
 )
 
-, order_weeks_min_order_creation_date as ( 
+, menu_weeks_with_cutoff as ( 
     
     select
-        min(order_creation_date) - interval '1 day' as order_cutoff_date
+        min(order_creation_date) - interval '1 day' + interval '23 hours 59 minutes' as menu_week_cutoff_time
         , menu_week_monday_date
         , menu_year
         , menu_week
         , company_id
-    from agreement_orders
+    from orders_agreements_joined
     group by all
 
 )
 
-, order_weeks_numbered as (
+, menu_weeks_numbered as (
     select 
-        order_cutoff_date
+        menu_week_cutoff_time
         , menu_week_monday_date
         , menu_year
         , menu_week
         , company_id
-        , row_number () over (partition by company_id order by menu_week_monday_date) as delivery_week_order
-    from order_weeks_min_order_creation_date
+        , row_number () over (partition by company_id order by menu_week_monday_date) as menu_week_sequence_number
+    from menu_weeks_with_cutoff
 
 )
 
-, orders_with_cutoff as (
-    select 
-        order_cutoff_date + INTERVAL '23 hours 59 minutes' as menu_week_cutoff_time
+, menu_weeks_numbered_add_previous_cutoff as (
+
+    select
+        menu_week_cutoff_time
         , menu_week_monday_date
         , menu_year
         , menu_week
         , company_id
-        , delivery_week_order
-    from order_weeks_numbered
-
+        , menu_week_sequence_number
+        , lag(menu_week_cutoff_time) over (
+            partition by company_id 
+            order by menu_week_sequence_number
+        ) as previous_menu_week_cutoff_time
+    from menu_weeks_numbered
 )
 
-select * from orders_with_cutoff
+select * from menu_weeks_numbered_add_previous_cutoff

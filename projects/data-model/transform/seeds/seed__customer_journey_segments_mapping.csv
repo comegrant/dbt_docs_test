@@ -1,7 +1,7 @@
 main_segment_id;main_segment_name;main_segment_description;sub_segment_id;sub_segment_name;sub_segment_description
 1;Prospect;Before first order or churned.;0;Partial Signup;Has not yet fully signed up, but has an agreement_id.
 1;Prospect;Before first order or churned.;1;Churned;Has previously been a customer, but has not had any orders the past 8 weeks.
-1;Prospect;Before first order or churned.;2;Pending Onboarding;Has signed up, but has not had any orders yet.
+1;Prospect;Before first order or churned.;2;Waiting for Onboarding;Has signed up, but has not had any orders yet.
 1;Prospect;Before first order or churned.;3;Regret;Freeze before first delivery, or has not taken a delivery 4 weeks after signup.
 2;Buyer;Customers who has had at least one order within the past 8 weeks.;4;Onboarding;Has had first order less than 8 weeks ago and has had less than 4 orders in total.
 2;Buyer;Customers who has had at least one order within the past 8 weeks.;5;Reactivated;Has been churned, but has had an order less than 8 weeks ago and has had less than 4 orders in total since reactivation.
@@ -9,3 +9,4 @@ main_segment_id;main_segment_name;main_segment_description;sub_segment_id;sub_se
 2;Buyer;Customers who has had at least one order within the past 8 weeks.;7;Frequent;6-7 orders in past 8 weeks.
 2;Buyer;Customers who has had at least one order within the past 8 weeks.;8;Regular;4-5 orders in past 8 weeks.
 2;Buyer;Customers who has had at least one order within the past 8 weeks.;9;Occasional;<4 orders in past 8 weeks.
+-1;Unknown;Unkown, but often agreements that has been freezed for a long time and without any registered orders.;-1;Unknown;Unknown, but often agreements that has been freezed for a long time and without any registered orders.

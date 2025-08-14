@@ -2,7 +2,7 @@
 
 with
 
-agreements_with_history as (
+agreements_status_history as (
 
     select * from {{ ref('int_billing_agreements_statuses_scd2') }}
 
@@ -15,322 +15,344 @@ agreements_with_history as (
 
 )
 
-, first_orders as (
+, agreements_first_orders as (
 
     select * from {{ ref('int_billing_agreements_extract_first_order') }}
 
 )
 
-, delivery_week_order as (
+, menu_weeks as (
 
-    select * from {{ ref('int_historic_order_weeks_numbered') }}
+    select * from {{ ref('int_historic_menu_weeks_numbered') }}
 
 )
 
 , orders as (
 
     select * from {{ ref('cms__billing_agreement_orders') }}
-    where 
+    where
     order_type_id in ({{var("subscription_order_type_ids") | join(", ")}})
     and order_status_id in ({{var("finished_order_status_ids") | join(", ")}})
 
 )
 
+--------------------------------------------------------------------------------
+-- PREPARE AGREEMENTS WITH RELEVANT INFO AND DATES
+--------------------------------------------------------------------------------
 
-, delivery_week_order_add_previous_cutoff as (
+, menu_weeks_add_previous_cutoff as (
 
     select
-        delivery_week_order
-        , company_id
+          company_id
         , menu_week_monday_date
         , menu_week_cutoff_time
         , lag(menu_week_cutoff_time) over (
             partition by company_id
-            order by delivery_week_order
+            order by menu_week_sequence_number
         ) as previous_menu_week_cutoff_time
-    from delivery_week_order
-        
+    from menu_weeks
+
 )
 
-, agreements as (
+, agreements_add_dates as (
 
-    select 
-        agreements_with_history.billing_agreement_id
-        , agreements_with_history.billing_agreement_status_id
-        , agreements_with_history.billing_agreement_status_name
-        , agreements_with_history.valid_from
-        , agreements_with_history.valid_to
+    select
+        agreements_status_history.billing_agreement_id
         , distinct_agreements.company_id
+
         , distinct_agreements.signup_date
-        , first_orders.first_menu_week_monday_date
-        -- We find the first possible menu week for the agreement based on the signup date and the cutoff time of the week.
-        -- For historical weeks we miss the cutoff time, so we simplify the logic, however, since this is before the customer journey segments start date,
-        -- it is not a problem for the final segments.
+        , {{ get_monday_date_of_date('distinct_agreements.signup_date') }} as signup_date_monday_date
+        , agreements_first_orders.first_menu_week_monday_date
+
+        , min(
+            case
+                when agreements_status_history.billing_agreement_status_id = 40
+                then agreements_status_history.valid_from
+            end
+        ) as deleted_date
+
+        -- Partial signup when the agreement gets "User" status
+        , min(
+            case
+                when agreements_status_history.billing_agreement_status_id = 5
+                then agreements_status_history.valid_from
+            end
+        ) as partial_signup_date
+
+        -- Full signup when the agreement gets a status that is not User or Lead
+        , min(
+            case
+                when
+                    agreements_status_history.billing_agreement_status_id is not null
+                    and agreements_status_history.billing_agreement_status_id not in (5,50)
+                then agreements_status_history.valid_from
+            end
+        ) as full_signup_date
+
+    from agreements_status_history
+
+    left join distinct_agreements
+        on agreements_status_history.billing_agreement_id = distinct_agreements.billing_agreement_id
+
+    left join agreements_first_orders
+        on agreements_status_history.billing_agreement_id = agreements_first_orders.billing_agreement_id
+
+    group by all
+
+)
+
+----------------------------------------
+-- JOIN AGREEMENTS WITH MENU WEEKS
+----------------------------------------
+
+-- This is the main table that contains one row for each week and agreement
+, menu_weeks_agreements_joined as (
+
+    select
+        agreements_add_dates.billing_agreement_id
+        , menu_weeks.menu_week_monday_date
+        , menu_weeks.company_id
+        , menu_weeks.menu_year
+        , menu_weeks.menu_week
+        , menu_weeks.menu_week_cutoff_time
+        , agreements_add_dates.signup_date_monday_date
+        , first_possible_menu_week.menu_week_monday_date as first_possible_menu_week_monday_date
+        , agreements_add_dates.deleted_date
+        , agreements_add_dates.partial_signup_date
+        , agreements_add_dates.full_signup_date
+        , {{ get_monday_date_of_date('agreements_add_dates.partial_signup_date') }} as partial_signup_monday_date
+        , {{ get_monday_date_of_date('agreements_add_dates.full_signup_date') }} as full_signup_monday_date
+
+        , date_diff(week, first_possible_menu_week.menu_week_monday_date, menu_weeks.menu_week_monday_date) as weeks_since_first_possible_menu_week
+
         , case
-            when distinct_agreements.signup_date < '{{customer_journey_segments_start_date}}' - interval 9 weeks
-            then {{ get_monday_date_of_date('distinct_agreements.signup_date') }} + interval 1 week
-            else first_possible_menu_week.menu_week_monday_date 
-        end as first_possible_menu_week_monday_date
-    from agreements_with_history
-    left join distinct_agreements 
-        on agreements_with_history.billing_agreement_id = distinct_agreements.billing_agreement_id
-    left join first_orders
-        on agreements_with_history.billing_agreement_id = first_orders.billing_agreement_id
-    left join delivery_week_order_add_previous_cutoff as first_possible_menu_week
-        on distinct_agreements.company_id = first_possible_menu_week.company_id
-        and distinct_agreements.signup_date <= first_possible_menu_week.menu_week_cutoff_time
-        and distinct_agreements.signup_date > first_possible_menu_week.previous_menu_week_cutoff_time
-    where agreements_with_history.billing_agreement_status_id != 40 -- need to add deleted customers to model at a later stage
+            when agreements_add_dates.first_menu_week_monday_date > menu_weeks.menu_week_monday_date then null
+            else date_diff(week, agreements_add_dates.first_menu_week_monday_date, menu_weeks.menu_week_monday_date)
+          end as weeks_since_first_order
+
+    from menu_weeks
+
+    -- Join the menu weeks with all agreements that existed in the week in question, 
+    -- i.e. where the agreements were created before the monday of the week, 
+    -- and where the agreement was not deleted at the cutoff time of the week.
+    left join agreements_add_dates
+       on menu_weeks.company_id = agreements_add_dates.company_id
+       and menu_weeks.menu_week_monday_date >= agreements_add_dates.signup_date_monday_date
+       and menu_weeks.menu_week_cutoff_time < coalesce(agreements_add_dates.deleted_date, '{{var("future_proof_date")}}')
+
+    -- The first possible menu week for an agreement, is the first week with cutoff time after the full signup date:
+    left join menu_weeks as first_possible_menu_week
+        on agreements_add_dates.company_id = first_possible_menu_week.company_id
+        and first_possible_menu_week.menu_week_cutoff_time >= agreements_add_dates.full_signup_date
+        and first_possible_menu_week.previous_menu_week_cutoff_time < agreements_add_dates.full_signup_date
+
+    where
+        menu_weeks.menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
 
 )
 
-, agreements_first_freeze_date as (
+----------------------------------------
+-- GET ORDER INFORMATION FOR AGREEMENTS
+----------------------------------------
 
-    select billing_agreement_id
-            , min (valid_from) as first_freeze_date 
-    from agreements 
-    where billing_agreement_status_name= 'Freezed' 
-    group by 1
-)
+, agreement_orders_add_menu_week_info as (
 
-, agreements_deleted_date as (
-    select billing_agreement_id
-            , min (valid_from) as deleted_date 
-    from agreements_with_history
-    where billing_agreement_status_name= 'Deleted' 
-    group by 1
-)
-
-, agreements_and_orders_joined as (
-
-    select 
-        distinct_agreements.billing_agreement_id
+    select
+        orders.billing_agreement_id
+        , distinct_agreements.company_id
         , orders.menu_week_monday_date
         , orders.menu_year
         , orders.menu_week
-        , distinct_agreements.company_id
+        , menu_weeks.menu_week_cutoff_time
+        , menu_weeks.menu_week_sequence_number
     from orders
     left join distinct_agreements
         on orders.billing_agreement_id = distinct_agreements.billing_agreement_id
+    left join menu_weeks
+        on distinct_agreements.company_id = menu_weeks.company_id
+        and orders.menu_week_monday_date = menu_weeks.menu_week_monday_date
     where orders.menu_week_monday_date > DATEADD(week, -9, '{{customer_journey_segments_start_date}}') -- to have orders to base the initial segments on
 
 )
 
-, agreements_and_weeks_joined as (
-
-    select 
-        agreements.billing_agreement_id
-        , agreements.billing_agreement_status_id
-        , delivery_week_order.menu_week_monday_date
-        , delivery_week_order.company_id
-        , delivery_week_order.menu_year
-        , delivery_week_order.menu_week
-        , delivery_week_order.menu_week_cutoff_time
-        , agreements.signup_date
-        , agreements.first_possible_menu_week_monday_date
-        -- if cutoff for the next menu_week has not happened yet, menu_week_monday_date in delivery_week_order will be null when 
-        -- joined to agreements who sign up after Monday 00:00 of the current week.
-        , case 
-            when delivery_week_order.menu_week_monday_date is null then 0
-            else date_diff(week, agreements.first_possible_menu_week_monday_date, delivery_week_order.menu_week_monday_date)
-          end as weeks_since_first_possible_menu_week
-        , case
-            when date_diff(week, agreements.first_menu_week_monday_date, delivery_week_order.menu_week_monday_date) < 0
-            then null
-            else date_diff(week, agreements.first_menu_week_monday_date, delivery_week_order.menu_week_monday_date)
-          end as weeks_since_first_order
-    from agreements
-    left join delivery_week_order
-        on agreements.company_id = delivery_week_order.company_id
-        and agreements.valid_from <= delivery_week_order.menu_week_monday_date 
-        and agreements.valid_to > delivery_week_order.menu_week_monday_date
-    where (
-        delivery_week_order.menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
-        -- include agreements that sign up after Monday 00:00 of the current week.
-        or (
-            agreements.signup_date >= {{ get_monday_date_of_date('current_date()') }}
-            and delivery_week_order.menu_week_monday_date is not null
-        )
-    )
-)
-
-, orders_with_rownumber as (
-
-    select
-        agreements_and_orders_joined.billing_agreement_id
-        , agreements_and_orders_joined.menu_week_monday_date
-        , agreements_and_orders_joined.menu_year
-        , agreements_and_orders_joined.menu_week
-        , delivery_week_order.menu_week_cutoff_time
-        , delivery_week_order.delivery_week_order
-        , delivery_week_order.company_id
-    from agreements_and_orders_joined
-    left join delivery_week_order 
-        on agreements_and_orders_joined.company_id = delivery_week_order.company_id
-        and agreements_and_orders_joined.menu_week_monday_date = delivery_week_order.menu_week_monday_date
-   
-)
-
+-- Find number of orders in the past 8 weeks, for each billing agreement and week.
 , orders_past_8_weeks as (
-    select 
-        orders_with_rownumber.billing_agreement_id
-        , delivery_week_order.menu_year
-        , delivery_week_order.menu_week
-        , delivery_week_order.menu_week_monday_date
+    select
+        agreement_orders_add_menu_week_info.billing_agreement_id
+        , menu_weeks.menu_year
+        , menu_weeks.menu_week
+        , menu_weeks.menu_week_monday_date
         , count (*) as number_of_orders
-    from delivery_week_order
-    left join orders_with_rownumber 
-        on delivery_week_order.company_id = orders_with_rownumber.company_id
-        and (delivery_week_order.delivery_week_order - 7) <= orders_with_rownumber.delivery_week_order
-        and delivery_week_order.delivery_week_order >= orders_with_rownumber.delivery_week_order
+    from menu_weeks
+    left join agreement_orders_add_menu_week_info
+        on menu_weeks.company_id                      =  agreement_orders_add_menu_week_info.company_id
+        and menu_weeks.menu_week_sequence_number - 7 <=  agreement_orders_add_menu_week_info.menu_week_sequence_number
+        and menu_weeks.menu_week_sequence_number     >=  agreement_orders_add_menu_week_info.menu_week_sequence_number
     group by all
 
 )
 
+----------------------------------------
+-- HANDLE REACTIVATIONS
+----------------------------------------
+
+
+-- Find number of orders in the past 1 to 9 weeks, for each billing agreement and week.
+-- This is used to find reactivations, i.e. when an agreement has no orders in past 1 to 9 week, but has an order in the current week.
 , orders_past_1_to_9_weeks as (
-    select 
-        orders_with_rownumber.billing_agreement_id
-        , delivery_week_order.menu_year
-        , delivery_week_order.menu_week
-        , delivery_week_order.menu_week_monday_date
+    select
+        agreement_orders_add_menu_week_info.billing_agreement_id
+        , menu_weeks.menu_year
+        , menu_weeks.menu_week
+        , menu_weeks.menu_week_monday_date
         , count (*) as number_of_orders
-    from delivery_week_order
-    left join orders_with_rownumber 
-        on delivery_week_order.company_id = orders_with_rownumber.company_id
-        and orders_with_rownumber.delivery_week_order >= (delivery_week_order.delivery_week_order - 8)
-        and orders_with_rownumber.delivery_week_order <= (delivery_week_order.delivery_week_order - 1)
+    from menu_weeks
+    left join agreement_orders_add_menu_week_info
+        on menu_weeks.company_id                      = agreement_orders_add_menu_week_info.company_id
+        and menu_weeks.menu_week_sequence_number - 8 <= agreement_orders_add_menu_week_info.menu_week_sequence_number
+        and menu_weeks.menu_week_sequence_number - 1 >= agreement_orders_add_menu_week_info.menu_week_sequence_number
     group by all
 
 )
 
-, reactivation_agreements as (
+-- Find reactivated agreements, i.e. agreements that have no orders in the past 1 to 9 weeks, but have an order in the current week.
+, reactivated_agreements as (
 
     select
-        orders_with_rownumber.billing_agreement_id
-        , orders_with_rownumber.menu_week_monday_date as reactivation_date
-        , orders_with_rownumber.menu_week as reactivation_week
-        , orders_with_rownumber.menu_year as reactivation_year
-        , company_id
-    from orders_with_rownumber
+          agreement_orders_add_menu_week_info.billing_agreement_id
+        , agreement_orders_add_menu_week_info.menu_week_monday_date as reactivation_date
+        , agreement_orders_add_menu_week_info.menu_week as reactivation_week
+        , agreement_orders_add_menu_week_info.menu_year as reactivation_year
+        , agreement_orders_add_menu_week_info.company_id
+    -- All rows in this table represent agreements that had an order in the week in question
+    from agreement_orders_add_menu_week_info
     left join orders_past_1_to_9_weeks
-        on orders_with_rownumber.billing_agreement_id = orders_past_1_to_9_weeks.billing_agreement_id
-        and orders_with_rownumber.menu_year = orders_past_1_to_9_weeks.menu_year
-        and orders_with_rownumber.menu_week = orders_past_1_to_9_weeks.menu_week
+        on agreement_orders_add_menu_week_info.billing_agreement_id = orders_past_1_to_9_weeks.billing_agreement_id
+        and agreement_orders_add_menu_week_info.menu_year = orders_past_1_to_9_weeks.menu_year
+        and agreement_orders_add_menu_week_info.menu_week = orders_past_1_to_9_weeks.menu_week
+    -- We only include the agreements that didn't have any orders in the 8 weeks before the week in question
     where orders_past_1_to_9_weeks.number_of_orders is null
 
 )
 
-, agreement_reactivation_ranked as (
+, reactivations_ranked as (
     select
-        delivery_week_order.menu_week_monday_date,
-        delivery_week_order.company_id,
-        reactivation_agreements.billing_agreement_id,
-        reactivation_agreements.reactivation_date,
-        row_number() over (
-            partition by reactivation_agreements.billing_agreement_id, delivery_week_order.menu_week_monday_date
-            order by reactivation_agreements.reactivation_date desc
-        ) as rownumber
-    from delivery_week_order
-    left join reactivation_agreements
-        on delivery_week_order.company_id = reactivation_agreements.company_id
-        and delivery_week_order.menu_week_monday_date >= reactivation_agreements.reactivation_date 
+        menu_weeks.menu_week_monday_date
+        , reactivated_agreements.billing_agreement_id
+        , reactivated_agreements.reactivation_date
+        , row_number() over (
+            partition by reactivated_agreements.billing_agreement_id, menu_weeks.menu_week_monday_date
+            order by reactivated_agreements.reactivation_date desc
+        ) as reactivation_desc_rank
+    from menu_weeks
+    left join reactivated_agreements
+        on menu_weeks.company_id = reactivated_agreements.company_id
+        and menu_weeks.menu_week_monday_date >= reactivated_agreements.reactivation_date
 
 )
 
-, latest_agreement_reactivation as (
-    select 
+, latest_reactivation as (
+    select
         menu_week_monday_date
         , billing_agreement_id
         , reactivation_date
-    from agreement_reactivation_ranked
-    where rownumber = 1
-
-)
-
-, weeks_since_reactivation as (
-
-    select 
-        billing_agreement_id
-        , menu_week_monday_date
-        , reactivation_date
         , case
-            when date_diff(week, reactivation_date, menu_week_monday_date) < 0
-            then null
+            when date_diff(week, reactivation_date, menu_week_monday_date) < 0 then null
             else date_diff(week, reactivation_date, menu_week_monday_date)
           end as weeks_since_reactivation
-    from latest_agreement_reactivation
+    from reactivations_ranked
+    where reactivation_desc_rank = 1
 
 )
+
+----------------------------------------
+-- CREATE SUB SEGMENTS
+----------------------------------------
 
 , sub_segments as (
-    select 
-        agreements_and_weeks_joined.billing_agreement_id
-        , agreements_and_weeks_joined.menu_week_monday_date
-        , agreements_and_weeks_joined.menu_year
-        , agreements_and_weeks_joined.menu_week
-        , agreements_and_weeks_joined.menu_year*100 + agreements_and_weeks_joined.menu_week as menu_yearweek
-        , agreements_and_weeks_joined.menu_week_cutoff_time
+    select
+
+        menu_weeks_agreements_joined.billing_agreement_id
+        , menu_weeks_agreements_joined.menu_week_monday_date
+        , menu_weeks_agreements_joined.menu_year
+        , menu_weeks_agreements_joined.menu_week
+        , menu_weeks_agreements_joined.menu_year*100 + menu_weeks_agreements_joined.menu_week as menu_yearweek
+        , menu_weeks_agreements_joined.menu_week_cutoff_time
+        , menu_weeks_agreements_joined.deleted_date
+
         , case
-            when agreements_and_weeks_joined.billing_agreement_status_id == 5
+
+            --TODO: Follow up in #temp_crm_segment_model to decide if someone can stay in the partial signup segment forever..
+            when menu_weeks_agreements_joined.menu_week_monday_date >= menu_weeks_agreements_joined.partial_signup_monday_date
+                and menu_weeks_agreements_joined.menu_week_monday_date < coalesce(menu_weeks_agreements_joined.full_signup_monday_date, '{{var("future_proof_date")}}')
                 then {{ var("customer_journey_sub_segment_ids")["partial_signup"] }}
-            when 
-                coalesce(agreements_and_weeks_joined.weeks_since_first_possible_menu_week,0) < 3 
-                and agreements_and_weeks_joined.menu_week_monday_date > agreements_and_weeks_joined.signup_date
-                and agreements_and_weeks_joined.weeks_since_first_order is null 
+
+            when
+                coalesce(menu_weeks_agreements_joined.weeks_since_first_possible_menu_week,0) < 3
+                and menu_weeks_agreements_joined.menu_week_monday_date >= menu_weeks_agreements_joined.full_signup_monday_date
+                and menu_weeks_agreements_joined.weeks_since_first_order is null
                 then {{ var("customer_journey_sub_segment_ids")["pending_onboarding"] }}
-            when agreements_and_weeks_joined.weeks_since_first_possible_menu_week >= 3
-                and agreements_and_weeks_joined.weeks_since_first_order is null
+
+            when menu_weeks_agreements_joined.weeks_since_first_possible_menu_week >= 3
+                and menu_weeks_agreements_joined.weeks_since_first_order is null
                 then {{ var("customer_journey_sub_segment_ids")["regret"] }}
-            when (agreements_and_weeks_joined.weeks_since_first_order < 3 
-                and agreements_and_weeks_joined.weeks_since_first_order is not null) 
+
+            when (menu_weeks_agreements_joined.weeks_since_first_order < 7
+                and orders_past_8_weeks.number_of_orders < 4)
                 then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
-            when (agreements_and_weeks_joined.weeks_since_first_order < 7 
-                and orders_past_8_weeks.number_of_orders <4) 
-                then {{ var("customer_journey_sub_segment_ids")["onboarding"] }}
-            when (weeks_since_reactivation.weeks_since_reactivation < 7 
-                and orders_past_8_weeks.number_of_orders < 4 ) 
+
+            when (latest_reactivation.weeks_since_reactivation < 7
+                and orders_past_8_weeks.number_of_orders < 4 )
                 then {{ var("customer_journey_sub_segment_ids")["reactivated"] }}
+
             when orders_past_8_weeks.number_of_orders < 4
-                and agreements_and_weeks_joined.weeks_since_first_order >= 7 
+                and menu_weeks_agreements_joined.weeks_since_first_order >= 7
                 then {{ var("customer_journey_sub_segment_ids")["occasional"] }}
-            when orders_past_8_weeks.number_of_orders >= 4 
-                and orders_past_8_weeks.number_of_orders < 6 
-                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
+
+            when orders_past_8_weeks.number_of_orders >= 4
+                and orders_past_8_weeks.number_of_orders < 6
                 then {{ var("customer_journey_sub_segment_ids")["regular"] }}
-            when orders_past_8_weeks.number_of_orders >= 6 
+
+            when orders_past_8_weeks.number_of_orders >= 6
                 and orders_past_8_weeks.number_of_orders < 8
-                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
                 then {{ var("customer_journey_sub_segment_ids")["frequent"] }}
+
             when orders_past_8_weeks.number_of_orders >= 7
-                and (agreements_and_weeks_joined.weeks_since_first_order >= 7 
-                    or (agreements_and_weeks_joined.weeks_since_first_order < 7 and orders_past_8_weeks.number_of_orders >= 4))
                 then {{ var("customer_journey_sub_segment_ids")["always_on"] }}
-            when (agreements_and_weeks_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null) 
+
+            when (menu_weeks_agreements_joined.weeks_since_first_order >= 7 and orders_past_8_weeks.number_of_orders is null)
                 then {{ var("customer_journey_sub_segment_ids")["churned"] }}
-            else 
+
+            else
                 -1 --unknown
+
         end as sub_segment_id
-    from agreements_and_weeks_joined
-    left join orders_past_8_weeks 
-        on agreements_and_weeks_joined.billing_agreement_id = orders_past_8_weeks.billing_agreement_id
-        and agreements_and_weeks_joined.menu_week_monday_date = orders_past_8_weeks.menu_week_monday_date
-    left join weeks_since_reactivation
-        on agreements_and_weeks_joined.billing_agreement_id = weeks_since_reactivation.billing_agreement_id
-        and agreements_and_weeks_joined.menu_week_monday_date = weeks_since_reactivation.menu_week_monday_date
-    left join first_orders
-        on agreements_and_weeks_joined.billing_agreement_id = first_orders.billing_agreement_id
-    left join agreements_first_freeze_date
-        on agreements_and_weeks_joined.billing_agreement_id = agreements_first_freeze_date.billing_agreement_id
+
+    from menu_weeks_agreements_joined
+
+    left join orders_past_8_weeks
+        on menu_weeks_agreements_joined.billing_agreement_id = orders_past_8_weeks.billing_agreement_id
+        and menu_weeks_agreements_joined.menu_week_monday_date = orders_past_8_weeks.menu_week_monday_date
+
+    left join latest_reactivation
+        on menu_weeks_agreements_joined.billing_agreement_id = latest_reactivation.billing_agreement_id
+        and menu_weeks_agreements_joined.menu_week_monday_date = latest_reactivation.menu_week_monday_date
+
+    left join agreements_first_orders
+        on menu_weeks_agreements_joined.billing_agreement_id = agreements_first_orders.billing_agreement_id
 
 )
 
-, agreement_previous_segment as (
+--------------------------------------------------------------------------------
+-- CONSOLIDATE PERIODS OF THE SAME SUB SEGMENT AND HANDLE SCD FEATURES
+--------------------------------------------------------------------------------
+
+, sub_segments_add_previous_segment as (
     select
         billing_agreement_id
         , menu_week_monday_date
         , menu_week_cutoff_time
+        , deleted_date
         , sub_segment_id
         , lag(sub_segment_id) over (
             partition by billing_agreement_id
@@ -340,64 +362,44 @@ agreements_with_history as (
 
 )
 
-, segment_with_valid_from as (
+, sub_segment_add_valid_from as (
     select
         billing_agreement_id
         , sub_segment_id
         , menu_week_monday_date as menu_week_monday_date_from
-        , menu_week_cutoff_time as menu_week_cutoff_date_from
-    from agreement_previous_segment
+        , menu_week_cutoff_time as menu_week_cutoff_at_from
+        , deleted_date
+    from sub_segments_add_previous_segment
     where previous_sub_segment_id is null
        or sub_segment_id != previous_sub_segment_id
 
 )
 
-, segment_valid_to_and_from as (
+, sub_segment_add_valid_to as (
     select
-        segment_with_valid_from.billing_agreement_id
-        , segment_with_valid_from.sub_segment_id
-        , segment_with_valid_from.menu_week_monday_date_from
-        , segment_with_valid_from.menu_week_cutoff_date_from
+        sub_segment_add_valid_from.billing_agreement_id
+        , sub_segment_add_valid_from.sub_segment_id
+        , sub_segment_add_valid_from.menu_week_monday_date_from
+        , sub_segment_add_valid_from.menu_week_cutoff_at_from
+
         , coalesce(
             lead (menu_week_monday_date_from) over (
-                partition by segment_with_valid_from.billing_agreement_id
+                partition by sub_segment_add_valid_from.billing_agreement_id
                 order by menu_week_monday_date_from
             ),
-            '{{var("future_proof_date")}}'
+            least( to_date('{{var("future_proof_date")}}'), to_date(deleted_date) )
          ) as menu_week_monday_date_to
+
         , coalesce(
-            lead (menu_week_cutoff_date_from) over (
-                partition by segment_with_valid_from.billing_agreement_id
-                order by menu_week_cutoff_date_from
+            lead (menu_week_cutoff_at_from) over (
+                partition by sub_segment_add_valid_from.billing_agreement_id
+                order by menu_week_cutoff_at_from
             ),
-            '{{var("future_proof_date")}}'
-         ) as menu_week_cutoff_date_to
-    from segment_with_valid_from
+            least( to_timestamp('{{var("future_proof_date")}}'), deleted_date )
+         ) as menu_week_cutoff_at_to
+
+    from sub_segment_add_valid_from
 
 )
 
-, end_segments_at_deleted_date as (
-    select 
-        segment_valid_to_and_from.billing_agreement_id
-        , segment_valid_to_and_from.sub_segment_id
-        , segment_valid_to_and_from.menu_week_monday_date_from
-        , segment_valid_to_and_from.menu_week_cutoff_date_from
-        , case 
-            when agreements_deleted_date.deleted_date is not null 
-                and segment_valid_to_and_from.menu_week_monday_date_to > agreements_deleted_date.deleted_date
-            then to_date(agreements_deleted_date.deleted_date)
-            else segment_valid_to_and_from.menu_week_monday_date_to
-        end as menu_week_monday_date_to
-        , case 
-            when agreements_deleted_date.deleted_date is not null 
-                and segment_valid_to_and_from.menu_week_cutoff_date_to > agreements_deleted_date.deleted_date
-            then agreements_deleted_date.deleted_date
-            else segment_valid_to_and_from.menu_week_cutoff_date_to
-        end as menu_week_cutoff_date_to
-    from segment_valid_to_and_from
-    left join agreements_deleted_date 
-        on segment_valid_to_and_from.billing_agreement_id = agreements_deleted_date.billing_agreement_id
-
-)
-
-select * from end_segments_at_deleted_date
+select * from sub_segment_add_valid_to

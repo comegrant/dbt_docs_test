@@ -163,7 +163,7 @@ The name of the main segments in the customer journey model. Can be one of the f
 
 The name of the sub segments in the customer journey model. Each name can only be related to one main segment. The sub segments can have one of the following values:
 - Churned
-- Pending Onboarding
+- Waiting for Onboarding
 - Regret
 - Onboarding
 - Reactivated

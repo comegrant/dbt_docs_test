@@ -142,8 +142,8 @@ billing_agreements as (
 
     select
         billing_agreement_id
-        , menu_week_cutoff_date_from as valid_from
-        , menu_week_cutoff_date_to as valid_to
+        , menu_week_cutoff_at_from as valid_from
+        , menu_week_cutoff_at_to as valid_to
         , menu_week_monday_date_from as reactivation_monday_date
         , {{ get_financial_date_from_monday_date('menu_week_monday_date_from') }} as reactivation_financial_date
     from reactivation_cohorts

@@ -194,7 +194,7 @@ models:
       data_tests:
         - not_null
         - accepted_values:
-            values: ['Churned','Pending Onboarding','Regret','Onboarding','Reactivated','Always On','Frequent','Regular','Occasional']
+            values: ['Churned','Waiting for Onboarding','Regret','Onboarding','Reactivated','Always On','Frequent','Regular','Occasional']
             config:
               severity: warn
 

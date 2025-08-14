@@ -15,7 +15,7 @@ customer_journey_segments as (
 , billing_agreement_customer_journey_segments_scd1 as (
 
     select * from {{ ref('int_customer_journey_segments') }}
-    where menu_week_cutoff_date_to = '{{ var("future_proof_date") }}'
+    where menu_week_cutoff_at_to = '{{ var("future_proof_date") }}'
 
 )
 
@@ -44,7 +44,7 @@ customer_journey_segments as (
         -- get the date of the freshest data
         , greatest(
             dim_billing_agreements_scd1.valid_from
-            , billing_agreement_customer_journey_segments_scd1.menu_week_cutoff_date_from
+            , billing_agreement_customer_journey_segments_scd1.menu_week_cutoff_at_from
         ) as valid_from
     
     from dim_billing_agreements_scd1
