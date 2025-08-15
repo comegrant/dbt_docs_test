@@ -54,20 +54,20 @@ resources:
             {task_key: dbt-run-forecasting}
           ]
 
-        # - task_key: refresh-powerbi-forecasting
-        #   notebook_task:
-        #     notebook_path: ../powerbi-refresh/powerbi-refresh.py
-        #     base_parameters:
-        #       tables: "Forcecast Measures, Forecast Details"
-        #   depends_on: [
-        #     {task_key: dbt-run-forecasting}
-        #   ]
+        - task_key: refresh-powerbi-forecasting
+          notebook_task:
+            notebook_path: ../powerbi-refresh/powerbi-refresh.py
+            base_parameters:
+              tables: "Forecast Measures, Forecast Details"
+          depends_on: [
+            {task_key: dbt-run-forecasting}
+          ]
 
         - task_key: success-notification
           depends_on: [
             {task_key: dbt-run-forecasting},
             {task_key: dbt-test-forecasting},
-          #  {task_key: refresh-powerbi-forecasting}
+            {task_key: refresh-powerbi-forecasting}
           ]
           run_job_task:
             job_id: ${var.slack_notification_job_id}
@@ -80,7 +80,7 @@ resources:
           depends_on: [
             {task_key: dbt-run-forecasting},
             {task_key: dbt-test-forecasting},
-          #  {task_key: refresh-powerbi-forecasting}
+            {task_key: refresh-powerbi-forecasting}
           ]
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
