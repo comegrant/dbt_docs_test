@@ -6,6 +6,7 @@ include:
   - "jobs/**.yml"
   - "jobs/**.yaml"
 
+
 variables:
   environment:
     description: The environment that the code is running in
@@ -20,6 +21,9 @@ variables:
     default: 15.4.x-scala2.12
   git_sha:
     description: The sha of the current version
+  pause_status:
+    description: The default pause status for an environment
+    default: PAUSED
 
 targets:
   dev:
@@ -35,3 +39,4 @@ targets:
     mode: "${var.mode}"
     variables:
       slack_notification_job_id: 808732355997444
+      pause_status: UNPAUSED
