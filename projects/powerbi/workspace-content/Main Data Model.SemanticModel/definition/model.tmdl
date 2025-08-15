@@ -76,5 +76,6 @@ ref table 'Bridge Fact Orders Dim Partnerships'
 ref table 'Partnership Details'
 ref table 'Partnership Measures'
 ref table 'Price Categories'
+ref table '(Utils) Dimension Utils'
 
 ref cultureInfo en-US

@@ -74,6 +74,21 @@
               "queryRef": "Dates.Date Hierarchy.Week",
               "nativeQueryRef": "Date Hierarchy Week",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "(Utils) Matrix Spacer"
+                    }
+                  },
+                  "Property": "Blank Column"
+                }
+              },
+              "queryRef": "(Utils) Matrix Spacer.Blank Column",
+              "nativeQueryRef": "Blank Column",
+              "active": true
             }
           ]
         },
@@ -430,6 +445,20 @@
           }
         },
         "type": "Categorical"
+      },
+      {
+        "name": "cb72324ad1a76c209400",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }
