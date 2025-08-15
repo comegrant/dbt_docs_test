@@ -20,6 +20,7 @@ companies as (
         , companies.country_id
         , countries.language_id
         , companies.company_name
+        , companies.brand_name
         , countries.country_name
         , countries.country_currency
         , countries.main_vat_rate

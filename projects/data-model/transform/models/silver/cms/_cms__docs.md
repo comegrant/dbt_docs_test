@@ -12,6 +12,12 @@ The name of the company. A company can represent one of our brands, external bra
 
 {% enddocs %}
 
+{% docs column__brand_name %}
+
+The outwardly facing brand name of the company. Used on the website, app, marketing etc.
+
+{% enddocs %}
+
 # Countries
 
 {% docs column__country_id %}
@@ -192,7 +198,7 @@ The date the order was created. Not meaning when the order was initially placed,
 
 {% docs column__has_recipe_leaflets %}
 
-Flag to indiacte if the order has printed recipes. The option to only have digital recipes was introduced in February 2024. Customers has to opt out on the webpage to only recieve digital recipes.
+Flag to indiacte if the order has printed recipes. The option to only have digital recipes was introduced in February 2024. Customers has to opt out on the webpage to only receive digital recipes.
 
 {% enddocs %}
 
@@ -200,7 +206,7 @@ Flag to indiacte if the order has printed recipes. The option to only have digit
 
 {% docs column__billing_agreement_order_line_id %}
 
-The unique identifier of the order line of a order. Each product variation, discount, creditted amount etc. has a separate order line.
+The unique identifier of the order line of a order. Each product variation, discount, credited amount etc. has a separate order line.
 
 {% enddocs %}
 
@@ -313,7 +319,7 @@ Is one if the order is paid for directly while purchasing. Such as for gift card
 
 {% docs column__billing_agreement_id %}
 
-The id of a user that has signed up for our services. 
+The id of a user that has signed up for our services.
 
 {% enddocs %}
 
@@ -534,7 +540,7 @@ The multiplier used to calculate accrued loyalty points earned by a customer. Th
 
 {% docs column__point_multiplier_spendable %}
 
-The multiplier used to calculate spendable loyalty points earned by a customer. The number of spendable points earned on an order is equal to this multipled by the customer's gross order value. Spendable points are the points that customers can spend in the points shop.
+The multiplier used to calculate spendable loyalty points earned by a customer. The number of spendable points earned on an order is equal to this multiplied by the customer's gross order value. Spendable points are the points that customers can spend in the points shop.
 
 {% enddocs %}
 
@@ -721,7 +727,7 @@ The unique identifier for a specific menu week for a billing agreement basket. T
 {% docs column__timeblock_id_basket_scheduler %}
 
 The id of the timeblock if a customer has changed their timeblock for a particular week.
-Corresponds to a timeblock in operations__timeblocks. 
+Corresponds to a timeblock in operations__timeblocks.
 
 {% enddocs %}
 
@@ -1066,7 +1072,7 @@ Each discount line has one credit line and one debit line in billing_agreement_o
 
 {% enddocs %}
 
-# Discount Criterias
+# Discount Criteria
 
 {% docs column__discount_criteria_id %}
 
@@ -1099,7 +1105,7 @@ For chained discounts, the child discounts are the discount following the parent
 
 {% docs column__discount_chain_order %}
 
-The order the child discount has in the discount chain. 
+The order the child discount has in the discount chain.
 The chain order is connected to the child discount, not the parent, so when a child has chain order = 1, it means that it's the second discount in the chain, following the parent discount which is the first.
 
 {% enddocs %}

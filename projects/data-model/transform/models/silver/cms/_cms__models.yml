@@ -697,6 +697,13 @@ models:
         data_tests:
           - unique
           - not_null
+
+      - name: brand_name
+        data_type: string
+        description: "{{ doc('column__brand_name') }}"
+        data_tests:
+          - unique
+          - not_null
   
   - name: cms__countries
     description: "Information relevant for each country Cheffelo operates in."
