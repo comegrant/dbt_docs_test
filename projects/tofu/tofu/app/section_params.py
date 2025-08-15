@@ -28,7 +28,7 @@ def section_set_params() -> tuple[Company, int, int, int, str]:
     with col3:
         start_week = st.number_input("Forecast start week", value=default_forecast_start_week)
     with col4:
-        num_weeks = st.selectbox("Forecast horizon (weeks) ", (11, 15))
+        num_weeks = st.selectbox("Forecast horizon (weeks) ", (11, 1, 15))
     st.write(f"Run forecast for: {company.company_name}, forecast horizon = {num_weeks}")
     st.write(f"forecast job run id = {forecast_job_run_id}")
 

@@ -23,12 +23,15 @@ async def main() -> None:
     st.divider()
 
     company, num_weeks, forecast_start_year, forecast_start_week, forecast_job_run_id = section_set_params()
-    df_order_history, df_calendar, df_latest_forecasts = section_download_data(company_id=company.company_id)
+    df_order_history, df_calendar, df_latest_forecasts, df_estimations = section_download_data(
+        company_id=company.company_id
+    )
     st.divider()
     df_mapped, df_known, df_future, df_concat_with_holidays = section_order_history_analysis(
         df_order_history=df_order_history,
         df_calendar=df_calendar,
         df_latest_forecasts=df_latest_forecasts,
+        df_estimations=df_estimations,
         forecast_start_year=forecast_start_year,
         forecast_start_week=forecast_start_week,
         num_weeks=num_weeks,

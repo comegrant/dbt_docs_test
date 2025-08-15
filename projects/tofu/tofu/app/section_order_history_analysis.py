@@ -1,6 +1,11 @@
 import pandas as pd
 import streamlit as st
 from constants.companies import Company
+from tofu.analysis.estimations_analysis import (
+    get_estimations_delta_table,
+    get_estimations_pivot_table,
+    get_latest_estimations,
+)
 from tofu.analysis.order_history_analysis import (
     add_growth_projections,
     add_projected_orders,
@@ -16,6 +21,7 @@ def section_order_history_analysis(
     df_order_history: pd.DataFrame,
     df_calendar: pd.DataFrame,
     df_latest_forecasts: pd.DataFrame,
+    df_estimations: pd.DataFrame,
     forecast_start_year: int,
     forecast_start_week: int,
     num_weeks: int,
@@ -153,4 +159,32 @@ def section_order_history_analysis(
     st.subheader("💡 mapping table for sanity check")
     st.write(df_future_mapped.drop(columns=["total_orders", "flex_share"]))
     st.divider()
+
+    st.subheader("Additional information from active basket estimations")
+    with st.expander("**Click here** 👈"):
+        st.write("**Latest estimations for total orders**")
+        df_latest_estimations = get_latest_estimations(
+            df_estimations=df_estimations,
+            df_future_mapped=df_future_mapped,
+        )
+        st.write(df_latest_estimations)
+
+        df_estimations_pivoted, weeks_to_include = get_estimations_pivot_table(
+            df_estimations=df_estimations,
+            df_future_mapped=df_future_mapped,
+            df_known_mapped=df_known_mapped,
+            num_weeks_known_to_include=10,
+        )
+        st.write("**Active basket development**")
+        st.write(df_estimations_pivoted)
+
+        st.write("**Changes in active baskets between days before cutoff (x-y)**")
+        df_estimations_delta = get_estimations_delta_table(
+            df_estimations=df_estimations,
+            df_known_mapped=df_known_mapped,
+            df_latest_estimations=df_latest_estimations,
+            weeks_to_include=weeks_to_include,
+        )
+        st.write(df_estimations_delta)
+
     return df_mapped, df_known_mapped, df_future_mapped, df_concat_with_holidays

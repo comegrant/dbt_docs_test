@@ -84,6 +84,21 @@ def get_forecast_start_from_db(
     return forecast_start_year, forecast_start_week
 
 
+@st.cache_data
+def get_estimations(
+    company_id: str,
+) -> pd.DataFrame:
+    df_estimations = connection.sql(
+        f"""
+            select
+                *
+            from `mlgold`.tofu_estimations
+            where company_id = '{company_id}'
+        """
+    ).toPandas()
+    return df_estimations
+
+
 def append_pandas_df_to_catalog(
     df: pd.DataFrame,
     table_name: str,
