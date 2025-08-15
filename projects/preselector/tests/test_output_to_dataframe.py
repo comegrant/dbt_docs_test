@@ -124,8 +124,7 @@ async def test_batch_output_is_valid_dataframe() -> None:
     assert "recipes" in df.columns
     assert "main_recipe_ids" in df.columns
     assert df.height == validated_df.height
-    assert df["weeks_since_selected"].null_count() == 0
-    assert len(df["weeks_since_selected"].struct.fields) == 5
+    assert df["weeks_since_selected"].null_count() == 2
     assert (df["taste_preference_ids"] == ["A"]).all()
     assert df["taste_preferences"].null_count() == 0
 

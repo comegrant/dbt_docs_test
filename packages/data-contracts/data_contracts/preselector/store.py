@@ -162,6 +162,9 @@ class SuccessfulPreselectorOutput:
     compliancy = Int32().lower_bound(0).upper_bound(4).description("This will be deprecated for `recipes`")
 
     concept_preference_ids = List(String()).description("The concept preference ids used to generate the data")
+    weeks_since_selected = (
+        Struct().is_optional().description("Deprecated, as this has too many schema issues. Making it set to Null")
+    )
 
     generated_at = EventTimestamp()
 

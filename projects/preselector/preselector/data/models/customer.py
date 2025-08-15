@@ -155,12 +155,7 @@ class PreselectorSuccessfulResponse(BaseModel):
                 if mealkit.ordered_weeks_ago
                 else None
             )
-            mealkit_dict["weeks_since_selected"] = (
-                {str(key): str(value) for key, value in mealkit.ordered_weeks_ago.items()}
-                if mealkit.ordered_weeks_ago
-                else None
-            )
-
+            mealkit_dict["weeks_since_selected"] = None
             mealkit_dict["recipes"] = [recipe.model_dump() for recipe in mealkit.recipe_data]
 
             for old_key, new_key in renames.items():

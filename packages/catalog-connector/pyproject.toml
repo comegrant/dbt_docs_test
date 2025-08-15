@@ -8,7 +8,7 @@ packages = [{include = "catalog_connector"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 databricks-connect = ">=15.4.3"
-polars = "^1.32.2"
+polars = "^1.28.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "*"
