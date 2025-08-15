@@ -49,6 +49,9 @@ class SchemaChange:
             else:
                 raw_sql += f"{alter_table} ALTER COLUMN {name} TYPE {changes.dataType.simpleString()};\n"
 
+        for delete in self.deletes:
+            raw_sql += f"{alter_table} DROP COLUMN {delete.name};\n"
+
         return raw_sql
 
 

@@ -17,6 +17,7 @@ from data_contracts.preselector.basket_features import (
     WeeksSinceRecipe,
 )
 from data_contracts.preselector.store import Preselector
+from data_contracts.reci_pick import LatestRecommendations
 from data_contracts.recipe import RecipeEmbedding, RecipeMainIngredientCategory, RecipeNegativePreferences
 from data_contracts.recipe_vote import RecipeVote
 from numpy.random import seed as np_seed
@@ -61,6 +62,16 @@ async def test_preselector_run_without_user_data(dummy_store: ContractStore, moc
 
     features = potential_features()
     dummy_store, _ = remove_user_sources(dummy_store)
+    dummy_store = dummy_store.update_source_for(
+        RecipeMainIngredientCategory,
+        RandomDataSource.with_values(
+            {
+                "recipe_id": list(range(recipe_pool)),
+                "main_protein_category_id": [1] * recipe_pool,
+                "main_carbohydrate_category_id": [1] * recipe_pool,
+            }
+        ),
+    )
 
     search_spy = mocker.spy(main, "find_best_combination")
 
@@ -129,6 +140,18 @@ async def test_preselector_run(dummy_store: ContractStore) -> None:
                     "from_year_week": [year * 100 + week - 3] * recipe_pool,
                 }
             )
+        ),
+    ).update_source_for(
+        LatestRecommendations,
+        InMemorySource.from_values(
+            {
+                "billing_agreement_id": [1],
+                "menu_week": [1],
+                "menu_year": [2025],
+                "recipes": [[{"main_recipe_id": 4, "score": 0.2}]],
+                "company_id": [""],
+                "model_version": [""],
+            }
         ),
     )
 
@@ -246,6 +269,19 @@ async def test_preselector_end_to_end(dummy_store: ContractStore) -> None:
         .update_source_for(TargetVectors, RandomDataSource(partial_data=target_data))
         .update_source_for(ImportanceVector, RandomDataSource(partial_data=target_data))
         .update_source_for(PredefinedVectors, RandomDataSource(partial_data=defined_vectors))
+        .update_source_for(
+            LatestRecommendations,
+            InMemorySource.from_values(
+                {
+                    "billing_agreement_id": [1],
+                    "menu_week": [1],
+                    "menu_year": [2025],
+                    "recipes": [[{"main_recipe_id": 1, "score": 0.2}]],
+                    "company_id": [""],
+                    "model_version": [""],
+                }
+            ),
+        )
         .update_source_for(
             RecipeMainIngredientCategory,
             RandomDataSource.with_values(
@@ -387,6 +423,19 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
         .update_source_for(ImportanceVector, RandomDataSource(partial_data=target_data))
         .update_source_for(PredefinedVectors, RandomDataSource(partial_data=defined_vectors))
         .update_source_for(
+            LatestRecommendations,
+            InMemorySource.from_values(
+                {
+                    "billing_agreement_id": [1],
+                    "menu_week": [1],
+                    "menu_year": [2025],
+                    "recipes": [[{"main_recipe_id": 4, "score": 0.2}]],
+                    "company_id": [""],
+                    "model_version": [""],
+                }
+            ),
+        )
+        .update_source_for(
             WeeksSinceRecipe,
             InMemorySource(
                 pl.DataFrame(
@@ -415,6 +464,7 @@ async def test_preselector_quarantining(dummy_store: ContractStore) -> None:
                     "is_low_calorie": [False] * recipe_pool,
                     "is_roede": [False] * recipe_pool,
                     "main_ingredient_id": [1] * recipe_pool,
+                    "cumulated_times_on_menu": [0] * recipe_pool,
                 }
             ),
         )

@@ -44,14 +44,31 @@ def explain_selection(
         potential_vectors.select(pl.exclude(exclude_column))
         .select(columns)
         .transpose()
-        .lazy()
         .select(error_expression)
-        .collect()
         .transpose()
         .rename(lambda col: columns[int(col.split("_")[1])])
         .with_columns(total_error=pl.sum_horizontal(columns), recipe_id=potential_vectors[exclude_column])
         .sort("total_error", descending=False)
     )
+
+    diff = (
+        top_vectors.select(columns)
+        .transpose()
+        .with_columns(
+            pl.all() - top_vectors.select(columns).median().transpose().to_series(),
+        )
+        .transpose()
+        .rename(lambda col: columns[int(col.split("_")[1])])
+    )
+    biggest_relativ_to_others = (
+        diff.head(1)
+        .transpose(header_name="feature", include_header=True)
+        .sort("column_0", descending=False)
+        .filter(pl.col("feature").is_in(["change_in_error", "recipe_id"]).not_())
+        .head(10)
+    )
+    st.write("Biggest impact relative to others")
+    st.write(biggest_relativ_to_others)
 
     explanation = (
         top_vectors.select(columns)
@@ -82,7 +99,7 @@ def explain_selection(
         .select(pl.exclude(unimportant_columns))
         .transpose(header_name="feature", include_header=True)
         .sort("column_0", descending=False)
-        .filter(pl.col("feature").is_in(["change_in_error"]).not_())
+        .filter(pl.col("feature").is_in(["change_in_error", "recipe_id"]).not_())
         .head(10)
     )
 
@@ -147,7 +164,6 @@ def select_next_vector(
     Returns:
         pl.DataFrame: The vector that is closes to the target.
     """
-
     error_expression = (
         ((pl.all() - target_vector) * 10 * importance_vector)
         # Need to fill with 0 to avoid a nan sum

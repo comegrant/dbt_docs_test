@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Literal
 
 import polars as pl
@@ -7,6 +8,9 @@ from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
     from pyspark.sql.types import DataType, StructType
+
+
+logger = logging.getLogger(__name__)
 
 
 def polars_schema_to_spark(schema: dict[str, pl.PolarsDataType]) -> StructType:
@@ -104,14 +108,31 @@ class BinaryExpression(BaseModel):
         return " ".join(expr)
 
 
+class ScalarValue(BaseModel):
+    string: str | None = Field(None, alias="StringOwned")
+
+    def to_spark_expression(self) -> str:
+        if self.string:
+            return f"'{self.string}'"
+
+        raise ValueError(f"Unable to format '{self}'")
+
+
+class Scalar(BaseModel):
+    value: ScalarValue
+
+
 class LiteralPolarsValue(BaseModel):
     string: str | None = Field(None, alias="String")
     integer: int | None = Field(None, alias="Int")
     dynamic: LiteralPolarsValue | None = Field(None, alias="Dyn")
+    scalar: Scalar | None = Field(None, alias="Scalar")
 
     def to_spark_expression(self) -> str:
         if self.dynamic:
             return self.dynamic.to_spark_expression()
+        if self.scalar:
+            return self.scalar.value.to_spark_expression()
         if self.string:
             return f"'{self.string}'"
         if self.integer:
@@ -154,4 +175,5 @@ def polars_expression_to_spark(expr: pl.Expr) -> str | None:
     try:
         return node.to_spark_expression()
     except ValueError:
+        logger.error(f"Unable to transform expression {content}, which was decoded {node}")
         return None

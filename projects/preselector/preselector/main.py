@@ -145,9 +145,9 @@ async def run_preselector_for_request(
 
     cost_of_food = await cost_of_food_target_for(request, store)
 
-    assert cost_of_food.height == len(request.compute_for), (
-        f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
-    )
+    assert cost_of_food.height == len(
+        request.compute_for
+    ), f"Got {cost_of_food.height} CoF targets expected {len(request.compute_for)}"
 
     with duration("construct-vector"):
         (
@@ -495,12 +495,19 @@ async def run_preselector(
 
     recipe_features = normalized_recipe_features
 
-    with duration("load-recipe-vote"):
-        recipe_features = (
-            await store.feature_view(RecipeVote)
-            # .select({"is_favorite", "is_dislike"})
-            .features_for(recipe_features.with_columns(pl.lit(customer.agreement_id).alias("agreement_id")))
-            .to_polars()
+    if customer.has_data_processing_consent:
+        with duration("load-recipe-vote"):
+            recipe_features = (
+                await store.feature_view(RecipeVote)
+                # .select({"is_favorite", "is_dislike"})
+                .features_for(recipe_features.with_columns(pl.lit(customer.agreement_id).alias("agreement_id")))
+                .to_polars()
+            )
+    else:
+        vote_schema = RecipeVote()
+        recipe_features = recipe_features.with_columns(
+            pl.lit(0).alias(vote_schema.is_favorite.name),
+            pl.lit(0).alias(vote_schema.is_dislike.name),
         )
 
     if recipe_features.height < customer.number_of_recipes:
@@ -612,9 +619,9 @@ async def run_preselector(
             await store.feature_view(AttributeScoring).features_for(recipe_features).with_subfeatures().to_polars()
         )
 
-    assert not recipe_features.is_empty(), (
-        f"Found no features something is very wrong for {customer.agreement_id}, {year}, {week}"
-    )
+    assert (
+        not recipe_features.is_empty()
+    ), f"Found no features something is very wrong for {customer.agreement_id}, {year}, {week}"
 
     with duration("find-best-combination"):
         best_recipe_ids, error = await find_best_combination(

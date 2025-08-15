@@ -8,8 +8,10 @@ from data_contracts.preselector.store import Preselector, SuccessfulPreselectorO
 from data_contracts.recipe import RecipeMainIngredientCategory
 from data_contracts.sources import databricks_catalog
 
-COMPLIANCY_ALLERGEN = 1
-COMPLIANCY_PREFERENCE = 2
+from preselector.data.models.customer import PreselectorPreferenceCompliancy
+
+COMPLIANCY_ALLERGEN = PreselectorPreferenceCompliancy.non_preference_compliant
+COMPLIANCY_PREFERENCE = PreselectorPreferenceCompliancy.allergies_only_compliant
 ERROR_AVG = 0.003
 ERROR_ACC = 0.12
 ERROR_MEAN_ORDERED_AGO = 0.02

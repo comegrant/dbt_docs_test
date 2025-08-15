@@ -155,8 +155,6 @@ class SuccessfulPreselectorOutput:
     target_cost_of_food_per_recipe = Float()
     error_vector = Struct(PreselectorErrorStructure).is_optional()
 
-    weeks_since_selected = Struct().is_optional().description("Contains the main_recipe_id and the year week")
-
     recipes = List(Struct(PreselectorRecipeOutput)).is_optional().description("The outputted data")
 
     main_recipe_ids = List(Int32()).description("This will be deprecated for `recipes`")
