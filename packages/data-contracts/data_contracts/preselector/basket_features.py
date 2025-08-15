@@ -75,6 +75,12 @@ def mean_of_bool(feature: Bool) -> Float64:
     )
 
 
+def contains_at_least_one(feature: Bool) -> Float64:
+    return feature.polars_aggregation(pl.col(feature.name).fill_null(False).max(), as_type=Float64()).with_tag(
+        PreselectorTags.binary_metric
+    )
+
+
 quarantining = WeeksSinceRecipe()
 
 ordered_ago_agg = quarantining.ordered_weeks_ago.aggregate()
@@ -162,8 +168,13 @@ class BasketFeatures:
         .default_value(0)
     )
 
+    contains_at_least_one_fish = (
+        contains_at_least_one(recipe_features.is_fish).default_value(0).with_tag(VariationTags.protein)
+    )
+
     for protein in recipe_main_ingredient.all_proteins:
         locals()[f"{protein.name}_percentage"] = mean_of_bool(protein).default_value(0).with_tag(VariationTags.protein)
+
     # Need to clean-up the hack as the local loop value is added to the class
     del locals()["protein"]
 

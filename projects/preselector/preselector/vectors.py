@@ -66,12 +66,12 @@ async def importance_vector_for_concept(
 
     importance_vector = importances.select(combined_feature)
 
-    assert not importance_vector.is_empty(), (
-        f"Predefined importance vector is missing for concept {concept_ids} company: {company_id}"
-    )
-    assert not target_vector.is_empty(), (
-        f"Predefined target vector is missing for concept {concept_ids} company: {company_id}"
-    )
+    assert (
+        not importance_vector.is_empty()
+    ), f"Predefined importance vector is missing for concept {concept_ids} company: {company_id}"
+    assert (
+        not target_vector.is_empty()
+    ), f"Predefined target vector is missing for concept {concept_ids} company: {company_id}"
     return (importance_vector, target_vector)
 
 
@@ -183,15 +183,15 @@ async def historical_preselector_vector(
         importance_static = (
             await InjectedFeatures.process_input(
                 {
-                    "mean_cost_of_food": [0.03],
+                    "mean_cost_of_food": [0.1],
                     "mean_rank": [0.05],
-                    "mean_ordered_ago": [0.4],
+                    "mean_ordered_ago": [0.3],
                     "intra_week_similarity": [0.09],
                     "repeated_proteins_percentage": [0.1],
                     "repeated_carbo_percentage": [0.05],
                     "mean_is_dislike": [0.1],
                     "mean_is_favorite": [0.1],
-                    "suppress_score": [0.1],
+                    "suppress_score": [0.05],
                 }
             )
             .drop_invalid()

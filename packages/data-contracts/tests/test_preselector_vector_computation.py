@@ -64,6 +64,7 @@ async def test_importance_and_target_vector_computation() -> None:
                 "cooking_time_from": [0, 1, 0],
                 "is_lactose": [1, 1, 0],
                 "is_vegan": [0, 0, 0],
+                "is_fish": [1, 0, 0],
             }
         ),  # type: ignore
     )
@@ -100,6 +101,7 @@ async def test_importance_and_target_vector_computation() -> None:
         (pl.col("agreement_id") == 1) & (pl.col("vector_type") == "target")
     ).to_dicts()[0]
 
+    assert first_agreement_target["contains_at_least_one_fish"] == 1
     assert first_agreement_target["is_lactose_percentage"] == 1
     assert first_agreement_target["is_vegan_percentage"] == 0
 
@@ -117,6 +119,7 @@ async def test_importance_and_target_vector_computation() -> None:
         (pl.col("agreement_id") == 2) & (pl.col("vector_type") == "target")
     ).to_dicts()[0]
     assert second_agreement_target["is_vegan_percentage"] == 0
+    assert second_agreement_target["contains_at_least_one_fish"] == 0.5
 
     assert second_agreement_target["is_lactose_percentage"] >= 0.4
     assert second_agreement_target["is_lactose_percentage"] <= 0.6

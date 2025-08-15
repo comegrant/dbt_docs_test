@@ -755,7 +755,7 @@ class NormalizedRecipeFeatures:
 
     riskyness = cumulated_times_on_menu.transform_polars(
         ((5 - pl.col("cumulated_times_on_menu")) / 5).clip(lower_bound=0), as_dtype=Float32()
-    )
+    ).fill_na(1)
 
     number_of_ratings_log = (
         Float()
