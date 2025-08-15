@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "a0963faef2b802223be7",
   "position": {
-    "x": 648,
+    "x": 656,
     "y": 96,
-    "z": 8000,
+    "z": 7000,
     "height": 304,
-    "width": 616,
-    "tabOrder": 8000
+    "width": 608,
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "columnChart",
@@ -60,11 +60,11 @@
                       "Entity": "Preselector Measures"
                     }
                   },
-                  "Property": "Number of Dishes from Preselector"
+                  "Property": "Number of Active Subscribers with Preselector Output"
                 }
               },
-              "queryRef": "Preselector Measures.Number of Dishes from Preselector1",
-              "nativeQueryRef": "Number of Dishes from Preselector"
+              "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Active Subscribers with Preselector Output"
             }
           ]
         },
@@ -601,6 +601,82 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "d9fc4d6f8d05d23dd523",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Main Recipe Name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "9d5e5baba1d08093d29b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Recipe Main Ingredient Name (Eng)"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "86fceebc49235e20280c",
+        "field": {
+          "Arithmetic": {
+            "Left": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Preselector Measures"
+                  }
+                },
+                "Property": "Number of Dishes from Preselector"
+              }
+            },
+            "Right": {
+              "ScopedEval": {
+                "Expression": {
+                  "Measure": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Preselector Measures"
+                      }
+                    },
+                    "Property": "Number of Dishes from Preselector"
+                  }
+                },
+                "Scope": []
+              }
+            },
+            "Operator": 3
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "575a75bb8ed2b6968132",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Number of Active Subscribers with Preselector Output"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

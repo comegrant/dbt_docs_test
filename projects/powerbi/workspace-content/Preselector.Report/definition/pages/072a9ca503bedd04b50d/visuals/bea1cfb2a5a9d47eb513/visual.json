@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "bea1cfb2a5a9d47eb513",
   "position": {
     "x": 16,
@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 304,
     "width": 624,
-    "tabOrder": 3000
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
@@ -85,11 +85,11 @@
                       "Entity": "Preselector Measures"
                     }
                   },
-                  "Property": "Number of Dishes from Preselector"
+                  "Property": "Number of Active Subscribers with Preselector Output"
                 }
               },
-              "queryRef": "Preselector Measures.Number of Dishes from Preselector",
-              "nativeQueryRef": "Number of Dishes from Preselector"
+              "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
+              "nativeQueryRef": "Number of Active Subscribers with Preselector Output"
             }
           ]
         }

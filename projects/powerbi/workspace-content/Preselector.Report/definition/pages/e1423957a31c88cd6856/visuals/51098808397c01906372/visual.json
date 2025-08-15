@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "51098808397c01906372",
   "position": {
     "x": 16,
-    "y": 584,
+    "y": 96,
     "z": 6000,
-    "height": 120,
-    "width": 1248,
-    "tabOrder": 6000
+    "height": 304,
+    "width": 1232,
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,17 @@
               {
                 "textRuns": [
                   {
-                    "value": "This report uses 3 metrics which help us measures the quality of the preselection output:"
+                    "value": "This report uses 3 metrics which help us measures the quality of the preselection output:",
+                    "textStyle": {
+                      "fontSize": "16pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
                   }
                 ]
               },
@@ -28,48 +38,65 @@
                   {
                     "value": "Rotation Score",
                     "textStyle": {
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "fontSize": "16pt"
                     }
                   },
                   {
-                    "value": ": A score between 0 (bad) and 1 (good) which indicates how much the dishes in a mealbox repeat in the previous 6 weeks and all future visible weeks. A score of 0.8 for example says that the dishes in that mealbox repeat on average in 20% of other weeks."
+                    "value": ": A score between 0 (bad) and 1 (good) which indicates how much the dishes in a mealbox repeat in the previous 6 weeks and all future visible weeks. A score of 0.8 for example says that the dishes in that mealbox repeat on average in 20% of other weeks.",
+                    "textStyle": {
+                      "fontSize": "16pt"
+                    }
                   }
-                ],
-                "listType": "ordered"
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
               },
               {
                 "textRuns": [
                   {
                     "value": "Main Ingredient Variation Score",
                     "textStyle": {
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "fontSize": "16pt"
                     }
                   },
                   {
-                    "value": ": "
-                  },
-                  {
-                    "value": "A score between 0 (bad) and 1 (good) which indicates how many unique main proteins are in a mealbox. For example, if they have 4 meals and 3 unique main ingredients then their score is 0.75. ",
+                    "value": ": A score between 0 (bad) and 1 (good) which indicates how many unique main proteins are in a mealbox. For example, if they have 4 meals and 3 unique main ingredients then their score is 0.75. ",
                     "textStyle": {
-                      "fontSize": "12px"
+                      "fontSize": "16pt"
                     }
                   }
-                ],
-                "listType": "ordered"
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
               },
               {
                 "textRuns": [
                   {
                     "value": "Combined Rotation and Variation Score",
                     "textStyle": {
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "fontSize": "16pt"
                     }
                   },
                   {
-                    "value": ": This is an overall metric which is the multiplication of Rotation and Variation scores."
+                    "value": ": This is an overall metric which is the multiplication of Rotation and Variation scores.",
+                    "textStyle": {
+                      "fontSize": "16pt"
+                    }
                   }
-                ],
-                "listType": "ordered"
+                ]
               }
             ]
           }
