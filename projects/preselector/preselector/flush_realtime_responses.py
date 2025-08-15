@@ -65,7 +65,7 @@ async def write_to_databricks(
         try:
             df = pl.concat([output.body.to_dataframe() for output in success_messages], how="vertical_relaxed")
 
-            await write_store.feature_view(SuccessfulPreselectorOutput).insert(df)
+            await write_store.contract(SuccessfulPreselectorOutput).insert(df)
             await success_stream.mark_as_complete(success_messages)
 
             if message_count < write_size:

@@ -198,7 +198,7 @@ async def deploy_preselector(
                 else:
                     environment_variables.append(EnvironmentVariable(name=key.upper(), value=value))
 
-        company_specific_memory = {"linas": 10, "godtlevert": 7, "retnemt": 4, "adams": 5}
+        company_specific_memory = {"linas": 3, "godtlevert": 3, "retnemt": 3, "adams": 3}
 
         return Container(
             name=container_name,
@@ -344,6 +344,13 @@ async def deploy_all(tag: str, env: str, mode: Literal["both", "batch", "live", 
                     batch_size=10,
                     topic_request_name="deviation-request",
                     topic_success_name="deviation-response",
+                    # sub_queue_name="deadletter",
+                ),
+                WorkerConfig(
+                    container_name=f"{name}-priority-flush",
+                    batch_size=10,
+                    topic_request_name="priority-deviation-request",
+                    topic_success_name="priority-deviation-response",
                     # sub_queue_name="deadletter",
                 ),
             ]

@@ -196,13 +196,13 @@ typing-extensions = {version = ">=4.2", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "aligned"
-version = "0.0.127"
+version = "0.0.128"
 description = "A data management and lineage tool for ML applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "aligned-0.0.127-py3-none-any.whl", hash = "sha256:c84bdefc007ae30ad669e1f8bfc0c1290fa439a7d2d5f710d7744fc165e2a3c2"},
-    {file = "aligned-0.0.127.tar.gz", hash = "sha256:92cec07c9d0cd33b8d051a3f40ef49f7902d0c8861bda0196e55375d50893c98"},
+    {file = "aligned-0.0.128-py3-none-any.whl", hash = "sha256:f5b07eef47551b2e5e70514d1ab39a5c52bc20f36b1898cf29a39a5d27df3b0c"},
+    {file = "aligned-0.0.128.tar.gz", hash = "sha256:2b0e38c9bb7470c2b85bb4a5de7985e35e5a371b4dabe696a7132410d6fca256"},
 ]
 
 [package.dependencies]
@@ -4611,4 +4611,4 @@ openai = ["openai", "tiktoken"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f68fc774c1ceb3ffe85a90c6e22ba93b24dab50f93a9f2f11f8a094414cd5290"
+content-hash = "4260a61c102e82b3e04366fa572faa77aded1525d4f5d2413b0bb76e781d947f"
