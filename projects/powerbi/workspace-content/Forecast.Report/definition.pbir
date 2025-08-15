@@ -3,10 +3,10 @@
   "version": "4.0",
   "datasetReference": {
     "byConnection": {
-      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo;initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken",
+      "connectionString": "Data Source=\"powerbi://api.powerbi.com/v1.0/myorg/Synne Features\";initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken",
       "pbiServiceModelId": null,
       "pbiModelVirtualServerName": "sobe_wowvirtualserver",
-      "pbiModelDatabaseName": "fdc184ae-b967-41d0-95ce-f5a6aed083e4",
+      "pbiModelDatabaseName": "41ce1a20-9f12-4dd2-9966-1d82ac291869",
       "name": "EntityDataSource",
       "connectionType": "pbiServiceXmlaStyleLive"
     }

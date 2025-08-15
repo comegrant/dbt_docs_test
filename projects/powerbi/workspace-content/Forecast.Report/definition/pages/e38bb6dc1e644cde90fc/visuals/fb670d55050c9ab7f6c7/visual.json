@@ -43,6 +43,21 @@
               "queryRef": "Forecast Details.Forecast Horizon Index",
               "nativeQueryRef": "Forecast Horizon Index",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "(Utils) Matrix Spacer"
+                    }
+                  },
+                  "Property": "Blank Column"
+                }
+              },
+              "queryRef": "(Utils) Matrix Spacer.Blank Column",
+              "nativeQueryRef": "Blank Column",
+              "active": true
             }
           ]
         },
