@@ -134,7 +134,7 @@ class DatabricksKeyVault(KeyVaultInterface):
             if env is not None:
                 db_key = db_key + f"-{env}"
 
-            keys_to_load[db_key]
+            keys_to_load[db_key] = name
 
         loaded_values = await self.load_into_env(keys_to_load, optional_keys=can_be_missing)
         for key, value in loaded_values.items():

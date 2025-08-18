@@ -12,7 +12,6 @@ from model_registry.mlflow import MlflowRegistryBuilder
 if TYPE_CHECKING:
     from aligned.feature_store import ModelFeatureStore
     from aligned.schemas.feature import FeatureReference
-    from databricks.feature_store.training_set import TrainingSet
 
     from model_registry.interface import DatasetTypes, Model
 
@@ -34,7 +33,7 @@ class InMemoryRegistry(ModelRegistryBuilder):
         self.registry = self.registry.alias(alias)
         return self
 
-    def training_dataset(self, dataset: DatasetTypes | TrainingSet) -> ModelRegistryBuilder:
+    def training_dataset(self, dataset: DatasetTypes) -> ModelRegistryBuilder:
         self.registry = self.registry.training_dataset(dataset)
         return self
 

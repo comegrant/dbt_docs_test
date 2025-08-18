@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM python:3.11-slim-buster
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -12,7 +12,7 @@ COPY packages packages
 
 WORKDIR $PACKAGE_HOME
 
-# Only copy the package file for imporoved build caching
+# Only copy the package file for improved build caching
 COPY packages/model-registry/pyproject.toml .
 COPY packages/model-registry/poetry.lock .
 
@@ -20,6 +20,7 @@ COPY packages/model-registry/poetry.lock .
 RUN mkdir -p model_registry && touch model_registry/__init__.py
 
 # install requirements
+RUN pip install virtualenv==20.34.0
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
