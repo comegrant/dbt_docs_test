@@ -196,13 +196,13 @@ typing-extensions = {version = ">=4.2", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "aligned"
-version = "0.0.128"
+version = "0.0.129"
 description = "A data management and lineage tool for ML applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "aligned-0.0.128-py3-none-any.whl", hash = "sha256:f5b07eef47551b2e5e70514d1ab39a5c52bc20f36b1898cf29a39a5d27df3b0c"},
-    {file = "aligned-0.0.128.tar.gz", hash = "sha256:2b0e38c9bb7470c2b85bb4a5de7985e35e5a371b4dabe696a7132410d6fca256"},
+    {file = "aligned-0.0.129-py3-none-any.whl", hash = "sha256:b95f502785b6dd94ee4a88b43d6741fcf6fecce61e7486d7baa5d6a1ab77d3cf"},
+    {file = "aligned-0.0.129.tar.gz", hash = "sha256:04050fe934464f8c1f5a01b8b636c7ecb3acd91a32ab602738257c94d5ac921d"},
 ]
 
 [package.dependencies]
@@ -223,7 +223,7 @@ redis = {version = ">=4.3.1,<5.0.0", optional = true, markers = "extra == \"redi
 [package.extras]
 aws = ["aioaws (>=0.12,<0.13)", "connectorx (>=0.3.2,<0.4.0)"]
 azure = ["adlfs (>=2024.4.1,<2025.0.0)"]
-databricks = ["databricks-connect (>15.1.0)"]
+databricks = ["databricks-connect (>15.1.0)", "sqlglot (>=22.5.0,<23.0.0)"]
 deltalake = ["deltalake (>=0.18.1,<0.19.0)"]
 image = ["pillow (>=9.4.0,<10.0.0)"]
 kafka = ["kafka-python (>=2.0.2,<3.0.0)"]
@@ -599,17 +599,17 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.40.10"
+version = "1.40.11"
 description = "The AWS SDK for Python"
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "boto3-1.40.10-py3-none-any.whl", hash = "sha256:222b44ee4d6e4e8a9a2a4bada4c683c38f37481e545f7997aee7bc40a7fb4489"},
-    {file = "boto3-1.40.10.tar.gz", hash = "sha256:ed64d63cb24721ff603547caf099f3abf82783472910a3650ce8764c78396e7a"},
+    {file = "boto3-1.40.11-py3-none-any.whl", hash = "sha256:9d2d211d9cb3efc9a2b2ceec3c510b4e62e389618fd5c871e74d2cbca4561ff5"},
+    {file = "boto3-1.40.11.tar.gz", hash = "sha256:0c03da130467d51c6b940d19be295c56314e14ce0f0464cc86145e98d3c9e983"},
 ]
 
 [package.dependencies]
-botocore = ">=1.40.10,<1.41.0"
+botocore = ">=1.40.11,<1.41.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.13.0,<0.14.0"
 
@@ -618,13 +618,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.40.10"
+version = "1.40.11"
 description = "Low-level, data-driven core of boto 3."
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "botocore-1.40.10-py3-none-any.whl", hash = "sha256:22aff400250a0125be92e0d43011eb42414a64f999d5215827af91d8584b4476"},
-    {file = "botocore-1.40.10.tar.gz", hash = "sha256:db3b14043bc90fe4220edbc2e89e8f5af1d2d4aacc16bab3c30dacd98b0073e3"},
+    {file = "botocore-1.40.11-py3-none-any.whl", hash = "sha256:4beca0c5f92201da1bf1bc0a55038538ad2defded32ab0638cb68f5631dcc665"},
+    {file = "botocore-1.40.11.tar.gz", hash = "sha256:95af22e1b2230bdd5faa9d1c87e8b147028b14b531770a1148bf495967ccba5e"},
 ]
 
 [package.dependencies]
@@ -4611,4 +4611,4 @@ openai = ["openai", "tiktoken"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "4260a61c102e82b3e04366fa572faa77aded1525d4f5d2413b0bb76e781d947f"
+content-hash = "b8a6ec67eff752a5ed2e5012858a9ea3ff38f89cd108f2236acf3e060170892b"
