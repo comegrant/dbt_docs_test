@@ -78,6 +78,7 @@ class RequestCompany(ConfigModel):
     num_recipes: int
     required_recipes: list[str]
     available_recipes: list[str]
+    linked_recipes: dict[str, list[int]] = Field(default_factory=dict)
     taxonomies: list[RequestTaxonomy]
 
 

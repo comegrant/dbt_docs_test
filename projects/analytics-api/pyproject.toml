@@ -32,11 +32,6 @@ ruff = "*"
 pyright = "*"
 chef = {path = "../../packages/chef", develop = true}
 
-[tool.poetry.group.deploy.dependencies]
-azure-identity = "^1.23.0"
-azure-mgmt-resource = "^23.4.0"
-azure-mgmt-appcontainers = "^3.2.0"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
