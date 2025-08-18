@@ -131,6 +131,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           depends_on:
             - task_key: bronze_coredb_snapshot_full
           disable_auto_optimization: true
@@ -166,6 +168,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           depends_on:
             - task_key: bronze_coredb_snapshot_billing_agreements
           disable_auto_optimization: true
@@ -184,6 +188,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           depends_on: [
             {task_key: dbt-snapshot-billing-agreements},
             {task_key: bronze_cms_full},
@@ -209,6 +215,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           depends_on: [
             {task_key: dbt-run}
           ]

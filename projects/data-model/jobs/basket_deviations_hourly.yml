@@ -73,6 +73,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           disable_auto_optimization: true
           depends_on: [
             {task_key: bronze_cms_full},
@@ -91,6 +93,8 @@ resources:
           libraries:
             - pypi:
                 package: dbt-databricks${var.dbt_databricks_version}
+            - pypi:
+                package: urllib3==2.3.0
           disable_auto_optimization: true
           depends_on: [
             {task_key: dbt-run}

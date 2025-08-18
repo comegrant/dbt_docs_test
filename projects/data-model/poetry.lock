@@ -816,13 +816,13 @@ openai = ["httpx", "langchain-openai", "openai"]
 
 [[package]]
 name = "databricks-sql-connector"
-version = "4.1.0"
+version = "4.0.5"
 description = "Databricks SQL Connector for Python"
 optional = false
 python-versions = "<4.0.0,>=3.8.0"
 files = [
-    {file = "databricks_sql_connector-4.1.0-py3-none-any.whl", hash = "sha256:3e177a128b2393687ed070a763becfbcb569565b44d51ddd5986a5ed62af4d87"},
-    {file = "databricks_sql_connector-4.1.0.tar.gz", hash = "sha256:cf069c60e310cc3fee72e8c56fd9aaa8e3e30bb40e707889dcc06e1e5d28731e"},
+    {file = "databricks_sql_connector-4.0.5-py3-none-any.whl", hash = "sha256:8df9b0288f18ec699e2980319983c43080fe0a9a540261d26c37e63b2cb44b58"},
+    {file = "databricks_sql_connector-4.0.5.tar.gz", hash = "sha256:ade3143b3b55e8c236bea7da8579c63c43432dd07df9dc05b1d8f2f7bbeb144e"},
 ]
 
 [package.dependencies]
@@ -831,7 +831,6 @@ oauthlib = ">=3.1.0,<4.0.0"
 openpyxl = ">=3.0.10,<4.0.0"
 pandas = {version = ">=1.2.5,<2.3.0", markers = "python_version >= \"3.8\" and python_version < \"3.13\""}
 pyarrow = {version = ">=14.0.1", optional = true, markers = "python_version >= \"3.8\" and python_version < \"3.13\" and extra == \"pyarrow\""}
-pyjwt = ">=2.0.0,<3.0.0"
 python-dateutil = ">=2.8.0,<3.0.0"
 requests = ">=2.18.1,<3.0.0"
 thrift = ">=0.16.0,<0.21.0"
@@ -3640,13 +3639,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.5.0"
+version = "2.3.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "urllib3-2.5.0-py3-none-any.whl", hash = "sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc"},
-    {file = "urllib3-2.5.0.tar.gz", hash = "sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"},
+    {file = "urllib3-2.3.0-py3-none-any.whl", hash = "sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df"},
+    {file = "urllib3-2.3.0.tar.gz", hash = "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d"},
 ]
 
 [package.extras]
@@ -3816,4 +3815,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "db1615a843b2c24e77cf0f85c9ff5782f1c80d49e237b868200427a0352bb269"
+content-hash = "9608bdf81c37765087ab7d9fc0f6e7693657adbf8aff02540d6a3e3b4efccc0d"

@@ -24,6 +24,7 @@ resources:
             client: "1"
             dependencies:
               - dbt-databricks${var.dbt_databricks_version}
+              - urllib3==2.3.0
 
       tasks: 
         - task_key: dbt
