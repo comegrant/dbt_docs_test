@@ -29,7 +29,7 @@ variables:
     description: The id of the databricks forecasting service principal
   dbt_databricks_version:
     description: The version of dbt-databricks to use in all jobs
-    default: ">=1.10.0,<2.0.0"
+    default: ">=1.10.0,<1.10.9"
 
 targets:
   dev:
