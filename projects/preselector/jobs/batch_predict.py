@@ -155,7 +155,7 @@ async def load_requests(number_of_records: int | None) -> list[GenerateMealkitRe
     year_week_dates = [from_date + timedelta(weeks=week_dif) for week_dif in range(number_of_weeks)]
     year_weeks = [YearWeek(week=week.isocalendar().week, year=week.isocalendar().year) for week in year_week_dates]
 
-    df = await source.to_pandas()
+    df = await source.all_columns().to_pandas()
     return strategies(
         [
             GenerateMealkitRequest(
