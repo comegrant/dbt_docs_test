@@ -143,8 +143,19 @@ agreements_status_history as (
     -- The first possible menu week for an agreement, is the first week with cutoff time after the full signup date:
     left join menu_weeks as first_possible_menu_week
         on agreements_add_dates.company_id = first_possible_menu_week.company_id
-        and first_possible_menu_week.menu_week_cutoff_time >= agreements_add_dates.full_signup_date
-        and first_possible_menu_week.previous_menu_week_cutoff_time < agreements_add_dates.full_signup_date
+        -- We don't have cutoff time for all weeks before 2022, and use the monday date instead.
+        and 
+            coalesce( 
+                first_possible_menu_week.menu_week_cutoff_time
+                , first_possible_menu_week.menu_week_monday_date 
+            )  
+            >= agreements_add_dates.full_signup_date
+        and 
+            coalesce( 
+                first_possible_menu_week.previous_menu_week_cutoff_time
+                , first_possible_menu_week.menu_week_monday_date - interval 1 week
+            ) 
+            < agreements_add_dates.full_signup_date
 
     where
         menu_weeks.menu_week_monday_date >= '{{customer_journey_segments_start_date}}'
