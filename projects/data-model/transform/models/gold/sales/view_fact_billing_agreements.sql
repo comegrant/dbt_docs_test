@@ -15,12 +15,14 @@ all_days as (
 , mondays as (
 
     select 
-    * except (date),
-    cast(date as timestamp) as date
+
+    * except (date)
+    
+    -- Convert date to timestamp in order to use the field in incremental refresh in Power BI.
+    , cast(date as timestamp) as date
+
     from all_days
     where 
-        -- The logic in the measures assumes the data to be on weekly basis and as og now we only need weekly data in this view.
-        --date >= current_date() - interval '30 days' or
         is_monday = true
 
 )

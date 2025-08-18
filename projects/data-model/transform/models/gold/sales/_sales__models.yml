@@ -1617,16 +1617,372 @@ models:
     latest_version: 1
     config:
       alias: fact_billing_agreements_daily
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_billing_agreements_daily
+        data_type: string
+        description: "{{ doc('column__pk_fact_billing_agreements_daily') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: date
+        data_type: date
+        description: "{{ doc('column__date') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from_billing_agreements
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from_billing_agreements_cutoff
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: first_menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__first_menu_week_monday_date') }}"
+
+      - name: is_monday
+        data_type: boolean
+        description: "{{ doc('column__is_monday') }}"
+        data_tests:
+          - not_null
+
+      - name: is_paused
+        data_type: boolean
+        description: "{{ doc('column__is_paused') }}"
+        data_tests:
+          - not_null:
+              config: 
+                where: "is_monday = true"
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active') }}"
+        data_tests:
+          - not_null
+
+      - name: is_freezed
+        data_type: boolean
+        description: "{{ doc('column__is_freezed') }}"
+        data_tests:
+          - not_null
+
+      - name: has_order
+        data_type: boolean
+        description: "{{ doc('column__has_order') }}"
+        data_tests:
+          - not_null:
+              config: 
+                where: "is_monday = true"
+
+      - name: loyalty_level_number
+        data_type: int
+        description: "{{ doc('column__loyalty_level_number') }}"
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_billing_agreements_cutoff
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_periods_since_first_menu_week
+        data_type: int
+        description: "{{ doc('column__fk_dim_periods_since_first_menu_week') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_periods_since')
+            to_columns: [pk_dim_periods_since]
+        data_tests:
+          - relationships:
+              to: ref('dim_periods_since')
+              field: pk_dim_periods_since
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_preference_combinations')
+            to_columns: [pk_dim_preference_combinations]
+        data_tests:
+          - relationships:
+              to: ref('dim_preference_combinations')
+              field: pk_dim_preference_combinations
+
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
+
+      - name: fk_dim_customer_journey_segments
+        data_type: string
+        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_customer_journey_segments')
+            to_columns: [pk_dim_customer_journey_segments]
+        data_tests:
+          - relationships:
+              to: ref('dim_customer_journey_segments')
+              field: pk_dim_customer_journey_segments
 
     versions:
       - v: 1
 
   - name: view_fact_billing_agreements
-    description: "View on fact_billing_agreements_daily. Daily if last 30 days, otherwise weekly."
+    description: "View on fact_billing_agreements_daily on a weekly level. Selecting the mondays from fact_billing_agreements_daily."
     latest_version: 1
     config:
       alias: view_fact_billing_agreements
       materialized: view
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_fact_billing_agreements_daily
+        data_type: string
+        description: "{{ doc('column__pk_fact_billing_agreements_daily') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: date
+        data_type: timestamp
+        description: "{{ doc('column__date') }}"
+        data_tests:
+          - not_null
+
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from_billing_agreements
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from_billing_agreements_cutoff
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: first_menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__first_menu_week_monday_date') }}"
+
+      - name: is_monday
+        data_type: boolean
+        description: "{{ doc('column__is_monday') }}"
+        data_tests:
+          - not_null
+
+      - name: is_paused
+        data_type: boolean
+        description: "{{ doc('column__is_paused') }}"
+        data_tests:
+          - not_null:
+              config: 
+                where: "is_monday = true"
+
+      - name: is_active
+        data_type: boolean
+        description: "{{ doc('column__is_active') }}"
+        data_tests:
+          - not_null
+
+      - name: is_freezed
+        data_type: boolean
+        description: "{{ doc('column__is_freezed') }}"
+        data_tests:
+          - not_null
+
+      - name: has_order
+        data_type: boolean
+        description: "{{ doc('column__has_order') }}"
+        data_tests:
+          - not_null:
+              config: 
+                where: "is_monday = true"
+
+      - name: loyalty_level_number
+        data_type: int
+        description: "{{ doc('column__loyalty_level_number') }}"
+
+      - name: fk_dim_dates
+        data_type: int
+        description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+
+      - name: fk_dim_billing_agreements
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_billing_agreements_cutoff
+        data_type: string
+        description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
+        data_tests:
+          - relationships:
+              to: ref('dim_billing_agreements')
+              field: pk_dim_billing_agreements
+
+      - name: fk_dim_companies
+        data_type: string
+        description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
+
+      - name: fk_dim_periods_since_first_menu_week
+        data_type: int
+        description: "{{ doc('column__fk_dim_periods_since_first_menu_week') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_periods_since')
+            to_columns: [pk_dim_periods_since]
+        data_tests:
+          - relationships:
+              to: ref('dim_periods_since')
+              field: pk_dim_periods_since
+
+      - name: fk_dim_preference_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_preference_combinations') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_preference_combinations')
+            to_columns: [pk_dim_preference_combinations]
+        data_tests:
+          - relationships:
+              to: ref('dim_preference_combinations')
+              field: pk_dim_preference_combinations
+
+      - name: fk_dim_loyalty_seasons
+        data_type: string
+        description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
+        data_tests:
+          - relationships:
+              to: ref('dim_loyalty_seasons')
+              field: pk_dim_loyalty_seasons
+
+      - name: fk_dim_customer_journey_segments
+        data_type: string
+        description: "{{ doc('column__pk_dim_customer_journey_segments') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_customer_journey_segments')
+            to_columns: [pk_dim_customer_journey_segments]
+        data_tests:
+          - relationships:
+              to: ref('dim_customer_journey_segments')
+              field: pk_dim_customer_journey_segments
 
     versions:
       - v: 1

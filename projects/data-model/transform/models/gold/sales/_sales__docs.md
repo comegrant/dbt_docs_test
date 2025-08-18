@@ -1030,6 +1030,47 @@ The primary key of fact_partnership_points.
 # Bridge Fact Orders Dim Partnerships
 {% docs column__pk_bridge_fact_orders_dim_partnerships %}
 
-The primary key of bridge_fact_orders_dim_partnerships. It is a hasg of the columns pk_fact_orders and pk_dim_partnerships.
+The primary key of bridge_fact_orders_dim_partnerships. It is a hash of the columns pk_fact_orders and pk_dim_partnerships.
 
 {% enddocs %}
+
+
+# Fact Billing Agreements Daily
+
+
+{% docs column__pk_fact_billing_agreements_daily %}
+
+The primary key of fact_billing_agreements_daily. It is a hash of the columns date and billing_agreement_id.
+
+{% enddocs %}
+
+{% docs column__is_monday %}
+
+True if the date represents a monday, else False. 
+
+{% enddocs %}
+
+{% docs column__is_paused %}
+
+Indicates if the customer has paused their delivery on the week represented by the monday. True if paused, false if not. Null for non-Mondays.
+
+{% enddocs %}
+
+{% docs column__is_active %}
+
+True if the agreement status is "Active", else false.
+
+{% enddocs %}
+
+{% docs column__is_freezed %}
+
+True if the agreement status is "Freezed", else false.
+
+{% enddocs %}
+
+{% docs column__has_order %}
+
+Indicates if the customer has taken a delivery on the week represented by the monday. True if the customer has taken an order, false if not. Null for non-Mondays.
+
+{% enddocs %}
+
