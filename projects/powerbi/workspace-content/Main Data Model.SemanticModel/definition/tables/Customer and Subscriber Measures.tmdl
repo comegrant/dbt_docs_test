@@ -201,15 +201,20 @@ table 'Customer and Subscriber Measures'
 	/// If not filtered, this includes all statuses and segments, except the "Deleted" status.
 	/// When used together with [Customer Journey Segments], you will only be able to see this number on a weekly level.
 	measure 'Number of Accounts' = 
-			VAR IsFiltered_ = ISFILTERED('Customer and Subscriber Details'[Billing Agreement Status])
+			VAR IsFilteredOnStatus = ISFILTERED('Customer and Subscriber Details'[Billing Agreement Status])
+			VAR IsFilteredOnSegments = ISFILTERED('Customer Journey Segments')
 			RETURN
 			IF(
-			    IsFiltered_,
+			    IsFilteredOnStatus,
 			    [Number of Subscribers All Statuses],
-				CALCULATE(
-					[Number of Subscribers All Statuses],
-					'Customer and Subscriber Details'[Billing Agreement Status] <> "Deleted",
-					NOT ISBLANK('Customer and Subscriber Details'[Billing Agreement Status])
+				IF(
+					IsFilteredOnSegments,
+					'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
+					CALCULATE(
+						[Number of Subscribers All Statuses],
+						'Customer and Subscriber Details'[Billing Agreement Status] <> "Deleted",
+						NOT ISBLANK('Customer and Subscriber Details'[Billing Agreement Status])
+					)
 				)
 			)
 		formatString: #,0

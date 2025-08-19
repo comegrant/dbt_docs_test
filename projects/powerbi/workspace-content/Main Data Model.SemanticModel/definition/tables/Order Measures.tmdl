@@ -824,6 +824,25 @@ table 'Order Measures'
 		displayFolder: Portion Adjustments
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
 
+	/// Average number of orders per unique account in the selected filtering context (i.e. time, preferences etc.)
+	/// Use it together with the Customer Journey Segments to see the average number of orders per account in each segment.
+	measure 'Average Number of Orders per Account' =
+			DIVIDE(
+				[Number of Orders],
+				[Number of Accounts]
+			)
+		formatString: #,0.00
+		displayFolder: Order Frequency
+
+	/// Order frequency for accounts same period last year
+	measure 'Average Number of Orders per Account (PY)' =
+			CALCULATE(
+				[Average Number of Orders per Account],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0.00
+		displayFolder: Order Frequency
+
 	/// Average number of orders per unique customers placing an order in the selected filtering context (i.e. time, preferences etc.)
 	measure 'Average Number of Orders per Customer' =
 			DIVIDE(
@@ -834,7 +853,7 @@ table 'Order Measures'
 		displayFolder: Order Frequency
 		lineageTag: 04d72b55-4e5c-458a-b85e-4221d4ed4ef1
 
-	/// Order frequency same period last year
+	/// Order frequency for customers, same period last year
 	measure 'Average Number of Orders per Customer (PY)' =
 			CALCULATE(
 				[Average Number of Orders per Customer],
