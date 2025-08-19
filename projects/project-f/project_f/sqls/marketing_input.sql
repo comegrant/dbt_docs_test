@@ -58,3 +58,4 @@ final as (
         and budget_year = {budget_year}
         and budget_type = '{budget_type}'
 )
+select * from final
