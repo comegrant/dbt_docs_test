@@ -135,6 +135,7 @@ table 'Customer and Subscriber Measures'
 				'Customer and Subscriber Measures'[Number of Subscribers All Statuses from fact_billing_agreement_updates]
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Selected Statuses
 
 	measure 'Number of Subscribers All Statuses from fact_billing_agreement_updates' =
@@ -168,6 +169,7 @@ table 'Customer and Subscriber Measures'
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Selected Statuses
 		lineageTag: a840a69a-c3f1-4878-ae41-b99013d1b47d
 
@@ -189,9 +191,44 @@ table 'Customer and Subscriber Measures'
 				[Number of Subscribers All Statuses],
 				'Time Intelligence'[Time Calculation]="YOY%"
 			)
+		isHidden
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Selected Statuses
 
+	/// Number of accounts, i.e. all accounts included users, subscribers, customers, prospects etc. 
+	/// This can be used together with the [Customer Journey Segments] table to find the size of a certain segment,
+	/// or along with the [Customer and Subscriber Details] table to get more granular insights.
+	/// If not filtered, this includes all statuses and segments, except the "Deleted" status.
+	/// When used together with [Customer Journey Segments], you will only be able to see this number on a weekly level.
+	measure 'Number of Accounts' = 
+			VAR IsFiltered_ = ISFILTERED('Customer and Subscriber Details'[Billing Agreement Status])
+			RETURN
+			IF(
+			    IsFiltered_,
+			    [Number of Subscribers All Statuses],
+				CALCULATE(
+					[Number of Subscribers All Statuses],
+					'Customer and Subscriber Details'[Billing Agreement Status] <> "Deleted",
+					NOT ISBLANK('Customer and Subscriber Details'[Billing Agreement Status])
+				)
+			)
+		formatString: #,0
+
+	/// Number of accounts same period last year.
+	measure 'Number of Accounts (PY)' =
+			CALCULATE(
+				[Number of Accounts],
+				'Time Intelligence'[Time Calculation]="PY"
+			)
+		formatString: #,0
+
+	/// % change in number of accounts comparing current period to same period last year
+	measure 'Number of Accounts (YOY%)' =
+			CALCULATE(
+				[Number of Accounts],
+				'Time Intelligence'[Time Calculation]="YOY%"
+			)
+		formatString: 0.00%;-0.00%;0.00%
 
 	/// Cumulative sum of number of subscribers (including all statues) from the beginning of the year (year-to-date)
 	measure 'Number of Subscribers All Statuses (YTD)' =

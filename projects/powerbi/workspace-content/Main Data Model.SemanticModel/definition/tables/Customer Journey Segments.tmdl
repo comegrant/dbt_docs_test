@@ -1,6 +1,7 @@
-/// Customer journey segments table that is used to categorize customers and prospects based on their behavior in the past 8 weeks
+/// Customer journey segments that is used to categorize customers and prospects based on their behavior in the past 8 weeks
+/// Use this table along with 'Customer and Subscriber Measures'[Number of Accounts] to count the size of each segment.
+/// Use this table along with measures in 'Order Measures' to analyze the ordering behavior of each segment.
 table 'Customer Journey Segments'
-    isHidden
     lineageTag: Customer-Journey-Segments-Table
 
     /// The primary key of the dim_customer_journey_segments. It is a hash of the column customer_journey_sub_segment_id.
