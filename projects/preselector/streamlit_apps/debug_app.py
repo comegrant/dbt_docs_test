@@ -55,6 +55,7 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
                 pl.col("target_cost_of_food_per_recipe"),
                 pl.col("compliancy"),
                 pl.col("error_vector"),
+                pl.col("recipes"),
             )
         )
         .sort("generated_at", descending=True)
