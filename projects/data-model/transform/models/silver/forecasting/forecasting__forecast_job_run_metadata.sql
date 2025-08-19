@@ -44,7 +44,7 @@ source as (
     select
         add_forecast_horizon_index.*
 
-        -- true/false flag if job run is the most recent run for the menu_week and its position in the forecast horizon (forecast_horizon_index)
+        -- true/false flag indicating whether the associated metadata represents the most recent forecast for the menu_week and its position in the forecast horizon (forecast_horizon_index)
         -- a reservation is also made for the one-week forecast vs the multi-week forecast. Both will have forecast_horizon_index = 1, both are wanted in reporting
         , row_number() over (
             partition by
@@ -59,7 +59,7 @@ source as (
             order by created_at desc
         ) = 1 as is_most_recent_menu_week_horizon_forecast
 
-        -- true/false flag if job run is the latest run for the menu_week
+        -- true/false flag indicating whether the associated metadata represents the most recent forecast for the menu_week
         , row_number() over (
             partition by
                 forecast_job_id
@@ -67,7 +67,6 @@ source as (
                 , menu_year
                 , menu_week
                 , forecast_group_id
-                , forecast_model_id
             order by created_at desc
         ) = 1 as is_most_recent_menu_week_forecast
 
