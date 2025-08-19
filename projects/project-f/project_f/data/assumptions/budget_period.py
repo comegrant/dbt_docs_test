@@ -11,11 +11,7 @@ budget_periods = {
     },
     "F2": {
         2025: {
-            "start_yyyyww": 202517,
-            "end_yyyyww": 202552,
-        },
-        2026: {
-            "start_yyyyww": 202617,
+            "start_yyyyww": 202534,
             "end_yyyyww": 202652,
         },
     },

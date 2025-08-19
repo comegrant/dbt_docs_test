@@ -15,7 +15,7 @@ def section_set_params() -> tuple[str, int, int, int, str]:
             ),
         )
     with col2:
-        budget_type = st.selectbox("Select a budget type", ("F3", "Budget", "F1", "F2"))
+        budget_type = st.selectbox("Select a budget type", ("F2", "Budget", "F1", "F3"))
     with col3:
         budget_year_default = max(budget_periods[budget_type].keys())
         budget_year = st.number_input(
