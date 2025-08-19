@@ -32,7 +32,6 @@ table Ingredients
 	/// The ingredient name in local language with size and unit label appended.
     column 'Ingredient Full Name'
 		dataType: string
-		isHidden
 		summarizeBy: none
 		sourceColumn: ingredient_full_name
 
@@ -129,11 +128,10 @@ table Ingredients
 
 		annotation SummarizationSetBy = Automatic
 
-    /// The status of the ingredient
+    /// The status of the ingredient, e.g. "Active for use", "Active - season", "Outgoing", "Not in use"
     column 'Ingredient Status'
 		dataType: string
 		summarizeBy: none
-        isHidden
         isAvailableInMdx: false
 		sourceColumn: ingredient_status_name
 
@@ -217,16 +215,20 @@ table Ingredients
 		annotation SummarizationSetBy = Automatic
 
     /// Indicates if the ingredient is active.
+	/// Hidden as we think Ingredient Status is used instead.
     column 'Is Active Ingredient'
 		dataType: boolean
+		isHidden
 		summarizeBy: none
 		sourceColumn: is_active_ingredient
 
 		annotation SummarizationSetBy = Automatic
 
     /// Indicates if the ingredient is available for use in menu planning.
+	/// Hidden as we think Ingredient Status is used instead.
     column 'Is Available For Use'
 		dataType: boolean
+		isHidden
 		summarizeBy: none
 		sourceColumn: is_available_for_use
 
