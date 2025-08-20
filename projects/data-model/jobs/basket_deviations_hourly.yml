@@ -7,7 +7,7 @@ resources:
         tool: "Preselector"
         purpose: "transformation"
         env: ${bundle.target}
-        managed_by: "manually" 
+        managed_by: "manually"
         user: "dbt developers"
 
       permissions:
@@ -16,7 +16,7 @@ resources:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN
 
-      timeout_seconds: 4500 #Timeout after 75 mins
+      timeout_seconds: 6000 #Timeout after 100 mins
       edit_mode: EDITABLE
 
       schedule:
