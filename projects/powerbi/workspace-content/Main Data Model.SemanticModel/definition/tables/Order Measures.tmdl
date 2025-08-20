@@ -839,7 +839,7 @@ table 'Order Measures'
 	/// Weekly order frequency for accounts same period last year
 	measure 'Average Number of Orders per Account and Week (PY)' =
 			CALCULATE(
-				[Average Number of Orders per Account],
+				[Average Number of Orders per Account and Week],
 				'Time Intelligence'[Time Calculation]="PY"
 			)
 		formatString: #,0.00
