@@ -1,8 +1,9 @@
 {
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definitionProperties/1.0.0/schema.json",
   "version": "4.0",
   "datasetReference": {
     "byConnection": {
-      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo [test];Initial Catalog=\"Main Data Model\";Access Mode=readonly;Integrated Security=ClaimsToken",
+      "connectionString": "Data Source=\"powerbi://api.powerbi.com/v1.0/myorg/Cheffelo [test]\";initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken",
       "pbiServiceModelId": null,
       "pbiModelVirtualServerName": "sobe_wowvirtualserver",
       "pbiModelDatabaseName": "6919b7b1-9457-4d6d-b00c-9e9480152146",
