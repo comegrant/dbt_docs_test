@@ -209,7 +209,12 @@ table 'Customer and Subscriber Measures'
 			    [Number of Subscribers All Statuses],
 				IF(
 					IsFilteredOnSegments,
-					'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements],
+					IF(
+                        SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment]) = "Unknown"
+                        || ISBLANK(SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment])),
+                        BLANK(),
+					    'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements]
+                    ),
 					CALCULATE(
 						[Number of Subscribers All Statuses],
 						'Customer and Subscriber Details'[Billing Agreement Status] <> "Deleted",

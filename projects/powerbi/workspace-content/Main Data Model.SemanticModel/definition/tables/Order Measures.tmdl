@@ -824,18 +824,20 @@ table 'Order Measures'
 		displayFolder: Portion Adjustments
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
 
-	/// Average number of orders per unique account in the selected filtering context (i.e. time, preferences etc.)
+	/// Average number of orders per account and week. 
 	/// Use it together with the Customer Journey Segments to see the average number of orders per account in each segment.
-	measure 'Average Number of Orders per Account' =
+	/// It will be calculated as the total number of orders in the period, divided by the number of accounts * number of weeks in the period,
+	/// meaning that the highest number one can get is 1.0.
+	measure 'Average Number of Orders per Account and Week' =
 			DIVIDE(
 				[Number of Orders],
-				[Number of Accounts]
+				COUNTROWS('Fact Billing Agreements')
 			)
 		formatString: #,0.00
 		displayFolder: Order Frequency
 
-	/// Order frequency for accounts same period last year
-	measure 'Average Number of Orders per Account (PY)' =
+	/// Weekly order frequency for accounts same period last year
+	measure 'Average Number of Orders per Account and Week (PY)' =
 			CALCULATE(
 				[Average Number of Orders per Account],
 				'Time Intelligence'[Time Calculation]="PY"
