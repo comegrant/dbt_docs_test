@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -6,7 +8,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from aligned import ContractStore
 from aligned.compiler.feature_factory import FeatureFactory
@@ -14,18 +16,19 @@ from aligned.schemas.feature import Feature, FeatureType
 from aligned.schemas.feature_view import CompiledFeatureView
 from aligned.sources.databricks import UCSqlSource, UCTableSource
 from aligned.sources.renamer import Renamer
-from dbt.artifacts.resources.v1.components import ColumnInfo
-from dbt.contracts.graph.manifest import Manifest
-from dbt.contracts.graph.nodes import ManifestNode, ModelNode
 from pydantic import BaseModel, Field
 from pyspark.sql.types import CharType, DecimalType, VarcharType
 
 from data_contracts.tags import Tags
 
+if TYPE_CHECKING:
+    from dbt.artifacts.resources.v1.components import ColumnInfo
+    from dbt.contracts.graph.manifest import Manifest
+    from dbt.contracts.graph.nodes import ManifestNode, ModelNode
+
+    DBTModels = dict[str, dict[str, ColumnInfo]]
+
 logger = logging.getLogger(__name__)
-
-
-DBTModels = dict[str, dict[str, ColumnInfo]]
 
 
 class Issue(Protocol):
@@ -139,6 +142,8 @@ class Conflicts:
 
 
 def read_manifest_from(path: str | Path) -> Manifest:
+    from dbt.contracts.graph.manifest import Manifest
+
     if not isinstance(path, Path):
         path = Path(path)
 
@@ -146,6 +151,8 @@ def read_manifest_from(path: str | Path) -> Manifest:
 
 
 def columns_per_table(nodes: Iterable[ManifestNode], prefix: str = "~matsei_") -> DBTModels:
+    from dbt.contracts.graph.nodes import ModelNode
+
     return {  # type: ignore
         f"{node.schema.removeprefix(prefix)}.{node.identifier}": node.columns
         for node in nodes
@@ -600,6 +607,8 @@ def sql_contracts_from_directory(directory: Path) -> ContractStore:
 
 
 def generate_contracts_from_dbt(manifest_content: Manifest, schema: str = "gold") -> None:
+    from dbt.contracts.graph.nodes import ModelNode
+
     generate_path = Path("data_contracts/dbt")
     generate_path.mkdir(exist_ok=True)
 

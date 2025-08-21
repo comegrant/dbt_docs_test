@@ -1,4 +1,4 @@
-from aligned import EventTimestamp, Float, Int32, String, feature_view
+from aligned import EventTimestamp, Float32, Int32, String, feature_view
 
 from data_contracts.sources import databricks_catalog, materialized_data
 
@@ -11,6 +11,6 @@ from data_contracts.sources import databricks_catalog, materialized_data
 class AttributeScoring:
     recipe_id = Int32().as_entity()
     company_id = String()
-    family_friendly_probability = Float()
-    chefs_favorite_probability = Float()
+    family_friendly_probability = Float32()
+    chefs_favorite_probability = Float32()
     created_at = EventTimestamp()
