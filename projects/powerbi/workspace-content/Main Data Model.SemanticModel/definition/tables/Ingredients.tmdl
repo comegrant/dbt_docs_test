@@ -38,7 +38,7 @@ table Ingredients
 		annotation SummarizationSetBy = Automatic
 
 	/// Ingredient category name of the main group of an ingredient.
-    column 'Main Group'
+    column 'Main Category Group'
 		dataType: string
 		summarizeBy: none
 		sourceColumn: main_group

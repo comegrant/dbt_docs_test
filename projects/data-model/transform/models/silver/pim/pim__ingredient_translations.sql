@@ -15,7 +15,7 @@ source as (
         , language_id
 
         {# strings #}
-        , lower(ingredient_name) as ingredient_name
+        , upper(substring(ingredient_name, 1, 1)) || lower(substring(ingredient_name, 2)) as ingredient_name
 
     from source
 
