@@ -27,6 +27,7 @@ source as (
         
         {# date #}
         , production_date
+        , {{ get_iso_week_start_date('year', 'week') }} as menu_week_monday_date
         
         {# timestamp #}
         , delivery_date as purchase_delivery_date
