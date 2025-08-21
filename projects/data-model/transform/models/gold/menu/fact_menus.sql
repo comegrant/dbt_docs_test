@@ -90,10 +90,9 @@ menu_weeks as (
 
     left join recipe_costs_and_co2
         on menu_weeks.company_id = recipe_costs_and_co2.company_id
-        and menu_weeks.menu_year = recipe_costs_and_co2.menu_year
-        and menu_weeks.menu_week = recipe_costs_and_co2.menu_week
+        and menu_weeks.menu_week_monday_date = recipe_costs_and_co2.menu_week_monday_date
+        and menu_weeks.product_variation_id = recipe_costs_and_co2.product_variation_id
         and menu_weeks.recipe_id = recipe_costs_and_co2.recipe_id
-        and menu_weeks.recipe_portion_id = recipe_costs_and_co2.recipe_portion_id
 
     group by all
 

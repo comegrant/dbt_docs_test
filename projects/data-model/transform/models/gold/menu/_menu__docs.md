@@ -430,6 +430,99 @@ The total net weight (in grams) of ingredients in the recipe that have registere
 
 {% enddocs %}
 
+{% docs column__customer_ordered_product_variation_quantity %}
+
+The number of units ordered by customers of the product variation in question. This column is not intended for aggregation, but can be useful for troubleshooting or validating customer order cost calculations.
+
+{% enddocs %}
+
+{% docs column__number_of_customer_orders %}
+The number of customer orders that include the specified product variation. This column is not intended for aggregation, but can be useful for troubleshooting or validating customer order cost calculations.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_quantity %}
+
+The total ingredient quantity ordered by customers, calculated as the number of ordered recipes, multiplied with the ingredient quantity within the recipe.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_weight %}
+
+The net weight (in grams) of the ingredient ordered by customers, calculated as the number of ordered recipes multiplied by the net weight of the ingredient used in each recipe.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_weight_whole_units %}
+
+The net weight (in grams) of the ingredient ordered by customers, where the quantity is rounded up to whole units as per recipe.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_planned_cost %}
+
+The menu planning purchasing cost for the total ingredient amount ordered by customers.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_planned_cost_whole_units %}
+
+The menu planning purchasing cost for the ingredient amount ordered by customers, based on ingredient quantity in whole units as per recipe. It is calculated as the sum of the cost of the recipe ingredients ordered based on the quantity used in the recipe rounded up to the nearest integer.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_expected_cost %}
+
+The expected purchasing cost for the total ingredient amount ordered by customers. The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_expected_cost_whole_units %}
+
+The expected purchasing cost for the ingredient amount ordered by customers, based on ingredient quantity in whole units. The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_actual_cost %}
+
+The actual purchasing cost for the total ingredient amount ordered by customers. It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe and with the number of recipes ordered by customers. 
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_actual_cost_whole_units %}
+
+The actual purchasing cost for the total ingredient amount (in whole units per recipe) ordered by customers. It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_co2_emissions %}
+
+The total registered CO2 emissions (in kg) associated with the amount of the ingredient that was actually ordered, based on the ordered quantity and available emissions data.
+
+The total amount of registered co2 emissions (in kg) for the ingredients ordered by customers. It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe as well as the number of recipes ordered by customers.
+Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with customer_ordered_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_co2_emissions_whole_units %}
+
+The total amount of registered co2 emissions (in kg) for the ingredients ordered by customers. It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe as well as the number of recipes ordered by customers.
+Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with customer_ordered_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_weight_with_co2_data %}
+
+The total net weight (in grams) of ingredients that was orderd by customers and has registered CO2 emission data.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_weight_with_co2_data_whole_units %}
+
+The total net weight (in grams) of ingredients that was orderd by customers and has registered CO2 emission data, where the quantity of the ingredients per recipe is rounded up to whole units. 
+
+{% enddocs %}
+
 # Meals
 
 {% docs column__pk_dim_meals %}

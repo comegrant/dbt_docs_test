@@ -336,6 +336,12 @@ discounts as (
         , menus.recipe_portion_id
         , coalesce(menus.recipe_id, order_lines.product_variation_id) as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
+        --TODO: This might include groceries which shouldn't be a part of this.
+        -- but we might go away from this dish_quantity thing anyways and modify the product_variation_quantity.
+        , case
+            when menus.recipe_id is not null then product_variation_quantity
+            else 0
+        end as dish_quantity
         , order_lines.product_variation_quantity
         , order_lines.vat
         , order_lines.unit_price_ex_vat
@@ -369,6 +375,7 @@ discounts as (
         , menus.recipe_portion_id
         , menus.recipe_id as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
+        , order_lines.product_variation_quantity as dish_quantity
         , {{ generate_null_columns(6, prefix='null_col') }}
         , 'GENERATED' as order_line_type_name
     from order_lines
@@ -852,19 +859,24 @@ discounts as (
             , recipe_feedback.source_updated_at
         ) as fact_updated_at
     
-        , recipe_costs_and_co2.total_ingredient_weight
-        , recipe_costs_and_co2.total_ingredient_weight_whole_units
-        , recipe_costs_and_co2.total_ingredient_planned_cost
-        , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units
-        , recipe_costs_and_co2.total_ingredient_expected_cost
-        , recipe_costs_and_co2.total_ingredient_expected_cost_whole_units
-        , recipe_costs_and_co2.total_ingredient_actual_cost
-        , recipe_costs_and_co2.total_ingredient_actual_cost_whole_units
-        , recipe_costs_and_co2.total_ingredient_co2_emissions
-        , recipe_costs_and_co2.total_ingredient_co2_emissions_whole_units
-        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data
-        , recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units
+        -- This column will be used to find price categories
+        , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units as price_category_cost
+        
+        -- Find ingredient cost of the order lines with recipes
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight as total_ingredient_weight
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_planned_cost as total_ingredient_planned_cost
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_planned_cost_whole_units as total_ingredient_planned_cost_whole_units
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_expected_cost as total_ingredient_expected_cost
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_expected_cost_whole_units as total_ingredient_expected_cost_whole_units
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_actual_cost as total_ingredient_actual_cost
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_actual_cost_whole_units as total_ingredient_actual_cost_whole_units
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_co2_emissions as total_ingredient_co2_emissions
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_co2_emissions_whole_units as total_ingredient_co2_emissions_whole_units
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight_with_co2_data as total_ingredient_weight_with_co2_data
+        , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units as total_ingredient_weight_with_co2_data_whole_units
 
+        -- Find ingredient cost of the recipes from the subscription
         , recipe_costs_and_co2_subscription.total_ingredient_weight as total_ingredient_weight_subscription
         , recipe_costs_and_co2_subscription.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units_subscription
         , recipe_costs_and_co2_subscription.total_ingredient_planned_cost as total_ingredient_planned_cost_subscription
@@ -884,16 +896,14 @@ discounts as (
         and add_swap_information.billing_agreement_id = recipe_feedback.billing_agreement_id
     left join recipe_costs_and_co2
         on add_swap_information.company_id = recipe_costs_and_co2.company_id
-        and add_swap_information.menu_year = recipe_costs_and_co2.menu_year
-        and add_swap_information.menu_week = recipe_costs_and_co2.menu_week
+        and add_swap_information.menu_week_monday_date = recipe_costs_and_co2.menu_week_monday_date
+        and add_swap_information.product_variation_id = recipe_costs_and_co2.product_variation_id
         and add_swap_information.recipe_id = recipe_costs_and_co2.recipe_id
-        and add_swap_information.recipe_portion_id = recipe_costs_and_co2.recipe_portion_id
     left join recipe_costs_and_co2 as recipe_costs_and_co2_subscription
         on add_swap_information.company_id = recipe_costs_and_co2_subscription.company_id
-        and add_swap_information.menu_year = recipe_costs_and_co2_subscription.menu_year
-        and add_swap_information.menu_week = recipe_costs_and_co2_subscription.menu_week
+        and add_swap_information.menu_week_monday_date = recipe_costs_and_co2_subscription.menu_week_monday_date
+        and add_swap_information.product_variation_id_subscription = recipe_costs_and_co2_subscription.product_variation_id
         and add_swap_information.recipe_id_subscription = recipe_costs_and_co2_subscription.recipe_id
-        and add_swap_information.recipe_portion_id_subscription = recipe_costs_and_co2_subscription.recipe_portion_id
 
 )
 
@@ -1071,8 +1081,8 @@ discounts as (
     left join price_categories
         on add_recipe_information.company_id = price_categories.company_id
         and add_recipe_information.portion_id = price_categories.portion_id
-        and add_recipe_information.total_ingredient_planned_cost_whole_units >= price_categories.min_ingredient_cost_inc_vat
-        and add_recipe_information.total_ingredient_planned_cost_whole_units < price_categories.max_ingredient_cost_inc_vat
+        and add_recipe_information.price_category_cost >= price_categories.min_ingredient_cost_inc_vat
+        and add_recipe_information.price_category_cost < price_categories.max_ingredient_cost_inc_vat
         and add_recipe_information.menu_week_monday_date >= price_categories.valid_from
         and add_recipe_information.menu_week_monday_date < price_categories.valid_to
 

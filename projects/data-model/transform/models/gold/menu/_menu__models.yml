@@ -1598,6 +1598,14 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__ingredient_nutrition_units') }}"
 
+      - name: customer_ordered_product_variation_quantity
+        data_type: bigint
+        description: "{{ doc('column__customer_ordered_product_variation_quantity') }}"
+
+      - name: number_of_customer_orders
+        data_type: bigint
+        description: "{{ doc('column__number_of_customer_orders') }}"
+
       - name: ingredient_order_quantity
         data_type: decimal(38,2)
         description: "{{ doc('column__ingredient_order_quantity') }}"
@@ -1674,6 +1682,58 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_weight_with_co2_data_whole_units') }}"
 
+      - name: customer_ordered_ingredient_quantity
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_quantity') }}"
+
+      - name: customer_ordered_ingredient_weight
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_weight') }}"
+
+      - name: customer_ordered_ingredient_weight_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_weight_whole_units') }}"
+
+      - name: customer_ordered_ingredient_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_planned_cost') }}"
+
+      - name: customer_ordered_ingredient_planned_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_planned_cost_whole_units') }}"
+
+      - name: customer_ordered_ingredient_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_expected_cost') }}"
+
+      - name: customer_ordered_ingredient_expected_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_expected_cost_whole_units') }}"
+
+      - name: customer_ordered_ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_actual_cost') }}"
+
+      - name: customer_ordered_ingredient_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_actual_cost_whole_units') }}"
+
+      - name: customer_ordered_ingredient_co2_emissions
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_co2_emissions') }}"
+
+      - name: customer_ordered_ingredient_co2_emissions_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_co2_emissions_whole_units') }}"
+
+      - name: customer_ordered_ingredient_weight_with_co2_data
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data') }}" 
+
+      - name: customer_ordered_ingredient_weight_with_co2_data_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data_whole_units') }}" 
+
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
@@ -1740,6 +1800,19 @@ models:
               to: ref('dim_ingredients')
               field: pk_dim_ingredients
 
+      - name: fk_dim_price_categories
+        data_type: string
+        description: "{{ doc('column__pk_dim_price_categories') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_price_categories')
+            to_columns: [pk_dim_price_categories]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_price_categories')
+              field: pk_dim_price_categories
+    
     versions:
       - v: 1
 

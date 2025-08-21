@@ -60,6 +60,10 @@ models:
         data_type: int
         description: "{{ doc('column__product_variation_quantity') }}"
 
+      - name: dish_quantity
+        data_type: int
+        description: "{{ doc('column__dish_quantity') }}"
+
       - name: product_variation_quantity_subscription
         data_type: int
         description: "{{ doc('column__product_variation_quantity_subscription') }}"
@@ -257,6 +261,10 @@ models:
       - name: is_not_cooked_dish
         data_type: boolean
         description: "{{ doc('column__is_not_cooked_dish') }}"
+
+      - name: price_category_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__price_category_cost') }}"
 
       - name: total_ingredient_weight
         data_type: decimal(38,2)

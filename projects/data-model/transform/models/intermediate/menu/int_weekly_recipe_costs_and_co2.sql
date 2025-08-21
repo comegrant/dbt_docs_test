@@ -10,10 +10,9 @@ weekly_recipe_ingredients as (
 
     select
         company_id
-        , menu_year
-        , menu_week
+        , menu_week_monday_date
+        , product_variation_id
         , recipe_id
-        , recipe_portion_id
 
         , sum(total_ingredient_weight)                              as total_ingredient_weight
         , sum(total_ingredient_weight_whole_units)                  as total_ingredient_weight_whole_units

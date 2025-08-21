@@ -231,9 +231,21 @@ Quantity subscribed to of the product.
 
 {% enddocs %}
 
+{% docs column__dish_quantity %}
+
+Number of dishes ordered.
+
+{% enddocs %}
+
 {% docs column__total_amount_ex_vat_subscription %}
 
 The total amount of the order line if only including subscribed product variation quantity. E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk that was subscribed to.
+
+{% enddocs %}
+
+{% docs column__price_category_cost %}
+
+The planned cost of ingredients (with quantity in whole units) for a single unit of the recipe, represented by `total_ingredient_planned_cost_whole_units`. This value is not multiplied by `dish_quantity` and reflects the cost for one recipe only. It is used to determine the price category in `dim_price_categories`.
 
 {% enddocs %}
 

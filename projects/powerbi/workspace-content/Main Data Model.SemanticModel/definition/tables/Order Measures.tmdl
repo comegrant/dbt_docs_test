@@ -443,7 +443,7 @@ table 'Order Measures'
 	/// Number of dishes that have been ordered by the customers
 	measure 'Number of Ordered Dishes' =
 			CALCULATE(
-				COUNTROWS('Order Measures'),
+				SUM('Order Measures'[dish_quantity]),
 				'Order Measures'[is_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes] <> "0",
 				'Order Measures'[has_normal_order_type] = TRUE(),
