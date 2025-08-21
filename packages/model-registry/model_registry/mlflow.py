@@ -13,10 +13,17 @@ from mlflow.models import ModelSignature
 from mlflow.models.model import ModelInfo
 
 from model_registry.interface import ModelMetadata, ModelRef, ModelRegistryBuilder
-from model_registry.mlflow_infer import UnityCatalogColumn, features_for_uc, load_model, structure_feature_refs
+from model_registry.mlflow_infer import (
+    UnityCatalogColumn,
+    features_for_uc,
+    features_from_contracts,
+    load_model,
+    structure_feature_refs,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
+    from aligned import ContractStore
     from aligned.feature_store import ModelFeatureStore
     from aligned.schemas.feature import FeatureReference
 
@@ -35,38 +42,42 @@ class MlflowRegistryBuilder(ModelRegistryBuilder):
     tag_len_limit: int = field(default=1000)
 
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pl.DataFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pl.DataFrame: ...
 
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pd.DataFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pd.DataFrame: ...
 
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pl.LazyFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pl.LazyFrame: ...
 
-    def infer_over(
+    async def infer_over(
         self,
         entities: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pd.DataFrame | pl.DataFrame | pl.LazyFrame:
         ref = ModelRef.from_string(model_uri)
         model, refs, output_name = load_model(ref, feature_refs, output_name)
@@ -78,25 +89,48 @@ class MlflowRegistryBuilder(ModelRegistryBuilder):
 
         structured_refs = structure_feature_refs(refs)
 
-        if isinstance(entities, pl.LazyFrame):
-            pd_ents = entities.collect().to_pandas()
-        elif isinstance(entities, pl.DataFrame):
-            pd_ents = entities.to_pandas()
+        if isinstance(structured_refs[0], UnityCatalogColumn):
+            if isinstance(entities, pl.LazyFrame):
+                pd_ents = entities.collect().to_pandas()
+            elif isinstance(entities, pl.DataFrame):
+                pd_ents = entities.to_pandas()
+            else:
+                pd_ents = entities
+
+            features = features_for_uc(structured_refs, pd_ents)  # type: ignore
+            pd_ents[output_name] = model.predict(features)
+
+            if isinstance(entities, pl.LazyFrame):
+                return pl.from_pandas(pd_ents).lazy()
+            elif isinstance(entities, pl.DataFrame):
+                return pl.from_pandas(pd_ents)
+            else:
+                return pd_ents
         else:
-            pd_ents = entities
+            if store is None:
+                from data_contracts.store import all_contracts  # type: ignore
 
-        if not isinstance(structured_refs[0], UnityCatalogColumn):
-            raise NotImplementedError("Currently only support inferring using Unity Catalog references.")
+                store = await all_contracts()  # type: ignore
 
-        features = features_for_uc(structured_refs, pd_ents)  # type: ignore
-        pd_ents[output_name] = model.predict(features)
+            features = await features_from_contracts(
+                structured_refs,  # type: ignore
+                entities,
+                store,  # type: ignore
+            )
 
-        if isinstance(entities, pl.LazyFrame):
-            return pl.from_pandas(pd_ents).lazy()
-        elif isinstance(entities, pl.DataFrame):
-            return pl.from_pandas(pd_ents)
-        else:
-            return pd_ents
+            try:
+                preds = pl.Series(model.predict(features))
+            except Exception:
+                preds = pl.Series(model.predict(features.to_pandas()))
+
+            with_preds = features.with_columns(preds.alias(output_name))
+
+            if isinstance(entities, pl.LazyFrame):
+                return with_preds.lazy()
+            elif isinstance(entities, pl.DataFrame):
+                return with_preds
+            else:
+                return with_preds.to_pandas()
 
     def alias(self, alias: str) -> MlflowRegistryBuilder:
         self._alias = alias
@@ -113,6 +147,7 @@ class MlflowRegistryBuilder(ModelRegistryBuilder):
             encodable_references = references  # type: ignore
         else:
             from aligned.exposed_model.mlflow import reference_metadata_for_features
+            from aligned.feature_store import ModelFeatureStore
             from aligned.schemas.feature import FeatureReference
 
             if isinstance(references, ModelFeatureStore):
@@ -128,7 +163,7 @@ class MlflowRegistryBuilder(ModelRegistryBuilder):
                     else:
                         encodable_references.append(ref)
 
-        string_rep = str(encodable_references)
+        string_rep = json.dumps(encodable_references)
         if len(string_rep) >= self.tag_len_limit:
             compressed = zlib.compress(json.dumps(encodable_references).encode())
             string_rep = base64.b85encode(compressed).decode()

@@ -16,6 +16,9 @@ from model_registry.interface import ModelMetadata, ModelRef
 
 if TYPE_CHECKING:
     import pandas as pd
+    import polars as pl
+    from aligned import ContractStore
+    from aligned.feature_store import ConvertableToRetrievalJob
     from aligned.schemas.feature import FeatureReference
 
 
@@ -120,6 +123,12 @@ def add_features_to(entities: pd.DataFrame, table_path: str, columns: set[str]) 
 
     join_columns = set(schema.fieldNames()).intersection(entity_columns.to_list())
 
+    if not join_columns:
+        raise ValueError(
+            f"Was unable to find any overlap between the entities and the feature table '{table_path}'.\n"
+            f"Columns for the entities are: {entities.columns.to_list()} while the table has {schema.fieldNames()}"
+        )
+
     all_columns = sorted(join_columns.union(columns))
 
     # Naive approache, but it gets the job done
@@ -146,3 +155,9 @@ def features_for_uc(refs: list[UnityCatalogColumn], entities: pd.DataFrame) -> p
         )
 
     return features[feature_order]  # type: ignore
+
+
+async def features_from_contracts(
+    refs: list[FeatureReference], entities: ConvertableToRetrievalJob, store: ContractStore
+) -> pl.DataFrame:
+    return await store.features_for(entities, features=refs).to_polars()

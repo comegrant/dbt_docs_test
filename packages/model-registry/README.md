@@ -46,6 +46,24 @@ await (
 )
 ```
 
+### Inferring new predictions
+You can also use a model by using the following code.
+
+```python
+registry: ModelRegistryBuilder = databricks_model_registry()
+
+entities = pl.DataFrame({
+    "recipe_id": [1, 2, 3],
+    ...
+})
+preds = await registry.infer_over(entities, "some-recipe-model@champion")
+```
+This will load the needed model and data, and infer new predictions.
+
+However, this assumes that you have set both a model signature and feature references.
+
+If this is not done, is it also possible to pass those into the `infer_over` method.
+
 ### MLFlow Registry
 
 To interact with any mlflow registry, either locally or remote. Use the following code to init a registry.
@@ -66,14 +84,4 @@ However, this will not setup `mlflow` to connect to the Databricks Unity Catalog
 from model_registry import databricks_model_registry, ModelRegistryBuilder
 
 registry: ModelRegistryBuilder = databricks_model_registry()
-```
-
-### Databricks Feature Store
-
-To interact with the Databricks Feature Store registry, use the following code.
-
-```python
-from model_registry.databricks_feature_store import databricks_feature_store, ModelRegistryBuilder
-
-registry: ModelRegistryBuilder = databricks_feature_store()
 ```

@@ -2,7 +2,9 @@ from uuid import uuid4
 
 import mlflow
 import pandas as pd
+import polars as pl
 import pytest
+from aligned.sources.random_source import RandomDataSource
 from model_registry import ModelMetadata
 from model_registry.mlflow import ModelRef
 from model_registry.mlflow_infer import UnityCatalogColumn, load_model
@@ -115,7 +117,52 @@ async def test_mlflow(mocker: MockerFixture) -> None:
         ],
     )
 
-    preds = registry.infer_over(
+    preds = await registry.infer_over(
         pd.DataFrame({"id": [11, 22, 33]}), ModelRef(model_name, alias, "alias"), output_name="preds"
     )
     assert not preds.empty
+
+
+@pytest.mark.asyncio
+async def test_mlflow_aligned_refs() -> None:
+    from aligned import Int32, data_contract, model_contract
+    from model_registry.mlflow import mlflow_registry
+
+    alias = "champion"
+    model_name = "test"
+    example_input = pd.DataFrame({"a": [1, 2, 3], "b": [2, 3, 1]})
+    example_input["a"] = example_input["a"].astype("int32")
+    example_input["b"] = example_input["b"].astype("int32")
+
+    @data_contract(source=RandomDataSource(fill_mode="random_samples"))
+    class Input:
+        id = Int32().as_entity()
+        a = Int32()
+        b = Int32()
+
+        kind_of_label = Int32()
+
+    @model_contract(input_features=[Input().a, Input().b])
+    class SomeModel:
+        some_label_name = Input().kind_of_label.as_classification_label()
+
+    store = SomeModel.query([Input]).store
+
+    def function(data: pd.DataFrame) -> pd.Series:
+        return data.sum(axis=1, numeric_only=True)
+
+    registry = mlflow_registry()
+    await (
+        registry.alias(alias)
+        .training_dataset(example_input)
+        .feature_references(store.contract(SomeModel).input_features())
+        .signature(store.contract(SomeModel))
+        .register_as(model_name, function)  # type: ignore
+    )
+
+    uri = f"{model_name}@{alias}"
+
+    preds = await registry.infer_over(pl.DataFrame({"id": [11, 22, 33]}), uri, store=store)
+    assert not preds.is_empty()
+    assert "some_label_name" in preds.columns
+    assert "id" in preds.columns

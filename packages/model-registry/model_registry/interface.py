@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     import pandas as pd
     import polars as pl
     import pyspark.sql as ps
+    from aligned import ContractStore
     from aligned.feature_store import ModelFeatureStore
     from aligned.schemas.feature import FeatureReference
     from mlflow.models import ModelSignature
@@ -95,38 +96,42 @@ T = TypeVar("T")
 
 class ModelRegistryBuilder:
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pl.DataFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pl.DataFrame: ...
 
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pd.DataFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pd.DataFrame: ...
 
     @overload
-    def infer_over(
+    async def infer_over(
         self,
         entities: pl.LazyFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pl.LazyFrame: ...
 
-    def infer_over(
+    async def infer_over(
         self,
         entities: pd.DataFrame | pl.DataFrame | pl.LazyFrame,
         model_uri: str | ModelRef,
         feature_refs: list[str] | None = None,
         output_name: str | None = None,
+        store: ContractStore | None = None,
     ) -> pd.DataFrame | pl.DataFrame | pl.LazyFrame:
         """
         Uses the defined model to infer over a set of entities.
@@ -155,6 +160,7 @@ class ModelRegistryBuilder:
             model_uri: A reference to the model to use
             feature_refs: A manual overwrite of the feature references to load into the model
             output_name: A manual overwrite of what to store the output as
+            store: The contract store if needed.
 
         Returns:
             A dataframe containing both the entities and it's output.
