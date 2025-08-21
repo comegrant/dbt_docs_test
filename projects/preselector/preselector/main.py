@@ -168,7 +168,7 @@ async def run_preselector_for_request(
         st.write(importance_vector)
 
         st.write("Target vector")
-        st.write(target_vector)
+        st.write(target_vector.select(importance_vector.columns))
 
         columns = target_vector.columns
         vals = (

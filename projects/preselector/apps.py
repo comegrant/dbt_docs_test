@@ -1,6 +1,7 @@
 from chef.deploy import Apps, CommonSecrets, EnvConfig, StreamlitApp
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
+from streamlit_apps import debug_app
 
 
 class RedisConfig(BaseSettings):
@@ -9,7 +10,7 @@ class RedisConfig(BaseSettings):
 
 apps = Apps(
     debug=StreamlitApp(
-        main_app="streamlit_apps/debug_app.py",
+        main_app=debug_app,
         secrets=[CommonSecrets, RedisConfig],
         env_vars=EnvConfig(
             test={

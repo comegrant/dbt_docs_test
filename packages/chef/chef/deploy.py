@@ -1,6 +1,7 @@
 import logging
 from contextlib import suppress
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import Protocol
 
 from azure.identity import DefaultAzureCredential
@@ -252,7 +253,7 @@ class App(Protocol):
 
 @dataclass
 class StreamlitApp:
-    main_app: str
+    main_app: str | ModuleType
 
     secrets: type[BaseSettings] | list[type[BaseSettings]] | None = None
     env_vars: EnvConfig | dict[str, str] | None = None
@@ -264,7 +265,11 @@ class StreamlitApp:
         return 8501
 
     def startup_commands(self) -> list[str]:
-        command = f"python -m streamlit run {self.main_app} --server.fileWatcherType none"
+        if not isinstance(self.main_app, str):
+            file_path = self.main_app.__name__.replace(".", "/") + ".py"
+        else:
+            file_path = self.main_app
+        command = f"python -m streamlit run {file_path} --server.fileWatcherType none"
         return ["/bin/sh", "-c", command]
 
     def used_env_vars(self, env: str) -> dict[str, str]:

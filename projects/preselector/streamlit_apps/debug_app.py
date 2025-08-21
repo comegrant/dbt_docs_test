@@ -15,6 +15,7 @@ from preselector.process_stream import load_cache
 from preselector.schemas.batch_request import GenerateMealkitRequest, NegativePreference, YearWeek
 from preselector.store import preselector_store
 from project_owners.owner import owner_for_email
+from pydantic import ValidationError
 from streamlit_apps.combinations_app import display_recipes
 from streamlit_helper import authenticated_user, setup_streamlit
 
@@ -96,9 +97,9 @@ async def responses_form() -> list[PreselectorSuccessfulResponse]:
         year_weeks = []
 
         for week in row["year_weeks"]:
-            if "recipes" in week:
+            try:
                 recipes = [PreselectorRecipeResponse(**rec) for rec in week["recipes"]]
-            else:
+            except (AttributeError, ValidationError, TypeError):
                 recipes = [
                     PreselectorRecipeResponse(
                         main_recipe_id=recipe_id, variation_id=variation_id, compliancy=week["compliancy"]
