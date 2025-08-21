@@ -32,6 +32,7 @@ table 'Case Details'
     /// Contains whether the responsible for the case is related to an internal or external party.
     column 'Responsibility Type'
         dataType: string
+        isHidden
         summarizeBy: none
         sourceColumn: case_responsibility_type
 
