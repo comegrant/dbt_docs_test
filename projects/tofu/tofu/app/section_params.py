@@ -18,7 +18,19 @@ def section_set_params() -> tuple[Company, int, int, int, str]:
         default_forecast_start_year, default_forecast_start_week = get_forecast_start_from_db(
             company_id=company.company_id,
         )
+        (calculated_start_year, calculated_start_week) = get_forecast_start(
+            cut_off_day=company.cut_off_week_day,
+            forecast_date=datetime.now(tz=pytz.timezone("CET")),
+        )
+        if calculated_start_year != default_forecast_start_year or calculated_start_week != default_forecast_start_week:
+            st.write(
+                f"❗️:red[Calculated forecast start {calculated_start_year}-{calculated_start_week} differs from db!]"
+            )
+        else:
+            st.write(f"✅:green[Calculated forecast start {calculated_start_year}-{calculated_start_week} matches db!]")
+
     except:  # noqa: E722
+        st.write("❗️:red[No forecast start found in db, using default forecast start]")
         (default_forecast_start_year, default_forecast_start_week) = get_forecast_start(
             cut_off_day=company.cut_off_week_day,
             forecast_date=datetime.now(tz=pytz.timezone("CET")),
