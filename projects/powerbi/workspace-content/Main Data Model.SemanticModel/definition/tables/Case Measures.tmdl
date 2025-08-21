@@ -15,111 +15,111 @@ table 'Case Measures'
     /// It can be a complaint, redelivery or an sms or note.
     measure 'Number of Orders With Cases' = DISTINCTCOUNTNOBLANK('Case Measures'[ops_order_id])
 		formatString: #,0    
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The number of of orders which had a case related to it in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Orders With Cases (Current Month)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The number of of orders which had a case related to it last year.
     measure 'Number of Orders With Cases (PY)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The difference in number of orders with cases in the selected year and the year before.
     measure 'Number of Orders With Cases (Diff PY)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The percentage change in number of orders with cases in the selected year and the year before.
     measure 'Number of Orders With Cases (YOY%)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The cummulative number of orders with cases from the beginning of the year up to the current period.
     measure 'Number of Orders With Cases (YTD)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The cummulative number of orders with cases from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Orders With Cases (PYTD)' = CALCULATE([Number of Orders With Cases], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     ///The share of deliveries that have a case.
     measure 'Share of Orders With Cases' = DIVIDE([Number of Orders With Cases], [Number of Orders])
         formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
     
     /// The share of orders with cases last year.
     measure 'Share of Orders With Cases (PY)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The share of orders with cases in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Share of Orders With Cases (Current Month)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The difference in share of orders with cases in the selected year and the year before.
     measure 'Share of Orders With Cases (Diff PY)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The percentage change in share of orders with cases in the selected year and the year before.
     measure 'Share of Orders With Cases (YOY%)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The share of orders with cases from the beginning of the year up to the current period.
     measure 'Share of Orders With Cases (YTD)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The share of orders with cases from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Share of Orders With Cases (PYTD)' = CALCULATE([Share of Orders With Cases], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Orders with Cases
 
     /// The number of cases per 1000 orders.
     /// It can be a complaint, redelivery or an sms or note.
     measure 'Number of Cases per 1000 Orders' = DIVIDE([Number of Orders With Cases], [Number of Orders])*1000
         formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The number of cases per 1000 orders last year.
     measure 'Number of Cases per 1000 Orders (PY)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The number of cases per 1000 orders in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Cases per 1000 Orders (Current Month)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The difference in number of cases per 1000 orders in the selected year and the year before.
     measure 'Number of Cases per 1000 Orders (Diff PY)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The percentage change in number of cases per 1000 orders in the selected year and the year before.
     measure 'Number of Cases per 1000 Orders (YOY%)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The number of cases per 1000 orders from the beginning of the year up to the current period.
     measure 'Number of Cases per 1000 Orders (YTD)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The number of cases per 1000 orders from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Cases per 1000 Orders (PYTD)' = CALCULATE([Number of Cases per 1000 Orders], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Cases
+        displayFolder: Cases\Per 1000 Orders
 
     /// The number of orders which had at least one redelivery related to it.
     /// It can be a complaint, redelivery or an sms or note.
@@ -129,152 +129,151 @@ table 'Case Measures'
                 'Case Measures'[is_accepted_redelivery] = TRUE()
             )
 		formatString: #,0    
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The number of of orders which had a redelivery related to it last year.
     measure 'Number of Orders With Redelivery (PY)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The number of of orders which had a redelivery related to it in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Orders With Redelivery (Current Month)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The difference in number of orders with redeliveries in the selected year and the year before.
     measure 'Number of Orders With Redelivery (Diff PY)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The percentage change in number of orders with redeliveries in the selected year and the year before.
     measure 'Number of Orders With Redelivery (YOY%)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The cummulative number of orders with redeliveries from the beginning of the year up to the current period.
     measure 'Number of Orders With Redelivery (YTD)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The cummulative number of orders with redeliveries from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Orders With Redelivery (PYTD)' = CALCULATE([Number of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     ///The share of deliveries that have a redelivery.
     measure 'Share of Orders With Redelivery' = DIVIDE([Number of Orders With Redelivery], [Number of Orders])
         formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
     
     /// The share of orders with redeliveries last year.
     measure 'Share of Orders With Redelivery (PY)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The share of orders with redeliveries in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Share of Orders With Redelivery (Current Month)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
       
     /// The difference in share of orders with redeliveries in the selected year and the year before.
     measure 'Share of Orders With Redelivery (Diff PY)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The percentage change in share of orders with redeliveries in the selected year and the year before.
     measure 'Share of Orders With Redelivery (YOY%)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The share of orders with redeliveries from the beginning of the year up to the current period.
     measure 'Share of Orders With Redelivery (YTD)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The share of orders with redeliveries from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Share of Orders With Redelivery (PYTD)' = CALCULATE([Share of Orders With Redelivery], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Orders with Redeliveries
 
     /// The number of redeliveries per 1000 orders.
     /// It can be a complaint, redelivery or an sms or note.
     measure 'Number of Redelivery per 1000 Orders' = DIVIDE([Number of Orders With Redelivery], [Number of Orders])*1000
         formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The number of redeliveries per 1000 orders last year.
     measure 'Number of Redelivery per 1000 Orders (PY)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The number of redeliveries per 1000 orders in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Redelivery per 1000 Orders (Current Month)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The difference in number of redeliveries per 1000 orders in the selected year and the year before.
     measure 'Number of Redelivery per 1000 Orders (Diff PY)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The percentage change in number of redeliveries per 1000 orders in the selected year and the year before.
     measure 'Number of Redelivery per 1000 Orders (YOY%)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The number of redeliveries per 1000 orders from the beginning of the year up to the current period.
     measure 'Number of Redelivery per 1000 Orders (YTD)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
 
     /// The number of redeliveries per 1000 orders from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Redelivery per 1000 Orders (PYTD)' = CALCULATE([Number of Redelivery per 1000 Orders], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Redelivery
+        displayFolder: Redeliveries\Per 1000 Orders
     
-    /// The number of complaints lines. One order can have several complaint lines, but only one complaint.
-    /// It can be a complaint, redelivery or an sms or note.
+    /// The number of case lines which is related to a complaint. One order can have several case line, but only one case.
     measure 'Number of Complaints' = 
             CALCULATE(
                 DISTINCTCOUNTNOBLANK('Case Measures'[case_line_id]),
                 'Case Measures'[is_complaint] = TRUE()
             )
         formatString: #,0    
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The number of complaints last year.
     measure 'Number of Complaints (PY)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The number of complaints in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Complaints (Current Month)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The difference in number of complaints in the selected year and the year before.
     measure 'Number of Complaints (Diff PY)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The percentage change in number of complaints in the selected year and the year before.
     measure 'Number of Complaints (YOY%)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The cummulative number of complaints from the beginning of the year up to the current period.
     measure 'Number of Complaints (YTD)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The cummulative number of complaints from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Complaints (PYTD)' = CALCULATE([Number of Complaints], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Number of Complaints
 
     /// The number of orders which had at least one complaint related to it.
     /// It can be a complaint, redelivery or an sms or note.
@@ -285,364 +284,362 @@ table 'Case Measures'
 
             )
 		formatString: #,0    
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The number of of orders which had a complaint related to it last year.
     measure 'Number of Orders With Complaints (PY)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The number of of orders which had a complaint related to it in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Orders With Complaints (Current Month)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The difference in number of orders with complaints in the selected year and the year before.
     measure 'Number of Orders With Complaints (Diff PY)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The percentage change in number of orders with complaints in the selected year and the year before.
     measure 'Number of Orders With Complaints (YOY%)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The cummulative number of orders with complaints from the beginning of the year up to the current period.
     measure 'Number of Orders With Complaints (YTD)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The cummulative number of orders with complaints from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Orders With Complaints (PYTD)' = CALCULATE([Number of Orders With Complaints], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     ///The share of deliveries that have a complaint.
     measure 'Share of Orders With Complaints' = DIVIDE([Number of Orders With Complaints], [Number of Orders])
         formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
     
     /// The share of orders with complaints last year.
     measure 'Share of Orders With Complaints (PY)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The share of orders with complaints in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Share of Orders With Complaints (Current Month)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints 
+        displayFolder: Complaints\Orders with Complaints
         
     /// The difference in share of orders with complaints in the selected year and the year before.
     measure 'Share of Orders With Complaints (Diff PY)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The percentage change in share of orders with complaints in the selected year and the year before.
     measure 'Share of Orders With Complaints (YOY%)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The share of orders with complaints from the beginning of the year up to the current period.
     measure 'Share of Orders With Complaints (YTD)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The share of orders with complaints from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Share of Orders With Complaints (PYTD)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Orders with Complaints
 
     /// The number of complaints per 1000 orders.
     /// It can be a complaint, redelivery or an sms or note.
     measure 'Number of Complaints per 1000 Orders' = DIVIDE([Number of Orders With Complaints], [Number of Orders])*1000
         formatString: #,0
-        displayFolder: Orders with Complaints
-
+        displayFolder: Complaints\Per 1000 Orders
     /// The number of complaints per 1000 orders last year.
     measure 'Number of Complaints per 1000 Orders (PY)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The number of complaints per 1000 orders in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Number of Complaints per 1000 Orders (Current Month)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The difference in number of complaints per 1000 orders in the selected year and the year before.
     measure 'Number of Complaints per 1000 Orders (Diff PY)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The percentage change in number of complaints per 1000 orders in the selected year and the year before.
     measure 'Number of Complaints per 1000 Orders (YOY%)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The number of complaints per 1000 orders from the beginning of the year up to the current period.
     measure 'Number of Complaints per 1000 Orders (YTD)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The number of complaints per 1000 orders from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Number of Complaints per 1000 Orders (PYTD)' = CALCULATE([Number of Complaints per 1000 Orders], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Orders with Complaints
+        displayFolder: Complaints\Per 1000 Orders
 
     /// The total amount credited, including VAT.
     measure 'Complaint Cost Inc VAT' = SUM('Case Measures'[Credit Amount Inc VAT])
         formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
     
     /// The total amount credited last year.
     measure 'Complaint Cost Inc VAT (PY)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Complaint Cost Inc VAT (Current Month)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in amount credited in the selected year and the year before.
     measure 'Complaint Cost Inc VAT (Diff PY)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in amount credited in the selected year and the year before.
     measure 'Complaint Cost Inc VAT (YOY%)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited from the beginning of the year up to the current period.
     measure 'Complaint Cost Inc VAT (YTD)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Complaint Cost Inc VAT (PYTD)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT. The cost of all complaints in a given period divided by the number of orders in that period.
     measure 'Average Complaint Cost Per Order Inc VAT' = DIVIDE([Complaint Cost Inc VAT], [Number of Orders])
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per order, including VAT, last year.
     measure 'Average Complaint Cost Per Order Inc VAT (PY)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Average Complaint Cost Per Order Inc VAT (Current Month)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in average amount credited per order in the selected year and the year before.
     measure 'Average Complaint Cost Per Order Inc VAT (Diff PY)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in average amount credited per order in the selected year and the year before.
     measure 'Average Complaint Cost Per Order Inc VAT (YOY%)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period.
     measure 'Average Complaint Cost Per Order Inc VAT (YTD)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Average Complaint Cost Per Order Inc VAT (PYTD)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint, including VAT.
     measure 'Average Complaint Cost Inc VAT' = DIVIDE([Complaint Cost Inc VAT], [Number of Complaints])
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per complaint last year.
     measure 'Average Complaint Cost Inc VAT (PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PY")
-        formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Average Complaint Cost Inc VAT (Current Month)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in average amount credited per complaint in the selected year and the year before.
     measure 'Average Complaint Cost Inc VAT (Diff PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in average amount credited per complaint in the selected year and the year before.
     measure 'Average Complaint Cost Inc VAT (YOY%)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per complaint from the beginning of the year up to the current period.
     measure 'Average Complaint Cost Inc VAT (YTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YTD")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Average Complaint Cost Inc VAT (PYTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited, excluding VAT.
     /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
     measure 'Complaint Cost Ex Vat' = SUM('Case Measures'[Credit Amount Ex Vat])
         formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
     
     /// The total amount credited last year.
     measure 'Complaint Cost Ex Vat (PY)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The total amount credited in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Complaint Cost Ex Vat (Current Month)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The difference in amount credited in the selected year and the year before.
     measure 'Complaint Cost Ex Vat (Diff PY)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in amount credited in the selected year and the year before.
     measure 'Complaint Cost Ex Vat (YOY%)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The total amount credited from the beginning of the year up to the current period.
     measure 'Complaint Cost Ex Vat (YTD)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The total amount credited from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Complaint Cost Ex Vat (PYTD)' = CALCULATE([Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per order, including VAT. The cost of all complaints in a given period divided by the number of orders in that period.
     measure 'Average Complaint Cost Per Order Ex Vat' = DIVIDE([Complaint Cost Ex Vat], [Number of Orders])
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
     
     /// The average amount credited per order, including VAT, last year.
     measure 'Average Complaint Cost Per Order Ex Vat (PY)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per order, including VAT, in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Average Complaint Cost Per Order Ex Vat (Current Month)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The difference in average amount credited per order in the selected year and the year before.
     measure 'Average Complaint Cost Per Order Ex Vat (Diff PY)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in average amount credited per order in the selected year and the year before.
     measure 'Average Complaint Cost Per Order Ex Vat (YOY%)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period.
     measure 'Average Complaint Cost Per Order Ex Vat (YTD)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Average Complaint Cost Per Order Ex Vat (PYTD)' = CALCULATE([Average Complaint Cost Per Order Ex Vat], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per complaint, including VAT.
     measure 'Average Complaint Cost Ex Vat' = DIVIDE([Complaint Cost Ex Vat], [Number of Complaints])
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
     
     /// The average amount credited per complaint last year.
     measure 'Average Complaint Cost Ex Vat (PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="PY")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per complaint in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Average Complaint Cost Ex Vat (Current Month)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="Current Month")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The difference in average amount credited per complaint in the selected year and the year before.
     measure 'Average Complaint Cost Ex Vat (Diff PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="Diff PY")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in average amount credited per complaint in the selected year and the year before.
     measure 'Average Complaint Cost Ex Vat (YOY%)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="YOY%")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
     
     /// The average amount credited per complaint from the beginning of the year up to the current period.
     measure 'Average Complaint Cost Ex Vat (YTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="YTD")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The average amount credited per complaint from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Average Complaint Cost Ex Vat (PYTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Ex Vat], 'Time Intelligence'[Time Calculation]="PYTD")
         formatString: #,0.00
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue, excluding VAT.
     measure 'Complaint Cost Share of Order Value Ex VAT' = DIVIDE([Complaint Cost Ex VAT], [Order Value Gross Ex VAT])
         formatString: 0.00%;-0.00%;0.00%
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue last year.
     measure 'Complaint Cost Share of Order Value Ex VAT (PY)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
     measure 'Complaint Cost Share of Order Value Ex VAT (Current Month)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The difference in share of complaint cost per revenue in the selected year and the year before.
     measure 'Complaint Cost Share of Order Value Ex VAT (Diff PY)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in share of complaint cost per revenue in the selected year and the year before.
     measure 'Complaint Cost Share of Order Value Ex VAT (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Diff YOY%") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue from the beginning of the year up to the current period.
     measure 'Complaint Cost Share of Order Value Ex VAT (YTD)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue from the beginning of the year up to the current period, for the same period in the previous year.
     measure 'Complaint Cost Share of Order Value Ex VAT (PYTD)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
-        displayFolder: Complaints
+        displayFolder: Complaints\Cost Ex Vat
        
     /// The quantity of the ingredients reported in complaints. I.e., if a customer reported two bad carrots the number will be two.
     measure 'Complaint Ingredient Quantity' = SUM('Case Measures'[Ingredient Quantity])
