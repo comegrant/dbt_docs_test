@@ -64,19 +64,22 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Get runner public IP
+        id: ip
+        run: echo "ip=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
+
+      - name: Add runner IP to Key Vault firewall
+        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }} & sleep 5
+
       - name: Get Secrets from Key Vault
         uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
-            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Allow
-
             DATABRICKS_SP_BUNDLE_PAT=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-sp-bundle-pat-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
             DATABRICKS_WAREHOUSE_DBT_ID=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-warehouse-dbt-id-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
             DATABRICKS_WORKSPACE_URL=$(az keyvault secret show --vault-name kv-chefdp-common --name databricks-workspace-url-${{ vars.ENVIRONMENT_VARIABLE }} --query value -o tsv)
             STORAGE_ACCOUNT_KEY=$(az keyvault secret show --vault-name kv-chefdp-common --name azure-storageaccount-stchefdpcommon${{ vars.ENVIRONMENT_VARIABLE }}-key --query value -o tsv)
-
-            az keyvault update --name kv-chefdp-common --resource-group rg-chefdp-common --default-action Deny
 
             echo "::add-mask::${DATABRICKS_SP_BUNDLE_PAT}"
             echo "::add-mask::${DATABRICKS_WAREHOUSE_DBT_ID}"
@@ -87,6 +90,10 @@ jobs:
             echo "DATABRICKS_WAREHOUSE_DBT_ID=${DATABRICKS_WAREHOUSE_DBT_ID}" >> $GITHUB_ENV
             echo "DATABRICKS_WORKSPACE_URL=${DATABRICKS_WORKSPACE_URL}" >> $GITHUB_ENV
             echo "STORAGE_ACCOUNT_KEY=${STORAGE_ACCOUNT_KEY}" >> $GITHUB_ENV
+
+      - name: Remove runner IP from Key Vault firewall
+        if: always()
+        run: az keyvault network-rule remove --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }}
 
       - name: dbt parse
         run: poetry run dbt parse --target=${{ vars.ENVIRONMENT_VARIABLE }} --project-dir ./transform --profiles-dir ./transform/profiles
