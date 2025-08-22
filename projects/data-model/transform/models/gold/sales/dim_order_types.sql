@@ -21,24 +21,24 @@ order_types as (
         1 as mealbox_composition_id
         , 'Subscription' as order_type_name
         , 'Preselected Menu' as mealbox_selection
-        , 'No Premium Dish' as premium_dish
-        , 'No Thrifty Dish' as thrifty_dish
+        , 'Preselected Menu' as premium_dish
+        , 'Preselected Menu' as thrifty_dish
 
     union all
 
     select
         2 as mealbox_composition_id
         , 'Subscription' as order_type_name
-        , 'Customer Composed' as mealbox_selection
-        , 'Premium Dish' as premium_dish
-        , 'Thrifty Dish' as thrifty_dish
+        , 'Customer Composed Menu' as mealbox_selection
+        , 'Has Premium Dish' as premium_dish
+        , 'Has Thrifty Dish' as thrifty_dish
 
     union all
 
     select
         3 as mealbox_composition_id
         , 'Subscription' as order_type_name
-        , 'Customer Composed' as mealbox_selection
+        , 'Customer Composed Menu' as mealbox_selection
         , 'No Premium Dish' as premium_dish
         , 'No Thrifty Dish' as thrifty_dish
 
@@ -48,8 +48,8 @@ order_types as (
     select
         4 as mealbox_composition_id
         , 'Subscription' as order_type_name
-        , 'Customer Composed' as mealbox_selection
-        , 'Premium Dish' as premium_dish
+        , 'Customer Composed Menu' as mealbox_selection
+        , 'Has Premium Dish' as premium_dish
         , 'No Thrifty Dish' as thrifty_dish
 
     union all
@@ -57,9 +57,9 @@ order_types as (
     select
         5 as mealbox_composition_id
         , 'Subscription' as order_type_name
-        , 'Customer Composed' as mealbox_selection
+        , 'Customer Composed Menu' as mealbox_selection
         , 'No Premium Dish' as premium_dish
-        , 'Thrifty Dish' as thrifty_dish
+        , 'Has Thrifty Dish' as thrifty_dish
 
 )
 
