@@ -51,6 +51,12 @@ resources:
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
+        - task_key: bronze_cms_address_live
+          notebook_task:
+            notebook_path: ../ingest/selected_columns_ingest/bronze_cms_address_live.py
+          depends_on: 
+            - task_key: check-if-main-data-model-job-runs
+
         - task_key: bronze_cms_full
           notebook_task:
             notebook_path: ../ingest/full_ingest/bronze_cms_full.py

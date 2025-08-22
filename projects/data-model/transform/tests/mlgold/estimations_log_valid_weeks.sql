@@ -3,7 +3,8 @@
 with filtered_rows as (
     select  *
     from {{ ref('estimations_log') }}
-    where date_trunc('day', estimation_generated_at) = current_date
+    -- subtract an hour so that this test does not fail when estimations are created just before midnight and this test runs just after midnight
+    where date_trunc('day', estimation_generated_at) = date_trunc('day',date_add(hour,-1,current_timestamp))
 )
 
 , date_bounds as (
@@ -31,11 +32,11 @@ with filtered_rows as (
 
 , expected_companies_with_weeks as (
     select 
-    menu_week
-    , company_id
+        menu_week
+        , company_id
     from expected_menu_weeks 
     left join expected_companies
-    on 1=1
+        on 1=1
 )
 
 , missing_companies_with_weeks as (

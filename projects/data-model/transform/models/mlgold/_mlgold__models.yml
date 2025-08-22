@@ -166,7 +166,7 @@ models:
                 - 00000000-0000-0000-0000-000000000000 # Not deviation
 
               config:
-                where: 'estimation_generated_at >= current_date'
+                where: 'estimation_generated_at >= date_trunc("day",date_add(hour,-1,current_timestamp))'
 
       - name: product_variation_quantity
         description: "{{doc('column__product_variation_quantity')}}"
