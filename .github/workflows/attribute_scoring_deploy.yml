@@ -33,5 +33,5 @@ jobs:
       working-directory: projects/attribute-scoring
       target-env: ${{matrix.target}}
       should-change-target: true
-      extra-args: --var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/review-screener:${{ github.sha }}" --var="mode=production"
+      extra-args: --var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/attribute-scoring-databricks:${{ github.sha }}" --var="mode=production"
     secrets: inherit
