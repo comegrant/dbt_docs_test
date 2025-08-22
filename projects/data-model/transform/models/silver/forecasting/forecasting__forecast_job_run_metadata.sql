@@ -60,13 +60,13 @@ source as (
         ) = 1 as is_most_recent_menu_week_horizon_forecast
 
         -- true/false flag indicating whether the associated metadata represents the most recent forecast for the menu_week
-        , row_number() over (
+        -- dense_rank is used to set true on all rows in the partition with same timestamp 
+        , dense_rank() over (
             partition by
                 forecast_job_id
                 , company_id
                 , menu_year
                 , menu_week
-                , forecast_group_id
             order by created_at desc
         ) = 1 as is_most_recent_menu_week_forecast
 
