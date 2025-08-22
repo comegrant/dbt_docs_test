@@ -1,33 +1,44 @@
-# Databricks notebook source
-# COMMAND ----------
+import asyncio
 import logging
+from contextlib import suppress
+from pydantic_argparser import parse_args
 
-from databricks_env import auto_setup_env
-
-auto_setup_env()
-
-logger = logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# COMMAND ----------
+import os
 import mlflow
-
-# import mlflow.sklearn
-from attribute_scoring.common import Args
-from attribute_scoring.db import get_spark_session
+from attribute_scoring.common import ArgsTrain
 from attribute_scoring.train.train import train_pipeline
-from databricks.feature_engineering import FeatureEngineeringClient
 
-mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment("/Shared/ml_experiments/attribute-scoring")
+from key_vault import key_vault
+from attribute_scoring.common import DatabricksSecrets
 
-env = dbutils.widgets.get("env")
-company = dbutils.widgets.get("company")
-target = dbutils.widgets.get("target")
 
-# COMMAND ----------
-args = Args(company=company, env=env, target=target)
-spark = get_spark_session()
-fe = FeatureEngineeringClient()
+async def main(args: ArgsTrain):
+    vault = key_vault(args.env)
 
-train_pipeline(args=args, fe=fe, spark=spark)
+    secrets = await vault.load(
+        model=DatabricksSecrets,
+        key_map={
+            "databricks_host": f"databricks-workspace-url-{args.env}",
+            "databricks_token": f"databricks-sp-bundle-pat-{args.env}",
+        },
+    )
+
+    os.environ["DATABRICKS_HOST"] = secrets.databricks_host
+    os.environ["DATABRICKS_TOKEN"] = secrets.databricks_token.get_secret_value()
+
+    mlflow.set_tracking_uri("databricks")
+    mlflow.set_experiment("/Shared/ml_experiments/attribute-scoring")
+
+    await train_pipeline(args=args)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    with suppress(ImportError):
+        import nest_asyncio
+
+        nest_asyncio.apply()
+
+    asyncio.run(main(args=parse_args(ArgsTrain)))

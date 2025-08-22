@@ -1,44 +1,70 @@
 import datetime as dt
 
 import pytz
-from attribute_scoring.db import get_data_from_sql
-from attribute_scoring.paths import PREDICT_SQL_DIR
+import pandas as pd
+
 from attribute_scoring.predict.configs import PredictionConfig
-from databricks.connect import DatabricksSession
-from pyspark.sql import DataFrame
+from attribute_scoring.train.configs import DataConfig
+from catalog_connector import connection
+from pathlib import Path
+from attribute_scoring.paths import PREDICT_SQL_DIR
+
 
 CONFIG = PredictionConfig()
+DATA_CONFIG = DataConfig()
 
 
 def get_prediction_data(
-    spark: DatabricksSession, company_id: str, start_yyyyww: int | None = None, end_yyyyww: int | None = None
-) -> tuple[DataFrame, int, int]:
-    """Fetches prediction data from a Databricks SQL table.
+    company_id: str, start_yyyyww: str, end_yyyyww: str
+) -> tuple[pd.DataFrame, int, int]:
+    if not start_yyyyww.strip():
+        prediction_date = dt.datetime.now(pytz.timezone("cet")).replace(tzinfo=None)
+        prediction_date += dt.timedelta(weeks=CONFIG.weeks_in_future)
+        year = prediction_date.year
+        week = prediction_date.isocalendar()[1]
+        start_week = int(f"{year}{week:02d}")
+    else:
+        start_week = int(start_yyyyww.strip())
 
-    Args:
-        spark (DatabricksSession): The Spark session to use for querying.
-        company_id (str): The ID of the company to filter data for.
-        start_yyyyww (int | None): The start week of the prediction period.
-        end_yyyyww (int | None): The end week of the prediction period.
+    if not end_yyyyww.strip():
+        end_week = start_week
+    else:
+        end_week = int(end_yyyyww.strip())
 
-    Returns:
-        DataFrame: A DataFrame containing the recipe_id and target label.
-    """
-    if start_yyyyww is None:
-        prediction_date = dt.datetime.now(pytz.timezone("cet")).replace(tzinfo=None) + dt.timedelta(
-            weeks=CONFIG.weeks_in_future
+    sql_path = Path(PREDICT_SQL_DIR) / "data_to_predict.sql"
+    with sql_path.open() as f:
+        query = f.read().format(
+            company_id=company_id,
+            start_yyyyww=start_week,
+            end_yyyyww=end_week,
         )
-        start_yyyyww = int(f"{prediction_date.year}{prediction_date.isocalendar()[1]:02d}")
-    if end_yyyyww is None:
-        end_yyyyww = start_yyyyww
 
-    df = get_data_from_sql(
-        spark=spark,
-        sql_path=PREDICT_SQL_DIR / "data_to_predict.sql",
-        input_schema=CONFIG.input_schema,
-        input_table=CONFIG.input_table,
-        company_id=company_id,
-        start_yyyyww=start_yyyyww,
-        end_yyyyww=end_yyyyww,
+    df = connection.sql(query).toPandas()
+
+    return df, start_week, end_week
+
+
+def extract_features(data: pd.DataFrame) -> pd.DataFrame:
+    feature_cols = (
+        DATA_CONFIG.recipe_features.feature_names
+        + DATA_CONFIG.ingredient_features.feature_names
     )
-    return df, start_yyyyww, end_yyyyww
+
+    predict_data = pd.DataFrame(data[feature_cols])
+
+    return predict_data
+
+
+def postprocessing(
+    data: pd.DataFrame, prediction: pd.Series, target_name: str
+) -> pd.DataFrame:
+    df = pd.DataFrame(data[["company_id", "recipe_id"]])
+
+    df[f"{target_name}_probability"] = prediction
+    df[f"is_{target_name}"] = prediction.apply(
+        lambda x: float(x) > CONFIG.prediction_threshold
+    )
+
+    df = df.dropna()
+
+    return df

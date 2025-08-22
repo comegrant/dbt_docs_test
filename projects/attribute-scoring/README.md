@@ -13,10 +13,9 @@ This project is a **work-in-progress** and serves as a baseline for future impro
 ## Features of the Project
 
 - **Data**:
-    - Dbt model: `env.mlgold.ml_recipes`
-    - Feature table: `env.mlfeatures.ft_ml_recipes`
-    - Model output: `env.mloutputs.attribute_scoring`
-  
+    - Dbt model: `mlgold.attribute_scoring_recipes` and `mlgold.dishes_forecasting_recipe_ingredients`
+    - Model output: `mloutputs.attribute_scoring`
+
 - **Model Training & Prediction**:
   - Trains a classifier model for a specific company and a selected "fuzzy" attribute as the target. The target can be `family_friendly` or `family_friendly`
   - Predicts the likelihood (probability) that a recipe possesses the fuzzy attribute.
@@ -24,40 +23,42 @@ This project is a **work-in-progress** and serves as a baseline for future impro
 
 ## Pipelines
 
-The project includes three pipelines:
+The project includes two pipelines:
 
-1. **Tune Pipeline**:
-   - Runs Optuna hyperparameter tuning on the model.
-   - Triggered manually to refine and improve model performance.
-   - Databricks Job parameters:
-        - company (LMK, AMK, GL, RT): Cheffelo company abbreviation
-        - target (has_chefs_favorite_taxonomy, has_family_friendly_taxonomy): Recipe attribute
-        - n_trials (int): Number of trials for Optuna hyperparameter tuning
 
-2. **Train Pipeline**:
+1. **Train Pipeline**:
    - Trains the model for a given company and target.
    - Triggered manually.
    - Databricks Job parameters:
-        -  company (LMK, AMK, GL, RT): Cheffelo company abbreviation
+        - company (LMK, AMK, GL, RT): Cheffelo company abbreviation
         - target (has_chefs_favorite_taxonomy, has_family_friendly_taxonomy): Recipe attribute
+        - alias (e.g. "challenger"): Alias of trained model
 
-3. **Predict Pipeline**:
+2. **Predict Pipeline**:
    - Automatically triggered each week on Monday at 08:00 AM to run predictions for the latest batch of recipes.
    - Databricks Job parameter:
-        - run_mode (weekly, bulk): Run normal prediction (weekly), or predict all recipes 
+        - startyyyyww (e.g. 202543): Start year and week of the interval to run recipe predictions on. (*Default: 5 weeks ahead*)
+        - endyyyyww (e.g. 202544): End year and week of the interval to run recipe predictions on. (*Default: 5 weeks ahead*)
+        - alias (e.g. "champion"): Alias of the model to use for predictionss (*Default: "champion"*)
 
+
+If you need to tune the model, this can be done locally by running the `tune.py` file in the train/ folder.
 
 ## How to Use
 
 ### 2. Configure the Pipelines
 The pipelines can be triggered manually in Databricks or automatically.
-- The target, environment and company can be configured directly in Databricks before triggering job for tuning and training.
+- The target, environment and company can be configured directly in Databricks before triggering job for training.
 - Threshold for the true/false classification can be configured in `predict/config.py`.
 
 
 ## Streamlit app
 
-TBD.
+To test the streamlit app locally, run the following in your terminal:
+
+```bash
+chef up app
+```
 
 ## Usage
 

@@ -1,14 +1,13 @@
 import logging
-from typing import Any, Union
+from typing import Union
 
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
-from attribute_scoring.common import Args
+from attribute_scoring.common import ArgsTrain
 from attribute_scoring.train.configs import ModelConfig
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from sklearn.pipeline import Pipeline
 
 MODEL_CONFIG = ModelConfig()
 
@@ -59,7 +58,7 @@ def log_metrics(
 
 
 def log_feature_importance(
-    args: Args,
+    args: ArgsTrain,
     feature_importance: list[float],
     feature_names: list[str],
     top_n: int = 15,
@@ -80,18 +79,3 @@ def log_feature_importance(
     plt.savefig("feature_importance_plot.png")
     mlflow.log_artifact("feature_importance_plot.png")
     plt.close()
-
-
-class ModelWrapper(mlflow.pyfunc.PythonModel):
-    """Wrapper for a trained model to return probabilities instead of predictions."""
-
-    def __init__(self, trained_model: Pipeline):
-        self.model = trained_model
-
-    def preprocess_result(self, model_input: pd.DataFrame) -> pd.DataFrame:
-        return model_input
-
-    def predict(self, context: Any, model_input: pd.DataFrame) -> pd.Series:  # noqa
-        processed_df = self.preprocess_result(model_input.copy())
-        results = self.model.predict_proba(processed_df)[:, 1]
-        return results

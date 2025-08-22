@@ -17,7 +17,7 @@ jobs:
       registry: ${{ vars.CONTAINER_REGISTRY }}
       image-name: attribute-scoring-databricks
       dockerfile: docker/Dockerfile.databricks
-      push-latest: true
+      tag: "main-latest"
       push-sha: true
     secrets: inherit
 
@@ -33,8 +33,5 @@ jobs:
       working-directory: projects/attribute-scoring
       target-env: ${{matrix.target}}
       should-change-target: true
-      docker-image-name: attribute-scoring-databricks
-      docker-image-tag: ${{ github.sha }}
-      # Setting the docker image which is needed for python projects
-      extra-args: '--var="mode=production"'
+      extra-args: --var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/review-screener:${{ github.sha }}" --var="mode=production"
     secrets: inherit

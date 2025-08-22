@@ -1,15 +1,11 @@
 import logging
 
 import pandas as pd
-from attribute_scoring.common import Args
 from attribute_scoring.train.configs import DataConfig
-from attribute_scoring.train.data import create_training_data, get_feature_lookups, get_training_data
+from sklearn.model_selection import train_test_split
 from attribute_scoring.train.utils import check_target_distribution
-from constants.companies import get_company_by_code
-from databricks.connect import DatabricksSession
-from databricks.feature_engineering import FeatureEngineeringClient
-from databricks.feature_engineering.training_set import TrainingSet
 from sklearn.preprocessing import LabelEncoder
+
 
 DATA_CONFIG = DataConfig()
 
@@ -29,55 +25,65 @@ def encode_labels(target: pd.Series) -> tuple[pd.Series, LabelEncoder]:
     return target_encoded, label_encoder
 
 
-def prepare_training_data(
-    args: Args, fe: FeatureEngineeringClient, spark: DatabricksSession
-) -> tuple[pd.DataFrame, pd.Series, TrainingSet]:
-    """Prepares data for model training.
-
-    Prepares the training data by fetching raw data, applying feature lookups,
-    and encoding the target labels.
+def generate_sample(
+    df: pd.DataFrame, target_label: str, sample_size: int
+) -> pd.DataFrame:
+    """
+    Generate a stratified random sample from the input dataframe for training.
 
     Args:
-        args (Args): Configuration arguments.
-        fe (FeatureEngineeringClient): Feature engineering client.
-        spark (DatabricksSession): The Spark session to use for querying.
+        df (pd.DataFrame): The input dataframe containing features and target.
+        target_label (str): The name of the target column for stratification.
+        sample_size (int): The desired number of samples in the output dataframe.
 
     Returns:
-        tuple[pd.DataFrame, pd.Series, any]:
-            - data (pd.DataFrame): Processed feature data for training.
-            - target_encoded (pd.Series): Encoded target variable.
-            - training_set (any): Training set object.
+        pd.DataFrame: A sampled dataframe with approximately `sample_size` rows, stratified by the target label.
+                      If `sample_size` is None or greater than the number of rows in `df`, returns the original dataframe.
     """
-    logging.info("Fetching data...")
-    company_id = get_company_by_code(args.company).company_id
-    target_label = args.target
+    if sample_size is not None and sample_size < len(df):
+        sample_fraction = sample_size / len(df)
+        df_sampled, _ = train_test_split(
+            df,
+            test_size=1 - sample_fraction,
+            stratify=df[target_label],
+            random_state=10,
+        )
 
-    if target_label is None:
-        raise ValueError("target_label cannot be None")
+        return pd.DataFrame(df_sampled)
+    else:
+        return df
 
-    df = get_training_data(spark=spark, company_id=company_id, target_label=target_label)
 
-    lookup = get_feature_lookups(
-        lookup_recipe=DATA_CONFIG.recipe_feature_lookup,
-        lookup_ingredients=DATA_CONFIG.ingredient_feature_lookup,
+def create_training_data(
+    df: pd.DataFrame, target_label: str, sample_size: int = 10000
+) -> tuple[pd.DataFrame, pd.Series]:
+    """
+    Preprocesses the training data for model training.
+
+    Args:
+        df (pd.DataFrame): The input dataframe containing features and target.
+        target_label (str): The name of the target column.
+        sample_size (int, optional): The number of samples to use for training.
+
+    Returns:
+        tuple[pd.DataFrame, pd.Series]: A tuple containing the preprocessed feature dataframe and the encoded target series.
+    """
+    feature_columns = (
+        DATA_CONFIG.recipe_features.feature_names
+        + DATA_CONFIG.ingredient_features.feature_names
     )
 
-    logging.info("Creating training set...")
-    training_df, training_set = create_training_data(
-        df=df,
-        fe=fe,
-        feature_lookup=lookup,
-        target_label=target_label,
-        excluded_columns=DATA_CONFIG.excluded_columns,
-    )
+    training_set = df[feature_columns + [target_label]]
+    training_set = training_set.dropna(subset=[target_label])  # type: ignore
+    training_set = training_set.drop_duplicates()
 
-    training_df = training_df.drop_duplicates()
-    logging.info(f"Created training set with {training_df.shape[0]} rows.")
+    training_sample = generate_sample(training_set, target_label, sample_size)
 
-    data = training_df.drop([target_label], axis=1)
-    target = pd.Series(training_df[target_label])
+    training_data = training_sample.drop(target_label, axis=1)
+    target = pd.Series(training_sample[target_label])
+
     logging.info(check_target_distribution(target))
 
     target_encoded, _ = encode_labels(target)
 
-    return data, target_encoded, training_set
+    return training_data, target_encoded

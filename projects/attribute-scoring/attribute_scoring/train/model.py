@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import Optional, Any
 
-from attribute_scoring.common import Args
+from mlflow.pyfunc.model import PythonModel
+import pandas as pd
+from attribute_scoring.common import ArgsTrain
 from attribute_scoring.train.configs import DataConfig, ModelConfig
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -10,7 +12,7 @@ DATA_CONFIG = DataConfig()
 MODEL_CONFIG = ModelConfig()
 
 
-def model(args: Args, classifier: Optional[object] = None) -> Pipeline:
+def model(args: ArgsTrain, classifier: Optional[object] = None) -> Pipeline:
     """Builds a machine learning pipeline that preprocesses data and applies a classifier.
 
     Args:
@@ -25,8 +27,6 @@ def model(args: Args, classifier: Optional[object] = None) -> Pipeline:
         columns_to_scale=DATA_CONFIG.columns_to_scale,
     )
     if classifier is None:
-        if args.target is None:
-            raise ValueError("Target must be specified when classifier is not provided")
         classifier = MODEL_CONFIG.classifier(args.company, args.target)
 
     model_pipeline = Pipeline(
@@ -39,7 +39,9 @@ def model(args: Args, classifier: Optional[object] = None) -> Pipeline:
     return model_pipeline
 
 
-def create_preprocessor(columns_to_encode: list[str], columns_to_scale: list[str]) -> ColumnTransformer:
+def create_preprocessor(
+    columns_to_encode: list[str], columns_to_scale: list[str]
+) -> ColumnTransformer:
     """Creates a preprocessor for the machine learning pipeline.
 
     Args:
@@ -62,3 +64,20 @@ def create_preprocessor(columns_to_encode: list[str], columns_to_scale: list[str
     )
 
     return preprocessor
+
+
+class ModelWrapper(PythonModel):
+    """Wrapper for a trained model to return probabilities instead of predictions."""
+
+    def __init__(self, trained_model: Pipeline):
+        self.model = trained_model
+
+    def preprocess_result(self, model_input: pd.DataFrame) -> pd.DataFrame:
+        return model_input
+
+    def predict(
+        self, context: Any, model_input: pd.DataFrame, params: Optional[dict] = None
+    ) -> Any:
+        processed_df = self.preprocess_result(model_input.copy())
+        results = self.model.predict_proba(processed_df)[:, 1]
+        return results

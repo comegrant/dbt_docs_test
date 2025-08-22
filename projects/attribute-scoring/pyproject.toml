@@ -6,12 +6,9 @@ authors = ["Agathe Raaum <agathe.raaum@cheffelo.com>"]
 packages = [{include = "attribute_scoring"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11.9"
 pydantic-settings = "^2.1.0"
 streamlit = "^1.40.0"
-databricks-env = {path = "../../packages/databricks-env", develop = true}
-databricks-connect = "15.4.3"
-databricks-feature-engineering = "^0.8.0"
 constants = {path = "../../packages/constants", develop = true}
 scikit-learn = "1.5.2"
 xgboost = "^2.1.1"
@@ -25,8 +22,14 @@ catboost = "^1.2.7"
 imbalanced-learn = "^0.12.4"
 msal = "^1.31.0"
 pyright = "^1.1.391"
+mlflow = "^2.19.0"
 
 slack-connector = {path = "../../packages/slack-connector", develop = true}
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
+data-contracts = {path = "../../packages/data-contracts", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
+model-registry = {path = "../../packages/model-registry", develop = true}
+
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
 
@@ -37,6 +40,7 @@ pytest = "*"
 pytest-asyncio = "*"
 ruff = "*"
 chef = {path = "../../packages/chef", develop = true}
+pyright = "*"
 ipykernel = "^6.29.5"
 
 [build-system]

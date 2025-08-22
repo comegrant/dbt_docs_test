@@ -1,18 +1,17 @@
 name: attribute-scoring PR
+
 on:
   pull_request:
     paths:
-      - '.github/workflows/template_test_in_docker.yml'
       - '.github/workflows/attribute_scoring_pr.yml'
       - 'projects/attribute-scoring/**'
   workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
 
 jobs:
   test-attribute-scoring:
-    uses:
-      ./.github/workflows/template_test_python.yml
+    uses: ./.github/workflows/template_test_python.yml
     with:
-      python-version: "3.10.13"
+      python-version: "3.11.9"
       working-directory: projects/attribute-scoring
     secrets: inherit
 
@@ -25,7 +24,7 @@ jobs:
       dockerfile: docker/Dockerfile.databricks
       tag: dev-latest
     secrets: inherit
-  
+
   deploy-to-dev:
     uses: ./.github/workflows/cd_dab_template.yml
     with:

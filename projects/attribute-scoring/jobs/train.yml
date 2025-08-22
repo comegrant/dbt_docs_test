@@ -29,15 +29,30 @@ resources:
         on_success:
           - agathe.raaum@cheffelo.com
 
+      parameters:
+        - name: env
+          default: "dev"
+        - name: company
+          default: "AMK"
+        - name: target
+          default: "has_chefs_favorite_taxonomy"
+        - name: alias
+          default: "challenger"
+
       tasks:
         - task_key: train-attribute-scoring
           job_cluster_key: attribute-scoring-train
-          notebook_task:
-            notebook_path: ./1_model_train.py
-            base_parameters:
-              env: "${var.environment}"
-              company: LMK
-              target: has_chefs_favorite_taxonomy
+          spark_python_task:
+            python_file: 1_model_train.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+              - "--company"
+              - "{{job.parameters.company}}"
+              - "--target"
+              - "{{job.parameters.target}}"
+              - "--alias"
+              - "{{job.parameters.alias}}"
 
         - task_key: slack-notification-success
           depends_on:

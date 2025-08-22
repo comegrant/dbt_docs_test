@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM python:3.11-slim-buster
 
 # install Poetry
 RUN pip install --no-cache-dir poetry
@@ -34,4 +34,3 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 # set starting command
 WORKDIR $SERVICE_HOME
 CMD python attribute_scoring/main.py
-

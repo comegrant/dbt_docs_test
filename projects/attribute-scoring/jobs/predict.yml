@@ -33,63 +33,95 @@ resources:
         on_success:
           - agathe.raaum@cheffelo.com
 
+      parameters:
+        - name: env
+          default: "dev"
+        - name: company
+          default: "AMK"
+        - name: alias
+          default: "champion"
+        - name: startyyyyww
+          default: ""
+        - name: endyyyyww
+          default: ""
+
       tasks:
         - task_key: predict-attribute-scoring-AMK
           job_cluster_key: attribute-scoring-predict-weekly
-          notebook_task:
-            notebook_path: ./2_predict.py
-            base_parameters:
-              env: "${var.environment}"
-              company: AMK
-              start_yyyyww: None
-              end_yyyyww: None
+          spark_python_task:
+            python_file: ./2_predict.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+              - "--company"
+              - "AMK"
+              - "--alias"
+              - "{{job.parameters.alias}}"
+              - "--startyyyyww"
+              - "{{job.parameters.startyyyyww}}"
+              - "--endyyyyww"
+              - "{{job.parameters.endyyyyww}}"
 
         - task_key: predict-attribute-scoring-GL
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
-          notebook_task:
-            notebook_path: ./2_predict.py
-            base_parameters:
-              env: "${var.environment}"
-              company: GL
-              start_yyyyww: None
-              end_yyyyww: None
+          spark_python_task:
+            python_file: ./2_predict.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+              - "--company"
+              - "GL"
+              - "--alias"
+              - "{{job.parameters.alias}}"
+              - "--startyyyyww"
+              - "{{job.parameters.startyyyyww}}"
+              - "--endyyyyww"
+              - "{{job.parameters.endyyyyww}}"
           depends_on:
             - task_key: predict-attribute-scoring-AMK
 
         - task_key: predict-attribute-scoring-RT
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
-          notebook_task:
-            notebook_path: ./2_predict.py
-            base_parameters:
-              env: "${var.environment}"
-              company: RT
-              start_yyyyww: None
-              end_yyyyww: None
+          spark_python_task:
+            python_file: ./2_predict.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+              - "--company"
+              - "RT"
+              - "--alias"
+              - "{{job.parameters.alias}}"
+              - "--startyyyyww"
+              - "{{job.parameters.startyyyyww}}"
+              - "--endyyyyww"
+              - "{{job.parameters.endyyyyww}}"
           depends_on:
             - task_key: predict-attribute-scoring-GL
 
         - task_key: predict-attribute-scoring-LMK
           job_cluster_key: attribute-scoring-predict-weekly
           run_if: ALL_DONE
-          notebook_task:
-            notebook_path: ./2_predict.py
-            base_parameters:
-              env: "${var.environment}"
-              company: LMK
-              start_yyyyww: None
-              end_yyyyww: None
+          spark_python_task:
+            python_file: ./2_predict.py
+            parameters:
+              - "--env"
+              - "{{job.parameters.env}}"
+              - "--company"
+              - "LMK"
+              - "--alias"
+              - "{{job.parameters.alias}}"
+              - "--startyyyyww"
+              - "{{job.parameters.startyyyyww}}"
+              - "--endyyyyww"
+              - "{{job.parameters.endyyyyww}}"
           depends_on:
             - task_key: predict-attribute-scoring-RT
 
         - task_key: slack-notification-success
-          depends_on: [
-            {task_key: predict-attribute-scoring-AMK},
-            {task_key: predict-attribute-scoring-GL},
-            {task_key: predict-attribute-scoring-RT},
-            {task_key: predict-attribute-scoring-LMK},
-          ]
+          depends_on: [task_key: predict-attribute-scoring-AMK, task_key: predict-attribute-scoring-GL, task_key: predict-attribute-scoring-RT,
+             task_key: predict-attribute-scoring-LMK]
           run_if: ALL_SUCCESS
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
@@ -98,14 +130,10 @@ resources:
               header_message: ""
               body_message: ✅ Attribute scoring prediction successful!
               is_error: false
-        
+
         - task_key: slack-notification-failure
-          depends_on: [
-            {task_key: predict-attribute-scoring-AMK},
-            {task_key: predict-attribute-scoring-GL},
-            {task_key: predict-attribute-scoring-RT},
-            {task_key: predict-attribute-scoring-LMK},
-          ]
+          depends_on: [task_key: predict-attribute-scoring-AMK, task_key: predict-attribute-scoring-GL, task_key: predict-attribute-scoring-RT,
+             task_key: predict-attribute-scoring-LMK]
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
