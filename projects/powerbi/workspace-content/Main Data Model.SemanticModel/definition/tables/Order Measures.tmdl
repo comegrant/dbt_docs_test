@@ -1880,6 +1880,15 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// The quantity of ordered dishes
+	column dish_quantity
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: sum
+		sourceColumn: dish_quantity
+
 	/// The timestamp of when the order was created in the CMS system
 	column source_created_at
 		dataType: dateTime
