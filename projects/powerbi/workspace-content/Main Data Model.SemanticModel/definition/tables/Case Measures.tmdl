@@ -640,6 +640,42 @@ table 'Case Measures'
     measure 'Complaint Cost Share of Order Value Ex VAT (PYTD)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
+
+    /// The share of complaint cost per revenue, including VAT.
+	measure 'Complaint Cost Share of Order Value Inc Vat' = DIVIDE([Complaint Cost Inc VAT], [Order Value Gross Inc VAT])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The share of complaint cost per revenue last year, including VAT.
+	measure 'Complaint Cost Share of Order Value Inc Vat (PY)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="PY")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The share of complaint cost per revenue (including VAT) in the month of todays date.
+	/// Need to be filtered on year if its wanted to see numbers for a specific year.
+	measure 'Complaint Cost Share of Order Value Inc Vat (Current Month)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="Current Month")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The difference in share of complaint cost per revenue (including VAT) in the selected year and the year before.
+	measure 'Complaint Cost Share of Order Value Inc Vat (Diff PY)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="Diff PY")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The percentage change in share of complaint cost per revenue (including VAT) in the selected year and the year before.
+	measure 'Complaint Cost Share of Order Value Inc Vat (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="YOY%")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The share of complaint cost per revenue (including VAT) from the beginning of the year up to the current period.
+	measure 'Complaint Cost Share of Order Value Inc Vat (YTD)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="YTD")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
+
+	/// The share of complaint cost per revenue (including VAT) from the beginning of the year up to the current period, for the same period in the previous year.
+	measure 'Complaint Cost Share of Order Value Inc Vat (PYTD)' = CALCULATE([Complaint Cost Share of Order Value Inc Vat], 'Time Intelligence'[Time Calculation]="PYTD")
+		formatString: #,0
+		displayFolder: Complaints\Cost Inc Vat
        
     /// The quantity of the ingredients reported in complaints. I.e., if a customer reported two bad carrots the number will be two.
     measure 'Complaint Ingredient Quantity' = SUM('Case Measures'[Ingredient Quantity])

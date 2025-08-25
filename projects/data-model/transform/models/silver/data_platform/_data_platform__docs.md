@@ -138,6 +138,18 @@ The difference in number of weeks between the monday date of the current week an
 
 {% enddocs %}
 
+{% docs column__financial_year_week_name %}
+
+Year and week concatenated in the same column.
+
+{% enddocs %}
+
+{% docs column__financial_year_week_number %}
+
+Year and week added together in the same column.
+
+{% enddocs %}
+
 # Customer Journey Segments
 {% docs column__customer_journey_main_segment_id %}
 

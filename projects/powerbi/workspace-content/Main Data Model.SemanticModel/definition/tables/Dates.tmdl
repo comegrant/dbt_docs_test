@@ -4,6 +4,9 @@
 table Dates
 	lineageTag: c07364ff-2124-4e7c-891b-a66b8032cb30
 
+	/// Counts the number of weeks in a selected period.
+	measure 'Number of Weeks' = CALCULATE( DISTINCTCOUNT( 'Dates'[Year Week]), 'Dates'[Day of Week] = 1)
+
 	/// Date of year on
 	column Date
 		dataType: dateTime
@@ -88,6 +91,12 @@ table Dates
 		sourceColumn: financial_quarter
 
 		annotation SummarizationSetBy = User
+
+	/// Year and week added together in one column.
+	column 'Year Week'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: financial_year_week_number
 
 	/// Month of the year (1-12). This follows the normal iso calendar which is the normal calendar in Scandinavia.
 	column 'Calendar Month Number'

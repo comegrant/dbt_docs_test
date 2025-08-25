@@ -33,11 +33,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Get runner public IP
+        shell: bash
         id: ip
         run: echo "ip=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
 
       - name: Add runner IP to Key Vault firewall
-        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }} & sleep 5
+        run: az keyvault network-rule add --name kv-chefdp-common --ip-address ${{ steps.ip.outputs.ip }} & sleep 10
 
       - name: Get Secrets from Key Vault
         shell: pwsh

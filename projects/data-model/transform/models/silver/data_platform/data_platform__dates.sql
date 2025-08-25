@@ -120,6 +120,8 @@ dates as (
         , weekday_name
         , monday_date
         , monday_date_previous_week
+        , concat(financial_year, ' ', financial_week) as financial_year_week_name
+        , financial_year * 100 + financial_week as financial_year_week_number
         -- add index to all the days of the financial year
         -- makes it possible to compare with the same day in other years
         -- since some financial years does not have week 1 we cannot use row_number()
