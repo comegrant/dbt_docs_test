@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import mlflow
+from mlflow.models import ModelSignature
 from mlflow.pyfunc import PyFuncModel
 
 from model_registry.interface import ModelMetadata, ModelRef
@@ -48,15 +49,14 @@ def load_model(
     model_ref: ModelRef, feature_refs: list[str] | None = None, output_name: str | None = None
 ) -> tuple[PyFuncModel, list[str] | None, str]:
     model: PyFuncModel = mlflow.pyfunc.load_model(model_ref.model_uri)
-    if not output_name:
-        model_info = mlflow.models.get_model_info(model_ref.model_uri)  # type: ignore
 
-        signature = model_info.signature_dict
+    if not output_name:
+        signature: ModelSignature = model.metadata.signature
         if signature is None:
             raise ValueError("Needs a signature in order to know what to name the output preds.")
 
         with suppress(Exception):
-            output_name = json.loads(signature["outputs"])[0]["name"]
+            output_name = str(signature.outputs.input_names()[0])
 
     assert output_name, "Unable to find an output name, so manually define it."
 

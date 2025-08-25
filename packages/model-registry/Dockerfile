@@ -22,7 +22,7 @@ RUN mkdir -p model_registry && touch model_registry/__init__.py
 # install requirements
 RUN pip install virtualenv==20.34.0
 RUN poetry config virtualenvs.create false
-RUN poetry install
+RUN poetry install --all-extras
 
 # copy source code
 COPY packages/model-registry .

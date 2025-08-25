@@ -11,6 +11,7 @@ import mlflow
 import polars as pl
 from mlflow.models import ModelSignature
 from mlflow.models.model import ModelInfo
+from mlflow.types.schema import DataType, Schema
 
 from model_registry.interface import ModelMetadata, ModelRef, ModelRegistryBuilder
 from model_registry.mlflow_infer import (
@@ -98,6 +99,14 @@ class MlflowRegistryBuilder(ModelRegistryBuilder):
                 pd_ents = entities
 
             features = features_for_uc(structured_refs, pd_ents)  # type: ignore
+
+            assert isinstance(model.metadata.signature.inputs, Schema)
+            for input_col, dtype in model.metadata.signature.inputs.input_types_dict().items():
+                if isinstance(dtype, DataType):
+                    features[input_col] = features[input_col].astype(dtype.to_pandas())
+                else:
+                    features[input_col] = features[input_col].astype(dtype)
+
             pd_ents[output_name] = model.predict(features)
 
             if isinstance(entities, pl.LazyFrame):
