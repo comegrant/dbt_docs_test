@@ -25,6 +25,7 @@ async def main(args: ArgsTrain):
 
     os.environ["DATABRICKS_HOST"] = secrets.databricks_host
     os.environ["DATABRICKS_TOKEN"] = secrets.databricks_token.get_secret_value()
+    os.environ["MLFLOW_USE_DATABRICKS_SDK_MODEL_ARTIFACTS_REPO_FOR_UC"] = "true"
 
     mlflow.set_tracking_uri("databricks")
     mlflow.set_experiment("/Shared/ml_experiments/attribute-scoring")
