@@ -1,20 +1,81 @@
+# Price Campaign Products
+{% docs column__price_campaign_product_id %}
+
+The primary key of the price campaign products in the product layer database.
+This table contains the price of campaign products for a given product variation, on a product_variation_id level. It contains both the campaign price and the original price (base campaign price).
+
+{% enddocs %}
+
+{% docs column__menu_week_from %}
+
+The campaign price's first applicable menu week.
+
+{% enddocs %}
+
+{% docs column__menu_year_from %}
+
+The campaign price's first applicable menu year.
+
+{% enddocs %}
+
+
+{% docs column__menu_week_to %}
+
+The campaign price's last applicable menu week. If null, the campaign product price is still valid.
+
+{% enddocs %}
+
+
+{% docs column__menu_year_to %}
+
+The campaign price's last applicable menu year. If null, the campaign product price is still valid.
+
+{% enddocs %}
+
+{% docs column__price_ex_vat %}
+
+The price of the campaign product before VAT.
+
+{% enddocs %}
+
+{% docs column__target_margin %}
+
+The target margin of the campaign product.
+
+{% enddocs %}
+
+
+{% docs column__is_base_campaign %}
+
+True if the campaign price is the base campaign price, which means it does not have a discount. is_base_campaign indicates there is a discount when it is false.
+
+{% enddocs %}
+
+{% docs column__comment %}
+
+A comment on the campaign price. Usually indicates whether the price is a default price or a discount price.
+
+{% enddocs %}
+
+
+
 # Product Concepts
 {% docs column__product_concept_id %}
 
-The primary key of the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level. 
+The primary key of the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level.
 
 {% enddocs %}
 
 {% docs column__product_concept_name %}
 
-The name the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level. 
+The name the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level.
 
 
 {% enddocs %}
 
 {% docs column__product_concept_description %}
 
-The description of the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level. 
+The description of the product concepts in the product layer database. Product concepts is a grouping of products, almost like the product types, but on a more general level.
 
 {% enddocs %}
 
@@ -39,7 +100,7 @@ The description of the product types in the product layer database.
 
 {% docs column__is_physical_product %}
 
-True if the product is a physical product (like Mealboxes). 
+True if the product is a physical product (like Mealboxes).
 False if the product is not a physical product (like Administrative products or Giftcards).
 
 {% enddocs %}
@@ -67,13 +128,13 @@ The description of the products in the product layer database.
 
 {% docs column__product_status_id %}
 
-The primary key of the product statuses in the product layer database. 
+The primary key of the product statuses in the product layer database.
 
 {% enddocs %}
 
 {% docs column__product_status_name %}
 
-The name of the product statuses in the product layer database. 
+The name of the product statuses in the product layer database.
 
 {% enddocs %}
 
@@ -94,13 +155,13 @@ The stock keeping unit (sku) of the product variations.
 
 {% docs column__product_variation_name %}
 
-The name of each variation name in each company. A product variation has a specified size, meals and portions, unlike the corresponding product where the size, portions and meals is not specified. 
+The name of each variation name in each company. A product variation has a specified size, meals and portions, unlike the corresponding product where the size, portions and meals is not specified.
 
 {% enddocs %}
 
 {% docs column__product_variation_description %}
 
-Description of a product variation. 
+Description of a product variation.
 
 {% enddocs %}
 
@@ -114,21 +175,21 @@ True if the product variation will be visible on the webpage within the next 4 w
 
 {% docs column__attribute_value %}
 
-The value of a selected attribute for a product variation. 
-E.g. if the selected attribute is "Meals" and the product variation is "Vegetar 3 Middager 4 Personer", then the attribute value will be 3, since the variation has 3 meals. 
+The value of a selected attribute for a product variation.
+E.g. if the selected attribute is "Meals" and the product variation is "Vegetar 3 Middager 4 Personer", then the attribute value will be 3, since the variation has 3 meals.
 
 {% enddocs %}
 
 # Product Variation Attribute Templates
 {% docs column__attribute_id %}
 
-The id of the attribute connected to a product variation. 
+The id of the attribute connected to a product variation.
 
 {% enddocs %}
 
 {% docs column__attribute_name %}
 
-The name of the attribute connected to a product variation. For example "Meals" or "Portions". 
+The name of the attribute connected to a product variation. For example "Meals" or "Portions".
 
 {% enddocs %}
 
@@ -140,6 +201,6 @@ The default value of a product variation attribute, which should be used if no o
 
 {% docs column__attribute_data_type %}
 
-Gives information about the data type of the attribute value, e.g. if it is a String, Decimal, Boolean etc. 
+Gives information about the data type of the attribute value, e.g. if it is a String, Decimal, Boolean etc.
 
 {% enddocs %}

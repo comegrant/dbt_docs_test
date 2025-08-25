@@ -8,15 +8,16 @@ from coredb_connector import load_coredb_full
 
 database = "PRODUCT_LAYER"
 tables = [
-    "product", 
+    "price_campaign_product",
+    "product",
     "product_concept",
-    "product_type", 
+    "product_type",
     "product_type_concept",
     "product_status",
-    "product_variation", 
-    "product_variation_company", 
-    "product_variation_attribute_template", 
+    "product_variation",
+    "product_variation_company",
+    "product_variation_attribute_template",
     "product_variation_attribute_value"
     ]
-for table in tables: 
+for table in tables:
     load_coredb_full(dbutils, database, table)

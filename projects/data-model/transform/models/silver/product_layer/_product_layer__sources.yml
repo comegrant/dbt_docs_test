@@ -5,6 +5,7 @@ sources:
     description: "Tables from the product layer database in the CoreDB Azure SQL Server"
     schema: bronze
     tables:
+      - name: product_layer__price_campaign_product
       - name: product_layer__product_concept
       - name: product_layer__product_type_concept
       - name: product_layer__product_type
@@ -14,3 +15,4 @@ sources:
       - name: product_layer__product_variation_company
       - name: product_layer__product_variation_attribute_value
       - name: product_layer__product_variation_attribute_template
+      

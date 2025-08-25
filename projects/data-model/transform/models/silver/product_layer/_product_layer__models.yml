@@ -1,4 +1,100 @@
 models:
+  - name: product_layer__price_campaign_products
+    description: "Table holding price campaign products for a given product variation."
+    columns:
+      - name: price_campaign_product_id
+        data_type: varchar(36)
+        description: "{{ doc('column__price_campaign_product_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: varchar(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: product_variation_id
+        data_type: varchar(36)
+        description: "{{ doc('column__product_variation_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_from
+        data_type: int
+        description: "{{ doc('column__menu_week_from') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year_from
+        data_type: int
+        description: "{{ doc('column__menu_year_from') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_to
+        data_type: int
+        description: "{{ doc('column__menu_week_to') }}"
+
+      - name: menu_year_to
+        data_type: int
+        description: "{{ doc('column__menu_year_to') }}"
+
+      - name: price_ex_vat
+        data_type: decimal(20, 2)
+        description: "{{ doc('column__price_ex_vat') }}"
+        data_tests:
+          - not_null
+
+      - name: vat
+        data_type: decimal(6, 2)
+        description: "{{ doc('column__vat') }}"
+        data_tests:
+          - not_null
+
+      - name: target_margin
+        data_type: decimal(10, 2)
+        description: "{{ doc('column__target_margin') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: timestamp
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "{{ doc('column__valid_to') }}"
+
+      - name: is_base_campaign
+        data_type: boolean
+        description: "{{ doc('column__is_base_campaign') }}"
+        data_tests:
+          - not_null
+
+      - name: comment
+        data_type: string
+        description: "{{ doc('column__comment') }}"
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
   - name: product_layer__product_concepts
     description: ""
     columns:
@@ -42,7 +138,7 @@ models:
         description: "{{ doc('column__source_updated_by') }}"
         data_tests:
           - not_null
-        
+
   - name: product_layer__product_types_concepts
     description: ""
     data_tests:
@@ -104,7 +200,7 @@ models:
       - name: product_type_description
         data_type: string
         description: "{{ doc('column__product_type_description') }}"
-        
+
       - name: is_physical_product
         data_type: boolean
         description: "{{ doc('column__is_physical_product') }}"
@@ -283,7 +379,7 @@ models:
       - name: product_variation_description
         data_type: string
         description: "{{ doc('column__product_variation_description') }}"
-  
+
       - name: sent_to_frontend
         data_type: boolean
         description: "{{ doc('column__sent_to_frontend') }}"
@@ -311,7 +407,7 @@ models:
         description: "{{ doc('column__source_updated_by') }}"
         data_tests:
           - not_null
-  
+
   - name: product_layer__product_variation_attribute_values
     description: ""
     data_tests:
@@ -423,3 +519,4 @@ models:
         description: "{{ doc('column__source_updated_by') }}"
         data_tests:
           - not_null
+
