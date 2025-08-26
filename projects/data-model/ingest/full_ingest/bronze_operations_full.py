@@ -18,6 +18,7 @@ tables = [
         , "cutoff"
         , "cutoff_calendar"
         , "last_mile_route"
+        , "order_collis"
         , "distribution_center"
         , "distribution_center_type"
         , "timeblock_blacklist"

@@ -22,6 +22,8 @@ variables:
     description: The id of the running job check job to call
   preselector_materialization_job_id:
     description: The id of the preselector materialization job to call
+  ingestion_job_id:
+    description: The id of the job that ingests source tables
   copy_from_prod_daily_pause_status:
     description: "Whether the copy_from_prod_daily job should be paused or unpaused."
     default: PAUSED
@@ -42,6 +44,7 @@ targets:
       slack_notification_job_id: 221967110790300
       running_job_check_job_id: 1013342696672148
       preselector_materialization_job_id: 98557615197253
+      ingestion_job_id: 801173944698032
       databricks_forecasting_sp_application_id: c185ec1e-ec85-4a95-9362-cfc489a00039
 
     resources:
@@ -61,6 +64,7 @@ targets:
       slack_notification_job_id: 823927532277018
       running_job_check_job_id: 151995008710777
       preselector_materialization_job_id: 1030627407532831
+      ingestion_job_id: 510861596863971
       databricks_forecasting_sp_application_id: b75a37c9-53e9-4b66-a44d-2e3e03e3dbb0
     resources:
       jobs:
@@ -75,6 +79,7 @@ targets:
       slack_notification_job_id: 808732355997444
       running_job_check_job_id: 497656932586919
       preselector_materialization_job_id: 148734131753684
+      ingestion_job_id: 488661079691855
       databricks_forecasting_sp_application_id: e91b18b8-e2c8-468d-bb1b-6bd194b7bf6c
     resources:
       jobs:

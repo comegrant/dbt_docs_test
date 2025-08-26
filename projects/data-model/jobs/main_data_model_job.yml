@@ -35,90 +35,18 @@ resources:
                   body_message: 🚀 Main data model job has started
                   is_error: "false"
 
-        - task_key: bronze_coredb_snapshot_full
+        - task_key: ingestion-job
+          run_job_task:
+            job_id: ${var.ingestion_job_id}
           depends_on:
             - task_key: start-notification
+  
+        - task_key: ingest-snapshot-tables
           notebook_task:
             notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_full.py
-
-        - task_key: bronze_cms_full
           depends_on:
             - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_cms_full.py
-
-        - task_key: bronze_pim_full
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_pim_full.py
-
-        - task_key: bronze_psl_full
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_psl_full.py
-
-        - task_key: bronze_operations_full
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_operations_full.py
-        
-        - task_key: bronze_partnership_full
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_partnership_full.py
-
-        - task_key: bronze_cms_billing_agreement_order_and_order_lines
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_order_&_order_lines.py
-
-        - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
-
-        - task_key: bronze_operations_orders_history
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_operations_orders_history.py
-
-        - task_key: bronze_operations_case_lines
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_operations_case_lines.py  
-
-        - task_key: bronze_operations_cases
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_operations_cases.py    
-
-        - task_key: bronze_cms_loyalty_points
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/incremental_ingest/bronze_cms_loyalty_points.py
-
-        - task_key: bronze_cms_register_info_basket
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
-
-        - task_key: bronze_operations_orders
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/selected_columns_ingest/bronze_operations_orders.py
-
+  
         - task_key: dbt-snapshot-all
           dbt_task:
             project_directory: ../transform/
@@ -134,25 +62,18 @@ resources:
             - pypi:
                 package: urllib3==2.3.0
           depends_on:
-            - task_key: bronze_coredb_snapshot_full
+            - task_key: ingest-snapshot-tables
           disable_auto_optimization: true
 
         # perform an extra ingest of billing agreements to
         # capture agreements that has been created during the job
-        - task_key: bronze_coredb_snapshot_billing_agreements
-          depends_on: [
-            {task_key: bronze_cms_full},
-            {task_key: bronze_pim_full},
-            {task_key: bronze_psl_full},
-            {task_key: bronze_operations_full},
-            {task_key: bronze_partnership_full}, 
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
-            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: bronze_cms_register_info_basket},
-            {task_key: dbt-snapshot-all}
-          ]
+        - task_key: ingest-billing-agreements
           notebook_task:
-            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_billing_agreements.py
+            notebook_path: ../ingest/snapshot_ingest/bronze_cms_snapshot_billing_agreements.py
+          depends_on: [
+            {task_key: dbt-snapshot-all},
+            {task_key: ingestion-job}
+          ]
 
         # perform an extra snapshot of billing agreements to
         # capture agreements that has been created during the job
@@ -171,7 +92,7 @@ resources:
             - pypi:
                 package: urllib3==2.3.0
           depends_on:
-            - task_key: bronze_coredb_snapshot_billing_agreements
+            - task_key: ingest-billing-agreements
           disable_auto_optimization: true
 
         - task_key: dbt-run
@@ -192,14 +113,7 @@ resources:
                 package: urllib3==2.3.0
           depends_on: [
             {task_key: dbt-snapshot-billing-agreements},
-            {task_key: bronze_cms_full},
-            {task_key: bronze_pim_full},
-            {task_key: bronze_psl_full},
-            {task_key: bronze_operations_full},
-            {task_key: bronze_partnership_full},
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
-            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: bronze_cms_register_info_basket}
+            {task_key: ingestion-job}
           ]
           disable_auto_optimization: true
 
@@ -227,7 +141,6 @@ resources:
             notebook_path: ../powerbi-refresh/powerbi-refresh.py
             base_parameters:
               tables: ""
-
           depends_on: [
             {task_key: dbt-run}
           ]
@@ -244,16 +157,7 @@ resources:
 
         - task_key: fail-notification
           depends_on: [
-            {task_key: bronze_coredb_snapshot_full},
-            {task_key: bronze_coredb_snapshot_billing_agreements},
-            {task_key: bronze_cms_full},
-            {task_key: bronze_pim_full},
-            {task_key: bronze_psl_full},
-            {task_key: bronze_operations_full},
-            {task_key: bronze_partnership_full},
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
-            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: bronze_cms_register_info_basket},
+            {task_key: ingestion-job},
             {task_key: dbt-snapshot-all},
             {task_key: dbt-snapshot-billing-agreements},
             {task_key: dbt-run},
@@ -285,6 +189,7 @@ resources:
             node_type_id: Standard_D4ds_v5
             custom_tags:
               ResourceClass: SingleNode
+              purpose: "ingestion"
               tool: "dbt"
               env: ${bundle.target}
               managed_by: "manually"

@@ -29,12 +29,6 @@ resources:
               body_message: 🚀 Ingestion job has started
               is_error: "false"
 
-        - task_key: bronze_coredb_snapshot_full
-          depends_on:
-            - task_key: start-notification
-          notebook_task:
-            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_full.py
-
         - task_key: bronze_cms_full
           depends_on:
             - task_key: start-notification
@@ -58,12 +52,12 @@ resources:
             - task_key: start-notification
           notebook_task:
             notebook_path: ../ingest/full_ingest/bronze_operations_full.py
-
+        
         - task_key: bronze_partnership_full
           depends_on:
             - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/full_ingest/bronze_partnership_full.py  
+            notebook_path: ../ingest/full_ingest/bronze_partnership_full.py
 
         - task_key: bronze_cms_billing_agreement_order_and_order_lines
           depends_on:
@@ -77,60 +71,72 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
 
+        - task_key: bronze_operations_orders_history
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_operations_orders_history.py
+
+        - task_key: bronze_operations_order_collis_history
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_operations_order_collis_history.py
+
+        - task_key: bronze_operations_case_lines
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_operations_case_lines.py  
+
+        - task_key: bronze_operations_cases
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_operations_cases.py    
+
+        - task_key: bronze_cms_loyalty_points
+          depends_on:
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_loyalty_points.py
+
         - task_key: bronze_cms_register_info_basket
           depends_on:
             - task_key: start-notification
           notebook_task:
             notebook_path: ../ingest/selected_columns_ingest/bronze_cms_register_info_basket.py
 
-        - task_key: dbt-snapshot-all
-          dbt_task:
-            project_directory: ../transform/
-            warehouse_id: ${var.warehouse_id}
-            catalog: ${bundle.target}
-            commands:
-              - 'dbt deps'
-              - 'dbt snapshot'
-          environment_key: dbt-default
+        - task_key: bronze_operations_orders
           depends_on:
-            - task_key: bronze_coredb_snapshot_full
-          disable_auto_optimization: true
-
-        # perform an extra ingest of billing agreements to
-        # capture agreements that has been created during the job
-        - task_key: bronze_coredb_snapshot_billing_agreements
-          depends_on: [
-            {task_key: bronze_cms_full},
-            {task_key: bronze_pim_full},
-            {task_key: bronze_psl_full},
-            {task_key: bronze_operations_full},
-            {task_key: bronze_partnership_full},
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
-            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: bronze_cms_register_info_basket},
-            {task_key: dbt-snapshot-all}
-          ]
+            - task_key: start-notification
           notebook_task:
-            notebook_path: ../ingest/snapshot_ingest/bronze_coredb_snapshot_billing_agreements.py
+            notebook_path: ../ingest/selected_columns_ingest/bronze_operations_orders.py
 
-        # perform an extra snapshot of billing agreements to
-        # capture agreements that has been created during the job
-        - task_key: dbt-snapshot-billing-agreements
-          dbt_task:
-            project_directory: ../transform/
-            warehouse_id: ${var.warehouse_id}
-            catalog: ${bundle.target}
-            commands:
-              - 'dbt deps'
-              - 'dbt snapshot -s scd_cms__billing_agreements'
-          environment_key: dbt-default
-          depends_on:
-            - task_key: bronze_coredb_snapshot_billing_agreements
-          disable_auto_optimization: true
+        - task_key: bronze_cms_address_live
+          depends_on: 
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/selected_columns_ingest/bronze_cms_address_live.py
 
         - task_key: success-notification
-          depends_on:
-            - task_key: dbt-snapshot-billing-agreements
+          depends_on: [
+              {task_key: bronze_cms_full},
+              {task_key: bronze_pim_full},
+              {task_key: bronze_psl_full},
+              {task_key: bronze_operations_full},
+              {task_key: bronze_partnership_full},
+              {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+              {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+              {task_key: bronze_operations_orders_history},
+              {task_key: bronze_operations_order_collis_history},
+              {task_key: bronze_operations_case_lines},
+              {task_key: bronze_operations_cases},
+              {task_key: bronze_cms_loyalty_points},
+              {task_key: bronze_cms_register_info_basket},
+              {task_key: bronze_operations_orders},
+              {task_key: bronze_cms_address_live}
+          ]
           run_job_task:
             job_id: ${var.slack_notification_job_id}
             job_parameters:
@@ -140,18 +146,21 @@ resources:
 
         - task_key: fail-notification
           depends_on: [
-            {task_key: bronze_coredb_snapshot_full},
-            {task_key: bronze_coredb_snapshot_billing_agreements},
-            {task_key: bronze_cms_full},
-            {task_key: bronze_pim_full},
-            {task_key: bronze_psl_full},
-            {task_key: bronze_operations_full},
-            {task_key: bronze_partnership_full},
-            {task_key: bronze_cms_billing_agreement_order_and_order_lines},
-            {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
-            {task_key: bronze_cms_register_info_basket},
-            {task_key: dbt-snapshot-all},
-            {task_key: dbt-snapshot-billing-agreements}
+              {task_key: bronze_cms_full},
+              {task_key: bronze_pim_full},
+              {task_key: bronze_psl_full},
+              {task_key: bronze_operations_full},
+              {task_key: bronze_partnership_full},
+              {task_key: bronze_cms_billing_agreement_order_and_order_lines},
+              {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
+              {task_key: bronze_operations_orders_history},
+              {task_key: bronze_operations_order_collis_history},
+              {task_key: bronze_operations_case_lines},
+              {task_key: bronze_operations_cases},
+              {task_key: bronze_cms_loyalty_points},
+              {task_key: bronze_cms_register_info_basket},
+              {task_key: bronze_operations_orders},
+              {task_key: bronze_cms_address_live}
           ]
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:
