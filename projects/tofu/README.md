@@ -1,76 +1,68 @@
-# tofu
+# 🦄 tofu
 
-TOFU = Total Orders Forecast Unicorn
+TOFU = Total Orders Forecast Unicorn 🦄
 
-## Structure
+It's mysterious. It's magical. It knows the future. It knows what the customers want.
+It's a unicorn.
 
-This project is structured with the following assumptions in mind.
+TOFU contains a streamlit app that forecasts the total number of orders
 
-- `tofu`: Where all our business logic is stored.
-- `jobs`: Where all our orchestrated jobs exists. E.i. a wrapper around functionality that exists in `tofu`.
-- `tests`: Where we put any unit or integration tests.
-- `docker`: Where we build our containers for different environments.
+# 🚀 Launch the app locally
 
-## Development
+If this your first time launching the app, you'll need to follow these steps.
 
-To get *auto completion* support, make sure to have a python virtual environment setup with the project's Python dependencies installed.
+Prerequisites:
+ - You have cloned the `sous-chef` repo.
+ - You have `poetry` installed.
 
-This can be done with the following CLI commands:
+Steps:
 
-```bash
-poetry shell
-poetry install
-```
+1. Initiate the virtual environment and install dependencies:
 
-Then open your favourite editor and start typing :rocket:
+    ```bash
+    cd sous-chef
+    cd projects/tofu
 
-## Running the code
+    # Make sure you pull the latest changes
+    git pull origin main
+    poetry env use python3.11
+    poetry config in-project true
 
-### First time setup
+    # Intiate the virtual environment
+    poetry shell
+    # check if you have a .venv folder under tofu folder
+    ls -la .venv
 
-Before you start editing.
-Make sure you have an `.env` file in the root of the `sous-chef` repo.
+    # Activate the virtual environment
+    source .venv/bin/activate
 
-This is used to connect to Databricks and our data lake when developing locally through a container.
+    # if you have a new poetry version, do
+    poetry env activate
 
-### Local run
+    # Install dependencies
+    poetry install
+    ```
+2. Fill in your databricks credentials in the `.env` file.
+- if you don't have a `.env` file, create one under the `sous-chef` folder. You can just open a new file and then save it as `.env`, or alternatively in the terminal do:
+    ```bash
+    cd /{path-to-sous-chef}/sous-chef
+    touch .env
+    ```
+- Open the file and enter these
+    ```
+    DATABRICKS_HOST=https://adb-<workspacename>azuredatabricks.net
+    DATABRICKS_TOKEN=<your-databricks-PAT>
+    ```
+- if you don't have a `DATABRICKS_TOKEN`, you should create one in the databricks workspace following the instructions [here](https://docs.databricks.com/dev-tools/api/latest/authentication.html). 
 
-To run the code locally, is it recommended to use `docker`.
-This makes sure we can replicate the production environment as closely as possible, and therefore replicate issues with ease.
+3. Launch the app (and for every single time afterwards):
 
-Then run `docker compose run <your-service-to-run>`.
+    ```bash
+    cd /{path-to-sous-chef}/sous-chef/projects/tofu
+    source .venv/bin/activate
+    streamlit run projects/tofu/tofu.py
+    ```
 
-> [!NOTE]
-> The default template contains a service called `run` in the `docker-compose.yaml` file which should run the `job/run.py` file with some default arguments.
+# 📊 View the app
 
-### Run in Databricks
-
-If you rather want to use Databricks compute to run the code. Then it is recommended to do the following.
-
-1. Create a new PR in GitHub. This will deploy your new `jobs` workflows to the Databricks `dev` [workspace](https://adb-4291784437205825.5.azuredatabricks.net/jobs?o=4291784437205825).
-2. Find the workflow that you created. Should be named similar to `[dev <some uuid>] <your-job-name>`.
-
-
-## Troubleshooting
-
-Here are some common issues and how to fix them.
-
-### I get a `Module not found error` locally
-This often happens when a dependency is either added or updated, but not reflected in the container.
-
-Therefore, try running `docker compose build <your-service>` and then run again.
-
-If it is still not working, then make sure the dependencies are copied correctly in the associated `Dockerfile`.
-
-### Unable to find my job in Databricks
-Make sure you have a `.yaml` file associated with your python file, and not only the python file that.
-
-If you still can not find your workflow in Databricks, make sure the `databricks.yml` reference the yaml file in the `include` section.
-
-If this do not work. Check the Databricks DABs validation logs in GitHub actions to find more information about why it is failing.
-
-### My code is not updating in Databricks
-Make sure you have pushed a new Docker image with the latest source code.
-This should happen automatically if you push a change to an open PR.
-
-Furthermore, if you still have issues. Try to manually trigger the workflow and manually define the Docker image url as a parameter to make sure you are using the correct codebase.
+The app should be running on `http://localhost:8501`. You should automatically see it in a browser.
