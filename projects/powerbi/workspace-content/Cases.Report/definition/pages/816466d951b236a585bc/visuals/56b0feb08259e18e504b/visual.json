@@ -1,0 +1,184 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "56b0feb08259e18e504b",
+  "position": {
+    "x": 15.555555555555555,
+    "y": 424.44444444444446,
+    "z": 9000,
+    "height": 284.44444444444446,
+    "width": 1257.7777777777778,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "HierarchyLevel": {
+                  "Expression": {
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Date Hierarchy"
+                    }
+                  },
+                  "Level": "Week"
+                }
+              },
+              "queryRef": "Dates.Date Hierarchy.Week",
+              "nativeQueryRef": "Date Hierarchy Week",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Ingredients"
+                    }
+                  },
+                  "Property": "Ingredient Name"
+                }
+              },
+              "queryRef": "Ingredients.Ingredient Name",
+              "nativeQueryRef": "Ingredient Name",
+              "active": false
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Complaint Ingredient Quantity"
+                }
+              },
+              "queryRef": "Case Measures.Complaint Ingredient Quantity",
+              "nativeQueryRef": "Complaint Ingredient Quantity"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Complaint Cost Ex Vat"
+                }
+              },
+              "queryRef": "Case Measures.Complaint Cost Ex Vat",
+              "nativeQueryRef": "Complaint Cost Ex Vat"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Schema": "extension",
+                      "Entity": "Case Measures"
+                    }
+                  },
+                  "Property": "Average ingredient complaint cost"
+                }
+              },
+              "queryRef": "Case Measures.Average ingredient complaint cost",
+              "nativeQueryRef": "Average ingredient complaint cost"
+            }
+          ]
+        }
+      }
+    },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Dates.Date Hierarchy.Week"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dates"
+                    }
+                  },
+                  "Property": "Financial Week"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Ingredients.Ingredient Name"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {}
+      }
+    ],
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "135.55555555555554D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Recipe Ingredients"
+                          }
+                        },
+                        "Property": "total_ingredient_actual_cost"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "-61.71D"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "metadata": "Case Measures.Complaint Ingredient Quantity"
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

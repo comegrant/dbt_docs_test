@@ -1,0 +1,45 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "8f757026bd54a5eb6456",
+      "displayName": "Cost graph",
+      "children": [
+        "ddeb3689e1300781ac59"
+      ]
+    },
+    {
+      "name": "f43b2d3f05b4ad60a9e4"
+    },
+    {
+      "name": "aa15b66c9e8a4d09e21d",
+      "displayName": "Category Graph",
+      "children": [
+        "da1ab7256d87bb0962c8"
+      ]
+    },
+    {
+      "name": "240bf983481331eabc24"
+    },
+    {
+      "name": "0c3c963e02472eb086b1",
+      "displayName": "Cause graph",
+      "children": [
+        "d1b35b32a084d3ab1542"
+      ]
+    },
+    {
+      "name": "03b8f8af233e081305ce"
+    },
+    {
+      "name": "246dcf50a0e45ee8ddc8",
+      "displayName": "Impact graph",
+      "children": [
+        "6cdcfa2093fdbc882707"
+      ]
+    },
+    {
+      "name": "2fc0eff004e4459293d3"
+    }
+  ]
+}

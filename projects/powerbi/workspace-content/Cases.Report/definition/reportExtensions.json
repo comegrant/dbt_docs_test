@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Case Measures",
+      "measures": [
+        {
+          "name": "Average ingredient complaint cost",
+          "dataType": "Integer",
+          "expression": "DIVIDE([Complaint Cost Ex Vat], [Complaint Ingredient Quantity])",
+          "references": {
+            "measures": [
+              {
+                "entity": "Case Measures",
+                "name": "Complaint Cost Ex Vat"
+              },
+              {
+                "entity": "Case Measures",
+                "name": "Complaint Ingredient Quantity"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

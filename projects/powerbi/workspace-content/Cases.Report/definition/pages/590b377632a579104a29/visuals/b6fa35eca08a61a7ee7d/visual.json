@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "b6fa35eca08a61a7ee7d",
   "position": {
-    "x": 351.6141339540419,
+    "x": 180,
     "y": 0,
     "z": 1000,
-    "height": 57.258264932882973,
-    "width": 241.129876266648,
-    "tabOrder": 0
+    "height": 57,
+    "width": 300,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "slicer",
@@ -17,17 +17,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dates"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Date Hierarchy"
                     }
                   },
-                  "Property": "Date"
+                  "Level": "Date"
                 }
               },
-              "queryRef": "Dates.Date",
-              "nativeQueryRef": "Date",
+              "queryRef": "Dates.Date Hierarchy.Date",
+              "nativeQueryRef": "Date Hierarchy Date",
               "active": true
             }
           ]
@@ -37,13 +42,18 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "HierarchyLevel": {
                 "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
+                  "Hierarchy": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Dates"
+                      }
+                    },
+                    "Hierarchy": "Date Hierarchy"
                   }
                 },
-                "Property": "Date"
+                "Level": "Date"
               }
             },
             "direction": "Ascending"
@@ -80,7 +90,21 @@
             "relativePeriod": {
               "expr": {
                 "Literal": {
-                  "Value": "'Weeks'"
+                  "Value": "'Calendar Weeks'"
+                }
+              }
+            },
+            "numericStart": {
+              "expr": {
+                "Literal": {
+                  "Value": "27D"
+                }
+              }
+            },
+            "numericEnd": {
+              "expr": {
+                "Literal": {
+                  "Value": "35D"
                 }
               }
             }
@@ -166,13 +190,18 @@
                     "Condition": {
                       "Between": {
                         "Expression": {
-                          "Column": {
+                          "HierarchyLevel": {
                             "Expression": {
-                              "SourceRef": {
-                                "Source": "d"
+                              "Hierarchy": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "d"
+                                  }
+                                },
+                                "Hierarchy": "Date Hierarchy"
                               }
                             },
-                            "Property": "Date"
+                            "Level": "Date"
                           }
                         },
                         "LowerBound": {
@@ -180,27 +209,27 @@
                             "Expression": {
                               "DateAdd": {
                                 "Expression": {
-                                  "DateAdd": {
-                                    "Expression": {
-                                      "Now": {}
-                                    },
-                                    "Amount": 1,
-                                    "TimeUnit": 0
-                                  }
+                                  "Now": {}
                                 },
                                 "Amount": -6,
                                 "TimeUnit": 1
                               }
                             },
-                            "TimeUnit": 0
+                            "TimeUnit": 1
                           }
                         },
                         "UpperBound": {
                           "DateSpan": {
                             "Expression": {
-                              "Now": {}
+                              "DateAdd": {
+                                "Expression": {
+                                  "Now": {}
+                                },
+                                "Amount": -1,
+                                "TimeUnit": 1
+                              }
                             },
-                            "TimeUnit": 0
+                            "TimeUnit": 1
                           }
                         }
                       }
@@ -236,15 +265,20 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "6c71b2d85981065e0077",
+        "name": "9219cd399762d1b1d792",
         "field": {
-          "Column": {
+          "HierarchyLevel": {
             "Expression": {
-              "SourceRef": {
-                "Entity": "Dates"
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
               }
             },
-            "Property": "Date"
+            "Level": "Date"
           }
         },
         "type": "Categorical"

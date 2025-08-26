@@ -1,0 +1,45 @@
+table '(Param) Case Measures Inc VAT'
+	lineageTag: a47d6f7c-1543-4eb9-96ab-f906bbb42b27
+
+	column '(Param) Case Measures Inc VAT Name'
+		isHidden
+		lineageTag: 8a70924a-de5d-4ca5-9eb1-8608eeb758a6
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: '(Param) Case Measures Inc VAT Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Case Measures Inc VAT Field'
+		isHidden
+		lineageTag: 26b78baf-8f11-4d7f-b03a-8e9b21515b3a
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: '(Param) Case Measures Inc VAT Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Case Measures Inc VAT Order'
+		isHidden
+		formatString: 0
+		lineageTag: aa549ec1-55a2-45af-a6c2-4fde4972f59a
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '(Param) Case Measures Inc VAT' = calculated
+		mode: import
+		source =
+				{
+				    ("Average Complaint Cost Inc VAT", NAMEOF('Case Measures'[Average Complaint Cost Inc VAT]), 0),
+				    ("Average Complaint Cost Per Order Inc VAT", NAMEOF('Case Measures'[Average Complaint Cost Per Order Inc VAT]), 1),
+				    ("Complaint Cost Inc VAT", NAMEOF('Case Measures'[Complaint Cost Inc VAT]), 2)
+				}
+
