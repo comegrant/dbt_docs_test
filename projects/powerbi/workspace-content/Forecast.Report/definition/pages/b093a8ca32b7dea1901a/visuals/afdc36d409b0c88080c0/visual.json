@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "fb670d55050c9ab7f6c7",
+  "name": "afdc36d409b0c88080c0",
   "position": {
-    "x": 16.25,
-    "y": 126.25,
-    "z": 0,
-    "height": 532.5,
-    "width": 1243.75,
-    "tabOrder": 5000
+    "x": 17,
+    "y": 80,
+    "z": 2000,
+    "height": 625,
+    "width": 1244,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -17,32 +17,22 @@
           "projections": [
             {
               "field": {
-                "Column": {
+                "HierarchyLevel": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "Forecast Details"
+                    "Hierarchy": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dates"
+                        }
+                      },
+                      "Hierarchy": "Date Hierarchy"
                     }
                   },
-                  "Property": "Forecast Horizon"
+                  "Level": "Week"
                 }
               },
-              "queryRef": "Forecast Details.Forecast Horizon",
-              "nativeQueryRef": "Forecast Horizon",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Forecast Details"
-                    }
-                  },
-                  "Property": "Forecast Horizon Index"
-                }
-              },
-              "queryRef": "Forecast Details.Forecast Horizon Index",
-              "nativeQueryRef": "Forecast Horizon Index",
+              "queryRef": "Dates.Date Hierarchy.Week",
+              "nativeQueryRef": "Date Hierarchy Week",
               "active": true
             },
             {
@@ -87,42 +77,12 @@
                       "Entity": "Products"
                     }
                   },
-                  "Property": "Product Type"
-                }
-              },
-              "queryRef": "Products.Product Type",
-              "nativeQueryRef": "Product Type",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
                   "Property": "Product Variation"
                 }
               },
               "queryRef": "Products.Product Variation",
               "nativeQueryRef": "Product Variation",
-              "active": false
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Recipes"
-                    }
-                  },
-                  "Property": "Recipe Name"
-                }
-              },
-              "queryRef": "Recipes.Recipe Name",
-              "nativeQueryRef": "Recipe Name",
-              "active": false
+              "active": true
             }
           ]
         },
@@ -140,11 +100,28 @@
                 }
               },
               "queryRef": "Forecast Measures.Number of Forecasted Product Variations",
-              "nativeQueryRef": "Forecasted Products",
-              "displayName": "Forecasted Products"
+              "nativeQueryRef": "Number of Forecasted Groceries",
+              "displayName": "Number of Forecasted Groceries"
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Brands"
+                  }
+                },
+                "Property": "Brand"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
       }
     },
     "expansionStates": [
@@ -157,6 +134,7 @@
             "queryRefs": [
               "Brands.Brand"
             ],
+            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -173,148 +151,66 @@
           },
           {
             "queryRefs": [
-              "Products.Product Type"
-            ],
-            "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Type"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
               "Products.Product Variation"
-            ],
-            "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Products"
-                    }
-                  },
-                  "Property": "Product Variation"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "Recipes.Recipe Name"
             ],
             "isCollapsed": true,
             "isPinned": true
           }
         ],
-        "root": {}
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Godtlevert'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Linas Matkasse'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Adams Matkasse'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'RetNemt'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
       }
     ],
     "objects": {
-      "subTotals": [
-        {
-          "properties": {
-            "columnSubtotals": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "rowSubtotals": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "values": [
-        {
-          "properties": {
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "13D"
-                }
-              }
-            },
-            "valuesOnRow": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "rowHeaders": [
-        {
-          "properties": {
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "13D"
-                }
-              }
-            },
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Left'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "columnHeaders": [
-        {
-          "properties": {
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "13D"
-                }
-              }
-            },
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Right'"
-                }
-              }
-            },
-            "titleAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Left'"
-                }
-              }
-            }
-          }
-        }
-      ],
       "columnWidth": [
         {
           "properties": {
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "129.14285478221507D"
+                  "Value": "125.32545033784533D"
                 }
               }
             }
@@ -329,37 +225,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'1'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
+                        "Value": "42L"
                       }
                     }
                   }
@@ -373,302 +247,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "134.9690821276912D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "5L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "128.7188612652548D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "4L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "127.90422444747455D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "127.55376897001393D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "2L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "132.5621472654272D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "3L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "267.37198795793745D"
+                  "Value": "296.6134543403065D"
                 }
               }
             }
@@ -682,7 +261,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "95D"
+                  "Value": "88.6191711327676D"
                 }
               }
             }
@@ -697,44 +276,21 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'1'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
+                        "Value": "31L"
                       }
                     }
                   }
                 }
               }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
+            ]
           }
         },
         {
@@ -742,7 +298,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "94D"
+                  "Value": "82.66675767677613D"
                 }
               }
             }
@@ -757,44 +313,21 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
+                        "Value": "32L"
                       }
                     }
                   }
                 }
               }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
+            ]
           }
         },
         {
@@ -802,7 +335,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "96D"
+                  "Value": "85.04770602091199D"
                 }
               }
             }
@@ -817,44 +350,21 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "2L"
+                        "Value": "33L"
                       }
                     }
                   }
                 }
               }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
+            ]
           }
         },
         {
@@ -862,7 +372,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "94D"
+                  "Value": "80.28579229437953D"
                 }
               }
             }
@@ -877,44 +387,21 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "3L"
+                        "Value": "34L"
                       }
                     }
                   }
                 }
               }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
+            ]
           }
         },
         {
@@ -922,7 +409,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "104D"
+                  "Value": "72.62516977507481D"
                 }
               }
             }
@@ -937,15 +424,422 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "35L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "128.67135707357258D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "36L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "106.63920911553217D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "37L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "108.82750731183515D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "38L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "104.01302741954058D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "39L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "108.64475942268011D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "40L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "105.02210719617835D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "41L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "84.6097818689314D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "46L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "83.77338761297288D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "45L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "123.96796129027206D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "43L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "84.61818279688113D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "44L"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "149D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "scopeId": {
+                  "Comparison": {
+                    "ComparisonKind": 0,
+                    "Left": {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Entity": "Dates"
+                          }
+                        },
+                        "Property": "Financial Week"
+                      }
+                    },
+                    "Right": {
+                      "Literal": {
+                        "Value": "36L"
                       }
                     }
                   }
@@ -959,22 +853,21 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "4L"
+                        "Value": "null"
                       }
                     }
                   }
                 }
               }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
+            ]
           }
         },
         {
@@ -997,15 +890,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "37L"
                       }
                     }
                   }
@@ -1019,135 +912,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "5L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "96D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "6L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "140.25000179938533D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "6L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1161,7 +934,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "135.75003630116927D"
+                  "Value": "103D"
                 }
               }
             }
@@ -1176,15 +949,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "38L"
                       }
                     }
                   }
@@ -1198,15 +971,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "7L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1220,7 +993,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "135.74994554831312D"
+                  "Value": "104D"
                 }
               }
             }
@@ -1235,15 +1008,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "39L"
                       }
                     }
                   }
@@ -1257,15 +1030,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "8L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1279,7 +1052,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "127.03141097908822D"
+                  "Value": "99D"
                 }
               }
             }
@@ -1294,15 +1067,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "40L"
                       }
                     }
                   }
@@ -1316,15 +1089,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "9L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1338,7 +1111,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "133.25212558102174D"
+                  "Value": "101D"
                 }
               }
             }
@@ -1353,15 +1126,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "41L"
                       }
                     }
                   }
@@ -1375,15 +1148,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "10L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1397,7 +1170,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "119.42743661230931D"
+                  "Value": "104D"
                 }
               }
             }
@@ -1412,15 +1185,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "42L"
                       }
                     }
                   }
@@ -1434,15 +1207,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "11L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1456,7 +1229,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "123.25003014842872D"
+                  "Value": "106D"
                 }
               }
             }
@@ -1471,15 +1244,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "Dates"
                           }
                         },
-                        "Property": "Forecast Horizon"
+                        "Property": "Financial Week"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'11/15'"
+                        "Value": "43L"
                       }
                     }
                   }
@@ -1493,133 +1266,15 @@
                       "Column": {
                         "Expression": {
                           "SourceRef": {
-                            "Entity": "Forecast Details"
+                            "Entity": "(Utils) Matrix Spacer"
                           }
                         },
-                        "Property": "Forecast Horizon Index"
+                        "Property": "Blank Column"
                       }
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "12L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "133.25003507062115D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "13L"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "134.25007017609522D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "14L"
+                        "Value": "null"
                       }
                     }
                   }
@@ -1629,13 +1284,86 @@
           }
         }
       ],
-      "general": [
+      "values": [
         {
           "properties": {
-            "layout": {
+            "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "'Compact'"
+                  "Value": "13D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTotals": [
+        {
+          "properties": {
+            "columnSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Right'"
+                }
+              }
+            },
+            "titleAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Left'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -1644,7 +1372,27 @@
       ]
     },
     "visualContainerObjects": {
-      "visualTooltip": [
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Number of Forecasted Groceries'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {
@@ -1657,26 +1405,13 @@
           }
         }
       ],
-      "stylePreset": [
+      "divider": [
         {
           "properties": {
-            "name": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "'Minimal'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "title": [
-        {
-          "properties": {
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Weekly Forecasts by cutoff until menu week'"
+                  "Value": "false"
                 }
               }
             }
@@ -1689,7 +1424,21 @@
             "verticalSpacing": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "10D"
+                }
+              }
+            },
+            "customizeSpacing": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "spaceBelowTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
                 }
               }
             }
@@ -1702,7 +1451,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "5c8fd6e8d550f5ed7d0a",
+        "name": "8e5b4040be61a5834c92",
         "field": {
           "Column": {
             "Expression": {
@@ -1743,13 +1492,6 @@
                     [
                       {
                         "Literal": {
-                          "Value": "'Velg&vrak'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
                           "Value": "'Standalone-groceries'"
                         }
                       }
@@ -1759,8 +1501,85 @@
               }
             }
           ]
-        }
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "f2d4f903252d04442e9b",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a483c53b5b0656e05393",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b892840bd5452c43001a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Variation"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "830ccd1f6665063934b6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Forecast Measures"
+              }
+            },
+            "Property": "Number of Forecasted Product Variations"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f5a0e9416c5d4d7ca0c0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
       }
     ]
-  }
+  },
+  "isHidden": true
 }

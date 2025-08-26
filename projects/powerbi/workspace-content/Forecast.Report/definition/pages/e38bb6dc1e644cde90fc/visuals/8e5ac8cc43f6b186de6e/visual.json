@@ -4,10 +4,9 @@
   "position": {
     "x": 197.14285714285717,
     "y": 0,
-    "z": 5,
+    "z": 5000,
     "height": 58.571428571428577,
-    "width": 180,
-    "tabOrder": 3
+    "width": 180
   },
   "visual": {
     "visualType": "slicer",
@@ -183,20 +182,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "e50294e8c26d66d601dc",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Products"
-              }
-            },
-            "Property": "Product Type"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

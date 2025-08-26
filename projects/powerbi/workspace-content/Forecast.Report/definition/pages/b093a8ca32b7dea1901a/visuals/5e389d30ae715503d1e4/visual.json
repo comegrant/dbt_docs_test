@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "9f1917eebb9433ec5f9a",
+  "name": "5e389d30ae715503d1e4",
   "position": {
-    "x": 377.25915472034467,
+    "x": 516.66666666666663,
     "y": 0,
-    "z": 3,
-    "height": 58.414320730892072,
-    "width": 180.1108222535839,
-    "tabOrder": 4
+    "z": 5000,
+    "height": 66.666666666666671,
+    "width": 123.33333333333333,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,64 +20,21 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Products"
+                      "Entity": "Portions"
                     }
                   },
-                  "Property": "Product Variation"
+                  "Property": "Portions"
                 }
               },
-              "queryRef": "Products.Product Variation",
-              "nativeQueryRef": "Product Variation",
+              "queryRef": "Portions.Portions",
+              "nativeQueryRef": "Portions",
               "active": true
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "isDefaultSort": true
       }
     },
     "objects": {
-      "general": [
-        {
-          "properties": {
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "selfFilterEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "selection": [
-        {
-          "properties": {
-            "selectAllCheckboxEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "singleSelect": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
       "data": [
         {
           "properties": {
@@ -98,13 +55,18 @@
           }
         }
       ],
-      "header": [
+      "general": [
+        {
+          "properties": {}
+        }
+      ],
+      "selection": [
         {
           "properties": {
-            "text": {
+            "selectAllCheckboxEnabled": {
               "expr": {
                 "Literal": {
-                  "Value": "'Product Variation'"
+                  "Value": "true"
                 }
               }
             }
@@ -112,17 +74,64 @@
         }
       ]
     },
-    "syncGroup": {
-      "groupName": "Product Variation",
-      "fieldChanges": true,
-      "filterChanges": true
-    },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
     "filters": [
       {
-        "name": "4438ee6329e766398986",
+        "name": "1d14bf516d39d74dc00d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Portions"
+              }
+            },
+            "Property": "Portions"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "Portions",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "Comparison": {
+                      "ComparisonKind": 0,
+                      "Left": {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "p"
+                            }
+                          },
+                          "Property": "Portions"
+                        }
+                      },
+                      "Right": {
+                        "Literal": {
+                          "Value": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "f7764ef0d64702db0479",
         "field": {
           "Measure": {
             "Expression": {

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "865d83cd27cefbe19847",
+  "name": "e1e05217c679590992b8",
   "position": {
-    "x": 550.068186882567,
+    "x": 186.66666666666666,
     "y": 0,
-    "z": 2,
-    "height": 58.414320730892072,
-    "width": 180.1108222535839,
-    "tabOrder": 3
+    "z": 1000,
+    "height": 58.888888888888886,
+    "width": 180,
+    "tabOrder": 9000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,15 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Recipes"
+                      "Entity": "Products"
                     }
                   },
-                  "Property": "Main Recipe Name"
+                  "Property": "Product Variation"
                 }
               },
-              "queryRef": "Recipes.Main Recipe Name",
-              "nativeQueryRef": "Main Recipe Name",
-              "active": true
+              "queryRef": "Products.Product Variation",
+              "nativeQueryRef": "Grocery Name",
+              "active": true,
+              "displayName": "Grocery Name"
             }
           ]
         }
@@ -104,7 +105,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Recipe Name'"
+                  "Value": "'Grocery Name'"
                 }
               }
             }
@@ -112,17 +113,34 @@
         }
       ]
     },
-    "syncGroup": {
-      "groupName": "Main Recipe Name",
-      "fieldChanges": true,
-      "filterChanges": true
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
     "filters": [
       {
-        "name": "9771bd8acb92299e6d13",
+        "name": "4438ee6329e766398986",
         "field": {
           "Measure": {
             "Expression": {
@@ -173,7 +191,62 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "3d98d46493889bc0c447",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Type"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "Products",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "p"
+                          }
+                        },
+                        "Property": "Product Type"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Standalone-groceries'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
       }
     ]
-  }
+  },
+  "isHidden": true
 }

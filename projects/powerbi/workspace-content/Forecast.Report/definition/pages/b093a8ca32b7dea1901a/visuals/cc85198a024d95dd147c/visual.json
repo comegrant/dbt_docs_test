@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "77af88650eea6cf728b3",
+  "name": "cc85198a024d95dd147c",
   "position": {
-    "x": 197.14285714285717,
+    "x": 352.22222222222223,
     "y": 0,
-    "z": 4,
-    "height": 58.571428571428577,
+    "z": 6000,
+    "height": 58.888888888888886,
     "width": 180,
-    "tabOrder": 2
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Products"
+                      "Entity": "Recipes"
                     }
                   },
-                  "Property": "Product Type"
+                  "Property": "Main Recipe Name"
                 }
               },
-              "queryRef": "Products.Product Type",
-              "nativeQueryRef": "Product Type",
+              "queryRef": "Recipes.Main Recipe Name",
+              "nativeQueryRef": "Main Recipe Name",
               "active": true
             }
           ]
@@ -104,7 +104,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Product Type'"
+                  "Value": "'Recipe Name'"
                 }
               }
             }
@@ -112,12 +112,17 @@
         }
       ]
     },
+    "syncGroup": {
+      "groupName": "Main Recipe Name",
+      "fieldChanges": true,
+      "filterChanges": true
+    },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
     "filters": [
       {
-        "name": "4438ee6329e766398986",
+        "name": "9771bd8acb92299e6d13",
         "field": {
           "Measure": {
             "Expression": {
@@ -168,20 +173,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "99c50948832040cbba75",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Products"
-              }
-            },
-            "Property": "Product Type"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

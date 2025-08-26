@@ -4,10 +4,10 @@
   "position": {
     "x": 550.068186882567,
     "y": 0,
-    "z": 3,
+    "z": 3000,
     "height": 58.414320730892072,
     "width": 180.1108222535839,
-    "tabOrder": 4
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "slicer",
@@ -173,20 +173,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "f43bd58e5806e4e2c577",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Name"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

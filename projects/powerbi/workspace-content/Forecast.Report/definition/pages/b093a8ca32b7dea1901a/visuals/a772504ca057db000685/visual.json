@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "f0b9557d9b56a0c3f7af",
+  "name": "a772504ca057db000685",
   "position": {
-    "x": 7.5,
-    "y": 67.5,
-    "z": 6000,
-    "height": 58.75,
-    "width": 1263.75,
-    "tabOrder": 3000
+    "x": 186.66666666666666,
+    "y": 0,
+    "z": 4000,
+    "height": 58.888888888888886,
+    "width": 180,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "slicer",
@@ -17,26 +17,24 @@
           "projections": [
             {
               "field": {
-                "HierarchyLevel": {
+                "Column": {
                   "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Dates"
-                        }
-                      },
-                      "Hierarchy": "Date Hierarchy"
+                    "SourceRef": {
+                      "Entity": "Products"
                     }
                   },
-                  "Level": "Week"
+                  "Property": "Product Variation"
                 }
               },
-              "queryRef": "Dates.Date Hierarchy.Week",
-              "nativeQueryRef": "Date Hierarchy Week",
+              "queryRef": "Products.Product Variation",
+              "nativeQueryRef": "Product Variation",
               "active": true
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "isDefaultSort": true
       }
     },
     "objects": {
@@ -56,13 +54,6 @@
                   "Value": "true"
                 }
               }
-            },
-            "outlineWeight": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
             }
           }
         }
@@ -73,18 +64,11 @@
             "selectAllCheckboxEnabled": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "singleSelect": {
-              "expr": {
-                "Literal": {
                   "Value": "true"
                 }
               }
             },
-            "strictSingleSelect": {
+            "singleSelect": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -100,7 +84,7 @@
             "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Basic'"
+                  "Value": "'Dropdown'"
                 }
               }
             }
@@ -113,43 +97,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Menu Week'"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0.2
-                    }
-                  }
-                }
-              }
-            },
-            "showRestatement": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "items": [
-        {
-          "properties": {
-            "background": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FCFBF7'"
-                    }
-                  }
+                  "Value": "'Product Variation'"
                 }
               }
             }
@@ -157,34 +105,17 @@
         }
       ]
     },
-    "visualContainerObjects": {
-      "padding": [
-        {
-          "properties": {
-            "left": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            },
-            "right": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          }
-        }
-      ]
+    "syncGroup": {
+      "groupName": "Product Variation",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   },
   "filterConfig": {
     "filters": [
       {
-        "name": "9771bd8acb92299e6d13",
+        "name": "4438ee6329e766398986",
         "field": {
           "Measure": {
             "Expression": {
@@ -235,6 +166,74 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "cdd0d67ca36abe8a5a1b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Type"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "Products",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "p"
+                          }
+                        },
+                        "Property": "Product Type"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Velg&vrak'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "284a4e1f49cd432d6d78",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Variation"
+          }
+        },
+        "type": "Categorical"
       }
     ]
   }
