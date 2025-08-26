@@ -23,6 +23,7 @@ deviations as (
         , products.meals
         , products.portions
         , deviations.product_variation_id
+        , deviations.product_variation_quantity
         , case
             -- Customers that had made deviations prior to the Onesub migration was 
             -- migrated by overwriting their latest deviation product

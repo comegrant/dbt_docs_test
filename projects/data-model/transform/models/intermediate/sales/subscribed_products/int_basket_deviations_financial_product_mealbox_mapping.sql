@@ -25,6 +25,7 @@ deviations as (
         , deviations.billing_agreement_basket_id
         , deviations.company_id
         , deviations.product_variation_id
+        , deviations.product_variation_quantity
         , products.product_id
         , products.meals
         , products.portions
@@ -54,6 +55,7 @@ deviations as (
         , financial_product_deviations.billing_agreement_basket_id
         , financial_product_deviations.company_id
         , financial_product_deviations.product_variation_id as financial_product_variation_id
+        , financial_product_deviations.product_variation_quantity
         , financial_mealbox_product_mapping.preselected_mealbox_product_id as product_id
         , financial_product_deviations.meals
         , financial_product_deviations.portions

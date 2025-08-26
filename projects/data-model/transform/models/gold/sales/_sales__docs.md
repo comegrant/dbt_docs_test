@@ -72,7 +72,25 @@ The the id of the number of portions in the mealbox the customer subscribes to. 
 
 {% docs column__mealbox_servings %}
 
-The total number of servings in the mealbox which is calculated by taking meals * portions. The value is null for all product variations that are not represention a mealbox.
+The total number of servings in the mealbox which is calculated by taking meals * portions * product quantity. The value is null for all product variations that are not represention a mealbox.
+
+{% enddocs %}
+
+{% docs column__mealbox_servings_subscription %}
+
+The total number of servings in the subscribed mealbox which is calculated by taking meals * portions * subscribed product quantity. The value is null for all product variations that are not represention a mealbox.
+
+{% enddocs %}
+
+{% docs column__dish_servings %}
+
+The number of servings on the dish, which is calculated by taking dish quantity * portions. The value is null for rows that is not a dish in the order (is_dish = true).
+
+{% enddocs %}
+
+{% docs column__dish_servings_subscription %}
+
+The number of servings in the preselected dish, which is calculated by taking subscribed quantity * portions. The value is null for rows that is not a preselected dish.
 
 {% enddocs %}
 

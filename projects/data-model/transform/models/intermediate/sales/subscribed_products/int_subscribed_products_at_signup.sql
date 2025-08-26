@@ -42,6 +42,7 @@ basket_registered as (
     , products.meals
     , products.portions
     , products_registered.product_variation_id
+    , products_registered.product_variation_quantity
     , agreements.company_id
     , agreements.signup_at as valid_from
     , {{ get_scd_valid_to() }} as valid_to

@@ -36,6 +36,7 @@ order_lines as (
         , products.meals
         , products.portions
         , order_lines.product_variation_id
+        , order_lines.product_variation_quantity
         , order_lines.source_created_at as valid_from
         , 'orders' as basket_source
     from order_lines

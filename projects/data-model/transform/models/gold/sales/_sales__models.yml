@@ -140,7 +140,15 @@ models:
 
       - name: mealbox_servings_subscription
         data_type: int
-        description: "{{ doc('column__mealbox_servings') }}"
+        description: "{{ doc('column__mealbox_servings_subscription') }}"
+
+      - name: dish_servings
+        data_type: int
+        description: "{{ doc('column__dish_servings') }}"
+
+      - name: dish_servings_subscription
+        data_type: int
+        description: "{{ doc('column__dish_servings_subscription') }}"
 
       - name: meal_adjustment_subscription
         data_type: int

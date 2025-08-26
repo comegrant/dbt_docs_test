@@ -527,10 +527,10 @@ discounts as (
                 -- also opposite problem, if meals = 1 and recipe id does not exist it will get mealbox servings
                 and add_order_level_columns.recipe_id is null
                 and add_order_level_columns.has_subscription_order_type is true
-            then products.meals * portions.portions
+            then products.meals * portions.portions * add_order_level_columns.product_variation_quantity
             else null
             end as mealbox_servings
-    
+
         , case 
             when
                 subscription_products.product_type_id in ('{{ var("mealbox_product_type_id") }}', '{{ var("financial_product_type_id") }}')
@@ -539,9 +539,31 @@ discounts as (
                 -- also opposite problem, if meals = 1 and recipe id does not exist it will get mealbox servings
                 and add_order_level_columns.recipe_id_subscription is null
                 and add_order_level_columns.has_subscription_order_type is true
-            then subscription_products.meals * portions_subscription.portions
+            then subscription_products.meals * portions_subscription.portions * add_order_level_columns.product_variation_quantity_subscription
             else null
             end as mealbox_servings_subscription
+
+        , case
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            or (
+                products.product_type_id = '{{ var("mealbox_product_type_id") }}' 
+                and add_order_level_columns.recipe_id is not null
+                and add_order_level_columns.has_subscription_order_type is true
+            )
+            then add_order_level_columns.dish_quantity * portions.portions
+            else null
+        end as dish_servings
+
+        , case
+            when subscription_products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            or (
+                subscription_products.product_type_id = '{{ var("mealbox_product_type_id") }}' 
+                and add_order_level_columns.recipe_id_subscription is not null
+                and add_order_level_columns.has_subscription_order_type is true
+            )
+            then portions_subscription.portions * add_order_level_columns.product_variation_quantity_subscription
+            else null
+        end as dish_servings_subscription
 
         -- mealbox and dishes
         , case 

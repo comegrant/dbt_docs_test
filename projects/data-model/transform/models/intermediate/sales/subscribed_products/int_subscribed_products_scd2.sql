@@ -48,6 +48,7 @@ basket_mealboxes as (
         billing_agreement_basket_id as mealbox_basket_id
         , billing_agreement_id
         , product_variation_id as mealbox_product_variation_id
+        , product_variation_quantity as mealbox_product_variation_quantity
         , valid_from
         , valid_to
         , basket_source_mealbox
@@ -105,7 +106,7 @@ basket_mealboxes as (
                 array(
                     struct(
                         mealbox_product_variation_id as product_variation_id
-                        , 1 as product_variation_quantity
+                        , mealbox_product_variation_quantity as product_variation_quantity
                         , false as is_extra_product
                         , true as is_mealbox
                         , mealbox_basket_id as billing_agreement_basket_id
@@ -117,7 +118,7 @@ basket_mealboxes as (
                 array(
                     struct(
                         mealbox_product_variation_id as product_variation_id
-                        , 1 as product_variation_quantity
+                        , mealbox_product_variation_quantity as product_variation_quantity
                         , false as is_extra_product
                         , true as is_mealbox
                         , mealbox_basket_id as billing_agreement_basket_id

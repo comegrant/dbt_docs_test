@@ -58,6 +58,7 @@ basket_products as (
         , meals
         , portions
         , product_variation_id
+        , product_variation_quantity
         , valid_from
         , basket_source
     from basket_products
@@ -85,6 +86,7 @@ basket_products as (
         , meals
         , portions
         , product_variation_id
+        , product_variation_quantity
         , valid_from
         , basket_source
     from preselector_deviation_products
@@ -101,6 +103,7 @@ basket_products as (
         , meals
         , portions
         , product_variation_id
+        , product_variation_quantity
         , valid_from
         , 'mealselector deviation' as basket_source
     from financial_deviation_mealbox
@@ -116,6 +119,7 @@ basket_products as (
         , signup_products.meals
         , signup_products.portions
         , signup_products.product_variation_id
+        , signup_products.product_variation_quantity
         , signup_products.valid_from
         , signup_products.basket_source
     from signup_products
@@ -141,6 +145,7 @@ basket_products as (
         , mealboxes_from_orders.meals
         , mealboxes_from_orders.portions
         , mealboxes_from_orders.product_variation_id
+        , mealboxes_from_orders.product_variation_quantity
         , mealboxes_from_orders.valid_from
         , mealboxes_from_orders.basket_source
     from mealboxes_from_orders
@@ -166,6 +171,7 @@ basket_products as (
         , mealboxes_from_onesub_migration.meals
         , mealboxes_from_onesub_migration.portions
         , mealboxes_from_onesub_migration.product_variation_id
+        , mealboxes_from_onesub_migration.product_variation_quantity
         , mealboxes_from_onesub_migration.valid_from
         , mealboxes_from_onesub_migration.basket_source
     from mealboxes_from_onesub_migration
@@ -182,6 +188,7 @@ basket_products as (
         , financial_deviation_mealbox.meals
         , financial_deviation_mealbox.portions
         , financial_deviation_mealbox.product_variation_id
+        , financial_deviation_mealbox.product_variation_quantity
         , financial_deviation_mealbox.valid_from
         , 'customer deviation' as basket_source
     from financial_deviation_mealbox
@@ -312,6 +319,7 @@ basket_products as (
             then true
             else false
         end as is_replaced_product_variation_id
+        , product_variation_quantity
         , valid_from
         , valid_to
         , basket_source
@@ -326,6 +334,7 @@ basket_products as (
         billing_agreement_id
         , billing_agreement_basket_id
         , product_variation_id
+        , product_variation_quantity
         , valid_from
         , valid_to
         , basket_source
@@ -358,6 +367,7 @@ basket_products as (
         billing_agreement_id
         , billing_agreement_basket_id
         , product_variation_id
+        , product_variation_quantity
         , min(valid_from)                   as valid_from
         , max(valid_to)                     as valid_to
         , min_by(basket_source, valid_from) as basket_source_mealbox
@@ -384,6 +394,9 @@ basket_products as (
         , min_by(
             subscribed_mealbox_group_periods.product_variation_id, subscribed_mealbox_group_periods.valid_from
         ) as product_variation_id
+        , min_by(
+            subscribed_mealbox_group_periods.product_variation_quantity, subscribed_mealbox_group_periods.valid_from
+        ) as product_variation_quantity
     from subscribed_mealbox_group_periods
     left join dbt_snapshot_min_valid_from
         on
@@ -407,7 +420,7 @@ basket_products as (
 
 -- for all agreements that signed up before the history start date
 -- and that does not have a dbt_snapshot before the history start date
--- we trust the first subscried product after the history start date
+-- we trust the first subscribed product after the history start date
 -- over the last subscribed product before the history start date
 , adjust_first_subscribed_product as (
 
@@ -415,6 +428,7 @@ basket_products as (
         subscribed_mealbox_merge_groups.billing_agreement_basket_id
         , subscribed_mealbox_merge_groups.billing_agreement_id
         , subscribed_mealbox_merge_groups.product_variation_id
+        , subscribed_mealbox_merge_groups.product_variation_quantity
         , case
             when
                 subscribed_mealbox_merge_groups.group_periods
