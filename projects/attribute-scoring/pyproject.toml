@@ -29,6 +29,7 @@ catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 data-contracts = {path = "../../packages/data-contracts", develop = true}
 key-vault = {path = "../../packages/key-vault", develop = true}
 model-registry = {path = "../../packages/model-registry", develop = true}
+pandera = "^0.26.0"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

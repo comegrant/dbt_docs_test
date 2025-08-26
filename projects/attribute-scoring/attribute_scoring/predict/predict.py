@@ -9,20 +9,18 @@ from attribute_scoring.predict.configs import PredictionConfig
 from attribute_scoring.predict.data import (
     get_prediction_data,
     postprocessing,
-    extract_features,
 )
 from attribute_scoring.predict.utils import (
     update_is_latest_flag,
     save_outputs_to_databricks,
 )
 from constants.companies import get_company_by_code
-import mlflow
 from model_registry import databricks_model_registry, ModelRegistryBuilder
 
 CONFIG = PredictionConfig()
 
 
-def predict_pipeline(
+async def predict_pipeline(
     args: ArgsPredict,
     registry: ModelRegistryBuilder = databricks_model_registry(),
 ) -> None:
@@ -34,7 +32,7 @@ def predict_pipeline(
         args.endyyyyww,
     )
 
-    features = extract_features(data)
+    entities = pd.DataFrame(data[["recipe_id", "recipe_portion_id", "language_id"]])
 
     base_df = None
     for target in CONFIG.target_mapped:
@@ -43,12 +41,11 @@ def predict_pipeline(
             raise ValueError(f"No mapping found for target {target}")
 
         model_uri = CONFIG.model_uri(args.env, args.company, target_name, args.alias)
-        model = mlflow.pyfunc.load_model(model_uri)
+        output = await registry.infer_over(
+            entities, model_uri=model_uri, output_name="probability"
+        )
 
-        probability = model.predict(features)
-        probability = pd.Series(probability.round(5))
-
-        predictions = postprocessing(data, probability, target_name=target_name)
+        predictions = postprocessing(output, company.company_id, target_name)
 
         if base_df is None:
             base_df = predictions

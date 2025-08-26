@@ -8,6 +8,7 @@ from attribute_scoring.train.configs import DataConfig
 from catalog_connector import connection
 from pathlib import Path
 from attribute_scoring.paths import PREDICT_SQL_DIR
+from attribute_scoring.predict.configs import validate_prediction_data
 
 
 CONFIG = PredictionConfig()
@@ -31,40 +32,46 @@ def get_prediction_data(
     else:
         end_week = int(end_yyyyww.strip())
 
+    recipe_columns_prefixed = ", ".join(
+        [f"recipe_features.{col}" for col in DATA_CONFIG.recipe_features.feature_names]
+    )
+    ingredient_columns_prefixed = ", ".join(
+        [
+            f"ingredient_features.{col}"
+            for col in DATA_CONFIG.ingredient_features.feature_names
+        ]
+    )
+
     sql_path = Path(PREDICT_SQL_DIR) / "data_to_predict.sql"
     with sql_path.open() as f:
         query = f.read().format(
             company_id=company_id,
             start_yyyyww=start_week,
             end_yyyyww=end_week,
+            recipe_columns_prefixed=recipe_columns_prefixed,
+            ingredient_columns_prefixed=ingredient_columns_prefixed,
         )
 
     df = connection.sql(query).toPandas()
 
+    df = df.dropna()
+
+    df = validate_prediction_data(df)
+
     return df, start_week, end_week
 
 
-def extract_features(data: pd.DataFrame) -> pd.DataFrame:
-    feature_cols = (
-        DATA_CONFIG.recipe_features.feature_names
-        + DATA_CONFIG.ingredient_features.feature_names
-    )
-
-    predict_data = pd.DataFrame(data[feature_cols])
-
-    return predict_data
-
-
 def postprocessing(
-    data: pd.DataFrame, prediction: pd.Series, target_name: str
+    predictions: pd.DataFrame, company_id: str, target_name: str
 ) -> pd.DataFrame:
-    df = pd.DataFrame(data[["company_id", "recipe_id"]])
+    df = pd.DataFrame(predictions[["recipe_id", "probability"]])
 
-    df[f"{target_name}_probability"] = prediction
-    df[f"is_{target_name}"] = prediction.apply(
+    df["company_id"] = company_id
+
+    df = df.rename(columns={"probability": f"{target_name}_probability"})
+
+    df[f"is_{target_name}"] = df[f"{target_name}_probability"].apply(
         lambda x: float(x) > CONFIG.prediction_threshold
     )
-
-    df = df.dropna()
 
     return df

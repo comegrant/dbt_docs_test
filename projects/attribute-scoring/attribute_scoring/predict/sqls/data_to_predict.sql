@@ -1,10 +1,12 @@
 with predictions as (
     select distinct
+        company_id,
         recipe_id
     from gold.fact_menus
     where (menu_year*100 + menu_week) between {start_yyyyww} and {end_yyyyww}
     and company_id = '{company_id}'
     and recipe_id is not null
+    and portion_id = 2 -- 4 portions
 ),
 
 recipe_features as (
@@ -22,8 +24,12 @@ recipe_features as (
 
 , prediction_data as (
     select
-        recipe_features.*
-        , ingredient_features.*
+        predictions.company_id,
+        predictions.recipe_id,
+        recipe_features.recipe_portion_id,
+        recipe_features.language_id,
+        {recipe_columns_prefixed},
+        {ingredient_columns_prefixed}
     from predictions
     left join recipe_features
         on predictions.recipe_id = recipe_features.recipe_id

@@ -28,7 +28,7 @@ async def main(args: ArgsPredict):
     os.environ["MLFLOW_USE_DATABRICKS_SDK_MODEL_ARTIFACTS_REPO_FOR_UC"] = "true"
 
     mlflow.set_tracking_uri("databricks")
-    predict_pipeline(args=args)
+    await predict_pipeline(args=args)
 
 
 if __name__ == "__main__":

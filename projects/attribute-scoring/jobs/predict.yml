@@ -35,7 +35,7 @@ resources:
 
       parameters:
         - name: env
-          default: "dev"
+          default: "${var.environment}"
         - name: company
           default: "AMK"
         - name: alias
