@@ -189,7 +189,7 @@ with fact_menus as (
     left join recipe_steps_list
         on fact_menus.recipe_portion_id = recipe_steps_list.recipe_portion_id
     where
-        dim_portions.portion_name_local = '4'
+        dim_portions.portion_name_local in ('4', '1')
         and dim_recipes.recipe_id is not null
 )
 
