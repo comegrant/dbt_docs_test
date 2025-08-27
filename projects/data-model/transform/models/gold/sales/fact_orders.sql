@@ -608,7 +608,11 @@ discounts as (
             else false
         end as is_preselected_dish
 
+        -- TODO: Temporary solution to find plus price dishes, need to figure out if a better way exist
         , case 
+            -- remove recipes with extra protein (very few instances where people have both + protein and + price)
+            when products.has_extra_protein
+            then 0
             when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
             and add_order_level_columns.total_amount_ex_vat > 0
             then 1

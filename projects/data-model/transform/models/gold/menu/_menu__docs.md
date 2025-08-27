@@ -138,6 +138,12 @@ The VAT category the product variation belongs to, represented as an whole numbe
 
 {% enddocs %}
 
+{% docs column__has_extra_protein %}
+
+Customers can choose to add extra protein to the products they order for an additional fee. This column is true if the product is of a variation that has extra protein.
+
+{% enddocs %}
+
 # Dim Taxonomies
 {% docs column__pk_dim_taxonomies %}
 

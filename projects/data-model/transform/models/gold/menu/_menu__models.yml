@@ -187,6 +187,12 @@ models:
         data_type: int
         description: "{{ doc('column__maximum_order_quantity') }}"
 
+      - name: has_extra_protein
+        data_type: boolean
+        description: "{{ doc('column__has_extra_protein') }}"
+        data_tests:
+          - not_null
+
       - name: is_financial
         data_type: boolean
         description: "{{ doc('column__is_financial') }}"

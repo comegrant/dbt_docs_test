@@ -80,6 +80,11 @@ product_tables_joined as (
         , coalesce(attributes.vat_rate, attributes_template.vat_rate) as vat_rate
         , coalesce(attributes.picking_line_label, attributes_template.picking_line_label) as picking_line_label
         , coalesce(attributes.maximum_order_quantity, attributes_template.maximum_order_quantity) as maximum_order_quantity
+        , case 
+            when coalesce(attributes.portion_name, attributes_template.portion_name) like '%+%'
+            then true
+            else false
+        end as has_extra_protein
 
     from product_variations_companies
     left join product_variations
