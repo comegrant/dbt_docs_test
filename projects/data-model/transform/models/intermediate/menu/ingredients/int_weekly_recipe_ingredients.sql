@@ -80,22 +80,22 @@ menu_weeks_recipes_portions as (
         , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)))  * any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as total_ingredient_co2_emissions_whole_units
         , any_value(
               case
-                  when recipe_ingredients.has_co2_data then 0
-                  else recipe_ingredients.ingredient_net_weight
+                  when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
+                  else 0
               end
           ) as ingredient_weight_with_co2_data
         , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * 
           any_value(
               case
-                  when recipe_ingredients.has_co2_data then 0
-                  else recipe_ingredients.ingredient_net_weight
+                  when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
+                  else 0
               end
           ) as total_ingredient_weight_with_co2_data
         , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * 
           any_value(
               case
-                  when recipe_ingredients.has_co2_data then 0
-                  else recipe_ingredients.ingredient_net_weight
+                  when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
+                  else 0
               end
           ) as total_ingredient_weight_with_co2_data_whole_units
     
