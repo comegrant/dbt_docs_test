@@ -153,6 +153,7 @@ table 'Order Measures'
 	/// know the average price paid per grocery item. This would give you the
 	/// order value divided by 4 (number of products)
 	measure 'Average Unit Price Inc Vat' = DIVIDE([Total Order Value Inc Vat],[Number of Ordered Units])
+		isHidden
 		displayFolder: Ordered Units
 		lineageTag: 01e8c74d-66dd-4082-bcee-a4c91dcc5c76
 
@@ -161,6 +162,7 @@ table 'Order Measures'
 	/// Average price per unit
 	/// Excluding VAT
 	measure 'Average Unit Price Ex Vat' = DIVIDE([Total Order Value Ex Vat],[Number of Ordered Units])
+		isHidden
 		displayFolder: Ordered Units
 		lineageTag: 461d3a40-d20c-45d2-aa78-46a36a2ce6ac
 
@@ -246,11 +248,10 @@ table 'Order Measures'
 	/// Hence, this measure should often be used together with a filter on product type
 	measure 'Number of Ordered Units' =
 			CALCULATE(
-				[Product Variation Quantity],
-				'Order Measures'[has_normal_order_type] = TRUE(),
-				'Order Measures'[has_finished_order_status] = TRUE()
+				[Product Variation Quantity]
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Ordered Units
 		lineageTag: ffd7948c-ef03-4234-b6e8-94515eca77eb
 
@@ -261,6 +262,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "PY"
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Number of ordered units for the same period in the month of todays date.
@@ -271,6 +273,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "Current Month"
 			)
 		formatString: #,0
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Relative increase/decrease in number of ordered units from previous year
@@ -280,6 +283,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "YOY%"
 			)
 		formatString: 0.00%;-0.00%;0.00%
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Average basket size, i.e. average number of units per order
@@ -292,6 +296,7 @@ table 'Order Measures'
 				[Number of Orders]
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Average Number of Units per Order for the same period last year.
@@ -301,6 +306,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "PY"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Average Number of Units per Order for the same period in the month of todays date.
@@ -311,6 +317,7 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "Current Month"
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Ordered Units
 
 	/// Sum of value of gift card
@@ -1689,6 +1696,11 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Preselected Recipes CO2 Emissions
 
+	/// Number of ordered mealboxes.
+	/// Sums the product variation quantity for all ordered products that are mealboxes.
+	measure 'Number of Ordered Mealboxes' = CALCULATE([Product Variation Quantity], 'Order Measures'[is_mealbox] = TRUE())
+		formatString: #,0
+		displayFolder: Mealboxes
 
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id

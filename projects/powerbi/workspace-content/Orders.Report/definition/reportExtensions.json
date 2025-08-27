@@ -3,37 +3,6 @@
   "name": "extension",
   "entities": [
     {
-      "name": "Order Measures",
-      "measures": [
-        {
-          "name": "Running orders",
-          "dataType": "Double",
-          "expression": "",
-          "measureTemplate": {
-            "daxTemplateName": "RunningTotal",
-            "version": 0
-          },
-          "references": {
-            "unrecognizedReferences": true
-          }
-        },
-        {
-          "name": "Running orders LY",
-          "dataType": "Double",
-          "expression": "\n\nCALCULATE([Running orders], DATEADD('Dates'[Date],-1, YEAR))",
-          "references": {
-            "measures": [
-              {
-                "schema": "extension",
-                "entity": "Order Measures",
-                "name": "Running orders"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "name": "(Param) Measures",
       "measures": [
         {

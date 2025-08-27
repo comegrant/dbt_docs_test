@@ -16,6 +16,7 @@ table 'Forecast Measures'
 			)
 		formatString: #,0
 		lineageTag: a43f5c61-5908-4572-ac98-b0bcb2891052
+
 	column 'Order Quantity Forecast'
 		dataType: int64
 		isHidden
