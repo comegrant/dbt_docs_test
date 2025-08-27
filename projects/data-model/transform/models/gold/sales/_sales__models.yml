@@ -2351,6 +2351,25 @@ models:
               values: [2, 3, 4, 5]
               quote: false
 
+      - name: product_variation_quantity_subscription
+        data_type: int
+        description: "{{ doc('column__product_variation_quantity_subscription') }}"
+        data_tests:
+          - not_null
+
+      - name: mealbox_servings_subscription
+        data_type: int
+        description: "{{ doc('column__mealbox_servings_subscription') }}"
+        data_tests:
+          - not_null
+
+      - name: dish_servings_subscription
+        data_type: int
+        description: "{{ doc('column__dish_servings_subscription') }}"
+        data_tests:
+          - not_null:
+              where: "is_dish = true"
+
       - name: has_data_processing_consent
         data_type: boolean
         description: "{{ doc('column__has_data_processing_consent') }}"
@@ -2487,6 +2506,34 @@ models:
         description: "{{ doc('column__is_dish_preselector_output') }}"
         data_tests:
           - not_null
+
+      - name: price_category_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__price_category_cost') }}"
+
+      - name: total_ingredient_planned_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost') }}"
+
+      - name: total_ingredient_planned_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_planned_cost_whole_units') }}"
+
+      - name: total_ingredient_expected_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost') }}"
+
+      - name: total_ingredient_expected_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_expected_cost_whole_units') }}"
+
+      - name: total_ingredient_actual_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost') }}"
+
+      - name: total_ingredient_actual_cost_whole_units
+        data_type: decimal(38,2)
+        description: "{{ doc('column__total_ingredient_actual_cost_whole_units') }}"
 
       - name: fk_dim_billing_agreements
         data_type: string
@@ -2634,6 +2681,18 @@ models:
           - relationships:
               to: ref('dim_preselector_versions')
               field: pk_dim_preselector_versions
+
+      - name: fk_dim_price_categories
+        data_type: string
+        description: "{{ doc('column__pk_dim_price_categories') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_price_categories')
+            to_columns: [pk_dim_price_categories]
+        data_tests:
+          - relationships:
+              to: ref('dim_price_categories')
+              field: pk_dim_price_categories
 
     versions:
       - v: 1

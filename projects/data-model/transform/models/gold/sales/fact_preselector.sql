@@ -66,6 +66,23 @@ preselector_successful_output_dishes as (
 
 )
 
+, subscribed_mealbox_products_quantity_greater_than_one as (
+
+    select * from {{ ref('int_subscribed_products_mealbox_quantity_greater_than_one_scd2') }}
+
+)
+
+, recipe_costs_and_co2 as (
+
+    select * from {{ ref('int_weekly_recipe_costs_and_co2') }}
+
+)
+
+, price_categories as (
+
+    select * from {{ ref('dim_price_categories') }}
+
+)
 
 -- Get the recipe and main recipe id for each dish in the preselector dishes output
 , join_recipe_and_main_recipe_id_to_preselector_dishes as (
@@ -353,38 +370,70 @@ preselector_successful_output_dishes as (
     from union_preselector_dishes_with_mealbox
 )
 
+, add_recipe_costs_and_co2 as (
+    select
+        add_mealbox_level_metrics.*
+
+        -- If the product variation quantity is not available, we default to 1.
+        -- This is often because the agreement is new and not yet ingested to the int table
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) as product_variation_quantity_subscription
+
+        -- This column will be used to find price categories
+        , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units as price_category_cost
+
+        -- Find ingredient cost of the recipes
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_planned_cost as total_ingredient_planned_cost
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_planned_cost_whole_units as total_ingredient_planned_cost_whole_units
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_expected_cost as total_ingredient_expected_cost
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_expected_cost_whole_units as total_ingredient_expected_cost_whole_units
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_actual_cost as total_ingredient_actual_cost
+        , coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) * recipe_costs_and_co2.total_ingredient_actual_cost_whole_units as total_ingredient_actual_cost_whole_units
+
+        -- Add dish/mealbox servings to each line for calculating cost per serving
+        , add_mealbox_level_metrics.portions * add_mealbox_level_metrics.meals * coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1) as mealbox_servings_subscription
+        , case 
+            when is_dish = true then
+                add_mealbox_level_metrics.portions * coalesce(subscribed_mealbox_products_quantity_greater_than_one.product_variation_quantity, 1)
+            else
+                null
+        end as dish_servings_subscription
+    from add_mealbox_level_metrics
+    -- Join the subscribed product at the time of the preselector output
+    left join subscribed_mealbox_products_quantity_greater_than_one
+        on add_mealbox_level_metrics.billing_agreement_id = subscribed_mealbox_products_quantity_greater_than_one.billing_agreement_id
+        and add_mealbox_level_metrics.created_at >= subscribed_mealbox_products_quantity_greater_than_one.valid_from
+        and add_mealbox_level_metrics.created_at < subscribed_mealbox_products_quantity_greater_than_one.valid_to
+    left join recipe_costs_and_co2
+        on add_mealbox_level_metrics.company_id = recipe_costs_and_co2.company_id
+        and add_mealbox_level_metrics.menu_week_monday_date = recipe_costs_and_co2.menu_week_monday_date
+        and add_mealbox_level_metrics.product_variation_id = recipe_costs_and_co2.product_variation_id
+        and add_mealbox_level_metrics.recipe_id = recipe_costs_and_co2.recipe_id
+)
+
 , add_keys as (
 
     select
-        add_mealbox_level_metrics.*
+        add_recipe_costs_and_co2.*
         , ingredient_combinations.ingredient_combination_id
         , companies.language_id
         -- Primary key
         , md5(
             cast(concat(
-                add_mealbox_level_metrics.billing_agreement_id
-                , coalesce(add_mealbox_level_metrics.product_variation_id, 'mealbox')
-                , add_mealbox_level_metrics.created_at
-                , add_mealbox_level_metrics.menu_week_monday_date
+                add_recipe_costs_and_co2.billing_agreement_id
+                , coalesce(add_recipe_costs_and_co2.product_variation_id, 'mealbox')
+                , add_recipe_costs_and_co2.created_at
+                , add_recipe_costs_and_co2.menu_week_monday_date
             ) as string)
         ) as pk_fact_preselector
         -- Foreign keys
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
-        , md5(add_mealbox_level_metrics.company_id) as fk_dim_companies
-        , md5(
-            concat(add_mealbox_level_metrics.recipe_id, companies.language_id)
-        ) as fk_dim_recipes
-        , cast(
-            date_format(add_mealbox_level_metrics.created_at, 'yyyyMMdd') as int
-        ) as fk_dim_dates_created_at
-        , cast(
-            date_format(add_mealbox_level_metrics.menu_week_financial_date, 'yyyyMMdd') as int
-        ) as fk_dim_dates
-        , date_format(add_mealbox_level_metrics.created_at, 'HHmm') as fk_dim_time_created_at
-        , md5(
-            add_mealbox_level_metrics.model_version_commit_sha
-        )                                      as fk_dim_preselector_versions
+        , md5(add_recipe_costs_and_co2.company_id) as fk_dim_companies
+        , md5(concat(add_recipe_costs_and_co2.recipe_id, companies.language_id)) as fk_dim_recipes
+        , cast(date_format(add_recipe_costs_and_co2.created_at, 'yyyyMMdd') as int) as fk_dim_dates_created_at
+        , cast(date_format(add_recipe_costs_and_co2.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
+        , date_format(add_recipe_costs_and_co2.created_at, 'HHmm') as fk_dim_time_created_at
+        , md5(add_recipe_costs_and_co2.model_version_commit_sha) as fk_dim_preselector_versions
         , case when is_dish = true then
             products_dish.pk_dim_products
         else
@@ -396,29 +445,30 @@ preselector_successful_output_dishes as (
             portions_mealbox.pk_dim_portions
         end as fk_dim_portions
         , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, companies.language_id)), '0') as fk_dim_ingredient_combinations
-    from add_mealbox_level_metrics
+        , coalesce(price_categories.pk_dim_price_categories, '0') as fk_dim_price_categories
+    from add_recipe_costs_and_co2
     left join companies
-        on add_mealbox_level_metrics.company_id = companies.company_id
+        on add_recipe_costs_and_co2.company_id = companies.company_id
     left join agreements
         on
-            add_mealbox_level_metrics.billing_agreement_id = agreements.billing_agreement_id
-            and add_mealbox_level_metrics.created_at >= agreements.valid_from
-            and add_mealbox_level_metrics.created_at < agreements.valid_to
+            add_recipe_costs_and_co2.billing_agreement_id = agreements.billing_agreement_id
+            and add_recipe_costs_and_co2.created_at >= agreements.valid_from
+            and add_recipe_costs_and_co2.created_at < agreements.valid_to
     -- The connection to dim_products is different for dishes and mealboxes, as the preselector doesn't output the
     -- product_variation_id for the mealbox, so I have to join it on the company, product_name, type, meals, and portions
     left join products as products_mealbox
         on
-            add_mealbox_level_metrics.company_id = products_mealbox.company_id
+            add_recipe_costs_and_co2.company_id = products_mealbox.company_id
             and products_mealbox.product_type_id = '{{ var("mealbox_product_type_id") }}'
             and products_mealbox.product_id = '{{ var("onesub_product_id") }}'
-            and add_mealbox_level_metrics.meals = products_mealbox.meals
-            and add_mealbox_level_metrics.portions = products_mealbox.portions
-            and add_mealbox_level_metrics.is_dish = false
+            and add_recipe_costs_and_co2.meals = products_mealbox.meals
+            and add_recipe_costs_and_co2.portions = products_mealbox.portions
+            and add_recipe_costs_and_co2.is_dish = false
     left join products as products_dish
         on
-            add_mealbox_level_metrics.company_id = products_dish.company_id
-            and add_mealbox_level_metrics.product_variation_id = products_dish.product_variation_id
-            and add_mealbox_level_metrics.is_dish = true
+            add_recipe_costs_and_co2.company_id = products_dish.company_id
+            and add_recipe_costs_and_co2.product_variation_id = products_dish.product_variation_id
+            and add_recipe_costs_and_co2.is_dish = true
     left join portions as portions_mealbox
         on products_mealbox.portion_name = portions_mealbox.portion_name_local
         and companies.language_id = portions_mealbox.language_id
@@ -428,9 +478,16 @@ preselector_successful_output_dishes as (
     left join billing_agreement_preferences
         on agreements.billing_agreement_preferences_updated_id = billing_agreement_preferences.billing_agreement_preferences_updated_id
     left join ingredient_combinations
-        on add_mealbox_level_metrics.recipe_id = ingredient_combinations.recipe_id
+        on add_recipe_costs_and_co2.recipe_id = ingredient_combinations.recipe_id
         and portions_dish.portion_id = ingredient_combinations.portion_id
         and companies.language_id = ingredient_combinations.language_id
+    left join price_categories
+        on add_recipe_costs_and_co2.company_id = price_categories.company_id
+        and portions_dish.portion_id = price_categories.portion_id
+        and add_recipe_costs_and_co2.price_category_cost >= price_categories.min_ingredient_cost_inc_vat
+        and add_recipe_costs_and_co2.price_category_cost < price_categories.max_ingredient_cost_inc_vat
+        and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.valid_from
+        and add_recipe_costs_and_co2.menu_week_monday_date < price_categories.valid_to
 )
 
 select * from add_keys
