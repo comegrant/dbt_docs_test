@@ -390,109 +390,109 @@ table 'Case Measures'
         displayFolder: Complaints\Per 1000 Orders
 
     /// The total amount credited, including VAT.
-    measure 'Complaint Cost Inc VAT' = SUM('Case Measures'[Credit Amount Inc VAT])
+    measure 'Complaint Cost Inc Vat' = SUM('Case Measures'[Credit Amount Inc Vat])
         formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
     
     /// The total amount credited last year.
-    measure 'Complaint Cost Inc VAT (PY)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
+    measure 'Complaint Cost Inc Vat (PY)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
-    measure 'Complaint Cost Inc VAT (Current Month)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
+    measure 'Complaint Cost Inc Vat (Current Month)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in amount credited in the selected year and the year before.
-    measure 'Complaint Cost Inc VAT (Diff PY)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
+    measure 'Complaint Cost Inc Vat (Diff PY)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in amount credited in the selected year and the year before.
-    measure 'Complaint Cost Inc VAT (YOY%)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%") 
+    measure 'Complaint Cost Inc Vat (YOY%)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited from the beginning of the year up to the current period.
-    measure 'Complaint Cost Inc VAT (YTD)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+    measure 'Complaint Cost Inc Vat (YTD)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The total amount credited from the beginning of the year up to the current period, for the same period in the previous year.
-    measure 'Complaint Cost Inc VAT (PYTD)' = CALCULATE([Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+    measure 'Complaint Cost Inc Vat (PYTD)' = CALCULATE([Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT. The cost of all complaints in a given period divided by the number of orders in that period.
-    measure 'Average Complaint Cost Per Order Inc VAT' = DIVIDE([Complaint Cost Inc VAT], [Number of Orders])
+    measure 'Average Complaint Cost Per Order Inc Vat' = DIVIDE([Complaint Cost Inc Vat], [Number of Orders])
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per order, including VAT, last year.
-    measure 'Average Complaint Cost Per Order Inc VAT (PY)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PY") 
+    measure 'Average Complaint Cost Per Order Inc Vat (PY)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
-    measure 'Average Complaint Cost Per Order Inc VAT (Current Month)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
+    measure 'Average Complaint Cost Per Order Inc Vat (Current Month)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in average amount credited per order in the selected year and the year before.
-    measure 'Average Complaint Cost Per Order Inc VAT (Diff PY)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
+    measure 'Average Complaint Cost Per Order Inc Vat (Diff PY)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in average amount credited per order in the selected year and the year before.
-    measure 'Average Complaint Cost Per Order Inc VAT (YOY%)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%") 
+    measure 'Average Complaint Cost Per Order Inc Vat (YOY%)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period.
-    measure 'Average Complaint Cost Per Order Inc VAT (YTD)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+    measure 'Average Complaint Cost Per Order Inc Vat (YTD)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per order, including VAT, from the beginning of the year up to the current period, for the same period in the previous year.
-    measure 'Average Complaint Cost Per Order Inc VAT (PYTD)' = CALCULATE([Average Complaint Cost Per Order Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+    measure 'Average Complaint Cost Per Order Inc Vat (PYTD)' = CALCULATE([Average Complaint Cost Per Order Inc Vat], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint, including VAT.
-    measure 'Average Complaint Cost Inc VAT' = DIVIDE([Complaint Cost Inc VAT], [Number of Complaints])
+    measure 'Average Complaint Cost Inc Vat' = DIVIDE([Complaint Cost Inc Vat], [Number of Complaints])
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per complaint last year.
-    measure 'Average Complaint Cost Inc VAT (PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PY")
+    measure 'Average Complaint Cost Inc Vat (PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="PY")
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
-    measure 'Average Complaint Cost Inc VAT (Current Month)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Current Month")
+    measure 'Average Complaint Cost Inc Vat (Current Month)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="Current Month")
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The difference in average amount credited per complaint in the selected year and the year before.
-    measure 'Average Complaint Cost Inc VAT (Diff PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="Diff PY")
+    measure 'Average Complaint Cost Inc Vat (Diff PY)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="Diff PY")
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The percentage change in average amount credited per complaint in the selected year and the year before.
-    measure 'Average Complaint Cost Inc VAT (YOY%)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YOY%")
+    measure 'Average Complaint Cost Inc Vat (YOY%)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="YOY%")
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
     
     /// The average amount credited per complaint from the beginning of the year up to the current period.
-    measure 'Average Complaint Cost Inc VAT (YTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="YTD")
+    measure 'Average Complaint Cost Inc Vat (YTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="YTD")
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
     /// The average amount credited per complaint from the beginning of the year up to the current period, for the same period in the previous year.
-    measure 'Average Complaint Cost Inc VAT (PYTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc VAT], 'Time Intelligence'[Time Calculation]="PYTD")
+    measure 'Average Complaint Cost Inc Vat (PYTD)' = CALCULATE ('Case Measures'[Average Complaint Cost Inc Vat], 'Time Intelligence'[Time Calculation]="PYTD")
         formatString: #,0.00
         displayFolder: Complaints\Cost Inc Vat
 
@@ -606,43 +606,43 @@ table 'Case Measures'
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue, excluding VAT.
-    measure 'Complaint Cost Share of Order Value Ex VAT' = DIVIDE([Complaint Cost Ex VAT], [Order Value Gross Ex VAT])
+    measure 'Complaint Cost Share of Order Value Ex Vat' = DIVIDE([Complaint Cost Ex Vat], [Order Value Gross Ex Vat])
         formatString: 0.00%;-0.00%;0.00%
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue last year.
-    measure 'Complaint Cost Share of Order Value Ex VAT (PY)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="PY") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (PY)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="PY") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue in the month of todays date.
     /// Need to be filtered on year if its wanted to see numbers for a specific year.
-    measure 'Complaint Cost Share of Order Value Ex VAT (Current Month)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Current Month") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (Current Month)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="Current Month") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The difference in share of complaint cost per revenue in the selected year and the year before.
-    measure 'Complaint Cost Share of Order Value Ex VAT (Diff PY)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Diff PY") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (Diff PY)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="Diff PY") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in share of complaint cost per revenue in the selected year and the year before.
-    measure 'Complaint Cost Share of Order Value Ex VAT (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="Diff YOY%") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="Diff YOY%") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue from the beginning of the year up to the current period.
-    measure 'Complaint Cost Share of Order Value Ex VAT (YTD)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="YTD") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (YTD)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="YTD") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue from the beginning of the year up to the current period, for the same period in the previous year.
-    measure 'Complaint Cost Share of Order Value Ex VAT (PYTD)' = CALCULATE([Complaint Cost Share of Order Value Ex VAT], 'Time Intelligence'[Time Calculation]="PYTD") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (PYTD)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="PYTD") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
     /// The share of complaint cost per revenue, including VAT.
-	measure 'Complaint Cost Share of Order Value Inc Vat' = DIVIDE([Complaint Cost Inc VAT], [Order Value Gross Inc VAT])
+	measure 'Complaint Cost Share of Order Value Inc Vat' = DIVIDE([Complaint Cost Inc Vat], [Order Value Gross Ex Vat])
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Complaints\Cost Inc Vat
 
@@ -717,7 +717,7 @@ table 'Case Measures'
         sourceColumn: ops_order_id
 
     /// The amount the customer will get in reimbursement. I.e., the cost of the case.
-    column 'Credit Amount Inc VAT'
+    column 'Credit Amount Inc Vat'
         dataType: int64
         isHidden
         summarizeBy: none
@@ -725,7 +725,7 @@ table 'Case Measures'
     
     /// The amount the customer will get in reimbursement. I.e., the cost of the case. 
     /// The VAT is deducted based on a fixed VAT rate per company which is 0.25 for Renemt, 0.12 for Linas Matkasse and 0.15 for Godtlevert and Adams Matkasse.
-    column 'Credit Amount Ex VAT'
+    column 'Credit Amount Ex Vat'
         dataType: int64
         isHidden
         summarizeBy: none

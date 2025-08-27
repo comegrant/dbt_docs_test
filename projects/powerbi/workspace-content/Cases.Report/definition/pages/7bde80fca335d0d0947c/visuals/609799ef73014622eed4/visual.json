@@ -62,10 +62,10 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Complaint Cost Inc VAT"
+                  "Property": "Complaint Cost Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Complaint Cost Inc VAT",
+              "queryRef": "Case Measures.Complaint Cost Inc Vat",
               "nativeQueryRef": "Complaint Cost",
               "displayName": "Complaint Cost"
             },
@@ -77,10 +77,10 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Average Complaint Cost Per Order Inc VAT"
+                  "Property": "Average Complaint Cost Per Order Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc VAT",
+              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc Vat",
               "nativeQueryRef": "Average Complaint Cost Per Order",
               "displayName": "Average Complaint Cost Per Order"
             },
@@ -143,7 +143,7 @@
                     "Entity": "Case Measures"
                   }
                 },
-                "Property": "Complaint Cost Inc VAT"
+                "Property": "Complaint Cost Inc Vat"
               }
             },
             "direction": "Descending"
@@ -389,20 +389,6 @@
           },
           "selector": {
             "metadata": "Case Measures.Complaint Cost Share of Order Value Inc Vat"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "117.00000028049246D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Case Measures.Complaint Cost Inc VAT"
           }
         }
       ]

@@ -62,11 +62,11 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Complaint Cost Inc VAT"
+                  "Property": "Complaint Cost Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Complaint Cost Inc VAT",
-              "nativeQueryRef": "Complaint Cost1",
+              "queryRef": "Case Measures.Complaint Cost Inc Vat",
+              "nativeQueryRef": "Complaint Cost",
               "displayName": "Complaint Cost"
             },
             {
@@ -77,11 +77,11 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Average Complaint Cost Per Order Inc VAT"
+                  "Property": "Average Complaint Cost Per Order Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc VAT",
-              "nativeQueryRef": "Average Complaint Cost Per Order1",
+              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc Vat",
+              "nativeQueryRef": "Average Complaint Cost Per Order",
               "displayName": "Average Complaint Cost Per Order"
             },
             {
@@ -143,7 +143,7 @@
                     "Entity": "Case Measures"
                   }
                 },
-                "Property": "Complaint Cost Inc VAT"
+                "Property": "Complaint Cost Inc Vat"
               }
             },
             "direction": "Descending"
@@ -410,13 +410,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "216.27115591965855D"
+                  "Value": "119.07594936708861D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Case Measures.Average Complaint Cost Per Order Inc VAT"
+            "metadata": "Case Measures.Complaint Cost Inc Vat"
           }
         },
         {
@@ -424,13 +424,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "130.75000515101783D"
+                  "Value": "214.95358649789029D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Case Measures.Complaint Cost Inc VAT"
+            "metadata": "Case Measures.Average Complaint Cost Per Order Inc Vat"
           }
         }
       ],

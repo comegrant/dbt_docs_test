@@ -5,10 +5,9 @@
   "options": {
     "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
+      "c1768988c094cc8aeb2c",
       "36ba399750903e8be3b9",
       "5fff1c6e5038430e366c",
-      "c1768988c094cc8aeb2c",
-      "5c485896a1d4b0dee0b4",
       "88664fab711c23140970",
       "cefd42617025aa50b165"
     ],
@@ -104,7 +103,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "d9a905598e05013c8a4a",
+                  "name": "697ac828c3b8414a35b9",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -119,7 +118,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "98f91f7708267158cc56",
+                  "name": "2a9e785960ab65ac4067",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -341,7 +340,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "63fcf4b6c71dbe20e6ab",
+                  "name": "63bce5604b0150a7d98e",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -390,18 +389,6 @@
                   }
                 ]
               }
-            }
-          },
-          "88664fab711c23140970": {
-            "singleVisual": {
-              "visualType": "textbox",
-              "objects": {}
-            }
-          },
-          "cefd42617025aa50b165": {
-            "singleVisual": {
-              "visualType": "bookmarkNavigator",
-              "objects": {}
             }
           },
           "56016240de42d27c51cb": {
@@ -495,7 +482,7 @@
                   "howCreated": 1
                 },
                 {
-                  "name": "1a0fedd172c49754dab0",
+                  "name": "a26e156194b04c504ab0",
                   "type": "Advanced",
                   "expression": {
                     "HierarchyLevel": {
@@ -515,7 +502,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "ad2981e04d4b010cb53e",
+                  "name": "8d7a5dcb0d7b36110c08",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -530,7 +517,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "1c69cbd2267993b277bd",
+                  "name": "b3b9fba68590dea49b53",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -545,7 +532,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "b50d00bdeb91c8d90a21",
+                  "name": "e8ad15d55e00cc4bc5b4",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -560,7 +547,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "b2be1e8bb7919a1a1e5a",
+                  "name": "5c5473651178007122e3",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -624,7 +611,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "78af638f9401773013b0",
+                  "name": "8fa39339b8001607ec02",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -639,7 +626,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "ed81de030b41d76000eb",
+                  "name": "a08659618b96da71ae6b",
                   "type": "Advanced",
                   "expression": {
                     "HierarchyLevel": {
@@ -659,7 +646,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "be47adf85a4c42b389ea",
+                  "name": "82baa590800910e6a666",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -674,7 +661,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "a33717c0a0cdb6c16e53",
+                  "name": "56feb97340c06d0069b7",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -689,7 +676,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "2a40efc8da05a2e071d0",
+                  "name": "cf78211a00c0c0d970e9",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -704,7 +691,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "73939d620cda438d1091",
+                  "name": "40b4b99824b3b2a039e1",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -719,7 +706,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "303dc73d84da56706ab8",
+                  "name": "dd41ba1160561d353093",
                   "type": "Advanced",
                   "expression": {
                     "Measure": {
@@ -748,7 +735,7 @@
                           "Entity": "Case Measures"
                         }
                       },
-                      "Property": "Share of Orders With Complaints"
+                      "Property": "Complaint Cost Ex Vat"
                     }
                   }
                 }
@@ -804,7 +791,10 @@
                     "identityValues": []
                   }
                 }
-              ]
+              ],
+              "display": {
+                "mode": "hidden"
+              }
             }
           },
           "7232adb2c60b879115ac": {
@@ -1041,11 +1031,195 @@
               }
             }
           },
+          "88664fab711c23140970": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "objects": {}
+            }
+          },
+          "c1768988c094cc8aeb2c": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "010b54b08080290d100e",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Details"
+                        }
+                      },
+                      "Property": "Impact"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "865c416d02805cb0106a",
+                  "type": "Advanced",
+                  "expression": {
+                    "HierarchyLevel": {
+                      "Expression": {
+                        "Hierarchy": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Entity": "Dates"
+                            }
+                          },
+                          "Hierarchy": "Date Hierarchy"
+                        }
+                      },
+                      "Level": "Week"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "83554579004ac4bc4175",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Measures"
+                        }
+                      },
+                      "Property": "Number of Orders With Complaints"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "3b74dbd94824090751e1",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Measures"
+                        }
+                      },
+                      "Property": "Complaint Cost Share of Order Value Inc Vat"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "c453ddb70b8b67796614",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Measures"
+                        }
+                      },
+                      "Property": "Share of Orders With Complaints"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "efee9d57ba7a014cc3d0",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Measures"
+                        }
+                      },
+                      "Property": "Complaint Cost Ex Vat"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "0c0c45d90d022a5559a0",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Measures"
+                        }
+                      },
+                      "Property": "Average Complaint Cost Per Order Ex Vat"
+                    }
+                  },
+                  "howCreated": 0
+                }
+              ]
+            },
+            "singleVisual": {
+              "visualType": "pivotTable",
+              "objects": {},
+              "activeProjections": {
+                "Rows": [
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Case Details"
+                        }
+                      },
+                      "Property": "Impact"
+                    }
+                  }
+                ]
+              },
+              "expansionStates": [
+                {
+                  "roles": [
+                    "Rows"
+                  ],
+                  "levels": [
+                    {
+                      "queryRefs": [
+                        "Case Details.Impact"
+                      ],
+                      "isCollapsed": true,
+                      "identityKeys": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Entity": "Case Details"
+                              }
+                            },
+                            "Property": "Impact"
+                          }
+                        }
+                      ],
+                      "isPinned": true
+                    },
+                    {
+                      "queryRefs": [
+                        "Dates.Date Hierarchy.Week"
+                      ],
+                      "isCollapsed": true,
+                      "isPinned": true
+                    }
+                  ],
+                  "root": {
+                    "identityValues": []
+                  }
+                }
+              ]
+            }
+          },
+          "cefd42617025aa50b165": {
+            "singleVisual": {
+              "visualType": "bookmarkNavigator",
+              "objects": {}
+            }
+          },
           "d0af4d01c23eee848b40": {
             "filters": {
               "byExpr": [
                 {
-                  "name": "37554d31ec2317b94224",
+                  "name": "90eaa92876e809e95d9a",
                   "type": "Categorical",
                   "expression": {
                     "HierarchyLevel": {
@@ -1107,27 +1281,27 @@
                                         "Expression": {
                                           "DateAdd": {
                                             "Expression": {
-                                              "DateAdd": {
-                                                "Expression": {
-                                                  "Now": {}
-                                                },
-                                                "Amount": 1,
-                                                "TimeUnit": 0
-                                              }
+                                              "Now": {}
                                             },
                                             "Amount": -6,
                                             "TimeUnit": 1
                                           }
                                         },
-                                        "TimeUnit": 0
+                                        "TimeUnit": 1
                                       }
                                     },
                                     "UpperBound": {
                                       "DateSpan": {
                                         "Expression": {
-                                          "Now": {}
+                                          "DateAdd": {
+                                            "Expression": {
+                                              "Now": {}
+                                            },
+                                            "Amount": -1,
+                                            "TimeUnit": 1
+                                          }
                                         },
-                                        "TimeUnit": 0
+                                        "TimeUnit": 1
                                       }
                                     }
                                   }
@@ -1166,7 +1340,7 @@
                         "relativePeriod": {
                           "expr": {
                             "Literal": {
-                              "Value": "'Weeks'"
+                              "Value": "'Calendar Weeks'"
                             }
                           }
                         },
@@ -1240,196 +1414,6 @@
                     }
                   }
                 ]
-              }
-            }
-          },
-          "c1768988c094cc8aeb2c": {
-            "filters": {
-              "byExpr": [
-                {
-                  "name": "447c9ed5167d5685b0d3",
-                  "type": "Categorical",
-                  "expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Details"
-                        }
-                      },
-                      "Property": "Impact"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "04185b6fa9b239056613",
-                  "type": "Advanced",
-                  "expression": {
-                    "HierarchyLevel": {
-                      "Expression": {
-                        "Hierarchy": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "Dates"
-                            }
-                          },
-                          "Hierarchy": "Date Hierarchy"
-                        }
-                      },
-                      "Level": "Week"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "679214665b9257c8ce9d",
-                  "type": "Advanced",
-                  "expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Number of Orders With Complaints"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "9d31b29a1c0a9cd3b200",
-                  "type": "Advanced",
-                  "expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Share of Orders With Complaints"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "f0b496907540393989ac",
-                  "type": "Advanced",
-                  "expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Average Complaint Cost Per Order Inc VAT"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "25b943da079e8908e712",
-                  "type": "Advanced",
-                  "expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Complaint Cost Inc VAT"
-                    }
-                  },
-                  "howCreated": 0
-                },
-                {
-                  "name": "dfc0de7a83018c67aa43",
-                  "type": "Advanced",
-                  "expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Complaint Cost Share of Order Value Inc Vat"
-                    }
-                  },
-                  "howCreated": 0
-                }
-              ]
-            },
-            "singleVisual": {
-              "visualType": "pivotTable",
-              "objects": {},
-              "orderBy": [
-                {
-                  "Direction": 2,
-                  "Expression": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Measures"
-                        }
-                      },
-                      "Property": "Complaint Cost Share of Order Value Inc Vat"
-                    }
-                  }
-                }
-              ],
-              "activeProjections": {
-                "Rows": [
-                  {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Case Details"
-                        }
-                      },
-                      "Property": "Impact"
-                    }
-                  }
-                ]
-              },
-              "expansionStates": [
-                {
-                  "roles": [
-                    "Rows"
-                  ],
-                  "levels": [
-                    {
-                      "queryRefs": [
-                        "Case Details.Impact"
-                      ],
-                      "isCollapsed": true,
-                      "identityKeys": [
-                        {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Entity": "Case Details"
-                              }
-                            },
-                            "Property": "Impact"
-                          }
-                        }
-                      ],
-                      "isPinned": true
-                    },
-                    {
-                      "queryRefs": [
-                        "Dates.Date Hierarchy.Week"
-                      ],
-                      "isCollapsed": true,
-                      "isPinned": true
-                    }
-                  ],
-                  "root": {
-                    "identityValues": []
-                  }
-                }
-              ],
-              "display": {
-                "mode": "hidden"
               }
             }
           }

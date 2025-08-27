@@ -171,7 +171,8 @@
               },
               "queryRef": "Order Measures.Order Value Gross Ex Vat",
               "nativeQueryRef": "Order Value Gross",
-              "displayName": "Order Value Gross"
+              "displayName": "Order Value Gross",
+              "format": "#,0"
             }
           ]
         }

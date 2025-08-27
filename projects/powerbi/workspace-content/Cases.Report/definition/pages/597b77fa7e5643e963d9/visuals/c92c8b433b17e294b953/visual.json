@@ -93,6 +93,20 @@
                   "Value": "'Calendar Weeks'"
                 }
               }
+            },
+            "numericStart": {
+              "expr": {
+                "Literal": {
+                  "Value": "27D"
+                }
+              }
+            },
+            "numericEnd": {
+              "expr": {
+                "Literal": {
+                  "Value": "35D"
+                }
+              }
             }
           }
         }

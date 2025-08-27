@@ -80,11 +80,11 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Average Complaint Cost Per Order Inc VAT"
+                  "Property": "Average Complaint Cost Per Order Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc VAT",
-              "nativeQueryRef": "Average Complaint Cost Per Order Inc VAT"
+              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc Vat",
+              "nativeQueryRef": "Average Complaint Cost Per Order Inc Vat"
             }
           ],
           "fieldParameters": [
