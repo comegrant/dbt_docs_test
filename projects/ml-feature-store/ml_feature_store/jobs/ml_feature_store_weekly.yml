@@ -33,14 +33,6 @@ resources:
           - agathe.raaum@cheffelo.com
 
       tasks:
-        - task_key: ft-ml-recipes
-          job_cluster_key: ml-feature-store-weekly
-          notebook_task:
-            notebook_path: run_ft_ml_recipes.py
-            base_parameters:
-              env: "${var.environment}"
-              is_drop_existing: false
-
         - task_key: ft-recipe-ingredients
           job_cluster_key: ml-feature-store-weekly
           notebook_task:
@@ -50,7 +42,7 @@ resources:
               is_drop_existing: false
 
         - task_key: slack-notification-success
-          depends_on: [task_key: ft-ml-recipes, task_key: ft-recipe-ingredients]
+          depends_on: [task_key: ft-recipe-ingredients]
           run_if: ALL_SUCCESS
           run_job_task:
             job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
@@ -59,19 +51,6 @@ resources:
               header_message: ""
               body_message: ✅ ML feature store job successful!
               is_error: false
-
-        - task_key: slack-notification-failure-ft-ml-recipes
-          depends_on:
-            - task_key: ft-ml-recipes
-          run_if: ALL_FAILED
-          run_job_task:
-            job_id: ${var.slack_notification_job_id} #Reads from the variable defined in the databricks.yml file
-            job_parameters:
-              environment: ${bundle.target}   #Reads from the target environment as defined in the databricks.yml file
-              header_message: ❌ ft_ml_recipes table generation in ML feature store failed!
-              body_message: Check databricks log for more details...
-              is_error: true
-              relevant_people: agathe, sylvia
 
         - task_key: slack-notification-failure-ft-recipe-ingredients
           depends_on:

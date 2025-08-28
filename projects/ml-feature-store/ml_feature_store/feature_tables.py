@@ -9,10 +9,6 @@ class FeatureTable(BaseModel):
     dbt_model_schema: str = "mlgold"
 
 
-ft_ml_recipes_configs = FeatureTable(
-    feature_table_name="ft_ml_recipes", primary_keys=["recipe_id"], dbt_model_name="ml_recipes"
-)
-
 ft_recipe_ingredients_configs = FeatureTable(
     feature_table_name="ft_recipe_ingredients",
     primary_keys=["recipe_portion_id", "language_id"],
