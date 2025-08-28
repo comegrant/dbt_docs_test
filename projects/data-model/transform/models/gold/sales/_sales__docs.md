@@ -1057,14 +1057,6 @@ The primary key of fact_partnership_points.
 {% enddocs %}
 
 
-# Bridge Fact Orders Dim Partnerships
-{% docs column__pk_bridge_fact_orders_dim_partnerships %}
-
-The primary key of bridge_fact_orders_dim_partnerships. It is a hash of the columns pk_fact_orders and pk_dim_partnerships.
-
-{% enddocs %}
-
-
 # Fact Billing Agreements Daily
 
 
@@ -1103,4 +1095,3 @@ True if the agreement status is "Freezed", else false.
 Indicates if the customer has taken a delivery on the week represented by the monday. True if the customer has taken an order, false if not. Null for non-Mondays.
 
 {% enddocs %}
-
