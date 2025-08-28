@@ -64,6 +64,8 @@ menu_weeks as (
         , menu_weeks.is_dish
         , menu_weeks.is_future_menu_week
 
+        , portions.portions
+
         , recipe_costs_and_co2.total_ingredient_weight
         , recipe_costs_and_co2.total_ingredient_weight_whole_units
 
@@ -138,6 +140,8 @@ menu_weeks as (
         , add_recipe_costs_and_co2.is_selected_menu
         , add_recipe_costs_and_co2.is_dish
         , add_recipe_costs_and_co2.is_future_menu_week
+
+        , add_recipe_costs_and_co2.portions
 
         , add_recipe_costs_and_co2.total_ingredient_weight
         , add_recipe_costs_and_co2.total_ingredient_weight_whole_units

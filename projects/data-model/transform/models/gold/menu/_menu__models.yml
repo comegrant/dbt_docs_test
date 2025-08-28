@@ -1227,6 +1227,10 @@ models:
         data_type: boolean
         description: "{{ doc('column__is_future_menu_week') }}"
 
+      - name: portions
+        data_type: int
+        description: "{{ doc('column__portions') }}"
+
       - name: total_ingredient_weight
         data_type: decimal(38,2)
         description: "{{ doc('column__total_ingredient_weight') }}"
