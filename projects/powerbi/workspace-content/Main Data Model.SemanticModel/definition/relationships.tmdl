@@ -414,6 +414,10 @@ relationship fact_recipe_ingredients_to_dim_ingredients
 	fromColumn: 'Recipe Ingredients'.fk_dim_ingredients
     toColumn: Ingredients.pk_dim_ingredients
 
+relationship fact_recipe_ingredients_to_dim_price_categories
+	fromColumn: 'Recipe Ingredients'.fk_dim_price_categories
+    toColumn: 'Price Categories'.pk_dim_price_categories
+
 relationship fact_billing_agreements_daily_to_dim_customer_journey_segments
 	fromColumn: 'Fact Billing Agreements'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments
