@@ -128,6 +128,115 @@ table 'Preselector Measures'
         formatString: #,0.00
         displayFolder: Selection Quality
 
+	/// The sum of the planned recipe cost of the recipes preselected for the customers.
+	/// It is the cost used in menu planning, and calculated using the exact quantity of all included ingredients.
+	measure 'Recipe Planned Cost from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_planned_cost]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The sum of the planned recipe cost of the recipes preselected for the customers.
+	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Recipe Planned Cost Whole Units from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_planned_cost_whole_units]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The sum of the expected recipe cost of the recipes preselected for the customers.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Recipe Expected Cost from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_expected_cost]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The sum of the expected recipe cost of the recipes preselected for the customers.
+	/// The expected cost might have a discount that is not to be included in the menu planning process.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Recipe Expected Cost Whole Units from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_expected_cost_whole_units]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The sum of the actual recipe cost of the recipes preselected for the customers.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using the exact quantity of all included ingredients.
+	measure 'Recipe Actual Cost from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_actual_cost]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The sum of the actual recipe cost of the recipes preselected for the customers.
+	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
+	/// This measure is calculated using quantity of all included ingredients, 
+	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
+	measure 'Recipe Actual Cost Whole Units from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[total_ingredient_actual_cost_whole_units]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0.00
+		displayFolder: Recipe Cost
+
+	/// The total number of plates preselected, which is calculated as the sum of Portions x Meals for all dishes in the selection.
+	/// Example: One mealbox with 5 meals and 4 portions per meal will count as 20 servings.
+	measure 'Number of Servings from Preselector Output' =
+			CALCULATE(
+				SUM('Preselector Details'[dish_servings_subscription]),
+				'Preselector Details'[Is Dish] = TRUE()
+				)
+		formatString: #,0
+
+	/// The planned cost per preselected serving.
+	/// See [Number of Servings from Preselector] for the definition of servings.
+	measure 'Recipe Planned Cost from Preselector Output per Serving' =
+			DIVIDE(
+				[Recipe Planned Cost from Preselector Output],
+				[Number of Servings from Preselector Output],
+				BLANK()
+			)
+		formatString: #,0.00
+		displayFolder: Recipe Cost\per Recipe Serving
+
+	/// The expected cost per preselected serving.
+	/// See [Number of Servings from Preselector] for the definition of servings.
+	measure 'Recipe Expected Cost from Preselector Output per Serving' =
+			DIVIDE(
+				[Recipe Expected Cost from Preselector Output],
+				[Number of Servings from Preselector Output],
+				BLANK()
+			)
+		formatString: #,0.00
+		displayFolder: Recipe Cost\per Recipe Serving
+
+	/// The actual cost per preselected serving.
+	/// See [Number of Servings from Preselector] for the definition of servings.
+	measure 'Recipe Actual Cost from Preselector Output per Serving' =
+			DIVIDE(
+				[Recipe Actual Cost from Preselector Output],
+				[Number of Servings from Preselector Output],
+				BLANK()
+			)
+		formatString: #,0.00
+		displayFolder: Recipe Cost\per Recipe Serving
+
 	partition 'Measure Table' = m
 		mode: import
 		source = GENERATESERIES(1,1,1)

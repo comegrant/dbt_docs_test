@@ -229,6 +229,94 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: has_data_processing_consent
 
+	/// The menu planning purchasing cost for the total ingredient amount in the recipe.
+	column total_ingredient_planned_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The menu planning purchasing cost based on ingredient quantity in whole units. 
+	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. 
+	column total_ingredient_planned_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_planned_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The expected purchasing cost for the total ingredient amount in the recipe. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
+	column total_ingredient_expected_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The expected purchasing cost based on ingredient quantity in whole units. 
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. 
+	/// This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
+	column total_ingredient_expected_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_expected_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe.
+	column total_ingredient_actual_cost
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
+	column total_ingredient_actual_cost_whole_units
+		dataType: double
+		isHidden
+        isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: total_ingredient_actual_cost_whole_units
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The total number of servings in the subscribed mealbox 
+    /// which is calculated by taking meals * portions * subscribed product quantity. 
+    /// The value is null for all product variations that are not represention a mealbox.
+    column mealbox_servings_subscription
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: mealbox_servings_subscription
+
+    /// The number of servings in the preselected dish, which is calculated by taking 
+    /// subscribed quantity * portions. 
+    /// The value is null for rows that is not a preselected dish.
+    column dish_servings_subscription
+        dataType: int64
+        isHidden
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: dish_servings_subscription
+
     column fk_dim_billing_agreements
         dataType: string
         isHidden
@@ -311,6 +399,14 @@ table 'Preselector Details'
         isAvailableInMdx: false
         summarizeBy: none
         sourceColumn: fk_dim_ingredient_combinations
+
+    /// Primary key of the dim_price_categories table
+    column fk_dim_price_categories
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_price_categories
 
     partition 'Preselector Measures' = m
         mode: directQuery

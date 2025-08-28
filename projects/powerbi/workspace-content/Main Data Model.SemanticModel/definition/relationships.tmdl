@@ -499,3 +499,7 @@ relationship bridge_ingredient_combinations_ingredients_to_dim_ingredient_combin
 relationship bridge_ingredient_combinations_ingredients_to_dim_ingredients
 	fromColumn: 'Bridge Ingredient Combinations Ingredients'.fk_dim_ingredients
 	toColumn: 'Ingredients'.pk_dim_ingredients
+
+relationship fact_preselector_to_dim_price_categories
+	fromColumn: 'Preselector Details'.fk_dim_price_categories
+	toColumn: 'Price Categories'.pk_dim_price_categories
