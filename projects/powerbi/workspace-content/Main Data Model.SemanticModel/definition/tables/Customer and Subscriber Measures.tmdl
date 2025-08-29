@@ -210,8 +210,11 @@ table 'Customer and Subscriber Measures'
 				IF(
 					IsFilteredOnSegments,
 					IF(
-                        SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment]) = "Unknown"
-                        || ISBLANK(SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment])),
+                        HASONEVALUE('Customer Journey Segments'[Customer Journey Sub Segment]) &&
+                        (
+                            SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment]) = "Unknown"
+                            || ISBLANK(SELECTEDVALUE('Customer Journey Segments'[Customer Journey Sub Segment]))
+                        ),
                         BLANK(),
 					    'Fact Billing Agreements'[Number of Subscribers All Statuses from fact_billing_agreements]
                     ),
