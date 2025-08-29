@@ -4140,9 +4140,22 @@ models:
               to: ref('dim_billing_agreements')
               field: pk_dim_billing_agreements
 
-      - name: fk_dim_dates
+      - name: fk_dim_dates_menu_week
         data_type: int
-        description: "{{ doc('column__pk_dim_dates') }}"
+        description: "{{ doc('column__fk_dim_dates_menu_week') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
+      
+      - name: fk_dim_dates_partnership_points_generated_at
+        data_type: int
+        description: "{{ doc('column__fk_dim_dates_partnership_points_generated_at') }}"
         constraints:
           - type: foreign_key
             to: ref('dim_dates')

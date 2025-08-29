@@ -78,7 +78,7 @@ products as (
         , add_financial_date.product_variation_quantity
         , cast(date_format(estimation_generated_at, 'yyyyMMdd') as int) as fk_dim_date_estimation_generated
         , cast(date_format(estimation_generated_at, 'HHmm') as string) as fk_dim_time_estimation_generated
-        , cast(date_format(add_financial_date.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date_menu_week
+        , cast(date_format(add_financial_date.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates_menu_week
         , md5(add_financial_date.company_id) as fk_dim_companies
         , md5(concat(add_financial_date.product_variation_id, add_financial_date.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins

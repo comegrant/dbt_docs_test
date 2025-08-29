@@ -46,13 +46,13 @@ table 'Partnership Measures'
 		summarizeBy: none
 		sourceColumn: fk_dim_billing_agreements
 
-	column fk_dim_dates
+	column fk_dim_dates_menu_week
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: 23e9619c-2b4c-4ba8-929d-ac66903ebe0a
 		summarizeBy: none
-		sourceColumn: fk_dim_dates
+		sourceColumn: fk_dim_dates_menu_week
 
 	column fk_dim_companies
 		dataType: string

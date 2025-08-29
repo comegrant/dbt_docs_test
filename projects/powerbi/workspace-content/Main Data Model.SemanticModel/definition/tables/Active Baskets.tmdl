@@ -36,13 +36,13 @@ table 'Active Baskets'
 		sourceColumn: fk_dim_time_estimation_generated
 
 	/// Foreign key connecting dim_time to the time at which an estimation was generated at.
-	column fk_dim_date_menu_week
+	column fk_dim_dates_menu_week
 		dataType: int64
 		isHidden
 		isAvailableInMdx: false
 		lineageTag: a75c6342-391c-4ccd-b7bb-ea3b85399df0
 		summarizeBy: none
-		sourceColumn: fk_dim_date_menu_week
+		sourceColumn: fk_dim_dates_menu_week
 
 		annotation SummarizationSetBy = Automatic
 

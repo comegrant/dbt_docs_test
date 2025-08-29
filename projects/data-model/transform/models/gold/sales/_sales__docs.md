@@ -1056,6 +1056,12 @@ The primary key of fact_partnership_points.
 
 {% enddocs %}
 
+{% docs column__fk_dim_dates_partnership_points_generated_at %}
+
+Foreign key to dim dates on the date when partnership points are generated.
+
+{% enddocs %}
+
 
 # Fact Billing Agreements Daily
 

@@ -1,6 +1,12 @@
 with
 
-billing_agreement_partnership_loyalty_points as (
+orders as (
+
+    select * from {{ ref('cms__billing_agreement_orders') }}
+
+)
+
+, billing_agreement_partnership_loyalty_points as (
 
     select * from {{ ref('partnership__billing_agreement_partnership_loyalty_points') }}
 
@@ -38,7 +44,8 @@ billing_agreement_partnership_loyalty_points as (
             )
         ) as fk_dim_partnerships
         , agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
-        , cast(date_format(billing_agreement_partnership_loyalty_points.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates
+        , cast(date_format({{ get_financial_date_from_monday_date('orders.menu_week_monday_date') }}, 'yyyyMMdd') as int) as fk_dim_dates_menu_week
+        , cast(date_format(billing_agreement_partnership_loyalty_points.source_created_at, 'yyyyMMdd') as int) as fk_dim_dates_partnership_points_generated_at
         , md5(agreements.company_id) as fk_dim_companies
 
     from billing_agreement_partnership_loyalty_points
@@ -47,6 +54,9 @@ billing_agreement_partnership_loyalty_points as (
         on billing_agreement_partnership_loyalty_points.billing_agreement_id = agreements.billing_agreement_id
         and billing_agreement_partnership_loyalty_points.source_created_at >= agreements.valid_from
         and billing_agreement_partnership_loyalty_points.source_created_at < agreements.valid_to
+
+    left join orders 
+        on billing_agreement_partnership_loyalty_points.billing_agreement_order_id = orders.billing_agreement_order_id
 
 )
 

@@ -105,9 +105,9 @@
               to: ref('dim_time')
               field: pk_dim_time
 
-      - name: fk_dim_date_menu_week
+      - name: fk_dim_dates_menu_week
         datatype: int
-        description: "{{ doc('column__fk_dim_date_menu_week') }}"
+        description: "{{ doc('column__fk_dim_dates_menu_week') }}"
         data_tests:
           - not_null
           - relationships:
