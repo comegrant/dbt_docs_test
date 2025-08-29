@@ -7,7 +7,7 @@
     "z": 6000,
     "height": 288,
     "width": 616,
-    "tabOrder": 5000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "tableEx",
@@ -55,8 +55,38 @@
                 }
               },
               "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
-              "nativeQueryRef": "Number Active Subscribers",
-              "displayName": "Number Active Subscribers"
+              "nativeQueryRef": "Active Subscribers",
+              "displayName": "Active Subscribers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Recipe Planned Cost from Preselector Output per Serving"
+                }
+              },
+              "queryRef": "Preselector Measures.Recipe Planned Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Planned Cost per Serving",
+              "displayName": "Planned Cost per Serving"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Price Categories"
+                    }
+                  },
+                  "Property": "Price Category Level"
+                }
+              },
+              "queryRef": "Price Categories.Price Category Level",
+              "nativeQueryRef": "Price Category",
+              "displayName": "Price Category"
             }
           ]
         }
@@ -148,48 +178,6 @@
         },
         "type": "Categorical",
         "howCreated": "User"
-      },
-      {
-        "name": "440e39f51a01978bb70c",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "ee3357e0c0a356a05317",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Id"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "53ad49deb768c9ad20b1",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Active Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

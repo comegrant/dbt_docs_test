@@ -7,7 +7,7 @@
     "z": 7000,
     "height": 304,
     "width": 608,
-    "tabOrder": 6000
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "columnChart",
@@ -601,82 +601,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "d9fc4d6f8d05d23dd523",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "9d5e5baba1d08093d29b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Recipe Main Ingredient Name (Eng)"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "86fceebc49235e20280c",
-        "field": {
-          "Arithmetic": {
-            "Left": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Preselector Measures"
-                  }
-                },
-                "Property": "Number of Dishes from Preselector"
-              }
-            },
-            "Right": {
-              "ScopedEval": {
-                "Expression": {
-                  "Measure": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "Preselector Measures"
-                      }
-                    },
-                    "Property": "Number of Dishes from Preselector"
-                  }
-                },
-                "Scope": []
-              }
-            },
-            "Operator": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "575a75bb8ed2b6968132",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Active Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

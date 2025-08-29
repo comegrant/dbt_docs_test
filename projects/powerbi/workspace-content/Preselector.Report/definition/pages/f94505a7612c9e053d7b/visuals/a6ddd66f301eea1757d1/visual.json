@@ -4,10 +4,10 @@
   "position": {
     "x": 656,
     "y": 400,
-    "z": 5000,
+    "z": 4000,
     "height": 304,
     "width": 608,
-    "tabOrder": 4000
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
@@ -343,89 +343,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "1d12d56a43a3d62de76a",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "a61ae5b407118edee0b1",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Week"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b3841fd129e008892ced",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Details"
-              }
-            },
-            "Property": "Rotation Score Group"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "b70e0277b30039028683",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Rotation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "23752aa374ccbaa03168",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

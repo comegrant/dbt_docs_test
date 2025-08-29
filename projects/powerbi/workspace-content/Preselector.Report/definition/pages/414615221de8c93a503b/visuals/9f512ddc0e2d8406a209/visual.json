@@ -7,7 +7,7 @@
     "z": 7000,
     "height": 304,
     "width": 608,
-    "tabOrder": 7000
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "lineChart",
@@ -637,89 +637,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "d07438305ddc45a35999",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7a382e7cd3cd33eb28c4",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Week"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "24dcc522d6463258bde4",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Portions"
-              }
-            },
-            "Property": "Portions"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "8a65c7d00d485d77005e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b7ed3fa5330321260722",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Main Ingredient Variation Score"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

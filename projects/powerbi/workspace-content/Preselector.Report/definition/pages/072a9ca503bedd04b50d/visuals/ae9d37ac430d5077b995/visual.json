@@ -7,7 +7,7 @@
     "z": 8000,
     "height": 288,
     "width": 1248,
-    "tabOrder": 7000
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "tableEx",
@@ -55,8 +55,8 @@
                 }
               },
               "queryRef": "Recipes.Recipe Main Ingredient Name (Eng)",
-              "nativeQueryRef": "Recipe Main Ingredient Name",
-              "displayName": "Recipe Main Ingredient Name"
+              "nativeQueryRef": "Main Ingredient",
+              "displayName": "Main Ingredient"
             },
             {
               "field": {
@@ -87,6 +87,36 @@
               "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
               "nativeQueryRef": "Number of Active Subscribers",
               "displayName": "Number of Active Subscribers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Recipe Planned Cost from Preselector Output per Serving"
+                }
+              },
+              "queryRef": "Preselector Measures.Recipe Planned Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Planned Cost per Serving",
+              "displayName": "Planned Cost per Serving"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Price Categories"
+                    }
+                  },
+                  "Property": "Price Category Level"
+                }
+              },
+              "queryRef": "Price Categories.Price Category Level",
+              "nativeQueryRef": "Price Category",
+              "displayName": "Price Category"
             }
           ]
         }
@@ -99,7 +129,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "220.60377358490567D"
+                  "Value": "113.74066738478288D"
                 }
               }
             }
@@ -113,7 +143,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "494.37735849056605D"
+                  "Value": "404.24351463405577D"
                 }
               }
             }
@@ -231,76 +261,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "660788f47e70920ec6e1",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "5ed8113b5802e20ea829",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Id"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "89fd9f3f6a752084e5a9",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Recipe Main Ingredient Name (Eng)"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "50a574064a7cca23c2e3",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Menu Measures"
-              }
-            },
-            "Property": "Number of Recipes in Menu"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "48b49e67ce2d300d0446",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Active Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

@@ -4,10 +4,10 @@
   "position": {
     "x": 16,
     "y": 96,
-    "z": 7002,
+    "z": 6000,
     "height": 160,
-    "width": 368,
-    "tabOrder": 7002
+    "width": 384,
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "kpi",
@@ -154,39 +154,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "1d31aa077c061b21083e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Share of Mealboxes with Taste Preferences Broken"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c99bf83d956eb2870489",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Date"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

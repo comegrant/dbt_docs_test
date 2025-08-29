@@ -7,7 +7,7 @@
     "z": 5000,
     "height": 280,
     "width": 608,
-    "tabOrder": 4000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
@@ -318,65 +318,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "700be64c2351005864e4",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Versions"
-              }
-            },
-            "Property": "Version Number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "a062fa0b2a1e9a0bdc95",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Details"
-              }
-            },
-            "Property": "Rotation Score Group"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "af2dc680c4e5e8517b4e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Rotation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "783d80a1a3ea59804e33",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

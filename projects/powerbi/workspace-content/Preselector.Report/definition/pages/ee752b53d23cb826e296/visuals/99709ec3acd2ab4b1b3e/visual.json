@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "99709ec3acd2ab4b1b3e",
   "position": {
-    "x": 456,
+    "x": 448,
     "y": 96,
-    "z": 7003,
+    "z": 7000,
     "height": 160,
-    "width": 368,
-    "tabOrder": 7003
+    "width": 384,
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "kpi",
@@ -194,39 +194,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "a244b392593c36202421",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Rotation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "01df778068d3d70aaed0",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Date"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

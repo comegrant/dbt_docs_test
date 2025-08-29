@@ -4,10 +4,10 @@
   "position": {
     "x": 16,
     "y": 288,
-    "z": 7001,
+    "z": 5000,
     "height": 416,
-    "width": 1248,
-    "tabOrder": 7001
+    "width": 608,
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "barChart",
@@ -616,82 +616,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "448ebcdd40e9b3aa55e9",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Main Recipe Name"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "c3b3e8f10e1082a701aa",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Recipe Main Ingredient Name (Eng)"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "7135261ec706401d038b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Active Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0d3b4008bc057dc81d0e",
-        "field": {
-          "Arithmetic": {
-            "Left": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Preselector Measures"
-                  }
-                },
-                "Property": "Number of Dishes from Preselector"
-              }
-            },
-            "Right": {
-              "ScopedEval": {
-                "Expression": {
-                  "Measure": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "Preselector Measures"
-                      }
-                    },
-                    "Property": "Number of Dishes from Preselector"
-                  }
-                },
-                "Scope": []
-              }
-            },
-            "Operator": 3
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 280,
     "width": 624,
-    "tabOrder": 2000
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
@@ -318,65 +318,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "36874d8dac82be43d400",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Versions"
-              }
-            },
-            "Property": "Version Number"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "ae4a4153016742eeb930",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Details"
-              }
-            },
-            "Property": "Main Ingredient Variation Score Group"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "af854617748e868a8622",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Main Ingredient Variation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d30b90dfa0e51e5a79e6",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

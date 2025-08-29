@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "d4f43c652624482ae835",
   "position": {
-    "x": 896,
+    "x": 880,
     "y": 96,
-    "z": 7004,
+    "z": 8000,
     "height": 160,
-    "width": 368,
-    "tabOrder": 7004
+    "width": 384,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "kpi",
@@ -169,39 +169,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "e226896609830e45702e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Main Ingredient Variation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "77a04e727cc2c71a5702",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Date"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

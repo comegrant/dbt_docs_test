@@ -1,0 +1,118 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "57dd739730e6947ecd95",
+  "position": {
+    "x": 16,
+    "y": 400,
+    "z": 7000,
+    "height": 304,
+    "width": 608,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preference Combinations"
+                    }
+                  },
+                  "Property": "Preference Combinations"
+                }
+              },
+              "queryRef": "Preference Combinations.Preference Combinations",
+              "nativeQueryRef": "Preference Combinations"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Recipe Planned Cost from Preselector Output per Serving"
+                }
+              },
+              "queryRef": "Preselector Measures.Recipe Planned Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Planned Cost per Serving",
+              "displayName": "Planned Cost per Serving"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Number of Active Subscribers with Preselector Output"
+                }
+              },
+              "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
+              "nativeQueryRef": "Active Subscribers ",
+              "displayName": "Active Subscribers "
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Preselector Measures"
+                  }
+                },
+                "Property": "Number of Active Subscribers with Preselector Output"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "228.15325234010353D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Preference Combinations.Preference Combinations"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Planned Cost per Serving per Preference Combination'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

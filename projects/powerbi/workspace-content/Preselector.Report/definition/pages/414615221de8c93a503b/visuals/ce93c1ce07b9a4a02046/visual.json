@@ -7,7 +7,7 @@
     "z": 4000,
     "height": 304,
     "width": 608,
-    "tabOrder": 3000
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
@@ -343,89 +343,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "a635293a79ba5265470e",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "ec9b62ad8009c080beed",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Week"
-              }
-            },
-            "Level": "Week"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1f03b8e311e3ec02399b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Number of Subscribers with Preselector Output"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "50d532eca96991704858",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Measures"
-              }
-            },
-            "Property": "Average Main Ingredient Variation Score"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c7cbbf1f7e457cc71475",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Preselector Details"
-              }
-            },
-            "Property": "Main Ingredient Variation Score Group"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

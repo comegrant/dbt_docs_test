@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 304,
     "width": 624,
-    "tabOrder": 2000
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
