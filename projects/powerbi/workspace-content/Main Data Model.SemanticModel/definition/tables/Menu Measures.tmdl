@@ -710,6 +710,36 @@ table 'Menu Measures'
 		isHidden
 		displayFolder: Ingredient Cost\by Ingredient\per Ingredient
 
+	/// The cost share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient Planned Cost Whole Units in Menu]/[Recipe Planned Cost Whole Units in Menu].
+	measure 'Ingredient Planned Cost Whole Units Share of Whole Recipes in Menu' = 
+			DIVIDE(
+				[Ingredient Planned Cost Whole Units in Menu],
+				[Recipe Planned Cost Whole Units in Menu]
+			)
+		formatString: #,0.00%
+		displayFolder: Ingredient Cost\by Ingredient\Share of Recipes
+
+	/// The cost share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient Expected Cost Whole Units in Menu]/[Recipe Expected Cost Whole Units in Menu].
+	measure 'Ingredient Expected Cost Whole Units Share of Whole Recipes in Menu' = 
+			DIVIDE(
+				[Ingredient Expected Cost Whole Units in Menu],
+				[Recipe Expected Cost Whole Units in Menu]
+			)
+		formatString: #,0.00%
+		displayFolder: Ingredient Cost\by Ingredient\Share of Recipes
+
+	/// The emission share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient CO2 Emissions in Menu]/[Recipe CO2 Emissions in Menu].
+	measure 'Ingredient CO2 Emission Share of Whole Recipes in Menu' = 
+			DIVIDE(
+				[Ingredient CO2 Emissions in Menu],
+				[Recipe CO2 Emissions in Menu]
+			)
+		formatString: #,0.00%
+		displayFolder: CO2 Emissions\by Ingredient
+
 	/// The net weight (in grams) for the total ingredient amount in the recipe.
 	column total_ingredient_weight
 		dataType: double

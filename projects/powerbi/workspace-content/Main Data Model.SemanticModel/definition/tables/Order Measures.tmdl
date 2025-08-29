@@ -473,6 +473,12 @@ table 'Order Measures'
 		displayFolder: Recipe Sales
 		lineageTag: 486a2e72-e1d4-4b82-ab70-9e235c2450b0
 
+	/// Number of ordered mealboxes.
+	/// Sums the product variation quantity for all ordered products that are mealboxes.
+	measure 'Number of Ordered Mealboxes' = CALCULATE([Product Variation Quantity], 'Order Measures'[is_mealbox] = TRUE())
+		formatString: #,0
+		displayFolder: Mealboxes
+
 	/// Number of dishes added by curtomer
 	/// Includes all dishes which the customer has selected themselves
 	/// which were not in the original weekly menu selected for them.
@@ -2503,11 +2509,45 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Margins
 
-	/// Number of ordered mealboxes.
-	/// Sums the product variation quantity for all ordered products that are mealboxes.
-	measure 'Number of Ordered Mealboxes' = CALCULATE([Product Variation Quantity], 'Order Measures'[is_mealbox] = TRUE())
-		formatString: #,0
-		displayFolder: Mealboxes
+	/// The cost share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient Actual Cost Whole Units from Orders]/[Recipe Actual Cost Whole Units from Orders].
+	measure 'Ingredient Actual Cost Whole Units Share of Whole Recipes from Orders' = 
+			DIVIDE(
+				[Ingredient Actual Cost Whole Units from Orders],
+				[Recipe Actual Cost Whole Units from Orders]
+			)
+		formatString: #,0.00%
+		displayFolder: Ingredient Cost\by Ingredient\Share of Recipes
+
+	/// The cost share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient Planned Cost Whole Units from Orders]/[Recipe Planned Cost Whole Units from Orders].
+	measure 'Ingredient Planned Cost Whole Units Share of Whole Recipes from Orders' = 
+			DIVIDE(
+				[Ingredient Planned Cost Whole Units from Orders],
+				[Recipe Planned Cost Whole Units from Orders]
+			)
+		formatString: #,0.00%
+		displayFolder: Ingredient Cost\by Ingredient\Share of Recipes
+
+	/// The cost share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient Expected Cost Whole Units from Orders]/[Recipe Expected Cost Whole Units from Orders].
+	measure 'Ingredient Expected Cost Whole Units Share of Whole Recipes from Orders' = 
+			DIVIDE(
+				[Ingredient Expected Cost Whole Units from Orders],
+				[Recipe Expected Cost Whole Units from Orders]
+			)
+		formatString: #,0.00%
+		displayFolder: Ingredient Cost\by Ingredient\Share of Recipes
+
+	/// The emission share of the selected ingredients within the recipes that contain them.
+	/// It is calculated as [Ingredient CO2 Emission from Orders]/[Recipe CO2 Emission from Orders].
+	measure 'Ingredient CO2 Emission Share of Whole Recipes from Orders' = 
+			DIVIDE(
+				[Ingredient CO2 Emission from Orders],
+				[Recipe CO2 Emission from Orders]
+			)
+		formatString: #,0.00%
+		displayFolder: CO2 Emissions\by Ingredient
 
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id
