@@ -104,11 +104,21 @@
               },
               "queryRef": "Preselector Measures.Number of Active Subscribers with Preselector Output",
               "nativeQueryRef": "Number of Active Subscribers with Preselector Output"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Recipe Expected Cost from Preselector Output per Serving"
+                }
+              },
+              "queryRef": "Preselector Measures.Recipe Expected Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Recipe Expected Cost from Preselector Output per Serving"
+            },
             {
               "field": {
                 "Measure": {
@@ -122,6 +132,24 @@
               },
               "queryRef": "Preselector Measures.Recipe Planned Cost from Preselector Output per Serving",
               "nativeQueryRef": "Recipe Planned Cost from Preselector Output per Serving"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Preselector Measures"
+                    }
+                  },
+                  "Property": "Recipe Actual Cost from Preselector Output per Serving"
+                }
+              },
+              "queryRef": "Preselector Measures.Recipe Actual Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Recipe Actual Cost from Preselector Output per Serving"
             }
           ]
         }
@@ -474,7 +502,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Planned Cost per Serving'"
+                  "Value": "'Actual Cost per Serving'"
                 }
               }
             }
@@ -483,5 +511,117 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "39c48d27ea8d66430bb2",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Calendar Hierarchy with Week"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8e49bb299b12c33806a8",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Calendar Hierarchy with Week"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3a31c3bd5a170cc3edde",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Number of Subscribers with Preselector Output"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "6fcd71f87c0ae396380b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Number of Active Subscribers with Preselector Output"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "68544b57ba27850b2252",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Recipe Actual Cost from Preselector Output per Serving"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c2154f5e42e07c63a870",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Recipe Expected Cost from Preselector Output per Serving"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "0497493ada89493edec1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Preselector Measures"
+              }
+            },
+            "Property": "Recipe Planned Cost from Preselector Output per Serving"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

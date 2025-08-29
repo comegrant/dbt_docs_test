@@ -103,11 +103,11 @@
                       "Entity": "Preselector Measures"
                     }
                   },
-                  "Property": "Recipe Planned Cost from Preselector Output per Serving"
+                  "Property": "Recipe Actual Cost from Preselector Output per Serving"
                 }
               },
-              "queryRef": "Preselector Measures.Recipe Planned Cost from Preselector Output per Serving",
-              "nativeQueryRef": "Recipe Planned Cost from Preselector Output per Serving"
+              "queryRef": "Preselector Measures.Recipe Actual Cost from Preselector Output per Serving",
+              "nativeQueryRef": "Recipe Actual Cost from Preselector Output per Serving"
             }
           ]
         }
@@ -460,7 +460,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Planned Cost per Serving'"
+                  "Value": "'Actual Cost per Serving'"
                 }
               }
             }
