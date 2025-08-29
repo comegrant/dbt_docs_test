@@ -434,12 +434,12 @@ preselector_successful_output_dishes as (
         , cast(date_format(add_recipe_costs_and_co2.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_dates
         , date_format(add_recipe_costs_and_co2.created_at, 'HHmm') as fk_dim_time_created_at
         , md5(add_recipe_costs_and_co2.model_version_commit_sha) as fk_dim_preselector_versions
-        , case when is_dish = true then
+        , case when add_recipe_costs_and_co2.is_dish = true then
             products_dish.pk_dim_products
         else
             products_mealbox.pk_dim_products
         end as fk_dim_products
-        , case when is_dish = true then
+        , case when add_recipe_costs_and_co2.is_dish = true then
             portions_dish.pk_dim_portions
         else
             portions_mealbox.pk_dim_portions

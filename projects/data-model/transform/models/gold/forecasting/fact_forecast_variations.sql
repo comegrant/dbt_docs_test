@@ -107,6 +107,7 @@ forecast_orders as (
         forecast_orders_forecast_variations_unioned.*
         , weekly_menus_variations.language_id
         , weekly_menus_variations.is_dish
+        , weekly_menus_variations.is_grocery
         , weekly_menus_variations.recipe_id
         , portions.portion_id
         , ingredient_combinations.ingredient_combination_id
@@ -160,6 +161,8 @@ forecast_orders as (
     , forecast_horizon_index
     , forecast_horizon
     , language_id
+    , is_dish
+    , is_grocery
     , recipe_id
     , portion_id
     , ingredient_combination_id

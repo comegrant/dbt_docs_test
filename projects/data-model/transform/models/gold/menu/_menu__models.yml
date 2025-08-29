@@ -207,6 +207,18 @@ models:
         data_type: boolean
         description: "{{ doc('column__sent_to_frontend') }}"
 
+      - name: is_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_mealbox') }}"
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
+      - name: is_grocery
+        data_type: boolean
+        description: "{{ doc('column__is_grocery') }}"
+
     versions:
       - v: 1
 

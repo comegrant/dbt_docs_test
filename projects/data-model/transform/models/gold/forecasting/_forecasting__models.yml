@@ -60,6 +60,18 @@
         data_tests:
           - not_null
 
+      - name: is_mealbox
+        data_type: boolean
+        description: "{{ doc('column__is_mealbox') }}"
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
+      - name: is_grocery
+        data_type: boolean
+        description: "{{ doc('column__is_grocery') }}"
+
       - name: billing_agreement_basket_deviation_origin_id
         data_type: varchar(36)
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
@@ -439,6 +451,14 @@
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
+
+      - name: is_dish
+        data_type: boolean
+        description: "{{ doc('column__is_dish') }}"
+
+      - name: is_grocery
+        data_type: boolean
+        description: "{{ doc('column__is_grocery') }}"
 
       - name: ingredient_combination_id
         data_type: string

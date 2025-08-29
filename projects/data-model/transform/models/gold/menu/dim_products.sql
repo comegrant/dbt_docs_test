@@ -41,6 +41,9 @@ products as (
             when product_type_id = '{{ var("financial_product_type_id") }}' then "Mealbox"
             else product_type_name
         end as product_type_name
+        , is_mealbox
+        , is_dish
+        , is_grocery
         , has_extra_protein
     from products
 
@@ -76,6 +79,9 @@ products as (
         , maximum_order_quantity
         , is_financial
         , sent_to_frontend
+        , is_mealbox
+        , is_dish
+        , is_grocery
         , has_extra_protein
 
     from rename_financial_product_type_name
@@ -105,6 +111,9 @@ products as (
         , null              as maximum_order_quantity 
         , false             as is_financial
         , false             as sent_to_frontend
+        , false             as is_mealbox
+        , false             as is_dish
+        , false             as is_grocery
         , false             as has_extra_protein
 
 )

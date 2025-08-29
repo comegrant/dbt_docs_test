@@ -1,27 +1,39 @@
 with
 
-products as (
-    select * from {{ ref('dim_products') }}
-)
+estimations as (
 
-, portions as (
-    select * from {{ ref('dim_portions') }}
-)
+    select * from {{ ref('int_estimations') }}
 
-, companies as (
-    select * from {{ ref('dim_companies') }}
-)
-
-, billing_agreements as (
-    select * from {{ ref('dim_billing_agreements') }}
 )
 
 , billing_agreement_preferences as (
+
     select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+
 )
 
-, estimations as (
-    select * from {{ ref('int_estimations') }}
+, products as (
+
+    select * from {{ ref('dim_products') }}
+
+)
+
+, portions as (
+
+    select * from {{ ref('dim_portions') }}
+
+)
+
+, companies as (
+
+    select * from {{ ref('dim_companies') }}
+
+)
+
+, billing_agreements as (
+
+    select * from {{ ref('dim_billing_agreements') }}
+
 )
 
 -- Get the most recent estimation timestamp for each company
@@ -55,7 +67,7 @@ products as (
 , add_keys as (
     select
         md5(concat(
-            estimation_generated_at
+            add_financial_date.estimation_generated_at
             , add_financial_date.menu_year
             , add_financial_date.menu_week
             , add_financial_date.company_id
@@ -72,6 +84,9 @@ products as (
         , add_financial_date.company_id
         , add_financial_date.billing_agreement_id
         , add_financial_date.product_variation_id
+        , products.is_mealbox
+        , products.is_dish
+        , products.is_grocery
         , add_financial_date.billing_agreement_basket_deviation_origin_id
         , add_financial_date.shipping_address_id
         , add_financial_date.estimation_generated_at

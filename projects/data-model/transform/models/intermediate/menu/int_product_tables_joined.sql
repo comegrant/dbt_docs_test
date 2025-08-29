@@ -80,6 +80,29 @@ product_tables_joined as (
         , coalesce(attributes.vat_rate, attributes_template.vat_rate) as vat_rate
         , coalesce(attributes.picking_line_label, attributes_template.picking_line_label) as picking_line_label
         , coalesce(attributes.maximum_order_quantity, attributes_template.maximum_order_quantity) as maximum_order_quantity
+        , case
+            when products.product_type_id in (
+                    '{{ var("mealbox_product_type_id") }}'
+                    , '{{ var("velg&vrak_product_type_id") }}'
+                )
+            then true
+            else false
+        end as is_dish
+        , case 
+            when products.product_type_id in (
+                {{ var('grocery_product_type_ids') | join(', ') }}
+                )
+            then true
+            else false
+        end as is_grocery
+        , case
+            when products.product_type_id in (
+                    '{{ var("mealbox_product_type_id") }}'
+                    , '{{ var("financial_product_type_id") }}'
+                )
+            then true
+            else false
+        end as is_mealbox
         , case 
             when coalesce(attributes.portion_name, attributes_template.portion_name) like '%+%'
             then true
