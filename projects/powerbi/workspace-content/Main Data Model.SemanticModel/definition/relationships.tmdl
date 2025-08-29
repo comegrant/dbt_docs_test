@@ -503,3 +503,7 @@ relationship bridge_ingredient_combinations_ingredients_to_dim_ingredients
 relationship fact_preselector_to_dim_price_categories
 	fromColumn: 'Preselector Details'.fk_dim_price_categories
 	toColumn: 'Price Categories'.pk_dim_price_categories
+
+relationship fact_preselector_to_dim_customer_journey_segments
+	fromColumn: 'Preselector Details'.fk_dim_customer_journey_segments
+	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments

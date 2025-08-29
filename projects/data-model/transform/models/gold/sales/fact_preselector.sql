@@ -84,6 +84,12 @@ preselector_successful_output_dishes as (
 
 )
 
+, customer_journey_segments as (
+
+    select * from {{ ref('int_customer_journey_segments') }}
+
+)
+
 -- Get the recipe and main recipe id for each dish in the preselector dishes output
 , join_recipe_and_main_recipe_id_to_preselector_dishes as (
 
@@ -446,6 +452,7 @@ preselector_successful_output_dishes as (
         end as fk_dim_portions
         , coalesce(md5(concat(ingredient_combinations.ingredient_combination_id, companies.language_id)), '0') as fk_dim_ingredient_combinations
         , coalesce(price_categories.pk_dim_price_categories, '0') as fk_dim_price_categories
+        , md5(cast(customer_journey_segments.sub_segment_id as string)) as fk_dim_customer_journey_segments
     from add_recipe_costs_and_co2
     left join companies
         on add_recipe_costs_and_co2.company_id = companies.company_id
@@ -488,6 +495,10 @@ preselector_successful_output_dishes as (
         and add_recipe_costs_and_co2.price_category_cost < price_categories.max_ingredient_cost_inc_vat
         and add_recipe_costs_and_co2.menu_week_monday_date >= price_categories.valid_from
         and add_recipe_costs_and_co2.menu_week_monday_date < price_categories.valid_to
+    left join customer_journey_segments
+        on add_recipe_costs_and_co2.billing_agreement_id = customer_journey_segments.billing_agreement_id
+        and add_recipe_costs_and_co2.menu_week_financial_date >= customer_journey_segments.menu_week_monday_date_from
+        and add_recipe_costs_and_co2.menu_week_financial_date < customer_journey_segments.menu_week_monday_date_to
 )
 
 select * from add_keys

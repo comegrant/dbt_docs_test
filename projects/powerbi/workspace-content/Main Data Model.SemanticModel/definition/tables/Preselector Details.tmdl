@@ -408,6 +408,13 @@ table 'Preselector Details'
         summarizeBy: none
         sourceColumn: fk_dim_price_categories
 
+    column fk_dim_customer_journey_segments
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_customer_journey_segments
+
     partition 'Preselector Measures' = m
         mode: directQuery
         source =
