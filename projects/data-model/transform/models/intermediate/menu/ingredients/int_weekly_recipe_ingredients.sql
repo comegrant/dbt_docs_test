@@ -110,8 +110,7 @@ menu_weeks_recipes_portions as (
         and menu_weeks_recipes_portions.language_id = recipe_ingredients.language_id
 
     left join ingredient_prices
-        on menu_weeks_recipes_portions.menu_year = ingredient_prices.menu_year
-        and menu_weeks_recipes_portions.menu_week = ingredient_prices.menu_week
+        on menu_weeks_recipes_portions.menu_week_monday_date = ingredient_prices.menu_week_monday_date
         and menu_weeks_recipes_portions.company_id = ingredient_prices.company_id
         and recipe_ingredients.ingredient_id = ingredient_prices.ingredient_id
 

@@ -12,6 +12,12 @@ weekly_purchase_orders as (
 
 )
 
+, ingredients as (
+
+    select * from {{ ref('pim__ingredients') }}
+
+)
+
 , companies as (
 
     select * from {{ ref('cms__companies') }}
@@ -64,8 +70,7 @@ weekly_purchase_orders as (
 , find_latest_relevant_purchasing_orders as (
 
     select
-        weekly_menus.menu_year
-        , weekly_menus.menu_week
+        weekly_menus.menu_week_monday_date
         , weekly_menus.ingredient_purchase_date
         , weekly_menus.company_id
         , weekly_purchase_orders_get_unit_costs_ordered.purchasing_company_id
@@ -93,8 +98,7 @@ weekly_purchase_orders as (
 , ingredient_relevant_actual_costs_joined as (
 
     select
-        find_latest_relevant_purchasing_orders.menu_year
-        , find_latest_relevant_purchasing_orders.menu_week
+        find_latest_relevant_purchasing_orders.menu_week_monday_date
         , find_latest_relevant_purchasing_orders.ingredient_purchase_date
         , find_latest_relevant_purchasing_orders.company_id
         , find_latest_relevant_purchasing_orders.purchasing_company_id
@@ -114,15 +118,20 @@ weekly_purchase_orders as (
 )
 
 
-, add_planned_and_expected_cost as (
+, add_costs_to_weekly_ingredients as (
 
     select
-        ingredient_relevant_actual_costs_joined.menu_year
-        , ingredient_relevant_actual_costs_joined.menu_week
-        , ingredient_relevant_actual_costs_joined.company_id
+
+        -- company_id + menu_week_monday_date + ingredient_id represents the unique key of this model
+        weekly_menus.company_id
+        , weekly_menus.menu_week_monday_date
+        , ingredients.ingredient_id
+
+        -- purchasing information
         , ingredient_relevant_actual_costs_joined.purchasing_company_id
         , ingredient_relevant_actual_costs_joined.country_id
-        , ingredient_relevant_actual_costs_joined.ingredient_id
+
+        --unit costs
         , coalesce(
                 campaign_prices.ingredient_unit_cost_markup
                 , campaign_prices.ingredient_unit_cost
@@ -132,22 +141,30 @@ weekly_purchase_orders as (
         , coalesce(campaign_prices.ingredient_unit_cost, regular_prices.ingredient_unit_cost) as ingredient_expected_cost_per_unit
         , ingredient_relevant_actual_costs_joined.ingredient_actual_cost_per_unit
     
-    from ingredient_relevant_actual_costs_joined
+    from weekly_menus
+
+    cross join ingredients
+    
+    left join ingredient_relevant_actual_costs_joined
+        on ingredients.ingredient_id = ingredient_relevant_actual_costs_joined.ingredient_id
+        and weekly_menus.ingredient_purchase_date = ingredient_relevant_actual_costs_joined.ingredient_purchase_date
+        and weekly_menus.menu_week_monday_date = ingredient_relevant_actual_costs_joined.menu_week_monday_date
+        and weekly_menus.company_id = ingredient_relevant_actual_costs_joined.company_id
 
     left join ingredient_prices as regular_prices
-        on ingredient_relevant_actual_costs_joined.ingredient_id = regular_prices.ingredient_id
-        and ingredient_relevant_actual_costs_joined.ingredient_purchase_date >= regular_prices.ingredient_price_valid_from
-        and ingredient_relevant_actual_costs_joined.ingredient_purchase_date <= regular_prices.ingredient_price_valid_to
+        on ingredients.ingredient_id = regular_prices.ingredient_id
+        and weekly_menus.ingredient_purchase_date >= regular_prices.ingredient_price_valid_from
+        and weekly_menus.ingredient_purchase_date <= regular_prices.ingredient_price_valid_to
         and regular_prices.ingredient_price_type_id = 0
     
     left join ingredient_prices as campaign_prices
-        on ingredient_relevant_actual_costs_joined.ingredient_id = campaign_prices.ingredient_id
-        and ingredient_relevant_actual_costs_joined.ingredient_purchase_date >= campaign_prices.ingredient_price_valid_from
-        and ingredient_relevant_actual_costs_joined.ingredient_purchase_date <= campaign_prices.ingredient_price_valid_to
+        on ingredients.ingredient_id = campaign_prices.ingredient_id
+        and weekly_menus.ingredient_purchase_date >= campaign_prices.ingredient_price_valid_from
+        and weekly_menus.ingredient_purchase_date <= campaign_prices.ingredient_price_valid_to
         and campaign_prices.ingredient_price_type_id = 1
 
     where regular_prices.ingredient_id is not null
 
 )
 
-select * from add_planned_and_expected_cost
+select * from add_costs_to_weekly_ingredients
