@@ -150,7 +150,18 @@ table 'Menu Measures'
 	/// TODO: Use Portions instead once we have that in Databricks
 	/// The number of servings in the recipes, i.e. the sum of portions in the recipes.
 	measure 'Number of Servings in Menu' =
-			SUM('Menu Measures'[portions])
+			CALCULATE(
+				SUM('Menu Measures'[portions]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
+		formatString: #,0
+		isHidden
+
+	measure 'Number of Recipe Variations in Menu' = 
+			CALCULATE(
+				COUNTROWS('Menu Measures'),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0
 		isHidden
 
@@ -208,7 +219,7 @@ table 'Menu Measures'
 	measure 'Ingredient Planned Cost per Recipe in the Menu' =
 			DIVIDE(
 				[Ingredient Planned Cost in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Ingredient\per Recipe
@@ -219,7 +230,7 @@ table 'Menu Measures'
 	measure 'Ingredient Planned Cost Whole Units per Recipe in the Menu' =
 			DIVIDE(
 				[Ingredient Planned Cost Whole Units in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Ingredient\per Recipe
@@ -230,7 +241,7 @@ table 'Menu Measures'
 	measure 'Ingredient Expected Cost per Recipe in the Menu' =
 			DIVIDE(
 				[Ingredient Expected Cost in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Ingredient\per Recipe
@@ -241,7 +252,7 @@ table 'Menu Measures'
 	measure 'Ingredient Expected Cost Whole Units per Recipe in the Menu' =
 			DIVIDE(
 				[Ingredient Expected Cost Whole Units in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Ingredient\per Recipe
@@ -305,7 +316,7 @@ table 'Menu Measures'
 	measure 'Recipe Planned Cost per Recipe in the Menu' =
 			DIVIDE(
 				[Recipe Planned Cost in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Recipe\per Recipe
@@ -317,7 +328,7 @@ table 'Menu Measures'
 	measure 'Recipe Planned Cost Whole Units per Recipe in the Menu' =
 			DIVIDE(
 				[Recipe Planned Cost Whole Units in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Recipe\per Recipe
@@ -329,7 +340,7 @@ table 'Menu Measures'
 	measure 'Recipe Expected Cost per Recipe in the Menu' =
 			DIVIDE(
 				[Recipe Expected Cost in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Recipe\per Recipe
@@ -341,7 +352,7 @@ table 'Menu Measures'
 	measure 'Recipe Expected Cost Whole Units per Recipe in the Menu' =
 			DIVIDE(
 				[Recipe Expected Cost Whole Units in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Recipe\per Recipe
@@ -380,7 +391,7 @@ table 'Menu Measures'
 	measure 'Ingredient CO2 Emissions per Recipe in Menu' =
 			DIVIDE(
 				[Ingredient CO2 Emissions in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: CO2 Emissions\by Ingredient
@@ -393,7 +404,7 @@ table 'Menu Measures'
 	measure 'Recipe CO2 Emissions per Recipe in Menu' =
 			DIVIDE(
 				[Recipe CO2 Emissions in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: CO2 Emissions\by Recipe
@@ -402,7 +413,10 @@ table 'Menu Measures'
 	/// The planned cost is the cost used in menu planning.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Planned Cost in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_planned_cost])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_planned_cost]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -411,7 +425,10 @@ table 'Menu Measures'
 	/// The planned cost is the cost used in menu planning.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Planned Cost Whole Units in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_planned_cost_whole_units])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_planned_cost_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -420,7 +437,10 @@ table 'Menu Measures'
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Expected Cost in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_expected_cost])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_expected_cost]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -429,7 +449,10 @@ table 'Menu Measures'
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Expected Cost Whole Units in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_expected_cost_whole_units])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_expected_cost_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -438,7 +461,10 @@ table 'Menu Measures'
 	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Actual Cost in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_actual_cost])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_actual_cost]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -447,7 +473,10 @@ table 'Menu Measures'
 	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	measure 'Ingredient Actual Cost Whole Units in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_actual_cost_whole_units])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_actual_cost_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost
@@ -456,7 +485,10 @@ table 'Menu Measures'
 	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	measure 'Ingredient CO2 Emissions in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_co2_emissions])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_co2_emissions]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Ingredient
@@ -465,7 +497,10 @@ table 'Menu Measures'
 	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	measure 'Ingredient CO2 Emissions Whole Units in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_co2_emissions_whole_units])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_co2_emissions_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Ingredient
@@ -473,7 +508,10 @@ table 'Menu Measures'
 	/// Hidden measure?
 	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
 	measure 'Ingredient Weight in Menu with CO2 Data' =
-			SUM('Recipe Ingredients'[total_ingredient_weight_with_co2_data])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_weight_with_co2_data]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Ingredient
@@ -496,7 +534,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient Planned Cost in Menu] to see the cost of specific ingredients in the recipes.
 	measure 'Recipe Planned Cost in Menu' =
-			SUM('Menu Measures'[total_ingredient_planned_cost])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_planned_cost]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost\by Recipe
@@ -506,7 +547,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient Planned Cost Whole Units in Menu] to see the cost of specific ingredients in the recipes.
 	measure 'Recipe Planned Cost Whole Units in Menu' =
-			SUM('Menu Measures'[total_ingredient_planned_cost_whole_units])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_planned_cost_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost\by Recipe
@@ -516,7 +560,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient Expected Cost in Menu] to see the cost of specific ingredients in the recipes.
 	measure 'Recipe Expected Cost in Menu' =
-			SUM('Menu Measures'[total_ingredient_expected_cost])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_expected_cost]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost\by Recipe
@@ -526,7 +573,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient Expected Cost Whole Units in Menu] to see the cost of specific ingredients in the recipes.
 	measure 'Recipe Expected Cost Whole Units in Menu' =
-			SUM('Menu Measures'[total_ingredient_expected_cost_whole_units])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_expected_cost_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Cost\by Recipe
@@ -537,7 +587,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the emission of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient CO2 Emissions in Menu] to see the emission of specific ingredients in the recipes.
 	measure 'Recipe CO2 Emissions in Menu' =
-			SUM('Menu Measures'[total_ingredient_co2_emissions])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_co2_emissions]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Recipe
@@ -548,7 +601,10 @@ table 'Menu Measures'
 	/// If filtered on specific ingredients, it will return the emission of all ingredients in the recipes that include any of the filtered ingredients, and not only the cost of the selected ingredients.
 	/// Use [Ingredient CO2 Emissions in Menu] to see the emission of specific ingredients in the recipes.
 	measure 'Recipe CO2 Emissions Whole Units in Menu' =
-			SUM('Menu Measures'[total_ingredient_co2_emissions_whole_units])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_co2_emissions_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Recipe
@@ -556,7 +612,10 @@ table 'Menu Measures'
 	/// Hidden measure?
 	/// The total net weight (in grams) of ingredients in the recipe that have registered CO2 emission data.
 	measure 'Recipe Weight in Menu with CO2 Data' =
-			SUM('Menu Measures'[total_ingredient_weight_with_co2_data])
+			CALCULATE(
+				SUM('Menu Measures'[total_ingredient_weight_with_co2_data]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: CO2 Emissions\by Recipe
@@ -577,7 +636,10 @@ table 'Menu Measures'
 	/// The total quantity of ingredients in the recipes.
 	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
 	measure 'Ingredient Quantity in Menu' = 
-			SUM('Recipe Ingredients'[ingredient_order_quantity])
+			CALCULATE(
+				SUM('Recipe Ingredients'[ingredient_order_quantity]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Amount
@@ -587,7 +649,7 @@ table 'Menu Measures'
 	measure 'Ingredient Quantity per Recipe in Menu' = 
 			DIVIDE(
 				[Ingredient Quantity in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		displayFolder: Ingredient Amount
@@ -605,7 +667,10 @@ table 'Menu Measures'
 	/// The weight of the ingredients (in grams) in the recipes in the menu.
 	/// This is the sum of the ingredient weight of all ingredients in the recipes, that is included in the selection.
 	measure 'Ingredient Weight in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_weight])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_weight]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Amount
@@ -613,7 +678,10 @@ table 'Menu Measures'
 	/// The weight of the ingredients in the recipes in the menu, based on ingredient quantity in whole units per recipe.
 	/// This is the sum of the ingredient weight of all ingredients in the recipes, that is included in the selection.
 	measure 'Ingredient Weight Whole Units in Menu' =
-			SUM('Recipe Ingredients'[total_ingredient_weight_whole_units])
+			CALCULATE(
+				SUM('Recipe Ingredients'[total_ingredient_weight_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
 		formatString: #,0.00
 		isHidden
 		displayFolder: Ingredient Amount
@@ -624,7 +692,7 @@ table 'Menu Measures'
 	measure 'Ingredient Weight Whole Units per Recipe in Menu' =
 			DIVIDE(
 				[Ingredient Weight Whole Units in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		isHidden
@@ -648,7 +716,7 @@ table 'Menu Measures'
 	measure 'Ingredient Weight per Recipe in Menu' =
 			DIVIDE(
 				[Ingredient Weight in Menu],
-				COUNTROWS('Menu Measures')
+				[Number of Recipe Variations in Menu]
 			)
 		formatString: #,0.00
 		isHidden
