@@ -335,12 +335,12 @@ table 'Case Measures'
         
     /// The difference in share of orders with complaints in the selected year and the year before.
     measure 'Share of Orders With Complaints (Diff PY)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="Diff PY") 
-		formatString: #,0
+		formatString: 0.00%;-0.00%;0.00%
         displayFolder: Complaints\Orders with Complaints
 
     /// The percentage change in share of orders with complaints in the selected year and the year before.
     measure 'Share of Orders With Complaints (YOY%)' = CALCULATE([Share of Orders With Complaints], 'Time Intelligence'[Time Calculation]="YOY%") 
-		formatString: #,0
+		formatString: 0.00%;-0.00%;0.00%
         displayFolder: Complaints\Orders with Complaints
 
     /// The share of orders with complaints from the beginning of the year up to the current period.
@@ -680,6 +680,16 @@ table 'Case Measures'
     /// The quantity of the ingredients reported in complaints. I.e., if a customer reported two bad carrots the number will be two.
     measure 'Complaint Ingredient Quantity' = SUM('Case Measures'[Ingredient Quantity])
 		formatString: #,0
+        displayFolder: Ingredients
+
+    /// The share of ingredients in the customer orders with complaints
+    /// Calculated as [Complaint Ingredient Quantity]/[Ingredient Quantity in Orders]
+    measure 'Share of Ordered Ingredients with Complaints' = 
+            DIVIDE(
+                [Complaint Ingredient Quantity],
+                [Ingredient Quantity in Orders]
+            )
+        formatString: 0.00%;-0.00%;0.00%
         displayFolder: Ingredients
 
     /// Primary key of the fact_case table.
