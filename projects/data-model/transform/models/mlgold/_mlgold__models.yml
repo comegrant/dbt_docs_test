@@ -110,47 +110,6 @@ models:
         description: "{{ doc('column__most_recent_menu_year_week_main_recipe') }}"
         data_type: int
 
-  - name: preselector_recipes
-    description: "Table containing the weekly preselected recipes for billing agreement ids"
-
-    columns:
-      - name: menu_week_monday_date
-        description: "{{ doc('column__menu_week_monday_date') }}"
-        data_type: date
-
-      - name: menu_week
-        description: "{{ doc('column__menu_week') }}"
-        data_type: int
-
-      - name: menu_year
-        description: "{{ doc('column__menu_year') }}"
-        data_type: int
-
-      - name: billing_agreement_basket_id
-        description: "{{ doc('column__billing_agreement_basket_id') }}"
-        data_type: string
-
-      - name: billing_agreement_id
-        description: "{{ doc('column__billing_agreement_id') }}"
-        data_type: int
-
-      - name: product_variation_id
-        description: "{{ doc('column__product_variation_id') }}"
-        data_type: string
-
-      - name: deviation_created_at
-        description: "{{ doc('column__source_created_at') }}"
-        data_type: timestamp
-
-      - name: deviation_created_by
-        description: "{{ doc('column__source_created_by') }}"
-        data_type: string
-
-      - name: recipe_id
-        description: "{{ doc('column__recipe_id') }}"
-        data_type: int
-
-
   - name: recipe_ingredients
     description: "Table containing ingredient information for recipe portion ids"
 
