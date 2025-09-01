@@ -306,7 +306,7 @@ Restart your code editor
 poetry --version
 ```
 
-_It should return something like `Poetry version 1.8.X`_
+_It should return something like `Poetry version 2.X.X`_
 
 If you get an `access denied` error, then you may need to add `%APPDATA%\Python\Scripts` to the exemptions:
 - Go to Settings > Security > Virus & threat protection
@@ -319,7 +319,6 @@ If you get an `access denied` error, then you may need to add `%APPDATA%\Python\
 4. Set poetry to prefer the currently active Python version
 
 ```bash
-poetry config virtualenvs.prefer-active-python true
 poetry config virtualenvs.in-project true
 ```
 
@@ -340,7 +339,7 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 2. Add poetry to your path
 ```bash
-echo 'export PATH="$HOME/.poetry/bin:$PATH"' >> ~/.zshrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 ```
 
 3. Check that you have set up Poetry correctly
@@ -348,12 +347,11 @@ echo 'export PATH="$HOME/.poetry/bin:$PATH"' >> ~/.zshrc
 poetry --version
 ```
 
-_It should return something like `Poetry version 1.8.X`_
+_It should return something like `Poetry version 2.X.X`_
 
 4. Set poetry to prefer the currently active Python version and create project specific virtualenvs
 
 ```bash
-poetry config virtualenvs.prefer-active-python true
 poetry config virtualenvs.in-project true
 ```
 
