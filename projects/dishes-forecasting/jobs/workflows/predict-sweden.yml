@@ -39,6 +39,10 @@ resources:
             base_parameters:
               env: "${var.environment}"
               company: LMK
+              is_from_workflow: true
+              is_modify_new_portions: false
+              is_add_new_portions_on_top: false
+              is_normalize_predictions: true
               write_mode: append
         - task_key: slack-notification-success
           depends_on:

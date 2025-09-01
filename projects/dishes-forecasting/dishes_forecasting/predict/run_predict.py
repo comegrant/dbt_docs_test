@@ -9,8 +9,8 @@ from time_machine.forecasting import get_forecast_start
 
 from dishes_forecasting.predict.configs import get_configs
 from dishes_forecasting.predict.data import create_pred_dataset
-from dishes_forecasting.predict.postprocessor import postprocess_predictions, save_predictions
-from dishes_forecasting.predict.predictor import make_predictions
+from dishes_forecasting.predict.postprocessor import format_predictions_for_output, save_predictions
+from dishes_forecasting.predict.predictor import make_predictions, modify_new_portions, normalize_predictions
 from dishes_forecasting.train.configs.feature_lookup_config import feature_lookup_config_list
 
 
@@ -19,6 +19,11 @@ class Args(BaseModel):
     env: Literal["dev", "test", "prod"]
     forecast_date: str = None
     is_running_on_databricks: bool
+    is_normalize_predictions: bool = True
+    is_modify_new_portions: bool = False
+    is_add_new_portions_on_top: bool = False
+    new_portions: list[int] = []
+    new_portions_targets: list[float] = []
     profile_name: str = "sylvia-liu"
 
 
@@ -38,8 +43,29 @@ def run_predict(args: Args) -> DataFrame:
     model_uri = pred_configs.model_uri[args.env]
     loaded_model = mlflow.pyfunc.load_model(model_uri)
     df_predictions = make_predictions(model=loaded_model, df_pred=df_pred)
+    if args.is_modify_new_portions:
+        print("Before modify_new_portions")  # noqa: T201
+        print(    # noqa: T201
+            df_predictions.groupby(
+                ["menu_year", "menu_week", "portion_quantity"]
+            ).variation_ratio_prediction.sum()
+        )
+        df_predictions = modify_new_portions(
+            df_predictions=df_predictions,
+            is_add_new_portions_on_top=args.is_add_new_portions_on_top,
+            new_portions=args.new_portions,
+            new_portions_targets=args.new_portions_targets,
+        )
+        print("After modify_new_portions")  # noqa: T201
+        print(    # noqa: T201
+            df_predictions.groupby(
+                ["menu_year", "menu_week", "portion_quantity"]
+            ).variation_ratio_prediction.sum()
+        )
+    elif args.is_normalize_predictions:
+        df_predictions = normalize_predictions(df_predictions=df_predictions)
 
-    df_processed = postprocess_predictions(df_predictions=df_predictions)
+    df_processed = format_predictions_for_output(df_predictions=df_predictions)
     save_predictions(
         df_to_write=df_processed,
         env=args.env,

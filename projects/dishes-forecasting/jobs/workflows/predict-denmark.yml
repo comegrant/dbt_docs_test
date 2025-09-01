@@ -39,6 +39,12 @@ resources:
             base_parameters:
               env: "${var.environment}"
               company: RT
+              is_from_workflow: true
+              is_modify_new_portions: true
+              is_add_new_portions_on_top: false
+              is_normalize_predictions: true
+              new_portions: 5
+              new_portions_targets: 0.025
               write_mode: append
         - task_key: slack-notification-success
           depends_on:

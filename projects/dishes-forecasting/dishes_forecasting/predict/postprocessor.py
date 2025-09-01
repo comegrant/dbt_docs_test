@@ -19,7 +19,7 @@ def save_predictions(
     append_pandas_df_to_catalog(df_to_write, full_table_name)
 
 
-def postprocess_predictions(
+def format_predictions_for_output(
     df_predictions: pd.DataFrame
 ) -> pd.DataFrame:
     run_id = uuid.uuid4()
