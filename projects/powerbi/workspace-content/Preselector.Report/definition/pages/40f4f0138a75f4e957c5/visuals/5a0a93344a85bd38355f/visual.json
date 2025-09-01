@@ -72,21 +72,6 @@
               "queryRef": "Preselector Measures.Recipe Actual Cost from Preselector Output per Serving",
               "nativeQueryRef": "Actual Cost per Serving",
               "displayName": "Actual Cost per Serving"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Price Categories"
-                    }
-                  },
-                  "Property": "Price Category Level"
-                }
-              },
-              "queryRef": "Price Categories.Price Category Level",
-              "nativeQueryRef": "Price Category",
-              "displayName": "Price Category"
             }
           ]
         }
