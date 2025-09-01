@@ -3,10 +3,10 @@
   "name": "dffdc7c708055bbb7067",
   "position": {
     "x": 0,
-    "y": 67.5,
+    "y": 72.266691429102053,
     "z": 11000,
-    "height": 88.75,
-    "width": 1162.5,
+    "height": 83.677221654749744,
+    "width": 1162.6062463243261,
     "tabOrder": 3000
   },
   "visual": {
@@ -20,16 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "(Param) Case Measures Ex VAT"
+                      "Entity": "(Param) Case Measures Ex Vat"
                     }
                   },
-                  "Property": "(Param) Case Measures Ex VAT Name"
+                  "Property": "(Param) Case Measures Ex Vat Name"
                 }
               },
-              "queryRef": "(Param) Case Measures Ex VAT.(Param) Case Measures Ex VAT Name",
-              "nativeQueryRef": "Costs Ex VAT",
+              "queryRef": "(Param) Case Measures Ex Vat.(Param) Case Measures Ex Vat Name",
+              "nativeQueryRef": "Costs Ex Vat",
               "active": true,
-              "displayName": "Costs Ex VAT"
+              "displayName": "Costs Ex Vat"
             }
           ]
         }
@@ -65,7 +65,7 @@
                 "From": [
                   {
                     "Name": "(",
-                    "Entity": "(Param) Case Measures Ex VAT",
+                    "Entity": "(Param) Case Measures Ex Vat",
                     "Type": 0
                   }
                 ],
@@ -81,7 +81,7 @@
                                   "Source": "("
                                 }
                               },
-                              "Property": "(Param) Case Measures Ex VAT Name"
+                              "Property": "(Param) Case Measures Ex Vat Name"
                             }
                           }
                         ],
@@ -89,7 +89,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Average Complaint Cost Ex VAT'"
+                                "Value": "'Average Complaint Cost Ex Vat'"
                               }
                             }
                           ]
@@ -110,6 +110,31 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": -0.5
+                    }
+                  }
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -93,10 +93,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "(Param) Case Measures Ex VAT"
+                      "Entity": "(Param) Case Measures Ex Vat"
                     }
                   },
-                  "Property": "(Param) Case Measures Ex VAT Field"
+                  "Property": "(Param) Case Measures Ex Vat Field"
                 }
               },
               "index": 0,

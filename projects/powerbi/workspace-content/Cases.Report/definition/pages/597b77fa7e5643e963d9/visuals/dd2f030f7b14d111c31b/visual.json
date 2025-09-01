@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "dd2f030f7b14d111c31b",
   "position": {
-    "x": 20.39408866995074,
-    "y": 67.389162561576356,
+    "x": 0,
+    "y": 72.266691429102053,
     "z": 12000,
-    "height": 88.669950738916256,
-    "width": 1142.0689655172414,
+    "height": 83.677221654749744,
+    "width": 1162.6062463243261,
     "tabOrder": 4000
   },
   "visual": {
@@ -20,16 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "(Param) Case Measures Inc VAT"
+                      "Entity": "(Param) Case Measures Inc Vat"
                     }
                   },
-                  "Property": "(Param) Case Measures Inc VAT Name"
+                  "Property": "(Param) Case Measures Inc Vat Name"
                 }
               },
-              "queryRef": "(Param) Case Measures Inc VAT.(Param) Case Measures Inc VAT Name",
-              "nativeQueryRef": "Costs Inc VAT",
+              "queryRef": "(Param) Case Measures Inc Vat.(Param) Case Measures Inc Vat Name",
+              "nativeQueryRef": "Costs Inc Vat",
               "active": true,
-              "displayName": "Costs Inc VAT"
+              "displayName": "Costs Inc Vat"
             }
           ]
         }
@@ -65,7 +65,7 @@
                 "From": [
                   {
                     "Name": "(",
-                    "Entity": "(Param) Case Measures Inc VAT",
+                    "Entity": "(Param) Case Measures Inc Vat",
                     "Type": 0
                   }
                 ],
@@ -81,7 +81,7 @@
                                   "Source": "("
                                 }
                               },
-                              "Property": "(Param) Case Measures Inc VAT Name"
+                              "Property": "(Param) Case Measures Inc Vat Name"
                             }
                           }
                         ],
@@ -89,7 +89,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Average Complaint Cost Per Order Inc VAT'"
+                                "Value": "'Average Complaint Cost Inc Vat'"
                               }
                             }
                           ]
@@ -110,6 +110,34 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "padding": [
+        {
+          "properties": {
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }

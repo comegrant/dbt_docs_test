@@ -80,11 +80,11 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Average Complaint Cost Per Order Inc Vat"
+                  "Property": "Average Complaint Cost Inc Vat"
                 }
               },
-              "queryRef": "Case Measures.Average Complaint Cost Per Order Inc Vat",
-              "nativeQueryRef": "Average Complaint Cost Per Order Inc Vat"
+              "queryRef": "Case Measures.Average Complaint Cost Inc Vat",
+              "nativeQueryRef": "Average Complaint Cost Inc Vat"
             }
           ],
           "fieldParameters": [
@@ -93,10 +93,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "(Param) Case Measures Inc VAT"
+                      "Entity": "(Param) Case Measures Inc Vat"
                     }
                   },
-                  "Property": "(Param) Case Measures Inc VAT Field"
+                  "Property": "(Param) Case Measures Inc Vat Field"
                 }
               },
               "index": 0,
