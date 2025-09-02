@@ -432,15 +432,10 @@ table 'Order Measures'
 	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X),
 	/// use the measures for Number of added/removed dishes
 	measure 'Number of Swapped In Dishes' =
-
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
-			            BLANK(),
-			            [Number of Added Dishes] - [Increased Meals]
-			        )
+			        [Number of Added Dishes] - [Increased Meals]
 			)
 		formatString: #,0
 		isHidden
@@ -582,21 +577,32 @@ table 'Order Measures'
 	measure 'Number of Orders with Swaps' = ```
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
-			            BLANK(),
-			            CALCULATE(
+			        CALCULATE(
 			                [Number of Orders],
 			                'Order Measures'[has_swap] = True
 			            )
-			        )
 			)
 			```
 		formatString: #,0
 		displayFolder: Swapped Dishes
 		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
+
+	/// Number of ordered dishes in orders where the customer replaced one or more dishes with another dish
+	measure 'Number of Ordered Dishes in Orders with Swaps' = ```
+
+			IF(
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
+			        BLANK(),
+			        CALCULATE(
+			            [Number of Ordered Dishes],
+			            'Order Measures'[has_swap] = True
+			        )
+			)
+			```
+		formatString: #,0
+		displayFolder: Swapped Dishes
 
 	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
@@ -653,19 +659,28 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Average number of swapped dishes in orders with swaps.
+	/// Calculated as [Number of Swapped Dishes]/[Number of Ordered Dishes in Orders with Swaps]
+	measure 'Share of Swapped Dishes in Orders with Swaps' = ```
+
+			    DIVIDE(
+			        [Number of Swapped Dishes],
+			        [Number of Ordered Dishes in Orders with Swaps],
+			        BLANK()
+			    )
+			```
+		displayFolder: Swapped Dishes
+		formatString: 0.00%;-0.00%;0.00%
+
 	/// Number of orders where the customer increased the number of portions
 	measure 'Number of Orders with Increased Portions' =
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			    BLANK(),
-			    IF(
-			        ISFILTERED('Products'),
-			        BLANK(),
-			        CALCULATE(
-			            [Number of Orders],
-			            'Order Measures'[portion_adjustment_subscription] > 0
-			        )
+			    CALCULATE(
+			        [Number of Orders],
+			        'Order Measures'[portion_adjustment_subscription] > 0
 			    )
 			)
 		formatString: #,0
@@ -676,15 +691,11 @@ table 'Order Measures'
 	measure 'Number of Orders with Decreased Portions' =
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			    BLANK(),
-			    IF(
-			        ISFILTERED('Products'),
-			        BLANK(),
-			        CALCULATE(
-			            [Number of Orders],
-			            'Order Measures'[portion_adjustment_subscription] < 0
-			        )
+			    CALCULATE(
+			        [Number of Orders],
+			        'Order Measures'[portion_adjustment_subscription] < 0
 			    )
 			)
 		formatString: #,0
@@ -695,15 +706,11 @@ table 'Order Measures'
 	measure 'Number of Orders with Adjusted Portions' =
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			    BLANK(),
-			    IF(
-			        ISFILTERED('Products'),
-			        BLANK(),
-			        CALCULATE(
-			            [Number of Orders],
-			            'Order Measures'[portion_adjustment_subscription] <> 0
-			        )
+			    CALCULATE(
+			        [Number of Orders],
+			        'Order Measures'[portion_adjustment_subscription] <> 0
 			    )
 			)
 		formatString: #,0
@@ -713,15 +720,11 @@ table 'Order Measures'
 	/// Number of orders where the customer increased the number of meals/days
 	measure 'Number of Orders with Increased Meals' =
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
-			            BLANK(),
-			            CALCULATE(
-			                [Number of Orders],
-			                'Order Measures'[meal_adjustment_subscription] > 0
-			            )
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[meal_adjustment_subscription] > 0
 			        )
 			)
 		formatString: #,0
@@ -732,15 +735,11 @@ table 'Order Measures'
 	measure 'Number of Orders with Decreased Meals' =
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
-			            BLANK(),
-			            CALCULATE(
-			                [Number of Orders],
-			                'Order Measures'[meal_adjustment_subscription] < 0
-			            )
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[meal_adjustment_subscription] < 0
 			        )
 			)
 		formatString: #,0
@@ -751,15 +750,11 @@ table 'Order Measures'
 	measure 'Number of Orders with Adjusted Meals' =
 
 			IF(
-			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			    ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			        BLANK(),
-			        IF(
-			            ISFILTERED('Products'),
-			            BLANK(),
-			            CALCULATE(
-			                [Number of Orders],
-			                'Order Measures'[meal_adjustment_subscription] <> 0
-			            )
+			        CALCULATE(
+			            [Number of Orders],
+			            'Order Measures'[meal_adjustment_subscription] <> 0
 			        )
 			)
 		formatString: #,0
@@ -779,16 +774,12 @@ table 'Order Measures'
 
 			CALCULATE(
 			    IF(
-			        ISFILTERED('Recipes')  || ISFILTERED('Ingredients'),
+			        ISFILTERED('Recipes')  || ISFILTERED('Ingredients') || ISFILTERED('Products'),
 			            BLANK(),
-			            IF(
-			                ISFILTERED('Products'),
-			                BLANK(),
-			                CALCULATE(
-			    	            SUM('Order Measures'[meal_adjustment_subscription]),
-			    	            'Order Measures'[has_normal_order_type] = TRUE(),
-			    	            'Order Measures'[has_finished_order_status] = TRUE()
-			                )
+			            CALCULATE(
+			                SUM('Order Measures'[meal_adjustment_subscription]),
+			                'Order Measures'[has_normal_order_type] = TRUE(),
+			                'Order Measures'[has_finished_order_status] = TRUE()
 			            )
 			    ),
 			    USERELATIONSHIP(
