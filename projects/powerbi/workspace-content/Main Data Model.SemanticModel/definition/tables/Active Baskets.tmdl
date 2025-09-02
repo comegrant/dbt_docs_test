@@ -6,8 +6,36 @@ table 'Active Baskets'
 	/// This is what would have been ordered if cutoff is now for the next 12 weeks.
 	/// See "Active Baskets Generated At" for the timestamp of the estimation.
 	measure 'Number of Units in Baskets if Cutoff is Now' = SUM('Active Baskets'[product_variation_quantity])
+		isHidden
 		formatString: #,0
 		lineageTag: 47c610a4-556a-43e8-92e0-be8a300c77f9
+
+	/// The number of mealboxes that would have been ordered if cutoff is now for the next 12 weeks.
+	/// See "Active Baskets Generated At" for the timestamp of the estimation.
+	measure 'Number of Mealboxes in Active Baskets' = 
+			CALCULATE(
+				SUM('Active Baskets'[product_variation_quantity]),
+				'Active Baskets'[is_mealbox] = TRUE()
+			)
+		formatString: #,0
+
+	/// The number of dishes that would have been ordered if cutoff is now for the next 12 weeks.
+	/// See "Active Baskets Generated At" for the timestamp of the estimation.
+	measure 'Number of Dishes in Active Baskets' = 
+			CALCULATE(
+				SUM('Active Baskets'[product_variation_quantity]),
+				'Active Baskets'[is_dish] = TRUE()
+			)
+		formatString: #,0
+
+	/// The number of groceries that would have been ordered if cutoff is now for the next 12 weeks.
+	/// See "Active Baskets Generated At" for the timestamp of the estimation.
+	measure 'Number of Groceries in Active Baskets' = 
+			CALCULATE(
+				SUM('Active Baskets'[product_variation_quantity]),
+				'Active Baskets'[is_grocery] = TRUE()
+			)
+		formatString: #,0
 
 	/// Counting number of potential customers in the upcoming weeks. 
 	/// This is the number of customers that would have ordered if cutoff is now, for the next 12 weeks.
@@ -121,11 +149,27 @@ table 'Active Baskets'
 
 	/// Timestamp of when the snapshot of the active baskets was taken.
 	column 'Active Baskets Generated At'
+		isHidden
 		dataType: dateTime
 		formatString: 'yyyy-mm-dd hh:mm:ss'
 		lineageTag: 8cab2d83-3dd0-46e3-9631-f334a17e26b7
 		summarizeBy: none
 		sourceColumn: estimation_generated_at
+	
+	column 'is_mealbox'
+		isHidden
+		dataType: boolean
+		sourceColumn: is_mealbox
+
+	column 'is_dish'
+		isHidden
+		dataType: boolean
+		sourceColumn: is_dish
+
+	column 'is_grocery'
+		isHidden
+		dataType: boolean
+		sourceColumn: is_grocery
 
 	partition 'Active Baskets' = m
 		mode: directQuery

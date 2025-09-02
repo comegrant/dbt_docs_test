@@ -1,0 +1,44 @@
+table '(Param) Active Baskets Measures'
+
+	column '(Param) Active Baskets Measures'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: '(Param) Active Baskets Measures Order'
+
+		relatedColumnDetails
+			groupByColumn: '(Param) Active Baskets Measures Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Active Baskets Measures Fields'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: '(Param) Active Baskets Measures Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Active Baskets Measures Order'
+		isHidden
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '(Param) Active Baskets Measures' = calculated
+		mode: import
+		source =
+				{
+				    ("Number of Mealboxes in Active Baskets", NAMEOF('Active Baskets'[Number of Mealboxes in Active Baskets]), 0),
+                    ("Number of Dishes in Active Baskets", NAMEOF('Active Baskets'[Number of Dishes in Active Baskets]), 1),
+				    ("Number of Groceries in Active Baskets", NAMEOF('Active Baskets'[Number of Groceries in Active Baskets]), 2)
+				}
+
