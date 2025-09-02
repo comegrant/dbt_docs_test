@@ -60,12 +60,19 @@ async def recipe_information_for_ids(
     year: int,
     week: int,
 ) -> Annotated[pd.DataFrame, RecipeFeatures]:
-    import polars as pl
-
     if not main_recipe_ids:
         return pd.DataFrame()
 
     schema = RecipeFeatures()
+
+    filter_exp = (
+        (schema.main_recipe_id.is_in(main_recipe_ids) & (schema.year == year) & (schema.week == week))
+        .to_expression()
+        .to_polars()
+    )
+
+    assert filter_exp is not None
+
     return (
         await RecipeFeatures.query()
         .select_columns(
@@ -80,11 +87,7 @@ async def recipe_information_for_ids(
                 schema.cooking_time_to.name,
             ]
         )
-        .filter(
-            pl.col(RecipeFeatures().main_recipe_id.name).is_in(main_recipe_ids)
-            & (pl.col(RecipeFeatures().year.name) == year)
-            & (pl.col(RecipeFeatures().week.name) == week)
-        )
+        .filter(filter_exp)
         .to_pandas()
     )
 

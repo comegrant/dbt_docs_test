@@ -1,4 +1,4 @@
-from chef.deploy import Apps, CommonSecrets, EnvConfig, StreamlitApp
+from chef.deploy import Apps, CommonSecrets, ContainerResources, EnvConfig, StreamlitApp
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from streamlit_apps import debug_app
@@ -24,5 +24,6 @@ apps = Apps(
                 "auth_redirect_uri": "https://preselector-debug-prod.delightfulpond-81d463af.northeurope.azurecontainerapps.io",
             },
         ),
+        resources=ContainerResources(cpu=1, memory="2Gi"),
     ),
 )
