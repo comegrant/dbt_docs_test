@@ -77,5 +77,7 @@ ref table 'Partnership Details'
 ref table 'Partnership Measures'
 ref table 'Price Categories'
 ref table '(Utils) Matrix Spacer'
+ref table '(Param) Case Measures Ex Vat'
+ref table '(Param) Case Measures Inc Vat'
 
 ref cultureInfo en-US
