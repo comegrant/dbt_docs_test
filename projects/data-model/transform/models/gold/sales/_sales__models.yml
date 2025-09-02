@@ -64,6 +64,10 @@ models:
         data_type: int
         description: "{{ doc('column__dish_quantity') }}"
 
+      - name: dish_quantity_subscription
+        data_type: int
+        description: "{{ doc('column__dish_quantity_subscription') }}"
+
       - name: product_variation_quantity_subscription
         data_type: int
         description: "{{ doc('column__product_variation_quantity_subscription') }}"
@@ -271,6 +275,10 @@ models:
         description: "{{ doc('column__is_not_cooked_dish') }}"
 
       - name: price_category_cost
+        data_type: decimal(38,2)
+        description: "{{ doc('column__price_category_cost') }}"
+
+      - name: price_category_cost_subscription
         data_type: decimal(38,2)
         description: "{{ doc('column__price_category_cost') }}"
 
@@ -657,6 +665,21 @@ models:
           - relationships:
               to: ref('dim_price_categories')
               field: pk_dim_price_categories
+  
+      - name: fk_dim_price_categories_subscription
+        data_type: string
+        description: "{{ doc('column__pk_dim_price_categories') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_price_categories')
+            to_columns: [pk_dim_price_categories]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_price_categories')
+              field: pk_dim_price_categories
+
 
       - name: fk_dim_products
         data_type: string

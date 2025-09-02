@@ -515,6 +515,10 @@ table 'Order Measures'
 						'Order Measures'[fk_dim_products_subscription],
 						Products[pk_dim_products]
 					),
+					USERELATIONSHIP(
+						'Order Measures'[fk_dim_price_categories_subscription],
+						'Price Categories'[pk_dim_price_categories]
+					),
 				   USERELATIONSHIP(
 					   'Bridge Billing Agreements Subscribed Products'[fk_dim_billing_agreements],
 					   'Billing Agreements Deviation'[pk_dim_billing_agreements]
@@ -544,7 +548,7 @@ table 'Order Measures'
 	/// Number of dishes initially presented to customer
 	measure 'Number of Preselected Dishes' = ```
 			CALCULATE(
-				COUNTROWS('Order Measures'),
+				SUM('Order Measures'[dish_quantity_subscription]),
 				'Order Measures'[is_preselected_dish] = TRUE(),
 				'Order Measures'[fk_dim_recipes_subscription] <> "0",
 				'Order Measures'[has_normal_order_type] = TRUE(),
@@ -552,6 +556,10 @@ table 'Order Measures'
 				USERELATIONSHIP(
 					'Order Measures'[fk_dim_recipes_subscription],
 					Recipes[pk_dim_recipes]
+				),
+				USERELATIONSHIP(
+					'Order Measures'[fk_dim_price_categories_subscription],
+					'Price Categories'[pk_dim_price_categories]
 				),
 				USERELATIONSHIP(
 					'Order Measures'[fk_dim_products_subscription],
@@ -2855,6 +2863,15 @@ table 'Order Measures'
 		summarizeBy: sum
 		sourceColumn: dish_quantity
 
+	/// The quantity of dishes selected by the preselector regardless of if the dish was ordered or not
+	column dish_quantity_subscription
+		dataType: int64
+		isHidden
+		formatString: 0
+		isAvailableInMdx: false
+		summarizeBy: sum
+		sourceColumn: dish_quantity_subscription
+
 	/// The timestamp of when the order was created in the CMS system
 	column source_created_at
 		dataType: dateTime
@@ -3629,6 +3646,14 @@ table 'Order Measures'
         isAvailableInMdx: false
         summarizeBy: none
         sourceColumn: fk_dim_price_categories
+
+	/// Primary key of the dim_price_categories
+    column fk_dim_price_categories_subscription
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: fk_dim_price_categories_subscription
 
 	partition 'Order Measures' = m
 		mode: directQuery

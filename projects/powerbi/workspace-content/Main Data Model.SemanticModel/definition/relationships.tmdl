@@ -487,6 +487,11 @@ relationship fact_orders_to_dim_price_categories
 	fromColumn: 'Order Measures'.fk_dim_price_categories
 	toColumn: 'Price Categories'.pk_dim_price_categories
 
+relationship fact_orders_to_dim_price_categories_subscription
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_price_categories_subscription
+	toColumn: 'Price Categories'.pk_dim_price_categories
+
 relationship fact_menus_to_dim_price_categories
 	fromColumn: 'Menu Measures'.fk_dim_price_categories
 	toColumn: 'Price Categories'.pk_dim_price_categories

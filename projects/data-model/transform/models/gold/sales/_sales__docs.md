@@ -255,6 +255,12 @@ Number of dishes ordered.
 
 {% enddocs %}
 
+{% docs column__dish_quantity_subscription %}
+
+Number of dishes in subscription. I.e. the quantity of the dish in the customers basket before making any changes.
+
+{% enddocs %}
+
 {% docs column__total_amount_ex_vat_subscription %}
 
 The total amount of the order line if only including subscribed product variation quantity. E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk that was subscribed to.

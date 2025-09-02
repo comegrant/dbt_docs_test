@@ -336,12 +336,6 @@ discounts as (
         , menus.recipe_portion_id
         , coalesce(menus.recipe_id, order_lines.product_variation_id) as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
-        --TODO: This might include groceries which shouldn't be a part of this.
-        -- but we might go away from this dish_quantity thing anyways and modify the product_variation_quantity.
-        , case
-            when menus.recipe_id is not null then product_variation_quantity
-            else 0
-        end as dish_quantity
         , order_lines.product_variation_quantity
         , order_lines.vat
         , order_lines.unit_price_ex_vat
@@ -375,7 +369,6 @@ discounts as (
         , menus.recipe_portion_id
         , menus.recipe_id as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
-        , order_lines.product_variation_quantity as dish_quantity
         , {{ generate_null_columns(6, prefix='null_col') }}
         , 'GENERATED' as order_line_type_name
     from order_lines
@@ -519,6 +512,26 @@ discounts as (
         , portions_subscription.portions as portions_subscription
         , portions.portion_id
         , portions_subscription.portion_id as portion_id_subscription
+        , case
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            or (
+                products.product_type_id = '{{ var("mealbox_product_type_id") }}' 
+                and add_order_level_columns.recipe_id is not null
+                and add_order_level_columns.has_subscription_order_type is true
+            )
+            then add_order_level_columns.product_variation_quantity
+            else 0
+        end as dish_quantity
+        , case
+            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
+            or (
+                products.product_type_id = '{{ var("mealbox_product_type_id") }}' 
+                and add_order_level_columns.recipe_id is not null
+                and add_order_level_columns.has_subscription_order_type is true
+            )
+            then add_order_level_columns.product_variation_quantity_subscription
+            else 0
+        end as dish_quantity_subscription
         , case 
             when
                 products.product_type_id in ('{{ var("mealbox_product_type_id") }}', '{{ var("financial_product_type_id") }}')
@@ -550,7 +563,7 @@ discounts as (
                 and add_order_level_columns.recipe_id is not null
                 and add_order_level_columns.has_subscription_order_type is true
             )
-            then add_order_level_columns.dish_quantity * portions.portions
+            then add_order_level_columns.product_variation_quantity * portions.portions
             else null
         end as dish_servings
 
@@ -887,7 +900,8 @@ discounts as (
     
         -- This column will be used to find price categories
         , recipe_costs_and_co2.total_ingredient_planned_cost_whole_units as price_category_cost
-        
+        , recipe_costs_and_co2_subscription.total_ingredient_planned_cost_whole_units as price_category_cost_subscription
+
         -- Find ingredient cost of the order lines with recipes
         , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight as total_ingredient_weight
         , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units
@@ -903,18 +917,18 @@ discounts as (
         , add_swap_information.dish_quantity * recipe_costs_and_co2.total_ingredient_weight_with_co2_data_whole_units as total_ingredient_weight_with_co2_data_whole_units
 
         -- Find ingredient cost of the recipes from the subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_weight as total_ingredient_weight_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_planned_cost as total_ingredient_planned_cost_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_planned_cost_whole_units as total_ingredient_planned_cost_whole_units_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_expected_cost as total_ingredient_expected_cost_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_expected_cost_whole_units as total_ingredient_expected_cost_whole_units_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_actual_cost as total_ingredient_actual_cost_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_actual_cost_whole_units as total_ingredient_actual_cost_whole_units_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_co2_emissions as total_ingredient_co2_emissions_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_co2_emissions_whole_units as total_ingredient_co2_emissions_whole_units_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data as total_ingredient_weight_with_co2_data_subscription
-        , recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data_whole_units as total_ingredient_weight_with_co2_data_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_weight as total_ingredient_weight_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_weight_whole_units as total_ingredient_weight_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_planned_cost as total_ingredient_planned_cost_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_planned_cost_whole_units as total_ingredient_planned_cost_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_expected_cost as total_ingredient_expected_cost_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_expected_cost_whole_units as total_ingredient_expected_cost_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_actual_cost as total_ingredient_actual_cost_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_actual_cost_whole_units as total_ingredient_actual_cost_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_co2_emissions as total_ingredient_co2_emissions_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_co2_emissions_whole_units as total_ingredient_co2_emissions_whole_units_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data as total_ingredient_weight_with_co2_data_subscription
+        , add_swap_information.dish_quantity_subscription * recipe_costs_and_co2_subscription.total_ingredient_weight_with_co2_data_whole_units as total_ingredient_weight_with_co2_data_whole_units_subscription
 
     from add_swap_information
     left join recipe_feedback
@@ -1009,6 +1023,7 @@ discounts as (
         , coalesce(md5(concat(add_recipe_information.portion_id_mealbox, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox
         , coalesce(md5(concat(add_recipe_information.portion_id_mealbox_subscription, add_recipe_information.language_id)), '0') as fk_dim_portions_mealbox_subscription
         , coalesce(price_categories.pk_dim_price_categories, '0') as fk_dim_price_categories
+        , coalesce(price_categories_subscription.pk_dim_price_categories, '0') as fk_dim_price_categories_subscription
         , coalesce(
             md5(
                 concat(
@@ -1111,6 +1126,13 @@ discounts as (
         and add_recipe_information.price_category_cost < price_categories.max_ingredient_cost_inc_vat
         and add_recipe_information.menu_week_monday_date >= price_categories.valid_from
         and add_recipe_information.menu_week_monday_date < price_categories.valid_to
+    left join price_categories as price_categories_subscription
+        on add_recipe_information.company_id = price_categories_subscription.company_id
+        and add_recipe_information.portion_id_subscription = price_categories_subscription.portion_id
+        and add_recipe_information.price_category_cost_subscription >= price_categories_subscription.min_ingredient_cost_inc_vat
+        and add_recipe_information.price_category_cost_subscription < price_categories_subscription.max_ingredient_cost_inc_vat
+        and add_recipe_information.menu_week_monday_date >= price_categories_subscription.valid_from
+        and add_recipe_information.menu_week_monday_date < price_categories_subscription.valid_to
 
 )
 
