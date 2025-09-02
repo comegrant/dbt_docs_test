@@ -625,7 +625,7 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Swapped Dishes
 
-	/// Average number of orders where a customer swapped one or more dishes
+	/// Calculated as [Number of Swapped Dishes]/[Number of Orders]
 	measure 'Average Number of Swaps per Order' = ```
 
 			    DIVIDE(
@@ -636,6 +636,20 @@ table 'Order Measures'
 			```
 		displayFolder: Swapped Dishes
 		lineageTag: 7a742dc2-ed19-4712-92c9-da29eefc46f2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Average number of swapped dishes in orders with swaps.
+	/// Calculated as [Number of Swapped Dishes]/[Number of Orders with Swaps]
+	measure 'Average Number of Swaps per Order with Swaps' = ```
+
+			    DIVIDE(
+			        [Number of Swapped Dishes],
+			        [Number of Orders with Swaps],
+			        BLANK()
+			    )
+			```
+		displayFolder: Swapped Dishes
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -795,7 +809,7 @@ table 'Order Measures'
 	/// Middle step calculation used to find swapped dishes
 	measure 'Decreased Meals' =
 			CALCULATE(
-				[Meal Adjustments],
+				[Meal Adjustments]*-1,
 				'Order Measures'[meal_adjustment_subscription] < 0
 
 			)
