@@ -324,12 +324,19 @@ async def historical_preselector_vector(
     ]
     target = (
         basket_features.group_by("agreement_id")
-        .agg([pl.col(feat).fill_nan(0).mean().alias(feat).cast(pl.Float32) for feat in feature_columns])
+        .agg([pl.col(feat).fill_nan(0).median().alias(feat).cast(pl.Float32) for feat in feature_columns])
         .with_columns(vector_type=pl.lit("target"))
     )
 
-    center_point = 0.3
-    buffer_range = 0.2
+    center_point = 0.4
+
+    number_of_features = len(boolean_feature_columns) + len(scalar_feature_columns)
+
+    boolean_weighting = len(boolean_feature_columns) / number_of_features
+    scalar_weighting = len(scalar_feature_columns) / number_of_features
+
+    scalar_soft_max_sum = pl.sum_horizontal([pl.col(feat).exp() for feat in scalar_feature_columns])
+    boolean_soft_max_sum = pl.sum_horizontal([pl.col(feat).exp() for feat in boolean_feature_columns])
 
     importance = (
         basket_features.filter((pl.len() > 1).over("agreement_id"))
@@ -337,24 +344,31 @@ async def historical_preselector_vector(
         .agg(
             [
                 *[
-                    (1 / pl.col(feat).fill_nan(0).std().clip(lower_bound=0.1)).alias(feat)
+                    # max 1 / 0.005 = 200 which means e^x still have some margin from the max floating point value
+                    # Otherwise will it lead to an inf value which will break the system
+                    (1 / pl.col(feat).fill_nan(0).std().clip(lower_bound=0.005)).alias(feat)
                     for feat in scalar_feature_columns
                 ],
                 *[
-                    ((pl.col(feat).filter(pl.col(feat) > 0).len() / pl.col(feat).len() - center_point) / buffer_range)
-                    .abs()
-                    .clip(lower_bound=0, upper_bound=1)
-                    .mul(10)
+                    # The percentage of weeks with at least one true value.
+                    # Except if it is the same as the center point will the importance be set to 0.
+                    ((pl.col(feat).filter(pl.col(feat) > 0).len() / pl.col(feat).len() - center_point) / center_point)
+                    .pow(2)
                     .alias(feat)
                     for feat in boolean_feature_columns
                 ],
             ]
         )
         .with_columns(
-            [(pl.col(feat) / pl.sum_horizontal(feature_columns)).cast(pl.Float32) for feat in feature_columns]
+            [
+                *[(pl.col(feat).exp() / scalar_soft_max_sum) * scalar_weighting for feat in scalar_feature_columns],
+                *[(pl.col(feat).exp() / boolean_soft_max_sum) * boolean_weighting for feat in boolean_feature_columns],
+            ]
         )
+        .with_columns([pl.col(feat).cast(pl.Float32) for feat in feature_columns])
         .with_columns(vector_type=pl.lit("importance"))
     )
+
     return (
         target.vstack(importance.select(target.columns))
         .with_columns(created_at=datetime.now(tz=timezone.utc), **dict.fromkeys(inject_features, 0))
