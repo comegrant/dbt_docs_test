@@ -1044,17 +1044,9 @@ The id of the shipping address in the subscription of the billing agreement.
 
 {% enddocs %}
 
-{% docs column__postal_code_shipping_address %}
-
-The postal code of the shipping address as in cms.
-Postal codes have been transformed to ensure they have the correct length by appending leading zeroes where applicable.
-
-{% enddocs %}
-
-
 {% docs column__is_geo_restricted %}
 
-If the value is 0 then the address is valid and can have deliveries. If 1, it means deliveries cannot be made to this address.
+If the value is true then the address is valid and can have deliveries. If false, it means deliveries cannot be made to this address.
 
 {% enddocs %}
 

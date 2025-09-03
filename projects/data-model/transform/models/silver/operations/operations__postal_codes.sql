@@ -6,16 +6,6 @@ source as (
 
 )
 
-, get_postal_code_string_with_correct_number_characters as (
-
-    select 
-        *
-        , {{ clean_postal_code('postalcode_id', 'country_id') }} as postal_code
-    from source
-
-
-)
-
 , renamed as (
 
     select 
@@ -26,7 +16,7 @@ source as (
         , country_id
 
         {# strings #}
-        , postal_code
+        , {{ clean_postal_code('postalcode_id', 'country_id') }} as postal_code
         , city as city_name
         , county as county_name
         , municipality as municipality_name
@@ -41,7 +31,7 @@ source as (
         , updated_at as source_updated_at
         , updated_by as source_updated_by
 
-    from get_postal_code_string_with_correct_number_characters
+    from source
 
 )
 

@@ -18,21 +18,6 @@ timeblocks_blacklisted as (
 
 )
 
-, upcoming_blacklisted_timeblocks_and_zones_joined as (
-
-    select 
-        timeblocks_blacklisted.*
-        , timeblocks_blacklisted_zones.zone_id
-        , timeblocks_blacklisted.menu_year*100 + timeblocks_blacklisted.menu_week as menu_year_week
-
-    from timeblocks_blacklisted
-    left join timeblocks_blacklisted_zones 
-        on timeblocks_blacklisted.timeblocks_blacklisted_id = timeblocks_blacklisted_zones.timeblocks_blacklisted_id
-    left join latest_menu_week
-        on timeblocks_blacklisted.company_id = latest_menu_week.company_id
-        and timeblocks_blacklisted.menu_year*100 + timeblocks_blacklisted.menu_week > latest_menu_week.menu_year_week
-)
-
 , zones as (
 
     select * from {{ ref('operations__zones') }}
@@ -51,10 +36,19 @@ timeblocks_blacklisted as (
 
 )
 
-, postal_codes as (
+, upcoming_blacklisted_timeblocks_and_zones_joined as (
 
-    select * from {{ ref('operations__postal_codes') }}
+    select 
+        timeblocks_blacklisted.*
+        , timeblocks_blacklisted_zones.zone_id
+        , timeblocks_blacklisted.menu_year*100 + timeblocks_blacklisted.menu_week as menu_year_week
 
+    from timeblocks_blacklisted
+    left join timeblocks_blacklisted_zones 
+        on timeblocks_blacklisted.timeblocks_blacklisted_id = timeblocks_blacklisted_zones.timeblocks_blacklisted_id
+    left join latest_menu_week
+        on timeblocks_blacklisted.company_id = latest_menu_week.company_id
+        and timeblocks_blacklisted.menu_year*100 + timeblocks_blacklisted.menu_week > latest_menu_week.menu_year_week
 )
 
 , all_tables_joined as (
@@ -71,7 +65,6 @@ timeblocks_blacklisted as (
         , zones.menu_year_week_to
         , zones.is_active as zone_is_active
         , zones_postal_codes.postal_code_id
-        , postal_codes.postal_code
 
     from upcoming_blacklisted_timeblocks_and_zones_joined
     left join zones
@@ -85,9 +78,6 @@ timeblocks_blacklisted as (
     left join zones_postal_codes
         on zones.zone_id = zones_postal_codes.zone_id
         and companies.country_id = zones_postal_codes.country_id
-    left join postal_codes
-        on zones_postal_codes.postal_code_id = postal_codes.postal_code_id
-        and companies.country_id = postal_codes.country_id
     where zones.zone_id is not null -- if a zone was not valid over the blacklisted menu_year_week, exclude it 
     and zones_postal_codes.zone_id is not null -- if a zone-postcode relationship does not exist, exclude it
 

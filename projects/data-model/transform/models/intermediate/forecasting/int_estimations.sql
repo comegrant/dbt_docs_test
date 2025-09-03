@@ -342,7 +342,7 @@ dates as (
 
     select 
         basket_and_deviations_unioned.*
-        , addresses.postal_code
+        , addresses.postal_code_id
 
     from basket_and_deviations_unioned
     left join addresses 
@@ -363,7 +363,7 @@ dates as (
         and with_postal_codes_not_geo_restricted.menu_year = timeblock_postal_code_blacklist.menu_year
         and with_postal_codes_not_geo_restricted.menu_week = timeblock_postal_code_blacklist.menu_week
         and with_postal_codes_not_geo_restricted.company_id = timeblock_postal_code_blacklist.company_id
-        and with_postal_codes_not_geo_restricted.postal_code = timeblock_postal_code_blacklist.postal_code
+        and with_postal_codes_not_geo_restricted.postal_code_id = timeblock_postal_code_blacklist.postal_code_id
     where 
         timeblock_postal_code_blacklist.timeblocks_blacklisted_id is null -- either the scheduled timeblock is not on the blacklist
         or timeblock_postal_code_blacklist.fallback_timeblock_id is not null -- or there is a fallback timeblock
@@ -382,7 +382,7 @@ dates as (
     , product_variation_id
     , product_variation_quantity
     , scheduled_shipping_address_id as shipping_address_id
-    , postal_code
+    , postal_code_id
     , billing_agreement_basket_deviation_origin_id
     , '{{current_timestamp}}' as estimation_generated_at
 

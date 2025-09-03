@@ -1,14 +1,14 @@
 with
 
-estimations as (
+billing_agreement_preferences as (
 
-    select * from {{ ref('int_estimations') }}
+    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
 
 )
 
-, billing_agreement_preferences as (
+, estimations as (
 
-    select * from {{ ref('int_billing_agreement_preferences_unioned') }}
+    select * from {{ ref('int_estimations') }}
 
 )
 
@@ -89,6 +89,7 @@ estimations as (
         , products.is_grocery
         , add_financial_date.billing_agreement_basket_deviation_origin_id
         , add_financial_date.shipping_address_id
+        , add_financial_date.postal_code_id
         , add_financial_date.estimation_generated_at
         , add_financial_date.product_variation_quantity
         , cast(date_format(estimation_generated_at, 'yyyyMMdd') as int) as fk_dim_date_estimation_generated
@@ -98,7 +99,7 @@ estimations as (
         , md5(concat(add_financial_date.product_variation_id, add_financial_date.company_id)) as fk_dim_products
         , md5(billing_agreement_basket_deviation_origin_id) as fk_dim_basket_deviation_origins
         , billing_agreements.pk_dim_billing_agreements as fk_dim_billing_agreements
-        , md5(add_financial_date.shipping_address_id) as fk_dim_addresses
+        , md5(concat(cast(add_financial_date.postal_code_id as string), companies.country_id))as fk_dim_addresses
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , portions.pk_dim_portions as fk_dim_portions
 
@@ -122,6 +123,7 @@ estimations as (
         on
             billing_agreements.billing_agreement_preferences_updated_id
             = billing_agreement_preferences.billing_agreement_preferences_updated_id
+
 )
 
 select * from add_keys

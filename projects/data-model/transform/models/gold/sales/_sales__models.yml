@@ -3714,23 +3714,22 @@ models:
         data_tests:
           - not_null
           - unique
-      
-      - name: shipping_address_id
-        data_type: string
-        description: "{{ doc('column__shipping_address_id') }}"
+
+      - name: postal_code_id
+        data_type: int
+        description: "{{ doc('column__postal_code_id') }}"
         data_tests:
           - not_null
-          - unique
   
       - name: postal_code
         data_type: string
         description: "{{ doc('column__postal_code') }}"
         data_tests:
           - not_null
-
-      - name: is_geo_restricted
-        data_type: boolean
-        description: "{{ doc('column__is_geo_restricted') }}"
+  
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
         data_tests:
           - not_null
 
