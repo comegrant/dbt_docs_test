@@ -49,6 +49,11 @@ fact_menus as (
                 filter(collect_list(dim_taxonomies.taxonomy_id), x -> x is not null)
             )
         ) as taxonomy_id_list
+        , array_sort(
+            array_distinct(
+                filter(collect_list(dim_taxonomies.taxonomy_type_name), x -> x is not null)
+            )
+        ) as taxonomy_type_name_list
     from dim_recipes
     left join bridge_recipe_taxonomies
         on dim_recipes.pk_dim_recipes = bridge_recipe_taxonomies.fk_dim_recipes

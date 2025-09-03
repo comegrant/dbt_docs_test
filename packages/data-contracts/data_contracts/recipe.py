@@ -64,49 +64,6 @@ FROM (
 GROUP BY recipe_id
 """
 
-recipe_features_sql = """WITH taxonomies AS (
-    SELECT
-        rt.RECIPE_ID as recipe_id,
-        CONCAT('["', STRING_AGG(tt.TAXONOMIES_NAME, '", "'), '"]') as taxonomies,
-        CONCAT('["', STRING_AGG(tt.TAXONOMIES_ID, '", "'), '"]') as taxonomy_ids
-    FROM pim.TAXONOMIES_TRANSLATIONS tt
-    INNER JOIN pim.RECIPES_TAXONOMIES rt on rt.TAXONOMIES_ID = tt.TAXONOMIES_ID
-    INNER JOIN pim.taxonomies t ON t.taxonomies_id = tt.TAXONOMIES_ID
-    WHERE t.taxonomy_type IN ('1', '9', '10', '11', '12', '19')
-    GROUP BY rt.RECIPE_ID
-)
-
-SELECT *
-FROM (SELECT rec.recipe_id,
-             COALESCE(rec.main_recipe_id, rec.recipe_id) as main_recipe_id,
-             rec.recipes_year as year,
-             rec.recipes_week as week,
-             rc.company_id,
-             rra.number_of_ratings,
-             rra.average_rating,
-             rm.RECIPE_MAIN_INGREDIENT_ID as main_ingredient_id,
-             rm.RECIPE_PHOTO as recipe_photo,
-             rm.COOKING_TIME_FROM as cooking_time_from,
-             rm.COOKING_TIME_TO as cooking_time_to,
-             rmt.recipe_name,
-             tx.taxonomies,
-             tx.taxonomy_ids,
-             rm.MODIFIED_DATE as updated_at,
-             GETDATE() as loaded_at,
-             ROW_NUMBER() over (PARTITION BY rec.recipe_id ORDER BY rmt.language_id) as nr
-	FROM pim.weekly_menus wm
-	INNER JOIN pim.MENUS m on m.WEEKLY_MENUS_ID = wm.weekly_menus_id
-	INNER JOIN pim.MENU_RECIPES mr on mr.MENU_ID = m.MENU_ID
-	INNER JOIN pim.recipes rec on rec.recipe_id = mr.RECIPE_ID
-        LEFT JOIN pim.recipe_rating_average rra ON rra.main_recipe_id = rec.main_recipe_id
-	INNER JOIN pim.RECIPE_COMPANIES rc ON rc.RECIPE_ID = rec.recipe_id
-        INNER JOIN pim.recipes_metadata rm ON rec.recipe_metadata_id = rm.RECIPE_METADATA_ID
-        INNER JOIN pim.recipe_metadata_translations rmt ON rmt.recipe_metadata_id = rec.recipe_metadata_id
-        LEFT JOIN taxonomies tx ON tx.recipe_id = rec.recipe_id
-) as recipes
-WHERE recipes.nr = 1"""
-
-
 main_ingredients_in_recipe = """SELECT *
 FROM (
         SELECT
@@ -388,6 +345,7 @@ main_ingredient_ids = {
             "menu_week": "week",
             "menu_year": "year",
             "taxonomy_id_list": "taxonomy_ids",
+            "taxonomy_type_name_list": "taxonomy_type_names",
             "recipe_main_ingredient_id": "main_ingredient_id",
             "cumulated_average_rating": "average_rating",
             "cumulated_number_of_ratings": "number_of_ratings",
@@ -430,6 +388,7 @@ class RecipeFeatures:
     is_high_cooking_time = cooking_time_from >= 30  # noqa: PLR2004
 
     taxonomy_ids = List(Int32()).description("The taxonomy ids for a recipe")
+    taxonomy_type_names = List(String()).description("The name of the taxonomy types. All should be in lowercase.")
 
     is_addon_kit = taxonomy_ids.contains(2164)
     is_adams_signature = taxonomy_ids.contains(2146)
@@ -744,6 +703,7 @@ class NormalizedRecipeFeatures:
     main_ingredient_id = Int32().is_optional()
 
     taxonomy_ids = List(Int32()).description("The taxonomy ids for that recipe")
+    taxonomy_type_names = List(String()).description("The name of the taxonomy types. All should be in lowercase.")
 
     year = Int32()
     week = Int32()
@@ -769,6 +729,8 @@ class NormalizedRecipeFeatures:
     is_slow_grown_chicken = taxonomy_ids.contains_any([2109, 2104])
     is_red_cross = taxonomy_ids.contains_any([3663, 3664, 3670])
     is_value_add = taxonomy_ids.contains_any([3684, 3681, 3682])
+
+    is_marketing_recipe = taxonomy_type_names.contains("marketing_tag")
 
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()

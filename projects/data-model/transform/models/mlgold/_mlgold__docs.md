@@ -215,6 +215,12 @@ Aggregated list of taxonomy ids for a recipe id.
 
 {% enddocs %}
 
+{% docs column__taxonomy_type_name_list %}
+
+Aggregated list of taxonomy type names for a recipe id.
+
+{% enddocs %}
+
 {% docs column__cumulated_times_on_menu %}
 
 Cumulated times a recipe id has been on the menu based the main recipe id
