@@ -1980,7 +1980,6 @@ table 'Order Measures'
 					TRUE(),
 					FALSE()
 				)
-
 			RETURN
 			IF(
 				IsFilteredOnCustomerAttributes && IsFilteredOnIngredients,
@@ -2664,6 +2663,119 @@ table 'Order Measures'
 		formatString: #,0.00%
 		displayFolder: CO2 Emissions\by Ingredient
 
+	/// Number of ordered dishes which the customer paid an extra price for.
+	measure 'Number of Ordered Plus Price Dishes' = 
+			CALCULATE(
+				[Number of Ordered Dishes]
+				, 'Order Measures'[is_plus_price_dish] = 1
+			)
+		formatString: #,0
+		displayFolder: Premium and Thrifty Dishes\Dishes\Plus Price
+
+	/// Number of orders that has one or more dishes which the customer paid an extra price for.
+	measure 'Number of Orders with Plus Price Dishes' = 
+			CALCULATE(
+				[Number of Orders]
+				, 'Order Measures'[is_plus_price_dish] = 1
+			)
+		formatString: #,0
+		displayFolder: Premium and Thrifty Dishes\Orders\Plus Price
+
+	/// The revenue coming from sales of dishes with an additional price.
+	/// I.e, the additional revenue coming from the extra price customers pay for plus price dishes.
+	measure 'Plus Price Dish Value Ex Vat' = 
+			CALCULATE(
+				[Order Value Gross Ex Vat]
+				, 'Order Measures'[is_plus_price_dish] = 1
+			)
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes
+
+	/// The average extra price paid for dishes per order.
+	/// Includes orders that does not have any plus price dishes.
+	measure 'Average Plus Price per Order' = DIVIDE([Plus Price Dish Value Ex Vat], [Number of Orders])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Orders\Plus Price
+
+	/// The average extra price paid per order with one or more plus price dishes.
+	/// Excludes orders that does not have any plus price dishes.
+	measure 'Average Plus Price per Order with Plus Price Dish' = DIVIDE([Plus Price Dish Value Ex Vat], [Number of Orders with Plus Price Dishes])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Orders\Plus Price
+
+	/// The average extra price paid per ordered plus price dish.
+	measure 'Average Plus Price per Ordered Plus Price Dish' = DIVIDE([Plus Price Dish Value Ex Vat], [Number of Ordered Plus Price Dishes])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Dishes\Plus Price
+
+	/// The percentage of dishes with an extra price per ordered dish.
+	/// Example: X% of the dishes sold was a plus price dish.
+	measure 'Share of Dishes with Plus Price' = DIVIDE([Number of Ordered Plus Price Dishes], [Number of Ordered Dishes])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Premium and Thrifty Dishes\Dishes\Plus Price
+
+	/// The percentage of orders with a dish that was paid extra for.
+	/// Example: X% of all the orders has one or more plus price dishes.
+	measure 'Share of Orders with Plus Price Dish' = DIVIDE([Number of Orders with Plus Price Dishes], [Number of Orders])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Premium and Thrifty Dishes\Orders\Plus Price
+
+	/// Number of ordered dishes which the customer gets an price reduction from.
+	measure 'Number of Ordered Thrifty Dishes' = 
+			CALCULATE(
+				[Number of Ordered Dishes]
+				, 'Order Measures'[is_thrifty_dish] = 1
+			)
+		formatString: #,0
+		displayFolder: Premium and Thrifty Dishes\Dishes\Thrifty
+
+	/// Number of orders with one or more dishes that the customer got a price reduction from.
+	measure 'Number of Orders with Thrifty Dishes' = 
+			CALCULATE(
+				[Number of Orders]
+				, 'Order Measures'[is_thrifty_dish] = 1
+			)
+		formatString: #,0
+		displayFolder: Premium and Thrifty Dishes\Orders\Thrifty
+
+	/// The sum of all price reductions coming from sales of thrifty dishes.
+	measure 'Thrifty Dish Value Ex Vat' = 
+			CALCULATE(
+				[Order Value Gross Ex Vat]
+				, 'Order Measures'[is_thrifty_dish] = 1
+			)
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\
+
+	/// The average price reduction per order coming from thrifty dishes
+	/// Includes order without thrifty dishes
+	measure 'Average Thrifty Price per Order' = DIVIDE([Thrifty Dish Value Ex Vat], [Number of Orders])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Orders\Thrifty
+
+	/// The average price reduction per order with one or more thrifty dishes.
+	/// Excludes orders that does not have any thrifty dishes.
+	measure 'Average Thrifty Price per Order with Thrifty Dish' = DIVIDE([Thrifty Dish Value Ex Vat], [Number of Orders with Thrifty Dishes])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Orders\Thrifty
+
+	/// The average price reduction per ordered thrifty dish.
+	measure 'Average Thrifty Price per Ordered Thrifty Dish' = DIVIDE([Thrifty Dish Value Ex Vat], [Number of Ordered Thrifty Dishes])
+		formatString: #,0.00
+		displayFolder: Premium and Thrifty Dishes\Dishes\Thrifty
+
+	/// The number of dishes with a price reduction per ordered dishes in percentage.
+	/// Example: X% of the dishes sold was a thrifty dish.
+	measure 'Share of Dishes with Thrifty Price' = DIVIDE([Number of Ordered Thrifty Dishes], [Number of Ordered Dishes])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Premium and Thrifty Dishes\Dishes\Thrifty
+
+	/// The percentage of orders that has one or more dish with a price reduction.
+	/// Example: X% of the orders had one or more thrifty dishes.
+	measure 'Share of Orders with Thrifty Dishes' = DIVIDE([Number of Orders with Thrifty Dishes], [Number of Orders])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Premium and Thrifty Dishes\Orders\Thrifty
+		
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id
 		dataType: int64
