@@ -18,10 +18,15 @@ source as (
         , max_ingredient_cost_inc_vat
         , suggested_price_inc_vat
         , price_category_level_name
-        , valid_from
+        -- TEMP: currently the valid from is the date it was added to PIM and not the menu week its active from.
+        -- tempfix until the valid from and valid to is corrected in the source from PIM
+        , to_date('2025-07-21') as valid_from
         , valid_to
 
     from source
+    -- TEMP: currently the valid from is the date it was added to PIM and not the menu week its active from.
+    -- tempfix until the valid from and valid to is corrected in the source from PIM
+    where valid_to = '{{ var("future_proof_date") }}'
 
 )
 
