@@ -336,6 +336,12 @@ discounts as (
         , menus.recipe_portion_id
         , coalesce(menus.recipe_id, order_lines.product_variation_id) as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
+        --TODO: This might include groceries which shouldn't be a part of this.
+        -- but we might go away from this dish_quantity thing anyways and modify the product_variation_quantity.
+        , case
+            when menus.recipe_id is not null then product_variation_quantity
+            else 0
+        end as dish_quantity
         , order_lines.product_variation_quantity
         , order_lines.vat
         , order_lines.unit_price_ex_vat
@@ -369,6 +375,7 @@ discounts as (
         , menus.recipe_portion_id
         , menus.recipe_id as orders_subscriptions_match_key
         , order_lines.billing_agreement_order_line_id
+        , order_lines.product_variation_quantity as dish_quantity
         , {{ generate_null_columns(6, prefix='null_col') }}
         , 'GENERATED' as order_line_type_name
     from order_lines
@@ -519,16 +526,6 @@ discounts as (
                 and add_order_level_columns.recipe_id is not null
                 and add_order_level_columns.has_subscription_order_type is true
             )
-            then add_order_level_columns.product_variation_quantity
-            else 0
-        end as dish_quantity
-        , case
-            when products.product_type_id = '{{ var("velg&vrak_product_type_id") }}'
-            or (
-                products.product_type_id = '{{ var("mealbox_product_type_id") }}' 
-                and add_order_level_columns.recipe_id is not null
-                and add_order_level_columns.has_subscription_order_type is true
-            )
             then add_order_level_columns.product_variation_quantity_subscription
             else 0
         end as dish_quantity_subscription
@@ -563,7 +560,7 @@ discounts as (
                 and add_order_level_columns.recipe_id is not null
                 and add_order_level_columns.has_subscription_order_type is true
             )
-            then add_order_level_columns.product_variation_quantity * portions.portions
+            then add_order_level_columns.dish_quantity * portions.portions
             else null
         end as dish_servings
 
