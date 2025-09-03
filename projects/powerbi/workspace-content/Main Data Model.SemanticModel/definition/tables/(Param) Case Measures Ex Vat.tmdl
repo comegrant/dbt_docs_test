@@ -1,18 +1,18 @@
 table '(Param) Case Measures Ex Vat'
-	lineageTag: 2427a6ff-4897-47df-ba69-777b41b301a1
 
 	column '(Param) Case Measures Ex Vat Name'
 		isHidden
-		lineageTag: f01cf5fb-d8c1-4872-898a-a24e64700fb5
 		summarizeBy: none
 		sourceColumn: [Value1]
 		sortByColumn: '(Param) Case Measures Ex Vat Order'
 
+		relatedColumnDetails
+			groupByColumn: '(Param) Case Measures Ex Vat Fields'
+
 		annotation SummarizationSetBy = Automatic
 
-	column '(Param) Case Measures Ex Vat Field'
+	column '(Param) Case Measures Ex Vat Fields'
 		isHidden
-		lineageTag: b85dc132-5727-4a5b-9ed2-e77bce78246b
 		summarizeBy: none
 		sourceColumn: [Value2]
 		sortByColumn: '(Param) Case Measures Ex Vat Order'
@@ -28,7 +28,6 @@ table '(Param) Case Measures Ex Vat'
 	column '(Param) Case Measures Ex Vat Order'
 		isHidden
 		formatString: 0
-		lineageTag: cfe0fb61-863b-473c-b6d8-a66f5b1cade1
 		summarizeBy: sum
 		sourceColumn: [Value3]
 
