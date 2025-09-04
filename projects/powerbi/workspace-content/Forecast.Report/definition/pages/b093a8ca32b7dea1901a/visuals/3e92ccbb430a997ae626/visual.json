@@ -111,12 +111,11 @@
                       "Entity": "Forecast Measures"
                     }
                   },
-                  "Property": "Number of Forecasted Product Variations"
+                  "Property": "Number of Forecasted Dishes"
                 }
               },
-              "queryRef": "Forecast Measures.Number of Forecasted Product Variations",
-              "nativeQueryRef": "Number of Forecasted Dishes",
-              "displayName": "Number of Forecasted Dishes"
+              "queryRef": "Forecast Measures.Number of Forecasted Dishes",
+              "nativeQueryRef": "Number of Forecasted Dishes"
             }
           ]
         }
@@ -1653,10 +1652,11 @@
               }
             }
           ]
-        }
+        },
+        "howCreated": "User"
       },
       {
-        "name": "303bb816b65eba10a243",
+        "name": "2ef7e2a23d01eb774382",
         "field": {
           "HierarchyLevel": {
             "Expression": {
@@ -1675,49 +1675,7 @@
         "type": "Advanced"
       },
       {
-        "name": "7a114dfc30b5d2da408b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Brands"
-              }
-            },
-            "Property": "Brand"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "d23b226c5c10085e8670",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Recipes"
-              }
-            },
-            "Property": "Recipe Name"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "104cefea4591e55aadbd",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Portions"
-              }
-            },
-            "Property": "Portions"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "e1b82f991b1e942da9c2",
+        "name": "4565912dd550754e459b",
         "field": {
           "Column": {
             "Expression": {
@@ -1731,58 +1689,60 @@
         "type": "Advanced"
       },
       {
-        "name": "78613cc0368d977b92b6",
+        "name": "44575b1ef39b8de264be",
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Products"
+                "Entity": "Brands"
               }
             },
-            "Property": "Product Type"
+            "Property": "Brand"
           }
         },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "p",
-              "Entity": "Products",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "p"
-                          }
-                        },
-                        "Property": "Product Type"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'Velg&vrak'"
-                        }
-                      }
-                    ]
-                  ]
-                }
+        "type": "Categorical"
+      },
+      {
+        "name": "44d984b8e841927b4c29",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
               }
-            }
-          ]
+            },
+            "Property": "Recipe Name"
+          }
         },
-        "howCreated": "User"
+        "type": "Categorical"
+      },
+      {
+        "name": "cf18e91d2a8f2d65ffb7",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Portions"
+              }
+            },
+            "Property": "Portions"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "71533831eaf62f24ff23",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Forecast Measures"
+              }
+            },
+            "Property": "Number of Forecasted Dishes"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

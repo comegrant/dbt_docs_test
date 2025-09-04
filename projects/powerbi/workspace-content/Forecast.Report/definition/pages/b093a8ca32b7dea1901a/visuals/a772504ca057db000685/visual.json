@@ -220,20 +220,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "284a4e1f49cd432d6d78",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Products"
-              }
-            },
-            "Property": "Product Variation"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

@@ -7,7 +7,7 @@
     "z": 0,
     "height": 532.5,
     "width": 1243.75,
-    "tabOrder": 5000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -136,12 +136,11 @@
                       "Entity": "Forecast Measures"
                     }
                   },
-                  "Property": "Number of Forecasted Product Variations"
+                  "Property": "Number of Forecasted Product Variations with history"
                 }
               },
-              "queryRef": "Forecast Measures.Number of Forecasted Product Variations",
-              "nativeQueryRef": "Forecasted Products",
-              "displayName": "Forecasted Products"
+              "queryRef": "Forecast Measures.Number of Forecasted Product Variations with history",
+              "nativeQueryRef": "Number of Forecasted Product Variations with history"
             }
           ]
         }
@@ -675,426 +674,6 @@
           },
           "selector": {
             "metadata": "Brands.Brand"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "95D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'1'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "94D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "1L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "96D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "2L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "94D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "3L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "104D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "4L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "99D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "5L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "96D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'11/15'"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "Forecast Details"
-                          }
-                        },
-                        "Property": "Forecast Horizon Index"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "6L"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Forecast Measures.Number of Forecasted Product Variations"
           }
         },
         {
@@ -1676,7 +1255,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Weekly Forecasts by cutoff until menu week'"
+                  "Value": "'Dish and Grocery Forecasts by number of cutoffs to the menu week'"
                 }
               }
             }
@@ -1760,6 +1339,104 @@
             }
           ]
         }
+      },
+      {
+        "name": "f922d0d5fc674122f1b1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Forecast Details"
+              }
+            },
+            "Property": "Forecast Horizon"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "31b8369b634aa9710d96",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Forecast Details"
+              }
+            },
+            "Property": "Forecast Horizon Index"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b5d083bb91754523176e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "0f9d8f85093143422882",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "85e2636f195b4ffdd162",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Products"
+              }
+            },
+            "Property": "Product Variation"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "ce9eed11bf47a9aa2d66",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Recipes"
+              }
+            },
+            "Property": "Recipe Name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "42871cc51fd1755e8a2d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Forecast Measures"
+              }
+            },
+            "Property": "Number of Forecasted Product Variations with history"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

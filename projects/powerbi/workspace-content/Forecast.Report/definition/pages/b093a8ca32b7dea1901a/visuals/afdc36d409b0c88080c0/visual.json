@@ -96,12 +96,11 @@
                       "Entity": "Forecast Measures"
                     }
                   },
-                  "Property": "Number of Forecasted Product Variations"
+                  "Property": "Number of Forecasted Groceries"
                 }
               },
-              "queryRef": "Forecast Measures.Number of Forecasted Product Variations",
-              "nativeQueryRef": "Number of Forecasted Groceries",
-              "displayName": "Number of Forecasted Groceries"
+              "queryRef": "Forecast Measures.Number of Forecasted Groceries",
+              "nativeQueryRef": "Number of Forecasted Groceries1"
             }
           ]
         }
@@ -1451,61 +1450,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "8e5b4040be61a5834c92",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Products"
-              }
-            },
-            "Property": "Product Type"
-          }
-        },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "p",
-              "Entity": "Products",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "p"
-                          }
-                        },
-                        "Property": "Product Type"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'Standalone-groceries'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User"
-      },
-      {
-        "name": "f2d4f903252d04442e9b",
+        "name": "627398a6e244f1617858",
         "field": {
           "HierarchyLevel": {
             "Expression": {
@@ -1524,7 +1469,21 @@
         "type": "Advanced"
       },
       {
-        "name": "a483c53b5b0656e05393",
+        "name": "38c62483600761999548",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9fdbaf2638ab87e00efb",
         "field": {
           "Column": {
             "Expression": {
@@ -1538,7 +1497,7 @@
         "type": "Categorical"
       },
       {
-        "name": "b892840bd5452c43001a",
+        "name": "241eeafe42c7e700a081",
         "field": {
           "Column": {
             "Expression": {
@@ -1552,7 +1511,7 @@
         "type": "Categorical"
       },
       {
-        "name": "830ccd1f6665063934b6",
+        "name": "753b7a191cbca852e61d",
         "field": {
           "Measure": {
             "Expression": {
@@ -1560,21 +1519,7 @@
                 "Entity": "Forecast Measures"
               }
             },
-            "Property": "Number of Forecasted Product Variations"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f5a0e9416c5d4d7ca0c0",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "(Utils) Matrix Spacer"
-              }
-            },
-            "Property": "Blank Column"
+            "Property": "Number of Forecasted Groceries"
           }
         },
         "type": "Advanced"

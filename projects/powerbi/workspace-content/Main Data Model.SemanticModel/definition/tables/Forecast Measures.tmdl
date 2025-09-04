@@ -2,20 +2,89 @@
 table 'Forecast Measures'
 	lineageTag: Forecast-Measures-Table
 
-	/// The forecasted number of orders for a given menu week.
-	measure 'Number of Forecasted Orders' = SUM('Forecast Measures'[Order Quantity Forecast])
+	/// The forecasted number of orders for all weeks.
+	/// Use Date and Products dimensions to see forecasts for given menu weeks.
+	measure 'Number of Forecasted Orders' =
+			CALCULATE(
+				SUM('Forecast Measures'[Order Quantity Forecast]),
+				'Forecast Measures'[Is Most Recent Forecast] = TRUE()
+			)
 		formatString: #,0
 		lineageTag: 7a024798-dc70-466f-9e33-3e8371b4fae7
 
-	/// The forecasted quantity of a given product variation for a given menu week. If filtered on multiple weeks, this will return the quantity for the earliest week.
-	measure 'Number of Forecasted Product Variations' = 
+	/// The forecasted quantity of product variations for all weeks and product variations for which a forecast exists.
+	/// Use Date and Products dimensions to see forecasts for given menu weeks and product variations.
+	measure 'Number of Forecasted Product Variations' =
 			CALCULATE(
-    			SUM('Forecast Measures'[Product Variation Quantity Forecast]),
-    			ALL('Dates'),
-    			'Forecast Measures'[fk_dim_dates_menu_week] = MIN('Forecast Measures'[fk_dim_dates_menu_week])
+				'Forecast Measures'[Number of Forecasted Product Variations with history],
+				'Forecast Measures'[Is Most Recent Forecast] = TRUE()
 			)
 		formatString: #,0
+		isHidden
 		lineageTag: a43f5c61-5908-4572-ac98-b0bcb2891052
+
+	/// The most recent forecasted quantities of dishes for all menu weeks where a forecast exists (Dishes are product variations with product type = 'Velg&Vrak')
+	measure 'Number of Forecasted Dishes' =
+			CALCULATE(
+				'Forecast Measures'[Number of Forecasted Product Variations],
+				'Forecast Measures'[is_dish] = TRUE()
+			)
+		formatString: #,0
+		lineageTag: ffe0c859-d6fc-4ea0-8002-b06fc5a94781
+
+	/// The most recent forecasted quantities of groceries for all menu weeks where a forecast exists (Groceries are product variations with product type = 'Standalone-groceries' or 'Add-on-product')
+	measure 'Number of Forecasted Groceries' =
+			CALCULATE(
+				'Forecast Measures'[Number of Forecasted Product Variations],
+				'Forecast Measures'[is_grocery] = TRUE()
+			)
+		formatString: #,0
+		lineageTag: 667edd57-30db-4b16-aae2-04ec02141cce
+
+	/// (Analytics) The forecasted number of orders including all previous forecasts at different number of cutoffs to menu week.
+	/// E.g. A menu week can have ~12 different forecasts (11 weeks from cutoff, 10 weeks from cutoff, ... , 1 week from cutoff, 1 week from cutoff at the 1-week forecast)
+	measure 'Number of Forecasted Orders with history' = SUM('Forecast Measures'[Order Quantity Forecast])
+		formatString: #,0
+		isHidden
+		displayFolder: Forecasts with History
+		lineageTag: abe70b6c-98bb-434c-9d8a-b0a896016359
+
+	/// (Analytics) The forecasted quantity of product variations including all previous forecasts at different number of cutoffs to menu week.
+	/// E.g. A menu week can have ~12 different forecasts (11 weeks from cutoff, 10 weeks from cutoff, ... , 1 week from cutoff, 1 week from cutoff at the 1-week forecast) recasts for given menu weeks and dishes.
+	measure 'Number of Forecasted Product Variations with history' =
+			CALCULATE(
+				SUM('Forecast Measures'[Product Variation Quantity Forecast]),
+				ALL('Dates'),
+				'Forecast Measures'[fk_dim_dates_menu_week] = MIN('Forecast Measures'[fk_dim_dates_menu_week])
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Forecasts with History
+		lineageTag: 6eb138c5-e707-47a3-880e-fa1ae47b677e
+
+	/// (Analytics) Forecasted quantity of dishes (product variations with product type = 'Velg&Vrak') including all previous forecasts at different number of cutoffs to menu week.
+	/// E.g. A menu week can have ~12 different forecasts (11 weeks from cutoff, 10 weeks from cutoff, ... , 1 week from cutoff, 1 week from cutoff at the 1-week forecast)
+	measure 'Number of Forecasted Dishes with history' =
+			CALCULATE(
+				'Forecast Measures'[Number of Forecasted Product Variations with history],
+				'Forecast Measures'[is_dish] = TRUE()
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Forecasts with History
+		lineageTag: b865868c-1b8b-4ab4-a4c7-3b705c06e916
+
+	/// (Analytics) Forecasted quantity of groceries (product variations with product type = 'Standalone-groceries' or 'Add-on-product') including all previous forecasts at different number of cutoffs to menu week.
+	/// E.g. A menu week can have ~12 different forecasts (11 weeks from cutoff, 10 weeks from cutoff, ... , 1 week from cutoff, 1 week from cutoff at the 1-week forecast)
+	measure 'Number of Forecasted Groceries with history' =
+			CALCULATE(
+				'Forecast Measures'[Number of Forecasted Product Variations with history],
+				'Forecast Measures'[is_grocery] = TRUE()
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Forecasts with History
+		lineageTag: 9e13966b-695c-431f-85ae-a38ce6f95a89
 
 	column 'Order Quantity Forecast'
 		dataType: int64
@@ -35,6 +104,7 @@ table 'Forecast Measures'
 
 	/// True if the forecast is the most recent for a given menu week.
 	column 'Is Most Recent Forecast'
+		isHidden
 		dataType: boolean
 		formatString: """TRUE"";""TRUE"";""FALSE"""
 		isAvailableInMdx: false
@@ -95,22 +165,36 @@ table 'Forecast Measures'
 		lineageTag: 5e4dc396-6343-4a59-b1ef-72f65e3c3f8a
 		summarizeBy: none
 		sourceColumn: fk_dim_recipes
-    
-  	/// Primary key of the dim_portions table
-    column fk_dim_portions
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_portions
 
-    /// Primary key of the dim_ingredient_combinations table
-    column fk_dim_ingredient_combinations
-        dataType: string
-        isHidden
-        isAvailableInMdx: false
-        summarizeBy: none
-        sourceColumn: fk_dim_ingredient_combinations
+	/// Primary key of the dim_portions table
+	column fk_dim_portions
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: dd952b1a-356f-48b4-8dad-de6eb11d5109
+		summarizeBy: none
+		sourceColumn: fk_dim_portions
+
+	/// Primary key of the dim_ingredient_combinations table
+	column fk_dim_ingredient_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: 6cd6d548-f643-4b45-bca9-b468693a154f
+		summarizeBy: none
+		sourceColumn: fk_dim_ingredient_combinations
+
+	column is_dish
+		dataType: boolean
+		isHidden
+		lineageTag: 1873e5d0-1d71-4f54-9ac8-8a65eb4ccd7d
+		sourceColumn: is_dish
+
+	column is_grocery
+		dataType: boolean
+		isHidden
+		lineageTag: c9054c5e-b028-4d88-b9db-05e1fbad73f7
+		sourceColumn: is_grocery
 
 	partition 'Forecast Variation Measures' = m
 		mode: directQuery
@@ -122,3 +206,4 @@ table 'Forecast Measures'
 				    fact_forecast_variations_Table = gold_Schema{[Name="fact_forecast_variations",Kind="Table"]}[Data]
 				in
 				    fact_forecast_variations_Table
+

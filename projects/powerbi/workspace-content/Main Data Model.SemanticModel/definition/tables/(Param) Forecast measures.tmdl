@@ -1,0 +1,44 @@
+table '(Param) Forecast Measures'
+
+	column '(Param) Forecast Measures'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: '(Param) Forecast Measures Order'
+
+		relatedColumnDetails
+			groupByColumn: '(Param) Forecast Measures Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Forecast Measures Fields'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: '(Param) Forecast Measures Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column '(Param) Forecast Measures Order'
+		isHidden
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '(Param) Forecast Measures' = calculated
+		mode: import
+		source =
+				{
+				    ("Number of Forecasted Orders", NAMEOF('Forecast Measures'[Number of Forecasted Orders]), 0),
+				    ("Number of Forecasted Dishes", NAMEOF('Forecast Measures'[Number of Forecasted Dishes]), 1),
+                    ("Number of Forecasted Groceries", NAMEOF('Forecast Measures'[Number of Forecasted Groceries]), 2)
+				}
+
