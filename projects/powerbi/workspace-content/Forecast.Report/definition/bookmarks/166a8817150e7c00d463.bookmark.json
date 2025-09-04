@@ -441,7 +441,7 @@
                         "identityValues": [
                           {
                             "Literal": {
-                              "Value": "'Linas Matkasse'"
+                              "Value": "'Linas'"
                             }
                           }
                         ],
@@ -451,7 +451,7 @@
                         "identityValues": [
                           {
                             "Literal": {
-                              "Value": "'Adams Matkasse'"
+                              "Value": "'Adams'"
                             }
                           }
                         ],
@@ -971,7 +971,7 @@
                         "identityValues": [
                           {
                             "Literal": {
-                              "Value": "'Linas Matkasse'"
+                              "Value": "'Linas'"
                             }
                           }
                         ],
@@ -981,7 +981,7 @@
                         "identityValues": [
                           {
                             "Literal": {
-                              "Value": "'Adams Matkasse'"
+                              "Value": "'Adams'"
                             }
                           }
                         ],

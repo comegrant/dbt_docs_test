@@ -88,7 +88,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Linas Matkasse'"
+                  "Value": "'Linas'"
                 }
               }
             },
@@ -206,7 +206,7 @@
                     [
                       {
                         "Literal": {
-                          "Value": "'Linas Matkasse'"
+                          "Value": "'Linas'"
                         }
                       }
                     ]

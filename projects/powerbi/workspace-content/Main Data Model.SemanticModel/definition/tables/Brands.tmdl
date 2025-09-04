@@ -28,7 +28,7 @@ table Brands
 		dataType: string
 		lineageTag: 10650cc4-9738-4853-ac78-25e87facc476
 		summarizeBy: none
-		sourceColumn: company_name
+		sourceColumn: brand_name
 
 		annotation SummarizationSetBy = Automatic
 

@@ -358,7 +358,7 @@
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'Adams Matkasse'"
+                        "Value": "'Adams'"
                       }
                     }
                   }
@@ -442,7 +442,7 @@
                     },
                     "Right": {
                       "Literal": {
-                        "Value": "'Linas Matkasse'"
+                        "Value": "'Linas'"
                       }
                     }
                   }
