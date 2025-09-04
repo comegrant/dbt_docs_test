@@ -10,6 +10,8 @@ database = "OPERATIONS"
 tables = [
         "case_category"
         , "case_cause"
+        , "case_line"
+        , "cases"
         , "case_line_ingredient"
         , "case_line_type"
         , "case_responsible"
