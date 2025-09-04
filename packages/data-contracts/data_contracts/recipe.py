@@ -730,7 +730,7 @@ class NormalizedRecipeFeatures:
     is_red_cross = taxonomy_ids.contains_any([3663, 3664, 3670])
     is_value_add = taxonomy_ids.contains_any([3684, 3681, 3682])
 
-    is_marketing_recipe = taxonomy_type_names.contains("marketing_tag")
+    is_campaign_recipe = taxonomy_type_names.contains("campaign_tag")
 
     is_low_cooking_time = Bool()
     is_medium_cooking_time = Bool()
