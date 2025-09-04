@@ -81,7 +81,7 @@
                                   "Source": "("
                                 }
                               },
-                              "Property": "(Param) Case Measures Ex Vat Name"
+                              "Property": "(Param) Case Measures Ex Vat Fields"
                             }
                           }
                         ],
@@ -89,10 +89,60 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Average Complaint Cost Ex Vat'"
+                                "Value": "'''Case Measures''[Average Complaint Cost Ex Vat]'"
                               }
                             }
                           ]
+                        ]
+                      }
+                    },
+                    "Annotations": {
+                      "filterExpressionMetadata": {
+                        "expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Entity": "(Param) Case Measures Ex Vat"
+                                }
+                              },
+                              "Property": "(Param) Case Measures Ex Vat Name"
+                            }
+                          }
+                        ],
+                        "decomposedIdentities": {
+                          "values": [
+                            [
+                              {
+                                "0": [
+                                  {
+                                    "Literal": {
+                                      "Value": "'''Case Measures''[Average Complaint Cost Ex Vat]'"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          ],
+                          "columns": [
+                            {
+                              "value": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "(Param) Case Measures Ex Vat"
+                                    }
+                                  },
+                                  "Property": "(Param) Case Measures Ex Vat Fields"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "valueMap": [
+                          {
+                            "0": "Average Complaint Cost Ex Vat"
+                          }
                         ]
                       }
                     }

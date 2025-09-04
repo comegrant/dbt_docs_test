@@ -84,7 +84,8 @@
                 }
               },
               "queryRef": "Case Measures.Average Complaint Cost Ex Vat",
-              "nativeQueryRef": "Average Complaint Cost Ex Vat"
+              "nativeQueryRef": "Average Complaint Cost Ex Vat",
+              "displayName": "Average Complaint Cost Ex Vat"
             }
           ],
           "fieldParameters": [
@@ -96,7 +97,7 @@
                       "Entity": "(Param) Case Measures Ex Vat"
                     }
                   },
-                  "Property": "(Param) Case Measures Ex Vat Field"
+                  "Property": "(Param) Case Measures Ex Vat Fields"
                 }
               },
               "index": 0,
