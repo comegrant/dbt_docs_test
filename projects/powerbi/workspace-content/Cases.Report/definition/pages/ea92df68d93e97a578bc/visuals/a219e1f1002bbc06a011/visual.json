@@ -204,7 +204,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Complaint Cost Share of Order Value'"
+                  "Value": "'Share of Orders With Cases'"
                 }
               }
             }

@@ -627,7 +627,7 @@ table 'Case Measures'
         displayFolder: Complaints\Cost Ex Vat
 
     /// The percentage change in share of complaint cost per revenue in the selected year and the year before.
-    measure 'Complaint Cost Share of Order Value Ex Vat (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="Diff YOY%") 
+    measure 'Complaint Cost Share of Order Value Ex Vat (YOY%)' = CALCULATE([Complaint Cost Share of Order Value Ex Vat], 'Time Intelligence'[Time Calculation]="YOY%") 
 		formatString: #,0
         displayFolder: Complaints\Cost Ex Vat
 
