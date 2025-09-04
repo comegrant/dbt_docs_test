@@ -76,6 +76,7 @@ fact_menus as (
     select
         recipes.*
         , taxonomy_list.taxonomy_id_list
+        , taxonomy_list.taxonomy_type_name_list
         , recipe_ratings.sum_rating
         , recipe_ratings.number_of_ratings
     from recipes
@@ -119,6 +120,7 @@ fact_menus as (
         , cooking_time_from
         , cooking_time_to
         , taxonomy_id_list
+        , taxonomy_type_name_list
         , cumulated_times_on_menu
         , cumulated_number_of_ratings
         , cumulated_sum_rating / cumulated_number_of_ratings as cumulated_average_rating
