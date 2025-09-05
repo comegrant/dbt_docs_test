@@ -7,7 +7,7 @@
     "z": 4000,
     "height": 506.0752169720347,
     "width": 1218.2835101253615,
-    "tabOrder": 4000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -303,6 +303,48 @@
                   ]
                 }
               ]
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Linas'"
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "identityValues": [
+                    {
+                      "Literal": {
+                        "Value": "'SAS Partnership'"
+                      }
+                    }
+                  ],
+                  "isToggled": true
+                }
+              ]
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'RetNemt'"
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "identityValues": [
+                    {
+                      "Literal": {
+                        "Value": "'SAS Partnership'"
+                      }
+                    }
+                  ],
+                  "isToggled": true
+                }
+              ]
             }
           ]
         }
@@ -528,164 +570,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "abf5f810f29a6b99143d",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Brands"
-              }
-            },
-            "Property": "Brand"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "bfa8d4c0dc6fb1af1b35",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Order Measures"
-              }
-            },
-            "Property": "Number of Orders"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "67a45ecf60b4cf066c6e",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "422fd11b7f845df2c4d6",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Month"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "fd43735c588a03a18114",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Date Hierarchy"
-              }
-            },
-            "Level": "Week"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1bcdb79df281155c9659",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer and Subscriber Details"
-              }
-            },
-            "Property": "Partnership"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "5b38b661baf60b87c11e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Order Measures"
-              }
-            },
-            "Property": "Order Value Gross Ex Vat"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "ab81b1b8ec05965609ba",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Order Measures"
-              }
-            },
-            "Property": "Order Value Net Ex Vat"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "6a41f777ddc811f65832",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Partnership Details"
-              }
-            },
-            "Property": "Partnership Rule"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "3af4ca764c360720e011",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "(Utils) Matrix Spacer"
-              }
-            },
-            "Property": "Blank Column"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

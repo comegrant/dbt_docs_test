@@ -1,12 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
-  "name": "219cd47d55f8781cd53a",
+  "name": "a77bd81e4e7ecb1041bb",
   "position": {
-    "x": 16.267782426778243,
+    "x": 438.88707037643206,
     "y": 0,
-    "z": 0,
-    "height": 57.238493723849366,
-    "width": 181.35564853556485
+    "z": 5000,
+    "height": 65.990180032733221,
+    "width": 233.58428805237315,
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "slicer",
@@ -19,31 +20,35 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Brands"
+                      "Entity": "Customer and Subscriber Details"
                     }
                   },
-                  "Property": "Brand"
+                  "Property": "Partnership"
                 }
               },
-              "queryRef": "Brands.Brand",
-              "nativeQueryRef": "Brand",
+              "queryRef": "Customer and Subscriber Details.Partnership",
+              "nativeQueryRef": "Partnership",
               "active": true
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "isDefaultSort": true
       }
     },
     "objects": {
-      "general": [
+      "data": [
         {
           "properties": {
-            "orientation": {
+            "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "'Dropdown'"
+                }
+              }
+            },
+            "isInvertedSelectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -70,17 +75,9 @@
           }
         }
       ],
-      "data": [
+      "general": [
         {
-          "properties": {
-            "isInvertedSelectionMode": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ]
     },

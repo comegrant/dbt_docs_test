@@ -6,8 +6,7 @@
     "y": 0,
     "z": 0,
     "height": 57.238493723849366,
-    "width": 181.35564853556485,
-    "tabOrder": 1000
+    "width": 181.35564853556485
   },
   "visual": {
     "visualType": "slicer",
@@ -86,23 +85,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "18c8e31eb4719b58c5eb",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Brands"
-              }
-            },
-            "Property": "Brand"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 65.990180032733221,
     "width": 233.58428805237315,
-    "tabOrder": 3000
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "slicer",
@@ -82,23 +82,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "8dfa03d87ba9bbbfa64e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer and Subscriber Details"
-              }
-            },
-            "Property": "Partnership"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

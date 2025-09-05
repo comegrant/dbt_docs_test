@@ -7,7 +7,7 @@
     "z": 5000,
     "height": 58.013500482160076,
     "width": 285.13018322082928,
-    "tabOrder": 5000
+    "tabOrder": 4000
   },
   "visual": {
     "visualType": "slicer",
@@ -82,23 +82,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "96c04501db1ed6c5017a",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Partnership Details"
-              }
-            },
-            "Property": "Partnership Rule"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

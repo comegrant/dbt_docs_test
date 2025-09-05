@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "6ca74717b156da15bc4b",
   "position": {
-    "x": 29.954995499549955,
-    "y": 146.31863186318634,
+    "x": 35.015197568389063,
+    "y": 86.565349544072959,
     "z": 3000,
-    "height": 483.88838883888394,
-    "width": 595.64356435643572,
-    "tabOrder": 3000
+    "height": 313.19148936170217,
+    "width": 1209.969604863222,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "clusteredColumnChart",
@@ -126,89 +126,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "9a856e513d17bdb7c9d4",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Month"
-              }
-            },
-            "Level": "Year"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "dd8e12ff0ea0ecceedee",
-        "field": {
-          "HierarchyLevel": {
-            "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Dates"
-                  }
-                },
-                "Hierarchy": "Calendar Hierarchy with Month"
-              }
-            },
-            "Level": "Month"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "a1643cfb60d441380a11",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer and Subscriber Details"
-              }
-            },
-            "Property": "Partnership"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "7d465000eb4c9c559da9",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Brands"
-              }
-            },
-            "Property": "Brand"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "c48915b0609c8c3c6044",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer and Subscriber Measures"
-              }
-            },
-            "Property": "Number of Sign-ups"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }
