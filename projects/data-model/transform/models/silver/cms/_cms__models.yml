@@ -50,9 +50,9 @@ models:
           - unique
           - not_null
 
-      - name: ops_order_id
+      - name: billing_agreement_order_id
         data_type: varchar(36)
-        description: "{{ doc('column__ops_order_id') }}"
+        description: "{{ doc('column__billing_agreement_order_id') }}"
         constraints:
           - type: not_null
         data_tests:

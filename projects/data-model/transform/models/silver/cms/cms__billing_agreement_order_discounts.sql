@@ -20,7 +20,7 @@ source as (
         
         {# ids #}
         relation_id                 as billing_agreement_order_discount_id
-        , order_id                  as ops_order_id
+        , order_id                  as billing_agreement_order_id
         , discount_id
         , discount_criteria_id
         , cancelled_relation_id     as discount_order_cancelled_relation_id
