@@ -1,0 +1,25 @@
+resources:
+  jobs:
+    refresh_selected_powerbi_tables:
+      name: refresh_selected_powerbi_tables
+      description: 'Refreshes all listed tables in the tables parameter. Refreshes all tables if left blank.'
+
+      permissions:
+        - group_name: data-engineers
+          level: CAN_MANAGE_RUN
+        - group_name: data-scientists
+          level: CAN_MANAGE_RUN
+        - group_name: data-analysts
+          level: CAN_MANAGE_RUN
+
+      timeout_seconds: 1200 #Timeout after 20 mins
+      edit_mode: EDITABLE
+
+      tasks: 
+        - task_key: refresh_selected_powerbi_tables
+          notebook_task: 
+            notebook_path: ../powerbi-refresh/powerbi-refresh.py
+
+      parameters:
+        - name: tables
+          default: 'Insert table names here e.g. Order Measures, Active Baskets. Leave blank to refresh all tables.'

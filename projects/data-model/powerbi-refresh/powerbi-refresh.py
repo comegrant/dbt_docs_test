@@ -10,6 +10,8 @@ dbutils.widgets.text("tables", "", "Tables to refresh")
 
 # Set selected tables to refresh if passed as a parameter, else refresh all tables
 tables = dbutils.widgets.get("tables")
+if tables == 'Insert table names here e.g. Order Measures, Active Baskets. Leave blank to refresh all tables.':
+    dbutils.notebook.exit("No tables to refresh.")
 
 # COMMAND ----------
 
