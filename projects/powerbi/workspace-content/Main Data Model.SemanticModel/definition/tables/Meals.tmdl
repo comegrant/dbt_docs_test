@@ -1,0 +1,37 @@
+/// This table can be used to filter on number of meals of the products and recipes
+table 'Meals'
+    lineageTag: Meals-Table
+
+    /// Primary key of dim_meals. It is a composite of meals and and mealbox_meals.
+    column pk_dim_meals
+        dataType: string
+        isHidden
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: pk_dim_meals
+
+    /// Number of meals in a product or recipe.
+    column 'Meals'
+        dataType: int64
+        isAvailableInMdx: false
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: meals
+
+    /// Number of meals in the mealbox that relates to the product or the recipe.
+    column 'Mealbox Meals'
+        dataType: int64
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: mealbox_meals
+
+    partition 'Meals' = m
+        mode: directQuery
+        source =
+                let
+                    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+                    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+                    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+                    dim_meals_Table = gold_Schema{[Name="dim_meals",Kind="Table"]}[Data]
+                in
+                    dim_meals_Table

@@ -44,7 +44,7 @@ The number of meals in the mealbox the customer subscribes to. The column is on 
 
 {% enddocs %}
 
-{% docs column__mealbox_portions %}
+{% docs column__portions_mealbox %}
 
 The number of portions in the mealbox the customer ordered. The column is on order level, meaning that the value is present on all the rows of the order. It is used to create a foreign key connecting all rows of the order to Dim Portions using the portions related to the mealbox of the order. The column are mainly present for debugging purposes.
 

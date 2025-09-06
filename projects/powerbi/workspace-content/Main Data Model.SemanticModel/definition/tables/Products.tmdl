@@ -146,6 +146,7 @@ table Products
 	/// Example: A product variation with Meals = 4 means the product includes 4 dinners.
 	column Meals
 		dataType: string
+		isHidden
 		lineageTag: 0cfd128e-8134-4007-886f-3ed2f44a6279
 		summarizeBy: none
 		sourceColumn: meals

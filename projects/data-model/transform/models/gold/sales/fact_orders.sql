@@ -782,7 +782,7 @@ discounts as (
             when is_mealbox = true
             then portion_id
             end
-        ) as mealbox_portions
+        ) as portions_mealbox
         , max(
             case 
             when is_mealbox = true
@@ -813,8 +813,6 @@ discounts as (
         , coalesce(max(is_thrifty_dish), 0) as has_thrifty_dish
 
     from add_product_columns
-    where has_subscription_order_type is true
-    and menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
     group by 1
 
 )
@@ -826,7 +824,7 @@ discounts as (
         , find_swap_information.sum_added_dish
         , find_swap_information.sum_removed_dish
         , find_swap_information.meals_mealbox
-        , find_swap_information.mealbox_portions
+        , find_swap_information.portions_mealbox
         , find_swap_information.portion_id_mealbox
         , find_swap_information.meals_mealbox_subscription
         , find_swap_information.portions_mealbox_subscription
@@ -835,45 +833,61 @@ discounts as (
             when find_swap_information.has_preselector_output is false 
             and find_swap_information.is_onesub_migration is false
             and add_product_columns.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
+            and add_product_columns.has_subscription_order_type is true
             then 1
             else 0
         end as is_missing_preselector_output
         , case 
             when add_product_columns.is_mealbox = true 
+            and add_product_columns.has_subscription_order_type is true 
+            and add_product_columns.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
             then add_product_columns.meals - find_swap_information.meals_mealbox_subscription 
             end as meal_adjustment_subscription
         , case
             when add_product_columns.is_dish = true
+            and add_product_columns.has_subscription_order_type is true 
+            and add_product_columns.menu_week_monday_date >= '{{ var("mealbox_adjustments_cutoff") }}'
             then add_product_columns.portions - find_swap_information.portions_mealbox_subscription 
             end as portion_adjustment_subscription
         , case 
-            -- set to null if order is not relevant for swap data
-            when find_swap_information.billing_agreement_order_id is null
+            -- only subscription orders can have swaps, as there are no preselections in non subscription orders
+            -- and we only have subscription data for a certain period back in time
+            when (
+                add_product_columns.has_subscription_order_type is false 
+                or add_product_columns.menu_week_monday_date < '{{ var("mealbox_adjustments_cutoff") }}'
+            ) 
             then null
-            when find_swap_information.has_preselector_output is false 
-            and find_swap_information.is_onesub_migration is false
+            -- customers that does not have preselector output should not be considered for swaps
+            -- during the onesub migration customers would not have preselector output, but should be considered for swaps
+            when find_swap_information.has_preselector_output is false
             and add_product_columns.menu_week_monday_date >= '{{ var("onesub_full_launch_date") }}'
+            and find_swap_information.is_onesub_migration is false
             then false
-            -- separates swaps from meal adjustments (increase/decrease in meals and not swapping of dishes)
+            -- separates swaps from meal adjustments (increase/decrease in meals only is not considered a swap)
             when 
-                find_swap_information.sum_added_dish + find_swap_information.sum_removed_dish != abs(find_swap_information.meals_mealbox - find_swap_information.meals_mealbox_subscription)
+                find_swap_information.sum_added_dish + find_swap_information.sum_removed_dish 
+                != abs(find_swap_information.meals_mealbox - find_swap_information.meals_mealbox_subscription)
             then true
             else false
         end as has_swap
         , case
-            -- set to null if order is not relevant for swap data
-            when find_swap_information.billing_agreement_order_id is null
+            -- only subscription orders can have mealbox adjustments, as there are no preselections in non subscription orders
+            -- and we only have subscription data for a certain period back in time
+            when (
+                add_product_columns.has_subscription_order_type is false 
+                or add_product_columns.menu_week_monday_date < '{{ var("mealbox_adjustments_cutoff") }}'
+            )
             then null
-            -- customers that have swapped a dish or change in number of meals
-            when find_swap_information.sum_added_dish + find_swap_information.sum_removed_dish != 0
-            then true
-            -- customers that has changed number of portions or change in number of meals
-            when find_swap_information.sum_dish_portions - find_swap_information.sum_dish_portions_subscription != 0
+            -- customers that have changed recipes, number of meals or number of portions
+            when (
+                find_swap_information.sum_added_dish + find_swap_information.sum_removed_dish != 0
+                or find_swap_information.sum_dish_portions - find_swap_information.sum_dish_portions_subscription != 0
+            )
             then true
             else false
         end as has_mealbox_adjustment
-        , has_plus_price_dish
-        , has_thrifty_dish
+        , find_swap_information.has_plus_price_dish
+        , find_swap_information.has_thrifty_dish
     from add_product_columns
     left join find_swap_information
         on add_product_columns.billing_agreement_order_id = find_swap_information.billing_agreement_order_id
@@ -970,10 +984,8 @@ discounts as (
         , cast(date_format(add_recipe_information.menu_week_financial_date, 'yyyyMMdd') as int) as fk_dim_date
         , coalesce(md5(discounts.discount_id), '0') as fk_dim_discounts
         , md5(concat(loyalty_seasons.company_id,loyalty_seasons.loyalty_season_start_date)) as fk_dim_loyalty_seasons
-        , coalesce(meals, 0) as fk_dim_meals
-        , coalesce(meals_subscription, 0) as fk_dim_meals_subscription
-        , coalesce(meals_mealbox, 0) as fk_dim_meals_mealbox
-        , coalesce(meals_mealbox_subscription, 0) as fk_dim_meals_mealbox_subscription
+        , concat_ws('-', coalesce(cast(add_recipe_information.meals as string), '0'), coalesce(cast(add_recipe_information.meals_mealbox as string), '0')) as fk_dim_meals
+        , concat_ws('-', coalesce(cast(add_recipe_information.meals_subscription as string), '0'), coalesce(cast(add_recipe_information.meals_mealbox_subscription as string), '0')) as fk_dim_meals_subscription
         , md5(add_recipe_information.order_status_id) as fk_dim_order_statuses
         
         -- TODO: Have to consider if it should include swaps or mealbox adjustments

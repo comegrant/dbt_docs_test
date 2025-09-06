@@ -1848,7 +1848,7 @@ models:
 
     columns:
       - name: pk_dim_meals
-        data_type: int
+        data_type: string
         description: "{{ doc('column__pk_dim_meals') }}"
         constraints:
           - type: primary_key
@@ -1858,6 +1858,12 @@ models:
           - not_null
 
       - name: meals
+        data_type: int
+        description: "{{ doc('column__meals') }}"
+        data_tests:
+          - not_null
+  
+      - name: mealbox_meals
         data_type: int
         description: "{{ doc('column__meals') }}"
         data_tests:

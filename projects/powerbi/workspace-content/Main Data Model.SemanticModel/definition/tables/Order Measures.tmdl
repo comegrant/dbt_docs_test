@@ -516,6 +516,14 @@ table 'Order Measures'
 						Products[pk_dim_products]
 					),
 					USERELATIONSHIP(
+						'Order Measures'[fk_dim_meals_subscription],
+						'Meals'[pk_dim_meals]
+					),
+					USERELATIONSHIP(
+						'Order Measures'[fk_dim_portions_subscription],
+						'Portions'[pk_dim_portions]
+					),
+					USERELATIONSHIP(
 						'Order Measures'[fk_dim_price_categories_subscription],
 						'Price Categories'[pk_dim_price_categories]
 					),
@@ -560,6 +568,14 @@ table 'Order Measures'
 				USERELATIONSHIP(
 					'Order Measures'[fk_dim_price_categories_subscription],
 					'Price Categories'[pk_dim_price_categories]
+				),
+				USERELATIONSHIP(
+					'Order Measures'[fk_dim_meals_subscription],
+					'Meals'[pk_dim_meals]
+				),
+				USERELATIONSHIP(
+					'Order Measures'[fk_dim_portions_subscription],
+					'Portions'[pk_dim_portions]
 				),
 				USERELATIONSHIP(
 					'Order Measures'[fk_dim_products_subscription],
@@ -3264,6 +3280,27 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: fk_dim_portions
+
+	column fk_dim_portions_subscription
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_portions_subscription
+
+	column fk_dim_meals
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_meals
+
+	column fk_dim_meals_subscription
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_meals_subscription
 	
 	/// Defines a unique recipe rating. To be used to count number of ratings. A concatenation of the billing_agreement_id and the recipe_id from the recipe ratings table.
 	/// Used in Menu Measures

@@ -290,6 +290,20 @@ relationship fact_orders_to_dim_portions
 	fromColumn: 'Order Measures'.fk_dim_portions
 	toColumn: 'Portions'.pk_dim_portions
 
+relationship fact_orders_to_dim_portions_subscription
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_portions_subscription
+	toColumn: 'Portions'.pk_dim_portions
+
+relationship fact_orders_to_dim_meals
+	fromColumn: 'Order Measures'.fk_dim_meals
+	toColumn: 'Meals'.pk_dim_meals
+
+relationship fact_orders_to_dim_meals_subscription
+	isActive: false
+	fromColumn: 'Order Measures'.fk_dim_meals_subscription
+	toColumn: 'Meals'.pk_dim_meals
+
 relationship fact_orders_to_dim_ingredient_combinations
 	fromColumn: 'Order Measures'.fk_dim_ingredient_combinations
 	toColumn: 'Ingredient Combinations'.pk_dim_ingredient_combinations

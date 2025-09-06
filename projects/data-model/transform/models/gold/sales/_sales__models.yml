@@ -130,9 +130,9 @@ models:
         data_type: int
         description: "{{ doc('column__portion_size') }}"
 
-      - name: mealbox_portions
+      - name: portions_mealbox
         data_type: int
-        description: "{{ doc('column__mealbox_portions') }}"
+        description: "{{ doc('column__portions_mealbox') }}"
 
       - name: portions_mealbox_subscription
         data_type: int
@@ -597,7 +597,7 @@ models:
               field: pk_dim_order_line_details
     
       - name: fk_dim_meals
-        data_type: int
+        data_type: string
         description: "{{ doc('column__pk_dim_meals') }}"
         constraints:
           - type: not_null
@@ -611,35 +611,7 @@ models:
               field: pk_dim_meals
 
       - name: fk_dim_meals_subscription
-        data_type: int
-        description: "{{ doc('column__pk_dim_meals') }}"
-        constraints:
-          - type: not_null
-          - type: foreign_key
-            to: ref('dim_meals')
-            to_columns: [pk_dim_meals]
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_meals')
-              field: pk_dim_meals
-
-      - name: fk_dim_meals_mealbox
-        data_type: int
-        description: "{{ doc('column__pk_dim_meals') }}"
-        constraints:
-          - type: not_null
-          - type: foreign_key
-            to: ref('dim_meals')
-            to_columns: [pk_dim_meals]
-        data_tests:
-          - not_null
-          - relationships:
-              to: ref('dim_meals')
-              field: pk_dim_meals
-
-      - name: fk_dim_meals_mealbox_subscription
-        data_type: int
+        data_type: string
         description: "{{ doc('column__pk_dim_meals') }}"
         constraints:
           - type: not_null

@@ -79,6 +79,7 @@ ref table 'Price Categories'
 ref table '(Utils) Matrix Spacer'
 ref table '(Param) Case Measures Ex Vat'
 ref table '(Param) Case Measures Inc Vat'
+ref table 'Meals'
 ref table '(Param) Forecast Measures'
 ref table '(Param) Active Baskets Measures'
 
