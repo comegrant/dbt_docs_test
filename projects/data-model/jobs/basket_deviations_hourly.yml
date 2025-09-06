@@ -42,12 +42,16 @@ resources:
         - task_key: bronze_cms_billing_agreement_basket_deviations_and_products
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
+            base_parameters:
+              incremental_load_days: "1"
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
         - task_key: bronze_cms_billing_agreement_basket_scheduler
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_scheduler.py
+            base_parameters:
+              incremental_load_days: "1"
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
