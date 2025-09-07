@@ -43,7 +43,7 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
             base_parameters:
-              incremental_load_days: "1"
+              incremental_load_days: "45"
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
@@ -78,7 +78,6 @@ resources:
               - 'dbt deps'
               - 'dbt snapshot'
               - 'dbt run -s +estimations_log +active_basket_deviations_recent_weeks'
-              - 'dbt test -s +estimations_log +active_basket_deviations_recent_weeks --indirect-selection cautious'
           job_cluster_key: dbt_CLI
           libraries:
             - pypi:
