@@ -349,10 +349,11 @@ poetry --version
 
 _It should return something like `Poetry version 2.X.X`_
 
-4. Set poetry to prefer the currently active Python version and create project specific virtualenvs
+4. Set poetry to create project specific virtualenvs and install the poetry-plugin-shell plugin
 
 ```bash
 poetry config virtualenvs.in-project true
+poetry self add poetry-plugin-shell
 ```
 
 </details>
