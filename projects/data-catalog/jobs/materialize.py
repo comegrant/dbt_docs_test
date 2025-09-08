@@ -23,7 +23,7 @@ class MaterializeArgs(BaseModel):
 
 async def main(args: MaterializeArgs, vault: KeyVaultInterface | None = None) -> None:
     """
-    The main function that contains the logic for this job
+    Updating all the data needed for correct output to the Redis sources
     """
 
     env_keys = ["UC_ENV", "DATALAKE_ENV"]
