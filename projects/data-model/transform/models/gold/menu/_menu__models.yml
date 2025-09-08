@@ -969,6 +969,8 @@ models:
     latest_version: 1
     config:
       alias: bridge_dim_recipes_dim_taxonomies
+      contract:
+        enforced: true
 
     columns:
       - name: pk_bridge_dim_recipes_dim_taxonomies
@@ -1017,6 +1019,8 @@ models:
     latest_version: 1
     config:
       alias: bridge_ingredient_combinations_ingredients
+      contract:
+        enforced: true
 
     columns:
       - name: pk_bridge_ingredient_combinations_ingredients
@@ -1030,7 +1034,7 @@ models:
           - not_null
 
       - name: ingredient_combination_id
-        data_type: int
+        data_type: string
         description: "{{ doc('column__ingredient_combination_id') }}"
         data_tests:
           - not_null

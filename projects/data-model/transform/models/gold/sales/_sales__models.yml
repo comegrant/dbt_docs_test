@@ -867,24 +867,18 @@ models:
       - name: order_status_id
         data_type: string
         description: "{{ doc('column__order_status_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_status_name
         data_type: string
         description: "{{ doc('column__order_status_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: can_be_cancelled
         data_type: boolean
         description: "{{ doc('column__can_be_cancelled') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -982,16 +976,12 @@ models:
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1010,24 +1000,18 @@ models:
       - name: valid_from
         data_type: timestamp
         description: "{{ doc('column__valid_from') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: valid_to
         data_type: timestamp
         description: "{{ doc('column__valid_to') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_current
         data_type: boolean
         description: "{{ doc('column__is_current') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1038,8 +1022,6 @@ models:
       - name: payment_method
         data_type: string
         description: "{{ doc('column__payment_method') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1054,56 +1036,42 @@ models:
       - name: signup_at
         data_type: timestamp
         description: "{{ doc('column__signup_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_date
         data_type: date
         description: "{{ doc('column__signup_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_year_day
         data_type: int
         description: "{{ doc('column__signup_year_day') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_month_day
         data_type: int
         description: "{{ doc('column__signup_month_day') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_week_day
         data_type: int
         description: "{{ doc('column__signup_week_day') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_week
         data_type: int
         description: "{{ doc('column__signup_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_month
         data_type: string
         description: "{{ doc('column__signup_month') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1116,16 +1084,12 @@ models:
       - name: signup_quarter
         data_type: int
         description: "{{ doc('column__signup_quarter') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: signup_year
         data_type: int
         description: "{{ doc('column__signup_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1196,16 +1160,12 @@ models:
       - name: onesub_flag
         data_type: string
         description: "{{ doc('column__onesub_flag') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: onesub_beta_flag
         data_type: string
         description: "{{ doc('column__onesub_beta_flag') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
       
@@ -1238,40 +1198,30 @@ models:
       - name: preference_id
         data_type: char(36)
         description: "{{ doc('column__preference_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: char(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_type_id
         data_type: char(36)
         description: "{{ doc('column__preference_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_name
         data_type: string
         description: "{{ doc('column__preference_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_description
         data_type: string
         description: "{{ doc('column__preference_description') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1279,48 +1229,36 @@ models:
       - name: preference_name_brand
         data_type: string
         description: "{{ doc('column__preference_name_brand') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_description_brand
         data_type: string
         description: "{{ doc('column__preference_description_brand') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_type_name
         data_type: string
         description: "{{ doc('column__preference_type_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_type_description
         data_type: string
         description: "{{ doc('column__preference_type_description') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_active_preference
         data_type: boolean
         description: "{{ doc('column__is_active_preference') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_allergen
         data_type: boolean
         description: "{{ doc('column__is_allergen') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -1338,15 +1276,15 @@ models:
     latest_version: 1
     config:
       alias: bridge_billing_agreements_preferences
-    constraints:
-      - type: primary_key
-        columns: [pk_bridge_billing_agreements_preferences]
+      contract:
+        enforced: true
 
     columns:
       - name: pk_bridge_billing_agreements_preferences
         data_type: string
         description: "{{ doc('column__pk_bridge_billing_agreements_preferences') }}"
         constraints:
+          - type: primary_key
           - type: not_null
         data_tests:
           - unique
@@ -1383,24 +1321,18 @@ models:
       - name: billing_agreement_preferences_updated_id
         data_type: string
         description: "{{ doc('column__billing_agreement_preferences_updated_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: preference_id
         data_type: string
         description: "{{ doc('column__preference_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: string
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -2006,6 +1938,8 @@ models:
     latest_version: 1
     config:
       alias: fact_subscription_quiz
+      contract:
+        enforced: true
 
     versions:
       - v: 1
@@ -2092,8 +2026,6 @@ models:
       - name: has_started_subscription_quiz
         data_type: int
         description: "{{ doc('column__has_started_subscription_quiz') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
@@ -2102,8 +2034,6 @@ models:
       - name: has_completed_subscription_quiz
         data_type: int
         description: "{{ doc('column__has_completed_subscription_quiz') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
           - accepted_values:
@@ -2122,6 +2052,7 @@ models:
 
     versions:
       - v: 1
+
     columns:
       - name: pk_dim_preselector_versions
         data_type: string
@@ -2132,39 +2063,34 @@ models:
         data_tests:
           - unique
           - not_null
+
       - name: commit_sha
         data_type: string
         description: "{{ doc('column__model_version_commit_sha') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
+
       - name: short_commit_sha
         data_type: string
         description: "{{ doc('column__model_version_short_commit_sha') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
+
       - name: source_model_version_first_used_at
         data_type: timestamp
         description: "{{ doc('column__source_model_version_first_used_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
+
       - name: source_model_version_latest_used_at
         data_type: timestamp
         description: "{{ doc('column__source_model_version_latest_used_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
+
       - name: version_number
         data_type: int
         description: "{{ doc('column__preselector_version_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -2822,48 +2748,36 @@ models:
       - name: menu_week_monday_date
         data_type: date
         description: "{{ doc('column__menu_week_monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: language_id
         data_type: int
         description: "{{ doc('column__language_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_preference_combination_id
         data_type: string
         description: "{{ doc('column__pk_dim_preference_combinations') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: recipe_id
         data_type: int
         description: "{{ doc('column__recipe_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -2874,16 +2788,12 @@ models:
       - name: recipe_preference_combination_id
         data_type: string
         description: "{{ doc('column__pk_dim_preference_combinations') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: compliancy_level
         data_type: int
         description: "{{ doc('column__compliancy_level') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -2910,40 +2820,30 @@ models:
       - name: is_accepted_consent
         data_type: boolean
         description: "{{ doc('column__is_accepted_consent') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: valid_from
         data_type: timestamp
         description: "{{ doc('column__valid_from') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: varchar(36)
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: consent_id
         data_type: varchar(36)
         description: "{{ doc('column__consent_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3025,6 +2925,7 @@ models:
       alias: dim_consent_types
     contract:
       enforced: true
+
     columns:
       - name: pk_dim_consent_types
         data_type: string
@@ -3039,32 +2940,24 @@ models:
       - name: consent_category_name
         data_type: string
         description: "{{ doc('column__consent_category_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: consent_name
         data_type: string
         description: "{{ doc('column__consent_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: consent_id
         data_type: char(36)
         description: "{{ doc('column__consent_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: consent_category_id
         data_type: char(36)
         description: "{{ doc('column__consent_category_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3095,93 +2988,69 @@ models:
       - name: loyalty_order_id
         data_type: string
         description: "{{ doc('column__loyalty_order_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_order_line_id
         data_type: string
         description: "{{ doc('column__loyalty_order_line_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_order_status_id
         data_type: int
         description: "{{ doc('column__loyalty_order_status_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_week_monday_date
         data_type: date
         description: "{{ doc('column__order_week_monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_year
         data_type: int
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: order_week
         data_type: int
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: billing_agreement_id
         data_type: int
         description: "{{ doc('column__billing_agreement_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: company_id
         data_type: string
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: product_variation_id
         data_type: string
         description: "{{ doc('column__product_variation_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: product_variation_quantity
         data_type: int
         description: "{{ doc('column__product_variation_quantity') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: unit_point_price
         data_type: int
         description: "{{ doc('column__unit_point_price') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: total_point_price
         data_type: int
         description: "{{ doc('column__total_point_price') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3299,16 +3168,12 @@ models:
       - name: loyalty_order_status_id
         data_type: int
         description: "{{ doc('column__loyalty_order_status_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_order_status_name
         data_type: string
         description: "{{ doc('column__loyalty_order_status_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3425,16 +3290,12 @@ models:
       - name: loyalty_event_id
         data_type: string
         description: "{{ doc('column__loyalty_event_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_event_name
         data_type: string
         description: "{{ doc('column__loyalty_event_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3464,8 +3325,6 @@ models:
       - name: loyalty_points_id
         data_type: string
         description: "{{ doc('column__loyalty_points_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3520,8 +3379,6 @@ models:
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3616,12 +3473,19 @@ models:
               field: pk_dim_loyalty_seasons
               
   - name: dim_loyalty_seasons
+    description: ""
+    config:
+      alias: dim_loyalty_seasons
+      contract:
+        enforced: true
+
     columns:
       - name: pk_dim_loyalty_seasons
         data_type: string
         description: "{{ doc('column__pk_dim_loyalty_seasons') }}"
         constraints:
           - type: primary_key
+          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -3629,59 +3493,53 @@ models:
       - name: company_id
         data_type: string
         description: "{{ doc('column__company_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_season_name
         data_type: string
         description: "{{ doc('column__loyalty_season_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_season_year
         data_type: int
         description: "{{ doc('column__loyalty_season_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_season_quarter
         data_type: int
         description: "{{ doc('column__loyalty_season_quarter') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_season_start_date
         data_type: date
         description: "{{ doc('column__loyalty_season_start_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: loyalty_season_end_date
         data_type: date
         description: "{{ doc('column__loyalty_season_end_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
 
   - name: dim_addresses
     description: "Contains the postal code and whether or not the address is geo restricted (0 if the address can receive deliveries, 1 otherwise) for all current shipping addresses."
+    config:
+      alias: dim_addresses
+      contract:
+        enforced: true
+
     columns: 
       - name: pk_dim_addresses
         data_type: string
         description: "{{ doc('column__pk_dim_addresses') }}"
         constraints:
+          - type: not_null
           - type: primary_key
         data_tests:
           - not_null
@@ -3728,32 +3586,24 @@ models:
       - name: discount_id
         data_type: char(36)
         description: "{{ doc('column__discount_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: discount_usage_type_id
         data_type: int
         description: "{{ doc('column__discount_usage_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: discount_type_id
         data_type: int
         description: "{{ doc('column__discount_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: discount_amount_type_id
         data_type: int
         description: "{{ doc('column__discount_amount_type_id') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3788,8 +3638,6 @@ models:
       - name: discount_title
         data_type: string
         description: "{{ doc('column__discount_title') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3800,16 +3648,12 @@ models:
       - name: customer_usage_limit
         data_type: int
         description: "{{ doc('column__customer_usage_limit') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: discount_amount
         data_type: decimal(20,10)
         description: "{{ doc('column__discount_amount') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
@@ -3820,56 +3664,42 @@ models:
       - name: is_active_discount
         data_type: boolean
         description: "{{ doc('column__is_active_discount') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_coupon_code_required
         data_type: boolean
         description: "{{ doc('column__is_coupon_code_required') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_cumulative_discount
         data_type: boolean
         description: "{{ doc('column__is_cumulative_discount') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_valid_on_direct_order
         data_type: boolean
         description: "{{ doc('column__is_valid_on_direct_order') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_registration_discount
         data_type: boolean
         description: "{{ doc('column__is_registration_discount') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_disabled_on_freeze
         data_type: boolean
         description: "{{ doc('column__is_disabled_on_freeze') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_highest_price_discount
         data_type: boolean
         description: "{{ doc('column__is_highest_price_discount') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 

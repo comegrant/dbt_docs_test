@@ -38,15 +38,18 @@ billing_agreement_preferences as (
 
 -- Get the most recent estimation timestamp for each company
 , latest_estimation_timestamp as (
+
     select
         company_id
         , max(estimation_generated_at) as latest_estimation_generated_at
     from estimations
     group by company_id
+
 )
 
 -- Find the most recent estimations for each company
 , filter_latest_estimations as (
+
     select estimations.*
     from estimations
     left join latest_estimation_timestamp
@@ -54,17 +57,21 @@ billing_agreement_preferences as (
             estimations.company_id = latest_estimation_timestamp.company_id
             and estimations.estimation_generated_at = latest_estimation_timestamp.latest_estimation_generated_at
     where latest_estimation_timestamp.latest_estimation_generated_at is not null
+
 )
 
 -- Add the financial date to the estimations
 , add_financial_date as (
+
     select
         filter_latest_estimations.*
         , {{ get_financial_date_from_monday_date('filter_latest_estimations.menu_week_monday_date') }} as menu_week_financial_date
     from filter_latest_estimations
+
 )
 
 , add_keys as (
+
     select
         md5(concat(
             add_financial_date.estimation_generated_at

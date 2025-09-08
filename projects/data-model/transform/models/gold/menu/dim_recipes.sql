@@ -70,8 +70,7 @@ recipes as (
 
     select
 
-        md5(cast(concat(recipes.recipe_id, recipe_metadata.language_id) as string)) as pk_dim_recipes
-        , recipes.recipe_id
+        recipes.recipe_id
         , recipes.recipe_metadata_id
         , coalesce(recipes.main_recipe_id, recipes.recipe_id)                       as main_recipe_id
         , recipes.main_recipe_variation_id
@@ -136,7 +135,7 @@ recipes as (
     left join recipe_translations as recipe_translations
         on
             recipes.recipe_id = recipe_translations.recipe_id
-            and recipe_metadata.language_id = recipe_translations.language_id
+        and recipe_metadata.language_id = recipe_translations.language_id
 
     left join recipe_companies_find_local_language_id
         on recipes.recipe_id = recipe_companies_find_local_language_id.recipe_id
@@ -179,8 +178,7 @@ recipes as (
     union all
 
     select
-        '0'              as pk_dim_recipes
-        , 0              as recipe_id
+        0              as recipe_id
         , 0              as recipe_metadata_id
         , 0              as main_recipe_id
         , 0              as main_recipe_variation_id
@@ -213,4 +211,16 @@ recipes as (
         , 0 as weeks_since_first_menu_week_main_recipe
 )
 
-select * from add_unknown_row
+, add_pk as (
+
+    select 
+        case when recipe_id = 0 
+        then '0' 
+        else md5(cast(concat(recipe_id, language_id) as string))
+        end as pk_dim_recipes
+        , * 
+    from add_unknown_row
+
+)
+
+select * from add_pk

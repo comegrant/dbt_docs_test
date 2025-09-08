@@ -26,7 +26,8 @@ loyalty_agreement_ledger as (
         , loyalty_agreement_ledger.points_generated_at
         , loyalty_level_companies.company_id
     from loyalty_agreement_ledger
-    left join loyalty_level_companies on loyalty_agreement_ledger.loyalty_level_company_id = loyalty_level_companies.loyalty_level_company_id
+    left join loyalty_level_companies 
+        on loyalty_agreement_ledger.loyalty_level_company_id = loyalty_level_companies.loyalty_level_company_id
 
 )
 

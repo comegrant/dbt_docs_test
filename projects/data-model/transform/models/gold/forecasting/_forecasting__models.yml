@@ -4,8 +4,6 @@
     latest_version: 1
     config:
       alias: fact_estimations
-      config:
-        enforced: true
 
     columns:
       - name: pk_fact_estimations
@@ -99,8 +97,13 @@
           - not_null
 
       - name: fk_dim_date_estimation_generated
-        datatype: bigint
+        data_type: int
         description: "{{ doc('column__fk_dim_date_estimation_generated') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -109,8 +112,13 @@
 
 
       - name: fk_dim_time_estimation_generated
-        datatype: bigint
+        data_type: string
         description: "{{ doc('column__fk_dim_time_estimation_generated') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_time')
+            to_columns: [pk_dim_time]
         data_tests:
           - not_null
           - relationships:
@@ -118,8 +126,13 @@
               field: pk_dim_time
 
       - name: fk_dim_dates_menu_week
-        datatype: int
+        data_type: int
         description: "{{ doc('column__fk_dim_dates_menu_week') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
           - relationships:
@@ -129,6 +142,11 @@
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
           - relationships:
@@ -138,6 +156,11 @@
       - name: fk_dim_products
         data_type: string
         description: "{{ doc('column__pk_dim_products') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_products')
+            to_columns: [pk_dim_products]
         data_tests:
           - not_null
           - relationships:
@@ -147,6 +170,11 @@
       - name: fk_dim_basket_deviation_origins
         data_type: string
         description: "{{ doc('column__billing_agreement_basket_deviation_origin_id') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_basket_deviation_origins')
+            to_columns: [pk_dim_basket_deviation_origins]
         data_tests:
           - not_null
           - relationships:
@@ -156,6 +184,11 @@
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_billing_agreements')
+            to_columns: [pk_dim_billing_agreements]
         data_tests:
           - not_null
           - relationships:
@@ -173,6 +206,11 @@
       - name: fk_dim_portions
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_portions')
+            to_columns: [pk_dim_portions]
         data_tests:
           - not_null
           - relationships:
@@ -182,6 +220,11 @@
       - name: fk_dim_addresses
         data_type: string
         description: "{{ doc('column__pk_dim_addresses') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_addresses')
+            to_columns: [pk_dim_addresses]
         data_tests:
           - not_null
           - relationships:
@@ -251,6 +294,9 @@
       - name: pk_dim_budget_types
         data_type: string
         description: "{{ doc('column__pk_dim_budget_types') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -289,6 +335,9 @@
       - name: pk_fact_budget
         data_type: string
         description: "{{ doc('column__pk_fact_budget') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
         data_tests:
           - unique
           - not_null
@@ -350,20 +399,45 @@
       - name: fk_dim_dates
         data_type: int
         description: "{{ doc('column__pk_dim_dates') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_dates')
+            to_columns: [pk_dim_dates]
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: pk_dim_dates
 
       - name: fk_dim_companies
         data_type: string
         description: "{{ doc('column__pk_dim_companies') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_companies')
+            to_columns: [pk_dim_companies]
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: pk_dim_companies
 
       - name: fk_dim_budget_types
         data_type: string
         description: "{{ doc('column__pk_dim_budget_types') }}"
+        constraints:
+          - type: not_null
+          - type: foreign_key
+            to: ref('dim_budget_types')
+            to_columns: [pk_dim_budget_types]
         data_tests:
           - not_null
+          - relationships:
+              to: ref('dim_budget_types')
+              field: pk_dim_budget_types
+
     versions:
       - v: 1
 
@@ -661,7 +735,7 @@
         description: "{{ doc('column__forecast_horizon') }}"
         data_tests:
           - not_null
-      
+
       - name: forecast_horizon_group
         data_type: string
         description: "{{ doc('column__forecast_horizon_group') }}"

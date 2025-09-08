@@ -96,190 +96,142 @@ models:
       - name: date
         data_type: date
         description: "{{ doc('column__date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: calendar_year
         data_type: int
         description: "{{ doc('column__calendar_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: year_of_calendar_week
         data_type: int
         description: "{{ doc('column__year_of_calendar_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: calendar_quarter
         data_type: int
         description: "{{ doc('column__calendar_quarter') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: calendar_month_number
         data_type: int
         description: "{{ doc('column__calendar_month_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: calendar_month_name
         data_type: string
         description: "{{ doc('column__calendar_month_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: calendar_week
         data_type: int
         description: "{{ doc('column__calendar_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_year
         data_type: int
         description: "{{ doc('column__financial_year') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_quarter
         data_type: int
         description: "{{ doc('column__financial_quarter') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_month_number
         data_type: int
         description: "{{ doc('column__financial_month_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_month_name
         data_type: string
         description: "{{ doc('column__financial_month_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_week
         data_type: int
         description: "{{ doc('column__financial_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_year_week_name
         data_type: string
         description: "{{ doc('column__financial_year_week_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: financial_year_week_number
         data_type: int
         description: "{{ doc('column__financial_year_week_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: day_of_week
         data_type: int
         description: "{{ doc('column__day_of_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: weekday_name
         data_type: string
         description: "{{ doc('column__weekday_name') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: monday_date
         data_type: date
         description: "{{ doc('column__monday_date') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: monday_date_previous_week
         data_type: date
         description: "{{ doc('column__monday_date_previous_week') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: day_of_financial_year_number
         data_type: int
         description: "{{ doc('column__day_of_financial_year_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: day_of_financial_quarter_number
         data_type: int
         description: "{{ doc('column__day_of_financial_quarter_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: day_of_financial_month_number
         data_type: int
         description: "{{ doc('column__day_of_financial_month_number') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_future_date
         data_type: boolean
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: is_future_menu_week
         data_type: boolean
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
       - name: weeks_offset_from_current_monday
         data_type: bigint
         description: "{{ doc('column__weeks_offset_from_current_monday') }}"
-        constraints:
-          - type: not_null
         data_tests:
           - not_null
 
