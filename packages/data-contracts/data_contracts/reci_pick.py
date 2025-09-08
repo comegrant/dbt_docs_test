@@ -59,6 +59,14 @@ recommendations as (
     from mloutputs.reci_pick_recommendations
 ),
 
+consents as (
+    select
+        billing_agreement_id,
+        is_accepted_consent
+    from gold.fact_billing_agreement_consents
+),
+
+
 latest_recommendations as (
     select
         recommendations.*
@@ -68,6 +76,9 @@ latest_recommendations as (
         and recommendations.menu_week = latest_run.menu_week
         and recommendations.run_id = latest_run.run_id
         and recommendations.company_id = latest_run.company_id
+    left join consents
+        on consents.billing_agreement_id = recommendations.billing_agreement_id
+    where is_accepted_consent = true
 )
 
 select
