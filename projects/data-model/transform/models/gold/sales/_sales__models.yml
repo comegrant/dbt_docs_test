@@ -1955,6 +1955,30 @@ models:
           - unique
           - not_null
 
+      - name: billing_agreement_id
+        data_type: int
+        description: "{{ doc('column__billing_agreement_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: event_id_segment
+        data_type: string
+        description: "{{ doc('column__event_id_segment') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at_segment
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at_segment') }}"
+        data_tests:
+          - not_null
+
       - name: fk_dim_billing_agreements
         data_type: string
         description: "{{ doc('column__pk_dim_billing_agreements') }}"
@@ -1996,7 +2020,7 @@ models:
               field: pk_dim_companies
 
       - name: fk_dim_date_source_created_at_segment
-        data_type: bigint
+        data_type: int
         description: "{{ doc('column__fk_dim_date_source_created_at_segment') }}"
         constraints:
           - type: not_null

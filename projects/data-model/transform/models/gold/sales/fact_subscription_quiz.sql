@@ -61,7 +61,7 @@ billing_agreements as (
         ))                                           as pk_fact_subscription_quiz
 
         , update_subscription_events_unioned.event_id_segment
-        , update_subscription_events_unioned.billing_agreement_id
+        , cast(update_subscription_events_unioned.billing_agreement_id as int) as billing_agreement_id
         , update_subscription_events_unioned.company_id
         , update_subscription_events_unioned.source_created_at_segment
         
@@ -70,7 +70,7 @@ billing_agreements as (
         , billing_agreement_preferences.preference_combination_id as fk_dim_preference_combinations
         , md5(update_subscription_events_unioned.company_id) as fk_dim_companies
         , cast(date_format(update_subscription_events_unioned.source_created_at_segment, 'yyyyMMdd') as int) as fk_dim_date_source_created_at_segment
-        , cast(date_format(update_subscription_events_unioned.source_created_at_segment, 'HHmm') as int) as fk_dim_time_source_created_at_segment
+        , cast(date_format(update_subscription_events_unioned.source_created_at_segment, 'HHmm') as string) as fk_dim_time_source_created_at_segment
 
         {# NUMBERS #}
         , update_subscription_events_unioned.has_started_subscription_quiz
