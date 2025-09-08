@@ -16,12 +16,12 @@ resources:
         - group_name: data-engineers
           level: CAN_MANAGE_RUN
 
-      timeout_seconds: 6000 #Timeout after 100 mins
+      timeout_seconds: 7200 #Timeout after 120 mins
       edit_mode: EDITABLE
 
       schedule:
-       #Run every day every hour between 6:30am and 2:30am. (6:30, 7:30, ..., 23:30, 00:30, 1:30, 2:30) and also at 00:00 to ensure a successful run at around midnight.
-        quartz_cron_expression: 0 30 6-2/1,0 ? * * *
+       #Run every day every second hour between 6:00am and 2:00am. (6:00, 8:00, ..., 22:00, 00:00, 2:00)
+        quartz_cron_expression: 0 0 6-2/2 ? * * *
         timezone_id: Europe/Oslo
 
       tasks:
