@@ -59,18 +59,23 @@ recommendations as (
     from mloutputs.reci_pick_recommendations
 ),
 
-consents as (
+no_consents as (
     select
         gold.dim_billing_agreements.billing_agreement_id,
-        is_accepted_consent
+        is_accepted_consent,
+        consent_category_id,
+        consent_category_name,
+        consent_name,
+        dim_consent_types.consent_id
     from gold.dim_billing_agreements
     left join
         gold.fact_billing_agreement_consents
     on dim_billing_agreements.pk_dim_billing_agreements = fact_billing_agreement_consents.fk_dim_billing_agreements
-    where is_current = true
-    and (
-        is_accepted_consent = true or is_accepted_consent is null
-    )
+    left join
+        gold.dim_consent_types
+    on fact_billing_agreement_consents.fk_dim_consent_types = dim_consent_types.pk_dim_consent_types
+    where dim_consent_types.consent_id = 'F4212F1B-1B20-46E8-8C1B-4CAFBDD091BD' --data processing
+    and is_accepted_consent = false
 ),
 
 
@@ -83,8 +88,8 @@ latest_recommendations as (
         and recommendations.menu_week = latest_run.menu_week
         and recommendations.run_id = latest_run.run_id
         and recommendations.company_id = latest_run.company_id
-    where recommendations.billing_agreement_id in (
-        select distinct billing_agreement_id from consents
+    where recommendations.billing_agreement_id not in (
+        select distinct billing_agreement_id from no_consents
     )
 )
 
