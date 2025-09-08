@@ -120,13 +120,12 @@
                       "Entity": "Case Measures"
                     }
                   },
-                  "Property": "Share of Orders With Cases"
+                  "Property": "Share of Orders With Complaints"
                 }
               },
-              "queryRef": "Case Measures.Share of Orders With Cases",
-              "nativeQueryRef": "% of Orders",
-              "displayName": "% of Orders",
-              "format": "0.0 %;-0.0 %;0.0 %"
+              "queryRef": "Case Measures.Share of Orders With Complaints",
+              "nativeQueryRef": "% of Orders1",
+              "displayName": "% of Orders"
             },
             {
               "field": {
@@ -181,34 +180,16 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Brands"
+                    "Entity": "Case Measures"
                   }
                 },
-                "Property": "Country"
+                "Property": "Number of Complaints"
               }
             },
-            "direction": "Ascending"
-          },
-          {
-            "field": {
-              "HierarchyLevel": {
-                "Expression": {
-                  "Hierarchy": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "Dates"
-                      }
-                    },
-                    "Hierarchy": "Date Hierarchy"
-                  }
-                },
-                "Level": "Month"
-              }
-            },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -329,21 +310,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "94.62925490434596D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Case Measures.Share of Orders With Cases"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "141.98115707164595D"
+                  "Value": "139.72245438412912D"
                 }
               }
             }
@@ -357,7 +324,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "155.68352059925093D"
+                  "Value": "142.10540815925256D"
                 }
               }
             }
@@ -371,7 +338,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "126.15912725628148D"
+                  "Value": "127.28693724253613D"
                 }
               }
             }
@@ -385,7 +352,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "178.1350726379495D"
+                  "Value": "174.749992874447D"
                 }
               }
             }
@@ -399,7 +366,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "138.07352992218966D"
+                  "Value": "108.68327305580446D"
                 }
               }
             }
@@ -413,7 +380,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "181.36821103453426D"
+                  "Value": "181.3739207996629D"
                 }
               }
             }
@@ -421,13 +388,19 @@
           "selector": {
             "metadata": "Case Measures.Number of Orders With Complaints"
           }
-        }
-      ],
-      "columnFormatting": [
+        },
         {
-          "properties": {},
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "128.38745692625776D"
+                }
+              }
+            }
+          },
           "selector": {
-            "metadata": "Case Measures.Share of Orders With Cases"
+            "metadata": "Brands.Country"
           }
         }
       ]
@@ -502,5 +475,295 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "65246da4ea79eb1a9d93",
+        "ordinal": 0,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Complaint Cost Share of Order Value Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "faec7c0e012cb3c70050",
+        "ordinal": 1,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Share of Orders With Complaints"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8201b791a4a6644fcc80",
+        "ordinal": 2,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Number of Complaints"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "842cb9512317c6736812",
+        "ordinal": 3,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Complaint Cost Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d3a12320ebed42e17f3d",
+        "ordinal": 4,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Country"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "ccc01ea190ec0249afcd",
+        "ordinal": 5,
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d3fd44992b63ce9c9062",
+        "ordinal": 6,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Details"
+              }
+            },
+            "Property": "Case Line Type"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "c",
+              "Entity": "Case Details",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "Case Line Type"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Automatic Complaint'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Prp/credit'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Refund'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'No Credit'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "182ceac8adaf6a152176",
+        "ordinal": 7,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Details"
+              }
+            },
+            "Property": "Cause"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "c",
+              "Entity": "Case Details",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "Comparison": {
+                      "ComparisonKind": 0,
+                      "Left": {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "c"
+                            }
+                          },
+                          "Property": "Cause"
+                        }
+                      },
+                      "Right": {
+                        "Literal": {
+                          "Value": "'Withdrawn product'"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "ef4dc80abc257916ccd5",
+        "ordinal": 8,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Number of Orders"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "301de4af0472887545ee",
+        "ordinal": 9,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dates"
+              }
+            },
+            "Property": "Number of Weeks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ea07076c49c32cf389e1",
+        "ordinal": 10,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ba399fbce32d8a219b2e",
+        "ordinal": 11,
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Case Measures"
+              }
+            },
+            "Property": "Number of Orders With Complaints"
+          }
+        },
+        "type": "Advanced"
+      }
+    ],
+    "filterSortOrder": "Custom"
   }
 }
