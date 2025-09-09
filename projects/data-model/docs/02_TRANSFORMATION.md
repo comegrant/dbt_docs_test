@@ -381,7 +381,7 @@ All developers have their own schema in the Databricks Dev Workspace. When dbt m
 
 To ensure a smooth and consistent experience when developing with dbt locally, we provide a helper command: 
 ```
-dbt-chef prepare-local-development
+chef dbt prepare-local-development
 ```
 
 The command performs two key actions:
@@ -402,7 +402,7 @@ When developing, you can auto-generate code leveraging our custom CLI commands.
 When creating silver tables, we have a command which allows you to get a head start on adding the model.
 
 ```
-dbt-chef generate-silver-model \
+chef dbt generate-silver-model \
 --source-system <source_system> \ # name of the source system, e.g., cms
 --source-table-name <source_table_name> \ # name of the bronze table, e.g., cms__company
 --model-name <model_name> # name of the silver model, e.g., cms__companies
@@ -418,7 +418,7 @@ After this, you need to:
 There is a command which helps you generate docs blocks. Before this can be used, you need to add the model (only model, and not columns) to the model.yml-file. Note that the models must have been [built successfully](#build-and-run-models) for this command to work.
 
 ```
-dbt-chef generate-docs --model-name <model_name> # name of the silver model
+chef dbt generate-docs --model-name <model_name> # name of the silver model
 ```
 
 This will provide you with an output in the terminal of all the columns in the silver model represented as doc blocks. After this the following must will be done:
@@ -433,7 +433,7 @@ This will provide you with an output in the terminal of all the columns in the s
 After the docs have been generated, this command can be used to generate the column schema for the models.yml file:
 
 ```
-dbt-chef generate-yaml --model-name <model_name> # name of the silver model
+chef dbt generate-yaml --model-name <model_name> # name of the silver model
 ```
 
 1. Copy the output and add it to the relevant `__models.yml` file.
@@ -478,7 +478,7 @@ dbt build -s model_name+ --defer --state states/test
 ```
 
 >[!NOTE]
->To be able to defer, you must first have prepared your developer schema using `dbt-chef prepare-local-development`. 
+>To be able to defer, you must first have prepared your developer schema using `chef dbt prepare-local-development`. 
 >
 >This is because defer needs to use the manifests that are stored in the states folder.
 
@@ -509,7 +509,7 @@ When a pull request is created, the models you have modified and all downstream 
 Below is a step-by-step guide for development that can be used as a reminder while working. You can also use this [Miro board](https://miro.com/app/board/uXjVLIMsa8g=/?share_link_id=722109664611) for reference. Mark that one should often separate these steps into several feature branches and PRs.
 
 1. Ingest table to bronze following the guidelines in the [Ingestion Guide](01_INGESTION.md)
-2. Prepare local development: `dbt-chef prepare-local-development`
+2. Prepare local development: `chef dbt prepare-local-development`
 3. Add table(s) of interest to the `_source_system__source.yml`-file
 4. Create snapshot table (if needed)
 5. Create base table (if needed)

@@ -1,34 +1,19 @@
-"""
-Power BI Report Page Standardizer
-
-This script updates the 'activePageName' property in Power BI report pages.json files
-to ensure it always points to the first page in the 'pageOrder' array.
-
-Purpose:
-    Standardizes the default visible page when opening Power BI reports to always be
-    the first page in the defined page order. This ensures consistency across reports
-    and prevents users from landing on an arbitrary page when opening a report.
-
-Usage:
-    Run directly with no arguments to process all pages.json files in the PowerBI project:
-    $ python update_active_page.py
-"""
+"""PowerBI commands for the chef CLI."""
 
 import json
 from pathlib import Path
 from typing import Any
 
+import click
+
+
+def is_powerbi_directory() -> bool:
+    """Check if the current directory is the PowerBI directory."""
+    return Path.cwd().name.lower() == "powerbi"
+
 
 def get_report_display_name(file_path: str) -> str:
-    """
-    Get the display name of the report from the .platform file.
-
-    Args:
-        file_path: Path to the pages.json file
-
-    Returns:
-        str: Display name of the report, or fallback name if not found
-    """
+    """Get the display name of the report from the .platform file."""
     # Determine the .platform file path from the pages.json path
     report_dir = str(Path(file_path).parent.parent.parent)
     platform_file = Path(report_dir) / ".platform"
@@ -43,18 +28,7 @@ def get_report_display_name(file_path: str) -> str:
 
 
 def update_active_pages() -> tuple[int, list[str], list[str]]:
-    """
-    Updates the activePageName in all pages.json files to match the first value in pageOrder.
-
-    This function:
-    1. Finds all pages.json files in the PowerBI directory
-    2. For each file, reads the current configuration
-    3. Sets activePageName to the first page in the pageOrder array
-    4. Saves the file with the updated configuration
-
-    Returns:
-        tuple[int, list[str], list[str]]: Number of updated files, updated reports, skipped reports
-    """
+    """Update the activePageName in all pages.json files to match the first value in pageOrder."""
     # Find all pages.json files in the current directory (PowerBI directory)
     pages_files: list[str] = [str(path) for path in Path.cwd().rglob("pages.json")]
 
@@ -109,3 +83,38 @@ def update_active_pages() -> tuple[int, list[str], list[str]]:
             skipped_reports.append(f"{report_name} (processing error)")
 
     return updated_count, updated_reports, skipped_reports
+
+
+def register_powerbi_commands(cli_group: click.Group) -> None:
+    """Register PowerBI commands with the CLI group."""
+
+    @cli_group.group()
+    def powerbi() -> None:
+        """CLI tool for local PowerBI development."""
+
+    @powerbi.command()
+    def fix_opening_page() -> None:
+        """Update activePageName in all pages.json files to the first page in pageOrder."""
+        if not is_powerbi_directory():
+            raise click.ClickException(
+                "❌ This command must be run from the powerbi project directory. "
+                "Please navigate to the powerbi project directory and try again."
+            )
+
+        updated_count, updated_reports, skipped_reports = update_active_pages()
+
+        # Display results
+        click.echo("\n🔍 PowerBI Opening Page Update 🔍")
+        click.echo("=" * 40)
+
+        if updated_reports:
+            click.echo(f"\n✅ {updated_count} reports updated:")
+            for report in updated_reports:
+                click.echo(f"  • {report}")
+
+        if skipped_reports:
+            click.echo(f"\n⏩ {len(skipped_reports)} reports already correct:")
+            for report in skipped_reports:
+                click.echo(f"  • {report}")
+
+        click.echo(f"\n🎉 Summary: {updated_count} reports updated, {len(skipped_reports)} unchanged")
