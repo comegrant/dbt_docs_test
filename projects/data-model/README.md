@@ -181,8 +181,41 @@ The output from running `dbt debug` should look something like this if the setup
 07:22:11  All checks passed!
 ```
 
+### 3.3 Set up Databricks CLI
+#### 3.3.1 Set up a local Databricks Configuration
+To be able to deploy jobs locally, you need to set up a local databricks profile configuration. The connection details are stored in a YAML file at the following path on your computer: `[USERPATH]/.databrickscfg`. 
+Please follow the instructions below to set up the profile:
+1. Navigate to your user profile folder on your computer
+2. View hidden folders: 
+    * Mac: `cmd+shift+dot`
+    * Windows: Right click and press "show hidden"
+3. Create a file called `.databrickscfg`
+4. Open the file in your code editor
+5. Add the script below and modify the file:
+
+```yml
+[DEFAULT]
+host      = https://adb-4291784437205825.5.azuredatabricks.net
+token     = dapiXXXXXXXXXXXXXXXXXXXXXXX #Need to be configured by you
+
+[SP-dev]
+host          = https://adb-4291784437205825.5.azuredatabricks.net/
+client_id     = afa25b66-d0ac-476c-a8e1-6db8ca327030
+client_secret = doseXXXXXXXXXXXXXXXXXXXXXXX #Can be found in key vault
+```
+Replace the values in the following fields:
+- `token = dapiXXXXXXXXXXXXXXXXXXXXXXX`: Follow [these instructions](https://docs.databricks.com/en/dev-tools/auth/pat.html#databricks-personal-access-tokens-for-workspace-users) to generate a personal access token. Or use the one you created when setting up dbt. 
+- `client_secret = doseXXXXXXXXXXXXXXXXXXXXXXX`: Find the secret in [key vault](https://portal.azure.com/#@godtlevertno.onmicrosoft.com/resource/subscriptions/5a07602a-a1a5-43ee-9770-2cf18d1fdaf1/resourceGroups/rg-chefdp-common/providers/Microsoft.KeyVault/vaults/kv-chefdp-common/secrets), under the secret name `databricks-sp-bundle-secret-dev`
+
+#### 3.3.2 Test with bundle validate
+
+1. Open sous-chef in your code editor (i.e., Visual Studio Code)
+2. Enter the data-model project folder: `cd projects/data-model`
+3. Run `databricks bundle validate` in the terminal and verify that the bundle is successfully validated.
+
 ## 📚 4. More documentation
 
 - [Ingestion Guide](docs/01_INGESTION.md) - Data ingestion patterns and processes
 - [Transformation Guide](docs/02_TRANSFORMATION.md) - dbt models and transformation logic
+- [Orchestration Guide](docs/03_ORCHESTRATION.md) - Databricks Jobs and Databricks Asset Bundles
 
