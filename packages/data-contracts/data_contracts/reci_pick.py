@@ -59,25 +59,44 @@ recommendations as (
     from mloutputs.reci_pick_recommendations
 ),
 
-no_consents as (
+fact_billing_agreement_consents as (
     select
-        gold.dim_billing_agreements.billing_agreement_id,
+        billing_agreement_id,
         is_accepted_consent,
-        consent_category_id,
-        consent_category_name,
-        consent_name,
-        dim_consent_types.consent_id
-    from gold.dim_billing_agreements
-    left join
-        gold.fact_billing_agreement_consents
-    on dim_billing_agreements.pk_dim_billing_agreements = fact_billing_agreement_consents.fk_dim_billing_agreements
-    left join
-        gold.dim_consent_types
-    on fact_billing_agreement_consents.fk_dim_consent_types = dim_consent_types.pk_dim_consent_types
-    where dim_consent_types.consent_id = 'F4212F1B-1B20-46E8-8C1B-4CAFBDD091BD' --data processing
-    and is_accepted_consent = false
+        fk_dim_consent_types,
+        valid_from
+    from gold.fact_billing_agreement_consents
 ),
 
+consent_types as (
+    select
+        pk_dim_consent_types,
+        consent_category_id
+    from gold.dim_consent_types
+),
+
+data_processing_consents as (
+    select
+        fact_billing_agreement_consents.*
+    from fact_billing_agreement_consents
+    left join consent_types
+        on fact_billing_agreement_consents.fk_dim_consent_types = consent_types.pk_dim_consent_types
+    where consent_types.consent_category_id = '3495C28B-703C-44AA-B6E0-E01D46684261' -- data processing
+),
+
+consents_with_row_number as (
+    select
+        *,
+        row_number() over(partition by billing_agreement_id order by valid_from desc) as consent_row_number
+    from data_processing_consents
+),
+
+latest_consent as (
+    select
+        *
+    from consents_with_row_number
+    where consent_row_number = 1
+),
 
 latest_recommendations as (
     select
@@ -88,9 +107,9 @@ latest_recommendations as (
         and recommendations.menu_week = latest_run.menu_week
         and recommendations.run_id = latest_run.run_id
         and recommendations.company_id = latest_run.company_id
-    where recommendations.billing_agreement_id not in (
-        select distinct billing_agreement_id from no_consents
-    )
+    left join latest_consent
+        on latest_consent.billing_agreement_id = recommendations.billing_agreement_id
+    where latest_consent.is_accepted_consent = true
 )
 
 select
