@@ -8,8 +8,7 @@ from coredb_connector import load_coredb_full
 
 database = "PARTNERSHIP"
 tables = [
-        "billing_agreement_partnership"
-        , "billing_agreement_partnership_loyalty_points"
+        "billing_agreement_partnership_loyalty_points"
         , "company_partnership"
         , "company_partnership_rule"
         , "partnership"

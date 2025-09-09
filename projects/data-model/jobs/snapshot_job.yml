@@ -37,7 +37,7 @@ resources:
             catalog: ${bundle.target}
             commands:
               - 'dbt deps'
-              - 'dbt snapshot'
+              - 'dbt snapshot --exclude scd_partnership__billing_agreement_partnerships'
           environment_key: dbt-default
           depends_on: [
             {task_key: bronze_coredb_snapshot_full}

@@ -25,3 +25,12 @@ snapshots:
       check_cols: ['partnership_rule_ids_list']
       dbt_valid_to_current: null
       invalidate_hard_deletes: True
+
+  - name: scd_partnership__billing_agreement_partnerships
+    description: Snapshot is_active status on billing_agreement_ids with a relationship to a partnership. The is_active field determines whether the agreement qualifies for partnership points.
+    config:
+      unique_key: id
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: null
+      invalidate_hard_deletes: True
