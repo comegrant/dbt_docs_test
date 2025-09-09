@@ -23,10 +23,10 @@ table_dictionary = {
         "OPERATIONS":[
                "geofence",
                "geofence_postalcodes"
+        ],
+        "PARTNERSHIP":[
+                "billing_agreement_partnership"
         ]
-        # "PARTNERSHIP":[
-        #         "billing_agreement_partnership"
-        # ]
 }
 
 for database, tables in table_dictionary.items():
