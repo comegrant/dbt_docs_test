@@ -557,7 +557,10 @@ chef --help
 
 _It should return a list of commands that you can use._
 
-### 9. Setting up a project specific environment
+### 9. Install Databricks CLI
+[See instructions here](https://docs.databricks.com/aws/en/dev-tools/cli/install)
+
+### 10. Setting up a project specific environment
 We use pyenv to manage different Python versions, and Poetry to create virtualenvs with the correct dependencies for each project.
 
 Let's test creating a new Python environment for a project.
@@ -625,7 +628,7 @@ Should output something like:
 
 </details>
 
-### 10. Connecting to Databricks locally (NOT COMPLETE YET)
+### 11. Connecting to Databricks locally (NOT COMPLETE YET)
 If you want to run local code in Databricks, you need to first connect to Databricks using the Databricks extension in your code editor.
 
 1. Click on the Databricks logo in the left-hand side of your code editor.
