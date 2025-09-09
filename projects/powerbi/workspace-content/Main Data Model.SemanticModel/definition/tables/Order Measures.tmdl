@@ -424,7 +424,7 @@ table 'Order Measures'
 			        )
 			)
 		formatString: #,0
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
 
 	/// Number of dishes which the customer replaced a preselector dish with
@@ -439,7 +439,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 0a4fb450-86c8-4c98-9071-470e3602a74a
 
 	/// Number of dishes that have been ordered by the customers
@@ -497,7 +497,7 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 7919afdd-0322-4085-9960-441805140e39
 
 	/// Number of dishes removed.
@@ -538,7 +538,7 @@ table 'Order Measures'
 				   )
 			)
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: cb37e06d-5904-49ec-a217-63c87693121e
 
 	/// Share of dishes in order which the customer replaced with other dishes
@@ -550,11 +550,12 @@ table 'Order Measures'
 				BLANK()
 				)
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 729d9abc-e5b6-4544-9d9b-a18928e0fea4
 
 	/// Number of dishes initially presented to customer
 	measure 'Number of Preselected Dishes' = ```
+
 			CALCULATE(
 				SUM('Order Measures'[dish_quantity_subscription]),
 				'Order Measures'[is_preselected_dish] = TRUE(),
@@ -594,7 +595,7 @@ table 'Order Measures'
 			```
 		formatString: #,0
 		isHidden
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: a3d84168-264b-4b04-a9d4-7d0a907ff9c4
 
 	/// Number of orders where the customer replaced one or more dishes with another dish
@@ -610,7 +611,7 @@ table 'Order Measures'
 			)
 			```
 		formatString: #,0
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 9ec0b504-6ea1-434c-b20f-ab0bbda0e514
 
 	/// Number of ordered dishes in orders where the customer replaced one or more dishes with another dish
@@ -626,7 +627,7 @@ table 'Order Measures'
 			)
 			```
 		formatString: #,0
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 
 	/// Share of orders where the customer replaced one or more dishes with another dish
 	measure 'Share of Orders with Swaps' = ```
@@ -638,7 +639,7 @@ table 'Order Measures'
 			)
 			```
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 77799e35-5f8a-4e3d-a9de-01da07f747f5
 
 	/// Number of customers that was not presented with any preselector output
@@ -653,7 +654,7 @@ table 'Order Measures'
 			```
 		formatString: #,0
 		isHidden
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 
 	/// Calculated as [Number of Swapped Dishes]/[Number of Orders]
 	measure 'Average Number of Swaps per Order' = ```
@@ -664,7 +665,7 @@ table 'Order Measures'
 			        BLANK()
 			    )
 			```
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 7a742dc2-ed19-4712-92c9-da29eefc46f2
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -679,7 +680,7 @@ table 'Order Measures'
 			        BLANK()
 			    )
 			```
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -693,7 +694,7 @@ table 'Order Measures'
 			        BLANK()
 			    )
 			```
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		formatString: 0.00%;-0.00%;0.00%
 
 	/// Number of orders where the customer increased the number of portions
@@ -708,7 +709,7 @@ table 'Order Measures'
 			    )
 			)
 		formatString: #,0
-		displayFolder: Portion Adjustments
+		displayFolder: Mealbox Adjustments\Portions
 		lineageTag: 5e7e9802-6556-4d43-b74b-0701d3278f0a
 
 	/// Number of orders where the customer decreased the number of portions
@@ -723,7 +724,7 @@ table 'Order Measures'
 			    )
 			)
 		formatString: #,0
-		displayFolder: Portion Adjustments
+		displayFolder: Mealbox Adjustments\Portions
 		lineageTag: 38061b22-a5c0-44bd-a0ba-095086ce5d51
 
 	/// Number of orders where the customer changed (increased/decreased) the number of portions
@@ -738,7 +739,7 @@ table 'Order Measures'
 			    )
 			)
 		formatString: #,0
-		displayFolder: Portion Adjustments
+		displayFolder: Mealbox Adjustments\Portions
 		lineageTag: 85934d19-b088-47ba-8245-938d92c6aced
 
 	/// Number of orders where the customer increased the number of meals/days
@@ -752,7 +753,7 @@ table 'Order Measures'
 			        )
 			)
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: e552ea0e-69a2-414e-9bd0-219e0b09dc5c
 
 	/// Number of orders where the customer decreased the number of meals/days
@@ -767,7 +768,7 @@ table 'Order Measures'
 			        )
 			)
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 9491093b-37d6-4667-829a-9b23c9acc654
 
 	/// Number of orders where the customer adjusted (increased/decreased) the number of meals/days
@@ -782,15 +783,40 @@ table 'Order Measures'
 			        )
 			)
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: d8c66ffe-9918-408e-a136-7dfb405fb633
+
+	/// The percentage of all orders that as a meal adjustment
+	measure 'Share of Orders with Adjusted Meals' = DIVIDE([Number of Orders with Adjusted Meals], [Number of Orders])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Meals
+
+	/// The percentage of all orders that has a meal increase
+	measure 'Share of Orders with Increased Meals' = DIVIDE([Number of Orders with Increased Meals], [Number of Orders])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Meals
+
+	/// The percentage of all orders that has a meal decrease
+	measure 'Share of Orders with Decreased Meals' = DIVIDE([Number of Orders with Decreased Meals], [Number of Orders])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Meals
+
+	/// The share of all ordered dishes that was added
+	measure 'Share of Added Dishes' = DIVIDE([Number of Added Dishes], [Number of Ordered Dishes])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Meals
+
+	/// The share of all preselected dishes that was removed
+	measure 'Share of Removed Dishes' = DIVIDE([Number of Removed Dishes], [Number of Preselected Dishes])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Meals
 
 	/// Size of dish adjustment
 	/// Shows the "net" dish adjustment, meaning the total adjustment made after adding/removing dishes
 	/// Example: A customer removes 3 dishes and adds 2 new dishes. The adjustment size is = -1
 	measure 'Difference Added vs Removed Dishes' = [Number of Added Dishes] - [Number of Removed Dishes]
 		formatString: #,0
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 1bc0e052-4f0d-4564-8dcc-cefb9ba5604c
 
 	/// Middle step calculation used to find the difference between orderes meals and subscribed meals
@@ -818,7 +844,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 15fc3c41-f4e7-455c-8502-cfb16f3a92db
 
 	/// Middle step calculation used to find swapped dishes
@@ -830,7 +856,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 72548e83-a743-498b-90e6-d199251b894f
 
 	/// Middle step calculation used to find swapped dishes
@@ -842,7 +868,7 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Meal Adjustments
+		displayFolder: Mealbox Adjustments\Meals
 		lineageTag: 721b6dae-e435-404d-b057-75831058d524
 
 	/// Difference between ordered portions and subscribed portions
@@ -863,8 +889,18 @@ table 'Order Measures'
 			)
 		formatString: #,0
 		isHidden
-		displayFolder: Portion Adjustments
+		displayFolder: Mealbox Adjustments\Portions
 		lineageTag: acb06567-e631-49f7-9d41-40399ca3d51f
+
+	/// The percentage of all orders that has a portion increase
+	measure 'Share of Orders with Increased Portions' = DIVIDE([Number of Orders with Increased Portions], [Number of Orders])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Portions
+
+	/// The percentage of all orders that has portion decrease
+	measure 'Share of Orders with Decreased Portions' = DIVIDE([Number of Orders with Decreased Portions], [Number of Orders])
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Portions
 
 	/// Average number of orders per account and week. 
 	/// Use it together with the Customer Journey Segments to see the average number of orders per account in each segment.
@@ -1072,7 +1108,7 @@ table 'Order Measures'
 			    )
 			)
 		formatString: #,0
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 78a09f39-38ac-4d50-ad7e-8393bbe61796
 
 	/// Order frequency for swapping customers, i.e. average number of orders per unique swapping customer.
@@ -1085,7 +1121,7 @@ table 'Order Measures'
 			    BLANK()
 			)
 		formatString: #,0.00
-		displayFolder: Swapped Dishes
+		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: bcb63a66-3729-4565-a7e4-3d43cc9e43ee
 
 	/// Sales in the same period of the previous year
