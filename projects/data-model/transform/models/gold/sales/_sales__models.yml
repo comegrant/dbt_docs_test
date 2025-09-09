@@ -2985,6 +2985,12 @@ models:
         data_tests:
           - not_null
 
+      - name: company_id
+        description: "{{ doc('column__company_id') }}"
+        data_type: string
+        data_tests:
+          - not_null
+
     versions:
       - v: 1
 
