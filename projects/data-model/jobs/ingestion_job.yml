@@ -10,7 +10,7 @@ resources:
         managed_by: "manually"
         user: "dbt developers"
 
-      timeout_seconds: 3600 #Timeout after 1 hour
+      timeout_seconds: 5400 #Timeout after 90 minutes
       edit_mode: EDITABLE
 
       environments:

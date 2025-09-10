@@ -18,7 +18,7 @@ resources:
         - group_name: data-analysts
           level: CAN_VIEW
 
-      timeout_seconds: 12000 #Timeout after 100 mins
+      timeout_seconds: 12000 #Timeout after 3hours 20mins
       edit_mode: EDITABLE
 
       schedule:
