@@ -71,7 +71,7 @@ All tables and columns are documented in Databricks and visible in the catalog o
 - `dbt docs serve`
 
 Ensure that your virtual environment is activated, and that you are inside the transform folder before generating the docs:
-- `poetry shell` or `poetry source .venv/bin/activate` (if using poetry>=2.0.0) 
+- `poetry shell` or `source .venv/bin/activate` (if using poetry>=2.0.0) 
 - `cd transform`
 
 ## 📝 4. Code Guidelines
