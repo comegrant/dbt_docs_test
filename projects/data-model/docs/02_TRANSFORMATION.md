@@ -263,7 +263,9 @@ Gold models should have a good description, version, contracts set to true, cons
 ### 6.4 docs.md
 Each subdirectory of the layers has a `docs.md` file. This is used to store column documentation in [doc blocks](https://docs.getdbt.com/docs/build/documentation#using-docs-blocks). The purpose of this is to be able to reuse column documentation across models.
 
-For columns that exist across tables, they should be placed under the heading of the main source. For example, the description of `product_variation_id` should be placed under the heading "Product Variations" and not the heading "Menu Variations". If there is no natural main source, `common.md` can be used and a suitable heading should be created.
+For columns that exist across tables, they should be placed under the heading of the main source. For example, the description of `product_variation_id` should be placed under the heading "Product Variations" and not the heading "Menu Variations". If there is no natural main source, `__common_docs.md` can be used and a suitable heading should be created.
+
+Columns that gets create in intermediate or the gold layer should be documented in the docs.md-files of the gold models. Likewise with columns created in the mlgold or diamond layer.
 
 **Example:**
 ```
@@ -306,10 +308,10 @@ This section explains which transformations that are appropriate in each layer.
 **Purpose:** Clean and standardize raw data
 
 **Transformations:**
-- ✅ Renaming
-- ✅ Type casting
-- ✅ Basic computations (e.g., cents to dollars, add VAT, etc.)
-- ✅ Consistent casing of strings. Use initcap(), upper() or lower() to ensure consistent casing of strings where it makes sense
+- ✅ Renaming, remember the [🏷️ Naming Conventions](#53-columns).
+- ✅ Type casting.
+- ✅ Basic computations (e.g., cents to dollars, add VAT, etc.).
+- ✅ Consistent casing of strings. Use initcap(), upper() or lower() to ensure consistent casing of strings where it makes sense.
 - ✅ Remove columns that are not relevant. We do not want to include columns from the source that will never be in use.
 
 **Avoid:**
@@ -399,7 +401,7 @@ It's recommended to use the command whenever starting on a new feature branch.
 When developing, you can auto-generate code leveraging our custom CLI commands.
 
 #### Create code for silver tables
-When creating silver tables, we have a command which allows you to get a head start on adding the model.
+When creating silver tables, we have a command which allows you to get a head start on adding the model. The models.sql-file will be created when running this script. There are no code generation command for models in other layers as there is no standard setup for these models.
 
 ```
 chef dbt generate-silver-model \
@@ -414,8 +416,8 @@ After this, you need to:
 - Remove columns that are not relevant
 - Perform other cleaning and/or transformation steps
 
-#### Create docs
-There is a command which helps you generate docs blocks. Before this can be used, you need to add the model (only model, and not columns) to the model.yml-file. Note that the models must have been [built successfully](#build-and-run-models) for this command to work.
+#### Create docs for silver models
+There is a command which helps you generate docs blocks. Before this can be used, you need to add the model (only model, and not columns) to the model.yml-file. Note that the models must have been [built successfully](#build-and-run-models) for this command to work. This is mainly useful for silver models as models in other layers often have most of their columns already documented in the silver layer documentation. New column that are added in other layers should be added to the column documentation of the gold/mlgold/diamond layer.
 
 ```
 chef dbt generate-docs --model-name <model_name> # name of the silver model
@@ -429,17 +431,17 @@ This will provide you with an output in the terminal of all the columns in the s
 >[!NOTE]
 >The documentation will be visible in the catalog in Databricks. You can also view the documentation by running `dbt docs generate` followed by `dbt docs serve` in the terminal. Note that for this to be possible, the next step must be done first.
 
-#### Create column schema
-After the docs have been generated, this command can be used to generate the column schema for the models.yml file:
+#### Create column schema for all models
+After the docs have been generated, this command below be used to generate the column schema for the models.yml file. This command can be used for models across all layers. Note that the models must have been [built successfully](#build-and-run-models) for this command to work.
 
 ```
-chef dbt generate-yaml --model-name <model_name> # name of the silver model
+chef dbt generate-yaml --model-name <model_name> # name of the model
 ```
 
 1. Copy the output and add it to the relevant `__models.yml` file.
 2. Double check data types
 3. Remove the generated data tests that are not relevant for the columns
-4. Add more data tests if needed
+4. Add more [data tests](https://docs.getdbt.com/docs/build/data-tests) if needed
 
 ### 8.4 Build and run models
 When you have created or made changes to a model, you need to test that it works by running it. After the model is run, you can find the table in your development schema in the Databricks Catalog.
