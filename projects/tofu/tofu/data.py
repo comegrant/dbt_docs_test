@@ -1,11 +1,16 @@
 import logging
+import os
 from typing import Optional
 
 import pandas as pd
 import streamlit as st
+from azure.storage.blob import BlobServiceClient
 from catalog_connector import connection
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 
 def get_order_history(company_id: str) -> pd.DataFrame:
@@ -106,3 +111,17 @@ def append_pandas_df_to_catalog(
 ) -> None:
     spark_df = connection.spark().createDataFrame(df)
     connection.table(f"{schema}.{table_name}").append(spark_df)
+
+
+def upload_df_as_csv_to_blob(
+    df: pd.DataFrame,
+    container_name: str = "data-science",
+    blob_path: str = "forecasting_pipelines/manual_forecast/test",
+    blob_name: str = "data.csv",
+) -> None:
+    account_key = os.environ["DATALAKE_STORAGE_ACCOUNT_KEY"]
+    account_url = os.environ["DATALAKE_STORAGE_ACCOUNT_URL"]
+    blob_service_client = BlobServiceClient(account_url=f"{account_url}", credential=account_key)
+    container_client = blob_service_client.get_container_client(container=f"{container_name}/{blob_path}")
+    blob_client = container_client.get_blob_client(blob_name)
+    blob_client.upload_blob(df.to_csv(index=False), overwrite=True)

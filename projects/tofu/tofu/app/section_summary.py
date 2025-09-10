@@ -10,7 +10,6 @@ import streamlit as st
 from constants.companies import Company
 from tofu.analysis.postprocessing import (
     calculate_forecast_adjustments,
-    calculate_forecasts,
     prepare_forecast_orders_data,
     prepare_job_run_data,
     prepare_run_metadata,
@@ -21,20 +20,15 @@ from tofu.paths import TEST_DATA_DIR
 
 
 def section_summary(
-    df_future_mapped: pd.DataFrame,
-    df_future_mapped_with_flex: pd.DataFrame,
+    df_forecasts: pd.DataFrame,
     df_latest_forecasts: pd.DataFrame,
     company: Company,
     forecast_job_run_id: str,
     forecast_start_year: int,
     forecast_start_week: int,
     num_weeks: int,
-) -> None:
-    st.header("🏁  Final step: save forecasts!")
-    df_forecasts = calculate_forecasts(
-        df_future_mapped=df_future_mapped,
-        df_future_mapped_with_flex=df_future_mapped_with_flex,
-    )
+) -> pd.DataFrame:
+    st.header("🏁  Final step: save forecasts to NDP!")
     created_at = datetime.now(pytz.utc)
     st.write(f"Dataframes to be savedfor NDP, creation timestamp = {created_at}")
     df_job_run_metadata = prepare_run_metadata(
@@ -105,6 +99,7 @@ def section_summary(
     st.code(message)
 
     st.divider()
+    return df_forecasts
 
 
 def make_slack_message(df_forecast_adjustments: pd.DataFrame, company: Company, num_weeks: int) -> str:

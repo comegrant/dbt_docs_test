@@ -2,12 +2,14 @@ import asyncio
 
 import streamlit as st
 
+from tofu.analysis.postprocessing import calculate_forecasts
 from tofu.app.section_appendix import section_appendix
 from tofu.app.section_download_data import section_download_data
 from tofu.app.section_flex_share_analysis import section_flex_share_analysis
 from tofu.app.section_order_history_analysis import section_order_history_analysis
 from tofu.app.section_params import section_set_params
 from tofu.app.section_summary import section_summary
+from tofu.app.section_upload_datalake import section_upload_datalake
 
 st.set_page_config(
     layout="wide",
@@ -46,9 +48,22 @@ async def main() -> None:
         num_weeks=num_weeks,
         company=company,
     )
-    section_summary(
+
+    df_forecasts = calculate_forecasts(
         df_future_mapped=df_future,
         df_future_mapped_with_flex=df_future_mapped_with_flex,
+    )
+
+    section_upload_datalake(
+        df_forecast=df_forecasts,
+        forecast_job_run_id=forecast_job_run_id,
+        forecast_horizon=num_weeks,
+        company=company,
+    )
+    st.divider()
+
+    df_forecasts = section_summary(
+        df_forecasts=df_forecasts,
         company=company,
         forecast_job_run_id=forecast_job_run_id,
         forecast_start_year=forecast_start_year,
@@ -56,7 +71,6 @@ async def main() -> None:
         df_latest_forecasts=df_latest_forecasts,
         num_weeks=num_weeks,
     )
-
     section_appendix(
         df_future_mapped_with_flex=df_future_mapped_with_flex,
         df_known_mapped_with_flex=df_known_mapped_with_flex,
