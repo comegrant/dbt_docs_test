@@ -21,6 +21,7 @@ from aligned.feature_view.feature_view import FeatureViewWrapper
 from aligned.retrieval_job import RetrievalJob
 from aligned.schemas.feature_view import RetrievalRequest
 from aligned.sources.in_mem_source import InMemorySource
+from aligned.sources.local import DeltaConfig
 from project_owners.owner import Owner
 
 from data_contracts.sources import adb, adb_ml, materialized_data, ml_gold, pim_core
@@ -122,7 +123,7 @@ def join_root_ingredient_category(df: pl.LazyFrame) -> pl.LazyFrame:
 
     all_categories = (
         df.collect()
-        .with_columns(pl.col(parent_cat_col).cast(pl.Int64))
+        .with_columns(pl.col(parent_cat_col).cast(pl.Int32))
         .with_columns(
             pl.when(pl.col(cat_desc).is_null() | (pl.col(cat_desc) != target_group))
             .then(pl.col(parent_cat_col))
@@ -609,7 +610,8 @@ def compute_recipe_features(store: ContractStore | None = None) -> RetrievalJob:
 
     return (
         query(RecipeFeatures)
-        .all()
+        # It is starting to take some time to compute, so only fetch "new" data
+        .filter(RecipeFeatures().year >= 2025)  # noqa
         .transform_polars(lambda df: df.filter(pl.col("is_addon_kit").not_()))
         .join(nutrition, method="inner", left_on="recipe_id", right_on="recipe_id")
         .with_request(nutrition.retrieval_requests)  # Hack to get around a join bug
@@ -687,8 +689,8 @@ async def compute_normalized_features(
             RecipeCost.location,
         },
     ).with_loaded_at(),
-    materialized_source=materialized_data.partitioned_parquet_at(
-        "normalized_recipe_features_per_company", partition_keys=["company_id", "year"]
+    materialized_source=materialized_data.delta_at(
+        "normalized_recipe_features", config=DeltaConfig(partition_by=["company_id", "year"])
     ),
     acceptable_freshness=timedelta(hours=12),
 )
@@ -944,23 +946,21 @@ async def join_recipe_and_allergies(request: RetrievalRequest, store: ContractSt
         else:
             return view_wrapper.query()
 
-    allergy_preferences = (
-        await query(IngredientAllergiesPreferences)
-        .filter(
-            pl.col("preference_id").is_not_null()
-            & (
-                pl.col("has_trace_of") == False  # noqa: E712
-            )
-        )
-        .to_polars()
+    allergy_schema = IngredientAllergiesPreferences()
+    ingredient_schema = AllRecipeIngredients()
+
+    filter_exp = allergy_schema.preference_id.is_not_null() & (
+        allergy_schema.has_trace_of == False  # noqa: E712
     )
+
+    allergy_preferences = await query(IngredientAllergiesPreferences).filter(filter_exp).to_polars()
 
     recipes_with_allergies = (
         await query(AllRecipeIngredients)
-        .filter(pl.col("ingredient_id").is_in(allergy_preferences["ingredient_id"]))
+        .filter(ingredient_schema.ingredient_id.is_in(allergy_preferences["ingredient_id"].to_list()))
         .derive_features()
         .to_lazy_polars()
-    ).filter(pl.col("is_house_hold_ingredient").not_())
+    ).filter(pl.col(ingredient_schema.is_house_hold_ingredient.name).not_())
 
     recipe_with_preferences = (
         recipes_with_allergies.join(allergy_preferences.lazy(), on="ingredient_id")

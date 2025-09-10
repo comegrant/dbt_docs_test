@@ -10,6 +10,7 @@ from aligned import (
     Float,
     Float64,
     Int32,
+    Int64,
     String,
     feature_view,
 )
@@ -109,7 +110,7 @@ injected_features = InjectedFeatures()
 
 @feature_view(name="basket_features", source=RandomDataSource())
 class BasketFeatures:
-    basket_id = Int32().as_entity()
+    basket_id = Int64().as_entity()
 
     mean_fat = fat_agg.mean().cast(Float64())
     mean_protein = protein_agg.mean().cast(Float64())
@@ -235,11 +236,10 @@ async def historical_customer_mealkit_features(
 
     year_week_number = [year * 100 + week for year, week in year_weeks]
 
+    hist_schema = HistoricalRecipeOrders()
     df = (
         await history.select_columns(["agreement_id", "recipe_id", "portion_size", "year", "week", "company_id"])
-        .filter(
-            (pl.col("year") * 100 + pl.col("week")).is_in(year_week_number),
-        )
+        .filter((hist_schema.year * 100 + hist_schema.week).is_in(year_week_number))
         .to_polars()
     )
 
@@ -252,17 +252,17 @@ async def historical_customer_mealkit_features(
         [pl.lit(1).alias(feat) for feat in needed_dummy_features if feat not in features.columns]
     )
 
-    basket_features = (
-        await BasketFeatures.process_input(
-            features.with_columns(
-                year_week=pl.col("agreement_id") * 1_000_000 + pl.col("year") * 100 + pl.col("week")
-            ).rename(
-                {
-                    "year_week": "basket_id",
-                }
-            )
-        ).to_polars()
-    ).with_columns(
+    basket_features = await BasketFeatures.process_input(
+        features.with_columns(
+            year_week=pl.col("agreement_id").cast(pl.Int64) * 1_000_000 + pl.col("year") * 100 + pl.col("week")
+        ).rename(
+            {
+                "year_week": "basket_id",
+            }
+        )
+    ).to_polars()
+
+    basket_features = basket_features.with_columns(
         agreement_id=(pl.col("basket_id") / 1_000_000).floor().cast(pl.UInt64),
         year=((pl.col("basket_id") % 1_000_000) / 100).floor().cast(pl.UInt64),
         week=(pl.col("basket_id") % 100),

@@ -1,8 +1,7 @@
-from aligned import PostgreSQLConfig, RedisConfig
+from aligned import AzureBlobConfig, PostgreSQLConfig, RedisConfig
 from aligned.config_value import ConcatValue, ConfigValue, LiteralValue
 from aligned.sources.databricks import DatabricksConnectionConfig, EnvironmentValue
 
-from data_contracts.azure import AzureBlobConfig
 from data_contracts.sql_server import SqlServerConfig
 
 azure_dl_creds = AzureBlobConfig(  # type: ignore
