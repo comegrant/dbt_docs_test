@@ -1,0 +1,30 @@
+/// This parameter can be used to divide the customers into groups based on the number of swapped dishes.
+/// By changing it you will modify which customers are included in the following measures:
+/// - Number of Customers with X Swapped Dishes
+/// - Share of Swapping Customers with X Swapped Dishes
+table '(Param) Number of Swapped Dishes'
+
+	measure 'Number of Swapped Dishes Value' =
+            SELECTEDVALUE(
+                '(Param) Number of Swapped Dishes'[Number of Swapped Dishes],
+                BLANK()
+            )
+        isHidden
+        formatString: 0
+
+    /// This parameter can be used to divide the customers into groups based on the number of swapped dishes.
+    /// By changing it you will modify which customers are included in the following measures:
+    /// - Number of Customers with X Swapped Dishes
+    /// - Share of Swapping Customers with X Swapped Dishes
+    column 'Number of Swapped Dishes'
+        formatString: 0
+        summarizeBy: none
+        sourceColumn: [Value]
+
+        extendedProperty ParameterMetadata = {"version":0}
+
+        annotation SummarizationSetBy = User
+
+    partition 'Number of Swapped Dishes' = calculated
+        mode: import
+        source = GENERATESERIES(0, 50, 1)

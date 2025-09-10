@@ -427,6 +427,28 @@ table 'Order Measures'
 		displayFolder: Mealbox Adjustments\Swaps
 		lineageTag: 123f1862-185e-49e7-9891-ad2bdd843d29
 
+	/// Number of customers with X Swapped Dishes, where X is defined by the parameter "(Param) Number of Swapped Dishes"
+	measure 'Number of Customers with X Swapped Dishes' =
+			CALCULATE(
+				[Number of Customers], 
+				FILTER(
+					'Customer and Subscriber Details',
+					[Number of Swapped Dishes] = '(Param) Number of Swapped Dishes'[Number of Swapped Dishes Value]
+				)
+			)
+		formatString: #,0
+		displayFolder: Mealbox Adjustments\Swaps
+
+	/// Share of customers with X Swapped Dishes, where X is defined by the parameter "(Param) Number of Swapped Dishes"
+	/// Calculated as [Number of Customers with X Swapped Dishes] / [Number of Swapping Customers]
+	measure 'Share of Swapping Customers with X Swapped Dishes' =
+			DIVIDE(
+				[Number of Customers with X Swapped Dishes],
+				[Number of Swapping Customers]
+			)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Mealbox Adjustments\Swaps
+
 	/// Number of dishes which the customer replaced a preselector dish with
 	/// NOTE: This measure can only be used on a mealbox level, not in dish level.
 	/// If you're interested in information on dishes (such as number of dishes removed with ingredient X),
