@@ -125,6 +125,20 @@ jobs:
         run: |
           poetry run sed -i "s/schema: prdev/schema: ~PR${{ env.PR_NUMBER }}/" ./transform/profiles/profiles.yml
 
+      - name: Delete Gold Tables
+        run: |
+          set +e
+          poetry run dbt run-operation drop_tables_in_schema --args '{schema_name: ~pr${{ env.PR_NUMBER }}_gold, dry_run: false}' --project-dir ./transform --profiles-dir ./transform/profiles --target ${{ inputs.dbt-target }}
+          status=$?
+          if [ $status -ne 0 ]; then
+            echo "::warning file=drop-gold-tables::dbt drop tables command failed with status $status, continuing..."
+          fi
+          exit 0
+        env:
+          DATABRICKS_HOST: ${{ env.DATABRICKS_WORKSPACE_URL }}
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/${{ env.DATABRICKS_WAREHOUSE_DBT_ID }}
+          DATABRICKS_DBT_TOKEN: ${{ env.DATABRICKS_SP_BUNDLE_PAT }}
+      
       - name: Clone other gold models
         run: |
           set +e
