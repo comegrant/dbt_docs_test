@@ -11,6 +11,7 @@
 ///
 /// Dimensions supported:
 /// - Recipes
+/// - Ingredients
 /// - Taxonomies
 /// - Customer and Subscriber Details
 /// - Preferences
@@ -77,6 +78,42 @@ table 'Grand Total Calculations'
             	    )
             	)
             formatStringDefinition = "0.00%;-0.00%;0.00%"
+
+		calculationItem 'All Ingredients' =
+				CALCULATE(
+					SELECTEDMEASURE(),
+					REMOVEFILTERS(Ingredients)
+				)
+
+		calculationItem 'Other Ingredients' =
+				CALCULATE(
+					SELECTEDMEASURE(),
+					REMOVEFILTERS(Ingredients)
+				) -
+				SELECTEDMEASURE()
+
+		calculationItem '% Selected Ingredients' =
+				DIVIDE(
+					SELECTEDMEASURE(),
+					CALCULATE(
+						SELECTEDMEASURE(),
+						'Grand Total Calculations'[Grand Total Calculations] = "All Ingredients"
+					)
+				)
+			formatStringDefinition = "0.00%;-0.00%;0.00%"
+
+		calculationItem '% Other Ingredients' =
+				DIVIDE(
+					CALCULATE(
+						SELECTEDMEASURE(),
+						'Grand Total Calculations'[Grand Total Calculations] = "Other Ingredients"
+					),
+					CALCULATE(
+						SELECTEDMEASURE(),
+						'Grand Total Calculations'[Grand Total Calculations] = "All Ingredients"
+					)
+				)
+			formatStringDefinition = "0.00%;-0.00%;0.00%"
 
         calculationItem 'All Taxonomies' =
             	CALCULATE(
