@@ -17,6 +17,7 @@ billing_agreement_partnerships as (
 
     select 
         billing_agreement_partnerships.billing_agreement_id
+        , partnerships_rules_joined.company_partnership_id
         , partnerships_rules_joined.partnership_id
         , partnerships_rules_joined.company_id
         , partnerships_rules_joined.partnership_name
@@ -33,7 +34,8 @@ billing_agreement_partnerships as (
                 (x,y) -> case when x['rule'] < y['rule'] then -1 
                 when x['rule'] > y['rule'] then 1 else 0 end
             )
-        ) AS partnership_rules
+        ) as partnership_rules
+        , billing_agreement_partnerships.source_created_at
 
     from billing_agreement_partnerships
 

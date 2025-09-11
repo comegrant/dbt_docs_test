@@ -1049,6 +1049,7 @@ The primary key of the dim_customer_journey_segments. It is a hash of the column
 
 
 # Dim Partnerships
+
 {% docs column__pk_dim_partnerships %}
 
 The primary key of dim_partnerships. It is a hash of the columns company_partnership_id and partnership_rule_id.
@@ -1056,6 +1057,7 @@ The primary key of dim_partnerships. It is a hash of the columns company_partner
 {% enddocs %}
 
 # Fact Partnership Points
+
 {% docs column__pk_fact_partnership_points %}
 
 The primary key of fact_partnership_points.
@@ -1105,5 +1107,41 @@ True if the agreement status is "Freezed", else false.
 {% docs column__has_order %}
 
 Indicates if the customer has taken a delivery on the week represented by the monday. True if the customer has taken an order, false if not. Null for non-Mondays.
+
+{% enddocs %}
+
+
+# Dim Partnership Rule Combinations
+
+{% docs column__pk_dim_partnership_rule_combinations %}
+
+The primary key of dim_partnership_rule_combinations.
+
+{% enddocs %}
+
+{% docs column__partnership_rule_combinations_id %}
+
+md5 hash of the partnership_rule_id_combination_list column or '0' if partnership_rule_id_combination_list = ['0'].
+
+{% enddocs %}
+
+{% docs column__partnership_rule_id_combination_list %}
+
+Ordered array of partnership_rule_id combinations
+
+{% enddocs %}
+
+{% docs column__partnership_rule_combination_list %}
+
+Ordered array of partnership_rule_description combinations
+
+{% enddocs %}
+
+
+# Bridge Partnerships Partnership Rules
+
+{% docs column__pk_bridge_partnership_rule_combinations_partnerships %}
+
+The primary key of bridge_partnership_rule_combinations_partnerships. It is a hash of the columns fk_dim_partnerships and fk_dim_partnership_rule_combinations.
 
 {% enddocs %}

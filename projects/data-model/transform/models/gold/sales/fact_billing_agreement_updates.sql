@@ -1,6 +1,12 @@
 with
 
-dim_billing_agreements as (
+billing_agreements_partnerships as (
+
+    select * from {{ ref('partnership__billing_agreement_partnerships') }}
+
+)
+
+, dim_billing_agreements as (
 
     select * from {{ ref('dim_billing_agreements') }}
 
@@ -73,6 +79,17 @@ dim_billing_agreements as (
     , billing_agreement_preferences_previous_version.preference_combination_id as fk_dim_preference_combinations_previous_version
     , md5(agreements.company_id) as fk_dim_companies
     , loyalty_seasons.pk_dim_loyalty_seasons as fk_dim_loyalty_seasons
+    , case 
+        when billing_agreements_partnerships.company_partnership_id is null then '0'
+        -- if a partnership agreement, connect to the partnership with the 'No partnership rule' combination
+        else 
+            md5(
+                concat(
+                    '0'
+                    , billing_agreements_partnerships.company_partnership_id
+                )
+            )
+    end as fk_dim_partnership_rule_combinations
 
     , case
         when agreements.valid_from < agreements.first_menu_week_monday_date then 0
@@ -145,6 +162,8 @@ dim_billing_agreements as (
         on agreements.company_id = loyalty_seasons.company_id
         and agreements.valid_from >= loyalty_seasons.loyalty_season_start_date
         and agreements.valid_from < loyalty_seasons.loyalty_season_end_date
+    left join billing_agreements_partnerships
+        on agreements.billing_agreement_id = billing_agreements_partnerships.billing_agreement_id
 
 )
 

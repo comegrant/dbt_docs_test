@@ -7,15 +7,20 @@ company_partnership_rules as (
 )
 
 
-, add_pk as (
+, pk_added as (
 
     select
-        md5(
-            concat(
-                company_partnership_id
-                , partnership_rule_id
-                )
-         ) as pk_dim_partnerships
+        case 
+        when company_partnership_id = '0' 
+            then '0'
+        else
+            md5(
+                concat(
+                    company_partnership_id
+                    , partnership_rule_id
+                    )
+            )
+        end as pk_dim_partnerships
         , company_partnership_id
         , partnership_rule_id
         , company_id
@@ -28,24 +33,4 @@ company_partnership_rules as (
 
 )
 
-, add_not_relevant_partnership as (
-
-    select
-        *
-    from add_pk
-
-    union all
-
-    select
-        '0' as pk_dim_partnerships
-        , '0' as company_partnership_id
-        , '0' as partnership_rule_id
-        , '0' as company_id
-        , '0' as partnership_id
-        , 'No partnership' as partnership_name
-        , 'No partnership rule' as partnership_rule_name
-        , 'No partnership rule' as partnership_rule_description
-
-)
-
-select * from add_not_relevant_partnership
+select * from pk_added

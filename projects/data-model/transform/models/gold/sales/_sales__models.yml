@@ -829,19 +829,19 @@ models:
               to: ref('dim_transportation')
               field: pk_dim_transportation
 
-      - name: fk_dim_partnerships
+      - name: fk_dim_partnership_rule_combinations
         data_type: string
-        description: "{{ doc('column__pk_dim_partnerships') }}"
+        description: "{{ doc('column__pk_dim_partnership_rule_combinations') }}"
         constraints:
           - type: not_null
           - type: foreign_key
-            to: ref('dim_partnerships')
-            to_columns: [pk_dim_partnerships]
+            to: ref('dim_partnership_rule_combinations')
+            to_columns: [pk_dim_partnership_rule_combinations]
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_partnerships')
-              field: pk_dim_partnerships
+              to: ref('dim_partnership_rule_combinations')
+              field: pk_dim_partnership_rule_combinations
 
     versions:
       - v: 1
@@ -1480,6 +1480,18 @@ models:
           - relationships:
               to: ref('dim_periods_since')
               field: pk_dim_periods_since
+
+      - name: fk_dim_partnership_rule_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnership_rule_combinations') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_partnership_rule_combinations')
+            to_columns: [pk_dim_partnership_rule_combinations]
+        data_tests:
+          - relationships:
+              to: ref('dim_partnership_rule_combinations')
+              field: pk_dim_partnership_rule_combinations
 
       - name: billing_agreement_id
         data_type: int
@@ -4105,3 +4117,131 @@ models:
         description: "{{ doc('column__partnership_rule_description') }}"
         data_tests:
           - not_null
+
+  - name: dim_partnership_rule_combinations
+    description: "Table of all possible combinations of partnership rules for each company partnership id."
+    config:
+      alias: dim_partnership_rule_combinations
+      contract:
+        enforced: true
+
+    columns:
+
+      - name: pk_dim_partnership_rule_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnership_rule_combinations') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: partnership_rule_combinations_id
+        data_type: string
+        description: "{{ doc('column__partnership_rule_combinations_id') }}"
+        data_tests:
+          - not_null
+      
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_id') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_id_combination_list
+        data_type: array<string>
+        description: "{{ doc('column__partnership_rule_id_combination_list') }}"
+        data_tests:
+          - not_null
+
+      - name: partnership_rule_combination_list
+        data_type: array<string>
+        description: "{{ doc('column__partnership_rule_combination_list') }}"
+        data_tests:
+          - not_null
+
+  - name: bridge_partnership_rule_combinations_partnerships
+    description: "Bridge table between dim_partnerships and dim_partnership_rule_combinations."
+    config:
+      alias: bridge_partnership_rule_combinations_partnerships
+      contract:
+        enforced: true
+
+    columns:
+
+      - name: pk_bridge_partnership_rule_combinations_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_bridge_partnership_rule_combinations_partnerships') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: partnership_rule_id_combination_list
+        data_type: array<string>
+        description: "{{ doc('column__partnership_rule_id_combination_list') }}"
+
+      - name: partnership_rule_combination_list
+        data_type: array<string>
+        description: "{{ doc('column__partnership_rule_combination_list') }}"
+
+      - name: partnership_rule_id
+        data_type: char(36)
+        description: "{{ doc('column__partnership_rule_id') }}"
+
+      - name: company_partnership_id
+        data_type: char(36)
+        description: "{{ doc('column__company_partnership_id') }}"
+
+      - name: company_id
+        data_type: char(36)
+        description: "{{ doc('column__company_id') }}"
+
+      - name: partnership_name
+        data_type: string
+        description: "{{ doc('column__partnership_name') }}"
+
+      - name: partnership_rule_description
+        data_type: string
+        description: "{{ doc('column__partnership_rule_description') }}"
+
+      - name: fk_dim_partnerships
+        data_type: string
+        description: "{{ doc('column__pk_fact_orders') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_partnerships')
+            to_columns: [pk_dim_partnerships]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_partnerships')
+              field: pk_dim_partnerships
+
+      - name: fk_dim_partnership_rule_combinations
+        data_type: string
+        description: "{{ doc('column__pk_dim_partnership_rule_combinations') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_partnership_rule_combinations')
+            to_columns: [pk_dim_partnership_rule_combinations]
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_partnership_rule_combinations')
+              field: pk_dim_partnership_rule_combinations

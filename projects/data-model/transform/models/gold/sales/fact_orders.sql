@@ -21,6 +21,12 @@ discounts as (
 
 )
 
+, billing_agreement_partnerships as (
+
+    select * from {{ ref('partnership__billing_agreement_partnerships') }}
+
+)
+
 -- Intermediate
 , deviation_products as (
 
@@ -87,6 +93,12 @@ discounts as (
 
 )
 
+, partnership_order_rule_combinations as (
+
+    select * from {{ ref('int_billing_agreement_partnership_order_rule_combinations') }}
+
+)
+
 -- Gold
 , billing_agreements as (
 
@@ -109,12 +121,6 @@ discounts as (
 , loyalty_seasons as (
 
     select * from {{ ref('dim_loyalty_seasons') }}
-
-)
-
-, partnerships as (
-
-    select * from {{ ref('fact_partnership_points') }}
 
 )
 
@@ -1077,20 +1083,26 @@ discounts as (
                 )
             ), '0'
          ) as fk_dim_ingredient_combinations
-        , coalesce(
-            md5(
-                concat(
-                    partnerships.company_partnership_id
-                    , partnerships.partnership_rule_id
-                )
-            ), '0'
-        ) as fk_dim_partnerships
         ,  case 
-            -- the zones are missing in dim transportaion for some older data
+            -- the zones are missing in dim transportation for some older data
             when add_recipe_information.menu_year < 2018 
             then '0'
             else coalesce(md5(cast(order_zones.zone_id as string)), '0') 
         end as fk_dim_transportation
+        -- partnership rule combinations
+        , case 
+            when billing_agreement_partnerships.company_partnership_id is null
+            then '0'
+            when partnership_order_rule_combinations.partnership_rule_combinations_id is null
+            then md5(concat('0',billing_agreement_partnerships.company_partnership_id))
+            else 
+            md5(
+                concat(
+                    partnership_order_rule_combinations.partnership_rule_combinations_id
+                    , partnership_order_rule_combinations.company_partnership_id
+                )
+            ) 
+        end as fk_dim_partnership_rule_combinations
 
     from add_recipe_information
     left join billing_agreements as billing_agreements_ordergen
@@ -1125,9 +1137,6 @@ discounts as (
         on add_recipe_information.recipe_id = ingredient_combinations.recipe_id
         and add_recipe_information.portion_id = ingredient_combinations.portion_id
         and add_recipe_information.language_id = ingredient_combinations.language_id
-    -- TODO: Fix the fk on partnerships to handle cases where multiple rules can apply to a single order
-    left join partnerships
-        on add_recipe_information.billing_agreement_order_id = partnerships.billing_agreement_order_id
     left join price_categories
         on add_recipe_information.company_id = price_categories.company_id
         and add_recipe_information.portion_id = price_categories.portion_id
@@ -1142,6 +1151,10 @@ discounts as (
         and add_recipe_information.price_category_cost_subscription < price_categories_subscription.max_ingredient_cost_inc_vat
         and add_recipe_information.menu_week_monday_date >= price_categories_subscription.valid_from
         and add_recipe_information.menu_week_monday_date < price_categories_subscription.valid_to
+    left join billing_agreement_partnerships 
+        on add_recipe_information.billing_agreement_id = billing_agreement_partnerships.billing_agreement_id
+    left join partnership_order_rule_combinations
+        on add_recipe_information.billing_agreement_order_id = partnership_order_rule_combinations.billing_agreement_order_id
 
 )
 
