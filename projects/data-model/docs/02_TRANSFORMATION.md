@@ -405,10 +405,14 @@ When creating silver tables, we have a command which allows you to get a head st
 
 ```
 chef dbt generate-silver-model \
---source-system <source_system> \ # name of the source system, e.g., cms
---source-table-name <source_table_name> \ # name of the bronze table, e.g., cms__company
---model-name <model_name> # name of the silver model, e.g., cms__companies
+--source-system <source_system> \
+--source-table-name <source_table_name> \
+--model-name <model_name>
 ```
+Parameters:
+- <source_system>: name of the source system, e.g., cms
+- <source_table_name>: name of the bronze table, e.g., cms__company
+- <model_name>: name of the silver model, e.g., cms__companies
 
 After this, you need to:
 - Organize the columns by data type
@@ -420,8 +424,10 @@ After this, you need to:
 There is a command which helps you generate docs blocks. Before this can be used, you need to add the model (only model, and not columns) to the model.yml-file. Note that the models must have been [built successfully](#build-and-run-models) for this command to work. This is mainly useful for silver models as models in other layers often have most of their columns already documented in the silver layer documentation. New column that are added in other layers should be added to the column documentation of the gold/mlgold/diamond layer.
 
 ```
-chef dbt generate-docs --model-name <model_name> # name of the silver model
+chef dbt generate-docs --model-name <model_name>
 ```
+Parameters:
+- <model_name>: name of the silver model, e.g., cms__companies
 
 This will provide you with an output in the terminal of all the columns in the silver model represented as doc blocks. After this the following must will be done:
 - Create a heading and paste this into the relevant docs.md file.
@@ -435,8 +441,10 @@ This will provide you with an output in the terminal of all the columns in the s
 After the docs have been generated, this command below be used to generate the column schema for the models.yml file. This command can be used for models across all layers. Note that the models must have been [built successfully](#build-and-run-models) for this command to work.
 
 ```
-chef dbt generate-yaml --model-name <model_name> # name of the model
+chef dbt generate-yaml --model-name <model_name>
 ```
+Parameters:
+- <model_name>: name of the model
 
 1. Copy the output and add it to the relevant `__models.yml` file.
 2. Double check data types
