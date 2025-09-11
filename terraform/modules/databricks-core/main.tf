@@ -758,6 +758,21 @@ resource "databricks_grants" "catalog_segment" {
     privileges = ["ALL_PRIVILEGES"]
   }
 
+  grant {
+    principal = "data-engineers"
+    privileges = ["ALL_PRIVILEGES"]
+  }
+
+  grant {
+    principal = "data-scientists"
+    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+  }
+
+  grant {
+    principal = "data-analysts"
+    privileges = ["SELECT", "USE_CATALOG", "USE_SCHEMA"]
+  }
+
 }
 
 resource "databricks_grants" "external_location" {
