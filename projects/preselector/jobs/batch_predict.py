@@ -23,7 +23,7 @@ from collections import defaultdict
 from datetime import date, timedelta
 
 dbutils.widgets.text("company_id", "")
-dbutils.widgets.text("number_of_weeks", "12")
+dbutils.widgets.text("number_of_weeks", "")
 dbutils.widgets.text("number_of_weeks_from_now", "5")
 dbutils.widgets.text("from_date_iso_format", "")
 dbutils.widgets.text("environment", defaultValue="")
@@ -85,7 +85,13 @@ if strategies_size_raw:
 else:
     strategies_size = None
 
-number_of_weeks = int(dbutils.widgets.get("number_of_weeks"))
+
+number_of_weeks_raw = dbutils.widgets.get("number_of_weeks")
+if number_of_weeks_raw == "":
+    number_of_weeks = 12
+else:
+    number_of_weeks = int(number_of_weeks_raw)
+
 number_of_weeks_from_now = int(dbutils.widgets.get("number_of_weeks_from_now"))
 from_date = dbutils.widgets.get("from_date_iso_format")
 
