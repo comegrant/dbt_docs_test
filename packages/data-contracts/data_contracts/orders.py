@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 import polars as pl
 from aligned import (
@@ -17,7 +17,7 @@ from aligned.schemas.feature_view import RetrievalRequest
 from project_owners.owner import Owner
 
 from data_contracts.mealkits import DefaultMealboxRecipes
-from data_contracts.sources import adb, adb_ml, materialized_data, ml_gold
+from data_contracts.sources import adb, databricks_config, materialized_data, ml_gold
 from data_contracts.user import UserSubscription
 
 flex_dish_id = "CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1"
@@ -28,54 +28,28 @@ user_origin_id = "25017d0e-f788-48d7-8dc4-62581d58b698".upper()
 
 contacts = [Owner.matsmoll().name]
 
-historical_orders_sql = """
-WITH velgandvrak AS (
-    SELECT * FROM mb.products p
-    WHERE p.product_type_id in ('CAC333EA-EC15-4EEA-9D8D-2B9EF60EC0C1', '2f163d69-8ac1-6e0c-8793-ff0000804eb3')
-    AND variation_portions != 1
-),
-
-data as (
-    SELECT
-        ba.agreement_id,
-        ba.company_id,
-        bao.delivery_date as delivered_at,
-        p.variation_portions as portion_size,
-        r.recipe_id,
-        COALESCE(r.main_recipe_id, r.recipe_id) as main_recipe_id,
-        rr.RATING as rating,
-        wm.MENU_WEEK as week,
-        wm.MENU_YEAR as year
-    FROM cms.billing_agreement ba
-             INNER JOIN cms.billing_agreement_order bao ON bao.agreement_id = ba.agreement_id
-             INNER JOIN cms.billing_agreement_order_line baol ON baol.agreement_order_id = bao.id
-             INNER JOIN velgandvrak p ON p.variation_id = baol.variation_id
-             INNER JOIN pim.WEEKLY_MENUS wm
-                ON wm.COMPANY_ID = ba.company_id
-                    AND wm.MENU_WEEK = bao.week
-                    AND wm.MENU_YEAR = bao.year
-             INNER JOIN pim.MENUS m ON m.WEEKLY_MENUS_ID = wm.WEEKLY_MENUS_ID
-             INNER JOIN pim.MENU_VARIATIONS mv ON mv.MENU_ID = m.MENU_ID
-                AND mv.MENU_VARIATION_EXT_ID = baol.variation_id
-             INNER JOIN pim.MENU_RECIPES mr ON mr.MENU_ID = m.menu_id
-                AND mr.menu_recipe_order <= mv.menu_number_days
-             INNER JOIN pim.recipes r ON r.recipe_id = mr.RECIPE_ID
-             LEFT JOIN pim.RECIPES_RATING rr ON rr.RECIPE_ID = r.recipe_id
-                AND rr.AGREEMENT_ID = ba.agreement_id
-)
-
-SELECT * FROM data WHERE year >= 2024
+orders_sql = """
+SELECT
+    o.billing_agreement_id as agreement_id,
+    o.recipe_id,
+    o.company_id,
+    o.menu_week as week,
+    o.menu_year as year,
+    o.portions as portion_size,
+    o.recipe_rating as rating,
+    coalesce(r.main_recipe_id, o.recipe_id) as main_recipe_id
+FROM gold.fact_orders o
+LEFT JOIN gold.dim_recipes r ON r.pk_dim_recipes = o.fk_dim_recipes
+WHERE o.menu_year >= 2024 and o.is_dish
 """
 
 
 @feature_view(
     name="historical_recipe_orders",
     description="The recipes that our customers have received. Together with the rating of the dish.",
-    source=adb_ml.fetch(historical_orders_sql),
+    source=databricks_config.sql(orders_sql),
     materialized_source=materialized_data.parquet_at("historical_recipe_orders.parquet"),
     contacts=contacts,
-    acceptable_freshness=timedelta(days=6),
-    tags=["incremental"],
 )
 class HistoricalRecipeOrders:
     agreement_id = Int32().as_entity()
@@ -88,8 +62,6 @@ class HistoricalRecipeOrders:
     main_recipe_id = Int32()
 
     portion_size = Int32()
-
-    delivered_at = ValidFrom()
 
     rating = (Int32().is_optional().lower_bound(0).upper_bound(5)).description(
         "A value of 0 means that the user did not make the dish. While a missing values means did not rate",
