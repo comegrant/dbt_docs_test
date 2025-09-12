@@ -58,3 +58,5 @@ sources:
       - name: pim__unit_labels
       - name: pim__unit_labels_translations
       - name: pim__ingredients_status_codes
+      - name: pim__weekly_production_need
+      - name: pim__ingredient_type

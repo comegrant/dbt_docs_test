@@ -21,6 +21,7 @@ tables = [
     "ingredient_category_preference",
     "ingredient_nutrient_facts",
     "ingredient_price",
+    "ingredient_type"
     "ingredients_status_codes",
     "ingredients_translations",
     "menus",
@@ -41,6 +42,7 @@ tables = [
     "recipes_comments",
     "recipe_companies",
     "recipe_difficulty_levels_translations",
+    "recipe_favorite_types",
     "recipe_main_ingredients",
     "recipe_main_ingredients_translations",
     "recipes_metadata",
@@ -62,7 +64,7 @@ tables = [
     "weekly_menus",
     "weekly_orders",
     "weekly_orders_lines",
-    "recipe_favorite_types",
+    "weekly_production_need"
 ]
 for table in tables:
     load_coredb_full(dbutils, database, table)

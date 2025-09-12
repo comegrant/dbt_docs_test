@@ -36,6 +36,12 @@ ingredients as (
 
 )
 
+, ingredient_types as (
+
+    select * from {{ ref('pim__ingredient_types') }}
+
+)
+
 , ingredient_info as (
 
     select
@@ -57,7 +63,7 @@ ingredients as (
         , ingredients.unit_label_id
         , ingredients.ingredient_category_id
         , ingredients.ingredient_status_code_id --Add status description
-        , ingredients.ingredient_type_id --Add ingredient type name (N/A right now, needs INGREDIENT_TYPE table)
+        , ingredients.ingredient_type_id
         , ingredients.pack_type_id  --Add pack type name (N/A right now, needs PACK_TYPES_TRANSLATIONS table)
         , ingredients.epd_id_number
         , ingredients.ingredient_manufacturer_supplier_id
@@ -71,6 +77,7 @@ ingredients as (
         , ingredient_suppliers.ingredient_supplier_name
         , ingredient_manufacturer_suppliers.ingredient_supplier_name as ingredient_manufacturer_name
         , status_codes.ingredient_status_name
+        , ingredient_types.ingredient_type_name
 
         -- numerics
         , ingredients.ingredient_size
@@ -84,9 +91,6 @@ ingredients as (
         , ingredients.ingredient_packaging_width
 
         -- booleans
-        , ingredients.is_active_ingredient
-        , ingredients.is_available_for_use
-        , ingredients.is_outgoing_ingredient
         , ingredients.is_cold_storage
         , ingredients.is_consumer_cold_storage
         , ingredients.is_organic_ingredient
@@ -119,15 +123,18 @@ ingredients as (
     left join status_codes
         on ingredients.ingredient_status_code_id = status_codes.ingredient_status_code_id
 
+    left join ingredient_types
+        on ingredients.ingredient_type_id = ingredient_types.ingredient_type_id
+
 )
 
 , group_name_extraction as (
     select
         ingredient_id
         , language_id
-        , any_value(case when ingredient_category_description = 'Main Group' then ingredient_category_name end) ignore nulls as main_group
-        , any_value(case when ingredient_category_description = 'Category Group' then ingredient_category_name end) ignore nulls as category_group
-        , any_value(case when ingredient_category_description = 'Product Group' then ingredient_category_name end) ignore nulls as product_group
+        , any_value(case when ingredient_category_description = 'Main Group' then ingredient_category_name end) ignore nulls as main_group_name
+        , any_value(case when ingredient_category_description = 'Category Group' then ingredient_category_name end) ignore nulls as category_group_name
+        , any_value(case when ingredient_category_description = 'Product Group' then ingredient_category_name end) ignore nulls as product_group_name
     from category_hierarchy
     group by 1, 2
 )
@@ -136,11 +143,16 @@ ingredients as (
     select
         ingredient_id
         , language_id
-        , any_value(case when hierarchy_level = 0 then ingredient_category_id end) ignore nulls as category_level1
-        , any_value(case when hierarchy_level = 1 then ingredient_category_id end) ignore nulls as category_level2
-        , any_value(case when hierarchy_level = 2 then ingredient_category_id end) ignore nulls as category_level3
-        , any_value(case when hierarchy_level = 3 then ingredient_category_id end) ignore nulls as category_level4
-        , any_value(case when hierarchy_level = 4 then ingredient_category_id end) ignore nulls as category_level5
+        , any_value(case when hierarchy_level_name = 'Main category' then ingredient_category_name end) ignore nulls as main_category_name
+        , any_value(case when hierarchy_level_name = 'Sub category 1' then ingredient_category_name end) ignore nulls as sub_category1_name
+        , any_value(case when hierarchy_level_name = 'Sub category 2' then ingredient_category_name end) ignore nulls as sub_category2_name
+        , any_value(case when hierarchy_level_name = 'Sub category 3' then ingredient_category_name end) ignore nulls as sub_category3_name
+        , any_value(case when hierarchy_level_name = 'Sub category 4' then ingredient_category_name end) ignore nulls as sub_category4_name
+        , any_value(case when hierarchy_level = 0 then ingredient_category_id end) ignore nulls as main_category_id
+        , any_value(case when hierarchy_level = 1 then ingredient_category_id end) ignore nulls as sub_category1_id
+        , any_value(case when hierarchy_level = 2 then ingredient_category_id end) ignore nulls as sub_category2_id
+        , any_value(case when hierarchy_level = 3 then ingredient_category_id end) ignore nulls as sub_category3_id
+        , any_value(case when hierarchy_level = 4 then ingredient_category_id end) ignore nulls as sub_category4_id
     from category_hierarchy
     group by 1, 2
 )
@@ -154,14 +166,19 @@ ingredients as (
             , ingredient_info.language_id
         )) as pk_dim_ingredients
         , ingredient_info.*
-        , group_name_extraction.main_group
-        , group_name_extraction.category_group
-        , group_name_extraction.product_group
-        , flat_hierarchy.category_level1
-        , flat_hierarchy.category_level2
-        , flat_hierarchy.category_level3
-        , flat_hierarchy.category_level4
-        , flat_hierarchy.category_level5
+        , group_name_extraction.main_group_name
+        , group_name_extraction.category_group_name
+        , group_name_extraction.product_group_name
+        , flat_hierarchy.main_category_name
+        , flat_hierarchy.sub_category1_name
+        , flat_hierarchy.sub_category2_name
+        , flat_hierarchy.sub_category3_name
+        , flat_hierarchy.sub_category4_name
+        , flat_hierarchy.main_category_id
+        , flat_hierarchy.sub_category1_id
+        , flat_hierarchy.sub_category2_id
+        , flat_hierarchy.sub_category3_id
+        , flat_hierarchy.sub_category4_id
     
     from ingredient_info
 

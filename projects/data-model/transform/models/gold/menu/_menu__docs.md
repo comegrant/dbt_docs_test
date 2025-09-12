@@ -195,51 +195,81 @@ The name of the producing supplier, which can differ from the supplier.
 
 {% enddocs %}
 
-{% docs column__main_group %}
+{% docs column__main_group_name %}
 
 Ingredient category name of the main group of an ingredient.
 
 {% enddocs %}
 
-{% docs column__category_group%}
+{% docs column__category_group_name %}
 
 Ingredient category name of the category group of an ingredient.
 
 {% enddocs %}
 
-{% docs column__product_group %}
+{% docs column__product_group_name %}
 
 Ingredient category name of the product group of an ingredient.
 
 {% enddocs %}
 
-{% docs column__category_level1 %}
+{% docs column__main_category_name %}
 
-Ingredient category id of the first level of the ingredient category hierarchy.
-
-{% enddocs %}
-
-{% docs column__category_level2 %}
-
-Ingredient category id of the second level of the ingredient category hierarchy.
+Ingredient category name of the main category of an ingredient.
 
 {% enddocs %}
 
-{% docs column__category_level3 %}
+{% docs column__sub_category1_name %}
 
-Ingredient category id of the third level of the ingredient category hierarchy.
-
-{% enddocs %}
-
-{% docs column__category_level4 %}
-
-Ingredient category id of the fourth level of the ingredient category hierarchy.
+Ingredient category name of the first sub category of an ingredient.
 
 {% enddocs %}
 
-{% docs column__category_level5 %}
+{% docs column__sub_category2_name %}
 
-Ingredient category id of the fifth level of the ingredient category hierarchy.
+Ingredient category name of the second sub category of an ingredient.
+
+{% enddocs %}
+
+{% docs column__sub_category3_name %}
+
+Ingredient category name of the third sub category of an ingredient.
+
+{% enddocs %}
+
+{% docs column__sub_category4_name %}
+
+Ingredient category name of the fourth sub category of an ingredient.
+
+{% enddocs %}
+
+{% docs column__main_category_id %}
+
+Ingredient category id of the main category - the first level, without parent category - of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__sub_category1_id %}
+
+Ingredient category id of the first sub category - the second level - of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__sub_category2_id %}
+
+Ingredient category id of the second sub category - the third level - of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__sub_category3_id %}
+
+Ingredient category id of the third sub category - the fourth level - of the ingredient category hierarchy.
+
+{% enddocs %}
+
+{% docs column__sub_category4_id %}
+
+Ingredient category id of the fourth sub category - the fifth level - of the ingredient category hierarchy.
 
 {% enddocs %}
 

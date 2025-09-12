@@ -51,9 +51,6 @@ renamed as (
         , width as ingredient_packaging_width
 
         {# booleans #}
-        , is_active as is_active_ingredient
-        , can_be_used as is_available_for_use
-        , is_outgoing as is_outgoing_ingredient
         , cold_storage as is_cold_storage
         , consumer_cold_storage as is_consumer_cold_storage
         , is_organic as is_organic_ingredient

@@ -665,10 +665,6 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_type_id') }}"
 
-      - name: is_active_ingredient
-        data_type: boolean
-        description: "{{ doc('column__is_active_ingredient') }}"
-
       - name: ingredient_net_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_net_weight') }}"
@@ -705,10 +701,6 @@ models:
         data_type: boolean
         description: "{{ doc('column__has_co2_data') }}"
 
-      - name: is_available_for_use
-        data_type: boolean
-        description: "{{ doc('column__is_available_for_use') }}"
-
       - name: is_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_cold_storage') }}"
@@ -724,10 +716,6 @@ models:
       - name: is_organic_ingredient
         data_type: boolean
         description: "{{ doc('column__is_organic_ingredient') }}"
-
-      - name: is_outgoing_ingredient
-        data_type: boolean
-        description: "{{ doc('column__is_outgoing_ingredient') }}"
 
       - name: is_special_packing
         data_type: boolean
@@ -808,38 +796,62 @@ models:
       - name: ingredient_status_name
         data_type: string
         description: "{{ doc('column__status_code_name') }}"
-
-      - name: main_group
+      
+      - name: ingredient_type_name
         data_type: string
-        description: "{{ doc('column__main_group') }}"
+        description: "{{ doc('column__ingredient_type_name') }}"
 
-      - name: category_group
+      - name: main_group_name
         data_type: string
-        description: "{{ doc('column__category_group') }}"
+        description: "{{ doc('column__main_group_name') }}"
 
-      - name: product_group
+      - name: category_group_name
         data_type: string
-        description: "{{ doc('column__product_group') }}"
+        description: "{{ doc('column__category_group_name') }}"
 
-      - name: category_level1
-        data_type: int
-        description: "{{ doc('column__category_level1') }}"
+      - name: product_group_name
+        data_type: string
+        description: "{{ doc('column__product_group_name') }}"
 
-      - name: category_level2
-        data_type: int
-        description: "{{ doc('column__category_level2') }}"
+      - name: main_category_name
+        data_type: string
+        description: "{{ doc('column__main_category_name') }}"
 
-      - name: category_level3
-        data_type: int
-        description: "{{ doc('column__category_level3') }}"
+      - name: sub_category1_name
+        data_type: string
+        description: "{{ doc('column__sub_category1_name') }}"
 
-      - name: category_level4
-        data_type: int
-        description: "{{ doc('column__category_level4') }}"
+      - name: sub_category2_name
+        data_type: string
+        description: "{{ doc('column__sub_category2_name') }}"
+      
+      - name: sub_category3_name
+        data_type: string
+        description: "{{ doc('column__sub_category3_name') }}"
+      
+      - name: sub_category4_name
+        data_type: string
+        description: "{{ doc('column__sub_category4_name') }}"
 
-      - name: category_level5
+      - name: main_category_id
         data_type: int
-        description: "{{ doc('column__category_level5') }}"
+        description: "{{ doc('column__main_category_id') }}"
+
+      - name: sub_category1_id
+        data_type: int
+        description: "{{ doc('column__sub_category1_id') }}"
+
+      - name: sub_category2_id
+        data_type: int
+        description: "{{ doc('column__sub_category2_id') }}"
+
+      - name: sub_category3_id
+        data_type: int
+        description: "{{ doc('column__sub_category3_id') }}"
+
+      - name: sub_category4_id
+        data_type: int
+        description: "{{ doc('column__sub_category4_id') }}"
 
     versions:
       - v: 1
@@ -1632,9 +1644,9 @@ models:
         data_type: bigint
         description: "{{ doc('column__number_of_customer_orders') }}"
 
-      - name: ingredient_order_quantity
+      - name: recipe_ingredient_quantity
         data_type: decimal(38,2)
-        description: "{{ doc('column__ingredient_order_quantity') }}"
+        description: "{{ doc('column__recipe_ingredient_quantity') }}"
 
       - name: ingredient_weight_per_unit
         data_type: decimal(38,2)

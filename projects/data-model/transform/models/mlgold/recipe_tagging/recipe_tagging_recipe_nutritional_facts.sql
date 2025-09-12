@@ -47,7 +47,6 @@ recipes as (
         on recipe_ingredients.ingredient_id = ingredients.ingredient_id
     where
         recipes.is_in_recipe_universe = true
-        and ingredients.is_active_ingredient = true
         and portions.language_id = recipes.language_id
         and ingredients.language_id = recipes.language_id
         and recipe_ingredients.language_id = recipes.language_id

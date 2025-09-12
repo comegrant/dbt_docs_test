@@ -1178,17 +1178,13 @@ models:
         data_type: int
         description: "{{ doc('column__chef_ingredient_section_id') }}"
 
-      - name: order_ingredient_id
+      - name: recipe_ingredient_id
         data_type: int
-        description: "{{ doc('column__order_ingredient_id') }}"
+        description: "{{ doc('column__recipe_ingredient_id') }}"
 
       - name: generic_ingredient_id
         data_type: int
         description: "{{ doc('column__generic_ingredient_id') }}"
-
-      - name: recipe_ingredient_amount
-        data_type: string
-        description: "{{ doc('column__recipe_ingredient_amount') }}"
 
   - name: pim__ingredient_category_translations
     description: "Table mapping ingredient category ids to their names in different languages"
@@ -1278,10 +1274,6 @@ models:
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
 
-      - name: is_active_ingredient
-        data_type: boolean
-        description: "{{ doc('column__is_active_ingredient') }}"
-
       - name: ingredient_net_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_net_weight') }}"
@@ -1314,10 +1306,6 @@ models:
         data_type: boolean
         description: "{{ doc('column__has_packaging_photo') }}"
         
-      - name: is_available_for_use
-        data_type: boolean
-        description: "{{ doc('column__is_available_for_use') }}"
-        
       - name: is_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_cold_storage') }}"
@@ -1333,10 +1321,6 @@ models:
       - name: is_organic_ingredient
         data_type: boolean
         description: "{{ doc('column__is_organic_ingredient') }}"
-        
-      - name: is_outgoing_ingredient
-        data_type: boolean
-        description: "{{ doc('column__is_outgoing_ingredient') }}"
         
       - name: is_special_packing
         data_type: boolean
@@ -1418,16 +1402,16 @@ models:
         data_type: string
         description: "{{ doc('column__ingredient_external_reference') }}"
 
-  - name: pim__order_ingredients
+  - name: pim__recipe_ingredients
     description: "Table connecting ingredient to a specific recipe variation"
     config:
       contract:
         enforced: true
 
     columns:
-      - name: order_ingredient_id
+      - name: recipe_ingredient_id
         data_type: int
-        description: "{{ doc('column__order_ingredient_id') }}"
+        description: "{{ doc('column__recipe_ingredient_id') }}"
 
       - name: ingredient_internal_reference
         data_type: string
@@ -1461,9 +1445,9 @@ models:
         data_type: decimal(6,2)
         description: "{{ doc('column__nutrition_units') }}"
       
-      - name: ingredient_order_quantity
+      - name: recipe_ingredient_quantity
         data_type: decimal(6,2)
-        description: "{{ doc('column__ingredient_order_quantity') }}"
+        description: "{{ doc('column__recipe_ingredient_quantity') }}"
 
   - name: pim__ingredient_categories
     description: "Table with ingredient category information"
@@ -2228,3 +2212,38 @@ models:
       - name: unit_label_full_name
         data_type: string
         description: "{{ doc('column__unit_label_full_name') }}"
+
+  - name: pim__ingredient_types
+    description: ""
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: ingredient_type_id
+        data_type: string
+        description: "{{ doc('column__ingredient_type_id') }}"
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: ingredient_type_name
+        data_type: string
+        description: "{{ doc('column__ingredient_type_name') }}"

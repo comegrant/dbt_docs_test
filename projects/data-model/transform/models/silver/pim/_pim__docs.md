@@ -18,12 +18,6 @@ Identifier for each ingredient section, where an ingredient section is i.e. "pan
 
 {% enddocs %}
 
-{% docs column__recipe_ingredient_amount %}
-
-Amount of specific ingredient in a recipe variation
-
-{% enddocs %}
-
 # Weekly Menus
 {% docs column__weekly_menu_id %}
 
@@ -429,18 +423,6 @@ Indicates if there is a packaging photo linked.
 
 {% enddocs %}
 
-{% docs column__is_active_ingredient %}
-
-Indicates if the ingredient is active.
-
-{% enddocs %}
-
-{% docs column__is_available_for_use %}
-
-Indicates if the ingredient is available for use in menu planning.
-
-{% enddocs %}
-
 {% docs column__is_cold_storage %}
 
 Indicates if the ingredient should handled in cold storage in production.
@@ -462,12 +444,6 @@ Indicates if the ingredient is fragile and should be handled carefully in produc
 {% docs column__is_organic_ingredient %}
 
 Indicates if the ingredient is classified as organic.
-
-{% enddocs %}
-
-{% docs column__is_outgoing_ingredient %}
-
-Indicates if the ingredient is soon not to be used in menu planning.
 
 {% enddocs %}
 
@@ -860,10 +836,10 @@ The name of the price category level.
 
 {% enddocs %}
 
-# Order Ingredients
-{% docs column__order_ingredient_id %}
+# Recipe Order Ingredients
+{% docs column__recipe_ingredient_id %}
 
-Identifier for an ingredient connected to a specific recipe variation
+Identifier for each ingredient connected to a specific recipe variation, i.e. recipe and portion size.
 
 {% enddocs %}
 
@@ -885,9 +861,9 @@ The amount of an ingredient which is included in nutritional calculations. The u
 
 {% enddocs %}
 
-{% docs column__ingredient_order_quantity %}
+{% docs column__recipe_ingredient_quantity %}
 
-The amount of an ingredient to be ordered for a recipe. The unit is specified by the unit label.
+The amount of an ingredient to be purchased for each recipe variation. Also includes home ingredients, i.e. ingredients not to be purchased. The unit is specified by the unit label.
 
 {% enddocs %}
 
@@ -971,6 +947,13 @@ Indicates if the ingredient quantity is derived from a recipe or not.
 {% docs column__is_active_weekly_ingredient %} 
 
 Indicates if the weekly ingredient rows is active or not. If not active they will not be sent to purchasing or production, but will still be in the recipe.
+
+{% enddocs %}
+
+# Ingredient Types
+{% docs column__ingredient_type_name %} 
+
+The ingredient type of an ingredient, i.e. "Standard Ingredient", "Menu leaflet", "Production material", "Flyer" or other.
 
 {% enddocs %}
 

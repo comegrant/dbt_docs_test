@@ -21,7 +21,7 @@ ingredients as (
         ingredient_id
         , ingredient_category_id
     from ingredients
-    where is_active_ingredient = True -- active
+    where ingredient_status_code_id != 30 --Exclude status "Not in use"
 )
 
 , parent_level as (
@@ -37,7 +37,8 @@ ingredients as (
         level_1.ingredient_id
         , level_1.ingredient_category_id
         , level_2.parent_category_id
-        , 0                            as hierarchy_level
+        , 0 as hierarchy_level
+        , 'Main category' as hierarchy_level_name
     from base_level as level_1
     left join parent_level as level_2
         on level_1.ingredient_category_id = level_2.ingredient_category_id
@@ -48,7 +49,8 @@ ingredients as (
         level_1.ingredient_id
         , level_2.parent_category_id as ingredient_category_id
         , level_3.parent_category_id
-        , 1               as hierarchy_level
+        , 1 as hierarchy_level
+        , 'Sub category 1' as hierarchy_level_name
     from base_level as level_1
     left join parent_level as level_2
         on level_1.ingredient_category_id = level_2.ingredient_category_id
@@ -61,7 +63,8 @@ ingredients as (
         level_1.ingredient_id
         , level_3.parent_category_id as ingredient_category_id
         , level_4.parent_category_id
-        , 2               as hierarchy_level
+        , 2 as hierarchy_level
+        , 'Sub category 2' as hierarchy_level_name
     from base_level as level_1
     left join parent_level as level_2
         on level_1.ingredient_category_id = level_2.ingredient_category_id
@@ -76,7 +79,8 @@ ingredients as (
         level_1.ingredient_id
         , level_4.parent_category_id as ingredient_category_id
         , level_5.parent_category_id
-        , 3               as hierarchy_level
+        , 3 as hierarchy_level
+        , 'Sub category 3' as hierarchy_level_name
     from base_level as level_1
     left join parent_level as level_2
         on level_1.ingredient_category_id = level_2.ingredient_category_id
@@ -93,7 +97,8 @@ ingredients as (
         level_1.ingredient_id
         , level_5.parent_category_id as ingredient_category_id
         , level_6.parent_category_id
-        , 4               as hierarchy_level
+        , 4 as hierarchy_level
+        , 'Sub category 4' as hierarchy_level_name
     from base_level as level_1
     left join parent_level as level_2
         on level_1.ingredient_category_id = level_2.ingredient_category_id
@@ -113,6 +118,7 @@ category_hierarchy_with_translations as (
         category_hierarchy.ingredient_id
         , category_hierarchy.ingredient_category_id
         , category_hierarchy.hierarchy_level
+        , category_hierarchy.hierarchy_level_name
         , ingredient_category_translations.ingredient_category_name
         , ingredient_category_translations.ingredient_category_description
         , ingredient_category_translations.language_id

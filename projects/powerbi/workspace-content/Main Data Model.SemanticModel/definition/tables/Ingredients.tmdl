@@ -18,6 +18,7 @@ table Ingredients
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ingredient_id
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -26,6 +27,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_name
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -34,14 +36,16 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_full_name
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
 	/// Ingredient category name of the main group of an ingredient.
-    column 'Main Category Group'
+    column 'Main Group'
 		dataType: string
 		summarizeBy: none
-		sourceColumn: main_group
+		sourceColumn: main_group_name
+		displayFolder: Ingredient Category Hierarchy
 
 		annotation SummarizationSetBy = Automatic
 
@@ -49,7 +53,8 @@ table Ingredients
     column 'Category Group'
 		dataType: string
 		summarizeBy: none
-		sourceColumn: category_group
+		sourceColumn: category_group_name
+		displayFolder: Ingredient Category Hierarchy
 
 		annotation SummarizationSetBy = Automatic
 
@@ -57,7 +62,51 @@ table Ingredients
     column 'Product Group'
 		dataType: string
 		summarizeBy: none
-		sourceColumn: product_group
+		sourceColumn: product_group_name
+		displayFolder: Ingredient Category Hierarchy
+
+	/// Ingredient category name of the main category group of an ingredient.
+    column 'Main Category'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: main_category_name
+		displayFolder: Ingredient Categories Full Hierarchy
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient category name of the first sub category group of an ingredient.
+    column 'Sub Category level 1'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sub_category1_name
+		displayFolder: Ingredient Categories Full Hierarchy
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient category name of the second sub category group of an ingredient.
+    column 'Sub Category level 2'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sub_category2_name
+		displayFolder: Ingredient Categories Full Hierarchy
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient category name of the third sub category group of an ingredient.
+    column 'Sub Category level 3'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sub_category3_name
+		displayFolder: Ingredient Categories Full Hierarchy
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Ingredient category name of the fourth sub category group of an ingredient.
+    column 'Sub Category level 4'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: sub_category4_name
+		displayFolder: Ingredient Categories Full Hierarchy
 
 		annotation SummarizationSetBy = Automatic
 
@@ -75,6 +124,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_brand
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -83,6 +133,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_content_list
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -109,6 +160,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_external_reference
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -117,6 +169,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_supplier_name
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -125,6 +178,7 @@ table Ingredients
 		dataType: string
 		summarizeBy: none
 		sourceColumn: ingredient_manufacturer_name
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -134,6 +188,17 @@ table Ingredients
 		summarizeBy: none
         isAvailableInMdx: false
 		sourceColumn: ingredient_status_name
+		displayFolder: General Ingredient Information
+
+		annotation SummarizationSetBy = Automatic
+
+    /// The ingredient type of an ingredient, i.e. "Standard Ingredient", "Menu leaflet", "Production material", "Flyer" or other.
+    column 'Ingredient Type'
+		dataType: string
+		summarizeBy: none
+        isAvailableInMdx: false
+		sourceColumn: ingredient_type_name
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -142,6 +207,7 @@ table Ingredients
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ingredient_size
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -150,6 +216,7 @@ table Ingredients
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ingredient_shelf_life
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -158,6 +225,7 @@ table Ingredients
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ingredient_net_weight
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -166,6 +234,7 @@ table Ingredients
 		dataType: int64
 		summarizeBy: none
 		sourceColumn: ingredient_gross_weight
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -214,34 +283,6 @@ table Ingredients
 
 		annotation SummarizationSetBy = Automatic
 
-    /// Indicates if the ingredient is active.
-	/// Hidden as we think Ingredient Status is used instead.
-    column 'Is Active Ingredient'
-		dataType: boolean
-		isHidden
-		summarizeBy: none
-		sourceColumn: is_active_ingredient
-
-		annotation SummarizationSetBy = Automatic
-
-    /// Indicates if the ingredient is available for use in menu planning.
-	/// Hidden as we think Ingredient Status is used instead.
-    column 'Is Available For Use'
-		dataType: boolean
-		isHidden
-		summarizeBy: none
-		sourceColumn: is_available_for_use
-
-		annotation SummarizationSetBy = Automatic
-
-    /// Indicates if the ingredient is soon not to be used in menu planning.
-    column 'Is Outgoing Ingredient'
-		dataType: boolean
-		summarizeBy: none
-		sourceColumn: is_outgoing_ingredient
-
-		annotation SummarizationSetBy = Automatic
-
     /// Indicates if the ingredient should be handled in cold storage in production.
     column 'Is Cold Storage'
 		dataType: boolean
@@ -265,6 +306,7 @@ table Ingredients
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: is_organic_ingredient
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 
@@ -354,6 +396,7 @@ table Ingredients
 		dataType: boolean
 		summarizeBy: none
 		sourceColumn: has_co2_data
+		displayFolder: General Ingredient Information
 
 		annotation SummarizationSetBy = Automatic
 

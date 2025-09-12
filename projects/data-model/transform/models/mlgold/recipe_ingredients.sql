@@ -11,7 +11,7 @@ chef_ingredient_sections as (
     select
         chef_ingredient_section_id
         , generic_ingredient_id
-        , order_ingredient_id
+        , recipe_ingredient_id
     from {{ ref("pim__chef_ingredients") }}
 )
 
@@ -30,7 +30,7 @@ chef_ingredient_sections as (
         , chef_ingredients.generic_ingredient_id
         , generic_ingredient_names.language_id
         , generic_ingredient_names.generic_ingredient_name
-        , chef_ingredients.order_ingredient_id
+        , chef_ingredients.recipe_ingredient_id
     from chef_ingredient_sections
     left join chef_ingredients
         on chef_ingredients.chef_ingredient_section_id = chef_ingredient_sections.chef_ingredient_section_id
@@ -38,13 +38,13 @@ chef_ingredient_sections as (
         on generic_ingredient_names.generic_ingredient_id = chef_ingredients.generic_ingredient_id
 )
 
-, order_ingredients as (
+, recipe_ingredients as (
     select
-        order_ingredient_id
+        recipe_ingredient_id
         , ingredient_internal_reference
         , is_main_carbohydrate
         , is_main_protein
-    from {{ ref("pim__order_ingredients") }}
+    from {{ ref("pim__recipe_ingredients") }}
 )
 
 , ingredient_categories as (
@@ -55,38 +55,38 @@ chef_ingredient_sections as (
     from {{ ref("pim__ingredients") }}
 )
 
-{# to map each order_ingredient_id with category_id #}
-, order_ingredients_categories_linking as (
+{# to map each recipe_ingredient_id with category_id #}
+, recipe_ingredients_categories_linking as (
     select
-        order_ingredients.order_ingredient_id
-        , order_ingredients.is_main_carbohydrate
-        , order_ingredients.is_main_protein
+        recipe_ingredients.recipe_ingredient_id
+        , recipe_ingredients.is_main_carbohydrate
+        , recipe_ingredients.is_main_protein
         , ingredient_categories.ingredient_id
         , ingredient_categories.ingredient_category_id
-    from order_ingredients
+    from recipe_ingredients
     left join ingredient_categories
         on
-            order_ingredients.ingredient_internal_reference
+            recipe_ingredients.ingredient_internal_reference
             = ingredient_categories.ingredient_internal_reference
 )
 
-{# Joining the two joined CTEs together through order_ingredient_id #}
+{# Joining the two joined CTEs together through recipe_ingredient_id #}
 , recipes_generic_ingredient_names_categories_joined as (
     select
         recipes_generic_ingredient_names_joined.*
-        , order_ingredients_categories_linking.ingredient_id
-        , order_ingredients_categories_linking.ingredient_category_id
-        , order_ingredients_categories_linking.is_main_carbohydrate
-        , order_ingredients_categories_linking.is_main_protein
+        , recipe_ingredients_categories_linking.ingredient_id
+        , recipe_ingredients_categories_linking.ingredient_category_id
+        , recipe_ingredients_categories_linking.is_main_carbohydrate
+        , recipe_ingredients_categories_linking.is_main_protein
     from recipes_generic_ingredient_names_joined
-    left join order_ingredients_categories_linking
+    left join recipe_ingredients_categories_linking
         on
-            recipes_generic_ingredient_names_joined.order_ingredient_id
-            = order_ingredients_categories_linking.order_ingredient_id
+            recipes_generic_ingredient_names_joined.recipe_ingredient_id
+            = recipe_ingredients_categories_linking.recipe_ingredient_id
     where
         recipes_generic_ingredient_names_joined.generic_ingredient_id is not null
         and recipes_generic_ingredient_names_joined.generic_ingredient_name is not null
-        and order_ingredients_categories_linking.ingredient_id is not null
+        and recipe_ingredients_categories_linking.ingredient_id is not null
 )
 
 select * from recipes_generic_ingredient_names_categories_joined

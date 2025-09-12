@@ -10,7 +10,7 @@ renamed as (
 
     select
         {# ids #}
-        order_ingredient_id
+        order_ingredient_id as recipe_ingredient_id
         
         {# strings #}
         , upper(ingredient_internal_reference) as ingredient_internal_reference
@@ -30,7 +30,7 @@ renamed as (
         , modified_date as source_updated_at
             
         {# numerics #}
-        , order_ingredient_qty as ingredient_order_quantity
+        , order_ingredient_qty as recipe_ingredient_quantity
         , nutrition_units
         
     from source

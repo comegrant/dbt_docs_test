@@ -130,8 +130,8 @@ models:
         description: "{{ doc('column__generic_ingredient_name') }}"
         data_type: string
 
-      - name: order_ingredient_id
-        description: "{{ doc('column__order_ingredient_id') }}"
+      - name: recipe_ingredient_id
+        description: "{{ doc('column__recipe_ingredient_id') }}"
         data_type: int
 
       - name: ingredient_id

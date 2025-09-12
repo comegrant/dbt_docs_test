@@ -24,9 +24,9 @@ recipes as (
 
 )
 
-, order_ingredients as (
+, recipe_ingredients as (
 
-    select * from {{ ref('pim__order_ingredients') }}
+    select * from {{ ref('pim__recipe_ingredients') }}
 
 )
 
@@ -57,14 +57,13 @@ recipes as (
         , generic_ingredient_translations.generic_ingredient_id
         , generic_ingredient_translations.generic_ingredient_name
         , ingredients.ingredient_id
-        , order_ingredients.ingredient_internal_reference
+        , recipe_ingredients.ingredient_internal_reference
         , ingredient_translations.ingredient_name
         , ingredient_translations.language_id
-        , chef_ingredients.recipe_ingredient_amount
-        , order_ingredients.is_main_carbohydrate
-        , order_ingredients.is_main_protein
-        , order_ingredients.nutrition_units 
-        , order_ingredients.ingredient_order_quantity
+        , recipe_ingredients.is_main_carbohydrate
+        , recipe_ingredients.is_main_protein
+        , recipe_ingredients.nutrition_units 
+        , recipe_ingredients.recipe_ingredient_quantity
         , ingredients.ingredient_net_weight
         , ingredients.ingredient_co2_emissions_per_kg
         , ingredients.ingredient_co2_emissions_per_unit
@@ -80,10 +79,10 @@ recipes as (
         on chef_ingredient_sections.chef_ingredient_section_id = chef_ingredients.chef_ingredient_section_id
     left join generic_ingredient_translations
         on chef_ingredients.generic_ingredient_id = generic_ingredient_translations.generic_ingredient_id
-    left join order_ingredients
-        on chef_ingredients.order_ingredient_id = order_ingredients.order_ingredient_id
+    left join recipe_ingredients
+        on chef_ingredients.recipe_ingredient_id = recipe_ingredients.recipe_ingredient_id
     left join ingredients
-        on order_ingredients.ingredient_internal_reference = ingredients.ingredient_internal_reference
+        on recipe_ingredients.ingredient_internal_reference = ingredients.ingredient_internal_reference
     left join ingredient_translations
         on ingredients.ingredient_id = ingredient_translations.ingredient_id
 

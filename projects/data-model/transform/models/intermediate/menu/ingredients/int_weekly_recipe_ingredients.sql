@@ -57,41 +57,41 @@ menu_weeks_recipes_portions as (
         , any(recipe_ingredients.is_main_carbohydrate) as is_main_carbohydrate
         , any(recipe_ingredients.is_main_protein) as is_main_protein
         , sum(recipe_ingredients.nutrition_units) as nutrition_units
-        , sum(recipe_ingredients.ingredient_order_quantity) as ingredient_order_quantity
+        , sum(recipe_ingredients.recipe_ingredient_quantity) as recipe_ingredient_quantity
         
         , any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as ingredient_weight_per_unit
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as total_ingredient_weight
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as total_ingredient_weight_whole_units
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as total_ingredient_weight
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))) * any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as total_ingredient_weight_whole_units
 
         , any_value(coalesce(ingredient_prices.ingredient_planned_cost_per_unit, 0)) as ingredient_planned_cost_per_unit
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_planned_cost_per_unit, 0)) as total_ingredient_planned_cost
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_planned_cost_per_unit, 0)) as total_ingredient_planned_cost_whole_units
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_planned_cost_per_unit, 0)) as total_ingredient_planned_cost
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_planned_cost_per_unit, 0)) as total_ingredient_planned_cost_whole_units
         
         , any_value(coalesce(ingredient_prices.ingredient_expected_cost_per_unit, 0)) as ingredient_expected_cost_per_unit
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_expected_cost_per_unit, 0)) as total_ingredient_expected_cost
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_expected_cost_per_unit, 0)) as total_ingredient_expected_cost_whole_units
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_expected_cost_per_unit, 0)) as total_ingredient_expected_cost
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_expected_cost_per_unit, 0)) as total_ingredient_expected_cost_whole_units
         
         , any_value(coalesce(ingredient_prices.ingredient_actual_cost_per_unit, 0)) as ingredient_actual_cost_per_unit
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_actual_cost_per_unit, 0)) as total_ingredient_actual_cost
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_actual_cost_per_unit, 0)) as total_ingredient_actual_cost_whole_units
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * any_value(coalesce(ingredient_prices.ingredient_actual_cost_per_unit, 0)) as total_ingredient_actual_cost
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))) * any_value(coalesce(ingredient_prices.ingredient_actual_cost_per_unit, 0)) as total_ingredient_actual_cost_whole_units
         
         , any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as ingredient_co2_emissions_per_unit
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))  * any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as total_ingredient_co2_emissions
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)))  * any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as total_ingredient_co2_emissions_whole_units
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))  * any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as total_ingredient_co2_emissions
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)))  * any_value(recipe_ingredients.ingredient_co2_emissions_per_unit) as total_ingredient_co2_emissions_whole_units
         , any_value(
               case
                   when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
                   else 0
               end
           ) as ingredient_weight_with_co2_data
-        , sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0)) * 
+        , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * 
           any_value(
               case
                   when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
                   else 0
               end
           ) as total_ingredient_weight_with_co2_data
-        , ceiling(sum(coalesce(recipe_ingredients.ingredient_order_quantity, 0))) * 
+        , ceiling(sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0))) * 
           any_value(
               case
                   when recipe_ingredients.has_co2_data then recipe_ingredients.ingredient_net_weight
