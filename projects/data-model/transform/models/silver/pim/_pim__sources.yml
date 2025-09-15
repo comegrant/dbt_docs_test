@@ -5,7 +5,6 @@ sources:
     description: ""
     schema: bronze
     tables:
-
       - name: pim__ingredient_price
       - name: pim__menus
       - name: pim__menu_variations
@@ -25,11 +24,11 @@ sources:
       - name: pim__taxonomies
       - name: pim__recipes_taxonomies
       - name: pim__generic_ingredients_translations
-      - name: pim__chef_ingredient_sections   
+      - name: pim__chef_ingredient_sections
       - name: pim__chef_ingredients
       - name: pim__ingredient_categories_translations
       - name: pim__ingredients
-      - name: pim__order_ingredients	
+      - name: pim__order_ingredients
       - name: pim__ingredient_categories
       - name: pim__recipes_rating
       - name: pim__recipes_comments
@@ -58,5 +57,9 @@ sources:
       - name: pim__unit_labels
       - name: pim__unit_labels_translations
       - name: pim__ingredients_status_codes
+      - name: pim__quick_comments
+      - name: pim__quick_comment_translations
+      - name: pim__rating_quick_comment_configuration
+      - name: pim__recipe_rating_quick_comments
       - name: pim__weekly_production_need
       - name: pim__ingredient_type

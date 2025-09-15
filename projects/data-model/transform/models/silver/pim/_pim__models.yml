@@ -19,7 +19,7 @@ models:
         description: "{{ doc('column__ingredient_status_name') }}"
         data_tests:
           - not_null
-  
+
       - name: source_created_by
         data_type: string
         description: "{{ doc('column__source_created_by') }}"
@@ -173,7 +173,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if:  ">9074" # orders < 2020 can be without distribution center id
+                error_if: ">9074" # orders < 2020 can be without distribution center id
                 warn_if: ">9074"
 
       - name: menu_week
@@ -227,7 +227,7 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
-        
+
   - name: pim__ingredient_prices
     description: "Contains information on the planning purchasing price of ingredients."
     config:
@@ -535,7 +535,6 @@ models:
               config:
                 severity: warn
 
-
       - name: source_created_at
         data_type: timestamp
         description: "{{ doc('column__source_created_at') }}"
@@ -544,7 +543,6 @@ models:
               config:
                 severity: warn
 
-
       - name: source_updated_by
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
@@ -552,7 +550,6 @@ models:
           - not_null:
               config:
                 severity: warn
-
 
       - name: source_updated_at
         data_type: timestamp
@@ -1277,7 +1274,7 @@ models:
       - name: ingredient_net_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_net_weight') }}"
-      
+
       - name: unit_label_id
         data_type: int
         description: "{{ doc('column__unit_label_id') }}"
@@ -1305,43 +1302,43 @@ models:
       - name: has_packaging_photo
         data_type: boolean
         description: "{{ doc('column__has_packaging_photo') }}"
-        
+
       - name: is_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_cold_storage') }}"
-        
+
       - name: is_consumer_cold_storage
         data_type: boolean
         description: "{{ doc('column__is_consumer_cold_storage') }}"
-        
+
       - name: is_fragile_ingredient
         data_type: boolean
         description: "{{ doc('column__is_fragile_ingredient') }}"
-        
+
       - name: is_organic_ingredient
         data_type: boolean
         description: "{{ doc('column__is_organic_ingredient') }}"
-        
+
       - name: is_special_packing
         data_type: boolean
         description: "{{ doc('column__is_special_packing') }}"
-        
+
       - name: is_to_register_batch_number
         data_type: boolean
         description: "{{ doc('column__is_to_register_batch_number') }}"
-        
+
       - name: is_to_register_expiration_date
         data_type: boolean
         description: "{{ doc('column__is_to_register_expiration_date') }}"
-        
+
       - name: is_to_register_ingredient_weight
         data_type: boolean
         description: "{{ doc('column__is_to_register_ingredient_weight') }}"
-        
+
       - name: is_to_register_temperature
         data_type: boolean
         description: "{{ doc('column__is_to_register_temperature') }}"
-        
+
       - name: ingredient_gross_weight
         data_type: decimal(34,2)
         description: "{{ doc('column__ingredient_gross_weight') }}"
@@ -1444,7 +1441,7 @@ models:
       - name: nutrition_units
         data_type: decimal(6,2)
         description: "{{ doc('column__nutrition_units') }}"
-      
+
       - name: recipe_ingredient_quantity
         data_type: decimal(6,2)
         description: "{{ doc('column__recipe_ingredient_quantity') }}"
@@ -1909,7 +1906,6 @@ models:
         data_type: string
         description: "{{ doc('column__source_updated_by') }}"
 
-
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
@@ -1948,7 +1944,7 @@ models:
         description: "{{ doc('column__ingredient_supplier_id') }}"
         data_tests:
           - not_null
-      
+
       - name: ingredient_supplier_status_code_id
         data_type: int
         description: "{{ doc('column__ingredient_supplier_status_code_id') }}"
@@ -2014,7 +2010,7 @@ models:
         description: "{{ doc('column__menu_variation_id') }}"
         data_tests:
           - not_null
-      
+
       - name: ingredient_id
         data_type: int
         description: "{{ doc('column__ingredient_id') }}"
@@ -2040,7 +2036,7 @@ models:
       - name: source_updated_at
         data_type: timestamp
         description: "{{ doc('column__source_updated_at') }}"
-      
+
       # Test for not_null gives warning, but there are 339 rows with NULL up until 2019-03-11. DATA-1383 to create a better test.
       - name: weekly_ingredient_quantity
         data_type: decimal(34,3)
@@ -2049,7 +2045,7 @@ models:
           - not_null:
               config:
                 severity: warn
-      
+
       - name: is_fetched_from_recipes
         data_type: boolean
         description: "{{ doc('column__is_fetched_from_recipes') }}"
@@ -2057,7 +2053,7 @@ models:
           - not_null:
               config:
                 severity: warn
-      
+
       - name: is_active_weekly_ingredient
         data_type: boolean
         description: "{{ doc('column__is_active_weekly_ingredient') }}"
@@ -2204,7 +2200,7 @@ models:
       - name: unit_label_short_name
         data_type: string
         description: "{{ doc('column__unit_label_short_name') }}"
-      
+
       - name: unit_label_short_name_plural
         data_type: string
         description: "{{ doc('column__unit_label_short_name_plural') }}"
@@ -2212,6 +2208,119 @@ models:
       - name: unit_label_full_name
         data_type: string
         description: "{{ doc('column__unit_label_full_name') }}"
+
+  - name: pim__quick_comments
+    description: "Quick comment versioning table. Mostly ingested to get company_id."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: is_frontend_enabled
+        data_type: boolean
+        description: "{{ doc('column__is_frontend_enabled') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+  - name: pim__quick_comment_translations
+    description: "Table storing the text of quick comments in local language and english"
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: quick_comment_translation_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_translation_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: quick_comment_text
+        data_type: string
+        description: "{{ doc('column__quick_comment_text') }}"
+        data_tests:
+          - not_null
+
+  - name: pim__rating_quick_comment_configuration
+    description: "Number of stars in the review for which a quick comment is suggested to the user."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: rating_quick_comment_configuration_id
+        data_type: string
+        description: "{{ doc('column__rating_quick_comment_configuration_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - not_null
+
+      - name: number_of_stars
+        data_type: int
+        description: "{{ doc('column__number_of_stars') }}"
+        data_tests:
+          - not_null
+
+  - name: pim__recipe_rating_quick_comments
+    description: "IDs of quick comments associated to reviews."
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: recipe_review_id
+        data_type: string
+        description: "{{ doc('column__recipe_review_id') }}"
+        data_tests:
+          - not_null
+
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - not_null
 
   - name: pim__ingredient_types
     description: ""

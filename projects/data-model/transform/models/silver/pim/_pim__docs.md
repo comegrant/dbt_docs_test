@@ -306,6 +306,50 @@ Free text comment made by a customer when rating the recipe.
 
 {% enddocs %}
 
+{% docs column__quick_comment_id %}
+
+The identifier of a quick comment. A pre-written comment proposed as an option to the user when rating a dish. This is the unique identifier of the text template, not that of a specific comment left by a specific user.
+
+{% enddocs %}
+
+{% docs column__quick_comment_translation_id %}
+
+The unique identifier of a quick comment's translation.
+
+{% enddocs %}
+
+{% docs column__quick_comment_text %}
+
+The text of the quick comment.
+
+{% enddocs %}
+
+{% docs column__rating_quick_comment_configuration_id %}
+
+The unique ID of the configuration (rule) associating a quick comment to a range of star ratings. e.g: a quick comment "Tasted delicious" will not be proposed as an option on a 1-star review.
+
+{% enddocs %}
+
+{% docs column__number_of_stars %}
+
+The number of star(s) for which a quick comment can appear as an option.
+e.g: a quick comment "Tasted delicious" will not be proposed as an option on a 1-star review.
+
+{% enddocs %}
+
+{% docs column__is_frontend_enabled %}
+
+Whether the quick comment can be proposed to users on the website.
+
+{% enddocs %}
+
+{% docs column__recipe_review_id %}
+
+The unique identifier of a rating, an event in which a user gave a rating (1-5 stars) to a recipe. A rating can optionally be associated to a comment and/or any number of quick comments.
+
+{% enddocs %}
+
+
 # Ingredient Categories
 {% docs column__ingredient_category_id %}
 
