@@ -61,11 +61,11 @@ table 'Recipe Ingredients'
 		annotation SummarizationSetBy = Automatic
 
 	/// The amount of an ingredient to be ordered for a recipe. 
-	column ingredient_order_quantity
+	column recipe_ingredient_quantity
 		dataType: double
         isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: ingredient_order_quantity
+		sourceColumn: recipe_ingredient_quantity
 		annotation SummarizationSetBy = Automatic
 
 	/// The net weight (in grams) for the total ingredient amount in the recipe.

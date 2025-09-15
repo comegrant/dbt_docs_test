@@ -637,7 +637,7 @@ table 'Menu Measures'
 	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
 	measure 'Ingredient Quantity in Menu' = 
 			CALCULATE(
-				SUM('Recipe Ingredients'[ingredient_order_quantity]),
+				SUM('Recipe Ingredients'[recipe_ingredient_quantity]),
 				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
 			)
 		formatString: #,0.00
