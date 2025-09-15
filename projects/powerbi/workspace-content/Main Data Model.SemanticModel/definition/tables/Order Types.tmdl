@@ -53,12 +53,6 @@ table 'Order Types'
 		summarizeBy: none
 		sourceColumn: premium_dish
 
-	column 'Premium Dish'
-		dataType: string
-		isHidden
-		summarizeBy: none
-		sourceColumn: premium_dish
-
 	/// Used to filter orders on whether or not the order includes a thrifty dish. A thrifty dish is a dish which the customer get a price reduction if chosing.
 	column 'Thrifty Dish'
 		dataType: string

@@ -3836,7 +3836,7 @@ table 'Order Measures'
 		isHidden
 		isAvailableInMdx: false
 		summarizeBy: none
-		sourceColumn: fk_dim_partnerships
+		sourceColumn: fk_dim_partnership_rule_combinations
 
 	/// Primary key of the dim_ingredient_combinations table
     column fk_dim_ingredient_combinations
