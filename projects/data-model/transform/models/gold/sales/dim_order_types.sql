@@ -20,9 +20,9 @@ order_types as (
     select
         1 as mealbox_composition_id
         , 'Subscription' as order_type_name
-        , 'Preselected Menu' as mealbox_selection
-        , 'Preselected Menu' as premium_dish
-        , 'Preselected Menu' as thrifty_dish
+        , 'Cheffelo Composed Menu' as mealbox_selection
+        , 'Cheffelo Composed Menu' as premium_dish
+        , 'Cheffelo Composed Menu' as thrifty_dish
 
     union all
 
@@ -30,8 +30,8 @@ order_types as (
         2 as mealbox_composition_id
         , 'Subscription' as order_type_name
         , 'Customer Composed Menu' as mealbox_selection
-        , 'Has Premium Dish' as premium_dish
-        , 'Has Thrifty Dish' as thrifty_dish
+        , 'Order with Premium Dish' as premium_dish
+        , 'Order with Thrifty Dish' as thrifty_dish
 
     union all
 
@@ -39,8 +39,8 @@ order_types as (
         3 as mealbox_composition_id
         , 'Subscription' as order_type_name
         , 'Customer Composed Menu' as mealbox_selection
-        , 'No Premium Dish' as premium_dish
-        , 'No Thrifty Dish' as thrifty_dish
+        , 'Order without Premium Dish' as premium_dish
+        , 'Order without Thrifty Dish' as thrifty_dish
 
 
     union all
@@ -49,8 +49,8 @@ order_types as (
         4 as mealbox_composition_id
         , 'Subscription' as order_type_name
         , 'Customer Composed Menu' as mealbox_selection
-        , 'Has Premium Dish' as premium_dish
-        , 'No Thrifty Dish' as thrifty_dish
+        , 'Order with Premium Dish' as premium_dish
+        , 'Order without Thrifty Dish' as thrifty_dish
 
     union all
 
@@ -58,11 +58,10 @@ order_types as (
         5 as mealbox_composition_id
         , 'Subscription' as order_type_name
         , 'Customer Composed Menu' as mealbox_selection
-        , 'No Premium Dish' as premium_dish
-        , 'Has Thrifty Dish' as thrifty_dish
+        , 'Order without Premium Dish' as premium_dish
+        , 'Order with Thrifty Dish' as thrifty_dish
 
 )
-
 
 , order_types_clean as (
     select
