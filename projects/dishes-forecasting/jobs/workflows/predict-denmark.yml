@@ -24,8 +24,8 @@ resources:
                 password: "{{secrets/auth_common/docker-registry-password}}"
 
       schedule:
-        quartz_cron_expression: '0 0 1 ? * THU'
-        timezone_id: UTC
+        quartz_cron_expression: '0 0 6 ? * THU'
+        timezone_id: Europe/Oslo
 
       email_notifications:
         on_failure:
