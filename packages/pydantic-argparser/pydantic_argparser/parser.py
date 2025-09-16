@@ -93,6 +93,9 @@ def decode_args(parser: argparse.Namespace, model: type[T]) -> T:
         if value == PydanticUndefined:
             raise ValueError(f"Got an undefined value for '{name}'")
 
+        if value is None:
+            continue
+
         if field.annotation is None:
             continue
 

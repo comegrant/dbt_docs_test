@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 
     dbutils: RemoteDbUtils = ""  # type: ignore
 
+from constants.companies import get_company_by_name
+from data_contracts.recipe import RecipeFeatures
 from databricks_env import auto_setup_env
 
 auto_setup_env()
@@ -20,6 +22,7 @@ from preselector.output_validation import (
     compliancy_metrics,
     error_metrics,
     get_output_data,
+    unwanted_concept,
     validation_metrics,
     validation_summary,
     variation_metrics,
@@ -78,10 +81,26 @@ url_to_job = f"{DATABRICKS_HOSTS[env]}/jobs/{job_id}/runs/{parent_run_id}"
 
 
 async def run() -> None:
+    company_id = get_company_by_name(company).company_id
+
+    assert company_id
+    assert start_yyyyww
+
     df = await get_output_data(
         start_yyyyww=start_yyyyww, output_type=output_type, company=company, model_version=model_version
     )
     display(df)
+
+    recipe_schema = RecipeFeatures()
+    recipe_data = (
+        await RecipeFeatures.query()
+        .filter(
+            (recipe_schema.company_id == company_id) & (start_yyyyww <= (recipe_schema.year * 100 + recipe_schema.week))
+        )
+        .to_polars()
+    )
+
+    unwanted_metrics = unwanted_concept(df, recipe_data)
 
     results_comp = compliancy_metrics(df)
     results_error = error_metrics(df)
@@ -113,6 +132,7 @@ async def run() -> None:
         f"- Allergen preference broken: {error_compliancy}% of instances.\n"
         f"- Mean ordered ago broken: {error_mean_ordered_ago}% of instances.\n"
         f"Warnings:\n"
+        f"- Unwanted vegetarian percentage: {unwanted_metrics.unwanted_vegetarian_perc:.1%} of instances.\n"
         f"- Taste/concept preference broken: {warning_compliancy}% of instances.\n"
         f"- Aggregated error vector too high: {warning_avg_error}% of instances.\n"
         f"- Accumulated error vector too high: {warning_acc_error}% of instances.\n"
@@ -125,6 +145,7 @@ async def run() -> None:
         f"Warnings Detected in Preselector Output!\n"
         f"Total number of instances: {total_records}\n"
         f"Warnings:\n"
+        f"- Unwanted vegetarian percentage: {unwanted_metrics.unwanted_vegetarian_perc:.1%} of instances.\n"
         f"- Taste/concept preference broken: {warning_compliancy}% of instances.\n"
         f"- Aggregated error vector too high: {warning_avg_error}% of instances.\n"
         f"- Accumulated error vector too high: {warning_acc_error}% of instances.\n"

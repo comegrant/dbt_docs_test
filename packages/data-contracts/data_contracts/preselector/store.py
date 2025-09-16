@@ -106,6 +106,7 @@ class Preselector:
     recipes = List(Struct(PreselectorRecipeOutput)).is_optional().description("The outputted recipes")
 
     taste_preferences = List(Struct(AllergenPreference))
+    taste_preference_ids = List(String()).is_optional()
 
     model_version = String()
     "The git hash of the program"

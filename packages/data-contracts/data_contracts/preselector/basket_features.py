@@ -64,6 +64,7 @@ class VariationTags:
     quality = "quality"
     time = "time"
     equal_dishes = "equal_dishes"
+    normally_avoid = "normally_avoid"
 
 
 class PreselectorTags:
@@ -155,8 +156,11 @@ class BasketFeatures:
         as_type=Float64(),
     ).default_value(0)
 
-    is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.protein)
-    is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.protein)
+    is_vegan_percentage = mean_of_bool(recipe_features.is_vegan).with_tag(VariationTags.normally_avoid)
+    is_vegetarian_percentage = mean_of_bool(recipe_features.is_vegetarian).with_tag(VariationTags.normally_avoid)
+    contains_at_least_one_vegetarian = (
+        contains_at_least_one(recipe_features.is_vegetarian).default_value(0).with_tag(VariationTags.normally_avoid)
+    )
 
     is_seafood_percentage = (
         Float64()
@@ -178,10 +182,6 @@ class BasketFeatures:
 
     # Need to clean-up the hack as the local loop value is added to the class
     del locals()["protein"]
-
-    is_other_protein_percentage = (
-        mean_of_bool(recipe_main_ingredient.is_other_protein).default_value(0).with_tag(VariationTags.protein)
-    )
 
     # Main Carbos
     for carbo in recipe_main_ingredient.all_carbos:
@@ -312,23 +312,22 @@ async def historical_preselector_vector(
 
     features = {feat for feat in BasketFeatures.query().request.all_features if feat.name not in inject_features}
     feature_columns = [feat.name for feat in features if feat not in exclude_columns]
-    scalar_feature_columns = [
-        feat.name
-        for feat in features
-        if feat not in exclude_columns and (feat.tags is None or PreselectorTags.binary_metric not in feat.tags)
-    ]
     boolean_feature_columns = [
         feat.name
         for feat in features
         if feat not in exclude_columns and feat.tags is not None and PreselectorTags.binary_metric in feat.tags
     ]
+    scalar_feature_columns = [
+        feat.name for feat in features if feat not in exclude_columns and feat.name not in boolean_feature_columns
+    ]
+
     target = (
         basket_features.group_by("agreement_id")
-        .agg([pl.col(feat).fill_nan(0).median().alias(feat).cast(pl.Float32) for feat in feature_columns])
+        .agg([pl.col(feat).fill_nan(0).mean().alias(feat).cast(pl.Float32) for feat in feature_columns])
         .with_columns(vector_type=pl.lit("target"))
     )
 
-    center_point = 0.4
+    center_point = 0.3
 
     number_of_features = len(boolean_feature_columns) + len(scalar_feature_columns)
 
@@ -336,7 +335,20 @@ async def historical_preselector_vector(
     scalar_weighting = len(scalar_feature_columns) / number_of_features
 
     scalar_soft_max_sum = pl.sum_horizontal([pl.col(feat).exp() for feat in scalar_feature_columns])
-    boolean_soft_max_sum = pl.sum_horizontal([pl.col(feat).exp() for feat in boolean_feature_columns])
+    # Using a sigmoid function to set the activation, so soft max is not needed
+    boolean_sum = pl.sum_horizontal([pl.col(feat) for feat in boolean_feature_columns])
+
+    def sigmoid(col: str, value_range: float, offset: float) -> pl.Expr:
+        half_range = value_range / 2
+
+        if offset <= 0:
+            exponent = -1 * (pl.col(col) + half_range + offset)
+        else:
+            exponent = -1 * (pl.col(col) - half_range - offset)
+
+        exponent = exponent / (0.1 * half_range)
+
+        return 1 / (1 + exponent.exp())
 
     importance = (
         basket_features.filter((pl.len() > 1).over("agreement_id"))
@@ -352,22 +364,31 @@ async def historical_preselector_vector(
                 *[
                     # The percentage of weeks with at least one true value.
                     # Except if it is the same as the center point will the importance be set to 0.
-                    ((pl.col(feat).filter(pl.col(feat) > 0).len() / pl.col(feat).len() - center_point) / center_point)
-                    .pow(2)
-                    .alias(feat)
+                    (pl.col(feat).filter(pl.col(feat) > 0).len() / pl.col(feat).len()).alias(feat)
                     for feat in boolean_feature_columns
                 ],
             ]
         )
         .with_columns(
             [
+                pl.when(pl.col(feat) < center_point)
+                .then(sigmoid(feat, center_point, 0))
+                .otherwise(sigmoid(feat, 1 - center_point, center_point))
+                .alias(feat)
+                for feat in boolean_feature_columns
+            ]
+        )
+        .with_columns(
+            [
                 *[(pl.col(feat).exp() / scalar_soft_max_sum) * scalar_weighting for feat in scalar_feature_columns],
-                *[(pl.col(feat).exp() / boolean_soft_max_sum) * boolean_weighting for feat in boolean_feature_columns],
+                *[(pl.col(feat) / boolean_sum) * boolean_weighting for feat in boolean_feature_columns],
             ]
         )
         .with_columns([pl.col(feat).cast(pl.Float32) for feat in feature_columns])
         .with_columns(vector_type=pl.lit("importance"))
     )
+
+    importance.sum_horizontal()
 
     return (
         target.vstack(importance.select(target.columns))
@@ -391,34 +412,37 @@ async def generate_attribut_definition_vectors(request: RetrievalRequest, limit:
         "RT": "5E65A955-7B1A-446C-B24F-CFE576BF52D7",
     }
 
-    default_values = {
+    schema = BasketFeatures()
+
+    default_values: dict[str, dict[str, FeatureImportance]] = {
         # Quick and easy
         "C28F210B-427E-45FA-9150-D6344CAE669B": {
-            "cooking_time_mean": FeatureImportance(target=0.0, importance=1.0),
+            schema.cooking_time_mean.name: FeatureImportance(target=0.0, importance=1.0),
         },
         # Chef favorite
         "C94BCC7E-C023-40CE-81E0-C34DA3D79545": {
             # "is_chef_choice_percentage": FeatureImportance(target=1.0, importance=0.1),
             # "mean_number_of_ratings": FeatureImportance(target=0.75, importance=0.1),
             # "mean_ratings": FeatureImportance(target=0.8, importance=0.1),
-            "mean_family_friendly_probability": FeatureImportance(target=0.0, importance=1.0),
+            schema.mean_family_friendly_probability.name: FeatureImportance(target=0.0, importance=1.0),
         },
         # Family
         "B172864F-D58E-4395-B182-26C6A1F1C746": {
             # "is_family_friendly_percentage": FeatureImportance(target=1.0, importance=0.1),
-            "mean_family_friendly_probability": FeatureImportance(target=1.0, importance=1.0),
+            schema.mean_family_friendly_probability.name: FeatureImportance(target=1.0, importance=1.0),
         },
         # Vegetarian
         "6A494593-2931-4269-80EE-470D38F04796": {
-            "is_vegetarian_percentage": FeatureImportance(target=1.0, importance=1.0),
+            schema.is_vegetarian_percentage.name: FeatureImportance(target=1.0, importance=1.0),
+            schema.contains_at_least_one_vegetarian.name: FeatureImportance(target=1.0, importance=1.0),
         },
         # Low Cal
         "FD661CAD-7F45-4D02-A36E-12720D5C16CA": {
-            "is_low_calorie": FeatureImportance(target=1.0, importance=1.0),
+            schema.is_low_calorie.name: FeatureImportance(target=1.0, importance=1.0),
         },
         # Roede
         "DF81FF77-B4C4-4FC1-A135-AB7B0704D1FA": {
-            "is_roede_percentage": FeatureImportance(target=1.0, importance=1.0),
+            schema.is_roede_percentage.name: FeatureImportance(target=1.0, importance=1.0),
         },
         # Single
         "37CE056F-4779-4593-949A-42478734F747": {},

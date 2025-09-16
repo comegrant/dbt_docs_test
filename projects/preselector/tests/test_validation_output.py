@@ -2,8 +2,15 @@ import polars as pl
 import pytest
 from aligned import ContractStore
 from aligned.sources.random_source import RandomDataSource
-from data_contracts.recipe import RecipeMainIngredientCategory
-from preselector.output_validation import compliancy_metrics, error_metrics, validation_metrics, variation_metrics
+from constants.concepts import ConceptIds, NegativePreferenceIds
+from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory
+from preselector.output_validation import (
+    compliancy_metrics,
+    error_metrics,
+    unwanted_concept,
+    validation_metrics,
+    variation_metrics,
+)
 from preselector.store import preselector_store
 
 
@@ -74,6 +81,57 @@ def dummy_store() -> ContractStore:
 
 
 @pytest.mark.asyncio
+async def test_unwanted_recipe_metric(dummy_store: ContractStore) -> None:
+    df = pl.DataFrame(
+        {
+            "agreement_id": [1, 2, 3, 4, 5],
+            "company_id": ["a", "a", "a", "a", "a"],
+            "year": [2024, 2024, 2024, 2024, 2024],
+            "week": [1, 1, 1, 1, 1],
+            "main_recipe_ids": [
+                ["1", "2", "3", "4"],
+                ["1", "2", "3", "5"],  # contains veg
+                ["1", "6", "3", "4"],  # contains veg
+                ["1", "2", "3", "4"],
+                ["1", "2", "3", "4"],
+            ],
+            "concept_preference_ids": [[ConceptIds.vegetarian.value], ["s"], ["s"], ["c"], []],
+            "taste_preference_ids": [["a"], None, [NegativePreferenceIds.non_vegetarian.value], None, ["a"]],
+        }
+    )
+
+    store = dummy_store.update_source_for(
+        RecipeFeatures,
+        RandomDataSource.with_values(
+            {
+                "main_recipe_id": [1, 2, 3, 4, 5, 6],
+                "is_vegetarian": [False, False, False, False, True, True],
+            }
+        ),
+    )
+
+    schema = RecipeFeatures()
+    recipe_data = (
+        await store.contract(RecipeFeatures)
+        .select(
+            [
+                schema.is_vegetarian,
+                schema.main_recipe_id,
+            ]
+        )
+        .all()
+        .to_polars()
+    )
+
+    out = unwanted_concept(df, recipe_data)
+
+    perc = out.unwanted_vegetarian_perc
+
+    assert perc >= 0.333332
+    assert perc <= 0.333334
+
+
+@pytest.mark.asyncio
 async def test_validation_metric(dummy_store: ContractStore) -> None:
     df = pl.DataFrame(
         {
@@ -95,6 +153,8 @@ async def test_validation_metric(dummy_store: ContractStore) -> None:
                 ["63059", "51311", "44106", "86774"],
                 ["63059", "51311", "44106", "86774"],
             ],
+            "concept_preference_ids": [[""], [""], [""], [""]],
+            "taste_preference_ids": [[""], None, None, None],
         }
     )
 

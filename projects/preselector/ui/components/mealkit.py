@@ -21,25 +21,22 @@ def mealkit(
     number_of_recipes = recipe_information.shape[0]
     cols = container.columns(number_of_recipes)
 
-    taxonomies_to_show = [
-        "Vegetarisk",
-        "Vegan",
-        "Laktosefri",
-        "Glutenfri",
-        "Roede",
-        "Vegetar",
-        "Godt og rimelig",
-    ]
-
     for index, row in recipe_information.iterrows():
         assert isinstance(index, int)
+
+        recipe = RecipeFeatures()
+        tags_of_interest: dict[str, bool] = {
+            "Vegetar": row[recipe.is_vegetarian.name],  # type: ignore
+            "Vegan": row[recipe.is_vegan.name],  # type: ignore
+            "Laktose": row[recipe.is_lactose.name],  # type: ignore
+            "Roede": row[recipe.is_roede.name],  # type: ignore
+            "Low Cal": row[recipe.is_low_calorie.name],  # type: ignore
+        }
 
         col = cols[int(index)]
         col.image(row[RecipeFeatures().recipe_photo_url.name])  # type: ignore
 
-        tags = " ".join(
-            [badge(tag) for tag in row[RecipeFeatures().taxonomy_ids.name] if tag in taxonomies_to_show],
-        )
+        tags = " ".join([badge(tag) for tag, should_show in tags_of_interest.items() if should_show])
         col.markdown(tags, unsafe_allow_html=True)
 
         col.markdown(
@@ -65,31 +62,8 @@ async def recipe_information_for_ids(
 
     schema = RecipeFeatures()
 
-    filter_exp = (
-        (schema.main_recipe_id.is_in(main_recipe_ids) & (schema.year == year) & (schema.week == week))
-        .to_expression()
-        .to_polars()
-    )
-
-    assert filter_exp is not None
-
-    return (
-        await RecipeFeatures.query()
-        .select_columns(
-            [
-                schema.recipe_photo_url.name,
-                schema.main_recipe_id.name,
-                schema.year.name,
-                schema.week.name,
-                schema.taxonomy_ids.name,
-                schema.recipe_name.name,
-                schema.cooking_time_from.name,
-                schema.cooking_time_to.name,
-            ]
-        )
-        .filter(filter_exp)
-        .to_pandas()
-    )
+    filter_exp = schema.main_recipe_id.is_in(main_recipe_ids) & (schema.year == year) & (schema.week == week)
+    return (await RecipeFeatures.query().filter(filter_exp).to_polars()).to_pandas()
 
 
 async def cached_recipe_info(

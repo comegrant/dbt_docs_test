@@ -1,12 +1,14 @@
 import datetime as dt
-from typing import Optional
+from typing import Annotated, Optional
 
 import polars as pl
 from aligned import ContractStore
 from constants.companies import get_company_by_code
+from constants.concepts import ConceptIds, NegativePreferenceIds
 from data_contracts.preselector.store import Preselector, SuccessfulPreselectorOutput
-from data_contracts.recipe import RecipeMainIngredientCategory
+from data_contracts.recipe import RecipeFeatures, RecipeMainIngredientCategory
 from data_contracts.sources import databricks_catalog
+from pydantic import BaseModel
 
 from preselector.data.models.customer import PreselectorPreferenceCompliancy
 
@@ -34,14 +36,17 @@ async def get_output_data(
     company_id = get_company_by_code(company).company_id
 
     if output_type == "realtime":
+        schema = SuccessfulPreselectorOutput()
         df = (
             await SuccessfulPreselectorOutput.query()
-            .filter(pl.col("menu_year").cast(pl.Int32) * 100 + pl.col("menu_week") == start_yyyyww)
-            .filter(pl.col("company_id") == company_id)
+            .filter((schema.menu_year * 100 + schema.menu_week) == start_yyyyww)
+            .filter(schema.company_id == company_id)
             .unique_entities()
             .to_polars()
         ).select(
             [
+                "concept_preference_ids",
+                "taste_preferences",
                 "company_id",
                 "menu_year",
                 "menu_week",
@@ -65,11 +70,14 @@ async def get_output_data(
         else:
             raise ValueError(f"Unsupported output type: {output_type}")
 
+        schema = Preselector()
         df = (
             await Preselector.query()
             .using_source(source)
             .select(
                 {
+                    "concept_preference_ids",
+                    "taste_preferences",
                     "company_id",
                     "year",
                     "week",
@@ -82,8 +90,8 @@ async def get_output_data(
                 }
             )
             .all()
-            .filter(pl.col("year").cast(pl.Int32) * 100 + pl.col("week") == start_yyyyww)
-            .filter(pl.col("company_id") == company_id)
+            .filter((schema.year * 100 + schema.week) == start_yyyyww)
+            .filter(schema.company_id == company_id)
             .rename({"agreement_id": "billing_agreement_id", "year": "menu_year", "week": "menu_week"})
             .to_polars()
         ).with_columns(number_of_recipes=pl.col("main_recipe_ids").list.len())
@@ -96,6 +104,43 @@ async def get_output_data(
 
 def count_over_compliance(compliance: int) -> pl.Expr:
     return pl.col("compliancy").filter(pl.col("compliancy") == compliance).count()
+
+
+class UnwantedConcept(BaseModel):
+    unwanted_vegetarian_perc: float
+
+
+def unwanted_concept(df: pl.DataFrame, recipe_df: Annotated[pl.DataFrame, RecipeFeatures]) -> UnwantedConcept:
+    recipe = RecipeFeatures()
+    df_schema = Preselector()
+
+    user_filter = ~(
+        df_schema.concept_preference_ids.contains(ConceptIds.vegetarian.value)
+        | (
+            df_schema.taste_preference_ids.is_not_null()
+            & df_schema.taste_preference_ids.contains(NegativePreferenceIds.non_vegetarian.value)
+        )
+    ).to_polars()
+
+    non_veg_df = (
+        df.filter(user_filter)
+        .explode(df_schema.main_recipe_ids.name)
+        .cast({df_schema.main_recipe_ids.name: recipe_df.schema[recipe.main_recipe_id.name]})
+    )
+
+    with_features = non_veg_df.join(
+        recipe_df, left_on=df_schema.main_recipe_ids.name, right_on=recipe.main_recipe_id.name
+    )
+
+    metrics = (
+        with_features.group_by([df_schema.agreement_id.name, df_schema.year.name, df_schema.week.name])
+        .agg(unwanted_count=pl.col(recipe.is_vegetarian.name).sum())
+        .select(unwanted_vegetarian_perc=pl.arg_where(pl.col("unwanted_count") > 0).count() / pl.count())
+    )
+
+    assert metrics.height == 1, f"Expected one row but got {metrics.height}"
+
+    return UnwantedConcept(**metrics.to_dicts()[0])
 
 
 def compliancy_metrics(df: pl.DataFrame) -> pl.DataFrame:
@@ -194,7 +239,7 @@ async def add_variation_warning(df: pl.DataFrame, dummy: Optional[ContractStore]
         .rename({"main_recipe_ids": "recipe_id"})
     )
 
-    store = dummy.feature_view(RecipeMainIngredientCategory) if dummy else RecipeMainIngredientCategory.query()
+    store = dummy.contract(RecipeMainIngredientCategory) if dummy else RecipeMainIngredientCategory.query()
     with_main_ingredient = await store.features_for(all_recipe_ids).to_polars()
 
     grouped = with_main_ingredient.group_by(

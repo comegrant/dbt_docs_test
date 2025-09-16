@@ -93,10 +93,11 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
         return importance, target
 
     potential_tags = {
-        VariationTags.protein: 0.1,
+        VariationTags.protein: 1,
         VariationTags.carbohydrate: 0.2,
-        VariationTags.quality: 0.8,
+        VariationTags.quality: 0.9,
         VariationTags.equal_dishes: 0.0,
+        VariationTags.normally_avoid: 0,
     }
 
     tags = dict()
@@ -113,8 +114,9 @@ def potentially_add_variation(importance: pl.DataFrame, target: pl.DataFrame) ->
     # These total sum 0.5 will lead to
     # Attributes = 2/3
     # Variation = 1/3
-    # Since they should be summed to 1
-    total_sum = 0.2 / len(tags)
+    # Since they should be summed to 1 and using 0.5 leads to 1.5
+    # So a total sum of 1 would lead to 50/50
+    total_sum = 1 / len(tags)
 
     if not tags:
         return importance, target
@@ -186,8 +188,8 @@ async def historical_preselector_vector(
                     "mean_cost_of_food": [0.1],
                     "mean_rank": [0.05],
                     "mean_ordered_ago": [0.3],
-                    "intra_week_similarity": [0.09],
-                    "repeated_proteins_percentage": [0.1],
+                    "intra_week_similarity": [0.05],
+                    "repeated_proteins_percentage": [0.05],
                     "repeated_carbo_percentage": [0.05],
                     "mean_is_dislike": [0.1],
                     "mean_is_favorite": [0.1],
@@ -300,7 +302,7 @@ async def historical_preselector_vector(
         )
 
     # Stacking the user vector two times to weight that 2 / 3
-    user_vector_weight = 2
+    user_vector_weight = 10
     attribute_vector_weight = 1
     vector_sum = user_vector_weight + attribute_vector_weight
 

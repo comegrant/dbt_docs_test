@@ -1,7 +1,6 @@
 "Contains the 'model' of the preselector - if it can be called that."
 
 import logging
-from math import log2
 from typing import Annotated
 
 import numpy as np
@@ -403,19 +402,18 @@ async def find_best_combination(
         if should_explain:
             import streamlit as st
 
+            st.write(f"Selecting recipe nr {index + 1}")
             st.write("New candidate vectors")
             st.write(recipe_nudge)
 
         # For a five recipe selection on the first run
         # log(1.2) => 0.26
-        binary_weight = log2(1 + (final_combination.height + 1) / number_of_recipes)
+        # binary_weight = log2(1 + (final_combination.height + 1) / number_of_recipes)
 
         next_vector = select_next_vector(
             mean_target_vector,
             recipe_nudge,
-            feature_importance.with_columns([pl.col(feat) * binary_weight for feat in binary_features])
-            .transpose()
-            .to_series(),
+            feature_importance.with_columns([pl.col(feat) for feat in binary_features]).transpose().to_series(),
             columns,
             explain_based_on_current=current_vector,
             error_column=error_column if index == n_recipes_to_add - 1 else None,

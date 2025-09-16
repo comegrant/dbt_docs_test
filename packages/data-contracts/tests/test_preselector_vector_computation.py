@@ -47,7 +47,7 @@ async def test_importance_and_target_vector_computation() -> None:
                 "week": [1, 1, 2, 2] * 2,
                 "year": [2024] * 8,
                 "portion_size": [2] * 8,
-            }
+            },
         ),  # type: ignore
     )
     store = store.update_source_for(
@@ -66,7 +66,7 @@ async def test_importance_and_target_vector_computation() -> None:
                 "is_vegan": [0, 0, 0],
                 "is_fish": [1, 0, 0],
                 "is_spicy": [0, 1, 0],
-            }
+            },
         ),  # type: ignore
     )
     store = store.update_source_for(
@@ -78,7 +78,7 @@ async def test_importance_and_target_vector_computation() -> None:
                 "main_protein_name": ["salmon", "chicken", "beef"],
                 "main_carbohydrate_category_id": [1047, 2182, 940],
                 "main_carboydrate_name": ["grain", "pasta", "vegs"],
-            }
+            },
         ),  # type: ignore
     )
 
