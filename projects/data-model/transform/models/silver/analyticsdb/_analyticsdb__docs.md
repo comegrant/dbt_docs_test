@@ -70,13 +70,13 @@ A description of what the different customer segments are and what they include
 
 {% enddocs %}
 
-# Budget Aquisition Targets
+# Budget Acquisition Targets
 
 {% enddocs %}
 
-{% docs column__monthly_aquisition_target %}
+{% docs column__monthly_acquisition_target %}
 
-The target number of customers which Growth&Customer are expecting to aquire/reactivate during specified month
+The target number of customers which Growth&Customer are expecting to acquire/reactivate during specified month
 
 {% enddocs %}
 

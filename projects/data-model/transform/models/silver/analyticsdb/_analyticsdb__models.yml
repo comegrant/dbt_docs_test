@@ -413,14 +413,14 @@ models:
         data_tests:
           - not_null
 
-  - name: analyticsdb_shared__budget_aquisition_targets
-    description: "Table containing the input from growth/customer on target number of aquisitions"        
-    alias: analyticsdb_shared__budget_aquisition_targets 
+  - name: analyticsdb_shared__budget_acquisition_targets
+    description: "Table containing the input from growth/customer on target number of acquisitions"        
+    alias: analyticsdb_shared__budget_acquisition_targets 
     columns:
 
-      - name: monthly_aquisition_target
+      - name: monthly_acquisition_target
         data_type: int
-        description: "{{ doc('column__monthly_aquisition_target') }}"
+        description: "{{ doc('column__monthly_acquisition_target') }}"
 
       - name: financial_year
         data_type: int

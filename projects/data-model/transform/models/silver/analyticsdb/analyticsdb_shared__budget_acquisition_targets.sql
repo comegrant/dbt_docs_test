@@ -16,7 +16,7 @@ source as (
         , budget_type_id
         
         {# numerics #}
-        , estimate as monthly_aquisition_target
+        , estimate as monthly_acquisition_target
         , year as financial_year
         , month as financial_month_number
         , budget_year
