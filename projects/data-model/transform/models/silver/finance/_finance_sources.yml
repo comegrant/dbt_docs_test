@@ -1,0 +1,13 @@
+# DOCUMENTATION: https://docs.getdbt.com/reference/source-properties
+
+version: 2
+
+sources:
+  - name: finance
+    schema: bronze
+    description: "Tables from the Finance database"
+    tables:
+      - name: finance__invoice_desc
+      - name: finance__invoice_type
+      - name: finance__invoice_process_status
+      - name: finance__payment_partner
