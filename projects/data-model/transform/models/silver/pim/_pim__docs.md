@@ -343,7 +343,7 @@ Whether the quick comment can be proposed to users on the website.
 
 {% enddocs %}
 
-{% docs column__recipe_review_id %}
+{% docs column__recipe_rating_id %}
 
 The unique identifier of a rating, an event in which a user gave a rating (1-5 stars) to a recipe. A rating can optionally be associated to a comment and/or any number of quick comments.
 

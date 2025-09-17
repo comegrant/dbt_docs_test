@@ -11,7 +11,7 @@ source as (
     select
 
         {# ids #}
-        recipe_rating_id as recipe_review_id
+        recipe_rating_id
         , quick_comment_id
 
     from source

@@ -285,12 +285,6 @@ Used to fetch recipe information about the dishes that has been presented to the
 
 {% enddocs %}
 
-{% docs column__recipe_rating_id %}
-
-Defines a unique recipe rating. To be used to count number of ratings. A concatenation of the billing_agreement_id and the recipe_id from the recipe ratings table.
-
-{% enddocs %}
-
 {% docs column__recipe_comment_id %}
 
 Defines a unique recipe comment. To be used to count number of comments. A concatenation of the billing_agreement_id and the recipe_id from the recipe comments table.

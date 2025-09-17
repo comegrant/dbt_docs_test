@@ -630,3 +630,56 @@ Lists the names of all ingredients in the combination as a single, comma-separat
 Primary key of bridge_ingredient_combinations_ingredients. Generated from ingredient_combination_id, ingredient_id and language_id.
 
 {% enddocs %}
+
+# Bridge Recipe Reviews Quick Comments
+
+{% docs column__pk_bridge_recipe_reviews_quick_comments %}
+
+Primary key of bridge_recipe_review_quick_comments. Generated from recipe_rating_id and quick_comment_id.
+
+{% enddocs %}
+
+{% docs column__fk_dim_recipe_reviews %}
+
+Foreign key joining to dim_recipe_reviews, generated from recipe_rating_id.
+
+{% enddocs %}
+
+{% docs column__fk_dim_quick_comments %}
+
+Foreign key joining to dim_quick_comments, generated from quick_comment_id.
+
+{% enddocs %}
+
+# Dim Quick Comments
+
+{% docs column__pk_dim_quick_comments %}
+
+Primary key of dim_quick_comments. Generated from quick_comment_id.
+
+{% enddocs %}
+
+{% docs column__language_name %}
+
+The name of the local language of the quick comment.
+
+{% enddocs %}
+
+{% docs column__quick_comment_text_local %}
+
+The text of the quick comment in the local language of the brand.
+
+{% enddocs %}
+
+{% docs column__quick_comment_text_english %}
+
+The text of the quick comment translated to English.
+
+{% enddocs %}
+
+{% docs column__star_rating_range %}
+
+The range of stars in the review for which the quick comment can be proposed as an option to the user.
+e.g: a quick comment with the text "Tasted delicious!" will not be an option on a 1-star review.
+
+{% enddocs %}

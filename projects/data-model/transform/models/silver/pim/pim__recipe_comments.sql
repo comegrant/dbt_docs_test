@@ -13,6 +13,7 @@ source as (
         
         {# ids #}
         recipe_id
+        , recipe_rating_id
         , agreement_id as billing_agreement_id
 
         {# strings #}

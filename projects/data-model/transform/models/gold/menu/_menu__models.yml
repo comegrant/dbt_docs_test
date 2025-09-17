@@ -1,7 +1,6 @@
 version: 2
 
 models:
-
   - name: dim_price_categories
     description: "Containing the different price categoriy levels a dish can have given the number of portions in the recipe. Is a slowly changing dimension type II."
     latest_version: 1
@@ -11,7 +10,6 @@ models:
         enforced: true
 
     columns:
-
       - name: pk_dim_price_categories
         data_type: string
         description: "{{ doc('column__pk_dim_recipe_reaction_types') }}"
@@ -74,7 +72,6 @@ models:
 
     versions:
       - v: 1
-
 
   - name: dim_products
     description: ""
@@ -223,7 +220,8 @@ models:
       - v: 1
 
   - name: dim_recipe_reaction_types
-    description: "When choosing dishes the customer can react with a heart or a dislike. This table holds information about\
+    description:
+      "When choosing dishes the customer can react with a heart or a dislike. This table holds information about\
       \ the different types of reactions a customer can make."
     latest_version: 1
     config:
@@ -260,7 +258,8 @@ models:
       - v: 1
 
   - name: fact_recipe_reactions
-    description: "When choosing dishes the customer can react with a heart or a dislike. The table stores the reaction made\
+    description:
+      "When choosing dishes the customer can react with a heart or a dislike. The table stores the reaction made\
       \ by customers."
     latest_version: 1
     config:
@@ -796,7 +795,7 @@ models:
       - name: ingredient_status_name
         data_type: string
         description: "{{ doc('column__status_code_name') }}"
-      
+
       - name: ingredient_type_name
         data_type: string
         description: "{{ doc('column__ingredient_type_name') }}"
@@ -824,11 +823,11 @@ models:
       - name: sub_category2_name
         data_type: string
         description: "{{ doc('column__sub_category2_name') }}"
-      
+
       - name: sub_category3_name
         data_type: string
         description: "{{ doc('column__sub_category3_name') }}"
-      
+
       - name: sub_category4_name
         data_type: string
         description: "{{ doc('column__sub_category4_name') }}"
@@ -1774,11 +1773,11 @@ models:
 
       - name: customer_ordered_ingredient_weight_with_co2_data
         data_type: decimal(38,2)
-        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data') }}" 
+        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data') }}"
 
       - name: customer_ordered_ingredient_weight_with_co2_data_whole_units
         data_type: decimal(38,2)
-        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data_whole_units') }}" 
+        description: "{{ doc('column__customer_ordered_ingredient_weight_with_co2_data_whole_units') }}"
 
       - name: fk_dim_companies
         data_type: string
@@ -1858,7 +1857,7 @@ models:
           - relationships:
               to: ref('dim_price_categories')
               field: pk_dim_price_categories
-    
+
     versions:
       - v: 1
 
@@ -1886,10 +1885,138 @@ models:
         description: "{{ doc('column__meals') }}"
         data_tests:
           - not_null
-  
+
       - name: mealbox_meals
         data_type: int
         description: "{{ doc('column__meals') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: bridge_recipe_reviews_quick_comments
+    description: "Bridge table mapping a review to any number of quick comments."
+    latest_version: 1
+    config:
+      alias: bridge_recipe_reviews_quick_comments
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_bridge_recipe_reviews_quick_comments
+        data_type: string
+        description: "{{ doc('column__pk_bridge_recipe_reviews_quick_comments') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: fk_dim_quick_comments
+        data_type: string
+        description: "{{ doc('column__fk_dim_quick_comments') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_quick_comments')
+            to_columns: [pk_dim_quick_comments]
+          - type: not_null
+        data_tests:
+          - not_null
+
+      - name: fk_dim_recipe_reviews
+        data_type: string
+        description: "{{ doc('column__fk_dim_recipe_reviews') }}"
+        # TO-DO: Re-enable on dim_recipe_reviews is done
+        # constraints:
+        #   - type: foreign_key
+        #     to: ref('dim_recipe_reviews')
+        #     to_columns: [pk_dim_recipe_reviews]
+        #   - type: not_null
+        data_tests:
+          - not_null
+
+      - name: recipe_rating_id
+        data_type: string
+        description: "{{ doc('column__recipe_rating_id') }}"
+        data_tests:
+          - not_null
+
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - not_null
+
+    versions:
+      - v: 1
+
+  - name: dim_quick_comments
+    description: "Dimension table for quick comment text and attributes."
+    latest_version: 1
+    config:
+      alias: dim_quick_comments
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_quick_comments
+        data_type: string
+        description: "{{ doc('column__pk_dim_quick_comments') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: quick_comment_id
+        data_type: string
+        description: "{{ doc('column__quick_comment_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: company_id
+        data_type: string
+        description: "{{ doc('column__company_id') }}"
+        data_tests:
+          - not_null
+
+      - name: star_rating_range
+        data_type: string
+        description: "{{ doc('column__star_rating_range') }}"
+        data_tests:
+          - not_null
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+        data_tests:
+          - not_null
+
+      - name: language_name
+        data_type: string
+        description: "{{ doc('column__language_name') }}"
+        data_tests:
+          - not_null
+
+      - name: quick_comment_text_local
+        data_type: string
+        description: "{{ doc('column__quick_comment_text_local') }}"
+        data_tests:
+          - not_null
+
+      - name: quick_comment_text_english
+        data_type: string
+        description: "{{ doc('column__quick_comment_text_english') }}"
+        data_tests:
+          - not_null
+
+      - name: is_frontend_enabled
+        data_type: boolean
+        description: "{{ doc('column__is_frontend_enabled') }}"
         data_tests:
           - not_null
 
