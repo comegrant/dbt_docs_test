@@ -907,7 +907,7 @@ The amount of an ingredient which is included in nutritional calculations. The u
 
 {% docs column__recipe_ingredient_quantity %}
 
-The amount of an ingredient to be purchased for each recipe variation. Also includes home ingredients, i.e. ingredients not to be purchased. The unit is specified by the unit label.
+The amount of an ingredient that is used to make the recipe for each recipe variation. These can be fractional, e.g. half a cucumber. Also includes home ingredients, i.e. ingredients that are not to be purchased, but rather assumed to be present in the customer's home. The unit is specified by the unit label.
 
 {% enddocs %}
 

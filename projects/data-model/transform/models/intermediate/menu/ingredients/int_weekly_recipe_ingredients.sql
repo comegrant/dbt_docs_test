@@ -57,7 +57,9 @@ menu_weeks_recipes_portions as (
         , any(recipe_ingredients.is_main_carbohydrate) as is_main_carbohydrate
         , any(recipe_ingredients.is_main_protein) as is_main_protein
         , sum(recipe_ingredients.nutrition_units) as nutrition_units
+  
         , sum(recipe_ingredients.recipe_ingredient_quantity) as recipe_ingredient_quantity
+        , cast(ceiling(sum(recipe_ingredients.recipe_ingredient_quantity)) as int) as recipe_ingredient_quantity_whole_units
         
         , any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as ingredient_weight_per_unit
         , sum(coalesce(recipe_ingredients.recipe_ingredient_quantity, 0)) * any_value(coalesce(recipe_ingredients.ingredient_net_weight, 0)) as total_ingredient_weight

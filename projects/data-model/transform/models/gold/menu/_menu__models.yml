@@ -1648,6 +1648,10 @@ models:
         data_type: decimal(38,2)
         description: "{{ doc('column__recipe_ingredient_quantity') }}"
 
+      - name: recipe_ingredient_quantity_whole_units
+        data_type: int
+        description: "{{ doc('column__recipe_ingredient_quantity_whole_units') }}"
+
       - name: ingredient_weight_per_unit
         data_type: decimal(38,2)
         description: "{{ doc('column__ingredient_weight_per_unit') }}"
@@ -1723,6 +1727,10 @@ models:
       - name: customer_ordered_ingredient_quantity
         data_type: decimal(38,2)
         description: "{{ doc('column__customer_ordered_ingredient_quantity') }}"
+
+      - name: customer_ordered_ingredient_quantity_whole_units
+        data_type: int
+        description: "{{ doc('column__customer_ordered_ingredient_quantity_whole_units') }}"
 
       - name: customer_ordered_ingredient_weight
         data_type: decimal(38,2)

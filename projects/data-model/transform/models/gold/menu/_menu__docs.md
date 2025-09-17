@@ -371,6 +371,12 @@ The net weight (in grams) for the total ingredient amount in the recipe.
 
 {% enddocs %}
 
+{% docs column__recipe_ingredient_quantity_whole_units %}
+
+The whole unit amount of an ingredient that is packed for each recipe variation. Also includes home ingredients, i.e. ingredients that are not to be purchased, but rather assumed to be present in the customer's home. 
+
+{% enddocs %}
+
 {% docs column__total_ingredient_weight_whole_units %}
 
 The net weight (in grams) of the ingredients, based on ingredient quantity in whole units.
@@ -480,6 +486,12 @@ The number of customer orders that include the specified product variation. This
 {% docs column__customer_ordered_ingredient_quantity %}
 
 The total ingredient quantity ordered by customers, calculated as the number of ordered recipes, multiplied with the ingredient quantity within the recipe.
+
+{% enddocs %}
+
+{% docs column__customer_ordered_ingredient_quantity_whole_units %}
+
+The total ingredient quantity ordered by customers, calculated as the ingredient quantity within the recipe rounded up to whole units, multiplied by the number of ordered recipes.
 
 {% enddocs %}
 

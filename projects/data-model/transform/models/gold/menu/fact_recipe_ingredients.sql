@@ -78,6 +78,7 @@ weekly_recipe_ingredients as (
     , weekly_recipe_ingredients.nutrition_units
 
     , weekly_recipe_ingredients.recipe_ingredient_quantity
+    , weekly_recipe_ingredients.recipe_ingredient_quantity_whole_units
     
     , weekly_recipe_ingredients.ingredient_weight_per_unit
     , weekly_recipe_ingredients.total_ingredient_weight
@@ -107,6 +108,7 @@ weekly_recipe_ingredients as (
     , orders_aggregated.number_of_orders as number_of_customer_orders
 
     , weekly_recipe_ingredients.recipe_ingredient_quantity * coalesce(orders_aggregated.product_variation_quantity,0) as customer_ordered_ingredient_quantity
+    , cast(weekly_recipe_ingredients.recipe_ingredient_quantity_whole_units * coalesce(orders_aggregated.product_variation_quantity,0) as int) as customer_ordered_ingredient_quantity_whole_units
     
     , weekly_recipe_ingredients.total_ingredient_weight  * coalesce(orders_aggregated.product_variation_quantity,0) as customer_ordered_ingredient_weight
     , weekly_recipe_ingredients.total_ingredient_weight_whole_units * coalesce(orders_aggregated.product_variation_quantity,0) as customer_ordered_ingredient_weight_whole_units
