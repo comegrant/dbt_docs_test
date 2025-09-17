@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Partnership Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership Rule"
                 }
               },
-              "queryRef": "Partnership Details.Partnership Rule",
-              "nativeQueryRef": "Partnership Rule",
+              "queryRef": "Partnerships.Partnership Rule",
+              "nativeQueryRef": "Partnership Rule1",
               "active": true
             }
           ]
@@ -82,5 +82,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "493b66d670078b23179f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership Rule"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

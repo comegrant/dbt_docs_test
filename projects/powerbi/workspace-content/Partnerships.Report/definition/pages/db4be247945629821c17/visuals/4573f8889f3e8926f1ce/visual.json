@@ -114,14 +114,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer and Subscriber Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership"
                 }
               },
-              "queryRef": "Customer and Subscriber Details.Partnership",
-              "nativeQueryRef": "Partnership",
+              "queryRef": "Partnerships.Partnership",
+              "nativeQueryRef": "Partnership1",
               "active": true
             },
             {
@@ -129,15 +129,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Partnership Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership Rule"
                 }
               },
-              "queryRef": "Partnership Details.Partnership Rule",
-              "nativeQueryRef": "Partnership Rule",
-              "active": true
+              "queryRef": "Partnerships.Partnership Rule",
+              "nativeQueryRef": "Partnership Rule1",
+              "active": false
             }
           ]
         },
@@ -232,122 +232,20 @@
           },
           {
             "queryRefs": [
-              "Customer and Subscriber Details.Partnership"
+              "Partnerships.Partnership"
             ],
             "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Customer and Subscriber Details"
-                    }
-                  },
-                  "Property": "Partnership"
-                }
-              }
-            ],
             "isPinned": true
           },
           {
             "queryRefs": [
-              "Partnership Details.Partnership Rule"
+              "Partnerships.Partnership Rule"
             ],
             "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Partnership Details"
-                    }
-                  },
-                  "Property": "Partnership Rule"
-                }
-              }
-            ],
             "isPinned": true
           }
         ],
-        "root": {
-          "children": [
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'Godtlevert'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'SAS Partnership'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'No partnership rule'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'Linas'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'SAS Partnership'"
-                      }
-                    }
-                  ],
-                  "isToggled": true
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'RetNemt'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'SAS Partnership'"
-                      }
-                    }
-                  ],
-                  "isToggled": true
-                }
-              ]
-            }
-          ]
-        }
+        "root": {}
       }
     ],
     "objects": {
@@ -570,5 +468,164 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "0e22387d6fdb6fa9633c",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e4cdc198075cd8dd39dd",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "5f80a788c7137a200e51",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "971680f1821f5e321a12",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "07d6732487df870a9e51",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "3925eaa06e1c5d0c4a9c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Number of Orders"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "67f7c411fc11fed8b311",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Gross Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c9d3026cc0da0ddb7ec6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Order Measures"
+              }
+            },
+            "Property": "Order Value Net Ex Vat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f2fdfe73e4d50e5d7b51",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d7570d8df63225bd0826",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership Rule"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

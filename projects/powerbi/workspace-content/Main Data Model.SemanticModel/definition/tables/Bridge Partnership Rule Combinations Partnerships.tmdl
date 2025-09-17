@@ -1,0 +1,34 @@
+/// Bridge table connecting Dim Partnerships and Dim Partnership Rule Combinations.
+table 'Bridge Partnership Rule Combinations Partnerships'
+	isHidden
+	lineageTag: Bridge-Partnership-Rule-Combinations-Partnerships-Table
+
+	/// Primary key of Dim Partnerships
+	column fk_dim_partnerships
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: bfe1198e-fdff-45fd-895c-83c900060c61
+		summarizeBy: none
+		sourceColumn: fk_dim_partnerships
+
+	/// Primary key of Dim Partnership Rule Combinations
+	column fk_dim_partnership_rule_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		lineageTag: ab056785-eb9e-4ab7-b542-65adb64766e1
+		summarizeBy: none
+		sourceColumn: fk_dim_partnership_rule_combinations
+
+	partition 'Bridge Partnership Rule Combinations Partnerships' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    bridge_partnerships_partnership_rules_Table = gold_Schema{[Name="bridge_partnership_rule_combinations_partnerships",Kind="Table"]}[Data]
+				in
+					bridge_partnerships_partnership_rules_Table
+

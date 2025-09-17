@@ -3,7 +3,7 @@
   "version": "4.0",
   "datasetReference": {
     "byConnection": {
-      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo;initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken;semanticmodelid=fdc184ae-b967-41d0-95ce-f5a6aed083e4"
+      "connectionString": "Data Source=\"powerbi://api.powerbi.com/v1.0/myorg/Grant Features\";initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken;semanticmodelid=50fa5ce3-4267-4f99-9a9a-76e46ec3c406"
     }
   }
 }

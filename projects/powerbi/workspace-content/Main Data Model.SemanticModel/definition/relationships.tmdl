@@ -483,7 +483,7 @@ relationship fact_partnership_points_to_dim_billing_agreements
 
 relationship fact_partnership_points_to_dim_partnerships
 	fromColumn: 'Partnership Measures'.fk_dim_partnerships
-	toColumn: 'Partnership Details'.pk_dim_partnerships
+	toColumn: 'Partnerships'.pk_dim_partnerships
 
 relationship fact_partnership_points_to_dim_dates
 	fromColumn: 'Partnership Measures'.fk_dim_dates_menu_week
@@ -522,3 +522,20 @@ relationship fact_preselector_to_dim_price_categories
 relationship fact_preselector_to_dim_customer_journey_segments
 	fromColumn: 'Preselector Details'.fk_dim_customer_journey_segments
 	toColumn: 'Customer Journey Segments'.pk_dim_customer_journey_segments
+
+relationship fact_orders_to_dim_partnership_rule_combinations
+	fromColumn: 'Order Measures'.fk_dim_partnership_rule_combinations
+	toColumn: 'Partnership Rule Combinations'.pk_dim_partnership_rule_combinations
+
+relationship fact_billing_agreement_updates_to_dim_partnership_rule_combinations
+	fromColumn: 'Customer and Subscriber Measures'.fk_dim_partnership_rule_combinations
+	toColumn: 'Partnership Rule Combinations'.pk_dim_partnership_rule_combinations
+
+relationship bridge_partnerships_partnership_rules_to_dim_partnership_rule_combinations
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Bridge Partnership Rule Combinations Partnerships'.fk_dim_partnership_rule_combinations
+	toColumn: 'Partnership Rule Combinations'.pk_dim_partnership_rule_combinations
+
+relationship bridge_partnerships_partnership_rules_to_dim_partnerships
+	fromColumn: 'Bridge Partnership Rule Combinations Partnerships'.fk_dim_partnerships
+	toColumn: 'Partnerships'.pk_dim_partnerships

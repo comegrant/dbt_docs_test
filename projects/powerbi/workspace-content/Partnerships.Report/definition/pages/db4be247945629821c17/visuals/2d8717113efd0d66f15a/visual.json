@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer and Subscriber Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership"
                 }
               },
-              "queryRef": "Customer and Subscriber Details.Partnership",
-              "nativeQueryRef": "Partnership",
+              "queryRef": "Partnerships.Partnership",
+              "nativeQueryRef": "Partnership1",
               "active": true
             }
           ]
@@ -82,5 +82,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "09b48794f1dcd510b978",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

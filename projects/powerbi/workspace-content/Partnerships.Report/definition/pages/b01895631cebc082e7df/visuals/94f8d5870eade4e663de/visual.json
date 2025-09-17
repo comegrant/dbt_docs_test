@@ -114,14 +114,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer and Subscriber Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership"
                 }
               },
-              "queryRef": "Customer and Subscriber Details.Partnership",
-              "nativeQueryRef": "Partnership",
+              "queryRef": "Partnerships.Partnership",
+              "nativeQueryRef": "Partnership1",
               "active": true
             },
             {
@@ -129,15 +129,15 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Partnership Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership Rule"
                 }
               },
-              "queryRef": "Partnership Details.Partnership Rule",
-              "nativeQueryRef": "Partnership Rule",
-              "active": true
+              "queryRef": "Partnerships.Partnership Rule",
+              "nativeQueryRef": "Partnership Rule1",
+              "active": false
             }
           ]
         },
@@ -204,13 +204,14 @@
           },
           {
             "queryRefs": [
-              "Customer and Subscriber Details.Partnership"
+              "Partnerships.Partnership"
             ],
+            "isCollapsed": true,
             "isPinned": true
           },
           {
             "queryRefs": [
-              "Partnership Details.Partnership Rule"
+              "Partnerships.Partnership Rule"
             ],
             "isCollapsed": true,
             "isPinned": true
@@ -330,5 +331,136 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "d37951b0a84d7b3784be",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Year"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "94198abd1f166358f24b",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "00e6daaee11048b1e2a6",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Dates"
+                  }
+                },
+                "Hierarchy": "Date Hierarchy"
+              }
+            },
+            "Level": "Week"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "6b438a63dd76aebefbf5",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "(Utils) Matrix Spacer"
+              }
+            },
+            "Property": "Blank Column"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "0052a2fddc463169aaf6",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Brands"
+              }
+            },
+            "Property": "Brand"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "f68a2ac85bc431961c08",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnership Measures"
+              }
+            },
+            "Property": "Number of Partnership Points Earned "
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5b7ca7ae9a4bd07f18c1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "1704ce1c81046f7fa2e8",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership Rule"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

@@ -1,0 +1,24 @@
+/// All partnership rule combinations for each company partnership. Partnership rules determine how customers obtain certain benefits with the partner. 
+/// In the future it may be possible for multiple rules to apply on a single order, thus a combination of rules will apply.
+/// Hidden until it is necessary to view partnership rule combinations in PowerBI
+table 'Partnership Rule Combinations'
+    isHidden
+	lineageTag: Partnership-Rule-Combinations-Table
+
+	column pk_dim_partnership_rule_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: pk_dim_partnership_rule_combinations
+
+	partition 'Partnership Rule Combinations' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Databricks.Catalogs(Host, HttpPath, [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    catalog_Database = Source{[Name=Catalog,Kind="Database"]}[Data],
+				    gold_Schema = catalog_Database{[Name=Schema,Kind="Schema"]}[Data],
+				    dim_partnership_rule_combinations_Table = gold_Schema{[Name="dim_partnership_rule_combinations",Kind="Table"]}[Data]
+				in
+				    dim_partnership_rule_combinations_Table

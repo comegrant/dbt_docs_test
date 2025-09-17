@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
   "name": "e4a773cbb90d78a899f4",
   "position": {
-    "x": 34.564459930313589,
-    "y": 86.968641114982574,
+    "x": 34.194122885129119,
+    "y": 87.764915405164743,
     "z": 4000,
-    "height": 615.47038327526138,
-    "width": 1210.8710801393729,
+    "height": 618.913624220837,
+    "width": 1211.6117542297418,
     "tabOrder": 3000
   },
   "visual": {
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer and Subscriber Details"
+                      "Entity": "Partnerships"
                     }
                   },
                   "Property": "Partnership"
                 }
               },
-              "queryRef": "Customer and Subscriber Details.Partnership",
-              "nativeQueryRef": "Partnership",
+              "queryRef": "Partnerships.Partnership",
+              "nativeQueryRef": "Partnership1",
               "active": true
             },
             {
@@ -91,7 +91,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Customer and Subscriber Details"
+                    "Entity": "Partnerships"
                   }
                 },
                 "Property": "Partnership"
@@ -250,20 +250,6 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "da00604c946eb72d40ab",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Customer and Subscriber Details"
-              }
-            },
-            "Property": "Partnership"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
         "name": "011d372a72a8f91afe35",
         "field": {
           "Measure": {
@@ -377,6 +363,20 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "e198256603138ab01cef",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Partnerships"
+              }
+            },
+            "Property": "Partnership"
+          }
+        },
+        "type": "Categorical"
       }
     ]
   }

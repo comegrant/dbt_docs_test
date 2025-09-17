@@ -104,16 +104,16 @@ table 'Customer and Subscriber Measures'
 			// or if the date range is less than or equal to 2 years and there are multiple days selected,
 			// then use the fact_billing_agreements table which is on a daily level for the past 30 days,
 			// and on a weekly level for the past 2 years.
-			// Else use the fact_billing_agreements_updates table, which is can be used on a daily level, 
+			// Else use the fact_billing_agreements_updates table, which is can be used on a daily level,
 			// but has slower performance and cannot be used together with 'Periods Since First Menu Week'.
 			//IF(
-			//	ISFILTERED('Periods Since First Menu Week') 
+			//	ISFILTERED('Periods Since First Menu Week')
 			//	||
 			//	DATEDIFF(
 			//			MIN('Dates'[Date]),
 			//			TODAY(),
 			//			DAY
-			//		) <= 30 
+			//		) <= 30
 			//		&& NOT CONTAINS('Customer and Subscriber Details', [Billing Agreement Status], "Deleted")
 			//	||
 			//	(
@@ -195,12 +195,12 @@ table 'Customer and Subscriber Measures'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Selected Statuses
 
-	/// Number of accounts, i.e. all accounts included users, subscribers, customers, prospects etc. 
+	/// Number of accounts, i.e. all accounts included users, subscribers, customers, prospects etc.
 	/// This can be used together with the [Customer Journey Segments] table to find the size of a certain segment,
 	/// or along with the [Customer and Subscriber Details] table to get more granular insights.
 	/// If not filtered, this includes all statuses and segments, except the "Deleted" status.
 	/// When used together with [Customer Journey Segments], you will only be able to see this number on a weekly level.
-	measure 'Number of Accounts' = 
+	measure 'Number of Accounts' =
 			VAR IsFilteredOnStatus = ISFILTERED('Customer and Subscriber Details'[Billing Agreement Status])
 			VAR IsFilteredOnSegments = ISFILTERED('Customer Journey Segments')
 			RETURN
@@ -442,7 +442,7 @@ table 'Customer and Subscriber Measures'
 			//		NOT HASONEVALUE('Dates'[Date]),
 			//
 			//	'Fact Billing Agreements'[Number of Subscribers Changed from Active from fact_billing_agreements weekly],
-			//	
+			//
 			//	IF(
 			//		DATEDIFF(
 			//			MIN('Dates'[Date]),
@@ -576,7 +576,7 @@ table 'Customer and Subscriber Measures'
 			//		NOT HASONEVALUE('Dates'[Date]),
 			//
 			//	'Fact Billing Agreements'[Number of Subscribers Changed to Active from fact_billing_agreements weekly],
-			//	
+			//
 			//	IF(
 			//		DATEDIFF(
 			//			MIN('Dates'[Date]),
@@ -1026,6 +1026,13 @@ table 'Customer and Subscriber Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: fk_dim_preference_combinations_previous_version
+
+	column fk_dim_partnership_rule_combinations
+		dataType: string
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: fk_dim_partnership_rule_combinations
 
 	column is_signup
 		dataType: boolean

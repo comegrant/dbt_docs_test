@@ -4222,7 +4222,7 @@ models:
 
       - name: fk_dim_partnerships
         data_type: string
-        description: "{{ doc('column__pk_fact_orders') }}"
+        description: "{{ doc('column__pk_dim_partnerships') }}"
         constraints:
           - type: foreign_key
             to: ref('dim_partnerships')

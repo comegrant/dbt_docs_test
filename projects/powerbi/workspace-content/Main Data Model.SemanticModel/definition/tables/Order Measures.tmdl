@@ -358,7 +358,7 @@ table 'Order Measures'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	/// Share of Orders With Discounts
-	/// Is currently on a order line level, meaning that it can not be combined with the Product table or Recipes table since 
+	/// Is currently on a order line level, meaning that it can not be combined with the Product table or Recipes table since
 	/// those are related to other order lines. This can be changed if needed.
 	measure 'Share of Orders With Discounts' = DIVIDE([Number of Orders With Discounts], [Number of Orders])
 		formatString: 0.00\ %;-0.00\ %;0.00\ %
@@ -430,7 +430,7 @@ table 'Order Measures'
 	/// Number of customers with X Swapped Dishes, where X is defined by the parameter "(Param) Number of Swapped Dishes"
 	measure 'Number of Customers with X Swapped Dishes' =
 			CALCULATE(
-				[Number of Customers], 
+				[Number of Customers],
 				FILTER(
 					'Customer and Subscriber Details',
 					[Number of Swapped Dishes] = '(Param) Number of Swapped Dishes'[Number of Swapped Dishes Value]
@@ -924,7 +924,7 @@ table 'Order Measures'
 		formatString: #,0
 		displayFolder: Mealbox Adjustments\Portions
 
-	/// Average number of orders per account and week. 
+	/// Average number of orders per account and week.
 	/// Use it together with the Customer Journey Segments to see the average number of orders per account in each segment.
 	/// It will be calculated as the total number of orders in the period, divided by the number of accounts * number of weeks in the period,
 	/// meaning that the highest number one can get is 1.0.
@@ -1037,7 +1037,7 @@ table 'Order Measures'
 		lineageTag: 90ce50c3-d6c7-4a7b-8339-518093f7f186
 
 	/// Number of order that has one or more subscribed groceries
-	measure 'Number of Orders with Subscribed Groceries' = 
+	measure 'Number of Orders with Subscribed Groceries' =
 			CALCULATE(
 				[Number of Orders],
 				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
@@ -1064,9 +1064,9 @@ table 'Order Measures'
 
 	/// Number of ordered groceries that comes from a grocery subscription.
 	/// Sums the product variation quantity for all ordered product variations that are subscribed groceries.
-	measure 'Number of Ordered Groceries from Subscription' = 
+	measure 'Number of Ordered Groceries from Subscription' =
 			CALCULATE(
-				[Subscribed Product Variation Quantity], 
+				[Subscribed Product Variation Quantity],
 				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
 			)
 		formatString: #,0
@@ -1099,9 +1099,9 @@ table 'Order Measures'
 
 	/// Revenue from subscribed groceries
 	/// Excluding VAT
-	measure 'Subscribed Grocery Value Ex Vat' = 
+	measure 'Subscribed Grocery Value Ex Vat' =
 			CALCULATE(
-				[Subscribed Product Variation Amount Ex Vat], 
+				[Subscribed Product Variation Amount Ex Vat],
 				'Order Measures'[is_subscribed_grocery] = TRUE() && 'Order Measures'[is_grocery] = TRUE()
 			)
 		formatString: #,0
@@ -1482,9 +1482,9 @@ table 'Order Measures'
 	/// The total number of plates served, which is calculated as the sum of Portions x Meals for all orders in the selection.
 	/// Example: One delivery with 5 meals and 4 portions per meal will count as 20 servings.
 	measure 'Number of Servings' =
-			VAR isFilteredOnDish = 
+			VAR isFilteredOnDish =
 				IF(
-					ISFILTERED('Recipes') || 
+					ISFILTERED('Recipes') ||
 					ISFILTERED('Ingredients') ||
 					ISFILTERED('Order Line Details') ||
 					ISFILTERED('Portions') ||
@@ -1676,7 +1676,7 @@ table 'Order Measures'
 		displayFolder: Ingredient Cost\by Recipe
 
 	/// The sum of the planned recipe cost of the recipes ordered by the customers.
-	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients, 
+	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// When used with recipes it shows the cost coming from those recipes.
 	/// When used with ingredients it shows the the cost of the recipes containing that ingredient.
@@ -1707,7 +1707,7 @@ table 'Order Measures'
 
 	/// The sum of the expected recipe cost of the recipes ordered by the customers.
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
-	/// This measure is calculated using quantity of all included ingredients, 
+	/// This measure is calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// When used with recipes it shows the cost coming from those recipes.
 	/// When used with ingredients it shows the the cost of the recipes containing that ingredient.
@@ -1738,7 +1738,7 @@ table 'Order Measures'
 
 	/// The sum of the actual recipe cost of the recipes ordered by the customers.
 	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
-	/// This measure is calculated using quantity of all included ingredients, 
+	/// This measure is calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// When used with recipes it shows the cost coming from those recipes.
 	/// When used with ingredients it shows the the cost of the recipes containing that ingredient.
@@ -1752,8 +1752,8 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Recipe
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the ordered recipes. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the ordered recipes.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return the emission of all recipes that include any of those ingredients, and not only the emission of the selected ingredients.
 	/// Use [Ingredient CO2 Emission from Orders] to see the emission of specific ingredients in the recipes.
@@ -1766,7 +1766,7 @@ table 'Order Measures'
 		displayFolder: CO2 Emissions\by Recipe
 
 	/// The total amount of registered co2 emissions (in kg) for the ingredients in the ordered recipes, where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return the emission of all recipes that include any of those ingredients, and not only the emission of the selected ingredients.
 	/// Use [Ingredient CO2 Emission Whole Units from Orders] to see the emission of specific ingredients in the recipes.
@@ -1867,7 +1867,7 @@ table 'Order Measures'
 		displayFolder: Ingredient Cost\... for Whole Preselected Recipes
 
 	/// The sum of the planned recipe cost if the customer would have taken the preselected recipes.
-	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients, 
+	/// It is the cost used in menu planning, and calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of those ingredients.
 	measure 'Recipe Planned Cost Whole Units from Preselected Menu' =
@@ -1894,7 +1894,7 @@ table 'Order Measures'
 
 	/// The sum of the expected recipe cost if the customer would have taken the preselected recipes.
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
-	/// This measure is calculated using quantity of all included ingredients, 
+	/// This measure is calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of those ingredients.
 	measure 'Recipe Expected Cost Whole Units from Preselected Menu' =
@@ -1921,7 +1921,7 @@ table 'Order Measures'
 
 	/// The sum of the actual recipe cost if the customer would have taken the preselected recipes.
 	/// The actual cost is fetched from the purchasing order(s) for the menu week of the recipe.
-	/// This measure is calculated using quantity of all included ingredients, 
+	/// This measure is calculated using quantity of all included ingredients,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
 	/// If filtered on specific ingredients, it will return the cost of all ingredients in the recipes that include any of those ingredients.
 	measure 'Recipe Actual Cost Whole Units from Preselected Menu' =
@@ -1934,7 +1934,7 @@ table 'Order Measures'
 		displayFolder: Ingredient Cost\... for Whole Preselected Recipes
 
 	/// The total amount of registered co2 emissions (in kg) for the ingredients if the customer would have taken the preselected recipes.
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredients in the recipe. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredients in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return the emission of all recipes that include any of those ingredients.
 	measure 'Recipe CO2 Emission from Preselected Menu' =
@@ -1946,9 +1946,9 @@ table 'Order Measures'
 		isHidden
 		displayFolder: CO2 Emissions\by Recipe
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients if the customer would have taken the preselected recipes, 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients if the customer would have taken the preselected recipes,
 	/// where the ingredient quantity is rounded up to the nearest integer (i.e. whole units).
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return the emission of all recipes that include any of those ingredients.
 	measure 'Recipe CO2 Emission Whole Units from Preselected Menu' =
@@ -1988,8 +1988,8 @@ table 'Order Measures'
 	/// It is the cost used in menu planning, and calculated using the exact quantity of all included ingredients.
 	/// If filtered on specific ingredients, it will return only the cost coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
-	/// it will return blank as we don't have that level of detail in the data. 
-	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken), 
+	/// it will return blank as we don't have that level of detail in the data.
+	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken),
 	/// use [Recipe Planned Cost from Orders] instead. The [Recipe Planned Cost from Orders] measure will also work when filtered on customer attributes.
 	measure 'Ingredient Planned Cost from Orders' =
 			VAR IsFilteredOnCustomerAttributes =
@@ -2031,8 +2031,8 @@ table 'Order Measures'
 	/// The sum of the planned ingredient cost of the ingredients in the recipes ordered by the customers, using whole units for ingredient quantities per recipe.
 	/// If filtered on specific ingredients, it will return only the cost coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
-	/// it will return blank as we don't have that level of detail in the data. 
-	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken), 
+	/// it will return blank as we don't have that level of detail in the data.
+	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken),
 	/// use [Recipe Planned Cost Whole Units from Orders] instead. The [Recipe Planned Cost Whole Units from Orders] measure will also work when filtered on customer attributes.
 	measure 'Ingredient Planned Cost Whole Units from Orders' =
 			VAR IsFilteredOnCustomerAttributes =
@@ -2074,8 +2074,8 @@ table 'Order Measures'
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
 	/// If filtered on specific ingredients, it will return only the cost coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
-	/// it will return blank as we don't have that level of detail in the data. 
-	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken), 
+	/// it will return blank as we don't have that level of detail in the data.
+	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken),
 	/// use [Recipe expected Cost from Orders] instead. The [Recipe expected Cost from Orders] measure will also work when filtered on customer attributes.
 	measure 'Ingredient Expected Cost from Orders' =
 			VAR IsFilteredOnCustomerAttributes =
@@ -2118,8 +2118,8 @@ table 'Order Measures'
 	/// The expected cost might have a discount that is not to be included in the menu planning process.
 	/// If filtered on specific ingredients, it will return only the cost coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
-	/// it will return blank as we don't have that level of detail in the data. 
-	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken), 
+	/// it will return blank as we don't have that level of detail in the data.
+	/// If you want to see the cost of all ingredients in the recipes that include any of the filtered ingredients (e.g. the cost of all ingredients in recipes that include chicken),
 	/// use [Recipe expected Cost Whole Units from Orders] instead. The [Recipe expected Cost Whole Units from Orders] measure will also work when filtered on customer attributes.
 	measure 'Ingredient Expected Cost Whole Units from Orders' =
 			VAR IsFilteredOnCustomerAttributes =
@@ -2246,8 +2246,8 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Ingredient Cost\by Ingredient
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes ordered by the customers. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes ordered by the customers.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return only the emission coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
@@ -2292,7 +2292,7 @@ table 'Order Measures'
 		displayFolder: CO2 Emissions\by Ingredient
 
 	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes ordered by the customers, where the ingredient quantity is rounded up to whole units per recipe
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data, so the actual CO2 emission may be higher than this measure indicates.
 	/// If filtered on specific ingredients, it will return only the emission coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
@@ -2402,7 +2402,7 @@ table 'Order Measures'
 	/// If filtered on specific ingredients, it will return only the weight coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
 	/// it will return blank as we don't have that level of detail in the data.
-	measure 'Ingredient Weight in Orders' = 
+	measure 'Ingredient Weight in Orders' =
 			VAR IsFilteredOnCustomerAttributes =
 				IF(
 					ISFILTERED('Customer and Subscriber Details') ||
@@ -2448,7 +2448,7 @@ table 'Order Measures'
 	/// If filtered on specific ingredients, it will return only the weight coming from those ingredients.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
 	/// it will return blank as we don't have that level of detail in the data.
-	measure 'Ingredient Weight Whole Units in Orders' = 
+	measure 'Ingredient Weight Whole Units in Orders' =
 			VAR IsFilteredOnCustomerAttributes =
 				IF(
 					ISFILTERED('Customer and Subscriber Details') ||
@@ -2495,7 +2495,7 @@ table 'Order Measures'
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
 	/// it will return blank as we don't have that level of detail in the data.
-	measure 'Ingredient Weight per Ordered Serving' = 
+	measure 'Ingredient Weight per Ordered Serving' =
 			DIVIDE(
 				[Ingredient Weight in Orders],
 				[Number of Servings]
@@ -2510,7 +2510,7 @@ table 'Order Measures'
 	/// When filtering on ingredients, only the contribution from the selected ingredients will be included in the calculation.
 	/// If filtered on customer attributes (like preferences, status, segments etc.) as well as on specific ingredients,
 	/// it will return blank as we don't have that level of detail in the data.
-	measure 'Ingredient Weight Whole Units per Ordered Serving' = 
+	measure 'Ingredient Weight Whole Units per Ordered Serving' =
 			DIVIDE(
 				[Ingredient Weight Whole Units in Orders],
 				[Number of Servings]
@@ -2522,7 +2522,7 @@ table 'Order Measures'
 	/// The ingredient quantity ordered by the customers.
 	/// If filtered on specific ingredients, it will return the amount of those ingredients that are ordered by the customers as a part of the recipes.
 	/// If filtered on customer attributes (like preferences, status, segments etc.), it will return blank as we don't have that level of detail in the data.
-	measure 'Ingredient Quantity in Orders' = 
+	measure 'Ingredient Quantity in Orders' =
 			VAR IsFilteredOnCustomerAttributes =
 				IF(
 					ISFILTERED('Customer and Subscriber Details') ||
@@ -2548,7 +2548,7 @@ table 'Order Measures'
 		formatString: #,0.00
 		displayFolder: Ingredient Amount
 
-	/// Margin calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders], 
+	/// Margin calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders],
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	/// When filtered on specific recipes, ingredients or order line details, it will return blank as the Order Value is placed on Mealbox and not on the recipes.
 	measure 'Order Contribution Margin' =
@@ -2575,7 +2575,7 @@ table 'Order Measures'
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
-	/// Margin if the customer had bought the preselected menu calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu], 
+	/// Margin if the customer had bought the preselected menu calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu],
 	/// where the order value is ignoring any extra cost on premium/thrify dishes.
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	measure 'Preselection Order Contribution Margin' =
@@ -2588,10 +2588,10 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Margins
 
-	/// Margin percentage calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders])/[Order Value Gross Ex Vat], 
+	/// Margin percentage calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders])/[Order Value Gross Ex Vat],
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	/// When filtered on specific recipes, ingredients or order line details, it will return blank as the Order Value is placed on Mealbox and not on the recipes.
-	measure 'Order Contribution Margin %' = 
+	measure 'Order Contribution Margin %' =
 			VAR IsFilteredOnSingleRecipes =
 				IF(
 					ISFILTERED('Recipes') ||
@@ -2617,7 +2617,7 @@ table 'Order Measures'
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
-	/// Margin percentage if the customer had bought the preselected menu, calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu])/[Order Value Gross Ex Vat], 
+	/// Margin percentage if the customer had bought the preselected menu, calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu])/[Order Value Gross Ex Vat],
 	/// where the order value is ignoring any extra cost on premium/thrify dishes.
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	measure 'Preselection Order Contribution Margin %' =
@@ -2632,8 +2632,8 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Margins
 
-	/// Margin percentage same period last year. 
-	measure 'Order Contribution Margin % PY' = 
+	/// Margin percentage same period last year.
+	measure 'Order Contribution Margin % PY' =
 			CALCULATE(
 				[Order Contribution Margin %],
 				'Time Intelligence'[Time Calculation] = "PY"
@@ -2642,8 +2642,8 @@ table 'Order Measures'
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
-	/// Margin percentage if the customer had bought the preselected menu, same period last year. 
-	measure 'Preselection Order Contribution Margin % PY' = 
+	/// Margin percentage if the customer had bought the preselected menu, same period last year.
+	measure 'Preselection Order Contribution Margin % PY' =
 			CALCULATE(
 				[Preselection Order Contribution Margin %],
 				'Time Intelligence'[Time Calculation] = "PY"
@@ -2699,7 +2699,7 @@ table 'Order Measures'
 
 	/// The cost share of the selected ingredients within the recipes that contain them.
 	/// It is calculated as [Ingredient Actual Cost Whole Units from Orders]/[Recipe Actual Cost Whole Units from Orders].
-	measure 'Ingredient Actual Cost Whole Units Share of Whole Recipes from Orders' = 
+	measure 'Ingredient Actual Cost Whole Units Share of Whole Recipes from Orders' =
 			DIVIDE(
 				[Ingredient Actual Cost Whole Units from Orders],
 				[Recipe Actual Cost Whole Units from Orders]
@@ -2709,7 +2709,7 @@ table 'Order Measures'
 
 	/// The cost share of the selected ingredients within the recipes that contain them.
 	/// It is calculated as [Ingredient Planned Cost Whole Units from Orders]/[Recipe Planned Cost Whole Units from Orders].
-	measure 'Ingredient Planned Cost Whole Units Share of Whole Recipes from Orders' = 
+	measure 'Ingredient Planned Cost Whole Units Share of Whole Recipes from Orders' =
 			DIVIDE(
 				[Ingredient Planned Cost Whole Units from Orders],
 				[Recipe Planned Cost Whole Units from Orders]
@@ -2719,7 +2719,7 @@ table 'Order Measures'
 
 	/// The cost share of the selected ingredients within the recipes that contain them.
 	/// It is calculated as [Ingredient Expected Cost Whole Units from Orders]/[Recipe Expected Cost Whole Units from Orders].
-	measure 'Ingredient Expected Cost Whole Units Share of Whole Recipes from Orders' = 
+	measure 'Ingredient Expected Cost Whole Units Share of Whole Recipes from Orders' =
 			DIVIDE(
 				[Ingredient Expected Cost Whole Units from Orders],
 				[Recipe Expected Cost Whole Units from Orders]
@@ -2729,7 +2729,7 @@ table 'Order Measures'
 
 	/// The emission share of the selected ingredients within the recipes that contain them.
 	/// It is calculated as [Ingredient CO2 Emission from Orders]/[Recipe CO2 Emission from Orders].
-	measure 'Ingredient CO2 Emission Share of Whole Recipes from Orders' = 
+	measure 'Ingredient CO2 Emission Share of Whole Recipes from Orders' =
 			DIVIDE(
 				[Ingredient CO2 Emission from Orders],
 				[Recipe CO2 Emission from Orders]
@@ -2738,7 +2738,7 @@ table 'Order Measures'
 		displayFolder: CO2 Emissions\by Ingredient
 
 	/// Number of ordered dishes which the customer paid an extra price for.
-	measure 'Number of Ordered Plus Price Dishes' = 
+	measure 'Number of Ordered Plus Price Dishes' =
 			CALCULATE(
 				[Number of Ordered Dishes]
 				, 'Order Measures'[is_plus_price_dish] = 1
@@ -2747,7 +2747,7 @@ table 'Order Measures'
 		displayFolder: Plus Price and Thrifty Dishes\Dishes\Plus Price
 
 	/// Number of orders that has one or more dishes which the customer paid an extra price for.
-	measure 'Number of Orders with Plus Price Dishes' = 
+	measure 'Number of Orders with Plus Price Dishes' =
 			CALCULATE(
 				[Number of Orders]
 				, 'Order Measures'[is_plus_price_dish] = 1
@@ -2757,7 +2757,7 @@ table 'Order Measures'
 
 	/// The revenue coming from sales of dishes with an additional price.
 	/// I.e, the additional revenue coming from the extra price customers pay for plus price dishes.
-	measure 'Plus Price Dish Value Ex Vat' = 
+	measure 'Plus Price Dish Value Ex Vat' =
 			CALCULATE(
 				[Order Value Gross Ex Vat]
 				, 'Order Measures'[is_plus_price_dish] = 1
@@ -2795,7 +2795,7 @@ table 'Order Measures'
 		displayFolder: Plus Price and Thrifty Dishes\Orders\Plus Price
 
 	/// Number of ordered dishes which the customer gets an price reduction from.
-	measure 'Number of Ordered Thrifty Dishes' = 
+	measure 'Number of Ordered Thrifty Dishes' =
 			CALCULATE(
 				[Number of Ordered Dishes]
 				, 'Order Measures'[is_thrifty_dish] = 1
@@ -2804,7 +2804,7 @@ table 'Order Measures'
 		displayFolder: Plus Price and Thrifty Dishes\Dishes\Thrifty
 
 	/// Number of orders with one or more dishes that the customer got a price reduction from.
-	measure 'Number of Orders with Thrifty Dishes' = 
+	measure 'Number of Orders with Thrifty Dishes' =
 			CALCULATE(
 				[Number of Orders]
 				, 'Order Measures'[is_thrifty_dish] = 1
@@ -2813,7 +2813,7 @@ table 'Order Measures'
 		displayFolder: Plus Price and Thrifty Dishes\Orders\Thrifty
 
 	/// The sum of all price reductions coming from sales of thrifty dishes.
-	measure 'Thrifty Dish Value Ex Vat' = 
+	measure 'Thrifty Dish Value Ex Vat' =
 			CALCULATE(
 				[Order Value Gross Ex Vat]
 				, 'Order Measures'[is_thrifty_dish] = 1
@@ -2849,7 +2849,7 @@ table 'Order Measures'
 	measure 'Share of Orders with Thrifty Dishes' = DIVIDE([Number of Orders with Thrifty Dishes], [Number of Orders])
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Plus Price and Thrifty Dishes\Orders\Thrifty
-		
+
 	/// The unique identifier of a user that have signed up for our service
 	column billing_agreement_id
 		dataType: int64
@@ -2906,7 +2906,7 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	/// The total amount of the order line ex vat. 
+	/// The total amount of the order line ex vat.
 	/// I.e., the unit price ex vat multiplied with the quantity ordered of the variation.
 	column total_amount_ex_vat
 		dataType: double
@@ -2922,7 +2922,7 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	/// The total amount of the order line inc vat. 
+	/// The total amount of the order line inc vat.
 	/// I.e., the unit price inc vat multiplied with the quantity ordered of the variation.
 	column total_amount_inc_vat
 		dataType: double
@@ -2938,8 +2938,8 @@ table 'Order Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	/// Flag to indiacte if the order has printed recipes. 
-	/// The option to only have digital recipes was introduced in February 2024. 
+	/// Flag to indiacte if the order has printed recipes.
+	/// The option to only have digital recipes was introduced in February 2024.
 	/// Customers has to opt out on the webpage to only recieve digital recipes.
 	column has_recipe_leaflets
 		dataType: boolean
@@ -3133,7 +3133,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Is 1 if the ordered dish was added by the customer themselves and 0 if the ordered dish was a part of the preselection the customer was presented to on the frontend. 
+	/// Is 1 if the ordered dish was added by the customer themselves and 0 if the ordered dish was a part of the preselection the customer was presented to on the frontend.
 	/// For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers add to their menu.
 	column is_added_dish
 		dataType: int64
@@ -3146,7 +3146,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Is 1 if the customer removed the dish presented on the frontend from their menu and and 0 if the dish presented on the frontend was ordered by the customer. 
+	/// Is 1 if the customer removed the dish presented on the frontend from their menu and and 0 if the dish presented on the frontend was ordered by the customer.
 	/// For all rows that are not representing a dish the field is null. Is used to determine which type of dishes customers remove from their menu.
 	column is_removed_dish
 		dataType: int64
@@ -3236,7 +3236,7 @@ table 'Order Measures'
 
 		changedProperty = IsHidden
 
-	/// The difference between the number of portions ordered by the customer and the number of portions they subscribe to. 
+	/// The difference between the number of portions ordered by the customer and the number of portions they subscribe to.
 	/// The customer can change portions on dish level, hence is the number placed on the recipe row of the order.
 	column portion_adjustment_subscription
 		dataType: int64
@@ -3275,7 +3275,7 @@ table 'Order Measures'
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-	
+
 	/// Rating (1-5) of the recipe given by the customer. If rating is 0 it means that the customer marked the recipe as not cooked.
 	column 'Recipe Rating'
 		dataType: int64
@@ -3303,12 +3303,12 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Flag that indicates if the customer was presented for output of the preselector in the frontend before selecting recipes. 
-	/// Due to bugs it can happen that a customer does not see any preselected dishes in their menu on the frontend. 
-	/// When this happens the customer will often just go ahead and select dishes themselves. 
-	/// If the customer was not presented with preselector output in the frontend the value of the flag is 1, 
-	/// if the customer did receive preselector output before selecting dishes its 0. 
-	/// The value is null for orders that existed before the preselector was launched together with Onesub (pre fall of 2024). 
+	/// Flag that indicates if the customer was presented for output of the preselector in the frontend before selecting recipes.
+	/// Due to bugs it can happen that a customer does not see any preselected dishes in their menu on the frontend.
+	/// When this happens the customer will often just go ahead and select dishes themselves.
+	/// If the customer was not presented with preselector output in the frontend the value of the flag is 1,
+	/// if the customer did receive preselector output before selecting dishes its 0.
+	/// The value is null for orders that existed before the preselector was launched together with Onesub (pre fall of 2024).
 	/// The flag is on order level. I.e. the whole order will have the same value for this flag.
 	column is_missing_preselector_output
 		dataType: int64
@@ -3359,7 +3359,7 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: fk_dim_meals_subscription
-	
+
 	/// Defines a unique recipe rating. To be used to count number of ratings. A concatenation of the billing_agreement_id and the recipe_id from the recipe ratings table.
 	/// Used in Menu Measures
 	column 'Recipe Rating Id'
@@ -3369,7 +3369,7 @@ table 'Order Measures'
 		lineageTag: 68b906db-5f2b-4ce4-88ce-8349a1e8c941
 		summarizeBy: none
 		sourceColumn: recipe_rating_id
-	
+
 	/// Defines a unique recipe comment. To be used to count number of comments. A concatenation of the billing_agreement_id and the recipe_id from the recipe comments table.
 	/// Used in Menu Measures
 	column 'Recipe Comment Id'
@@ -3465,7 +3465,7 @@ table 'Order Measures'
     	summarizeBy: none
     	sourceColumn: fk_dim_order_line_details
 
-	/// True if the preselected product variation represents a grocery the customer subscribes to, else false. 
+	/// True if the preselected product variation represents a grocery the customer subscribes to, else false.
 	/// Is null for all orders that was placed before we started tracking subscribed products (< 2024).
 	column is_subscribed_grocery
 		dataType: boolean
@@ -3483,8 +3483,8 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: sum
 		sourceColumn: product_variation_quantity_subscription
-	
-	/// The total amount of the order line if only including subscribed product variation quantity. 
+
+	/// The total amount of the order line if only including subscribed product variation quantity.
 	/// E.g. if a customer subscribed to one milk and adds two more. This column will only contain the amount coming from one milk.
 	column total_amount_ex_vat_subscription
 		dataType: double
@@ -3523,7 +3523,7 @@ table 'Order Measures'
 		isAvailableInMdx: false
 		summarizeBy: none
 		sourceColumn: has_finished_order_status
-	
+
 	/// True if the order is a subscription order, campaign order or daily direct order.
 	/// The flag is used in measures only include the orders of interest. E.g., excluding gift cards and similar.
 	column has_normal_order_type
@@ -3564,8 +3564,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The menu planning purchasing cost based on ingredient quantity in whole units. 
-	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. 
+	/// The menu planning purchasing cost based on ingredient quantity in whole units.
+	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 	column total_ingredient_planned_cost_whole_units
 		dataType: double
 		isHidden
@@ -3575,7 +3575,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The expected purchasing cost for the total ingredient amount in the recipe. 
+	/// The expected purchasing cost for the total ingredient amount in the recipe.
 	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
 	column total_ingredient_expected_cost
 		dataType: double
@@ -3586,8 +3586,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The expected purchasing cost based on ingredient quantity in whole units. 
-	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. 
+	/// The expected purchasing cost based on ingredient quantity in whole units.
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
 	/// This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 	column total_ingredient_expected_cost_whole_units
 		dataType: double
@@ -3598,7 +3598,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// The actual purchasing cost for the total ingredient amount of the recipe.
 	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe.
 	column total_ingredient_actual_cost
 		dataType: double
@@ -3609,7 +3609,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// The actual purchasing cost for the total ingredient amount of the recipe.
 	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
 	column total_ingredient_actual_cost_whole_units
 		dataType: double
@@ -3620,8 +3620,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
 	column total_ingredient_co2_emissions
 		dataType: double
@@ -3632,8 +3632,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
 	column total_ingredient_co2_emissions_whole_units
 		dataType: double
@@ -3663,7 +3663,7 @@ table 'Order Measures'
 		sourceColumn: total_ingredient_weight_with_co2_data_whole_units
 
 		annotation SummarizationSetBy = Automatic
-	
+
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
 	/// The net weight (in grams) for the total ingredient amount in the recipe.
@@ -3702,8 +3702,8 @@ table 'Order Measures'
 
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
-	/// The menu planning purchasing cost based on ingredient quantity in whole units. 
-	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer. 
+	/// The menu planning purchasing cost based on ingredient quantity in whole units.
+	/// It is calculated as the sum of the cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 	column total_ingredient_planned_cost_whole_units_subscription
 		dataType: double
 		isHidden
@@ -3715,7 +3715,7 @@ table 'Order Measures'
 
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
-	/// The expected purchasing cost for the total ingredient amount in the recipe. 
+	/// The expected purchasing cost for the total ingredient amount in the recipe.
 	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
 	column total_ingredient_expected_cost_subscription
 		dataType: double
@@ -3728,8 +3728,8 @@ table 'Order Measures'
 
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
-	/// The expected purchasing cost based on ingredient quantity in whole units. 
-	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account. 
+	/// The expected purchasing cost based on ingredient quantity in whole units.
+	/// The expected cost includes discounts or other price adjustment (variable cost unit) if set, as opposed to the planned cost that does not take the variable cost into account.
 	/// This field is calculated as the sum of the expected cost of the recipe ingredients based on the quantity used in the recipe rounded up to the nearest integer.
 	column total_ingredient_expected_cost_whole_units_subscription
 		dataType: double
@@ -3742,7 +3742,7 @@ table 'Order Measures'
 
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
-	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// The actual purchasing cost for the total ingredient amount of the recipe.
 	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated as the actual purchasing cost of the orders, divided by the quantity in the orders, multiplied with the ingredient quantity in the recipe.
 	column total_ingredient_actual_cost_subscription
 		dataType: double
@@ -3753,7 +3753,7 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The actual purchasing cost for the total ingredient amount of the recipe. 
+	/// The actual purchasing cost for the total ingredient amount of the recipe.
 	/// It is fetched from the purchasing order(s) for the menu week of the recipe and calculated by dividing the actual purchasing cost of the orders by the ordered quantity, and then multipling it with the ingredient quantity (rounded up to whole units) in the recipe.
 	column total_ingredient_actual_cost_whole_units_subscription
 		dataType: double
@@ -3766,8 +3766,8 @@ table 'Order Measures'
 
 	/// Ingredient data for the recipes shown to the customer on the frontend (preselected dishes).
 	/// I.e. the recipes the customer would get if not making changes to the mealbox.
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data to calculate emissions per kg of food in the recipes.
 	column total_ingredient_co2_emissions_subscription
 		dataType: double
@@ -3778,8 +3778,8 @@ table 'Order Measures'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes. 
-	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe. 
+	/// The total amount of registered co2 emissions (in kg) for the ingredients in the recipes.
+	/// It is calculated by multipling the emission per kg of the ingredient with the net weight of on unit of the ingredient, and then multipling it with the quantity (rounded up to whole units) of the ingredient in the recipe.
 	/// Note: Not all ingredients have registered CO2 emission data. For meaningful analysis, use this field together with total_ingredient_weight_with_co2_data_whole_units to calculate emissions per kg of food in the recipes.
 	column total_ingredient_co2_emissions_whole_units_subscription
 		dataType: double
@@ -3829,9 +3829,8 @@ table 'Order Measures'
 		summarizeBy: none
 		sourceColumn: pk_fact_orders
 
-	/// TO-DO: 
-	/// Remove when dim_partnerships is connected to relevant fact tables in a similar way as it is done for dim_preferences. 
-	column fk_dim_partnerships
+	/// Primary key of the dim_partnership_rule_combinations table
+	column fk_dim_partnership_rule_combinations
 		dataType: string
 		isHidden
 		isAvailableInMdx: false
