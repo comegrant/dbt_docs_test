@@ -1,6 +1,122 @@
 version: 2
 
 models:
+  - name: dim_timeblocks
+    description: >
+      Timeblocks describes a delivery window that consists of a day of the week and a time range during that day when deliveries can be made.
+    meta:
+      owners:
+        - "Marie Borg"
+    latest_version: 1
+    config:
+      alias: dim_timeblocks
+      contract:
+        enforced: true
+    
+    columns:
+      - name: pk_dim_timeblocks
+        data_type: string
+        description: "{{ doc('column__pk_dim_timeblocks') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: timeblock_id
+        data_type: decimal(18, 0)
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_type_id
+        data_type: string
+        description: "{{ doc('column__timeblock_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: day_of_week
+        data_type: int
+        description: "{{ doc('column__day_of_week_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: weekday_name
+        data_type: string
+        description: "{{ doc('column__weekday_name') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from
+        data_type: string
+        description: "{{ doc('column__time_from_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to
+        data_type: string
+        description: "{{ doc('column__time_to_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_time_window_name
+        data_type: string
+        description: "{{ doc('column__delivery_time_window_name') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_window_name
+        data_type: string
+        description: "{{ doc('column__delivery_window_name') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_type_name
+        data_type: string
+        description: "{{ doc('column__timeblock_type_name') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from_numeric
+        data_type: int
+        description: "{{ doc('column__time_from_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to_numeric
+        data_type: int
+        description: "{{ doc('column__time_to_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_window_start_numeric
+        data_type: int
+        description: "{{ doc('column__delivery_window_start_numeric') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_from
+        data_type: date
+        description: "{{ doc('column__valid_from') }}"
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        data_type: date
+        description: "{{ doc('column__valid_to') }}"
+        data_tests:
+          - not_null
+    
+    versions:
+      - v: 1
+
   - name: dim_transportation
     description: >
       Contains information about the transportation of a delivery including transport company and the facilities distributing the boxes.

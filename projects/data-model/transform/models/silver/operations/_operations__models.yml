@@ -1,4 +1,236 @@
 models:
+
+  - name: operations__timeblock_calendar
+    description: >
+      To be written.
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: timeblock_calendar_id
+        data_type: string
+        description: "{{ doc('column__timeblock_calendar_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: timeblock_id
+        data_type: decimal(18, 0)
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year
+        data_type: int
+        description: "{{ doc('column__menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week
+        data_type: int
+        description: "{{ doc('column__menu_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_year_week
+        data_type: int
+        description: "{{ doc('column__menu_year_week') }}"
+        data_tests:
+          - not_null
+
+      - name: menu_week_monday_date
+        data_type: date
+        description: "{{ doc('column__menu_week_monday_date') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from
+        data_type: string
+        description: "{{ doc('column__time_from_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to
+        data_type: string
+        description: "{{ doc('column__time_to_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from_numeric
+        data_type: int
+        description: "{{ doc('column__time_from_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to_numeric
+        data_type: int
+        description: "{{ doc('column__time_to_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: day_of_week
+        data_type: int
+        description: "{{ doc('column__day_of_week_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_window_start_numeric
+        data_type: int
+        description: "{{ doc('column__delivery_window_start_numeric') }}"
+        data_tests:
+          - not_null
+
+      - name: delivery_date
+        data_type: date
+        description: "{{ doc('column__delivery_date') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_started_at_local
+        data_type: timestamp
+        description: "{{ doc('column__timeblock_started_at_local') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_started_at_utc
+        data_type: timestamp
+        description: "{{ doc('column__timeblock_started_at_utc') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_ended_at_local
+        data_type: timestamp
+        description: "{{ doc('column__timeblock_ended_at_local') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_ended_at_utc
+        data_type: timestamp
+        description: "{{ doc('column__timeblock_ended_at_utc') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+  - name: operations__timeblock_types
+    description: >
+      Information about the timeblock types, such as redelivery, xmax etc.
+      A timeblock describes a delivery window that consists of a day of the week and a time range during that day when deliveries can be made.
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: timeblock_type_id
+        data_type: string
+        description: "{{ doc('column__timeblock_type_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: timeblock_type_name
+        data_type: string
+        description: "{{ doc('column__timeblock_type_name') }}"
+        data_tests:
+          - not_null
+
+  - name: operations__timeblocks
+    description: >
+      To be written.
+      A timeblock describes a delivery window that consists of a day of the week and a time range during that day when deliveries can be made.
+    config:
+      contract:
+        enforced: true
+
+    columns:
+      - name: timeblock_id
+        data_type: int
+        description: "{{ doc('column__timeblock_id') }}"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: country_id
+        data_type: string
+        description: "{{ doc('column__country_id') }}"
+        data_tests:
+          - not_null
+
+      - name: timeblock_type_id
+        data_type: string
+        description: "{{ doc('column__timeblock_type_id') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from_default
+        data_type: string
+        description: "{{ doc('column__time_from_default_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to_default
+        data_type: string
+        description: "{{ doc('column__time_to_default_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_from_default_numeric
+        data_type: int
+        description: "{{ doc('column__time_from_default_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: time_to_default_numeric
+        data_type: int
+        description: "{{ doc('column__time_to_default_numeric_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: day_of_week_default
+        data_type: int
+        description: "{{ doc('column__day_of_week_default_timeblocks') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_by
+        data_type: string
+        description: "{{ doc('column__source_created_by') }}"
+        data_tests:
+          - not_null
+
+      - name: source_created_at
+        data_type: timestamp
+        description: "{{ doc('column__source_created_at') }}"
+        data_tests:
+          - not_null
+
+      - name: source_updated_by
+        data_type: string
+        description: "{{ doc('column__source_updated_by') }}"
+
+      - name: source_updated_at
+        data_type: timestamp
+        description: "{{ doc('column__source_updated_at') }}"
+  
   - name: base_operations__orders_history
     description: "Information about orders from the operations database. Contains all the history of orders related to deliveries that has passed."
     config:

@@ -17,6 +17,9 @@ sources:
       - name: operations__distribution_center
       - name: operations__distribution_center_type
       - name: operations__postal_codes
+      - name: operations__timeblock
+      - name: operations__timeblock_calendar
+      - name: operations__timeblock_type
       - name: operations__timeblock_blacklist
       - name: operations__transport_company
       - name: operations__zones_blacklist

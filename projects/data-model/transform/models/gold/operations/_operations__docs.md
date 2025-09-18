@@ -1,3 +1,23 @@
+# Dim Timeblocks
+
+{% docs column__pk_dim_timeblocks %}
+
+Primary key of the dim_timeblocks table.
+
+{% enddocs %}
+
+{% docs column__delivery_window_name %}
+
+The delivery window represented on the format "Mon 14:00-16:00".
+
+{% enddocs %}
+
+{% docs column__delivery_time_window_name %}
+
+The hours in the delivery window represented on the format "14:00-16:00".
+
+{% enddocs %}
+
 # Dim Transportation
 
 {% docs column__pk_dim_transportation %}

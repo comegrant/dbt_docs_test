@@ -1,3 +1,129 @@
+# Timeblock Calendar
+{% docs column__timeblock_calendar_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__delivery_date %}
+
+...
+
+{% enddocs %}
+
+{% docs column__timeblock_started_at_local %}
+
+...
+
+{% enddocs %}
+
+{% docs column__timeblock_started_at_utc %}
+
+...
+
+{% enddocs %}
+
+{% docs column__timeblock_ended_at_local %}
+
+...
+
+{% enddocs %}
+
+{% docs column__timeblock_ended_at_utc %}
+
+...
+
+{% enddocs %}
+
+{% docs column__time_from_timeblocks %}
+
+The start hour of the delivery window as a string.
+
+{% enddocs %}
+
+{% docs column__time_to_timeblocks %}
+
+The end hour of the delivery window represented as a string.
+
+{% enddocs %}
+
+{% docs column__time_from_numeric_timeblocks %}
+
+The start hour of the delivery window represented as an integer.
+
+{% enddocs %}
+
+{% docs column__time_to_numeric_timeblocks %}
+
+The end hour of the delivery window represented as an integer.
+
+{% enddocs %}
+
+{% docs column__day_of_week_timeblocks %}
+
+The day of the week of the delivery as an integer (0 = Monday).
+
+{% enddocs %}
+
+{% docs column__delivery_window_start_numeric %}
+
+The delivery window represented as a numberic value. For example:
+- Monday 14:00 = 14000
+- Tuesday 14:00 = 14001
+- Tuesday 16:00 = 16001
+
+{% enddocs %}
+
+# Timeblocks
+{% docs column__timeblock_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__time_from_default_timeblocks %}
+
+The default start time of the delivery window. The default is based on the current default, and not what has been default historically.
+
+{% enddocs %}
+
+{% docs column__time_to_default_timeblocks %}
+
+The default end time of the delivery window. The default is based on the current default, and not what has been default historically.
+
+{% enddocs %}
+
+{% docs column__time_from_default_numeric_timeblocks %}
+
+The default start time of the delivery window represented as an integer. The default is based on the current default, and not what has been default historically..
+
+{% enddocs %}
+
+{% docs column__time_to_default_numeric_timeblocks %}
+
+The default end time of the delivery window represented as an integer. The default is based on the current default, and not what has been default historically.
+
+{% enddocs %}
+
+{% docs column__day_of_week_default_timeblocks %}
+
+The default day of the week of the delivery represented as an integer (0 = Monday). The default is based on the current default, and not what has been default historically.
+
+{% enddocs %}
+
+# Timeblock Types
+{% docs column__timeblock_type_id %}
+
+...
+
+{% enddocs %}
+
+{% docs column__timeblock_type_name %}
+
+...
+
+{% enddocs %}
+
 # Transport Companies
 
 {% docs column__transport_company_id %}
@@ -35,13 +161,6 @@ The unique id of the distribution center in the source database.
 {% docs column__distribution_center_name %}
 
 The name of the distribution center namne. A distribution center is the site where the delivery gets distributed to the transport company. An order can go through several distibution centers during the delivery process.
-
-{% enddocs %}
-
-# Timeblocks
-{% docs column__timeblock_id %}
-
-The ID of the timeblock. A timeblock describes a delivery window that consists of a day of the week and a time range during that day when deliveries can be made.
 
 {% enddocs %}
 
