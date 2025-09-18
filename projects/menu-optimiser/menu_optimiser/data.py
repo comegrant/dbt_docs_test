@@ -1,78 +1,48 @@
+"""
+Data loading and preprocessing for the menu optimiser.
+"""
+
 import pandas as pd
-from data_contracts.sources import azure_dl_creds
-from data_contracts.helper import camel_to_snake
-
-RECIPE_BANK_DIRECTORY = "data-science/test-folder/MP20"
-
-
-async def get_df_from_datalake(directory: str, parquet_filename: str) -> pd.DataFrame:
-    df_recipe_bank = (
-        await azure_dl_creds.directory(directory)
-        .parquet_at(parquet_filename)
-        .to_pandas()
-    )
-
-    return df_recipe_bank
-
-
-# TODO: AGATHE: validate
-async def get_recipe_bank_data(company_code: str, recipe_bank_env: str) -> pd.DataFrame:
-    """Get recipe bank data from datalake."""
-    parquet_filename = f"PIM_RecipeBank_{company_code}_{recipe_bank_env}"
-    df_recipe_bank = await get_df_from_datalake(RECIPE_BANK_DIRECTORY, parquet_filename)
-
-    return df_recipe_bank
+from menu_optimiser.common import Args
+from menu_optimiser.db import (
+    get_recipe_bank_data,
+    get_recipe_tagging_data,
+    get_recipe_carbs_data,
+    get_recipe_protein_data,
+)
+from menu_optimiser.preprocessing import (
+    preprocess_recipe_bank_data,
+    preprocess_recipe_tagging,
+    preprocess_carbs,
+    preprocess_protein,
+    preprocess_final_dataset,
+)
 
 
-def preprocess_recipe_data(
-    df: pd.DataFrame,
-    only_universe: bool = True,
-) -> pd.DataFrame:
-    """Preprocess recipe bank data."""
-    # switch from camel case to snake case
-    df.columns = pd.Index([camel_to_snake(x) for x in df.columns.to_list()])
+async def create_dataset(args: Args) -> pd.DataFrame:
+    """
+    Load and preprocess all required data sources to produce the complete dataset for menu optimisation.
 
-    # TODO: AGATHE: switch out with config later
-    df = pd.DataFrame(
-        df[
-            [
-                "recipe_id",
-                "main_ingredient_id",
-                "taxonomy_id",
-                "average_rating",
-                "price_category",
-                "is_universe",
-                "cooking_time_from",
-                "cooking_time_to",
-            ]
-        ]
-    )
+    Args:
+        args (Args): Configuration arguments specifying company and environment.
 
-    if only_universe:
-        df = pd.DataFrame(df[df["is_universe"]])
+    Returns:
+        pd.DataFrame: The dataset ready for the menu solver.
+    """
+    df_recipe_bank = await get_recipe_bank_data(args.company_code, args.recipe_bank_env)
+    df_recipe_tagging = await get_recipe_tagging_data()
+    df_carbs = await get_recipe_carbs_data()
+    df_protein = await get_recipe_protein_data()
 
-    df = pd.DataFrame(df[df["main_ingredient_id"].notna()])
-    df["main_ingredient_id"] = df["main_ingredient_id"].astype(int)
-    df = df.rename(columns={"price_category": "price_category_id"})
-    df["cooking_time"] = (
-        df["cooking_time_from"].astype(str) + "_" + df["cooking_time_to"].astype(str)
-    )
+    df_recipe_bank = preprocess_recipe_bank_data(df_recipe_bank)
+    df_recipe_tagging = preprocess_recipe_tagging(df_recipe_tagging)
+    df_carbs = preprocess_carbs(df_carbs)
+    df_protein = preprocess_protein(df_protein)
 
-    # TODO: df_validate
+    df_full = df_recipe_bank.merge(df_recipe_tagging, on="recipe_id", how="left")
+    df_full = df_full.merge(df_carbs, on="recipe_id", how="left")
+    df_full = df_full.merge(df_protein, on="recipe_id", how="left")
 
-    df = (
-        df.groupby("recipe_id")
-        .agg(
-            taxonomies=("taxonomy_id", list),
-            main_ingredient_id=("main_ingredient_id", "first"),
-            price_category_id=("price_category_id", "first"),
-            average_rating=("average_rating", "first"),
-            is_universe=("is_universe", "first"),
-            cooking_time_from=("cooking_time_from", "first"),
-            cooking_time_to=("cooking_time_to", "first"),
-            cooking_time=("cooking_time", "first"),
-        )
-        .reset_index()
-    )
+    df_full = preprocess_final_dataset(df_full)
 
-    return df
+    return df_full

@@ -7,12 +7,14 @@ from contextlib import asynccontextmanager
 from http import HTTPStatus
 
 from data_contracts.recommendations.store import recommendation_feature_contracts
+from data_contracts.tags import Tags
 from dotenv import find_dotenv, load_dotenv
 from fastapi import Depends, FastAPI, Form, Request
 from key_vault import key_vault
 
 from analytics_api.routers.menu_feedback import mf_router as mf_app_router
 from analytics_api.routers.menu_generator import mop_router as mop_app_router
+from analytics_api.routers.menu_generator_2 import mop_router_2 as mop_app_router_2
 from analytics_api.routers.recommendations import rec_router
 from analytics_api.routers.review_screener import rs_router as rs_app_router
 from analytics_api.settings import EnvSettings, load_settings
@@ -46,7 +48,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if settings.environment != "dev":
         await datadog_logger(env=settings.environment)
 
-    app.include_router(router_for_store(store), dependencies=[Depends(raise_on_invalid_token)])
+    app.include_router(
+        router_for_store(store, expose_tag=Tags.expose_in_analytics_api),
+        dependencies=[Depends(raise_on_invalid_token)],
+    )
 
     vault = key_vault()
     await vault.load_into_env({"openai-preselector-key": "OPENAI_API_KEY"})
@@ -57,6 +62,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Analytics API", lifespan=lifespan)
 app.include_router(mop_app_router)
+app.include_router(mop_app_router_2)
 app.include_router(mf_app_router)
 app.include_router(rec_router)
 app.include_router(rs_app_router)

@@ -20,6 +20,7 @@ menu-optimiser = {path = "../../projects/menu-optimiser", develop = true}
 preselector = {path = "../../projects/preselector", develop = true}
 review-screener = {path = "../../projects/review-screener", develop = true}
 scikit-learn = "^1.6.1"
+pandera = "^0.24.0"
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}

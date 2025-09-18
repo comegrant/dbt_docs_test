@@ -1,4 +1,4 @@
-"""Stores constants commonly used in the code"""
+"""TO BE DEPRECATED. Stores constants commonly used in the code"""
 
 ING_COLUMN = "main_ingredient_id"
 TAX_COLUMN = "taxonomy_id"

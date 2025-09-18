@@ -1,3 +1,7 @@
+"""
+TO BE DEPRECATED: This is the old menu optimiser.
+"""
+
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 
@@ -6,7 +10,10 @@ def exclude_recipes(
     df: pd.DataFrame,
     min_rating: int,
 ) -> pd.DataFrame:
-    """Exclude recipes with average rating below the threshold. Missing ratings are filled with min_rating."""
+    """
+    TO BE DEPRECATED.
+    Exclude recipes with average rating below the threshold. Missing ratings are filled with min_rating.
+    """
 
     df["average_rating"] = df["average_rating"].fillna(min_rating)
 
@@ -17,6 +24,7 @@ def get_dummies(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
     """
+    TO BE DEPRECATED.
     Creates a new 0's and 1's df. Used to count constraints in the recipes.
 
     Parameters
@@ -60,6 +68,7 @@ def get_distribution(
     field_name,
 ):
     """
+    TO BE DEPRECATED.
     Get the difference between the number of wanted and actual recipes with the given items.
 
     Example:
@@ -99,6 +108,7 @@ def get_priority_df(
     just_fill: bool = False,
 ) -> pd.DataFrame:
     """
+    TO BE DEPRECATED.
     Generate a priority DataFrame based on overlay calculations and specified recipes.
 
     Parameters:
@@ -145,6 +155,7 @@ def update_dist(  # TODO: seems unnecessary to do it this way
     dist: dict[str, float], selected_df: pd.DataFrame, available_df: pd.DataFrame
 ) -> tuple[dict[str, float], pd.DataFrame]:
     """
+    TO BE DEPRECATED.
     Updates the distribution of key quantities based on the given DataFrame and returns the updated distribution
     and the modified wanted DataFrame.
 
@@ -191,6 +202,7 @@ def get_message(
     taxonomy_id: int,
 ) -> tuple[int, str]:
     """
+    TO BE DEPRECATED.
     Generates a status message based on the completeness and availability of ingredients, prices,
     and cooking times for recipes.
 

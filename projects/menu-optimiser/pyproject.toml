@@ -18,6 +18,10 @@ constants = {path = "../../packages/constants", develop = true}
 catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 seaborn = "^0.13.2"
 plotly = "^6.1.2"
+pandera = "^0.24.0"
+key-vault = {path = "../../packages/key-vault", develop = true}
+pulp = "^3.2.1"
+streamlit-helper = {path = "../../packages/streamlit-helper", develop = true}
 
 [tool.poetry.group.cli.dependencies]
 pydantic-argparser = {path = "../../packages/pydantic-argparser", develop = true}
@@ -47,4 +51,5 @@ exclude = [
     "**/jobs/**.py",
     ".venv",
     "streamlit_app/**",
+    "apps.py"
 ]

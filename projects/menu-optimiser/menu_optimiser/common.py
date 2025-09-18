@@ -1,14 +1,14 @@
+"""
+Common data models and configuration utilities shared across the menu optimiser.
+"""
+
 from pydantic import BaseModel, alias_generators, Field
 from typing import Literal
+from dataclasses import dataclass
 
 
 class Args(BaseModel):
-    company_id: Literal[
-        "6a2d0b60-84d6-4830-9945-58d518d27ac2",  # LMK
-        "8a613c15-35e4-471f-91cc-972f933331d7",  # AM
-        "09ecd4f0-ae58-4539-8e8f-9275b1859a19",  # GL
-        "5e65a955-7b1a-446c-b24f-cfe576bf52d7",  # RT
-    ]
+    company_id: str
     env: Literal["dev", "test", "prod"]
 
     @property
@@ -18,7 +18,7 @@ class Args(BaseModel):
         elif self.env == "test":
             return "QA"
         elif self.env == "prod":
-            return "PRD"
+            return "PROD"
         else:
             raise ValueError("Invalid environment")
 
@@ -34,6 +34,14 @@ class Args(BaseModel):
             return "RT"
         else:
             raise ValueError("Invalid company id")
+
+
+@dataclass
+class BusinessRule:
+    total: int
+    main_ingredients: dict[int, int]
+    price_category: dict[int, int]
+    cooking_time_to: dict[int, int]
 
 
 class ConfigModel(BaseModel):
@@ -78,7 +86,7 @@ class RequestCompany(ConfigModel):
     num_recipes: int
     required_recipes: list[str]
     available_recipes: list[str]
-    linked_recipes: dict[str, list[int]] = Field(default_factory=dict)
+    linked_recipes: dict[str, list[int]] | None = Field(default_factory=dict)
     taxonomies: list[RequestTaxonomy]
 
 
@@ -91,7 +99,7 @@ class RequestMenu(ConfigModel):
 class ReponseRecipe(ConfigModel):
     recipe_id: int
     main_ingredient_id: int
-    is_constraint: bool
+    is_constraint: bool = Field(default=True)
 
 
 class ResponseMainIngredient(ConfigModel):

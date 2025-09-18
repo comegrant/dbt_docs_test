@@ -1,89 +1,146 @@
 import streamlit as st
+import pandas as pd
 import json
 from menu_optimiser.common import RequestMenu
-import asyncio
-from menu_optimiser.optimization import generate_menu_companies
-from streamlit_app.helpers.utils import get_recipe_data, map_taxonomies
+from menu_optimiser.old_mop.optimization import generate_menu_companies
+from streamlit_app.helpers.utils import (
+    get_new_recipe_data,
+    map_new_taxonomies,
+)
+from constants.companies import get_company_by_id
+from menu_optimiser.menu_solver import generate_menu
 
+# from streamlit_app.helpers.config import VALID_TAXONOMIES
+from streamlit_app.helpers.utils import (
+    get_extra_columns_for_old_menu,
+    create_menu_with_ingredients,
+)
+
+from streamlit_helper import setup_streamlit
+from menu_optimiser.db import get_recipe_ingredients_data
 
 st.set_page_config(page_title="Menu Optimiser", page_icon=":bento:")
-st.title("Menu Optimiser")
-st.write("This is a menu optimiser app.")
-
-if st.button("🔁 Reset app"):
-    st.session_state.clear()
-    st.rerun()
-
-for key in [
-    "business_input",
-    "payload",
-    "response",
-    "company",
-    "recipes",
-    "week",
-    "year",
-    "status_msg",
-    "recipe_data",
-]:
-    if key not in st.session_state:
-        st.session_state[key] = None
 
 
-uploaded_file = st.file_uploader("Upload or replace JSON file", type=["json"])
+async def preprocess_menus(df_new, df_old):
+    df_old = await get_extra_columns_for_old_menu(df_old)
 
-if uploaded_file:
+    df_old = await get_new_recipe_data(df_old)
+    df_old = map_new_taxonomies(df_old, "cuisine")
+    df_old = map_new_taxonomies(df_old, "dish_type")
+    df_old = map_new_taxonomies(
+        df_old,
+        "taxonomies",
+        list_of_taxonomies=st.session_state["VALID_TAXONOMIES"],
+        keep_ids=True,
+    )
+
+    df_new = await get_new_recipe_data(df_new)
+    df_new = map_new_taxonomies(df_new, "cuisine")
+    df_new = map_new_taxonomies(df_new, "dish_type")
+    df_new = map_new_taxonomies(
+        df_new,
+        "taxonomies",
+        list_of_taxonomies=st.session_state["VALID_TAXONOMIES"],
+        keep_ids=True,
+    )
+
+    # if there are nan values within lists within the columns that are list, fill with "unknown"
+    # TODO: find better way than this hacky
+    def fill_unknown(x):
+        try:
+            # If x is a list, fill any nan/None in the list with "unknown"
+            if isinstance(x, list):
+                return ["unknown" if pd.isna(i) else i for i in x]
+            # If x is a scalar, check for nan/None
+            return ["unknown"] if pd.isna(x) else [x]
+        except Exception:
+            return x
+
+    # only do this for certain columns, e.g. cuisine, dish_type, main_protein, main_carb
+    columns_to_fill = [
+        "cuisine",
+        "dish_type",
+        "main_protein",
+        "main_carb",
+        "protein_processing",
+    ]
+    df_old[columns_to_fill] = df_old[columns_to_fill].applymap(fill_unknown)
+    df_new[columns_to_fill] = df_new[columns_to_fill].applymap(fill_unknown)
+    return df_new, df_old
+
+
+@setup_streamlit(datadog_config=None, datadog_metrics_config=None)
+async def main():
+    st.title("Menu Optimiser")
+
+    st.header("📁 Data Upload")
+    uploaded_file = st.file_uploader(
+        "Upload your business rule input to generate a menu (JSON)",
+        type=["json"],
+        help="JSON file with business input",
+    )
+
+    if uploaded_file is None:
+        if st.session_state.get("company") is not None:
+            st.info(
+                f"Successfully generated menu for {st.session_state.get('company')}"
+            )
+        return
+
+    if not (
+        "new_menu_data" not in st.session_state
+        or "old_menu_data" not in st.session_state
+        or "company" not in st.session_state
+        or st.session_state.get("last_uploaded_filename") != uploaded_file.name
+    ):
+        return
+
     try:
-        data = json.load(uploaded_file)
-        st.session_state["business_input"] = data
-        st.session_state["payload"] = RequestMenu.model_validate(data)
+        with st.spinner("Loading data..."):
+            data = json.load(uploaded_file)
+            payload = RequestMenu.model_validate(data)
 
-        for key in [
-            "response",
-            "company",
-            "recipes",
-            "week",
-            "year",
-            "status_msg",
-            "recipe_data",
-        ]:
-            st.session_state[key] = None
+            st.session_state["VALID_TAXONOMIES"] = [
+                taxonomy.taxonomy_id for taxonomy in payload.companies[0].taxonomies
+            ]
 
-        st.success("File loaded successfully.")
+        with st.spinner("Generating new menu..."):
+            problem, df_new, error = await generate_menu(payload)
+
+        with st.spinner("Generating old menu..."):
+            _, df_old = await generate_menu_companies(payload)
+
+        with st.spinner("Fetching additional data for visualisations..."):
+            df_new, df_old = await preprocess_menus(df_new, df_old)
+
+        with st.spinner("Getting recipe ingredients..."):
+            df_recipe_ingredients = await get_recipe_ingredients_data()
+            df_new, df_new_ingredients = create_menu_with_ingredients(
+                df_new, df_recipe_ingredients
+            )
+            df_old, df_old_ingredients = create_menu_with_ingredients(
+                df_old, df_recipe_ingredients
+            )
+
+        st.session_state["payload"] = payload
+        st.session_state["new_menu_data"] = df_new
+        st.session_state["old_menu_data"] = df_old
+        st.session_state["new_menu_ingredients"] = df_new_ingredients
+        st.session_state["old_menu_ingredients"] = df_old_ingredients
+        st.session_state["last_uploaded_filename"] = uploaded_file.name
+        st.session_state["company"] = get_company_by_id(
+            payload.companies[0].company_id.upper()
+        ).company_name
+        st.session_state["error"] = error
+        st.session_state["status"] = problem.status
+
     except Exception as e:
-        st.error(f"Failed to load file: {e}")
+        st.error(f"Error loading data: {str(e)}")
+        st.info(
+            "Please ensure your JSON file has the required columns and proper formatting."
+        )
 
-# button to generate menu and recipe data
-if st.session_state["payload"] is not None:
-    if st.button("Generate Menu"):
-        with st.spinner("Generating menu..."):
-            payload = st.session_state["payload"]
-            try:
-                response = asyncio.run(generate_menu_companies(payload))
-                st.session_state["company"] = response.companies[0]
-                st.session_state["recipes"] = [
-                    r.recipe_id for r in st.session_state["company"].recipes
-                ]
-                st.session_state["week"] = response.week
-                st.session_state["year"] = response.year
-                st.session_state["status_msg"] = response.status_msg
 
-                # get additional recipe data
-                data = asyncio.run(
-                    get_recipe_data(
-                        st.session_state["recipes"],
-                        st.session_state["company"].company_id,
-                    )
-                )
-
-                # map taxonomies to recipe data
-                relevant_taxonomies = [
-                    t.taxonomy_id for t in st.session_state["company"].taxonomies
-                ]
-                data_with_taxonomies = map_taxonomies(data, relevant_taxonomies)
-
-                st.session_state["recipe_data"] = data_with_taxonomies
-                st.session_state["response"] = response
-
-                st.success("Menu generated successfully!")
-            except Exception as e:
-                st.error(f"Error generating menu: {str(e)}")
+if __name__ == "__main__":
+    main()  # pyright: ignore

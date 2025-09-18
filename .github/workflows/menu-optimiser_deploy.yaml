@@ -1,0 +1,37 @@
+name: menu-optimiser deploy
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/menu-optimiser_deploy.yaml'
+      - 'projects/menu-optimiser/**'
+  workflow_dispatch:  # Allows to trigger the workflow manually in GitHub UI
+
+jobs:
+  build-menu-optimiser-image:
+    uses: ./.github/workflows/cd_docker_image_template.yml
+    with:
+      working-directory: projects/menu-optimiser
+      registry: ${{ vars.CONTAINER_REGISTRY }}
+      image-name: menu-optimiser
+      dockerfile: docker/Dockerfile.databricks
+      tag: "main-latest"
+      push-sha: true
+    secrets: inherit
+
+  deploy-menu-optimiser:
+    strategy:
+      matrix:
+        target: [Test, Production]
+      max-parallel: 1
+      fail-fast: true
+    needs: build-menu-optimiser-image
+    uses: ./.github/workflows/cd_dab_template.yml
+    with:
+      working-directory: projects/menu-optimiser
+      target-env: ${{matrix.target}}
+      should-change-target: true
+      # Setting the docker image which is needed for python projects
+      extra-args: --var="docker_image_url=${{ vars.CONTAINER_REGISTRY }}/menu-optimiser:${{ github.sha }}" --var="mode=production"
+    secrets: inherit

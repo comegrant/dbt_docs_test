@@ -42,7 +42,7 @@ services:
     depends_on:
       - base
     ports:
-      - 8500:8501
+      - 8501:8501
       - 8888:8888
     env_file:
       - ../../.env

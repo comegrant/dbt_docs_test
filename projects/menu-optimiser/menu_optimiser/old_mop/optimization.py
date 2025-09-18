@@ -1,3 +1,7 @@
+"""
+TO BE DEPRECATED: This is the old menu optimiser.
+"""
+
 import logging
 
 import pandas as pd
@@ -14,12 +18,10 @@ from menu_optimiser.common import (
     ReponseRecipe,
     ResponseCompany,
 )
-from menu_optimiser.data import (
-    preprocess_recipe_data,
-    get_recipe_bank_data,
-)
+from menu_optimiser.db import get_recipe_bank_data
+from menu_optimiser.preprocessing import preprocess_recipe_bank_data
 
-from menu_optimiser.helpers import (
+from menu_optimiser.old_mop.helpers import (
     exclude_recipes,
     get_dummies,
     get_distribution,
@@ -39,6 +41,7 @@ def generate_menu(
     final_df: pd.DataFrame,
 ) -> dict[str, str | int | list[str | int] | list[dict[str, str]]]:
     """
+    TO BE DEPRECATED.
     Generate a menu combination from all recipes.
 
     Args:
@@ -241,8 +244,9 @@ def generate_menu(
 
 async def generate_menu_companies(
     payload: RequestMenu,
-) -> ResponseMenu:
+) -> tuple[ResponseMenu, pd.DataFrame]:
     """
+    TO BE DEPRECATED.
     Generate menu for companies based on available and required recipes.
 
     Parameters
@@ -271,7 +275,7 @@ async def generate_menu_companies(
 
     df_recipe_bank = await get_recipe_bank_data(args.company_code, args.recipe_bank_env)
     df_recipes = pd.DataFrame(
-        preprocess_recipe_data(df_recipe_bank, only_universe=True)
+        preprocess_recipe_bank_data(df_recipe_bank, only_universe=True)
     )
 
     messages.append(f"COMPANY {args.company_id}:")
@@ -372,10 +376,29 @@ async def generate_menu_companies(
 
     response_companies.append(response_company)
 
-    return ResponseMenu(
-        week=payload.week,
-        year=payload.year,
-        companies=response_companies,
-        status=max(status),
-        status_msg=" ".join(messages),
+    return (
+        ResponseMenu(
+            week=payload.week,
+            year=payload.year,
+            companies=response_companies,
+            status=max(status),
+            status_msg=" ".join(messages),
+        ),
+        final_df,
     )
+
+
+if __name__ == "__main__":
+    import json
+    import asyncio
+    from dotenv import find_dotenv, load_dotenv
+
+    load_dotenv(find_dotenv())
+
+    with open("../../menu_optimiser/test_files/lmk_fake.json", "r") as f:
+        raw_data = json.load(f)
+    payload = RequestMenu.model_validate(raw_data)
+
+    res, df = asyncio.run(generate_menu_companies(payload))
+    print(df)
+    print(res)

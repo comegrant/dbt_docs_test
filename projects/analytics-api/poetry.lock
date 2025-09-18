@@ -215,14 +215,14 @@ tz = ["tzdata"]
 
 [[package]]
 name = "aligned"
-version = "0.0.125"
+version = "0.0.132"
 description = "A data management and lineage tool for ML applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "aligned-0.0.125-py3-none-any.whl", hash = "sha256:76f17c5f9e25c03a6565dbcc3344a9a8a90750a516ce8dc4211b493405d43d25"},
-    {file = "aligned-0.0.125.tar.gz", hash = "sha256:8b73037cd2bcf9ed69686595f6e33e8cf3af78a7b67cca75d6bdc6ecf08a83e7"},
+    {file = "aligned-0.0.132-py3-none-any.whl", hash = "sha256:df734648d992f840a7126673599b8e5566321e8e912ea7b86b5652794c46a973"},
+    {file = "aligned-0.0.132.tar.gz", hash = "sha256:f0e5e4a768a6c9007377440f3c706077d13748e3a3506a4afd823a6c4eed2bbc"},
 ]
 
 [package.dependencies]
@@ -243,8 +243,8 @@ redis = {version = ">=4.3.1,<5.0.0", optional = true, markers = "extra == \"redi
 [package.extras]
 aws = ["aioaws (>=0.12,<0.13)", "connectorx (>=0.3.2,<0.4.0)"]
 azure = ["adlfs (>=2024.4.1,<2025.0.0)"]
-databricks = ["databricks-connect (>15.1.0)"]
-deltalake = ["deltalake (>=0.18.1,<0.19.0)"]
+databricks = ["databricks-connect (>15.1.0)", "sqlglot (>=22.5.0,<23.0.0)"]
+deltalake = ["deltalake (>=1.0.0,<2.0.0)"]
 image = ["pillow (>=9.4.0,<10.0.0)"]
 kafka = ["kafka-python (>=2.0.2,<3.0.0)"]
 lancedb = ["lancedb (>=0.8.2,<0.9.0)"]
@@ -656,6 +656,7 @@ develop = true
 
 [package.dependencies]
 databricks-connect = ">=15.4.3"
+polars = "^1.28.0"
 
 [package.source]
 type = "directory"
@@ -1175,7 +1176,7 @@ files = []
 develop = true
 
 [package.dependencies]
-aligned = {version = "^0.0.125", extras = ["azure", "pandas", "redis"]}
+aligned = {version = "^0.0.132", extras = ["azure", "pandas", "redis"]}
 azure-identity = "^1.15.0"
 azure-storage-blob = "^12.19.0"
 databricks-connect = {version = "15.4.3", optional = true}
@@ -3061,13 +3062,17 @@ catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 code2flow = "^2.5.1"
 constants = {path = "../../packages/constants", develop = true}
 data-contracts = {path = "../../packages/data-contracts", develop = true}
+key-vault = {path = "../../packages/key-vault", develop = true}
 numpy = "1.26.4"
 pandas = "2.2.2"
+pandera = "^0.24.0"
 plotly = "^6.1.2"
+pulp = "^3.2.1"
 pydantic-settings = "^2.1.0"
 scikit-learn = "^1.6.1"
 seaborn = "^0.13.2"
 streamlit = "^1.45.1"
+streamlit-helper = {path = "../../packages/streamlit-helper", develop = true}
 
 [package.source]
 type = "directory"
@@ -3178,11 +3183,13 @@ files = []
 develop = true
 
 [package.dependencies]
+catalog-connector = {path = "../../packages/catalog-connector", develop = true}
 mlflow = "^2.19.0"
+polars = "^1.28.0"
+polars-lts-cpu = "^1.28.0"
 
 [package.extras]
-aligned = ["aligned @ git+https://github.com/MatsMoll/aligned.git@matsei/big-boy"]
-databricks = ["databricks-connect", "databricks-feature-engineering (>=0.8.0,<0.9.0)"]
+aligned = ["aligned (>=0.0.125,<0.0.126)"]
 
 [package.source]
 type = "directory"
@@ -3342,6 +3349,18 @@ files = [
 
 [package.dependencies]
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.11\""}
+
+[[package]]
+name = "mypy-extensions"
+version = "1.1.0"
+description = "Type system extensions for programs checked with the mypy type checker."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "mypy_extensions-1.1.0-py3-none-any.whl", hash = "sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505"},
+    {file = "mypy_extensions-1.1.0.tar.gz", hash = "sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558"},
+]
 
 [[package]]
 name = "narwhals"
@@ -3587,6 +3606,41 @@ spss = ["pyreadstat (>=1.2.0)"]
 sql-other = ["SQLAlchemy (>=2.0.0)", "adbc-driver-postgresql (>=0.8.0)", "adbc-driver-sqlite (>=0.8.0)"]
 test = ["hypothesis (>=6.46.1)", "pytest (>=7.3.2)", "pytest-xdist (>=2.2.0)"]
 xml = ["lxml (>=4.9.2)"]
+
+[[package]]
+name = "pandera"
+version = "0.24.0"
+description = "A light-weight and flexible data validation and testing tool for statistical data objects."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "pandera-0.24.0-py3-none-any.whl", hash = "sha256:3b7de575b43a4aa03a1561802be4ee0c7471e49153684fe327f7bbea0724b02b"},
+    {file = "pandera-0.24.0.tar.gz", hash = "sha256:154231780643bc73b121bd976b0ada9dcebb3e065c622954fd099dc299cf44bd"},
+]
+
+[package.dependencies]
+packaging = ">=20.0"
+pydantic = "*"
+typeguard = "*"
+typing_extensions = "*"
+typing_inspect = ">=0.6.0"
+
+[package.extras]
+all = ["black", "dask[dataframe]", "distributed", "fastapi", "frictionless (<=4.40.8)", "geopandas", "hypothesis (>=6.92.7)", "modin", "pandas-stubs", "polars (>=0.20.0)", "pyspark[connect] (>=3.2.0)", "pyyaml (>=5.1)", "ray", "scipy", "shapely"]
+dask = ["dask[dataframe]", "distributed"]
+fastapi = ["fastapi"]
+geopandas = ["geopandas", "shapely"]
+hypotheses = ["scipy"]
+io = ["black", "frictionless (<=4.40.8)", "pyyaml (>=5.1)"]
+modin = ["dask[dataframe]", "distributed", "modin", "ray"]
+modin-dask = ["dask[dataframe]", "distributed", "modin"]
+modin-ray = ["modin", "ray"]
+mypy = ["pandas-stubs"]
+pandas = ["numpy (>=1.24.4)", "pandas (>=2.1.1)"]
+polars = ["polars (>=0.20.0)"]
+pyspark = ["pyspark[connect] (>=3.2.0)"]
+strategies = ["hypothesis (>=6.92.7)"]
 
 [[package]]
 name = "pillow"
@@ -4065,6 +4119,22 @@ files = [
     {file = "protobuf-4.25.8-py3-none-any.whl", hash = "sha256:15a0af558aa3b13efef102ae6e4f3efac06f1eea11afb3a57db2901447d9fb59"},
     {file = "protobuf-4.25.8.tar.gz", hash = "sha256:6135cf8affe1fc6f76cced2641e4ea8d3e59518d1f24ae41ba97bcad82d397cd"},
 ]
+
+[[package]]
+name = "pulp"
+version = "3.2.2"
+description = "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "pulp-3.2.2-py3-none-any.whl", hash = "sha256:d3ca5ff11a28b3e7b2508a992d7e51f3533471d89305f0560b5fe3b6cc821043"},
+    {file = "pulp-3.2.2.tar.gz", hash = "sha256:389a6ff1dc34ec4b093f34f7a9fa3553743ff0ea99b2a423e9f0dd16940f63d2"},
+]
+
+[package.extras]
+open-py = ["cylp ; sys_platform != \"win32\"", "highspy", "pyscipopt"]
+public-py = ["coptpy", "gurobipy", "xpress"]
 
 [[package]]
 name = "py4j"
@@ -5528,24 +5598,24 @@ full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.7
 
 [[package]]
 name = "streamlit"
-version = "1.45.1"
+version = "1.49.1"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = "!=3.9.7,>=3.9"
 groups = ["main"]
 files = [
-    {file = "streamlit-1.45.1-py3-none-any.whl", hash = "sha256:9ab6951585e9444672dd650850f81767b01bba5d87c8dac9bc2e1c859d6cc254"},
-    {file = "streamlit-1.45.1.tar.gz", hash = "sha256:e37d56c0af5240dbc240976880e81366689c290a559376417246f9b3f51b4217"},
+    {file = "streamlit-1.49.1-py3-none-any.whl", hash = "sha256:ad7b6d0dc35db168587acf96f80378249467fc057ed739a41c511f6bf5aa173b"},
+    {file = "streamlit-1.49.1.tar.gz", hash = "sha256:6f213f1e43f035143a56f58ad50068d8a09482f0a2dad1050d7e7e99a9689818"},
 ]
 
 [package.dependencies]
-altair = ">=4.0,<6"
+altair = ">=4.0,<5.4.0 || >5.4.0,<5.4.1 || >5.4.1,<6"
 blinker = ">=1.5.0,<2"
-cachetools = ">=4.0,<6"
+cachetools = ">=4.0,<7"
 click = ">=7.0,<9"
 gitpython = ">=3.0.7,<3.1.19 || >3.1.19,<4"
 numpy = ">=1.23,<3"
-packaging = ">=20,<25"
+packaging = ">=20,<26"
 pandas = ">=1.4.0,<3"
 pillow = ">=7.1.0,<12"
 protobuf = ">=3.20,<7"
@@ -5554,12 +5624,39 @@ pydeck = ">=0.8.0b4,<1"
 requests = ">=2.27,<3"
 tenacity = ">=8.1.0,<10"
 toml = ">=0.10.1,<2"
-tornado = ">=6.0.3,<7"
+tornado = ">=6.0.3,<6.5.0 || >6.5.0,<7"
 typing-extensions = ">=4.4.0,<5"
 watchdog = {version = ">=2.1.5,<7", markers = "platform_system != \"Darwin\""}
 
 [package.extras]
+all = ["rich (>=11.0.0)", "streamlit[auth,charts,pdf,snowflake,sql]"]
+auth = ["Authlib (>=1.3.2)"]
+charts = ["graphviz (>=0.19.0)", "matplotlib (>=3.0.0)", "orjson (>=3.5.0)", "plotly (>=4.0.0)"]
+pdf = ["streamlit-pdf (>=1.0.0)"]
 snowflake = ["snowflake-connector-python (>=3.3.0) ; python_version < \"3.12\"", "snowflake-snowpark-python[modin] (>=1.17.0) ; python_version < \"3.12\""]
+sql = ["SQLAlchemy (>=2.0.0)"]
+
+[[package]]
+name = "streamlit-helper"
+version = "0.1.0"
+description = "A package to make it easier to setup streamlit apps"
+optional = false
+python-versions = "^3.10"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+cheffelo-logging = {path = "../../packages/cheffelo-logging", develop = true}
+datadog = "^0.50.1"
+streamlit = "^1.47.0"
+
+[package.extras]
+auth = ["msal (>=1.32.3,<2.0.0)"]
+
+[package.source]
+type = "directory"
+url = "../../packages/streamlit-helper"
 
 [[package]]
 name = "streamlit-pages"
@@ -5767,6 +5864,21 @@ slack = ["slack-sdk"]
 telegram = ["requests"]
 
 [[package]]
+name = "typeguard"
+version = "4.4.4"
+description = "Run-time type checker for Python"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "typeguard-4.4.4-py3-none-any.whl", hash = "sha256:b5f562281b6bfa1f5492470464730ef001646128b180769880468bd84b68b09e"},
+    {file = "typeguard-4.4.4.tar.gz", hash = "sha256:3a7fd2dffb705d4d0efaed4306a704c89b9dee850b688f060a8b1615a79e5f74"},
+]
+
+[package.dependencies]
+typing_extensions = ">=4.14.0"
+
+[[package]]
 name = "typer"
 version = "0.16.0"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
@@ -5807,6 +5919,22 @@ files = [
     {file = "typing_extensions-4.14.0-py3-none-any.whl", hash = "sha256:a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af"},
     {file = "typing_extensions-4.14.0.tar.gz", hash = "sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4"},
 ]
+
+[[package]]
+name = "typing-inspect"
+version = "0.9.0"
+description = "Runtime inspection utilities for typing module."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f"},
+    {file = "typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78"},
+]
+
+[package.dependencies]
+mypy-extensions = ">=0.3.0"
+typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "typing-inspection"
@@ -6373,4 +6501,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "2fbd68e397d4442eaab9e50842ff3dc37f19fbd749c1fe8d12177143151e4deb"
+content-hash = "f842ced97c4e066e49c69f77158f03634120fd1be0a2310b0fc7ec974c9cf627"
