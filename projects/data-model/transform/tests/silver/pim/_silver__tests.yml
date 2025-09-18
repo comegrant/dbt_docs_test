@@ -1,0 +1,13 @@
+version: 2
+
+data_tests:
+  - name: price_categories_continuity
+    description: >
+      Test to ensure that there is no overlap or gaps in price categories for a portion size within each company.
+      This means that the max cost of one price category level should match the min cost of the next level.
+      Hence, the data follows this structure:
+      Price Category: 1 - min_cost: 49 - max_cost: 60
+      Price Category: 2 - min_cost: 65 - max_cost: 70 -> GAP!!
+      Price Category: 3 - min_cost: 70 - max_cost: 80
+      Price Category: 4 - min_cost: 75 - max_cost: 100 -> OVERLAP!!
+      etc
