@@ -18,6 +18,23 @@ table 'Forecast Details'
         summarizeBy: none
         sourceColumn: forecast_horizon_group
 
+    /// (Analytics) The name of the forecast group the forecast pertains to
+    column 'Forecast Group'
+        isHidden
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: forecast_group_name
+
+    /// (Analytics) The name of the forecast model which produced the forecast
+    column 'Forecast Model'
+        isHidden
+        dataType: string
+        isAvailableInMdx: false
+        summarizeBy: none
+        sourceColumn: forecast_model_name
+
+
     /// Primary key of the dim_forecast_runs table
     column pk_dim_forecast_runs
         dataType: string
