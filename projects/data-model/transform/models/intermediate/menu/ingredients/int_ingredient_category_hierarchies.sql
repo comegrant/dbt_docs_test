@@ -21,7 +21,6 @@ ingredients as (
         ingredient_id
         , ingredient_category_id
     from ingredients
-    where ingredient_status_code_id != 30 --Exclude status "Not in use"
 )
 
 , parent_level as (
