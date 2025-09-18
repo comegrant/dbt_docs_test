@@ -1914,13 +1914,13 @@ models:
           - unique
           - not_null
 
-      - name: fk_dim_quick_comments
+      - name: fk_dim_recipe_quick_comments
         data_type: string
-        description: "{{ doc('column__fk_dim_quick_comments') }}"
+        description: "{{ doc('column__fk_dim_recipe_quick_comments') }}"
         constraints:
           - type: foreign_key
-            to: ref('dim_quick_comments')
-            to_columns: [pk_dim_quick_comments]
+            to: ref('dim_recipe_quick_comments')
+            to_columns: [pk_dim_recipe_quick_comments]
           - type: not_null
         data_tests:
           - not_null
@@ -1928,18 +1928,11 @@ models:
       - name: fk_dim_recipe_reviews
         data_type: string
         description: "{{ doc('column__fk_dim_recipe_reviews') }}"
-        # TO-DO: Re-enable on dim_recipe_reviews is done
-        # constraints:
-        #   - type: foreign_key
-        #     to: ref('dim_recipe_reviews')
-        #     to_columns: [pk_dim_recipe_reviews]
-        #   - type: not_null
-        data_tests:
-          - not_null
-
-      - name: recipe_rating_id
-        data_type: string
-        description: "{{ doc('column__recipe_rating_id') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_recipe_reviews')
+            to_columns: [pk_dim_recipe_reviews]
+          - type: not_null
         data_tests:
           - not_null
 
@@ -1952,18 +1945,18 @@ models:
     versions:
       - v: 1
 
-  - name: dim_quick_comments
+  - name: dim_recipe_quick_comments
     description: "Dimension table for quick comment text and attributes."
     latest_version: 1
     config:
-      alias: dim_quick_comments
+      alias: dim_recipe_quick_comments
       contract:
         enforced: true
 
     columns:
-      - name: pk_dim_quick_comments
+      - name: pk_dim_recipe_quick_comments
         data_type: string
-        description: "{{ doc('column__pk_dim_quick_comments') }}"
+        description: "{{ doc('column__pk_dim_recipe_quick_comments') }}"
         constraints:
           - type: primary_key
           - type: not_null
@@ -2019,6 +2012,70 @@ models:
         description: "{{ doc('column__is_frontend_enabled') }}"
         data_tests:
           - not_null
+
+    versions:
+      - v: 1
+
+  - name: dim_recipe_reviews
+    description: "Dimension table recipe ratings, comments and quick comments."
+    latest_version: 1
+    config:
+      alias: dim_recipe_reviews
+      contract:
+        enforced: true
+
+    columns:
+      - name: pk_dim_recipe_reviews
+        data_type: string
+        description: "{{ doc('column__pk_dim_recipe_reviews') }}"
+        constraints:
+          - type: primary_key
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+
+      - name: recipe_rating
+        data_type: int
+        description: "{{ doc('column__recipe_rating') }}"
+
+      - name: recipe_rating_score
+        data_type: double
+        description: "{{ doc('column__recipe_rating_score') }}"
+
+      - name: is_not_cooked_dish
+        data_type: boolean
+        description: "{{ doc('column__is_not_cooked_dish') }}"
+        data_tests:
+          - not_null
+
+      - name: recipe_comment
+        data_type: string
+        description: "{{ doc('column__recipe_comment') }}"
+
+      - name: language_id
+        data_type: int
+        description: "{{ doc('column__language_id') }}"
+
+      - name: language_name
+        data_type: string
+        description: "{{ doc('column__language_name') }}"
+
+      - name: quick_comment_id_combination
+        data_type: string
+        description: "{{ doc('column__quick_comment_id_combination') }}"
+
+      - name: quick_comment_combination_local
+        data_type: string
+        description: "{{ doc('column__quick_comment_combination_local') }}"
+
+      - name: quick_comment_combination_english
+        data_type: string
+        description: "{{ doc('column__quick_comment_combination_english') }}"
+
+      - name: combination_quick_comments_count
+        data_type: bigint
+        description: "{{ doc('column__combination_quick_comments_count') }}"
 
     versions:
       - v: 1

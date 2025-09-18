@@ -910,6 +910,7 @@ discounts as (
         , recipe_feedback.recipe_rating_score
         , recipe_feedback.is_not_cooked_dish
         , recipe_feedback.recipe_comment
+        , recipe_feedback.pk_dim_recipe_reviews as fk_dim_recipe_reviews
         , greatest(
             add_swap_information.source_created_at
             , recipe_feedback.source_updated_at

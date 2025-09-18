@@ -49,7 +49,7 @@ models:
         description: "{{ doc('column__source_created_at') }}"
         data_tests:
           - not_null
-  
+
       - name: fact_updated_at
         data_type: timestamp
         description: "{{ doc('column__fact_updated_at') }}"
@@ -125,7 +125,7 @@ models:
       - name: portions
         data_type: int
         description: "{{ doc('column__portion_size') }}"
-  
+
       - name: portions_subscription
         data_type: int
         description: "{{ doc('column__portion_size') }}"
@@ -433,7 +433,7 @@ models:
       - name: portion_id_subscription
         data_type: int
         description: "{{ doc('column__portion_id') }}"
-    
+
       - name: portion_id_mealbox
         data_type: int
         description: "{{ doc('column__portion_id_mealbox') }}"
@@ -442,7 +442,7 @@ models:
         data_type: int
         description: "{{ doc('column__portion_id_mealbox_subscription') }}"
 
-      - name: orders_subscriptions_match_key 
+      - name: orders_subscriptions_match_key
         data_type: string
         description: "{{ doc('column__orders_subscriptions_match_key') }}"
 
@@ -595,7 +595,7 @@ models:
           - relationships:
               to: ref('dim_order_line_details')
               field: pk_dim_order_line_details
-    
+
       - name: fk_dim_meals
         data_type: string
         description: "{{ doc('column__pk_dim_meals') }}"
@@ -637,7 +637,7 @@ models:
           - relationships:
               to: ref('dim_price_categories')
               field: pk_dim_price_categories
-  
+
       - name: fk_dim_price_categories_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_price_categories') }}"
@@ -651,7 +651,6 @@ models:
           - relationships:
               to: ref('dim_price_categories')
               field: pk_dim_price_categories
-
 
       - name: fk_dim_products
         data_type: string
@@ -698,7 +697,7 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
-  
+
       - name: fk_dim_portions_subscription
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
@@ -710,7 +709,7 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
-  
+
       - name: fk_dim_portions_mealbox
         data_type: string
         description: "{{ doc('column__pk_dim_portions') }}"
@@ -734,7 +733,6 @@ models:
           - relationships:
               to: ref('dim_portions')
               field: pk_dim_portions
-
 
       - name: fk_dim_products_subscription
         data_type: string
@@ -843,6 +841,18 @@ models:
               to: ref('dim_partnership_rule_combinations')
               field: pk_dim_partnership_rule_combinations
 
+      - name: fk_dim_recipe_reviews
+        data_type: string
+        description: "{{ doc('column__fk_dim_recipe_reviews') }}"
+        constraints:
+          - type: foreign_key
+            to: ref('dim_recipe_reviews')
+            to_columns: [pk_dim_recipe_reviews]
+        data_tests:
+          - relationships:
+              to: ref('dim_recipe_reviews')
+              field: pk_dim_recipe_reviews
+
     versions:
       - v: 1
 
@@ -921,7 +931,7 @@ models:
         description: "{{ doc('column__order_type_name') }}"
         data_tests:
           - not_null
-  
+
       - name: mealbox_selection
         data_type: string
         description: "{{ doc('column__mealbox_selection') }}"
@@ -1133,7 +1143,7 @@ models:
         data_type: int
         description: "{{ doc('column__reactivation_month_number') }}"
 
-      - name: reactivation_quarter  
+      - name: reactivation_quarter
         data_type: int
         description: "{{ doc('column__reactivation_quarter') }}"
 
@@ -1168,7 +1178,7 @@ models:
         description: "{{ doc('column__onesub_beta_flag') }}"
         data_tests:
           - not_null
-      
+
       - name: partnership_name
         data_type: string
         description: "{{ doc('column__partnership_name') }}"
@@ -1224,7 +1234,6 @@ models:
         description: "{{ doc('column__preference_description') }}"
         data_tests:
           - not_null
-
 
       - name: preference_name_brand
         data_type: string
@@ -1557,7 +1566,6 @@ models:
         data_tests:
           - not_null
 
-
       - name: has_updated_onesub_flag
         data_type: boolean
         description: "{{ doc('column__has_updated_onesub_flag') }}"
@@ -1629,7 +1637,7 @@ models:
         description: "{{ doc('column__is_paused') }}"
         data_tests:
           - not_null:
-              config: 
+              config:
                 where: "is_monday = true"
 
       - name: is_active
@@ -1649,7 +1657,7 @@ models:
         description: "{{ doc('column__has_order') }}"
         data_tests:
           - not_null:
-              config: 
+              config:
                 where: "is_monday = true"
 
       - name: loyalty_level_number
@@ -1817,7 +1825,7 @@ models:
         description: "{{ doc('column__is_paused') }}"
         data_tests:
           - not_null:
-              config: 
+              config:
                 where: "is_monday = true"
 
       - name: is_active
@@ -1837,7 +1845,7 @@ models:
         description: "{{ doc('column__has_order') }}"
         data_tests:
           - not_null:
-              config: 
+              config:
                 where: "is_monday = true"
 
       - name: loyalty_level_number
@@ -2834,7 +2842,8 @@ models:
           - not_null
 
   - name: fact_billing_agreement_consents
-    description: "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed.\
+    description:
+      "Overview of the consents made by customers. Has is_accepted_consent = true if accepted and false if removed.\
       \ If no consent has ever been made no row will exist for the customer."
     latest_version: 1
     config:
@@ -3341,9 +3350,9 @@ models:
         data_tests:
           - not_null
 
-
   - name: fact_loyalty_points
-    description: "Information about loyalty points transactions, explaining how customers are receiving or spending loyalty\
+    description:
+      "Information about loyalty points transactions, explaining how customers are receiving or spending loyalty\
       \ points."
     latest_version: 1
     config:
@@ -3513,7 +3522,7 @@ models:
           - relationships:
               to: ref('dim_loyalty_seasons')
               field: pk_dim_loyalty_seasons
-              
+
   - name: dim_loyalty_seasons
     description: ""
     config:
@@ -3568,7 +3577,6 @@ models:
         data_tests:
           - not_null
 
-
   - name: dim_addresses
     description: "Contains the postal code and whether or not the address is geo restricted (0 if the address can receive deliveries, 1 otherwise) for all current shipping addresses."
     config:
@@ -3576,7 +3584,7 @@ models:
       contract:
         enforced: true
 
-    columns: 
+    columns:
       - name: pk_dim_addresses
         data_type: string
         description: "{{ doc('column__pk_dim_addresses') }}"
@@ -3592,19 +3600,18 @@ models:
         description: "{{ doc('column__postal_code_id') }}"
         data_tests:
           - not_null
-  
+
       - name: postal_code
         data_type: string
         description: "{{ doc('column__postal_code') }}"
         data_tests:
           - not_null
-  
+
       - name: country_id
         data_type: string
         description: "{{ doc('column__country_id') }}"
         data_tests:
           - not_null
-
 
   - name: dim_discounts
     description: "Contains information on all discounts which customers can add to their account"
@@ -3656,7 +3663,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if: ">1020"  # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">1020" # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">1020"
 
       - name: discount_channel_id
@@ -3674,7 +3681,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if: ">152"  # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">152" # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">152"
 
       - name: discount_title
@@ -3756,7 +3763,7 @@ models:
           - not_null:
               config:
                 severity: error
-                error_if: ">1020"  # Only NULL for discounts before 2021-09-22 (migration)
+                error_if: ">1020" # Only NULL for discounts before 2021-09-22 (migration)
                 warn_if: ">1020"
 
       - name: discount_sub_category_name
@@ -3774,7 +3781,7 @@ models:
       - name: is_discount_chain
         data_type: boolean
         description: "{{ doc('column__is_discount_chain') }}"
-        
+
     versions:
       - v: 1
 
@@ -4030,7 +4037,7 @@ models:
           - relationships:
               to: ref('dim_dates')
               field: pk_dim_dates
-      
+
       - name: fk_dim_dates_partnership_points_generated_at
         data_type: int
         description: "{{ doc('column__fk_dim_dates_partnership_points_generated_at') }}"
@@ -4056,7 +4063,6 @@ models:
           - relationships:
               to: ref('dim_companies')
               field: pk_dim_companies
-
 
   - name: dim_partnerships
     description: "Table of all partnership rules that determine how many partnership points are earned and when they are earned by customers. Partnership points can only be earned by customers acquired through a partnership, e.g. SAS Partnership."
@@ -4126,7 +4132,6 @@ models:
         enforced: true
 
     columns:
-
       - name: pk_dim_partnership_rule_combinations
         data_type: string
         description: "{{ doc('column__pk_dim_partnership_rule_combinations') }}"
@@ -4142,7 +4147,7 @@ models:
         description: "{{ doc('column__partnership_rule_combinations_id') }}"
         data_tests:
           - not_null
-      
+
       - name: company_partnership_id
         data_type: char(36)
         description: "{{ doc('column__company_partnership_id') }}"
@@ -4181,7 +4186,6 @@ models:
         enforced: true
 
     columns:
-
       - name: pk_bridge_partnership_rule_combinations_partnerships
         data_type: string
         description: "{{ doc('column__pk_bridge_partnership_rule_combinations_partnerships') }}"

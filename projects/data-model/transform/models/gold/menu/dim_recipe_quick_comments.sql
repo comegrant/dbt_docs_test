@@ -34,7 +34,7 @@ translated_quick_comments as (
 , final as (
 
     select 
-        md5(quick_comment_companies.quick_comment_id::string) as pk_dim_quick_comments
+        md5(quick_comment_companies.quick_comment_id::string) as pk_dim_recipe_quick_comments
         , quick_comment_companies.quick_comment_id
         , quick_comment_companies.company_id
         , star_range.star_rating_range

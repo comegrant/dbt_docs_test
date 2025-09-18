@@ -635,7 +635,7 @@ Primary key of bridge_ingredient_combinations_ingredients. Generated from ingred
 
 {% docs column__pk_bridge_recipe_reviews_quick_comments %}
 
-Primary key of bridge_recipe_review_quick_comments. Generated from recipe_rating_id and quick_comment_id.
+Primary key of bridge_recipe_review_quick_comments. Generated from pk_dim_recipe_reviews and quick_comment_id.
 
 {% enddocs %}
 
@@ -645,17 +645,17 @@ Foreign key joining to dim_recipe_reviews, generated from recipe_rating_id.
 
 {% enddocs %}
 
-{% docs column__fk_dim_quick_comments %}
+{% docs column__fk_dim_recipe_quick_comments %}
 
-Foreign key joining to dim_quick_comments, generated from quick_comment_id.
+Foreign key joining to dim_recipe_quick_comments, generated from quick_comment_id.
 
 {% enddocs %}
 
 # Dim Quick Comments
 
-{% docs column__pk_dim_quick_comments %}
+{% docs column__pk_dim_recipe_quick_comments %}
 
-Primary key of dim_quick_comments. Generated from quick_comment_id.
+Primary key of dim_recipe_quick_comments. Generated from quick_comment_id.
 
 {% enddocs %}
 
@@ -681,5 +681,37 @@ The text of the quick comment translated to English.
 
 The range of stars in the review for which the quick comment can be proposed as an option to the user.
 e.g: a quick comment with the text "Tasted delicious!" will not be an option on a 1-star review.
+
+{% enddocs %}
+
+# Dim Recipe Reviews
+
+{% docs column__pk_dim_recipe_reviews %}
+
+Primary key generated from recipe_comment, recipe_rating and quick_comment_id_combination.
+
+{% enddocs %}
+
+{% docs column__quick_comment_id_combination %}
+
+A list of the IDs of all quick comments in the review.
+
+{% enddocs %}
+
+{% docs column__quick_comment_combination_local %}
+
+A list of all the quick comments in the review, in local language.
+
+{% enddocs %}
+
+{% docs column__quick_comment_combination_english %}
+
+A list of all the quick comments in the review, translated to English.
+
+{% enddocs %}
+
+{% docs column__combination_quick_comments_count %}
+
+The total number of quick comments in that review. 
 
 {% enddocs %}

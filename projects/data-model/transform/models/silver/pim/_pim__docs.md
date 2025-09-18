@@ -283,7 +283,7 @@ The status code of the portions. 1 = Enabled, 2 = Disabled.
 # Recipe Ratings
 {% docs column__recipe_rating %}
 
-Rating (1-5) of the recipe given by the customer. If rating is 0 it means that the customer marked the recipe as not cooked.
+Rating (1-5) of the recipe given by the customer. If rating is null it means that the customer marked the recipe as not cooked.
 
 {% enddocs %}
 
