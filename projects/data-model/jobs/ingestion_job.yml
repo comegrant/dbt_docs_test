@@ -101,6 +101,12 @@ resources:
           notebook_task:
             notebook_path: ../ingest/selected_columns_ingest/bronze_cms_address_live.py
 
+        - task_key: bronze_cms_billing_agreement_basket_scheduler
+          depends_on: 
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_scheduler.py
+
         - task_key: success-notification
           depends_on: [
               {task_key: bronze_cms_full},
@@ -114,7 +120,8 @@ resources:
               {task_key: bronze_cms_loyalty_points},
               {task_key: bronze_cms_register_info_basket},
               {task_key: bronze_operations_orders},
-              {task_key: bronze_cms_address_live}
+              {task_key: bronze_cms_address_live},
+              {task_key: bronze_cms_billing_agreement_basket_scheduler}
           ]
           run_job_task:
             job_id: ${var.slack_notification_job_id}
@@ -136,7 +143,8 @@ resources:
               {task_key: bronze_cms_loyalty_points},
               {task_key: bronze_cms_register_info_basket},
               {task_key: bronze_operations_orders},
-              {task_key: bronze_cms_address_live}
+              {task_key: bronze_cms_address_live},
+              {task_key: bronze_cms_billing_agreement_basket_scheduler}
           ]
           run_if: AT_LEAST_ONE_FAILED
           run_job_task:

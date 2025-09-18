@@ -43,7 +43,7 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_deviations_&_products.py
             base_parameters:
-              incremental_load_days: "45"
+              incremental_load_weeks: "8"
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
@@ -51,7 +51,7 @@ resources:
           notebook_task:
             notebook_path: ../ingest/incremental_ingest/bronze_cms_billing_agreement_basket_scheduler.py
             base_parameters:
-              incremental_load_days: "1"
+              incremental_load_weeks: "1"
           depends_on:
             - task_key: check-if-main-data-model-job-runs
 
