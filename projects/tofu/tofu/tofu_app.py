@@ -79,9 +79,9 @@ async def main() -> None:
         forecast_start_week=forecast_start_week,
         df_latest_forecasts=df_latest_forecasts,
         num_weeks=num_weeks,
+        is_enable_upload_to_ndp=False,
     )
     section_appendix(
-        df_future_mapped_with_flex=df_future_mapped_with_flex,
         df_known_mapped_with_flex=df_known_mapped_with_flex,
     )
 

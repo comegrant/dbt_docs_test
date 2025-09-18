@@ -126,5 +126,8 @@ def section_flex_share_analysis(
             num_years_history_to_plot=num_years_history_to_plot,
         )
     st.plotly_chart(fig_flex_share)
+    st.subheader("💡 mapping table for sanity check")
+    st.write(df_future_mapped_with_flex)
+
     st.divider()
     return df_future_mapped_with_flex, df_known_mapped_with_flex
