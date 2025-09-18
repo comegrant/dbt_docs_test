@@ -12,6 +12,7 @@ def create_or_replace_table_query(
     query: str, 
     user: str, 
     password: str,
+    append: bool = False,
     sink_schema: str = "bronze"
 ) -> None:
     """
@@ -41,7 +42,17 @@ def create_or_replace_table_query(
 
     database = database.lower()
 
-    remote_table.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{sink_schema}.{database}__{table}")
+    if append:
+        remote_table.write \
+        .mode("append") \
+        .option("overwriteSchema", "false") \
+        .saveAsTable(f"{sink_schema}.{database}__{table}")
+
+    else:
+        remote_table.write \
+        .mode("overwrite") \
+        .option("overwriteSchema", "true") \
+        .saveAsTable(f"{sink_schema}.{database}__{table}")
 
 def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     """
@@ -55,7 +66,14 @@ def load_coredb_full(dbutils: DBUtils, database: str, table: str) -> None:
     query = f"(SELECT * FROM {table})"
     load_coredb_query(dbutils, database, table, query)
 
-def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, host: str = "bh-replica.database.windows.net") -> None:
+def load_coredb_query(
+    dbutils: DBUtils,
+    database: str,
+    table: str,
+    query: str,
+    append: bool = False,
+    host: str = "bh-replica.database.windows.net"
+) -> None:
     """
     Executes custom query that loads selected data from a table in CoreDB
 
@@ -68,7 +86,7 @@ def load_coredb_query(dbutils: DBUtils, database: str, table: str, query: str, h
     username = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-username" )
     password = dbutils.secrets.get( scope="auth_common", key="coreDb-replica-password" )
 
-    create_or_replace_table_query(host, database, table, query, username, password)
+    create_or_replace_table_query(host, database, table, query, username, password, append)
 
     
     spark = SparkSession.builder.getOrCreate()
