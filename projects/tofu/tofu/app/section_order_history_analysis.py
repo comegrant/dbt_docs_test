@@ -130,7 +130,7 @@ def section_order_history_analysis(
                         st.write("prev. forecast unavailable")
 
     df_future_mapped["analysts_forecast_total_orders"] = adjusted_predictions
-    num_years_history_to_plot = 3
+    num_years_history_to_plot = 4
     if st.button("Show other projections"):
         fig_order = plot_projected_orders(
             df_known_mapped=df_known_mapped,

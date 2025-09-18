@@ -100,7 +100,7 @@ def section_flex_share_analysis(
                     else:
                         st.write("prev. forecast unavailable")
     df_future_mapped_with_flex["analysts_forecast_flex_share"] = adjusted_predictions
-    num_years_history_to_plot = 3
+    num_years_history_to_plot = 4
     if st.button("Show other flex share projections"):
         fig_flex_share = plot_projected_flex_share(
             df_known_mapped=df_known_mapped_with_flex,

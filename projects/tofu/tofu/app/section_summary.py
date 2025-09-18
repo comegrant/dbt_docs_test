@@ -103,6 +103,7 @@ def section_summary(
 
 
 def make_slack_message(df_forecast_adjustments: pd.DataFrame, company: Company, num_weeks: int) -> str:
+    st.write(df_forecast_adjustments)
     if company.country == "Norway":
         flag = "🇳🇴"
     elif company.country == "Sweden":
@@ -117,8 +118,10 @@ def make_slack_message(df_forecast_adjustments: pd.DataFrame, company: Company, 
     The forecast has been adjusted by the following amount:
         {company.company_code}:"""
     threshold = 100
+    if num_weeks == 1:
+        threshold = 0  # Always display adjustment to one week forecast
     df_past_threshold = df_forecast_adjustments[abs(df_forecast_adjustments["difference"]) >= threshold]
-    if df_past_threshold.shape[0] > 1:
+    if df_past_threshold.shape[0] >= 1:
         for a_row in df_forecast_adjustments.itertuples():
             if a_row.difference > threshold:
                 message += f"""

@@ -8,6 +8,7 @@ from tofu.app.section_download_data import section_download_data
 from tofu.app.section_flex_share_analysis import section_flex_share_analysis
 from tofu.app.section_order_history_analysis import section_order_history_analysis
 from tofu.app.section_params import section_set_params
+from tofu.app.section_previous_forecasts import section_previous_forecasts
 from tofu.app.section_summary import section_summary
 from tofu.app.section_upload_datalake import section_upload_datalake
 
@@ -29,6 +30,14 @@ async def main() -> None:
         company_id=company.company_id
     )
     st.divider()
+
+    section_previous_forecasts(
+        df_latest_forecasts=df_latest_forecasts,
+        df_order_history=df_order_history,
+    )
+
+    st.divider()
+
     df_mapped, df_known, df_future, df_concat_with_holidays = section_order_history_analysis(
         df_order_history=df_order_history,
         df_calendar=df_calendar,

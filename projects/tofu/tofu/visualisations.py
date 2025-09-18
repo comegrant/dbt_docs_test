@@ -8,7 +8,7 @@ def plot_growth_rate(
     df_known_mapped: pd.DataFrame,
     df_future_mapped: pd.DataFrame,
     company: Company,
-    num_weeks_history_to_plot: int = 52,
+    num_weeks_history_to_plot: int = 72,
 ) -> go.Figure:
     df_known_mapped_to_plot = df_known_mapped.tail(num_weeks_history_to_plot - len(df_future_mapped))
     fig = go.Figure()
@@ -184,7 +184,7 @@ def plot_flex_development(
     df_known_mapped: pd.DataFrame,
     df_future_mapped: pd.DataFrame,
     company: Company,
-    num_weeks_history_to_plot: int = 52,
+    num_weeks_history_to_plot: int = 72,
 ) -> go.Figure:
     df_known_mapped_to_plot = df_known_mapped.tail(num_weeks_history_to_plot - len(df_future_mapped))
     fig = go.Figure()
