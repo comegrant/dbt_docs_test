@@ -2,7 +2,7 @@
 import sys
 sys.path.append('../../reusable')
 
-from datetime import datetime
+import datetime
 
 from coredb_connector import load_coredb_query
 
@@ -10,43 +10,81 @@ from coredb_connector import load_coredb_query
 
 database = "CMS"
 source_table = "billing_agreement_basket_scheduler"
-source_date_created_column = "created_at"
-source_date_updated_column = "updated_at"
+source_year_column = "year"
+source_week_column = "week"
 
-silver_table = f"silver.cms__{source_table}s"
-silver_date_created_column = "source_created_at"
-silver_date_updated_column = "source_updated_at"
-
-
-# COMMAND ----------
-
-# Define the widget
-dbutils.widgets.text("incremental_load_days", "30")
-
-# Number of days since last ingest to extract data from, based on parameter, else default to 30 days
-days = int(dbutils.widgets.get("incremental_load_days"))
+silver_table = f"silver.cms__{source_table}"
+silver_year_column = "menu_year"
+silver_week_column = "menu_week"
 
 # COMMAND ----------
 
-# From date is 30 days before max date of corresponding silver table
-try: 
-    spark.table(f"{silver_table}")
-    from_date_df = spark.sql(f"SELECT DATE_SUB(MAX({silver_date_created_column}), {days}) AS {days}d_before_max_date FROM {silver_table}")
-    from_date = from_date_df.collect()[0][f'{days}d_before_max_date'].strftime('%Y-%m-%d')
-except Exception as e:
-    from_date = '2015-01-01'
+# Number of weeks back in time to extract data from based on parameter or default value
+dbutils.widgets.text("incremental_load_weeks", "8")
+
+weeks_back = int(dbutils.widgets.get("incremental_load_weeks"))
 
 # COMMAND ----------
 
-query_deviations = (
+query_silver = (
     f"""(
-        SELECT * 
-        FROM {source_table} 
-        WHERE {source_date_created_column} >= '{from_date}'
-        OR {source_date_updated_column} >= '{from_date}'
+        SELECT
+            MAX_BY(
+                {silver_year_column}
+                , {silver_year_column}*100+{silver_week_column}
+            ) as max_year
+            , MAX_BY(
+                {silver_week_column}
+                , {silver_year_column}*100+{silver_week_column}
+            ) as max_week
+        FROM {silver_table}
+        WHERE menu_week_monday_date < current_date()
     )"""
 )
 
 # COMMAND ----------
 
-load_coredb_query(dbutils, database, source_table, query_deviations)
+print(query_silver)
+
+# COMMAND ----------
+
+try: 
+    spark.table(f"{silver_table}")
+        
+    # Find max week and year of corresponding silver table
+    from_year_week_df = spark.sql(query_silver)
+    max_year = from_year_week_df.collect()[0][f'max_year']
+    max_week = from_year_week_df.collect()[0][f'max_week']
+
+    # Handle corner cases where source systems add week 53 to their system even when it does not exist in the calendar
+    if max_week == 53:
+        max_week = 52
+
+    # Get Monday date of max week and year
+    max_date = datetime.date.fromisocalendar(max_year, max_week, 1)
+
+    # Get the ISO year and week number to extract data from
+    from_date = max_date - datetime.timedelta(weeks=weeks_back)
+    from_year, from_week, _ = from_date.isocalendar()
+
+except Exception as e:
+    from_year = 2016 #first year of data
+    from_week = 1
+
+# COMMAND ----------
+
+query = (
+    f"""(
+        SELECT * FROM {source_table} 
+        WHERE {source_week_column} >= {from_week}
+        AND {source_year_column} >= {from_year}
+    )"""
+)
+
+# COMMAND ----------
+
+print(query)
+
+# COMMAND ----------
+
+load_coredb_query(dbutils, database, source_table, query)
