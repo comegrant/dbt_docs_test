@@ -14,6 +14,7 @@ source as (
         id as budget_marketing_input_id
         , company_id
         , budget_type_id
+        , budget_parameter_split_id as budget_segment_id
         
         {# numerics #}
         , estimate as monthly_acquisition_target

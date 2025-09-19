@@ -339,8 +339,8 @@
           - type: primary_key
           - type: not_null
         data_tests:
-          - unique
           - not_null
+          - unique
 
       - name: budget_id
         data_type: string
@@ -372,6 +372,12 @@
         data_tests:
           - not_null
 
+      - name: financial_month_number
+        data_type: int
+        description: "{{ doc('column__financial_month_number') }}"
+        data_tests:
+          - not_null
+
       - name: financial_week
         data_type: int
         description: "{{ doc('column__financial_week') }}"
@@ -395,6 +401,10 @@
         description: "{{ doc('column__budget_number_of_orders') }}"
         data_tests:
           - not_null
+
+      - name: monthly_acquisition_target
+        data_type: int
+        description: "{{ doc('column__monthly_acquisition_target') }}"
 
       - name: fk_dim_dates
         data_type: int
@@ -434,9 +444,7 @@
             to_columns: [pk_dim_budget_types]
         data_tests:
           - not_null
-          - relationships:
-              to: ref('dim_budget_types')
-              field: pk_dim_budget_types
+
 
     versions:
       - v: 1

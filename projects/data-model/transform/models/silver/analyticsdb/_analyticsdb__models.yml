@@ -499,5 +499,12 @@ models:
         constraints:
           - type: not_null
         data_tests:
+          - not_null 
+
+      - name: budget_segment_id
+        data_type: varchar(36)
+        description: "{{ doc('column__budget_segment_id') }}"
+        constraints:
+          - type: not_null
+        data_tests:
           - not_null  
-      
