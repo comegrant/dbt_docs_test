@@ -2582,6 +2582,7 @@ table 'Order Measures'
 	/// Margin calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders],
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	/// When filtered on specific recipes, ingredients or order line details, it will return blank as the Order Value is placed on Mealbox and not on the recipes.
+	/// Todo: We should avoid "contribution margin" and include Delivery Fee in the calculation. Until properly named and defined this measure is isHidden
 	measure 'Order Contribution Margin' =
 			// As long as we don't have cost on other than recipes, we can only calculate contribution margin for Mealboxes and Velg&vrak.
 			VAR IsFilteredOnSingleRecipes =
@@ -2603,12 +2604,14 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0.00
+		isHidden
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
 	/// Margin if the customer had bought the preselected menu calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu],
 	/// where the order value is ignoring any extra cost on premium/thrify dishes.
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
+	/// Todo: We should avoid "contribution margin" and include Delivery Fee in the calculation. Until properly named and defined this measure is isHidden
 	measure 'Preselection Order Contribution Margin' =
 			// As long as we don't have cost on other than recipes, we can only calculate contribution margin for Mealboxes and Velg&vrak.
 			CALCULATE(
@@ -2622,6 +2625,7 @@ table 'Order Measures'
 	/// Margin percentage calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders])/[Order Value Gross Ex Vat],
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
 	/// When filtered on specific recipes, ingredients or order line details, it will return blank as the Order Value is placed on Mealbox and not on the recipes.
+	/// Todo: We should avoid "contribution margin" and include Delivery Fee in the calculation. Until properly named and defined this measure is isHidden
 	measure 'Order Contribution Margin %' =
 			VAR IsFilteredOnSingleRecipes =
 				IF(
@@ -2645,12 +2649,14 @@ table 'Order Measures'
 				)
 			)
 		formatString: #,0.00%
+		isHidden
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
 	/// Margin percentage if the customer had bought the preselected menu, calculated as ([Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Preselected Menu])/[Order Value Gross Ex Vat],
 	/// where the order value is ignoring any extra cost on premium/thrify dishes.
 	/// As we only have cost on recipes as of now, it will only consider Mealboxes and Velg&vrak products.
+	/// Todo: We should avoid "contribution margin" and include Delivery Fee in the calculation. Until properly named and defined this measure is isHidden
 	measure 'Preselection Order Contribution Margin %' =
 			CALCULATE(
 				DIVIDE(
@@ -2670,10 +2676,12 @@ table 'Order Measures'
 				'Time Intelligence'[Time Calculation] = "PY"
 			)
 		formatString: #,0.00%
+		isHidden
 		displayFolder: Margins
 
 	/// NB! Need to keep this hidden since we don't have correct gross amount on all preselected menus, e.g. billing_agreement_order_id = 846DD433-8CA3-4D9B-8E1E-CF884246A1E1'
 	/// Margin percentage if the customer had bought the preselected menu, same period last year.
+	/// Todo: We should avoid "contribution margin" and include Delivery Fee in the calculation. Until properly named and defined this measure is isHidden
 	measure 'Preselection Order Contribution Margin % PY' =
 			CALCULATE(
 				[Preselection Order Contribution Margin %],
