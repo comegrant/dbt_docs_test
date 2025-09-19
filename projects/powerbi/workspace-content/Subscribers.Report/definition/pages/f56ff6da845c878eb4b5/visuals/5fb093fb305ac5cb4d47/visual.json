@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
   "name": "5fb093fb305ac5cb4d47",
   "position": {
-    "x": 162.08566108007449,
-    "y": 7.9453755431409068,
-    "z": 20000,
+    "x": 164.58566108007449,
+    "y": 1.6953755431409068,
+    "z": 6000,
     "height": 55.617628801986349,
     "width": 249.48479205462448,
-    "tabOrder": 20000
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "slicer",
@@ -280,6 +280,13 @@
                   "Value": "'Calendar Year, Month, Date'"
                 }
               }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -301,6 +308,7 @@
             "Property": "Brand"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [

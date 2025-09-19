@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
   "name": "bffd24e67d07b1020d29",
   "position": {
     "x": 161.11888111888112,
-    "y": 8.0559440559440567,
+    "y": 0.55594405594405671,
     "z": 2000,
     "height": 56.391608391608393,
     "width": 248.83916083916083,
-    "tabOrder": 2000
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "slicer",
@@ -228,6 +228,19 @@
             }
           }
         }
+      ],
+      "header": [
+        {
+          "properties": {
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
@@ -246,6 +259,7 @@
             "Property": "Brand"
           }
         },
+        "type": "Categorical",
         "filter": {
           "Version": 2,
           "From": [

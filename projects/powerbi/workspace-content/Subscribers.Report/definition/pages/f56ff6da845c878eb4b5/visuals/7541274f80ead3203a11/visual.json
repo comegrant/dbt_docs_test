@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
   "name": "7541274f80ead3203a11",
   "position": {
-    "x": 394.090626939789,
-    "y": 7.9453755431409068,
-    "z": 21000,
+    "x": 396.590626939789,
+    "y": 1.6953755431409068,
+    "z": 7000,
     "height": 55.617628801986349,
     "width": 228.032278088144,
-    "tabOrder": 21000
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "slicer",
@@ -85,6 +85,13 @@
               "expr": {
                 "Literal": {
                   "Value": "'Concept'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
