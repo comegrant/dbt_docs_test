@@ -687,7 +687,7 @@ table 'Case Measures'
     measure 'Share of Ordered Ingredients with Complaints' = 
             DIVIDE(
                 [Complaint Ingredient Quantity],
-                [Ingredient Quantity in Orders]
+                [Ingredient Quantity in Orders Whole Units]
             )
         formatString: 0.00%;-0.00%;0.00%
         displayFolder: Ingredients

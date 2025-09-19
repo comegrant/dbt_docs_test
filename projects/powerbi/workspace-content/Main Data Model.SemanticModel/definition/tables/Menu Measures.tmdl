@@ -633,8 +633,8 @@ table 'Menu Measures'
 		isHidden
 		displayFolder: CO2 Emissions\by Recipe
 
-	/// The total quantity of ingredients in the recipes.
-	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
+	/// The total quantity of ingredients used in recipes, which can be fractional. E.g. if the recipe requires half a cucumber, the quantity for cucumber is 0.5.
+	/// This is the sum of the quantity of all ingredients, that is included in the selection.
 	measure 'Ingredient Quantity in Menu' = 
 			CALCULATE(
 				SUM('Recipe Ingredients'[recipe_ingredient_quantity]),
@@ -642,7 +642,18 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Quantity
+
+	/// The total whole unit quantity of ingredients used in recipes.
+	/// This is the sum of the whole unit quantity of all ingredients in the recipes, that is included in the selection.
+	measure 'Ingredient Quantity in Menu Whole Units' = 
+			CALCULATE(
+				SUM('Recipe Ingredients'[recipe_ingredient_quantity_whole_units]),
+				'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+			)
+		formatString: #,0
+		isHidden
+		displayFolder: Ingredient Quantity
 
 	/// The total quantity of ingredients per recipe.
 	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
@@ -651,8 +662,19 @@ table 'Menu Measures'
 				[Ingredient Quantity in Menu],
 				[Number of Recipe Variations in Menu]
 			)
+		isHidden
 		formatString: #,0.00
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Quantity
+
+	/// The total whole unit quantity of ingredients per recipe.
+	/// This is the sum of the whole unit quantity of all ingredients in the recipes, that is included in the selection.
+	measure 'Ingredient Quantity per Recipe in Menu Whole Units' = 
+			DIVIDE(
+				[Ingredient Quantity in Menu Whole Units],
+				[Number of Recipe Variations in Menu]
+			)
+		formatString: #,0
+		displayFolder: Ingredient Quantity
 
 	/// The total quantity of ingredients per serving.
 	/// This is the sum of the quantity of all ingredients in the recipes, that is included in the selection.
@@ -661,8 +683,19 @@ table 'Menu Measures'
 				[Ingredient Quantity in Menu],
 				[Number of Servings in Menu]
 			)
+		isHidden
 		formatString: #,0.00
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Quantity
+
+	/// The total whole unit quantity of ingredients per serving.
+	/// This is the sum of the whole unit quantity of all ingredients in the recipes, that is included in the selection.
+	measure 'Ingredient Quantity per Serving in Menu Whole Units' = 
+			DIVIDE(
+				[Ingredient Quantity in Menu Whole Units],
+				[Number of Servings in Menu]
+			)
+		formatString: #,0
+		displayFolder: Ingredient Quantity
 
 	/// The weight of the ingredients (in grams) in the recipes in the menu.
 	/// This is the sum of the ingredient weight of all ingredients in the recipes, that is included in the selection.
@@ -673,7 +706,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// The weight of the ingredients in the recipes in the menu, based on ingredient quantity in whole units per recipe.
 	/// This is the sum of the ingredient weight of all ingredients in the recipes, that is included in the selection.
@@ -684,7 +717,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// TODO: Unhide once underlying data is ok
 	/// The weight of the ingredients (in grams) per recipe in the menu, based on ingredient quantity in whole units per recipe.
@@ -696,7 +729,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// TODO: Unhide once underlying data is ok
 	/// The weight of the ingredients (in grams) per recipe serving in the menu, based on ingredient quantity in whole units per recipe.
@@ -708,7 +741,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// TODO: Unhide once underlying data is ok
 	/// The weight of the ingredients (in grams) per recipe in the menu, based on the exact ingredient quantity in the recipes.
@@ -720,7 +753,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// TODO: Unhide once underlying data is ok
 	/// The weight of the ingredients per recipe serving in the menu, based on the exact ingredient quantity in the recipes.
@@ -732,7 +765,7 @@ table 'Menu Measures'
 			)
 		formatString: #,0.00
 		isHidden
-		displayFolder: Ingredient Amount
+		displayFolder: Ingredient Weight
 
 	/// The average planned cost of ingredients in the menu.
 	/// It is calculated by dividing the total planned cost of ingredients in the menu by the total quantity of ingredients in the menu.

@@ -191,6 +191,13 @@ table 'Recipe Ingredients'
 		sourceColumn: customer_ordered_ingredient_quantity
 		annotation SummarizationSetBy = Automatic
 
+	/// The total ingredient quantity ordered by customers, calculated as the ingredient quantity within the recipe rounded up to whole units, multiplied by the number of ordered recipes.
+	column customer_ordered_ingredient_quantity_whole_units
+		dataType: int64
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: customer_ordered_ingredient_quantity_whole_units
+
 	/// The net weight (in grams) of the ingredient ordered by customers, calculated as the number of ordered recipes multiplied by the net weight of the ingredient used in each recipe.
 	column customer_ordered_ingredient_weight
 		dataType: double

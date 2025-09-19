@@ -2519,8 +2519,8 @@ table 'Order Measures'
 		isHidden
 		displayFolder: Ingredient Amount
 
-	/// The ingredient quantity ordered by the customers.
-	/// If filtered on specific ingredients, it will return the amount of those ingredients that are ordered by the customers as a part of the recipes.
+	/// The ingredient quantity in recipes ordered by customers, calculated as the ingredient quantity within the recipe - which could be a fractional quantity - multiplied by the number of ordered recipes.
+	/// If filtered on specific ingredients, it will return the amount of those ingredients used in recipes ordered by the customers.
 	/// If filtered on customer attributes (like preferences, status, segments etc.), it will return blank as we don't have that level of detail in the data.
 	measure 'Ingredient Quantity in Orders' =
 			VAR IsFilteredOnCustomerAttributes =
@@ -2545,7 +2545,38 @@ table 'Order Measures'
 					'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
 				)
 			)
+		isHidden
 		formatString: #,0.00
+		displayFolder: Ingredient Amount
+
+
+	/// The total ingredient quantity ordered by customers, calculated as the ingredient quantity within the recipe rounded up to whole units, multiplied by the number of ordered recipes.
+	/// If filtered on specific ingredients, it will return the amount of those ingredients that are ordered by the customers, as whole units.
+	/// If filtered on customer attributes (like preferences, status, segments etc.), it will return blank as we don't have that level of detail in the data.
+	measure 'Ingredient Quantity in Orders Whole Units' = 
+			VAR IsFilteredOnCustomerAttributes =
+				IF(
+					ISFILTERED('Customer and Subscriber Details') ||
+					ISFILTERED('Customer Journey Segments') ||
+					ISFILTERED('Order Line Details') ||
+					ISFILTERED('Order Types') ||
+					ISFILTERED('Preference Combinations') ||
+					ISFILTERED('Preferences') ||
+					ISFILTERED('Subscribed Products'),
+					TRUE(),
+					FALSE()
+				)
+
+			RETURN
+			IF(
+				IsFilteredOnCustomerAttributes,
+				BLANK(),
+				CALCULATE(
+					SUM('Recipe Ingredients'[customer_ordered_ingredient_quantity_whole_units]),
+					'Products'[Product Type] IN {"Mealbox", "Velg&vrak"}
+				)
+			)
+		formatString: #,0
 		displayFolder: Ingredient Amount
 
 	/// Margin calculated as [Order Value Gross Ex Vat]-[Recipe Actual Cost Whole Units from Orders],
