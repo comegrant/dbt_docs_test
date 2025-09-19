@@ -59,6 +59,13 @@ resources:
           notebook_task:
             notebook_path: ../ingest/full_ingest/bronze_partnership_full.py
 
+        
+        - task_key: bronze_finance_full
+          depends_on: 
+            - task_key: start-notification
+          notebook_task:
+            notebook_path: ../ingest/full_ingest/bronze_finance_full.py
+
         - task_key: bronze_cms_billing_agreement_order_and_order_lines
           depends_on:
             - task_key: start-notification
@@ -114,6 +121,7 @@ resources:
               {task_key: bronze_psl_full},
               {task_key: bronze_operations_full},
               {task_key: bronze_partnership_full},
+              {task_key: bronze_finance_full},
               {task_key: bronze_cms_billing_agreement_order_and_order_lines},
               {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
               {task_key: bronze_operations_orders_and_collis_history},
@@ -137,6 +145,7 @@ resources:
               {task_key: bronze_psl_full},
               {task_key: bronze_operations_full},
               {task_key: bronze_partnership_full},
+              {task_key: bronze_finance_full},
               {task_key: bronze_cms_billing_agreement_order_and_order_lines},
               {task_key: bronze_cms_billing_agreement_basket_deviations_and_products},
               {task_key: bronze_operations_orders_and_collis_history},
