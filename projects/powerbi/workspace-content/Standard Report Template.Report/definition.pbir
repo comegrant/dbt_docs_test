@@ -1,13 +1,9 @@
 {
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definitionProperties/2.0.0/schema.json",
   "version": "4.0",
   "datasetReference": {
     "byConnection": {
-      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo;Initial Catalog=\"Main Data Model\";Access Mode=readonly;Integrated Security=ClaimsToken",
-      "pbiServiceModelId": null,
-      "pbiModelVirtualServerName": "sobe_wowvirtualserver",
-      "pbiModelDatabaseName": "fdc184ae-b967-41d0-95ce-f5a6aed083e4",
-      "name": "EntityDataSource",
-      "connectionType": "pbiServiceXmlaStyleLive"
+      "connectionString": "Data Source=powerbi://api.powerbi.com/v1.0/myorg/Cheffelo;initial catalog=\"Main Data Model\";access mode=readonly;integrated security=ClaimsToken;semanticmodelid=fdc184ae-b967-41d0-95ce-f5a6aed083e4"
     }
   }
 }

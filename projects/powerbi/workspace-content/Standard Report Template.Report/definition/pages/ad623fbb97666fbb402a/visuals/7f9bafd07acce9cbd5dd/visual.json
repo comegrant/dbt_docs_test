@@ -1,0 +1,115 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "7f9bafd07acce9cbd5dd",
+  "position": {
+    "x": 791.73252279635267,
+    "y": 152.70516717325228,
+    "z": 6000,
+    "height": 492.15805471124622,
+    "width": 467.84194528875383,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Recipes"
+                    }
+                  },
+                  "Property": "Recipe Id"
+                }
+              },
+              "queryRef": "Recipes.Recipe Id",
+              "nativeQueryRef": "Recipe Id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Recipes"
+                    }
+                  },
+                  "Property": "Recipe Name"
+                }
+              },
+              "queryRef": "Recipes.Recipe Name",
+              "nativeQueryRef": "Recipe Name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Portions"
+                    }
+                  },
+                  "Property": "Portion Name"
+                }
+              },
+              "queryRef": "Portions.Portion Name",
+              "nativeQueryRef": "Portion Name"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Recipes"
+                  }
+                },
+                "Property": "Recipe Id"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "276.44670458389567D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Recipes.Recipe Name"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "92.97264412584967D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Portions.Portion Name"
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
