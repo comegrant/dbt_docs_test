@@ -6,8 +6,7 @@
     "y": 400.00000000000006,
     "z": 0,
     "height": 288,
-    "width": 464,
-    "tabOrder": 0
+    "width": 464
   },
   "visual": {
     "visualType": "hundredPercentStackedColumnChart",
