@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/cd_dbt_docs_serve.yml"
       - "projects/data-model/**"
 
 jobs:
@@ -29,7 +30,7 @@ jobs:
             ${{ inputs.working-directory }}/poetry.lock
 
       - name: Install Python packages
-        run: poetry install --no-root
+        run: poetry install dbt-core dbt-databricks --no-root
 
       - name: Install dbt dependencies
         run: poetry run dbt deps --project-dir ./transform
