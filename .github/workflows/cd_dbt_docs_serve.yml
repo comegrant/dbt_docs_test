@@ -40,7 +40,7 @@ jobs:
         run: poetry run dbt deps --project-dir ./transform
 
       - name: Build dbt docs
-        run: poetry run dbt docs generate
+        run: poetry run dbt docs generate --project-dir ./transform --profiles-dir ./transform/profiles
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
