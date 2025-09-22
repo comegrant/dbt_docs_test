@@ -41,10 +41,14 @@ jobs:
 
       - name: Build dbt docs
         run: poetry run dbt docs generate --project-dir ./transform --profiles-dir ./transform/profiles
+        env:
+          DATABRICKS_HOST: dummy
+          DATABRICKS_HTTP_PATH: dummy
+          DATABRICKS_DBT_TOKEN: dummy
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target
+          publish_dir: ./transform/target
           publish_branch: dbt-docs
