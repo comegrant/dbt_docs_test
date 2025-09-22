@@ -74,3 +74,4 @@ customer_journey_segments as (
 )
 
 select * from all_tables_joined
+where true
