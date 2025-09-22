@@ -1,0 +1,45 @@
+name: Deploy dbt Docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "projects/data-model/**"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        timeout-minutes: 5
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+          cache-dependency-path: |
+            poetry.lock
+            ${{ inputs.working-directory }}/poetry.lock
+
+      - name: Install Python packages
+        run: poetry install --with dev
+
+      - name: Install dbt dependencies
+        run: poetry run dbt deps --project-dir ./transform
+
+      - name: Build dbt docs
+        run: dbt docs generate
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target
+          publish_branch: gh-pages # Change if your pages branch is different
