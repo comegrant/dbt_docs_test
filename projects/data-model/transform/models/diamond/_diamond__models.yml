@@ -34,15 +34,26 @@ models:
       - name: customer_journey_main_segment_name
         data_type: string
         description: "{{ doc('column__customer_journey_main_segment_name') }}"
-        # TO-DO: Uncomment when customer journey model fixed. If customers signup between Monday 00:00 and cutoff of any week, they are not assigned any customer journey segment.  
-        # data_tests:
-        #   - not_null:
+        data_tests:
+          - not_null
 
       - name: customer_journey_sub_segment_name
         data_type: string
         description: "{{ doc('column__customer_journey_sub_segment_name') }}"
-        # data_tests:
-        #   - not_null:
+        data_tests:
+          - not_null
+
+      - name: next_cutoff_menu_year
+        data_type: int
+        description: "{{ doc('column__next_cutoff_menu_year') }}"
+        data_tests:
+          - not_null
+
+      - name: next_cutoff_menu_week
+        data_type: int
+        description: "{{ doc('column__next_cutoff_menu_week') }}"
+        data_tests:
+          - not_null
 
       - name: valid_from
         data_type: timestamp

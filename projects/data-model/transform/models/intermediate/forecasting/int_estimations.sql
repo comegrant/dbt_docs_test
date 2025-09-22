@@ -68,7 +68,8 @@ dates as (
 
 , last_menu_week as (
 
-    select * from {{ ref('int_latest_menu_week_passed_cutoff') }}
+    select * from {{ ref('int_menu_weeks') }}
+    where is_latest_menu_week_passed_cutoff is true
 
 )
 

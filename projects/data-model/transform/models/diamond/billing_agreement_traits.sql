@@ -30,6 +30,13 @@ customer_journey_segments as (
 
 )
 
+, latest_cutoff_menu_week as (
+
+    select * from {{ ref('int_menu_weeks') }}
+    where is_latest_menu_week_passed_cutoff is true
+
+)
+
 , all_tables_joined as (
     
     select 
@@ -41,10 +48,14 @@ customer_journey_segments as (
         -- customer_journey_segments
         , customer_journey_segments.customer_journey_main_segment_name
         , customer_journey_segments.customer_journey_sub_segment_name
+        -- menu week at next cutoff
+        , latest_cutoff_menu_week.next_menu_year as next_cutoff_menu_year
+        , latest_cutoff_menu_week.next_menu_week as next_cutoff_menu_week
         -- get the date of the freshest data
         , greatest(
             dim_billing_agreements_scd1.valid_from
             , billing_agreement_customer_journey_segments_scd1.menu_week_cutoff_at_from
+            , latest_cutoff_menu_week.menu_week_cutoff_time
         ) as valid_from
     
     from dim_billing_agreements_scd1
@@ -58,6 +69,8 @@ customer_journey_segments as (
     left join customer_journey_segments
         on billing_agreement_customer_journey_segments_scd1.sub_segment_id = customer_journey_segments.customer_journey_sub_segment_id
 
+    left join latest_cutoff_menu_week
+        on dim_billing_agreements_scd1.company_id = latest_cutoff_menu_week.company_id
 )
 
 select * from all_tables_joined

@@ -14,7 +14,8 @@ timeblocks_blacklisted as (
 
 , latest_menu_week as (
 
-    select * from {{ ref('int_latest_menu_week_passed_cutoff') }}
+    select * from {{ ref('int_menu_weeks') }}
+    where is_latest_menu_week_passed_cutoff is true
 
 )
 
@@ -48,7 +49,7 @@ timeblocks_blacklisted as (
         on timeblocks_blacklisted.timeblocks_blacklisted_id = timeblocks_blacklisted_zones.timeblocks_blacklisted_id
     left join latest_menu_week
         on timeblocks_blacklisted.company_id = latest_menu_week.company_id
-        and timeblocks_blacklisted.menu_year*100 + timeblocks_blacklisted.menu_week > latest_menu_week.menu_year_week
+        and timeblocks_blacklisted.menu_year *100 + timeblocks_blacklisted.menu_week > latest_menu_week.menu_year_week
 )
 
 , all_tables_joined as (

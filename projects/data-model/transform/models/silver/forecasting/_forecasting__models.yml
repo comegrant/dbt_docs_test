@@ -98,9 +98,9 @@ models:
         data_type: int
         description: "{{ doc('column__menu_week') }}"
 
-      - name: next_cutoff_menu_week
+      - name: next_cutoff_menu_year_week
         data_type: integer
-        description: "{{ doc('column__next_cutoff_menu_week') }}"
+        description: "{{ doc('column__next_cutoff_menu_year_week') }}"
         data_tests:
           - not_null
 

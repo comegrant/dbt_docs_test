@@ -42,7 +42,7 @@ dates as (
 
 , menu_weeks as (
 
-    select * from {{ ref('int_historic_menu_weeks_numbered') }}
+    select * from {{ ref('int_menu_weeks') }}
     
 )
 

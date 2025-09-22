@@ -10,3 +10,16 @@ A json string containing all the rules that are connected to a specific partners
 Timestamp which corresponds to the latest update across all traits for the billing agreement.
 
 {% enddocs %}
+
+{% docs column__next_cutoff_menu_year %}
+
+Menu year of the upcoming cutoff.
+
+{% enddocs %}
+
+{% docs column__next_cutoff_menu_week %}
+
+Menu week of the upcoming cutoff.
+
+{% enddocs %}
+

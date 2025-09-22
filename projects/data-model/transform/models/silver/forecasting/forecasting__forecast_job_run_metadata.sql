@@ -90,7 +90,7 @@ source as (
         {# ints #}
         , menu_year
         , menu_week
-        , next_cutoff_menu_week
+        , next_cutoff_menu_week as next_cutoff_menu_year_week
         , forecast_horizon
         , forecast_horizon_index
 

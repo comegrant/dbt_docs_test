@@ -79,10 +79,11 @@ def get_forecast_start_from_db(
     df_forecast_start = connection.sql(
         f"""
             select
-                extract(year from date_add(menu_week_monday_date, 7)) as forecast_start_year,
-                extract(week from date_add(menu_week_monday_date, 7)) as forecast_start_week
-            from prod.intermediate.int_latest_menu_week_passed_cutoff
+                next_menu_year as forecast_start_year,
+                next_menu_week as forecast_start_week
+            from prod.intermediate.int_menu_weeks
             where company_id = '{company_id}'
+            and is_latest_menu_week_passed_cutoff is true
         """
     ).toPandas()
     forecast_start_year, forecast_start_week = df_forecast_start.head(1).values[0]

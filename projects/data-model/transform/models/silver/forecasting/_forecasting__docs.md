@@ -32,9 +32,9 @@ The ID of the parent job run. If job run B is triggered by job run A, then A is 
 
 {% enddocs %}
 
-{% docs column__next_cutoff_menu_week %}
+{% docs column__next_cutoff_menu_year_week %}
 
-The menu week of the upcoming cutoff.
+The menu week of the upcoming cutoff in the format YYYYWW.
 
 {% enddocs %}
 
