@@ -34,13 +34,13 @@ jobs:
             ${{ inputs.working-directory }}/poetry.lock
 
       - name: Install Python packages
-        run: poetry install --no-root
+        run: poetry install --with dev
 
       - name: Install dbt dependencies
         run: poetry run dbt deps --project-dir ./transform
 
       - name: Build dbt docs
-        run: dbt docs generate
+        run: poetry run dbt docs generate
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
