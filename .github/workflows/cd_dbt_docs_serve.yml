@@ -12,6 +12,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-22.04
 
+    defaults:
+      run:
+        working-directory: projects/data-model
+
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v3
@@ -30,7 +34,7 @@ jobs:
             ${{ inputs.working-directory }}/poetry.lock
 
       - name: Install Python packages
-        run: poetry install dbt-core dbt-databricks --no-root
+        run: poetry install --no-root
 
       - name: Install dbt dependencies
         run: poetry run dbt deps --project-dir ./transform
